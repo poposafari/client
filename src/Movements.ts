@@ -15,6 +15,7 @@ export class Movements{
     private playerTileSizePixelsWalked:number = 0;
     private playerMovementDirectionString:String="";
     private isPlayerChangeDirection:boolean=false;
+    private isPlayerShortKey:boolean = false;
     playerMovementCount: number = 0;
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
@@ -41,7 +42,15 @@ export class Movements{
             this.updatePlayerPosition(delta);
         }
     }
-    movePlayer(direction: Direction): void{
+    movePlayer(direction: Direction,keyDuration:number): void{
+        console.log(direction+" "+keyDuration);
+        if(keyDuration < 80){
+            this.isPlayerShortKey = true;
+        }
+        else{
+            this.isPlayerShortKey = false;
+        }
+
         if(this.isPlayerMoving())
             return;
         else{
@@ -96,17 +105,14 @@ export class Movements{
     private movePlayerSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.playerMovementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
-        if(this.isPlayerChangeDirection){
+        if(this.isPlayerShortKey && this.isPlayerChangeDirection){
             playerMovementDistance.x=0;
             playerMovementDistance.y=0;
         }
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
-        console.log(this.playerTileSizePixelsWalked);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
-        console.log(this.playerTileSizePixelsWalked);
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
-        console.log(this.playerTileSizePixelsWalked);
 
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
