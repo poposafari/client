@@ -14,8 +14,8 @@ export class Movements{
     private speedPixelsPerSecond: number = GameScene.TILE_SIZE*3.5;
     private playerTileSizePixelsWalked:number = 0;
     private playerMovementDirectionString:String="";
-    private settingDirection:boolean=true;
-    playerMovementCount: number = -1;
+    private isPlayerChangeDirection:boolean=false;
+    playerMovementCount: number = 0;
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -51,20 +51,21 @@ export class Movements{
     private startPlayerMoving(direction: Direction): void {
         this.playerMovementDirectionString = this.getPlayerDirectionString(direction);
         this.playerMovementDirection = direction;
-
         this.playerMovementHistory.push(this.playerMovementDirectionString);
         if(this.playerMovementHistory.length > 2){
             this.playerMovementHistory.shift();
         }
         if(this.playerMovementHistory[0] != this.playerMovementHistory[1]){
-            this.playerMovementCount = -1;
-            this.settingDirection = true;
+            // this.playerMovementCount = 1;
+            this.isPlayerChangeDirection = true;
         }
-        console.log(this.playerMovementHistory);
-        console.log(this.playerMovementCount);
+        else{
+            this.isPlayerChangeDirection = false;
+        }
+        // console.log(this.isPlayerChangeDirection);
+        // console.log(this.playerMovementHistory);
         this.player.startAnimation(direction);
         this.updatePlayerTilePos();
-
     }
     private stopPlayerMoving():void{
         this.player.stopAnimation(this.playerMovementDirection);
@@ -95,11 +96,18 @@ export class Movements{
     private movePlayerSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.playerMovementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
+        if(this.isPlayerChangeDirection){
+            playerMovementDistance.x=0;
+            playerMovementDistance.y=0;
+        }
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
-
+        console.log(this.playerTileSizePixelsWalked);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
+        console.log(this.playerTileSizePixelsWalked);
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
+        console.log(this.playerTileSizePixelsWalked);
+
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
         return this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
