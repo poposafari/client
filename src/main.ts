@@ -14,6 +14,8 @@ const CANVAS_HEIGHT = 600;
 
 export class GameScene extends Phaser.Scene {
   static readonly TILE_SIZE = 32;
+  private readonly WALK_FRAMERATE=6;
+  private readonly RUN_FRAMERATE=1;
   private moveControls: MovementControls;
   private movements: Movements;
   
@@ -64,25 +66,25 @@ export class GameScene extends Phaser.Scene {
     const playerCustomFrameRunLeft = [[playerFrames[19],playerFrames[18]],[playerFrames[20],playerFrames[18]]];
     const playerCustomFrameRunRight = [[playerFrames[22],playerFrames[21]],[playerFrames[23],playerFrames[21]]];
 
-    //player walk frames.
-    this.createPlayerAnimation(Direction.WALK_UP_1, playerCustomFrameWalkUp[0]);
-    this.createPlayerAnimation(Direction.WALK_UP_2, playerCustomFrameWalkUp[1]);
-    this.createPlayerAnimation(Direction.WALK_DOWN_1, playerCustomFrameWalkDown[0]);
-    this.createPlayerAnimation(Direction.WALK_DOWN_2, playerCustomFrameWalkDown[1]);
-    this.createPlayerAnimation(Direction.WALK_LEFT_1, playerCustomFrameWalkLeft[0]);
-    this.createPlayerAnimation(Direction.WALK_LEFT_2, playerCustomFrameWalkLeft[1]);
-    this.createPlayerAnimation(Direction.WALK_RIGHT_1, playerCustomFrameWalkRight[0]);
-    this.createPlayerAnimation(Direction.WALK_RIGHT_2, playerCustomFrameWalkRight[1]);
+    //sprite(player) walk frames.
+    this.createPlayerAnimation(Direction.WALK_UP_1, playerCustomFrameWalkUp[0],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_UP_2, playerCustomFrameWalkUp[1],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_DOWN_1, playerCustomFrameWalkDown[0],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_DOWN_2, playerCustomFrameWalkDown[1],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_LEFT_1, playerCustomFrameWalkLeft[0],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_LEFT_2, playerCustomFrameWalkLeft[1],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_RIGHT_1, playerCustomFrameWalkRight[0],this.WALK_FRAMERATE);
+    this.createPlayerAnimation(Direction.WALK_RIGHT_2, playerCustomFrameWalkRight[1],this.WALK_FRAMERATE);
 
-    //player run frames.
-    this.createPlayerAnimation(Direction.RUN_UP_1, playerCustomFrameRunUp[0]);
-    this.createPlayerAnimation(Direction.RUN_UP_2, playerCustomFrameRunUp[1]);
-    this.createPlayerAnimation(Direction.RUN_DOWN_1, playerCustomFrameRunDown[0]);
-    this.createPlayerAnimation(Direction.RUN_DOWN_2, playerCustomFrameRunDown[1]);
-    this.createPlayerAnimation(Direction.RUN_LEFT_1, playerCustomFrameRunLeft[0]);
-    this.createPlayerAnimation(Direction.RUN_LEFT_2, playerCustomFrameRunLeft[1]);
-    this.createPlayerAnimation(Direction.RUN_RIGHT_1, playerCustomFrameRunRight[0]);
-    this.createPlayerAnimation(Direction.RUN_RIGHT_2, playerCustomFrameRunRight[1]);
+    //sprite(player) run frames.
+    this.createPlayerAnimation(Direction.RUN_UP_1, playerCustomFrameRunUp[0],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_UP_2, playerCustomFrameRunUp[1],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_DOWN_1, playerCustomFrameRunDown[0],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_DOWN_2, playerCustomFrameRunDown[1],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_LEFT_1, playerCustomFrameRunLeft[0],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_LEFT_2, playerCustomFrameRunLeft[1],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_1, playerCustomFrameRunRight[0],this.RUN_FRAMERATE);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_2, playerCustomFrameRunRight[1],this.RUN_FRAMERATE);
   }
 
   public update(_time: number, delta: number) {
@@ -93,11 +95,12 @@ export class GameScene extends Phaser.Scene {
   private createPlayerAnimation(
     name: string,
     frames: Phaser.Types.Animations.AnimationFrame[],
+    frameRate: number,
   ) {
     this.anims.create({
       key: name,
       frames: frames,
-      frameRate: 6,
+      frameRate: frameRate,
       repeat: 0,
       yoyo:false
     });
