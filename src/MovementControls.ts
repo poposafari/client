@@ -1,16 +1,19 @@
 import { Direction } from './Direction';
 import {Movements} from './Movements';
-
+enum KeyInputCheck{
+    KEY_DOWN = 0,
+    KEY_UP = 0,
+    KEY_LEFT = 0,
+    KEY_RIGHT = 0,
+}
 export class MovementControls{
     constructor(
         private keyInput:Phaser.Input.InputPlugin,
         private movements:Movements,
     ){}
+    
     update(){
         const cursors = this.keyInput.keyboard.createCursorKeys();
-        if(cursors.left.isDown === false || cursors.right.isDown === false || cursors.up.isDown === false || cursors.down.isDown === false){
-            this.movements.isKeyUpMovement = true;
-        }
         if(cursors.shift.isDown){
             if(cursors.left.isDown){
                 if(this.getMovementsStep()) this.movements.movePlayer(Direction.RUN_LEFT_1,cursors.left.getDuration());

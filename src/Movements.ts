@@ -11,11 +11,12 @@ export class Movements{
     ){}
     private playerMovementDirection: Direction = Direction.NONE;
     private playerMovementHistory: Array<String>=[];
-    private speedPixelsPerSecond = GameScene.TILE_SIZE*2;
+    private speedPixelsPerSecond;
     private playerTileSizePixelsWalked:number = 0;
     private playerMovementDirectionString:String="";
     private isPlayerChangeDirection:boolean=false;
     private isPlayerShortKey:boolean = false;
+    private pixelsToWalkThisUpdate:number = 0;
     playerMovementCount: number = 0;
     isKeyUpMovement:boolean = false;
 
@@ -46,7 +47,6 @@ export class Movements{
     }
     movePlayer(direction: Direction,keyDuration:number): void{
         this.setPlayerMovementSpeed(direction);
-        console.log(direction+" "+keyDuration);
         if(keyDuration < 90){
             this.isPlayerShortKey = true;
         }
@@ -62,10 +62,10 @@ export class Movements{
     }
     private setPlayerMovementSpeed(direction: Direction): void{
         if(this.getPlayerMovementType(direction) === 'walk'){
-            this.speedPixelsPerSecond = GameScene.TILE_SIZE*3.5;
+            this.speedPixelsPerSecond = GameScene.TILE_SIZE*3;
         }
         else{
-            this.speedPixelsPerSecond = GameScene.TILE_SIZE*5;
+            this.speedPixelsPerSecond = GameScene.TILE_SIZE*6;
         }
     }
     private startPlayerMoving(direction: Direction): void {
@@ -92,7 +92,7 @@ export class Movements{
         const tempString = direction.split('_',2);
         return tempString[1];
     }
-    private getPlayerMovementType(direction: Direction):String{
+    getPlayerMovementType(direction: Direction):String{
         const tempString = direction.split('_',2);
         return tempString[0];
     }
@@ -104,30 +104,37 @@ export class Movements{
     }
     private updatePlayerPosition(delta:number){
         const deltaToSeconds = delta/1000;
-        const pixelsToWalkThisUpdate = this.speedPixelsPerSecond*deltaToSeconds;
-        if(this.willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate)){
-            this.movePlayerSprite(pixelsToWalkThisUpdate);
+        //const pixelsToWalkThisUpdate = this.speedPixelsPerSecond*deltaToSeconds;
+        if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
+            this.pixelsToWalkThisUpdate = 2;
+        }  
+        else{
+            this.pixelsToWalkThisUpdate = 4;
+        }
+        if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
+            this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.stopPlayerMoving();
             this.playerMovementCount++;
         }
         else{
-            this.movePlayerSprite(pixelsToWalkThisUpdate);
+            this.movePlayerSprite(this.pixelsToWalkThisUpdate);
         }
     }
     private movePlayerSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.playerMovementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
-        if(this.isPlayerShortKey && this.isPlayerChangeDirection && this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
-            playerMovementDistance.x=0;
-            playerMovementDistance.y=0;
-        }
-        console.log();
+        // if(this.isPlayerShortKey && this.isPlayerChangeDirection && this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
+        //     playerMovementDistance.x=0;
+        //     playerMovementDistance.y=0;
+        // }
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
+        console.log(this.playerTileSizePixelsWalked);
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
+        console.log(this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate);
         return this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
     }
 }

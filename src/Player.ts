@@ -29,19 +29,20 @@ export class Player {
   stopAnimation(direction: Direction, isKeyUpMovement:boolean, playerMovementType: String) {
     const tempString = direction.split('_',2);
     const animationManager = this.sprite.anims.animationManager;
-    if(isKeyUpMovement && playerMovementType === 'run'){
-      this.sprite.setFrame(animationManager.get(`walk_${tempString[1]}_1`).frames[1].frame.name);
-    }
-    else{
-      this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
-    }
+    // if(isKeyUpMovement && playerMovementType === 'run'){
+    //   this.sprite.setFrame(animationManager.get(`walk_${tempString[1]}_1`).frames[1].frame.name);
+    // }
+    // else{
+    //   this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
+    // }
+    this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
     this.sprite.anims.stop();
   }
 
   startAnimation(direction: Direction) {
     this.sprite.anims.play(direction);
-  }                      
 
+  }                      
   getTilePos(): Phaser.Math.Vector2 {
     return this.tilePos.clone();
   }
