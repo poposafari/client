@@ -10,13 +10,16 @@ export class Movements{
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private playerMovementDirection: Direction = Direction.NONE;
+    private playerLastMovementDirection: Direction = Direction.NONE;
     private playerMovementHistory: Array<String>=[];
     private speedPixelsPerSecond;
     private playerTileSizePixelsWalked:number = 0;
     private playerMovementDirectionString:String="";
-    private isPlayerChangeDirection:boolean=false;
+    private isPlayerChangeDirection:boolean;
     private isPlayerShortKey:boolean = false;
     private pixelsToWalkThisUpdate:number = 0;
+    isPlayerPressAnyMovementKey:boolean = false;
+    isPlayerPressShiftKey:boolean = false;
     playerMovementCount: number = 0;
     isKeyUpMovement:boolean = false;
 
@@ -46,7 +49,7 @@ export class Movements{
         }
     }
     movePlayer(direction: Direction,keyDuration:number): void{
-        this.setPlayerMovementSpeed(direction);
+        this.playerLastMovementDirection = Direction.NONE;
         if(keyDuration < 90){
             this.isPlayerShortKey = true;
         }
@@ -58,14 +61,6 @@ export class Movements{
             return;
         else{
             this.startPlayerMoving(direction);
-        }
-    }
-    private setPlayerMovementSpeed(direction: Direction): void{
-        if(this.getPlayerMovementType(direction) === 'walk'){
-            this.speedPixelsPerSecond = GameScene.TILE_SIZE*3;
-        }
-        else{
-            this.speedPixelsPerSecond = GameScene.TILE_SIZE*6;
         }
     }
     private startPlayerMoving(direction: Direction): void {
@@ -85,7 +80,7 @@ export class Movements{
         this.updatePlayerTilePos();
     }
     private stopPlayerMoving():void{
-        this.player.stopAnimation(this.playerMovementDirection, this.isKeyUpMovement, this.getPlayerMovementType(this.playerMovementDirection));
+        this.player.stopAnimation(this.playerMovementDirection,this.isPlayerPressShiftKey,this.isPlayerPressAnyMovementKey);
         this.playerMovementDirection = Direction.NONE;
     }
     private getPlayerDirectionType(direction: Direction):String{
@@ -103,14 +98,15 @@ export class Movements{
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
     }
     private updatePlayerPosition(delta:number){
-        const deltaToSeconds = delta/1000;
+        //const deltaToSeconds = delta/1000;
         //const pixelsToWalkThisUpdate = this.speedPixelsPerSecond*deltaToSeconds;
-        if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
-            this.pixelsToWalkThisUpdate = 2;
+        if(this.isPlayerPressShiftKey){
+            this.pixelsToWalkThisUpdate = 4;
         }  
         else{
-            this.pixelsToWalkThisUpdate = 4;
+            this.pixelsToWalkThisUpdate = 2;
         }
+
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.stopPlayerMoving();
@@ -131,10 +127,10 @@ export class Movements{
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
-        console.log(this.playerTileSizePixelsWalked);
+        // console.log(this.playerTileSizePixelsWalked);
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        console.log(this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate);
+        // console.log(this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate);
         return this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
     }
 }

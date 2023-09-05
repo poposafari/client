@@ -14,7 +14,7 @@ const CANVAS_HEIGHT = 600;
 
 export class GameScene extends Phaser.Scene {
   static readonly TILE_SIZE = 32;
-  private readonly WALK_FRAMERATE=0; //6
+  private readonly WALK_FRAMERATE=6; //6
   private readonly RUN_FRAMERATE=0; //5
   private readonly WALK_DELAY=0;
   private readonly RUN_DELAY=0;
@@ -75,20 +75,20 @@ export class GameScene extends Phaser.Scene {
     ];
 
     const playerCustomFrameRunUp = [
-      [playerFrames[13],playerFrames[12],playerFrames[12]],
-      [playerFrames[14],playerFrames[12],playerFrames[12]]
+      [playerFrames[13],playerFrames[12]],
+      [playerFrames[14],playerFrames[12]]
     ];
     const playerCustomFrameRunDown = [
-      [playerFrames[16],playerFrames[15],playerFrames[15]],
-      [playerFrames[17],playerFrames[15],playerFrames[15]]
+      [playerFrames[16],playerFrames[15]],
+      [playerFrames[17],playerFrames[15]]
     ];
     const playerCustomFrameRunLeft = [
-      [playerFrames[19],playerFrames[18],playerFrames[18]],
-      [playerFrames[20],playerFrames[18],playerFrames[18]]
+      [playerFrames[19],playerFrames[18]],
+      [playerFrames[20],playerFrames[18]]
     ];
     const playerCustomFrameRunRight = [
-      [playerFrames[22],playerFrames[21],playerFrames[21]],
-      [playerFrames[23],playerFrames[21],playerFrames[21]]
+      [playerFrames[22],playerFrames[21]],
+      [playerFrames[23],playerFrames[21]]
     ];
 
     //sprite(player) walk frames.
@@ -131,16 +131,14 @@ export class GameScene extends Phaser.Scene {
       delay:delay,
       yoyo:false
     });
-    console.log(frames);
     if(name.charAt(0) === 'w'){
-      this.anims.get(name).frames[0].duration = 100;
+      this.anims.get(name).frames[0].duration = 10;
+      this.anims.get(name).frames[1].duration = 10;
     }
     if(name.charAt(0) === 'r'){
       this.anims.get(name).frames[0].duration = 500;
       this.anims.get(name).frames[1].duration = 500;
-      this.anims.get(name).frames[2].duration = 500;
     }
-    console.log(this.anims.get(name).frames);
   }
 }
 
