@@ -9,6 +9,7 @@ export class Movements{
         private player: Player,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
+    private readonly PLAYER_SPEED=2; //default 2.
     private playerMovementDirection: Direction = Direction.NONE;
     private playerLastMovementDirection: Direction = Direction.NONE;
     private playerMovementHistory: Array<String>=[];
@@ -36,12 +37,16 @@ export class Movements{
         [Direction.WALK_RIGHT_2]: Vector2.RIGHT,
         [Direction.RUN_UP_1]: Vector2.UP,
         [Direction.RUN_UP_2]: Vector2.UP,
+        [Direction.RUN_UP_3]: Vector2.UP,
         [Direction.RUN_DOWN_1]: Vector2.DOWN,
         [Direction.RUN_DOWN_2]: Vector2.DOWN,
+        [Direction.RUN_DOWN_3]: Vector2.DOWN,
         [Direction.RUN_LEFT_1]: Vector2.LEFT,
         [Direction.RUN_LEFT_2]: Vector2.LEFT,
+        [Direction.RUN_LEFT_3]: Vector2.LEFT,
         [Direction.RUN_RIGHT_1]: Vector2.RIGHT,
         [Direction.RUN_RIGHT_2]: Vector2.RIGHT,
+        [Direction.RUN_RIGHT_3]: Vector2.RIGHT,
       };
     playerUpdate(delta:number){
         if(this.isPlayerMoving()){
@@ -67,15 +72,15 @@ export class Movements{
         this.playerMovementDirectionString = this.getPlayerDirectionType(direction);
         this.playerMovementDirection = direction;
         this.playerMovementHistory.push(this.playerMovementDirectionString);
-        if(this.playerMovementHistory.length > 2){
-            this.playerMovementHistory.shift();
-        }
-        if(this.playerMovementHistory[0] != this.playerMovementHistory[1]){
-            this.isPlayerChangeDirection = true;
-        }
-        else{
-            this.isPlayerChangeDirection = false;
-        }
+        // if(this.playerMovementHistory.length > 2){
+        //     this.playerMovementHistory.shift();
+        // }
+        // if(this.playerMovementHistory[0] != this.playerMovementHistory[1]){
+        //     this.isPlayerChangeDirection = true;
+        // }
+        // else{
+        //     this.isPlayerChangeDirection = false;
+        // }
         this.player.startAnimation(direction);
         this.updatePlayerTilePos();
     }
@@ -101,16 +106,17 @@ export class Movements{
         //const deltaToSeconds = delta/1000;
         //const pixelsToWalkThisUpdate = this.speedPixelsPerSecond*deltaToSeconds;
         if(this.isPlayerPressShiftKey){
-            this.pixelsToWalkThisUpdate = 4;
+            this.pixelsToWalkThisUpdate = this.PLAYER_SPEED*2;
         }  
         else{
-            this.pixelsToWalkThisUpdate = 2;
+            this.pixelsToWalkThisUpdate = this.PLAYER_SPEED;
         }
 
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.stopPlayerMoving();
             this.playerMovementCount++;
+            console.log(this.playerMovementCount);
         }
         else{
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
@@ -127,10 +133,8 @@ export class Movements{
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
-        // console.log(this.playerTileSizePixelsWalked);
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        // console.log(this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate);
         return this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
     }
 }

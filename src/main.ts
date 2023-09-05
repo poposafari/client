@@ -76,19 +76,23 @@ export class GameScene extends Phaser.Scene {
 
     const playerCustomFrameRunUp = [
       [playerFrames[13],playerFrames[12]],
-      [playerFrames[14],playerFrames[12]]
+      [playerFrames[14],playerFrames[12]],
+      [playerFrames[12],playerFrames[12]]
     ];
     const playerCustomFrameRunDown = [
       [playerFrames[16],playerFrames[15]],
-      [playerFrames[17],playerFrames[15]]
+      [playerFrames[17],playerFrames[15]],
+      [playerFrames[15],playerFrames[15]]
     ];
     const playerCustomFrameRunLeft = [
       [playerFrames[19],playerFrames[18]],
-      [playerFrames[20],playerFrames[18]]
+      [playerFrames[20],playerFrames[18]],
+      [playerFrames[18],playerFrames[18]]
     ];
     const playerCustomFrameRunRight = [
       [playerFrames[22],playerFrames[21]],
-      [playerFrames[23],playerFrames[21]]
+      [playerFrames[23],playerFrames[21]],
+      [playerFrames[21],playerFrames[21]]
     ];
 
     //sprite(player) walk frames.
@@ -104,12 +108,20 @@ export class GameScene extends Phaser.Scene {
     //sprite(player) run frames.
     this.createPlayerAnimation(Direction.RUN_UP_1, playerCustomFrameRunUp[0],this.RUN_FRAMERATE,this.RUN_DELAY);
     this.createPlayerAnimation(Direction.RUN_UP_2, playerCustomFrameRunUp[1],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_UP_3, playerCustomFrameRunUp[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    
     this.createPlayerAnimation(Direction.RUN_DOWN_1, playerCustomFrameRunDown[0],this.RUN_FRAMERATE,this.RUN_DELAY);
     this.createPlayerAnimation(Direction.RUN_DOWN_2, playerCustomFrameRunDown[1],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_DOWN_3, playerCustomFrameRunDown[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+
     this.createPlayerAnimation(Direction.RUN_LEFT_1, playerCustomFrameRunLeft[0],this.RUN_FRAMERATE,this.RUN_DELAY);
     this.createPlayerAnimation(Direction.RUN_LEFT_2, playerCustomFrameRunLeft[1],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_LEFT_3, playerCustomFrameRunLeft[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    
     this.createPlayerAnimation(Direction.RUN_RIGHT_1, playerCustomFrameRunRight[0],this.RUN_FRAMERATE,this.RUN_DELAY);
     this.createPlayerAnimation(Direction.RUN_RIGHT_2, playerCustomFrameRunRight[1],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_3, playerCustomFrameRunRight[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    
   }
 
   public update(_time: number, delta: number) {
@@ -136,8 +148,8 @@ export class GameScene extends Phaser.Scene {
       this.anims.get(name).frames[1].duration = 10;
     }
     if(name.charAt(0) === 'r'){
-      this.anims.get(name).frames[0].duration = 500;
-      this.anims.get(name).frames[1].duration = 500;
+      this.anims.get(name).frames[0].duration = 300;
+      this.anims.get(name).frames[1].duration = 300;
     }
   }
 }

@@ -10,10 +10,14 @@ export enum Direction {
   WALK_DOWN_2 = "walk_down_2",
   RUN_UP_1 = "run_up_1",
   RUN_UP_2 = "run_up_2",
+  RUN_UP_3 = "run_up_3",
   RUN_LEFT_1 = "run_left_1",
   RUN_LEFT_2 = "run_left_2",
+  RUN_LEFT_3 = "run_left_3",
   RUN_RIGHT_1 = "run_right_1",
   RUN_RIGHT_2 = "run_right_2",
+  RUN_RIGHT_3 = "run_right_3",
   RUN_DOWN_1 = "run_down_1",
   RUN_DOWN_2 = "run_down_2",
+  RUN_DOWN_3 = "run_down_3"
 }
