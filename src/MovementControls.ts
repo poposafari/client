@@ -11,18 +11,16 @@ export class MovementControls{
         const cursors = this.keyInput.keyboard.createCursorKeys();
         this.movements.isPlayerPressAnyMovementKey = cursors.left.isDown || cursors.right.isDown || cursors.up.isDown || cursors.down.isDown;
         this.movements.isPlayerPressShiftKey = cursors.shift.isDown;
-
+        
         if(!this.movements.isPlayerPressAnyMovementKey){
             this.movements.playerMovementCount = 0;
         }
-
         if(cursors.up.isDown){
             if(this.movements.isPlayerPressShiftKey){
                 if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_UP_1,cursors.up.getDuration());
                 if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_UP_3,cursors.up.getDuration());
                 if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_UP_2,cursors.up.getDuration());
                 if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_UP_3,cursors.up.getDuration());
-
             }
             else{
                 if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_UP_1,cursors.up.getDuration());
@@ -49,7 +47,7 @@ export class MovementControls{
                 if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_LEFT_3,cursors.left.getDuration());
             }
             else{
-                if(this.getMovementsStep('r')) this.movements.movePlayer(Direction.WALK_LEFT_1,cursors.left.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_LEFT_1,cursors.left.getDuration());
                 else this.movements.movePlayer(Direction.WALK_LEFT_2,cursors.left.getDuration());
             }
         }
@@ -61,7 +59,7 @@ export class MovementControls{
                 if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_RIGHT_3,cursors.right.getDuration());
             }
             else{
-                if(this.getMovementsStep('r')) this.movements.movePlayer(Direction.WALK_RIGHT_1,cursors.right.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_RIGHT_1,cursors.right.getDuration());
                 else this.movements.movePlayer(Direction.WALK_RIGHT_2,cursors.right.getDuration());
             }
         }

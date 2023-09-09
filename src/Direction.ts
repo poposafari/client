@@ -19,5 +19,9 @@ export enum Direction {
   RUN_RIGHT_3 = "run_right_3",
   RUN_DOWN_1 = "run_down_1",
   RUN_DOWN_2 = "run_down_2",
-  RUN_DOWN_3 = "run_down_3"
+  RUN_DOWN_3 = "run_down_3",
+  PET_DOWN = "follow_pokemon_down",
+  PET_LEFT = "follow_pokemon_left",
+  PET_RIGHT = "follow_pokemon_right",
+  PET_UP = "follow_pokemon_up",
 }

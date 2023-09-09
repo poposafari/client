@@ -25,11 +25,11 @@ export class Player {
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
   }
-
+  
   stopAnimation(direction: Direction, isPlayerPressShiftKey:boolean,isPlayerPressAnyMovementKey: boolean) {
     const tempString = direction.split('_',2);
     const animationManager = this.sprite.anims.animationManager;
-    this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name); 
+    this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
     //player run logic should add.
     if(!isPlayerPressAnyMovementKey){
       this.sprite.setFrame(animationManager.get(`walk_${tempString[1]}_1`).frames[1].frame.name);

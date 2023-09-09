@@ -14,10 +14,15 @@ const CANVAS_HEIGHT = 600;
 
 export class GameScene extends Phaser.Scene {
   static readonly TILE_SIZE = 32;
-  private readonly WALK_FRAMERATE=6; //6
-  private readonly RUN_FRAMERATE=0; //5
-  private readonly WALK_DELAY=0;
-  private readonly RUN_DELAY=0;
+
+  private readonly PLAYER_WALK_FRAMERATE=6; //6
+  private readonly PLAYER_RUN_FRAMERATE=0; //5
+  private readonly PLAYER_WALK_DELAY=0;
+  private readonly PLAYER_RUN_DELAY=0;
+
+  private readonly PET_FRAMERATE=6;
+  private readonly PET_DELAY = 0;
+
   private moveControls: MovementControls;
   private movements: Movements;
   
@@ -30,6 +35,7 @@ export class GameScene extends Phaser.Scene {
     //this.load.image("nature_2","assets/map/nature_2.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
+    this.load.atlas('pet','assets/pokemon/001.png','assets/pokemon/001.json');
   }
 
   public create() {
@@ -41,13 +47,15 @@ export class GameScene extends Phaser.Scene {
     testTilemap.createLayer(1,"nature_1",0,0);
 
     const playerSprite = this.add.sprite(0, 0, "player");
-    // playerSprite.setDepth(0); //z-index++.
+    const petSprite = this.add.sprite(0,1,"pet");
+    playerSprite.setDepth(1); //z-index++.
+    petSprite.setDepth(0);
     // playerSprite.scale = 3; //playerSprite size setting.
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true;
-    const player = new Player(playerSprite, new Phaser.Math.Vector2(2, 1));
-
-    this.movements = new Movements(player, testTilemap);
+    const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
+    const pet = new Player(petSprite,new Phaser.Math.Vector2(2, 2));
+    this.movements = new Movements(player,pet,testTilemap);
     this.moveControls = new MovementControls(this.input, this.movements);
 
     const playerFrames = this.anims.generateFrameNames('player',{
@@ -55,6 +63,13 @@ export class GameScene extends Phaser.Scene {
       suffix:"",
       start:0,
       end:23,
+    });
+
+    const petFrames = this.anims.generateFrameNames('pet',{
+      prefix:'001-',
+      suffix:"",
+      start:0,
+      end:15,
     });
 
     const playerCustomFrameWalkUp = [
@@ -95,33 +110,51 @@ export class GameScene extends Phaser.Scene {
       [playerFrames[21],playerFrames[21]]
     ];
 
+    const petCustomFrameMovementDown = [
+      [petFrames[0],petFrames[1],petFrames[2],petFrames[3]]
+    ];
+    const petCustomFrameMovementLeft = [
+      [petFrames[4],petFrames[5],petFrames[6],petFrames[7]]
+    ];
+    const petCustomFrameMovementRight = [
+      [petFrames[8],petFrames[9],petFrames[10],petFrames[11]]
+    ];
+    const petCustomFrameMovementUp = [
+      [petFrames[12],petFrames[13],petFrames[14],petFrames[15]]
+    ];
+
     //sprite(player) walk frames.
-    this.createPlayerAnimation(Direction.WALK_UP_1, playerCustomFrameWalkUp[0],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_UP_2, playerCustomFrameWalkUp[1],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_DOWN_1, playerCustomFrameWalkDown[0],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_DOWN_2, playerCustomFrameWalkDown[1],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_LEFT_1, playerCustomFrameWalkLeft[0],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_LEFT_2, playerCustomFrameWalkLeft[1],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_RIGHT_1, playerCustomFrameWalkRight[0],this.WALK_FRAMERATE,this.WALK_DELAY);
-    this.createPlayerAnimation(Direction.WALK_RIGHT_2, playerCustomFrameWalkRight[1],this.WALK_FRAMERATE,this.WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_UP_1, playerCustomFrameWalkUp[0],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_UP_2, playerCustomFrameWalkUp[1],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_DOWN_1, playerCustomFrameWalkDown[0],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_DOWN_2, playerCustomFrameWalkDown[1],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_LEFT_1, playerCustomFrameWalkLeft[0],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_LEFT_2, playerCustomFrameWalkLeft[1],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_RIGHT_1, playerCustomFrameWalkRight[0],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
+    this.createPlayerAnimation(Direction.WALK_RIGHT_2, playerCustomFrameWalkRight[1],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
 
     //sprite(player) run frames.
-    this.createPlayerAnimation(Direction.RUN_UP_1, playerCustomFrameRunUp[0],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_UP_2, playerCustomFrameRunUp[1],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_UP_3, playerCustomFrameRunUp[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_UP_1, playerCustomFrameRunUp[0],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_UP_2, playerCustomFrameRunUp[1],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_UP_3, playerCustomFrameRunUp[2],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
     
-    this.createPlayerAnimation(Direction.RUN_DOWN_1, playerCustomFrameRunDown[0],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_DOWN_2, playerCustomFrameRunDown[1],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_DOWN_3, playerCustomFrameRunDown[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_DOWN_1, playerCustomFrameRunDown[0],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_DOWN_2, playerCustomFrameRunDown[1],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_DOWN_3, playerCustomFrameRunDown[2],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
 
-    this.createPlayerAnimation(Direction.RUN_LEFT_1, playerCustomFrameRunLeft[0],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_LEFT_2, playerCustomFrameRunLeft[1],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_LEFT_3, playerCustomFrameRunLeft[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_LEFT_1, playerCustomFrameRunLeft[0],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_LEFT_2, playerCustomFrameRunLeft[1],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_LEFT_3, playerCustomFrameRunLeft[2],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
     
-    this.createPlayerAnimation(Direction.RUN_RIGHT_1, playerCustomFrameRunRight[0],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_RIGHT_2, playerCustomFrameRunRight[1],this.RUN_FRAMERATE,this.RUN_DELAY);
-    this.createPlayerAnimation(Direction.RUN_RIGHT_3, playerCustomFrameRunRight[2],this.RUN_FRAMERATE,this.RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_1, playerCustomFrameRunRight[0],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_2, playerCustomFrameRunRight[1],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
+    this.createPlayerAnimation(Direction.RUN_RIGHT_3, playerCustomFrameRunRight[2],this.PLAYER_RUN_FRAMERATE,this.PLAYER_RUN_DELAY);
     
+    //sprite(follow pokemon) movement frames.
+    this.createPlayerAnimation(Direction.PET_DOWN, petCustomFrameMovementDown[0],this.PET_FRAMERATE,this.PET_DELAY);
+    this.createPlayerAnimation(Direction.PET_LEFT, petCustomFrameMovementLeft[0],this.PET_FRAMERATE,this.PET_DELAY);
+    this.createPlayerAnimation(Direction.PET_RIGHT, petCustomFrameMovementRight[0],this.PET_FRAMERATE,this.PET_DELAY);
+    this.createPlayerAnimation(Direction.PET_UP, petCustomFrameMovementUp[0],this.PET_FRAMERATE,this.PET_DELAY);
   }
 
   public update(_time: number, delta: number) {
@@ -139,7 +172,7 @@ export class GameScene extends Phaser.Scene {
       key: name,
       frames: frames,
       frameRate: frameRate,
-      repeat: 0,
+      repeat: -1,
       delay:delay,
       yoyo:false
     });
