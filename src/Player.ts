@@ -21,11 +21,9 @@ export class Player {
   getPosition(): Phaser.Math.Vector2 {
     return this.sprite.getBottomCenter();
   }
-
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
   }
-  
   stopAnimation(direction: Direction, isPlayerPressShiftKey:boolean,isPlayerPressAnyMovementKey: boolean) {
     const tempString = direction.split('_',2);
     const animationManager = this.sprite.anims.animationManager;

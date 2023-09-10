@@ -50,7 +50,7 @@ export class GameScene extends Phaser.Scene {
     const petSprite = this.add.sprite(0,1,"pet");
     playerSprite.setDepth(1); //z-index++.
     petSprite.setDepth(0);
-    // playerSprite.scale = 3; //playerSprite size setting.
+    // playerSprite.scale = 1; //playerSprite size setting.
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true;
     const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
@@ -71,7 +71,7 @@ export class GameScene extends Phaser.Scene {
       start:0,
       end:15,
     });
-
+  
     const playerCustomFrameWalkUp = [
       [playerFrames[1],playerFrames[0]],
       [playerFrames[2],playerFrames[0]]
@@ -88,7 +88,6 @@ export class GameScene extends Phaser.Scene {
       [playerFrames[10],playerFrames[9]],
       [playerFrames[11],playerFrames[9]]
     ];
-
     const playerCustomFrameRunUp = [
       [playerFrames[13],playerFrames[12]],
       [playerFrames[14],playerFrames[12]],
@@ -111,18 +110,17 @@ export class GameScene extends Phaser.Scene {
     ];
 
     const petCustomFrameMovementDown = [
-      [petFrames[0],petFrames[1],petFrames[2],petFrames[3]]
+      [petFrames[0],petFrames[1],petFrames[2],petFrames[3]],
     ];
     const petCustomFrameMovementLeft = [
-      [petFrames[4],petFrames[5],petFrames[6],petFrames[7]]
+      [petFrames[4],petFrames[5],petFrames[6],petFrames[7]],
     ];
     const petCustomFrameMovementRight = [
-      [petFrames[8],petFrames[9],petFrames[10],petFrames[11]]
+      [petFrames[8],petFrames[9],petFrames[10],petFrames[11]],
     ];
     const petCustomFrameMovementUp = [
-      [petFrames[12],petFrames[13],petFrames[14],petFrames[15]]
+      [petFrames[12],petFrames[13],petFrames[14],petFrames[15]],
     ];
-
     //sprite(player) walk frames.
     this.createPlayerAnimation(Direction.WALK_UP_1, playerCustomFrameWalkUp[0],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
     this.createPlayerAnimation(Direction.WALK_UP_2, playerCustomFrameWalkUp[1],this.PLAYER_WALK_FRAMERATE,this.PLAYER_WALK_DELAY);
@@ -155,13 +153,12 @@ export class GameScene extends Phaser.Scene {
     this.createPlayerAnimation(Direction.PET_LEFT, petCustomFrameMovementLeft[0],this.PET_FRAMERATE,this.PET_DELAY);
     this.createPlayerAnimation(Direction.PET_RIGHT, petCustomFrameMovementRight[0],this.PET_FRAMERATE,this.PET_DELAY);
     this.createPlayerAnimation(Direction.PET_UP, petCustomFrameMovementUp[0],this.PET_FRAMERATE,this.PET_DELAY);
-  }
 
+  }
   public update(_time: number, delta: number) {
     this.moveControls.update();
     this.movements.playerUpdate(delta);
   }
-
   private createPlayerAnimation(
     name: string,
     frames: Phaser.Types.Animations.AnimationFrame[],
@@ -183,6 +180,10 @@ export class GameScene extends Phaser.Scene {
     if(name.charAt(0) === 'r'){
       this.anims.get(name).frames[0].duration = 300;
       this.anims.get(name).frames[1].duration = 300;
+    }
+    if(name.charAt(0) === 'p'){
+      this.anims.get(name).frames[0].duration = 10;
+      this.anims.get(name).frames[1].duration = 10;
     }
   }
 }

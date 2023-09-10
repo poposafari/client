@@ -10,14 +10,16 @@ export class Movements{
         private pet: Player,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
+
     private readonly PLAYER_SPEED=2; //default 2.
     private playerMovementDirection: Direction = Direction.NONE;
-    private petMovementDirection: Direction = Direction.PET_DOWN;
-    private playerMovementHistory: Array<Phaser.Math.Vector2>=[];
-    private petMovementHistory: Array<Phaser.Math.Vector2>=[];
+    private petMovementDirection: Direction = Direction.NONE;
+    private petMovementHistory: Array<String> = [];
+    private isChangePetMovement: boolean;
     private playerTileSizePixelsWalked:number = 0;
     private petTileSizePixelsWalked:number=0;
     private pixelsToWalkThisUpdate:number = 0;
+
     isPlayerPressAnyMovementKey:boolean = false;
     isPlayerPressShiftKey:boolean = false;
     playerMovementCount: number = 0;
@@ -77,7 +79,6 @@ export class Movements{
         if(this.player.getPosition().y - this.pet.getPosition().y < 0){
             this.petMovementDirection = Direction.PET_UP;
         }
-
         this.playerMovementDirection = direction;
         this.player.startAnimation(direction);
         this.updatePlayerTilePos();
@@ -91,7 +92,7 @@ export class Movements{
         const tempString = direction.split('_',2);
         return tempString[1];
     }
-    getPlayerMovementType(direction: Direction):String{
+    private getPlayerMovementType(direction: Direction):String{
         const tempString = direction.split('_',2);
         return tempString[0];
     }
@@ -125,6 +126,7 @@ export class Movements{
         const directionVector = this.movementDirectionVectors[this.playerMovementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
+        
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
@@ -133,6 +135,7 @@ export class Movements{
         const directionVector = this.movementDirectionVectors[this.petMovementDirection].clone();
         const petMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPetPos = this.pet.getPosition().add(petMovementDistance);
+
         this.pet.setPosition(newPetPos);
         this.petTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.petTileSizePixelsWalked %= GameScene.TILE_SIZE;
