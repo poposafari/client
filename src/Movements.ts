@@ -13,9 +13,9 @@ export class Movements{
 
     private readonly PLAYER_SPEED=2; //default 2.
     private playerMovementDirection: Direction = Direction.NONE;
-    private petMovementDirection: Direction = Direction.NONE;
+    private petMovementDirection: Direction = Direction.PET_DOWN;
     private petMovementHistory: Array<String> = [];
-    private isChangePetMovement: boolean;
+    private isChangePetMovement: boolean = false;
     private playerTileSizePixelsWalked:number = 0;
     private petTileSizePixelsWalked:number=0;
     private pixelsToWalkThisUpdate:number = 0;
@@ -54,7 +54,12 @@ export class Movements{
         [Direction.PET_UP] : Vector2.UP,
       };
     playerUpdate(delta:number){
-        this.pet.startAnimation(this.petMovementDirection);
+        console.log(this.isChangePetMovement);
+        if(this.isChangePetMovement){
+            this.pet.startAnimation(this.petMovementDirection);
+            this.isChangePetMovement = false;
+        }
+        
         if(this.isPlayerMoving()){
             this.updatePlayerPosition(delta);
         }
@@ -79,6 +84,16 @@ export class Movements{
         if(this.player.getPosition().y - this.pet.getPosition().y < 0){
             this.petMovementDirection = Direction.PET_UP;
         }
+        this.petMovementHistory.push(this.petMovementDirection);
+        if(this.petMovementHistory.length > 2){
+            this.petMovementHistory.shift();
+        }
+        if(this.petMovementHistory[0] != this.petMovementHistory[1]){
+            this.isChangePetMovement = true;
+        }
+        else{
+            this.isChangePetMovement = false;
+        }
         this.playerMovementDirection = direction;
         this.player.startAnimation(direction);
         this.updatePlayerTilePos();
@@ -86,7 +101,7 @@ export class Movements{
     private stopPlayerMoving():void{
         this.player.stopAnimation(this.playerMovementDirection,this.isPlayerPressShiftKey,this.isPlayerPressAnyMovementKey);
         this.playerMovementDirection = Direction.NONE;
-        //this.petMovementDirection = Direction.NONE;
+        // this.petMovementDirection = Direction.NONE;
     }
     private getPlayerDirectionType(direction: Direction):String{
         const tempString = direction.split('_',2);
