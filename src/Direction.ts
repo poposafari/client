@@ -20,8 +20,8 @@ export enum Direction {
   RUN_DOWN_1 = "run_down_1",
   RUN_DOWN_2 = "run_down_2",
   RUN_DOWN_3 = "run_down_3",
-  PET_DOWN = "pet_down", //left step
-  PET_LEFT = "pet_left", //left step
-  PET_RIGHT = "pet_right", //left step
-  PET_UP = "pet_up", //left step
+  PET_DOWN = "pet_down", 
+  PET_LEFT = "pet_left",
+  PET_RIGHT = "pet_right", 
+  PET_UP = "pet_up", 
 }

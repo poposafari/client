@@ -10,21 +10,26 @@ export class Movements{
         private pet: Player,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
-
     private readonly PLAYER_SPEED=2; //default 2.
+
     private playerMovementDirection: Direction = Direction.NONE;
-    private petMovementDirection: Direction = Direction.PET_DOWN;
+    private petMovementDirection: Direction = Direction.NONE;
+
     private petMovementHistory: Array<String> = [];
+    private playerMovementHistory: Array<String> = [];
+
     private isChangePetMovement: boolean = false;
+    private isChangePlayerMovement: boolean = false;
+
     private playerTileSizePixelsWalked:number = 0;
     private petTileSizePixelsWalked:number=0;
     private pixelsToWalkThisUpdate:number = 0;
+    
+    private isPlayerPressAnyMovementKey:boolean = false;
+    private isPlayerPressShiftKey:boolean = false;
 
-    isPlayerPressAnyMovementKey:boolean = false;
-    isPlayerPressShiftKey:boolean = false;
     playerMovementCount: number = 0;
-    isKeyUpMovement:boolean = false;
-
+    isPlayerMovementFinish: boolean = false;
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -53,25 +58,54 @@ export class Movements{
         [Direction.PET_RIGHT] : Vector2.RIGHT,
         [Direction.PET_UP] : Vector2.UP,
       };
+    setPlayerMovementType(isPlayerPressAnyMovementKey:boolean, isPlayerPressShiftKey:boolean):void{
+        this.isPlayerPressAnyMovementKey = isPlayerPressAnyMovementKey;
+        this.isPlayerPressShiftKey = isPlayerPressShiftKey;
+    }
     playerUpdate(delta:number){
-        console.log(this.isChangePetMovement);
         if(this.isChangePetMovement){
             this.pet.startAnimation(this.petMovementDirection);
             this.isChangePetMovement = false;
         }
-        
         if(this.isPlayerMoving()){
-            this.updatePlayerPosition(delta);
+            this.updatePlayerPosition();
         }
     }
-    movePlayer(direction: Direction,keyDuration:number): void{
+    movePlayer(direction: Direction): void{
         if(this.isPlayerMoving())
             return;
         else{
             this.startPlayerMoving(direction);
         }
     }
-    private startPlayerMoving(direction: Direction): void {
+    private setPlayerMovementHistory(direction: Direction):void{
+        this.playerMovementHistory.push(direction);
+        if(this.playerMovementHistory.length > 2){
+            this.playerMovementHistory.shift();
+        }
+        if(this.playerMovementHistory[0] != this.playerMovementHistory[1]){
+            this.isChangePlayerMovement = true;
+        }
+        else{
+            this.isChangePlayerMovement = false;
+        }
+    }
+    private setPetMovementHistory(direction: Direction):void{
+        this.petMovementHistory.push(this.petMovementDirection);
+        if(this.petMovementHistory.length > 2){
+            this.petMovementHistory.shift();
+        }
+        if(this.petMovementHistory[0] != this.petMovementHistory[1]){
+            this.isChangePetMovement = true;
+        }
+        else{
+            this.isChangePetMovement = false;
+        }
+    }
+    private getPetMovementHistory():Array<String>{
+        return this.petMovementHistory;
+    }
+    private setPetMovementDirection(): void{
         if(this.player.getPosition().x - this.pet.getPosition().x > 0){
             this.petMovementDirection = Direction.PET_RIGHT;
         }
@@ -84,32 +118,19 @@ export class Movements{
         if(this.player.getPosition().y - this.pet.getPosition().y < 0){
             this.petMovementDirection = Direction.PET_UP;
         }
-        this.petMovementHistory.push(this.petMovementDirection);
-        if(this.petMovementHistory.length > 2){
-            this.petMovementHistory.shift();
-        }
-        if(this.petMovementHistory[0] != this.petMovementHistory[1]){
-            this.isChangePetMovement = true;
-        }
-        else{
-            this.isChangePetMovement = false;
-        }
+    }
+    private startPlayerMoving(direction: Direction): void {
         this.playerMovementDirection = direction;
+        this.setPlayerMovementHistory(this.playerMovementDirection);
+        this.setPetMovementDirection();
+        this.setPetMovementHistory(this.petMovementDirection);
         this.player.startAnimation(direction);
         this.updatePlayerTilePos();
     }
     private stopPlayerMoving():void{
-        this.player.stopAnimation(this.playerMovementDirection,this.isPlayerPressShiftKey,this.isPlayerPressAnyMovementKey);
+        this.player.stopAnimation(this.playerMovementDirection,this.isPlayerMovementFinish,this.isPlayerPressAnyMovementKey);
         this.playerMovementDirection = Direction.NONE;
-        // this.petMovementDirection = Direction.NONE;
-    }
-    private getPlayerDirectionType(direction: Direction):String{
-        const tempString = direction.split('_',2);
-        return tempString[1];
-    }
-    private getPlayerMovementType(direction: Direction):String{
-        const tempString = direction.split('_',2);
-        return tempString[0];
+        console.log(this.player.getPosition());
     }
     private isPlayerMoving(): boolean{
         return this.playerMovementDirection != Direction.NONE;
@@ -118,21 +139,27 @@ export class Movements{
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
         this.pet.setTilePos(this.pet.getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
     }
-    private updatePlayerPosition(delta:number){
-        if(this.isPlayerPressShiftKey){
+    private getPlayerMovementType(direction: Direction):String{
+        const tempString = direction.split('_',2);
+        return tempString[0];
+    }
+    private updatePlayerPosition(){
+        if(this.getPlayerMovementType(this.playerMovementDirection) === 'run'){
             this.pixelsToWalkThisUpdate = this.PLAYER_SPEED*2;
-        }  
-        else{
-            this.pixelsToWalkThisUpdate = this.PLAYER_SPEED;
         }
+        if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
+            this.pixelsToWalkThisUpdate = this.PLAYER_SPEED;
+        }  
 
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
+            this.isPlayerMovementFinish = true;
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.movePetSprite(this.pixelsToWalkThisUpdate);
             this.stopPlayerMoving();
             this.playerMovementCount++;
         }
         else{
+            this.isPlayerMovementFinish = false;
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.movePetSprite(this.pixelsToWalkThisUpdate);
         }
@@ -145,6 +172,7 @@ export class Movements{
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
+        console.log(this.playerTileSizePixelsWalked);
     }
     private movePetSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.petMovementDirection].clone();

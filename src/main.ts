@@ -35,7 +35,7 @@ export class GameScene extends Phaser.Scene {
     //this.load.image("nature_2","assets/map/nature_2.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
-    this.load.atlas('pet','assets/pokemon/001.png','assets/pokemon/001.json');
+    this.load.atlas('pet','assets/pokemon/007.png','assets/pokemon/001.json');
   }
 
   public create() {

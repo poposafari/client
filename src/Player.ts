@@ -16,7 +16,6 @@ export class Player {
     );
     this.sprite.setFrame(0);
   }
-  
   //sprite의 픽셀 위치를 반환한다.
   getPosition(): Phaser.Math.Vector2 {
     return this.sprite.getBottomCenter();
@@ -24,12 +23,12 @@ export class Player {
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
   }
-  stopAnimation(direction: Direction, isPlayerPressShiftKey:boolean,isPlayerPressAnyMovementKey: boolean) {
+  stopAnimation(direction: Direction, isPlayerMovementFinish:boolean,isPlayerPressAnyMovementKey: boolean) {
     const tempString = direction.split('_',2);
     const animationManager = this.sprite.anims.animationManager;
     this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
     //player run logic should add.
-    if(!isPlayerPressAnyMovementKey){
+    if(!isPlayerPressAnyMovementKey && isPlayerMovementFinish && direction.charAt(0) === 'r'){
       this.sprite.setFrame(animationManager.get(`walk_${tempString[1]}_1`).frames[1].frame.name);
     }
     this.sprite.anims.stop();

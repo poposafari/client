@@ -7,60 +7,62 @@ export class MovementControls{
         private keyInput:Phaser.Input.InputPlugin,
         private movements:Movements,
     ){}
+    private isPlayerPressAnyMovementKey:boolean = false;
+    private isPlayerPressShiftKey:boolean = false;
     update(){
         const cursors = this.keyInput.keyboard.createCursorKeys();
-        this.movements.isPlayerPressAnyMovementKey = cursors.left.isDown || cursors.right.isDown || cursors.up.isDown || cursors.down.isDown;
-        this.movements.isPlayerPressShiftKey = cursors.shift.isDown;
-        
-        if(!this.movements.isPlayerPressAnyMovementKey){
+        this.isPlayerPressAnyMovementKey = cursors.left.isDown || cursors.right.isDown || cursors.up.isDown || cursors.down.isDown;
+        this.isPlayerPressShiftKey = cursors.shift.isDown;
+        this.movements.setPlayerMovementType(this.isPlayerPressAnyMovementKey,this.isPlayerPressShiftKey);
+        if(!this.isPlayerPressAnyMovementKey){
             this.movements.playerMovementCount = 0;
         }
         if(cursors.up.isDown){
-            if(this.movements.isPlayerPressShiftKey){
-                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_UP_1,cursors.up.getDuration());
-                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_UP_3,cursors.up.getDuration());
-                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_UP_2,cursors.up.getDuration());
-                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_UP_3,cursors.up.getDuration());
+            if(this.isPlayerPressShiftKey){
+                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_UP_1);
+                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_UP_3);
+                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_UP_2);
+                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_UP_3);
             }
             else{
-                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_UP_1,cursors.up.getDuration());
-                else this.movements.movePlayer(Direction.WALK_UP_2,cursors.up.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_UP_1);
+                else this.movements.movePlayer(Direction.WALK_UP_2);
             }
         }
         if(cursors.down.isDown){
-            if(this.movements.isPlayerPressShiftKey){
-                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_DOWN_1,cursors.down.getDuration());
-                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_DOWN_3,cursors.down.getDuration());
-                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_DOWN_2,cursors.down.getDuration());
-                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_DOWN_3,cursors.down.getDuration());
+            if(this.isPlayerPressShiftKey){
+                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_DOWN_1);
+                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_DOWN_3);
+                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_DOWN_2);
+                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_DOWN_3);
             }
             else{
-                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_DOWN_1,cursors.down.getDuration());
-                else this.movements.movePlayer(Direction.WALK_DOWN_2,cursors.down.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_DOWN_1);
+                else this.movements.movePlayer(Direction.WALK_DOWN_2);
             }
         }
         if(cursors.left.isDown){
-            if(this.movements.isPlayerPressShiftKey){
-                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_LEFT_1,cursors.left.getDuration());
-                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_LEFT_3,cursors.left.getDuration());
-                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_LEFT_2,cursors.left.getDuration());
-                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_LEFT_3,cursors.left.getDuration());
+            if(this.isPlayerPressShiftKey){
+                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_LEFT_1);
+                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_LEFT_3);
+                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_LEFT_2);
+                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_LEFT_3);
             }
             else{
-                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_LEFT_1,cursors.left.getDuration());
-                else this.movements.movePlayer(Direction.WALK_LEFT_2,cursors.left.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_LEFT_1);
+                else this.movements.movePlayer(Direction.WALK_LEFT_2);
             }
         }
         if(cursors.right.isDown){
-            if(this.movements.isPlayerPressShiftKey){
-                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_RIGHT_1,cursors.right.getDuration());
-                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_RIGHT_3,cursors.right.getDuration());
-                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_RIGHT_2,cursors.right.getDuration());
-                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_RIGHT_3,cursors.right.getDuration());
+            if(this.isPlayerPressShiftKey){
+                if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_RIGHT_1);
+                if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_RIGHT_3);
+                if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_RIGHT_2);
+                if(this.getMovementsStep('r') === 4) this.movements.movePlayer(Direction.RUN_RIGHT_3);
             }
             else{
-                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_RIGHT_1,cursors.right.getDuration());
-                else this.movements.movePlayer(Direction.WALK_RIGHT_2,cursors.right.getDuration());
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_RIGHT_1);
+                else this.movements.movePlayer(Direction.WALK_RIGHT_2);
             }
         }
     }
