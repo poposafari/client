@@ -1,3 +1,4 @@
+import { Game } from "phaser";
 import { Direction } from "./Direction";
 import { Player } from "./Player";
 import { GameScene } from "./main";
@@ -19,7 +20,7 @@ export class Movements{
     private playerMovementHistory: Array<String> = [];
 
     private isChangePetMovement: boolean = false;
-    private isChangePlayerMovement: boolean = false;
+    private isChangePlayerMovementDirection: boolean = false;
 
     private playerTileSizePixelsWalked:number = 0;
     private petTileSizePixelsWalked:number=0;
@@ -28,8 +29,13 @@ export class Movements{
     private isPlayerPressAnyMovementKey:boolean = false;
     private isPlayerPressShiftKey:boolean = false;
 
+    isPlayerShortMovement:boolean = false;
+    
     playerMovementCount: number = 0;
-    isPlayerMovementFinish: boolean = false;
+    playerRunCount: number = 0;
+    playerWalkCount: number = 0;
+    isPlayerMovementFinish: boolean = true;
+
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -62,7 +68,7 @@ export class Movements{
         this.isPlayerPressAnyMovementKey = isPlayerPressAnyMovementKey;
         this.isPlayerPressShiftKey = isPlayerPressShiftKey;
     }
-    playerUpdate(delta:number){
+    playerUpdate(){
         if(this.isChangePetMovement){
             this.pet.startAnimation(this.petMovementDirection);
             this.isChangePetMovement = false;
@@ -78,17 +84,17 @@ export class Movements{
             this.startPlayerMoving(direction);
         }
     }
+    setDirectionPlayer(direction: Direction): void{
+        this.playerMovementDirection = direction;
+        this.player.startAnimation(this.playerMovementDirection);
+        this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
+        this.stopPlayerMoving();
+    }
     private setPlayerMovementHistory(direction: Direction):void{
-        this.playerMovementHistory.push(direction);
-        if(this.playerMovementHistory.length > 2){
-            this.playerMovementHistory.shift();
-        }
-        if(this.playerMovementHistory[0] != this.playerMovementHistory[1]){
-            this.isChangePlayerMovement = true;
-        }
-        else{
-            this.isChangePlayerMovement = false;
-        }
+        this.playerMovementHistory.push(this.getPlayerMovementDirectionType(direction));
+    }
+    private getPlayerMovementHistory():Array<String>{
+        return this.playerMovementHistory;
     }
     private setPetMovementHistory(direction: Direction):void{
         this.petMovementHistory.push(this.petMovementDirection);
@@ -121,16 +127,15 @@ export class Movements{
     }
     private startPlayerMoving(direction: Direction): void {
         this.playerMovementDirection = direction;
-        this.setPlayerMovementHistory(this.playerMovementDirection);
         this.setPetMovementDirection();
+        this.setPlayerMovementHistory(this.playerMovementDirection);
         this.setPetMovementHistory(this.petMovementDirection);
-        this.player.startAnimation(direction);
+        this.player.startAnimation(this.playerMovementDirection);
         this.updatePlayerTilePos();
     }
     private stopPlayerMoving():void{
-        this.player.stopAnimation(this.playerMovementDirection,this.isPlayerMovementFinish,this.isPlayerPressAnyMovementKey);
+        this.player.stopAnimation(this.playerMovementDirection);
         this.playerMovementDirection = Direction.NONE;
-        console.log(this.player.getPosition());
     }
     private isPlayerMoving(): boolean{
         return this.playerMovementDirection != Direction.NONE;
@@ -143,23 +148,29 @@ export class Movements{
         const tempString = direction.split('_',2);
         return tempString[0];
     }
-    private updatePlayerPosition(){
+    private getPlayerMovementDirectionType(direction: Direction):String{
+        const tempString = direction.split('_',2);
+        return tempString[1];
+    }
+    private setPlayerMovementSpeed(){
         if(this.getPlayerMovementType(this.playerMovementDirection) === 'run'){
             this.pixelsToWalkThisUpdate = this.PLAYER_SPEED*2;
         }
-        if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
+        else if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk'){
             this.pixelsToWalkThisUpdate = this.PLAYER_SPEED;
-        }  
-
+        }
+    }
+    private updatePlayerPosition(){
+        this.setPlayerMovementSpeed();
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
-            this.isPlayerMovementFinish = true;
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.movePetSprite(this.pixelsToWalkThisUpdate);
-            this.stopPlayerMoving();
+            if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk') this.playerWalkCount++;
+            if(this.getPlayerMovementType(this.playerMovementDirection) === 'run') this.playerRunCount++;
             this.playerMovementCount++;
+            this.stopPlayerMoving();
         }
         else{
-            this.isPlayerMovementFinish = false;
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.movePetSprite(this.pixelsToWalkThisUpdate);
         }
@@ -168,17 +179,14 @@ export class Movements{
         const directionVector = this.movementDirectionVectors[this.playerMovementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
-        
         this.player.setPosition(newPlayerPos);
         this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
-        console.log(this.playerTileSizePixelsWalked);
     }
     private movePetSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.petMovementDirection].clone();
         const petMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPetPos = this.pet.getPosition().add(petMovementDistance);
-
         this.pet.setPosition(newPetPos);
         this.petTileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.petTileSizePixelsWalked %= GameScene.TILE_SIZE;
