@@ -9,6 +9,8 @@ export class Movements{
     constructor(
         private player: Player,
         private pet: Player,
+        private playerSprite: Phaser.GameObjects.Sprite,
+        private petSprite: Phaser.GameObjects.Sprite,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private readonly PLAYER_SPEED=2; //default 2.
@@ -116,7 +118,6 @@ export class Movements{
         return this.petMovementHistory;
     }
     private setPetMovementDirection(): void{
-
         if(this.player.getPosition().x - this.pet.getPosition().x > 0){
             this.petMovementDirection = Direction.PET_RIGHT;
         }
@@ -132,6 +133,14 @@ export class Movements{
     }
     private startPlayerMoving(direction: Direction): void {
         this.playerMovementDirection = direction;
+        if(this.getPlayerMovementDirectionType(this.playerMovementDirection) === 'up'){
+            this.playerSprite.setDepth(0);
+            this.petSprite.setDepth(1);
+        }
+        else{
+            this.playerSprite.setDepth(1);
+            this.petSprite.setDepth(0);
+        }
         this.setPetMovementDirection();
         this.setPlayerMovementHistory(this.playerMovementDirection);
         this.setPetMovementHistory(this.petMovementDirection);

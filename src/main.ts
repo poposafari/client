@@ -39,7 +39,7 @@ export class GameScene extends Phaser.Scene {
     //this.load.image("nature_2","assets/map/nature_2.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
-    this.load.atlas('pet','assets/pokemon/393.png','assets/pokemon/001.json');
+    this.load.atlas('pet','assets/pokemon/149.png','assets/pokemon/001.json');
   }
 
   public create() {
@@ -61,7 +61,7 @@ export class GameScene extends Phaser.Scene {
     const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
     const pet = new Player(petSprite,new Phaser.Math.Vector2(2, 2));
     
-    this.movements = new Movements(player,pet,testTilemap);
+    this.movements = new Movements(player,pet,playerSprite,petSprite,testTilemap);
     this.moveControls = new MovementControls(this.input, this.movements);
 
     const playerFrames = this.anims.generateFrameNames('player',{
