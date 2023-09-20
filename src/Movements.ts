@@ -15,6 +15,7 @@ export class Movements{
 
     private playerMovementDirection: Direction = Direction.NONE;
     private petMovementDirection: Direction = Direction.NONE;
+    lastPlayerMovementDirection: Direction = Direction.NONE;
 
     private petMovementHistory: Array<String> = [];
     private playerMovementHistory: Array<String> = [];
@@ -90,6 +91,9 @@ export class Movements{
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
         this.stopPlayerMoving();
     }
+    standPlayer(direction:Direction): void{
+        this.player.standStopAnimation(direction);
+    }
     private setPlayerMovementHistory(direction: Direction):void{
         this.playerMovementHistory.push(this.getPlayerMovementDirectionType(direction));
     }
@@ -112,6 +116,7 @@ export class Movements{
         return this.petMovementHistory;
     }
     private setPetMovementDirection(): void{
+
         if(this.player.getPosition().x - this.pet.getPosition().x > 0){
             this.petMovementDirection = Direction.PET_RIGHT;
         }
@@ -168,9 +173,12 @@ export class Movements{
             if(this.getPlayerMovementType(this.playerMovementDirection) === 'walk') this.playerWalkCount++;
             if(this.getPlayerMovementType(this.playerMovementDirection) === 'run') this.playerRunCount++;
             this.playerMovementCount++;
+            this.isPlayerMovementFinish = true;
+            this.lastPlayerMovementDirection = this.playerMovementDirection;
             this.stopPlayerMoving();
         }
         else{
+            this.isPlayerMovementFinish = false;
             this.movePlayerSprite(this.pixelsToWalkThisUpdate);
             this.movePetSprite(this.pixelsToWalkThisUpdate);
         }

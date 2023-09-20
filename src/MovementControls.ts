@@ -24,6 +24,11 @@ export class MovementControls{
         if(!this.isPlayerPressAnyMovementKey){
             this.movements.playerRunCount = 0;
             this.movementKeyDurationValueList.length = 0; //List clear.
+            if(this.movements.isPlayerMovementFinish && this.movements.playerMovementCount > 0){
+                console.log('stop');
+                this.movements.standPlayer(this.movements.lastPlayerMovementDirection);
+            }
+            
         }
         if(cursors.up.isDown){
             if(this.isPlayerPressShiftKey){
