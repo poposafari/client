@@ -14,7 +14,6 @@ export class Movements{
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private readonly PLAYER_SPEED=2; //default 2.
-
     private playerMovementDirection: Direction = Direction.NONE;
     private petMovementDirection: Direction = Direction.NONE;
     lastPlayerMovementDirection: Direction = Direction.NONE;
@@ -33,12 +32,35 @@ export class Movements{
     private isPlayerPressShiftKey:boolean = false;
 
     isPlayerShortMovement:boolean = false;
+    isPlayerBlocking:boolean = false;
     
     playerMovementCount: number = 0;
     playerRunCount: number = 0;
     playerWalkCount: number = 0;
     isPlayerMovementFinish: boolean = true;
 
+    private isBlockingDirection(direction: Direction): boolean {
+        this.lastPlayerMovementDirection = direction;
+        return this.hasBlockingTile(this.tilePosInDirection(direction));
+    }    
+    private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {
+        console.log(this.player.getTilePos().add(this.movementDirectionVectors[direction]));
+        return this.player
+            .getTilePos()
+            .add(this.movementDirectionVectors[direction]);
+    }
+    private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+        if (this.hasNoTile(pos)) return true; //Tile이 없다면,
+        return this.map.layers.some((layer) => {
+            const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
+            return tile && tile.properties.collides;
+        }); 
+    }
+    private hasNoTile(pos: Phaser.Math.Vector2): boolean {
+        return !this.map.layers.some((layer) =>
+            this.map.hasTileAt(pos.x, pos.y, layer.name)
+        );
+    }
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -80,9 +102,13 @@ export class Movements{
             this.updatePlayerPosition();
         }
     }
-    movePlayer(direction: Direction): void{
-        if(this.isPlayerMoving())
+    movePlayer(direction: Direction): void {
+        if(this.isPlayerMoving()){
             return;
+        }
+        if (this.isBlockingDirection(direction)){
+            this.player.standStopAnimation(direction);
+        }
         else{
             this.startPlayerMoving(direction);
         }
@@ -133,6 +159,7 @@ export class Movements{
     }
     private startPlayerMoving(direction: Direction): void {
         this.playerMovementDirection = direction;
+        this.setPetMovementDirection();
         if(this.getPlayerMovementDirectionType(this.playerMovementDirection) === 'up'){
             this.playerSprite.setDepth(0);
             this.petSprite.setDepth(1);
@@ -141,7 +168,6 @@ export class Movements{
             this.playerSprite.setDepth(1);
             this.petSprite.setDepth(0);
         }
-        this.setPetMovementDirection();
         this.setPlayerMovementHistory(this.playerMovementDirection);
         this.setPetMovementHistory(this.petMovementDirection);
         this.player.startAnimation(this.playerMovementDirection);

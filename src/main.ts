@@ -9,7 +9,8 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   visible: false,
   key: "Game",
 };
-const CANVAS_WIDTH = 900;
+
+const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 600;
 
 export class GameScene extends Phaser.Scene {
@@ -25,11 +26,8 @@ export class GameScene extends Phaser.Scene {
 
   private moveControls: MovementControls;
   private movements: Movements;
-
-  private lastSecond: number = 0;
-  private currentSecond: number = 0;
   
-  private timerEvent:Phaser.Time.TimerEvent;
+  //private timerEvent:Phaser.Time.TimerEvent;
   
   constructor() {
     super(sceneConfig);
@@ -39,14 +37,12 @@ export class GameScene extends Phaser.Scene {
     //this.load.image("nature_2","assets/map/nature_2.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
-    this.load.atlas('pet','assets/pokemon/149.png','assets/pokemon/001.json');
+    this.load.atlas('pet','assets/pokemon/381.png','assets/pokemon/001.json');
   }
-
   public create() {
     this.time.addEvent({ delay: 1000, loop: true });
     const testTilemap = this.make.tilemap({ key: "test-town-map" });
     testTilemap.addTilesetImage("nature_1", "nature_1");
-    //testTilemap.addTilesetImage("nature_2", "nature_2");
 
     testTilemap.createLayer(0,"nature_1",0,0);
     testTilemap.createLayer(1,"nature_1",0,0);
@@ -55,9 +51,10 @@ export class GameScene extends Phaser.Scene {
     const petSprite = this.add.sprite(0,1,"pet");
     playerSprite.setDepth(1); //z-index++.
     petSprite.setDepth(0);
-    // playerSprite.scale = 1; //playerSprite size setting.
+
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true; 
+
     const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
     const pet = new Player(petSprite,new Phaser.Math.Vector2(2, 2));
     
@@ -160,16 +157,16 @@ export class GameScene extends Phaser.Scene {
     this.createPlayerAnimation(Direction.PET_RIGHT, petCustomFrameMovementRight[0],this.PET_FRAMERATE,this.PET_DELAY);
     this.createPlayerAnimation(Direction.PET_UP, petCustomFrameMovementUp[0],this.PET_FRAMERATE,this.PET_DELAY);
     
-    this.timerEvent = this.time.addEvent({
-      delay: 10, // 0.5ms
-      loop: true, // 반복 실행 여부
-      callback: this.test, // 실행할 콜백 함수
-      callbackScope: this // 콜백 함수의 컨텍스트 설정 (여기서는 현재 씬)
-    });
+    // this.timerEvent = this.time.addEvent({
+    //   delay: 10, // 0.5ms
+    //   loop: true, // 반복 실행 여부
+    //   callback: this.test, // 실행할 콜백 함수
+    //   callbackScope: this // 콜백 함수의 컨텍스트 설정 (여기서는 현재 씬)
+    // });
   }
-  public test(){
-    // this.moveControls.update();
-  }
+  // public test(){
+  //   // another loop.
+  // }
   public update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
     this.moveControls.update();
     this.movements.playerUpdate();

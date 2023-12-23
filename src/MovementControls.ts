@@ -2,16 +2,16 @@ import { Direction } from './Direction';
 import {Movements} from './Movements';
 import { Player } from './Player';
 
-const MIN_MOVEMENT_COUNT = 5;
-
 export class MovementControls{
     constructor(
         private keyInput:Phaser.Input.InputPlugin,
         private movements:Movements,
     ){}
-    private isPlayerPressAnyMovementKey:boolean = false;
+
+    private isPlayerPressAnyMovementKey:boolean = false; 
     private isPlayerPressShiftKey:boolean = false;
     private movementKeyDurationValueList:Array<number>=[];
+
     update(){
         const cursors = this.keyInput.keyboard.createCursorKeys();
         this.isPlayerPressAnyMovementKey = cursors.left.isDown || cursors.right.isDown || cursors.up.isDown || cursors.down.isDown;
@@ -25,10 +25,8 @@ export class MovementControls{
             this.movements.playerRunCount = 0;
             this.movementKeyDurationValueList.length = 0; //List clear.
             if(this.movements.isPlayerMovementFinish && this.movements.playerMovementCount > 0){
-                console.log('stop');
                 this.movements.standPlayer(this.movements.lastPlayerMovementDirection);
             }
-            
         }
         if(cursors.up.isDown){
             if(this.isPlayerPressShiftKey){
@@ -39,14 +37,8 @@ export class MovementControls{
             }
             else{
                 this.movementKeyDurationValueList.push(Math.floor(cursors.up.getDuration()));
-                if(this.movementKeyDurationValueList.length > MIN_MOVEMENT_COUNT){
-                    this.movementKeyDurationValueList.length = 0; //List clear.
-                    if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_UP_1);
-                    else this.movements.movePlayer(Direction.WALK_UP_2);  
-                }
-                else{   
-                    console.log(true);
-                }
+                if(this.getMovementsStep('w')) this.movements.movePlayer(Direction.WALK_UP_1);
+                else this.movements.movePlayer(Direction.WALK_UP_2);  
             }
         }
         if(cursors.down.isDown){
@@ -77,7 +69,6 @@ export class MovementControls{
         }
         if(cursors.right.isDown){
             if(this.isPlayerPressShiftKey){
-                console.log(this.movements.playerMovementCount);
                 if(this.getMovementsStep('r') === 1) this.movements.movePlayer(Direction.RUN_RIGHT_1);
                 if(this.getMovementsStep('r') === 2) this.movements.movePlayer(Direction.RUN_RIGHT_3);
                 if(this.getMovementsStep('r') === 3) this.movements.movePlayer(Direction.RUN_RIGHT_2);
@@ -92,9 +83,6 @@ export class MovementControls{
         }
     }
     private getMovementsStep(playerMovementType:string):number{
-        console.log('playerWalkCount: '+this.movements.playerWalkCount);
-        console.log('playerRunCount: '+this.movements.playerRunCount);
-
         if(playerMovementType === 'w'){
             return this.movements.playerWalkCount % 2;
         }
