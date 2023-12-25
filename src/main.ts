@@ -34,10 +34,11 @@ export class GameScene extends Phaser.Scene {
   }
   public preload() {
     this.load.image("nature_1","assets/map/nature_1.png");
+    this.load.image("pokeball","assets/character/ball.png");
     //this.load.image("nature_2","assets/map/nature_2.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
-    this.load.atlas('pet','assets/pokemon/381.png','assets/pokemon/001.json');
+    this.load.atlas('pet','assets/pokemon/132.png','assets/pokemon/001.json');
   }
   public create() {
     this.time.addEvent({ delay: 1000, loop: true });
@@ -49,16 +50,21 @@ export class GameScene extends Phaser.Scene {
 
     const playerSprite = this.add.sprite(0, 0, "player");
     const petSprite = this.add.sprite(0,1,"pet");
+    const ballSprite = this.add.sprite(1,0,"pokeball");
     playerSprite.setDepth(1); //z-index++.
+    ballSprite.setDepth(1);
     petSprite.setDepth(0);
+
+    ballSprite.setVisible(false);
 
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true; 
 
     const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
     const pet = new Player(petSprite,new Phaser.Math.Vector2(2, 2));
+    const ball = new Player(ballSprite,new Phaser.Math.Vector2(4, 2));
     
-    this.movements = new Movements(player,pet,playerSprite,petSprite,testTilemap);
+    this.movements = new Movements(player,pet,playerSprite,petSprite,ballSprite,testTilemap);
     this.moveControls = new MovementControls(this.input, this.movements);
 
     const playerFrames = this.anims.generateFrameNames('player',{
@@ -185,18 +191,6 @@ export class GameScene extends Phaser.Scene {
       delay:delay,
       yoyo:false
     });
-    if(name.charAt(0) === 'w'){
-      this.anims.get(name).frames[0].duration = 10;
-      this.anims.get(name).frames[1].duration = 10;
-    }
-    if(name.charAt(0) === 'r'){
-      this.anims.get(name).frames[0].duration = 300;
-      this.anims.get(name).frames[1].duration = 300;
-    }
-    if(name.charAt(0) === 'p'){
-      this.anims.get(name).frames[0].duration = 10;
-      this.anims.get(name).frames[1].duration = 10;
-    }
   }
 }
 

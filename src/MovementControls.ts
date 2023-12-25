@@ -10,12 +10,14 @@ export class MovementControls{
 
     private isPlayerPressAnyMovementKey:boolean = false; 
     private isPlayerPressShiftKey:boolean = false;
+    private isPlayerPressSpaceKey:boolean = false;
     private movementKeyDurationValueList:Array<number>=[];
 
     update(){
         const cursors = this.keyInput.keyboard.createCursorKeys();
         this.isPlayerPressAnyMovementKey = cursors.left.isDown || cursors.right.isDown || cursors.up.isDown || cursors.down.isDown;
         this.isPlayerPressShiftKey = cursors.shift.isDown;
+        this.isPlayerPressSpaceKey = cursors.space.isDown;
         
         this.movements.setPlayerMovementType(this.isPlayerPressAnyMovementKey,this.isPlayerPressShiftKey);
         if(!this.isPlayerPressShiftKey){
@@ -27,6 +29,10 @@ export class MovementControls{
             if(this.movements.isPlayerMovementFinish && this.movements.playerMovementCount > 0){
                 this.movements.standPlayer(this.movements.lastPlayerMovementDirection);
             }
+        }
+        if(this.isPlayerPressSpaceKey){
+            this.movements.setVisiblePokeballImage(true);
+            this.movements.movePokeball();
         }
         if(cursors.up.isDown){
             if(this.isPlayerPressShiftKey){

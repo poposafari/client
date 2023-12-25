@@ -11,6 +11,7 @@ export class Movements{
         private pet: Player,
         private playerSprite: Phaser.GameObjects.Sprite,
         private petSprite: Phaser.GameObjects.Sprite,
+        private ballSprite: Phaser.GameObjects.Sprite,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private readonly PLAYER_SPEED=2; //default 2.
@@ -39,6 +40,10 @@ export class Movements{
     playerWalkCount: number = 0;
     isPlayerMovementFinish: boolean = true;
 
+    public setVisiblePokeballImage(visible: boolean):void{
+        if(visible) this.ballSprite.setVisible(true);
+        else this.ballSprite.setVisible(false);
+    }
     private isBlockingDirection(direction: Direction): boolean {
         this.lastPlayerMovementDirection = direction;
         return this.hasBlockingTile(this.tilePosInDirection(direction));
@@ -88,6 +93,10 @@ export class Movements{
         [Direction.PET_LEFT] : Vector2.LEFT,
         [Direction.PET_RIGHT] : Vector2.RIGHT,
         [Direction.PET_UP] : Vector2.UP,
+        [Direction.BALL_UP] : Vector2.UP,
+        [Direction.BALL_LEFT] : Vector2.LEFT,
+        [Direction.BALL_RIGHT] : Vector2.RIGHT,
+        [Direction.BALL_DOWN] : Vector2.DOWN,
       };
     setPlayerMovementType(isPlayerPressAnyMovementKey:boolean, isPlayerPressShiftKey:boolean):void{
         this.isPlayerPressAnyMovementKey = isPlayerPressAnyMovementKey;
@@ -101,6 +110,9 @@ export class Movements{
         if(this.isPlayerMoving()){
             this.updatePlayerPosition();
         }
+    }
+    movePokeball(): void{
+        this.startPlayerMoving(this.lastPlayerMovementDirection);
     }
     movePlayer(direction: Direction): void {
         if(this.isPlayerMoving()){
@@ -137,7 +149,7 @@ export class Movements{
             this.isChangePetMovement = true;
         }
         else{
-            this.isChangePetMovement = false;
+            this.isChangePetMovement = false;  
         }
     }
     private getPetMovementHistory():Array<String>{
