@@ -1,7 +1,7 @@
 import { Game } from "phaser";
 import { Direction } from "./Direction";
 import { Player } from "./Player";
-import { GameScene } from "./main";
+import { GameScene } from "./Main";
 
 const Vector2 = Phaser.Math.Vector2;
 
