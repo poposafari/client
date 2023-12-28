@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import { GameScene } from "./main";
+import { GameScene } from "./Main";
 
 export class Player {
   constructor(
