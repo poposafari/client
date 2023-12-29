@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    app: "./src/main.ts",
+    app: "./src/Main.ts",
   },
 
   module: {
