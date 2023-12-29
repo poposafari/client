@@ -7,5 +7,4 @@ export class Player extends GridObject{
   ){
     super(sprite,tilePos);
   }
-  public behaviorStatus:Boolean;
 }

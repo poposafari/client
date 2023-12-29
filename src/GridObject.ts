@@ -31,11 +31,10 @@ export class GridObject {
   standStopAnimation(direction: Direction){
     const tempString = direction.split('_',3);
     const animationManager = this.sprite.anims.animationManager;
-    this.sprite.setFrame(animationManager.get(`walk_${tempString[1]}_1`).frames[1].frame.name);
+    this.sprite.setFrame(animationManager.get(`player_walk_${tempString[2]}_1`).frames[1].frame.name);
     this.sprite.anims.stop();
   }
   stopAnimation(direction: Direction) {
-    const tempString = direction.split('_',3);
     const animationManager = this.sprite.anims.animationManager;
     this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
     //player run logic should add.

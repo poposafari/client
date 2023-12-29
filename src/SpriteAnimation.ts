@@ -244,7 +244,7 @@ export class SpriteAnimation{
 
     private readonly PLAYER_WALK_FRAMERATE=6; //6
     private readonly PLAYER_RUN_FRAMERATE=0; //5
-    private readonly PLAYER_WALK_DELAY=0;
+    private readonly PLAYER_WALK_DELAY=6;
     private readonly PLAYER_RUN_DELAY=0;
   
     private readonly PET_FRAMERATE=6;
