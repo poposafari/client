@@ -34,13 +34,13 @@ export class GridObject {
     this.sprite.setFrame(animationManager.get(`player_walk_${tempString[2]}_1`).frames[1].frame.name);
     this.sprite.anims.stop();
   }
-  stopAnimation(direction: Direction) {
+  stopAnimation(direction: Direction){
     const animationManager = this.sprite.anims.animationManager;
     this.sprite.setFrame(animationManager.get(direction).frames[1].frame.name);
     //player run logic should add.
     this.sprite.anims.stop();
   }
-  startAnimation(direction: Direction) {
+  startAnimation(direction: Direction){
     this.sprite.anims.play(direction);
-  }      
+  }    
 }

@@ -1,5 +1,7 @@
 import { Direction } from "./Direction";
 import { GameScene } from "./Main";
+import { Pet } from "./Pet";
+import { PetMovements } from "./PetMovements";
 import { Player } from "./Player";
 
 const Vector2 = Phaser.Math.Vector2;
@@ -7,14 +9,16 @@ const Vector2 = Phaser.Math.Vector2;
 export class PlayerMovements{
     constructor(
         private player:Player,
+        private pet:Pet,
+        private petMovement: PetMovements,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private readonly PLAYER_SPEED=2; //default 2.
     private movementDirection: Direction = Direction.NONE;
     lastPlayerMovementDirection: Direction = Direction.PLAYER_WALK_UP_1;
-    private playerTileSizePixelsWalked:number = 0;
+    private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
-    isMovementFinish:boolean=false;
+    isMovementFinish:boolean=true;
 
     movementCount: number=0;
     movementWalkCount: number=0;
@@ -46,6 +50,9 @@ export class PlayerMovements{
         [Direction.PLAYER_RUN_RIGHT_2]: Vector2.RIGHT,
         [Direction.PLAYER_RUN_RIGHT_3]: Vector2.RIGHT,
     };
+    update(){
+        if(this.isMoving()){this.updatePosition();}
+    }
     private isBlockingDirection(direction: Direction): boolean {
         this.lastPlayerMovementDirection = direction;
         return this.hasBlockingTile(this.tilePosInDirection(direction));
@@ -67,16 +74,14 @@ export class PlayerMovements{
             this.map.hasTileAt(pos.x, pos.y, layer.name)
         );
     }
-    update(){
-        if(this.isMoving()){this.updatePosition();}
-    }
     private updatePosition(){
         this.setMovementSpeed();
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.moveSprite(this.pixelsToWalkThisUpdate);
+            this.petMovement.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = true;
-            if(this.movementType == "walk") this.movementWalkCount++;
-            else if(this.movementType == "run") this.movementRunCount++;
+            if(this.movementType === "walk") this.movementWalkCount++;
+            else if(this.movementType === "run") this.movementRunCount++;
             this.movementCount++;
             this.lastPlayerMovementDirection = this.movementDirection;
             this.stopMoving();
@@ -84,6 +89,7 @@ export class PlayerMovements{
         else{
             this.isMovementFinish = false;
             this.moveSprite(this.pixelsToWalkThisUpdate);
+            this.petMovement.moveSprite(this.pixelsToWalkThisUpdate);
         }
     }
     private setMovementSpeed(){
@@ -95,15 +101,15 @@ export class PlayerMovements{
         this.movementDirection = Direction.NONE;
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        return this.playerTileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
+        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
     }
     private moveSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.movementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
-        this.playerTileSizePixelsWalked += pixelsToWalkThisUpdate;
-        this.playerTileSizePixelsWalked %= GameScene.TILE_SIZE;
+        this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
+        this.tileSizePixelsWalked %= GameScene.TILE_SIZE;
     }
     checkMovement(direction: Direction){
         if(this.isMoving()) {return;}
@@ -117,10 +123,13 @@ export class PlayerMovements{
     }
     private startMoving(direction:Direction){
         this.movementDirection = direction;
+        this.petMovement.setMovementDirection(this.player.getPosition().x,this.player.getPosition().y);
+        this.petMovement.setMovementHistory();
         this.player.startAnimation(this.movementDirection);
         this.updateTilePosition();
     }
     private updateTilePosition(){
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
+        this.petMovement.updateTilePosition();
     }
 }
