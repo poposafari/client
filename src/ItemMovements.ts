@@ -8,11 +8,14 @@ const Vector2 = Phaser.Math.Vector2;
 
 export class ItemMovements{
     constructor(
-        private item: Item,
+        private phaser: Phaser.Scene,
         private playerMovement: PlayerMovements,
-    ){}
+    ){
+    }
     private readonly THROW_SPEED = 8;
     private readonly THROW_RANGE = 8;
+    private itemSprite: Phaser.GameObjects.Sprite;
+    private item:Item;
     private playerPosition:Phaser.Math.Vector2;
     private movementDirection: Direction = Direction.NONE;
     lastMovementDirection:Direction = Direction.ITEM_UP;
@@ -48,6 +51,7 @@ export class ItemMovements{
             this.throwItemCount++;
             this.lastMovementDirection = this.movementDirection;
             this.movementDirection = Direction.NONE;
+            this.itemSprite.destroy();
         }
         else{
             this.isMovementFinish = false;
@@ -76,6 +80,8 @@ export class ItemMovements{
         return this.movementDirection != Direction.NONE;
     }
     private startMoving(direction:Direction){
+        this.itemSprite = this.phaser.add.sprite(0,0,"pokeball");
+        this.item = new Item(this.itemSprite,new Phaser.Math.Vector2(0, 0));
         this.item.setPosition(this.playerPosition);
         console.log(this.item.getPosition());
         this.movementDirection = direction;

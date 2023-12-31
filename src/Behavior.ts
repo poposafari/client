@@ -8,7 +8,7 @@ export enum BEHAVIOR_STATUS {
     WALK_MODE="walk",
     RUN_MODE="run",
     PET_MODE="pet",
-    POKEBALL_MODE="pokeball",
+    THROW_ITEM_MODE="throwitem",
 }
 
 export class Behavior{
@@ -31,7 +31,7 @@ export class Behavior{
             if(walk){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
             if(walk && run){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
             if(!walk && !run && pet){this.playerBehaviorStatus = BEHAVIOR_STATUS.PET_MODE}
-            if(!walk && !run && pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.POKEBALL_MODE}
+            if(!walk && !run && pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
             if(!walk && !run && !pet && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
         }
     }   
@@ -51,7 +51,7 @@ export class Behavior{
             case BEHAVIOR_STATUS.PET_MODE:
                 this.readyPet();
                 break;
-            case BEHAVIOR_STATUS.POKEBALL_MODE:
+            case BEHAVIOR_STATUS.THROW_ITEM_MODE:
                 this.readyMovementItem();
                 break;
         }

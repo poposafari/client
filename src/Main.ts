@@ -34,7 +34,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("pokeball","assets/character/ball.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
-    this.load.atlas('pet','assets/pokemon/025.png','assets/pokemon/001.json');
+    this.load.atlas('pet','assets/pokemon/131.png','assets/pokemon/001.json');
   }
   public create(){
     const map = this.make.tilemap({ key: "test-town-map" });
@@ -44,10 +44,8 @@ export class GameScene extends Phaser.Scene {
 
     const playerSprite = this.add.sprite(0, 0, "player");
     const petSprite = this.add.sprite(0,1,"pet");
-    const pokeballSprite = this.add.sprite(0,0,"pokeball");
 
     playerSprite.setDepth(0);
-    pokeballSprite.setDepth(0);
     petSprite.setDepth(1);
 
     petSprite.visible = false; //false..?
@@ -60,9 +58,7 @@ export class GameScene extends Phaser.Scene {
 
     const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
     this.playerMovement = new PlayerMovements(player,pet,this.petMovement,map);
-
-    const item = new Item(pokeballSprite,new Phaser.Math.Vector2(0, 0));
-    this.itemMovement = new ItemMovements(item,this.playerMovement);
+    this.itemMovement = new ItemMovements(this,this.playerMovement);
     
     this.behavior = new Behavior(player,this.playerMovement,playerSprite,petSprite,this.itemMovement);
     this.keyControl = new KeyControl(this.input,this.behavior);
