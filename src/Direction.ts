@@ -24,4 +24,8 @@ export enum Direction {
   PET_LEFT = "pet_left",
   PET_RIGHT = "pet_right",
   PET_UP = "pet_up",
+  ITEM_DOWN = "item_down",
+  ITEM_LEFT = "item_left",
+  ITEM_RIGHT = "item_right",
+  ITEM_UP = "item_up",
 }

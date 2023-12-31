@@ -1,6 +1,7 @@
 import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
 import { Direction } from "./Direction";
+import { ItemMovements } from "./ItemMovements";
 
 export enum BEHAVIOR_STATUS {
     NONE_MODE="none",
@@ -16,6 +17,7 @@ export class Behavior{
         private playerMovement: PlayerMovements,
         private playerSprite: Phaser.GameObjects.Sprite,
         private petSprite: Phaser.GameObjects.Sprite,
+        private itemMovement: ItemMovements,
     ){}
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
@@ -50,9 +52,26 @@ export class Behavior{
                 this.readyPet();
                 break;
             case BEHAVIOR_STATUS.POKEBALL_MODE:
+                this.readyMovementItem();
                 break;
         }
     }
+    private readyMovementItem(){
+        const tempString = this.playerMovement.lastPlayerMovementDirection.split('_');
+        if(tempString[2] === 'up'){
+            this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition());
+        }
+        if(tempString[2] === 'down'){
+            this.itemMovement.checkMovement(Direction.ITEM_DOWN,this.player.getPosition());
+        }
+        if(tempString[2] === 'left'){
+            this.itemMovement.checkMovement(Direction.ITEM_LEFT,this.player.getPosition());
+        }
+        if(tempString[2] === 'right'){
+            this.itemMovement.checkMovement(Direction.ITEM_RIGHT,this.player.getPosition());
+        }
+    }
+
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.movementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){
