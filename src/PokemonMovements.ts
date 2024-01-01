@@ -1,13 +1,13 @@
 import { Player } from "./Player";
 import { Direction } from "./Direction";
-import { Pet } from "./Pet";
+import { Pokemon } from "./Pokemon";
 import { GameScene } from "./Main";
 
 const Vector2 = Phaser.Math.Vector2;
 
-export class PetMovements{
+export class PokemonMovements{
     constructor(
-        private pet: Pet,
+        private pet: Pokemon,
     ){}
     private isChangeMovement:boolean;
     private movementDirection:Direction;
@@ -16,10 +16,10 @@ export class PetMovements{
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
-        [Direction.PET_DOWN] : Vector2.DOWN,
-        [Direction.PET_LEFT] : Vector2.LEFT,
-        [Direction.PET_RIGHT] : Vector2.RIGHT,
-        [Direction.PET_UP] : Vector2.UP,
+        [Direction.POKEMON_DOWN] : Vector2.DOWN,
+        [Direction.POKEMON_LEFT] : Vector2.LEFT,
+        [Direction.POKEMON_RIGHT] : Vector2.RIGHT,
+        [Direction.POKEMON_UP] : Vector2.UP,
     };
     update(){
         if(this.isChangeMovement){
@@ -44,16 +44,16 @@ export class PetMovements{
     }
     setMovementDirection(playerPositionX:number, playerPositionY:number): void{
         if(playerPositionX - this.pet.getPosition().x > 0){
-            this.movementDirection = Direction.PET_RIGHT;
+            this.movementDirection = Direction.POKEMON_RIGHT;
         }
         if(playerPositionX - this.pet.getPosition().x < 0){
-            this.movementDirection = Direction.PET_LEFT;
+            this.movementDirection = Direction.POKEMON_LEFT;
         }
         if(playerPositionY - this.pet.getPosition().y > 0){
-            this.movementDirection = Direction.PET_DOWN;
+            this.movementDirection = Direction.POKEMON_DOWN;
         }
         if(playerPositionY - this.pet.getPosition().y < 0){
-            this.movementDirection = Direction.PET_UP;
+            this.movementDirection = Direction.POKEMON_UP;
         }
     }
     updateTilePosition(){

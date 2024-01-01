@@ -1,7 +1,7 @@
 import { Direction } from "./Direction";
 import { GameScene } from "./Main";
-import { Pet } from "./Pet";
-import { PetMovements } from "./PetMovements";
+import { Pokemon } from "./Pokemon";
+import { PokemonMovements } from "./PokemonMovements";
 import { Player } from "./Player";
 
 const Vector2 = Phaser.Math.Vector2;
@@ -9,8 +9,8 @@ const Vector2 = Phaser.Math.Vector2;
 export class PlayerMovements{
     constructor(
         private player:Player,
-        private pet:Pet,
-        private petMovement: PetMovements,
+        private pet:Pokemon,
+        private petMovement: PokemonMovements,
         private map: Phaser.Tilemaps.Tilemap,
     ){}
     private readonly PLAYER_SPEED=2; //default 2.

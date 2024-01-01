@@ -1,6 +1,6 @@
 import { GridObject } from "./GridObject";
 
-export class Pet extends GridObject{
+export class Pokemon extends GridObject{
   constructor(
     sprite: Phaser.GameObjects.Sprite,
     tilePos: Phaser.Math.Vector2

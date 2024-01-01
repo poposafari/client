@@ -1,12 +1,12 @@
 import * as Phaser from "phaser";
 import { Player } from "./Player";
-import { Pet } from "./Pet";
+import { Pokemon } from "./Pokemon";
 import { Item } from "./Item";
 import { SpriteAnimation } from "./SpriteAnimation";
 import { KeyControl } from "./KeyControl"
 import { Behavior } from "./Behavior";
 import { PlayerMovements } from "./PlayerMovements";
-import { PetMovements } from "./PetMovements";
+import { PokemonMovements } from "./PokemonMovements";
 import { ItemMovements } from "./ItemMovements";
 
 const CANVAS_WIDTH = 1000;
@@ -26,7 +26,7 @@ export class GameScene extends Phaser.Scene {
   private keyControl: KeyControl;
   private behavior: Behavior;
   private playerMovement: PlayerMovements;
-  private petMovement: PetMovements;
+  private petMovement: PokemonMovements;
   private itemMovement: ItemMovements;
 
   public preload(){
@@ -35,6 +35,7 @@ export class GameScene extends Phaser.Scene {
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
     this.load.atlas('pet','assets/pokemon/131.png','assets/pokemon/001.json');
+    this.load.atlas('wild','assets/pokemon/001.png','assets/pokemon/001.json');
   }
   public create(){
     const map = this.make.tilemap({ key: "test-town-map" });
@@ -44,19 +45,23 @@ export class GameScene extends Phaser.Scene {
 
     const playerSprite = this.add.sprite(0, 0, "player");
     const petSprite = this.add.sprite(0,1,"pet");
+    const wildSprite = this.add.sprite(0,2,"wild");
 
     playerSprite.setDepth(0);
     petSprite.setDepth(1);
+    wildSprite.setDepth(1);
 
     petSprite.visible = false; //false..?
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true; 
     
-    const spriteAnimation = new SpriteAnimation(this);
-    const pet = new Pet(petSprite,new Phaser.Math.Vector2(3,3));
-    this.petMovement = new PetMovements(pet);
+    const wild = new Pokemon(wildSprite,new Phaser.Math.Vector2(10,20));
 
-    const player = new Player(playerSprite,new Phaser.Math.Vector2(3, 2));
+    const spriteAnimation = new SpriteAnimation(this);
+    const pet = new Pokemon(petSprite,new Phaser.Math.Vector2(3,3));
+    this.petMovement = new PokemonMovements(pet);
+
+    const player = new Player(playerSprite,new Phaser.Math.Vector2(28, 1));
     this.playerMovement = new PlayerMovements(player,pet,this.petMovement,map);
     this.itemMovement = new ItemMovements(this,this.playerMovement);
     

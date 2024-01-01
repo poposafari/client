@@ -198,28 +198,28 @@ export class SpriteAnimation{
     
     //sprite(follow pokemon) movement frames.
         this.createPlayerAnimation(
-          Direction.PET_DOWN, 
+          Direction.POKEMON_DOWN, 
           this.petCustomFrameMovementDown[0],
-          this.PET_FRAMERATE,
-          this.PET_DELAY
+          this.POKEMON_FRAMERATE,
+          this.POKEMON_DELAY
         );
         this.createPlayerAnimation(
-          Direction.PET_LEFT, 
+          Direction.POKEMON_LEFT, 
           this.petCustomFrameMovementLeft[0],
-          this.PET_FRAMERATE,
-          this.PET_DELAY
+          this.POKEMON_FRAMERATE,
+          this.POKEMON_DELAY
         );
         this.createPlayerAnimation(
-          Direction.PET_RIGHT, 
+          Direction.POKEMON_RIGHT, 
           this.petCustomFrameMovementRight[0],
-          this.PET_FRAMERATE,
-          this.PET_DELAY
+          this.POKEMON_FRAMERATE,
+          this.POKEMON_DELAY
         );
         this.createPlayerAnimation(
-          Direction.PET_UP, 
+          Direction.POKEMON_UP, 
           this.petCustomFrameMovementUp[0],
-          this.PET_FRAMERATE,
-          this.PET_DELAY
+          this.POKEMON_FRAMERATE,
+          this.POKEMON_DELAY
         );
     }
     private anime: Phaser.Scene;
@@ -247,8 +247,8 @@ export class SpriteAnimation{
     private readonly PLAYER_WALK_DELAY=6;
     private readonly PLAYER_RUN_DELAY=0;
   
-    private readonly PET_FRAMERATE=6;
-    private readonly PET_DELAY = 0;
+    private readonly POKEMON_FRAMERATE=6;
+    private readonly POKEMON_DELAY = 0;
 
     private createPlayerAnimation(
       name: string,
