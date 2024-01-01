@@ -39,8 +39,8 @@ export class Behavior{
         console.log(this.playerBehaviorStatus);
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
-                this.playerMovement.movementWalkCount = 0;
-                this.player.standStopAnimation(this.playerMovement.lastPlayerMovementDirection);
+                this.playerMovement.playerMovementWalkCount = 0;
+                this.player.standStopAnimation(this.playerMovement.playerLastMovementDirection);
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
@@ -57,7 +57,7 @@ export class Behavior{
         }
     }
     private readyMovementItem(){
-        const tempString = this.playerMovement.lastPlayerMovementDirection.split('_');
+        const tempString = this.playerMovement.playerLastMovementDirection.split('_');
         if(tempString[2] === 'up'){
             this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition());
         }
@@ -73,11 +73,11 @@ export class Behavior{
     }
 
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
-        this.playerMovement.movementType = this.playerBehaviorStatus; 
+        this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){
             this.playerSprite.setDepth(0);
             this.petSprite.setDepth(1);
-            if(this.playerMovement.movementWalkCount % 2){
+            if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_UP_1);
             }
             else{
@@ -87,7 +87,7 @@ export class Behavior{
         if(movementKeyDeatailInfo["down"]){
             this.playerSprite.setDepth(1);
             this.petSprite.setDepth(0);
-            if(this.playerMovement.movementWalkCount % 2){
+            if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_1);
             }
             else{
@@ -97,7 +97,7 @@ export class Behavior{
         if(movementKeyDeatailInfo["left"]){
             this.playerSprite.setDepth(1);
             this.petSprite.setDepth(0);
-            if(this.playerMovement.movementWalkCount % 2){
+            if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_1);
             }
             else {
@@ -107,7 +107,7 @@ export class Behavior{
         if(movementKeyDeatailInfo["right"]){
             this.playerSprite.setDepth(1);
             this.petSprite.setDepth(0);
-            if(this.playerMovement.movementWalkCount % 2){
+            if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_RIGHT_1);
             }
             else {
@@ -116,7 +116,7 @@ export class Behavior{
         }
     }
     private readyMovementRunPlayer(movementKeyDeatailInfo:object){
-        this.playerMovement.movementType = this.playerBehaviorStatus; 
+        this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){
             this.playerSprite.setDepth(0);
             this.petSprite.setDepth(1);
@@ -152,12 +152,12 @@ export class Behavior{
     }
     private getMovementPlayerStep(){
         if(this.playerBehaviorStatus == BEHAVIOR_STATUS.RUN_MODE){
-            if(this.playerMovement.movementRunCount === 0) return 1;
-            if(this.playerMovement.movementRunCount === 1) return 2;  
-            if(this.playerMovement.movementRunCount === 2) return 3;
-            if(this.playerMovement.movementRunCount === 3) return 4;
-            if(this.playerMovement.movementRunCount === 4){
-                this.playerMovement.movementRunCount = 0;
+            if(this.playerMovement.playerMovementRunCount === 0) return 1;
+            if(this.playerMovement.playerMovementRunCount === 1) return 2;  
+            if(this.playerMovement.playerMovementRunCount === 2) return 3;
+            if(this.playerMovement.playerMovementRunCount === 3) return 4;
+            if(this.playerMovement.playerMovementRunCount === 4){
+                this.playerMovement.playerMovementRunCount = 0;
             }
         }
     }

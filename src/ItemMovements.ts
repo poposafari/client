@@ -10,8 +10,7 @@ export class ItemMovements{
     constructor(
         private phaser: Phaser.Scene,
         private playerMovement: PlayerMovements,
-    ){
-    }
+    ){}
     private readonly THROW_SPEED = 8;
     private readonly THROW_RANGE = 8;
     private itemSprite: Phaser.GameObjects.Sprite;

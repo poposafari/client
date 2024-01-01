@@ -1,12 +1,10 @@
 import * as Phaser from "phaser";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
-import { Item } from "./Item";
 import { SpriteAnimation } from "./SpriteAnimation";
 import { KeyControl } from "./KeyControl"
 import { Behavior } from "./Behavior";
 import { PlayerMovements } from "./PlayerMovements";
-import { PokemonMovements } from "./PokemonMovements";
 import { ItemMovements } from "./ItemMovements";
 
 const CANVAS_WIDTH = 1000;
@@ -26,7 +24,6 @@ export class GameScene extends Phaser.Scene {
   private keyControl: KeyControl;
   private behavior: Behavior;
   private playerMovement: PlayerMovements;
-  private petMovement: PokemonMovements;
   private itemMovement: ItemMovements;
 
   public preload(){
@@ -59,10 +56,9 @@ export class GameScene extends Phaser.Scene {
 
     const spriteAnimation = new SpriteAnimation(this);
     const pet = new Pokemon(petSprite,new Phaser.Math.Vector2(3,3));
-    this.petMovement = new PokemonMovements(pet);
 
     const player = new Player(playerSprite,new Phaser.Math.Vector2(28, 1));
-    this.playerMovement = new PlayerMovements(player,pet,this.petMovement,map);
+    this.playerMovement = new PlayerMovements(player,pet,map);
     this.itemMovement = new ItemMovements(this,this.playerMovement);
     
     this.behavior = new Behavior(player,this.playerMovement,playerSprite,petSprite,this.itemMovement);
@@ -72,7 +68,6 @@ export class GameScene extends Phaser.Scene {
     this.keyControl.update();
     this.behavior.update();
     this.playerMovement.update();
-    this.petMovement.update();
     this.itemMovement.update();
   }
 }

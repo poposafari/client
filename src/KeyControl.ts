@@ -1,4 +1,4 @@
-import { BEHAVIOR_STATUS, Behavior } from "./Behavior";
+import { Behavior } from "./Behavior";
 
 export class KeyControl{
     constructor(
