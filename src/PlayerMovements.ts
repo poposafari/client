@@ -26,7 +26,7 @@ export class PlayerMovements{
     
     private petMovementDirection: Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
-    private isPetMovementChange: boolean;
+    private isPetMovementChange: boolean = true;
 
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
@@ -124,8 +124,6 @@ export class PlayerMovements{
     private stopMoving(){
         this.player.stopAnimation(this.playerMovementDirection);
         this.playerMovementDirection = Direction.NONE;
-
-        this.pet.stopAnimation(this.petMovementDirection);
         this.petMovementDirection = Direction.NONE;
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
@@ -174,7 +172,6 @@ export class PlayerMovements{
         this.setPetMovementDirection();
         this.setPetMovementHistory();
         this.player.startAnimation(this.playerMovementDirection);
-        this.pet.startAnimation(this.petMovementDirection);
         this.updateTilePosition();
     }
     private updateTilePosition(){
