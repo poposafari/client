@@ -1,3 +1,10 @@
+import { Pokemon } from "./Pokemon";
+
 export class PokemonMovements{
-    constructor(){}
+    constructor(
+        pokemon: Pokemon,
+    ){}
+    update(){
+        
+    }
 }

@@ -6,6 +6,7 @@ import { KeyControl } from "./KeyControl"
 import { Behavior } from "./Behavior";
 import { PlayerMovements } from "./PlayerMovements";
 import { ItemMovements } from "./ItemMovements";
+import { PokemonMovements } from "./PokemonMovements";
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT =600;
@@ -24,6 +25,7 @@ export class GameScene extends Phaser.Scene {
   private keyControl: KeyControl;
   private behavior: Behavior;
   private playerMovement: PlayerMovements;
+  private pokemonMovement: PokemonMovements;
   private itemMovement: ItemMovements;
 
   public preload(){
@@ -53,7 +55,8 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.roundPixels = true; 
     
     const wild = new Pokemon(wildSprite,new Phaser.Math.Vector2(10,20));
-
+    this.pokemonMovement = new PokemonMovements(wild);
+    
     const spriteAnimation = new SpriteAnimation(this);
     const pet = new Pokemon(petSprite,new Phaser.Math.Vector2(3,3));
 

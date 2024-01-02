@@ -177,6 +177,5 @@ export class PlayerMovements{
     private updateTilePosition(){
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
         this.pet.setTilePos(this.pet.getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
-
     }
 }
