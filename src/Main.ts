@@ -7,6 +7,7 @@ import { Behavior } from "./Behavior";
 import { PlayerMovements } from "./PlayerMovements";
 import { ItemMovements } from "./ItemMovements";
 import { PokemonMovements } from "./PokemonMovements";
+import { PokemonBehavior } from "./PokemonBehavior";
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT =600;
@@ -24,9 +25,14 @@ export class GameScene extends Phaser.Scene {
 
   private keyControl: KeyControl;
   private behavior: Behavior;
+  private pokemonBehavior: PokemonBehavior;
   private playerMovement: PlayerMovements;
   private pokemonMovement: PokemonMovements;
   private itemMovement: ItemMovements;
+
+  private spriteList: Array<Phaser.GameObjects.Sprite>=[];
+  private pokemonList: Array<Pokemon>=[];
+  private pokemonMovementList: Array<PokemonMovements>=[];
 
   public preload(){
     this.load.image("nature_1","assets/map/nature_1.png");
@@ -44,18 +50,13 @@ export class GameScene extends Phaser.Scene {
 
     const playerSprite = this.add.sprite(0, 0, "player");
     const petSprite = this.add.sprite(0,1,"pet");
-    const wildSprite = this.add.sprite(0,2,"wild");
 
     playerSprite.setDepth(0);
     petSprite.setDepth(1);
-    wildSprite.setDepth(1);
 
     petSprite.visible = false; //false..?
     this.cameras.main.startFollow(playerSprite);
     this.cameras.main.roundPixels = true; 
-    
-    const wild = new Pokemon(wildSprite,new Phaser.Math.Vector2(10,20));
-    this.pokemonMovement = new PokemonMovements(wild);
     
     const spriteAnimation = new SpriteAnimation(this);
     const pet = new Pokemon(petSprite,new Phaser.Math.Vector2(3,3));
@@ -65,13 +66,18 @@ export class GameScene extends Phaser.Scene {
     this.itemMovement = new ItemMovements(this,this.playerMovement);
     
     this.behavior = new Behavior(player,this.playerMovement,playerSprite,petSprite,this.itemMovement);
+    this.pokemonBehavior = new PokemonBehavior(this,map,this.spriteList,this.pokemonList,this.pokemonMovementList);
     this.keyControl = new KeyControl(this.input,this.behavior);
   }
   public update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
     this.keyControl.update();
     this.behavior.update();
+    this.pokemonBehavior.update();
     this.playerMovement.update();
     this.itemMovement.update();
+    for(let i=0;i<10;i++){
+      this.pokemonMovementList[i].update();
+    }
   }
 }
 
