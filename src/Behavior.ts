@@ -36,7 +36,7 @@ export class Behavior{
         }
     }   
     public update(){
-        console.log(this.playerBehaviorStatus);
+        // console.log(this.playerBehaviorStatus);
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
                 this.playerMovement.playerMovementWalkCount = 0;

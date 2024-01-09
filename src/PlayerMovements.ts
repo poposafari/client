@@ -10,6 +10,7 @@ export class PlayerMovements{
         private player:Player,
         private pet: Pokemon,
         private map: Phaser.Tilemaps.Tilemap,
+        private wildPokemonList: Array<Pokemon>,
     ){}
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
@@ -65,9 +66,18 @@ export class PlayerMovements{
             this.updatePosition();
         }
     }
+    private hasBlockingWildPokemon(direction: Direction):boolean{
+        for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
+            if(this.tilePosInDirection(direction).equals(this.wildPokemonList[i].getTilePos())){
+                console.log(this.wildPokemonList[i]+' conflict!');
+                return true;
+            }
+        }
+    }
     private isBlockingDirection(direction: Direction): boolean {
         this.playerLastMovementDirection = direction;
-        return this.hasBlockingTile(this.tilePosInDirection(direction));
+        console.log(this.tilePosInDirection(direction));
+        return this.hasBlockingTile(this.tilePosInDirection(direction)) || this.hasBlockingWildPokemon(direction);
     }    
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {
         return this.player

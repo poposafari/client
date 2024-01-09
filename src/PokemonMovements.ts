@@ -1,5 +1,6 @@
 import { Direction } from "./Direction";
 import { GameScene } from "./Main";
+import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 
 const Vector2 = Phaser.Math.Vector2;
@@ -8,6 +9,7 @@ export class PokemonMovements{
     constructor(
         private pokemon: Pokemon,
         private map: Phaser.Tilemaps.Tilemap,
+        private player: Player,
     ){}
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
@@ -83,9 +85,17 @@ export class PokemonMovements{
     private isMoving(){
         return this.wildPokemonMovementDirection != Direction.NONE;
     }
+    private hasBlockingPlayer(direction: Direction):boolean{
+        for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
+            if(this.tilePosInDirection(direction).equals(this.player.getTilePos())){
+                console.log(this.pokemon[i]+' conflict!');
+                return true;
+            }
+        }
+    }
     private isBlockingDirection(direction: Direction): boolean {
         this.wildPokemonMovementDirection = direction;
-        return this.hasBlockingTile(this.tilePosInDirection(direction));
+        return this.hasBlockingTile(this.tilePosInDirection(direction)) || this.hasBlockingPlayer(direction);
     }   
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {
         return this.pokemon

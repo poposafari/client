@@ -4,6 +4,7 @@ import { Pokemon } from "./Pokemon";
 import { PokemonMovements } from "./PokemonMovements";
 import { GameScene } from "./Main";
 import { Game } from "phaser";
+import { Player } from "./Player";
 
 const POKEMON_BEHAVIOR_STATUS=[
     Direction.POKEMON_UP,
@@ -20,6 +21,7 @@ export class PokemonBehavior{
         private spriteList: Array<Phaser.GameObjects.Sprite>,
         private pokemonList: Array<Pokemon>,
         private pokemonMovementList: Array<PokemonMovements>,
+        private player: Player,
     ){}
     private checksum: boolean = false;
     private nextBehaviorTimeList: Array<number> = [];
@@ -35,7 +37,7 @@ export class PokemonBehavior{
         for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
             this.spriteList.push(this.phaser.add.sprite(0,0,"wild"));
             this.pokemonList.push(new Pokemon(this.spriteList[i],new Phaser.Math.Vector2(10,10)));
-            this.pokemonMovementList.push(new PokemonMovements(this.pokemonList[i],this.map));
+            this.pokemonMovementList.push(new PokemonMovements(this.pokemonList[i],this.map,this.player));
             this.nextBehaviorTimeList.push(0);
             this.timedEventList.push(this.phaser.time.addEvent({ delay: Phaser.Math.Between(1000, 8000), callback:this.onEvent,loop: true }));
         }

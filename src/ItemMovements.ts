@@ -82,7 +82,6 @@ export class ItemMovements{
         this.itemSprite = this.phaser.add.sprite(0,0,"pokeball");
         this.item = new Item(this.itemSprite,new Phaser.Math.Vector2(0, 0));
         this.item.setPosition(this.playerPosition);
-        console.log(this.item.getPosition());
         this.movementDirection = direction;
         this.item.startAnimation(this.movementDirection);
         this.updateTilePosition();
