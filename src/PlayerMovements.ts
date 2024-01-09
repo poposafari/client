@@ -76,7 +76,6 @@ export class PlayerMovements{
     }
     private isBlockingDirection(direction: Direction): boolean {
         this.playerLastMovementDirection = direction;
-        console.log(this.tilePosInDirection(direction));
         return this.hasBlockingTile(this.tilePosInDirection(direction)) || this.hasBlockingWildPokemon(direction);
     }    
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {

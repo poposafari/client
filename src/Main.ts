@@ -67,7 +67,7 @@ export class GameScene extends Phaser.Scene {
     this.itemMovement = new ItemMovements(this,this.playerMovement);
     
     this.behavior = new Behavior(player,this.playerMovement,playerSprite,petSprite,this.itemMovement);
-    this.pokemonBehavior = new PokemonBehavior(this,map,this.spriteList,this.pokemonList,this.pokemonMovementList,player);
+    this.pokemonBehavior = new PokemonBehavior(this,map,this.spriteList,this.pokemonList,this.pokemonMovementList,player );
     this.keyControl = new KeyControl(this.input,this.behavior);
   }
   public update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
