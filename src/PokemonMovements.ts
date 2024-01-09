@@ -94,7 +94,6 @@ export class PokemonMovements{
     private hasBlockingPlayer(direction: Direction):boolean{
         for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
             if(this.tilePosInDirection(direction).equals(this.player.getTilePos())){
-                console.log(this.pokemon[i]+' conflict!');
                 return true;
             }
         }
@@ -103,7 +102,6 @@ export class PokemonMovements{
         for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
             if(i === this.index) continue;
             if(this.tilePosInDirection(direction).equals(this.wildPokemonList[i].getTilePos())){
-                console.log(this.pokemon[i]+' conflict!');
                 return true;
             }
         }

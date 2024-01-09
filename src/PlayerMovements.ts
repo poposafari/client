@@ -69,7 +69,6 @@ export class PlayerMovements{
     private hasBlockingWildPokemon(direction: Direction):boolean{
         for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
             if(this.tilePosInDirection(direction).equals(this.wildPokemonList[i].getTilePos())){
-                console.log(this.wildPokemonList[i]+' conflict!');
                 return true;
             }
         }
