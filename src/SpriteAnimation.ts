@@ -11,12 +11,19 @@ export class SpriteAnimation{
             end:23,
         });
 
-        this.petFrames = this.anime.anims.generateFrameNames('pet',{
+        this.pokemonFrames = this.anime.anims.generateFrameNames('pet',{
             prefix:'001-',
             suffix:"",
             start:0,
             end:15,
         });
+
+        this.pokemonFrames = this.anime.anims.generateFrameNames('wild',{
+          prefix:'001-',
+          suffix:"",
+          start:0,
+          end:15,
+      });
 
         this.playerCustomFrameWalkUp = [
             [this.playerFrames[1],this.playerFrames[0]],
@@ -57,16 +64,16 @@ export class SpriteAnimation{
         ];
 
         this.petCustomFrameMovementDown = [
-            [this.petFrames[0],this.petFrames[1],this.petFrames[2],this.petFrames[3]],
+            [this.pokemonFrames[0],this.pokemonFrames[1],this.pokemonFrames[2],this.pokemonFrames[3]],
         ];
         this.petCustomFrameMovementLeft = [
-            [this.petFrames[4],this.petFrames[5],this.petFrames[6],this.petFrames[7]],
+            [this.pokemonFrames[4],this.pokemonFrames[5],this.pokemonFrames[6],this.pokemonFrames[7]],
         ];
         this.petCustomFrameMovementRight = [
-            [this.petFrames[8],this.petFrames[9],this.petFrames[10],this.petFrames[11]],
+            [this.pokemonFrames[8],this.pokemonFrames[9],this.pokemonFrames[10],this.pokemonFrames[11]],
         ];
         this.petCustomFrameMovementUp = [
-            [this.petFrames[12],this.petFrames[13],this.petFrames[14],this.petFrames[15]],
+            [this.pokemonFrames[12],this.pokemonFrames[13],this.pokemonFrames[14],this.pokemonFrames[15]],
         ];
 
         //sprite(player) walk frames.
@@ -225,7 +232,7 @@ export class SpriteAnimation{
     private anime: Phaser.Scene;
 
     private playerFrames: Phaser.Types.Animations.AnimationFrame[];
-    private petFrames: Phaser.Types.Animations.AnimationFrame[];
+    private pokemonFrames: Phaser.Types.Animations.AnimationFrame[];
 
     private playerCustomFrameWalkUp: Phaser.Types.Animations.AnimationFrame[][];
     private playerCustomFrameWalkDown: Phaser.Types.Animations.AnimationFrame[][];

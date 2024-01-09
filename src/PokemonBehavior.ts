@@ -2,6 +2,8 @@ import { Vector } from "matter";
 import { Direction } from "./Direction";
 import { Pokemon } from "./Pokemon";
 import { PokemonMovements } from "./PokemonMovements";
+import { GameScene } from "./Main";
+import { Game } from "phaser";
 
 const POKEMON_BEHAVIOR_STATUS=[
     Direction.POKEMON_UP,
@@ -19,10 +21,10 @@ export class PokemonBehavior{
         private pokemonList: Array<Pokemon>,
         private pokemonMovementList: Array<PokemonMovements>,
     ){}
-    private readonly MAX_WILDPOKEMON = 10;
     private checksum: boolean = false;
     private nextBehaviorTimeList: Array<number> = [];
     private timedEventList:Array<any>=[];
+    private delayList:Array<number>=[1000,1500,2000,2500,3000,3500,4000,4500,5000];
     update(){
         if(!this.checksum){
             this.generateWildPokemon();
@@ -30,8 +32,8 @@ export class PokemonBehavior{
         this.readyWildPokemon();
     }
     private generateWildPokemon(){
-        for(let i=0;i<this.MAX_WILDPOKEMON;i++){
-            this.spriteList.push(this.phaser.add.sprite(0,0,'wild'));
+        for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
+            this.spriteList.push(this.phaser.add.sprite(0,0,"wild"));
             this.pokemonList.push(new Pokemon(this.spriteList[i],new Phaser.Math.Vector2(10,10)));
             this.pokemonMovementList.push(new PokemonMovements(this.pokemonList[i],this.map));
             this.nextBehaviorTimeList.push(0);
@@ -40,21 +42,15 @@ export class PokemonBehavior{
         this.checksum = true;
     }
     private readyWildPokemon(){
-        for(let i=0;i<this.MAX_WILDPOKEMON;i++){
+        for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
             if(this.pokemonMovementList[i].isMovementFinish){
-                this.timedEventList[i].delay = Phaser.Math.Between(1000,5000);
+                this.timedEventList[i].delay = this.delayList[Math.floor(Math.random() * this.delayList.length)];
                 this.timedEventList[i].callback = this.onEvent.bind(this, i);
             }
         }        
     }
-    private formatTime(seconds){
-        let minutes = Math.floor(seconds/60);
-        let partInSeconds = seconds%60;
-        return `${minutes}:${partInSeconds}`;
-    }
     private onEvent(index)
     {
-        console.log('finish??');
         this.pokemonMovementList[index].checkMovement(POKEMON_BEHAVIOR_STATUS[Math.floor(Math.random() * 4)]);
     }
 }

@@ -17,6 +17,8 @@ export class PokemonMovements{
     private wildPokemonMovementDirection: Direction = Direction.NONE;
     wildPokemonLastMovementDirection: Direction = Direction.POKEMON_UP;
     isMovementFinish:boolean=true;
+    isMovementChange:boolean=true;
+    private wildPokemonMovementHistor: Array<String>=[];
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -26,8 +28,24 @@ export class PokemonMovements{
         [Direction.POKEMON_UP] : Vector2.UP,
     };
     update(){
+        if(this.isMovementChange){
+            this.pokemon.startAnimation(this.wildPokemonMovementDirection);
+            this.isMovementChange = false;
+        }
         if(this.isMoving()){
             this.updatePosition();
+        }
+    }
+    setMovementHistory():void{
+        this.wildPokemonMovementHistor.push(this.wildPokemonMovementDirection);
+        if(this.wildPokemonMovementHistor.length > 2){
+            this.wildPokemonMovementHistor.shift();
+        }
+        if(this.wildPokemonMovementHistor[0] != this.wildPokemonMovementHistor[1]){
+            this.isMovementChange = true;
+        }
+        else{
+            this.isMovementChange = false;  
         }
     }
     private setMovementSpeed(){
@@ -51,7 +69,7 @@ export class PokemonMovements{
             this.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = true;
             this.wildPokemonLastMovementDirection = this.wildPokemonMovementDirection;
-            this.stopMoving();
+            this.wildPokemonMovementDirection = Direction.NONE;
         }
         else{
             this.isMovementFinish = false;
@@ -95,6 +113,7 @@ export class PokemonMovements{
     }
     private startMoving(direction:Direction){
         this.wildPokemonMovementDirection = direction;
+        this.setMovementHistory();
         this.pokemon.startAnimation(this.wildPokemonMovementDirection);
         this.updateTilePosition();
     }

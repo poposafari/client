@@ -22,6 +22,7 @@ export class GameScene extends Phaser.Scene {
   constructor(){ super(sceneConfig) }
 
   static readonly TILE_SIZE = 32;
+  static readonly MAX_WILDPOKEMON = 5;
 
   private keyControl: KeyControl;
   private behavior: Behavior;
@@ -33,7 +34,7 @@ export class GameScene extends Phaser.Scene {
   private spriteList: Array<Phaser.GameObjects.Sprite>=[];
   private pokemonList: Array<Pokemon>=[];
   private pokemonMovementList: Array<PokemonMovements>=[];
-
+  
   public preload(){
     this.load.image("nature_1","assets/map/nature_1.png");
     this.load.image("pokeball","assets/character/ball.png");
@@ -75,7 +76,7 @@ export class GameScene extends Phaser.Scene {
     this.pokemonBehavior.update();
     this.playerMovement.update();
     this.itemMovement.update();
-    for(let i=0;i<10;i++){
+    for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
       this.pokemonMovementList[i].update();
     }
   }
