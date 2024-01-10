@@ -38,6 +38,7 @@ export class GameScene extends Phaser.Scene {
   public preload(){
     this.load.image("nature_1","assets/map/nature_1.png");
     this.load.image("pokeball","assets/character/ball.png");
+    this.load.image("groundPokeball","assets/item/monsterball.png");
     this.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     this.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
     this.load.atlas('pet','assets/pokemon/131.png','assets/pokemon/001.json');
@@ -64,7 +65,7 @@ export class GameScene extends Phaser.Scene {
 
     const player = new Player(playerSprite,new Phaser.Math.Vector2(28, 1));
     this.playerMovement = new PlayerMovements(player,pet,map,this.pokemonList);
-    this.itemMovement = new ItemMovements(this,this.playerMovement);
+    this.itemMovement = new ItemMovements(this,player,this.playerMovement,this.pokemonList);
     
     this.behavior = new Behavior(player,this.playerMovement,playerSprite,petSprite,this.itemMovement);
     this.pokemonBehavior = new PokemonBehavior(this,map,this.spriteList,this.pokemonList,this.pokemonMovementList,player );

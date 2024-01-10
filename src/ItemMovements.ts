@@ -3,13 +3,18 @@ import { Direction } from "./Direction";
 import { Item } from "./Item";
 import { GameScene } from "./Main";
 import { PlayerMovements } from "./PlayerMovements";
+import { Pokemon } from "./Pokemon";
+import { Player } from "./Player";
+import { PokemonMovements } from "./PokemonMovements";
 
 const Vector2 = Phaser.Math.Vector2;
 
 export class ItemMovements{
     constructor(
         private phaser: Phaser.Scene,
+        private player: Player,
         private playerMovement: PlayerMovements,
+        private wildPokemonList: Array<Pokemon>,
     ){}
     private readonly THROW_SPEED = 8;
     private readonly THROW_RANGE = 8;
@@ -22,6 +27,8 @@ export class ItemMovements{
     private pixelsToWalkThisUpdate:number = 0;
     isMovementFinish:boolean=true;
     throwItemCount:number = 0;
+
+    private groundPokeballList:Array<Pokemon>=[];
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -30,12 +37,13 @@ export class ItemMovements{
         [Direction.ITEM_LEFT]: Vector2.LEFT,
         [Direction.ITEM_RIGHT]: Vector2.RIGHT,
     };
-
     update(){
         if(this.isMoving()){this.updatePosition();}
     }
     checkMovement(direction: Direction,playerPosition:Phaser.Math.Vector2){
-        if(this.isMoving()) {return;}
+        if(this.isMoving()) {
+            return;
+        }
         else{
             this.playerPosition = playerPosition;
             console.log(direction);
@@ -65,7 +73,15 @@ export class ItemMovements{
         this.movementDirection = Direction.NONE;
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= (GameScene.TILE_SIZE*this.THROW_RANGE);
+        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE*this.THROW_RANGE;
+    }
+    private hasBlockingWildPokemon():boolean{
+        for(let i =0;i<GameScene.MAX_WILDPOKEMON;i++){
+            if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos())){
+                this.groundPokeballList.push(this.wildPokemonList[i]);
+                return true;
+            }
+        }
     }
     private moveSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.movementDirection].clone();
@@ -73,6 +89,13 @@ export class ItemMovements{
         const newPlayerPos = this.item.getPosition().add(playerMovementDistance);
         this.item.setPosition(newPlayerPos);
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
+        const targetStr = (this.tileSizePixelsWalked / GameScene.TILE_SIZE);
+        if(targetStr.toString().length === 1){
+            this.item.setTilePos(this.item.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
+            if(this.hasBlockingWildPokemon()){
+                return true;
+            }
+        }
         this.tileSizePixelsWalked %= (GameScene.TILE_SIZE*this.THROW_RANGE);
     }
     private isMoving(){
@@ -80,7 +103,7 @@ export class ItemMovements{
     }
     private startMoving(direction:Direction){
         this.itemSprite = this.phaser.add.sprite(0,0,"pokeball");
-        this.item = new Item(this.itemSprite,new Phaser.Math.Vector2(0, 0));
+        this.item = new Item(this.itemSprite,this.player.getTilePos());
         this.item.setPosition(this.playerPosition);
         this.movementDirection = direction;
         this.item.startAnimation(this.movementDirection);
@@ -89,5 +112,4 @@ export class ItemMovements{
     private updateTilePosition(){
         this.item.setTilePos(this.item.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
     }
-    
 }
