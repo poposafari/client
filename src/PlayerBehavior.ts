@@ -2,6 +2,10 @@ import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
 import { Direction } from "./Direction";
 import { ItemMovements } from "./ItemMovements";
+import { ImageManagement } from "./ImageManagement";
+import { Pokemon } from "./Pokemon";
+import { Item } from "./Item";
+import { WildPokemon } from "./WildPokemon";
 
 export enum BEHAVIOR_STATUS {
     NONE_MODE="none",
@@ -11,17 +15,29 @@ export enum BEHAVIOR_STATUS {
     THROW_ITEM_MODE="throwitem",
 }
 
-export class Behavior{
+export class PlayerBehavior{
     constructor(
         private player: Player,
-        private playerMovement: PlayerMovements,
-        private playerSprite: Phaser.GameObjects.Sprite,
-        private petSprite: Phaser.GameObjects.Sprite,
-        private itemMovement: ItemMovements,
+        private imageManagement: ImageManagement,
+        private wildPokemonList: Array<WildPokemon>,
     ){}
+    private pet:Pokemon;
+    private playerMovement: PlayerMovements;
+    private itemMovement: ItemMovements;
+
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
-    
+
+    public create(){
+        this.pet = new Pokemon(this.imageManagement.petSprite,new Phaser.Math.Vector2(3,3));
+        this.playerMovement = new PlayerMovements(
+            this.player,
+            this.pet,
+            this.imageManagement.map,
+            this.wildPokemonList
+        );
+        this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList);
+    }
     public setBehavior(movementKey:object,walk:boolean,run:boolean,pet:boolean,pokeball:boolean){
         this.movementKeyDeatailInfo = movementKey;
         if(this.playerMovement.isMovementFinish && !walk){
@@ -34,9 +50,8 @@ export class Behavior{
             if(!walk && !run && pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
             if(!walk && !run && !pet && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
         }
-    }   
+    }
     public update(){
-        // console.log(this.playerBehaviorStatus);
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
                 this.playerMovement.playerMovementWalkCount = 0;
@@ -55,28 +70,30 @@ export class Behavior{
                 this.readyMovementItem();
                 break;
         }
+        this.playerMovement.update();
+        this.itemMovement.update();
     }
     private readyMovementItem(){
         const tempString = this.playerMovement.playerLastMovementDirection.split('_');
         if(tempString[2] === 'up'){
-            this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition());
+            this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition(),this.player.getTilePos());
         }
         if(tempString[2] === 'down'){
-            this.itemMovement.checkMovement(Direction.ITEM_DOWN,this.player.getPosition());
+            this.itemMovement.checkMovement(Direction.ITEM_DOWN,this.player.getPosition(),this.player.getTilePos());
         }
         if(tempString[2] === 'left'){
-            this.itemMovement.checkMovement(Direction.ITEM_LEFT,this.player.getPosition());
+            this.itemMovement.checkMovement(Direction.ITEM_LEFT,this.player.getPosition(),this.player.getTilePos());
         }
         if(tempString[2] === 'right'){
-            this.itemMovement.checkMovement(Direction.ITEM_RIGHT,this.player.getPosition());
+            this.itemMovement.checkMovement(Direction.ITEM_RIGHT,this.player.getPosition(),this.player.getTilePos());
         }
     }
 
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){
-            this.playerSprite.setDepth(0);
-            this.petSprite.setDepth(1);
+            this.imageManagement.playerSprite.setDepth(0);
+            this.imageManagement.petSprite.setDepth(1);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_UP_1);
             }
@@ -85,8 +102,8 @@ export class Behavior{
             } 
         }
         if(movementKeyDeatailInfo["down"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_1);
             }
@@ -95,8 +112,8 @@ export class Behavior{
             }
         }
         if(movementKeyDeatailInfo["left"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_1);
             }
@@ -105,8 +122,8 @@ export class Behavior{
             }
         }
         if(movementKeyDeatailInfo["right"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_RIGHT_1);
             }
@@ -118,32 +135,32 @@ export class Behavior{
     private readyMovementRunPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){
-            this.playerSprite.setDepth(0);
-            this.petSprite.setDepth(1);
+            this.imageManagement.playerSprite.setDepth(0);
+            this.imageManagement.petSprite.setDepth(1);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);  
         }
         if(movementKeyDeatailInfo["down"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);  
         }
         if(movementKeyDeatailInfo["left"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);  
         }
         if(movementKeyDeatailInfo["right"]){
-            this.playerSprite.setDepth(1);
-            this.petSprite.setDepth(0);
+            this.imageManagement.playerSprite.setDepth(1);
+            this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_2);
@@ -162,7 +179,7 @@ export class Behavior{
         }
     }
     private readyPet(){
-        if(this.petSprite.visible){this.petSprite.visible = false}
-        else{this.petSprite.visible = true}
+        if(this.imageManagement.petSprite.visible){this.imageManagement.petSprite.visible = false}
+        else{this.imageManagement.petSprite.visible = true}
     }
 }

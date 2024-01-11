@@ -3,6 +3,7 @@ import { Direction } from "./Direction";
 import { GameScene } from "./Main";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
+import { WildPokemon } from "./WildPokemon";
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -10,7 +11,7 @@ export class PokemonMovements{
     constructor(
         private index: number,
         private pokemon: Pokemon,
-        private wildPokemonList: Array<Pokemon>,
+        private wildPokemonList: Array<WildPokemon>,
         private map: Phaser.Tilemaps.Tilemap,
         private player: Player,
     ){}
@@ -32,9 +33,6 @@ export class PokemonMovements{
         [Direction.POKEMON_RIGHT] : Vector2.RIGHT,
         [Direction.POKEMON_UP] : Vector2.UP,
     };
-    setWildPokemonList(list: Array<Pokemon>){
-        this.wildPokemonList = list;
-    }
     update(){
         if(this.isMovementChange){
             this.pokemon.startAnimation(this.wildPokemonMovementDirection);

@@ -1,9 +1,9 @@
-import { Behavior } from "./Behavior";
+import { PlayerBehavior } from "./PlayerBehavior";
 
 export class KeyControl{
     constructor(
         private keyInput:Phaser.Input.InputPlugin,
-        private behavior:Behavior,
+        private behavior:PlayerBehavior,
     ){
         this.cursorKey = this.keyInput.keyboard.createCursorKeys();
         this.petKey = this.keyInput.keyboard.addKey('P');

@@ -2,6 +2,7 @@ import { Direction } from "./Direction";
 import { GameScene } from "./Main";
 import { Pokemon } from "./Pokemon";
 import { Player } from "./Player";
+import { WildPokemon } from "./WildPokemon";
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -10,7 +11,7 @@ export class PlayerMovements{
         private player:Player,
         private pet: Pokemon,
         private map: Phaser.Tilemaps.Tilemap,
-        private wildPokemonList: Array<Pokemon>,
+        private wildPokemonList: Array<WildPokemon>,
     ){}
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;

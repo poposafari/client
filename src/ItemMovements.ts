@@ -2,25 +2,24 @@ import { Game } from "phaser";
 import { Direction } from "./Direction";
 import { Item } from "./Item";
 import { GameScene } from "./Main";
-import { PlayerMovements } from "./PlayerMovements";
 import { Pokemon } from "./Pokemon";
 import { Player } from "./Player";
-import { PokemonMovements } from "./PokemonMovements";
+import { ImageManagement } from "./ImageManagement";
+import { WildPokemon } from "./WildPokemon";
 
 const Vector2 = Phaser.Math.Vector2;
 
 export class ItemMovements{
     constructor(
-        private phaser: Phaser.Scene,
-        private player: Player,
-        private playerMovement: PlayerMovements,
-        private wildPokemonList: Array<Pokemon>,
+        private imageManagement: ImageManagement,
+        private wildPokemonList: Array<WildPokemon>,
     ){}
     private readonly THROW_SPEED = 8;
     private readonly THROW_RANGE = 8;
     private itemSprite: Phaser.GameObjects.Sprite;
     private item:Item;
     private playerPosition:Phaser.Math.Vector2;
+    private playerTilePosition:Phaser.Math.Vector2;
     private movementDirection: Direction = Direction.NONE;
     lastMovementDirection:Direction = Direction.ITEM_UP;
     private tileSizePixelsWalked:number = 0;
@@ -40,12 +39,13 @@ export class ItemMovements{
     update(){
         if(this.isMoving()){this.updatePosition();}
     }
-    checkMovement(direction: Direction,playerPosition:Phaser.Math.Vector2){
+    checkMovement(direction: Direction,playerPosition:Phaser.Math.Vector2,playerTilePosition:Phaser.Math.Vector2){
         if(this.isMoving()) {
             return;
         }
         else{
             this.playerPosition = playerPosition;
+            this.playerTilePosition = playerTilePosition;
             console.log(direction);
             this.startMoving(direction);
         }
@@ -78,7 +78,6 @@ export class ItemMovements{
     private hasBlockingWildPokemon():boolean{
         for(let i =0;i<GameScene.MAX_WILDPOKEMON;i++){
             if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos())){
-                this.groundPokeballList.push(this.wildPokemonList[i]);
                 return true;
             }
         }
@@ -102,8 +101,8 @@ export class ItemMovements{
         return this.movementDirection != Direction.NONE;
     }
     private startMoving(direction:Direction){
-        this.itemSprite = this.phaser.add.sprite(0,0,"pokeball");
-        this.item = new Item(this.itemSprite,this.player.getTilePos());
+        this.itemSprite = this.imageManagement.createSprite(0,0,"pokeball");
+        this.item = new Item(this.itemSprite,this.playerTilePosition);
         this.item.setPosition(this.playerPosition);
         this.movementDirection = direction;
         this.item.startAnimation(this.movementDirection);
