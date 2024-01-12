@@ -6,7 +6,6 @@ import { PlayerBehavior } from "./PlayerBehavior";
 import { WildPokemonBehavior } from "./WildPokemonBehavior";
 import { WildPokemon } from "./WildPokemon";
 
-
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT =600;
 
@@ -39,7 +38,7 @@ export class GameScene extends Phaser.Scene {
   }
   public create(){
     this.imageManagement.createMap();
-    this.imageManagement.createPlayerSprite();
+    this.imageManagement.createPlayer('player_nickname');
 
     this.player = new Player(this.imageManagement.playerSprite,new Phaser.Math.Vector2(4, 3));
     this.playerBehavior = new PlayerBehavior(this.player,this.imageManagement,this.wildPokemonList);

@@ -9,12 +9,15 @@ export class ImageManagement{
     private readonly DEFAULT_DELAY = 0;
     private readonly PLAYER_FRAME_MAX = 23;
     private readonly POKEMON_FRAME_MAX = 15;
-    private playerPokemonIndex:string = '000';
+    private playerIndex:string = 'player_nickname';
+    private playerPokemonIndex:string = null;
+    private itemIndex:string = null;
 
     public map:Phaser.Tilemaps.Tilemap;
     public playerSprite: Phaser.GameObjects.Sprite;
     public petSprite: Phaser.GameObjects.Sprite;
-    public throwPokeball: Phaser.GameObjects.Sprite;
+    public pokemonSprite: Phaser.GameObjects.Sprite;
+    public itemSprite: Phaser.GameObjects.Sprite;
 
     private playerFrames: Phaser.Types.Animations.AnimationFrame[];
     private playerCustomFrameWalkUp: Phaser.Types.Animations.AnimationFrame[][];
@@ -37,11 +40,13 @@ export class ImageManagement{
         this.phaser.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     }
     loadPlayerImage(){
-        this.phaser.load.atlas('player','assets/character/player_girl_0.png','assets/character/player_girl_0.json');
+        this.phaser.load.atlas(`${this.playerIndex}`,`assets/character/${this.playerIndex}.png`,`assets/character/${this.playerIndex}.json`);
     }
     loadItemImage(){
-        this.phaser.load.image("pokeball","assets/item/ball.png");
-        this.phaser.load.image("groundPokeball","assets/item/monsterball.png");
+        for(let i=0;i<4;i++){
+            this.phaser.load.image(`item_${i}_ground`,`assets/item/item_${i}_ground.png`);
+            this.phaser.load.image(`item_${i}_thrown`,`assets/item/item_${i}_thrown.png`);
+        }
     }
     loadPokemonImage(){
         for(let i=0;i<=this.MAX_POKEMON;i++){
@@ -59,21 +64,20 @@ export class ImageManagement{
         this.map.createLayer(0,"nature_1",0,0);
         this.map.createLayer(1,"nature_1",0,0);
     }
-    createPlayerSprite(){
-        this.playerSprite = this.createSprite(0,0,'player');
+    private createPlayerSprite(index: string){
+        this.playerSprite = this.createSprite(0,0,`${index}`);
         this.playerSprite.setDepth(0);
 
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
-        this.createPlayerSpriteAnimation();
 
-        this.petSprite = this.createSprite(0,1,this.playerPokemonIndex);
+        this.petSprite = this.createSprite(0,1,'000');
         this.petSprite.setDepth(1);
-        this.petSprite.visible = true;
+        this.petSprite.visible = false;
     }
-    private createPlayerSpriteAnimation(){
-        this.playerFrames = this.phaser.anims.generateFrameNames('player',{
-            prefix:'player_girl_0-',
+    private createPlayerSpriteAnimation(index: string){
+        this.playerFrames = this.phaser.anims.generateFrameNames(`${index}`,{
+            prefix:`${index}-`,
             suffix:"",
             start:0,
             end:this.PLAYER_FRAME_MAX,
@@ -94,7 +98,6 @@ export class ImageManagement{
             [this.playerFrames[10],this.playerFrames[9]],
             [this.playerFrames[11],this.playerFrames[9]]
         ];
-    
         this.playerCustomFrameRunUp = [
             [this.playerFrames[14],this.playerFrames[12]],
             [this.playerFrames[13],this.playerFrames[12]],
@@ -241,11 +244,20 @@ export class ImageManagement{
             this.DEFAULT_FRAMERATE,
             this.DEFAULT_DELAY
           );
-  
+    }
+    createPlayer(index: string){
+        this.createPlayerSprite(index);
+        this.createPlayerSpriteAnimation(index);
+    }
+    createPokemonSprite(index: string){
+        this.pokemonSprite = this.createSprite(0,1,index);
+        this.pokemonSprite.setDepth(0);
+        this.pokemonSprite.visible = true;
+        return this.pokemonSprite;
     }
     createPokemonSpriteAnimation(index:string){
         this.pokemonFrames = this.phaser.anims.generateFrameNames(index,{
-            prefix:`001-`,
+            prefix:`001-`, //${index}
             suffix:"",
             start:0,
             end:this.POKEMON_FRAME_MAX,
@@ -287,6 +299,12 @@ export class ImageManagement{
             this.DEFAULT_DELAY
           );
     }
+    createItemSprite(index:string){
+        this.itemSprite = this.createSprite(0,0,`${index}`);
+        this.itemSprite.setDepth(1);
+        this.itemSprite.visible = true;
+        return this.itemSprite;
+    }
     private createAnimation(
         name: string,
         frames: Phaser.Types.Animations.AnimationFrame[],
@@ -304,10 +322,6 @@ export class ImageManagement{
     }
     getPlayerPokemonIndex(){
         return this.playerPokemonIndex;
-    }
-    setPlayerPokemonIndex(index: string){
-        this.playerPokemonIndex = index;
-        this.createPokemonSpriteAnimation(index);
     }
     createSprite(posX:number,posY:number,key:string){
         return this.phaser.add.sprite(posX,posY,key);

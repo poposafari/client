@@ -4,8 +4,8 @@ import { Direction } from "./Direction";
 import { ItemMovements } from "./ItemMovements";
 import { ImageManagement } from "./ImageManagement";
 import { Pokemon } from "./Pokemon";
-import { Item } from "./Item";
 import { WildPokemon } from "./WildPokemon";
+import { ITEM_CODE } from "./Item";
 
 export enum BEHAVIOR_STATUS {
     NONE_MODE="none",
@@ -24,6 +24,7 @@ export class PlayerBehavior{
     private pet:Pokemon;
     private playerMovement: PlayerMovements;
     private itemMovement: ItemMovements;
+    private choiceItem: ITEM_CODE = ITEM_CODE.POKE_BALL_IMAGE;
 
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
@@ -36,7 +37,7 @@ export class PlayerBehavior{
             this.imageManagement.map,
             this.wildPokemonList
         );
-        this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList);
+        this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList,ITEM_CODE.NONE);
     }
     public setBehavior(movementKey:object,walk:boolean,run:boolean,pet:boolean,pokeball:boolean){
         this.movementKeyDeatailInfo = movementKey;
@@ -67,13 +68,13 @@ export class PlayerBehavior{
                 this.readyPet();
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
-                this.readyMovementItem();
+                this.readyMovementItem(this.choiceItem);
                 break;
         }
         this.playerMovement.update();
         this.itemMovement.update();
     }
-    private readyMovementItem(){
+    private readyMovementItem(item_code:ITEM_CODE){
         const tempString = this.playerMovement.playerLastMovementDirection.split('_');
         if(tempString[2] === 'up'){
             this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition(),this.player.getTilePos());

@@ -1,9 +1,7 @@
-import { Game } from "phaser";
 import { Direction } from "./Direction";
-import { Item } from "./Item";
+import { ITEM_CODE, Item } from "./Item";
 import { GameScene } from "./Main";
 import { Pokemon } from "./Pokemon";
-import { Player } from "./Player";
 import { ImageManagement } from "./ImageManagement";
 import { WildPokemon } from "./WildPokemon";
 
@@ -13,11 +11,14 @@ export class ItemMovements{
     constructor(
         private imageManagement: ImageManagement,
         private wildPokemonList: Array<WildPokemon>,
+        private itemCode: ITEM_CODE,
     ){}
     private readonly THROW_SPEED = 8;
     private readonly THROW_RANGE = 8;
     private itemSprite: Phaser.GameObjects.Sprite;
     private item:Item;
+    private item_thrown:ITEM_CODE;
+    private item_ground:ITEM_CODE;
     private playerPosition:Phaser.Math.Vector2;
     private playerTilePosition:Phaser.Math.Vector2;
     private movementDirection: Direction = Direction.NONE;
@@ -27,7 +28,6 @@ export class ItemMovements{
     isMovementFinish:boolean=true;
     throwItemCount:number = 0;
 
-    private groundPokeballList:Array<Pokemon>=[];
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
@@ -78,6 +78,7 @@ export class ItemMovements{
     private hasBlockingWildPokemon():boolean{
         for(let i =0;i<GameScene.MAX_WILDPOKEMON;i++){
             if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos())){
+                console.log('conflict!!');
                 return true;
             }
         }
@@ -101,7 +102,7 @@ export class ItemMovements{
         return this.movementDirection != Direction.NONE;
     }
     private startMoving(direction:Direction){
-        this.itemSprite = this.imageManagement.createSprite(0,0,"pokeball");
+        this.itemSprite = this.imageManagement.createItemSprite(this.itemCode);
         this.item = new Item(this.itemSprite,this.playerTilePosition);
         this.item.setPosition(this.playerPosition);
         this.movementDirection = direction;

@@ -1,4 +1,4 @@
-export enum Direction {
+export const enum Direction {
   NONE = "none",
   PLAYER_WALK_UP_1 = "player_walk_up_1",
   PLAYER_WALK_UP_2 = "player_walk_up_2",
