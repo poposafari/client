@@ -9,27 +9,33 @@ export class KeyControl{
         this.petKey = this.keyInput.keyboard.addKey('P');
         this.throwPokeballKey = this.keyInput.keyboard.addKey('C');
         this.rideKey = this.keyInput.keyboard.addKey('R');
+        this.choiceNextItemKey = this.keyInput.keyboard.addKey('M');
+        this.choicePrevItemKey = this.keyInput.keyboard.addKey('N');
     }
-    private isPlayerPressAnyMovementKey:boolean;
+    private isPressAnyMovementKey:boolean;
 
     private movementKeyDetail:object;
-    private isPlayerPressUpMovementKey:boolean;
-    private isPlayerPressDownMovementKey:boolean;
-    private isPlayerPressRightMovementKey:boolean;
-    private isPlayerPressLeftMovementKey:boolean;
+    private isPressUpMovementKey:boolean;
+    private isPressDownMovementKey:boolean;
+    private isPressRightMovementKey:boolean;
+    private isPressLeftMovementKey:boolean;
 
-    private isPlayerPressRunKey:boolean;
-    private isPlayerPressPetKey:boolean;
-    private isPlayerPressThrowPokeballKey:boolean;
-    private isPlayerPressRideKey:boolean;
-    
+    private isPressRunKey:boolean;
+    private isPressPetKey:boolean;
+    private isPressThrowPokeballKey:boolean;
+    private isPressRideKey:boolean;
+    private isPressChoiceNextItemKey:boolean;
+    private isPressChoicePrevItemKey:boolean;
+
     private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
     private petKey: Phaser.Input.Keyboard.Key;
     private throwPokeballKey: Phaser.Input.Keyboard.Key;
     private rideKey: Phaser.Input.Keyboard.Key;
+    private choiceNextItemKey: Phaser.Input.Keyboard.Key;
+    private choicePrevItemKey: Phaser.Input.Keyboard.Key;
 
     update(){
-        this.isPlayerPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
+        this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.movementKeyDetail = {
             up:this.cursorKey.up.isDown,
             down:this.cursorKey.down.isDown,
@@ -37,17 +43,20 @@ export class KeyControl{
             left:this.cursorKey.left.isDown,
         };
 
-        this.isPlayerPressRunKey = this.cursorKey.shift.isDown;
-        this.isPlayerPressPetKey = this.petKey.isDown;
-        this.isPlayerPressThrowPokeballKey = this.throwPokeballKey.isDown;
-        this.isPlayerPressRideKey = this.rideKey.isDown;
-
+        this.isPressRunKey = this.cursorKey.shift.isDown;
+        this.isPressPetKey = this.petKey.isDown;
+        this.isPressThrowPokeballKey = this.throwPokeballKey.isDown;
+        this.isPressRideKey = this.rideKey.isDown;
+        this.isPressChoiceNextItemKey = Phaser.Input.Keyboard.JustDown(this.choiceNextItemKey);
+        this.isPressChoicePrevItemKey = Phaser.Input.Keyboard.JustDown(this.choicePrevItemKey);
         this.behavior.setBehavior(
             this.movementKeyDetail,
-            this.isPlayerPressAnyMovementKey,
-            this.isPlayerPressRunKey,
-            this.isPlayerPressPetKey,
-            this.isPlayerPressThrowPokeballKey
+            this.isPressAnyMovementKey,
+            this.isPressRunKey,
+            this.isPressPetKey,
+            this.isPressThrowPokeballKey,
+            this.isPressChoiceNextItemKey,
+            this.isPressChoicePrevItemKey
         );
     }
 }

@@ -13,6 +13,8 @@ export enum BEHAVIOR_STATUS {
     RUN_MODE="run",
     PET_MODE="pet",
     THROW_ITEM_MODE="throwitem",
+    CHOICE_ITEM_NEXT="choiceitemnext",
+    CHOICE_ITEM_PREV="choiceitemnprev"
 }
 
 export class PlayerBehavior{
@@ -24,10 +26,17 @@ export class PlayerBehavior{
     private pet:Pokemon;
     private playerMovement: PlayerMovements;
     private itemMovement: ItemMovements;
-    private choiceItem: ITEM_CODE = ITEM_CODE.POKE_BALL_IMAGE;
+    private itemList: object = {
+        0:{thrown: ITEM_CODE.POKE_BALL_THROWN,ground: ITEM_CODE.POKE_BALL_GROUND},
+        1:{thrown: ITEM_CODE.GREAT_BALL_THROWN,ground: ITEM_CODE.GREAT_BALL_GROUND},
+        2:{thrown: ITEM_CODE.ULTRA_BALL_THROWN,ground: ITEM_CODE.ULTRA_BALL_GROUND},
+        3:{thrown: ITEM_CODE.MASTER_BALL_THROWN,ground: ITEM_CODE.MASTER_BALL_GROUND}
+    };
+    private choiceItemIndex:number = 0;
 
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
+
 
     public create(){
         this.pet = new Pokemon(this.imageManagement.petSprite,new Phaser.Math.Vector2(3,3));
@@ -39,7 +48,7 @@ export class PlayerBehavior{
         );
         this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList,ITEM_CODE.NONE);
     }
-    public setBehavior(movementKey:object,walk:boolean,run:boolean,pet:boolean,pokeball:boolean){
+    public setBehavior(movementKey:object,walk:boolean,run:boolean,pet:boolean,pokeball:boolean,choiceItemNext:boolean,choiceItemPrev:boolean){
         this.movementKeyDeatailInfo = movementKey;
         if(this.playerMovement.isMovementFinish && !walk){
             this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
@@ -50,9 +59,12 @@ export class PlayerBehavior{
             if(!walk && !run && pet){this.playerBehaviorStatus = BEHAVIOR_STATUS.PET_MODE}
             if(!walk && !run && pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
             if(!walk && !run && !pet && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
+            if(choiceItemNext && !choiceItemPrev && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_NEXT}
+            if(choiceItemPrev && !choiceItemNext && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_PREV}
         }
     }
     public update(){
+        //console.log(this.playerBehaviorStatus);
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
                 this.playerMovement.playerMovementWalkCount = 0;
@@ -68,14 +80,27 @@ export class PlayerBehavior{
                 this.readyPet();
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
-                this.readyMovementItem(this.choiceItem);
+                this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
+                break;
+            case BEHAVIOR_STATUS.CHOICE_ITEM_NEXT:
+                this.choiceItemIndex++;
+                if(this.choiceItemIndex > 3){
+                    this.choiceItemIndex = 0;
+                }
+                break;
+            case BEHAVIOR_STATUS.CHOICE_ITEM_PREV:
+                this.choiceItemIndex--;
+                if(this.choiceItemIndex < 0){
+                    this.choiceItemIndex = 3;
+                }
                 break;
         }
         this.playerMovement.update();
         this.itemMovement.update();
     }
-    private readyMovementItem(item_code:ITEM_CODE){
+    private readyMovementItem(item:object){
         const tempString = this.playerMovement.playerLastMovementDirection.split('_');
+        this.itemMovement.setReadyItem(item);
         if(tempString[2] === 'up'){
             this.itemMovement.checkMovement(Direction.ITEM_UP,this.player.getPosition(),this.player.getTilePos());
         }
@@ -89,7 +114,6 @@ export class PlayerBehavior{
             this.itemMovement.checkMovement(Direction.ITEM_RIGHT,this.player.getPosition(),this.player.getTilePos());
         }
     }
-
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo["up"]){

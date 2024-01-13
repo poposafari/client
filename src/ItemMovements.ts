@@ -36,8 +36,13 @@ export class ItemMovements{
         [Direction.ITEM_LEFT]: Vector2.LEFT,
         [Direction.ITEM_RIGHT]: Vector2.RIGHT,
     };
+    
     update(){
         if(this.isMoving()){this.updatePosition();}
+    }
+    setReadyItem(item_obj:object){
+        this.item_thrown = item_obj["thrown"];
+        this.item_ground = item_obj["ground"];
     }
     checkMovement(direction: Direction,playerPosition:Phaser.Math.Vector2,playerTilePosition:Phaser.Math.Vector2){
         if(this.isMoving()) {
@@ -90,9 +95,12 @@ export class ItemMovements{
         this.item.setPosition(newPlayerPos);
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         const targetStr = (this.tileSizePixelsWalked / GameScene.TILE_SIZE);
+        console.log(targetStr);
         if(targetStr.toString().length === 1){
             this.item.setTilePos(this.item.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
+            console.log(this.item.getTilePos());
             if(this.hasBlockingWildPokemon()){
+                
                 return true;
             }
         }
@@ -102,7 +110,7 @@ export class ItemMovements{
         return this.movementDirection != Direction.NONE;
     }
     private startMoving(direction:Direction){
-        this.itemSprite = this.imageManagement.createItemSprite(this.itemCode);
+        this.itemSprite = this.imageManagement.createItemSprite(this.item_thrown);
         this.item = new Item(this.itemSprite,this.playerTilePosition);
         this.item.setPosition(this.playerPosition);
         this.movementDirection = direction;

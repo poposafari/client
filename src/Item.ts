@@ -14,7 +14,7 @@ export const enum ITEM_CODE{
   MASTER_BALL_IMAGE = "item_3_image",
   MASTER_BALL_THROWN = "item_3_thrown",
   MASTER_BALL_GROUND = "item_3_ground",
-} 
+}
 
 export class Item extends GridObject{
   constructor(
