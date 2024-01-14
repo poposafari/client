@@ -127,9 +127,10 @@ export class WildPokemonMovements{
     checkMovement(direction: Direction){
         if(this.isMoving()) {return;}
         if(this.isBlockingDirection(direction)){
+            
             this.stopMoving();
         }
-        else {this.startMoving(direction)}
+        else{this.startMoving(direction)}
     }
     private startMoving(direction:Direction){
         this.wildPokemonMovementDirection = direction;

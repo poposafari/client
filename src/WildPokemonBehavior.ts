@@ -24,8 +24,12 @@ export class WildPokemonBehavior{
     }
     update(){
         for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
-            if(this.wildPokemonList[i].getMovementFinish()){
+            if(this.wildPokemonList[i].getMovementFinish() && this.wildPokemonList[i].getStatus() === 1){
+                this.wildPokemonList[i].setHidePokemon(false);
                 this.wildPokemonList[i].setRestTime();
+            }
+            if(this.wildPokemonList[i].getStatus() === 2){
+                this.wildPokemonList[i].setHidePokemon(true);
             }
             this.wildPokemonList[i].updateMovement();
         }
@@ -34,12 +38,12 @@ export class WildPokemonBehavior{
         for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
             const wildPokemonSprite = this.imageManagement.createPokemonSprite('003');
             this.imageManagement.createPokemonSpriteAnimation('003');
-            const wildPokemon = new Pokemon(wildPokemonSprite,new Phaser.Math.Vector2(10,10));
+            const wildPokemon = new Pokemon(wildPokemonSprite,new Phaser.Math.Vector2(Phaser.Math.Between(1,10),Phaser.Math.Between(1,10)));
             const wildPokemonMovement = new WildPokemonMovements(i,wildPokemon,this.wildPokemonList,this.imageManagement.map,this.player);
             this.wildPokemonList.push(new WildPokemon(
                 wildPokemon,
                 wildPokemonMovement,
-                this.phaserTime.addEvent({ delay: Phaser.Math.Between(1000, 8000), callback: null,loop: true }),
+                this.phaserTime.addEvent({ delay: 1000, callback: null,loop: true }),
                 WILDPOKEMON_STATUS.MOVEMENT
             ));
         }

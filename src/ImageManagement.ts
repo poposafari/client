@@ -301,7 +301,7 @@ export class ImageManagement{
     }
     createItemSprite(index:string){
         this.itemSprite = this.createSprite(0,0,`${index}`);
-        this.itemSprite.setDepth(1);
+        this.itemSprite.setDepth(0);
         this.itemSprite.visible = true;
         return this.itemSprite;
     }

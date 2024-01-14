@@ -7,4 +7,7 @@ export class Pokemon extends GridObject{
   ){
     super(sprite,tilePos);
   }
+  setVisible(type:boolean){
+    super.setHide(type);
+  }
 }

@@ -42,5 +42,9 @@ export class GridObject {
   }
   startAnimation(direction: Direction){
     this.sprite.anims.play(direction);
-  }    
+  }
+  setHide(type: boolean){
+    if(type){this.sprite.setVisible(false)}
+    else{this.sprite.setVisible(true)}
+  }
 }

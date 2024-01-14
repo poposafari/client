@@ -24,6 +24,9 @@ export class WildPokemon{
     getStatus(){
         return this.status;
     }
+    setHidePokemon(type: boolean){
+        this.pokemon.setVisible(type);
+    }
     setStatus(status: WILDPOKEMON_STATUS){
         this.status = status;
     }
@@ -33,12 +36,18 @@ export class WildPokemon{
     setRestTime(){
         this.timeEvent.delay = this.delayList[Math.floor(Math.random() * this.delayList.length)];
         this.timeEvent.callback = this.onEvent.bind(this);
+        this.timeEvent.paused = false; 
     }
     getTilePos(){
         return this.pokemon.getTilePos();
     }
     private onEvent()
     {
-        this.wildPokemonMovement.checkMovement(MOVEMENT_STATUS[Math.floor(Math.random() * 4)]);
+        if(this.getStatus() === 1){
+            this.wildPokemonMovement.checkMovement(MOVEMENT_STATUS[Math.floor(Math.random() * 4)]);
+        }
+        else{
+            this.timeEvent.paused = true;
+        }
     }
 }
