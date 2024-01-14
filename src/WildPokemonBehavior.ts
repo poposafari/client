@@ -36,8 +36,8 @@ export class WildPokemonBehavior{
     }
     private generateWildPokemon(){
         for(let i=0;i<GameScene.MAX_WILDPOKEMON;i++){
-            const wildPokemonSprite = this.imageManagement.createPokemonSprite('003');
-            this.imageManagement.createPokemonSpriteAnimation('003');
+            const wildPokemonSprite = this.imageManagement.createPokemonSprite('007');
+            this.imageManagement.createPokemonSpriteAnimation('007');
             const wildPokemon = new Pokemon(wildPokemonSprite,new Phaser.Math.Vector2(Phaser.Math.Between(1,10),Phaser.Math.Between(1,10)));
             const wildPokemonMovement = new WildPokemonMovements(i,wildPokemon,this.wildPokemonList,this.imageManagement.map,this.player);
             this.wildPokemonList.push(new WildPokemon(

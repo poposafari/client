@@ -83,7 +83,7 @@ export class ItemMovements{
     }
     private hasBlockingWildPokemon():boolean{
         for(let i =0;i<GameScene.MAX_WILDPOKEMON;i++){
-            if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos())){
+            if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos()) && this.wildPokemonList[i].getStatus() === 1){
                 this.isMovementFinish = true;
                 this.throwItemCount++;
                 this.lastMovementDirection = this.movementDirection;
