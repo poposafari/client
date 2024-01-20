@@ -5,6 +5,7 @@ import { Player } from "./Player";
 import { PlayerBehavior } from "./PlayerBehavior";
 import { WildPokemonBehavior } from "./WildPokemonBehavior";
 import { WildPokemon } from "./WildPokemon";
+import {io} from 'socket.io-client';
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT =600;
@@ -46,6 +47,10 @@ export class GameScene extends Phaser.Scene {
     this.keyControl = new KeyControl(this.input,this.playerBehavior);
     this.playerBehavior.create();
     this.wildPokemonBehavior.create();
+
+    const socket = io('http://localhost:8080');
+    socket.emit('test',this.player.getPosition());
+
   }
   public update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
     this.keyControl.update();

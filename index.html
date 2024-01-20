@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,4 +12,74 @@
   <body>
     <script src="app.js"></script>
   </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    input {
+      margin-bottom: 10px;
+    }
+
+    .confirm-btn {
+      margin-top: -10px; /* 아이디, 비밀번호 입력란 아래로 위치 조정 */
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+  </style>
+  <title>Signup Form</title>
+</head>
+<body>
+  <div class="container">
+    <form>
+      <input type="text" placeholder="아이디">
+      <br>
+      <input type="password" placeholder="비밀번호">
+      <br>
+      <button class="button" type="button" onclick="login()">LOGIN</button>
+      <br>
+      <button type="button" onclick="redirectToSignup()">Sign Up</button>
+    </form>
+  </div>
+
+  <script>
+    function redirectToSignup() {
+      fetch('http://localhost:8000/account/signup/', {
+        method: 'GET',
+        // You can include additional headers or options here if needed
+      })
+      .then(response => {
+        // Handle the response if necessary
+        console.log('GET request sent successfully');
+      })
+      .catch(error => {
+        // Handle errors here
+        console.error('Error sending GET request:', error);
+      });
+    }
+  </script>
+</body>
 </html>
