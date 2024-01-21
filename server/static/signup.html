@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    input, select {
+      margin-bottom: 10px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <title>회원가입 폼</title>
+</head>
+<body>
+  <div class="container">
+    <form id="signupForm">
+      <input type="email" placeholder="이메일 입력" required>
+      <br>
+      <input type="password" id="password" placeholder="비밀번호 입력" oninput="checkPassword()" required>
+      <br>
+      <span id="passwordError" style="color: red;"></span>
+      <br>
+      <input type="text" placeholder="닉네임 입력" pattern="[A-Za-z가-힣]{1,10}" required>
+      <br>
+      <label for="gender">성별 선택:</label>
+      <br>
+      <input type="radio" name="gender" value="남자" onclick="updateSubGenderOptions()"> 남자
+      <input type="radio" name="gender" value="여자" onclick="updateSubGenderOptions()"> 여자
+      <br>
+      <label for="subGender">세부 선택:</label>
+      <br>
+      <select id="subGender" name="subGender" disabled>
+        <!-- Options will be dynamically added here -->
+      </select>
+      <br>
+      <button type="button" onclick="signup()">Sign Up</button>
+    </form>
+  </div>
+
+  <script>
+    let checkValue = false;
+    function checkPassword() {
+      const passwordInput = document.getElementById('password');
+      const passwordError = document.getElementById('passwordError');
+      const password = passwordInput.value;
+      const hasMinimumLength = password.length >= 8;
+      const hasRequiredCharacters = /[A-Za-z]/.test(password) && /\d/.test(password) && /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+      if ((hasMinimumLength && hasRequiredCharacters) || password.length >= 10) {
+        checkValue = true;
+        passwordError.textContent = '';
+      } else {
+        checkValue = true;
+        passwordError.textContent = '비밀번호는 조건에 맞게 입력해주세요.';
+      }
+    }
+
+    function updateSubGenderOptions() {
+      const gender = document.querySelector('input[name="gender"]:checked');
+      const subGenderSelect = document.getElementById('subGender');
+
+      // Reset options
+      subGenderSelect.innerHTML = '';
+
+      if (gender) {
+        const genderOptions = {
+          '남자': ['남자1', '남자2'],
+          '여자': ['여자1', '여자2']
+        };
+
+        genderOptions[gender.value].forEach(optionValue => {
+          const option = document.createElement('option');
+          option.value = optionValue;
+          option.textContent = optionValue;
+          subGenderSelect.appendChild(option);
+        });
+
+        // Enable the dropdown
+        subGenderSelect.disabled = false;
+      } else {
+        // Disable the dropdown if no gender is selected
+        subGenderSelect.disabled = true;
+      }
+    }
+
+    function signup() {
+  // Get values from user input
+  const id = document.querySelector('input[type="email"]').value;
+  const pw = document.getElementById('password').value;
+  const nickname = document.querySelector('input[type="text"]').value;
+  const playerTypeSelect = document.getElementById('subGender');
+  const playerType = playerTypeSelect.options[playerTypeSelect.selectedIndex].value;
+
+  // Check if the password meets the criteria
+  const hasMinimumLength = pw.length >= 8;
+  const hasRequiredCharacters = /[A-Za-z]/.test(pw) && /\d/.test(pw) && /[!@#$%^&*(),.?":{}|<>]/.test(pw);
+  const isValidPassword = (hasMinimumLength && hasRequiredCharacters) || pw.length >= 10;
+
+  if (isValidPassword) {
+    // Perform the fetch only if the password is valid
+    fetch('http://localhost:8080/account/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pw,
+        nickname: nickname,
+        type: playerType,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => console.log(result));
+  } else {
+    // Handle invalid password
+    alert('비밀번호는 조건에 맞게 입력해주세요.');
+  }
+}
+
+  </script>
+</body>
+</html>
