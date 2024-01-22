@@ -6,6 +6,7 @@
   <style>
     body {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
@@ -14,48 +15,55 @@
 
     .container {
       text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      margin-top: 0;
     }
 
     input {
-      margin-bottom: 10px;
+      margin: 5px;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .confirm-btn {
-      margin-top: -10px; /* 아이디, 비밀번호 입력란 아래로 위치 조정 */
+    a {
+      text-decoration: none;
+      color: #4caf50;
+      margin: 5px;
     }
 
     button {
+      margin: 5px;
+      padding: 10px;
+      width: 100%;
       background-color: #4caf50;
       color: white;
-      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      margin-bottom: 10px;
     }
   </style>
-  <title>Signup Form</title>
+  <title>PoPoSeop</title>
 </head>
 <body>
   <div class="container">
-    <form>
-      <input type="text" placeholder="아이디">
-      <br>
-      <input type="password" placeholder="비밀번호">
-      <br>
-      <button class="button" type="button" onclick="login()">LOGIN</button>
-      <br>
-      <button type="button" onclick="redirectToSignup()">Sign Up</button>
-    </form>
+    <h1>PoPoSeop</h1>
+    <input type="text" placeholder="아이디 입력" required>
+    <input type="password" placeholder="비밀번호 입력" required>
+    <br>
+    <a href="#">아이디 찾기</a>
+    <a href="#">비밀번호 찾기</a>
+    <br>
+    <button type="submit" onclick="redirectToSignin()">로그인</button>
+    <button type="button" onclick="redirectToSignup()">회원가입</button>
   </div>
 
   <script>
     function redirectToSignup() {
-        window.location.href = '/account/signup/';
-    }
-    function signup() {
-      // 여기에 실제 회원가입 로직을 추가하면 됩니다.
-      alert('회원가입이 완료되었습니다.');
+      window.location.href = '/account/signup/';
     }
   </script>
 </body>

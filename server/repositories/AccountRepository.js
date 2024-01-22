@@ -1,25 +1,32 @@
 const database = require('../config/database');
 
-const defaultPetId='000';
-const defaultTitle='nu';
-const defaultMoney=10000;
-const defaultPokeball=30;
-const defaultGreatball=0;
-const defaultUltraball=0;
-const defaultMasterball=0;
-const defaultTilePosX=1;
-const defaultTilePosY=1;
-
-function signUpRepository(email,nickname,password,type){
-    const values = [email,nickname,defaultPetId,password,type,defaultTitle,defaultMoney,defaultPokeball,defaultGreatball,defaultUltraball,defaultMasterball,defaultTilePosX,defaultTilePosY];
-    const sql = `insert into user 
-    (email,nickname,pet_id,password,type,title,money,item_pokeball,item_greatball,item_ultraball,item_masterball,tilepos_x,tilepos_y) values 
-    (?,?,?,?,?,?,?,?,?,?,?,?,?)`
-    database.query(sql,values,function(err,result){
-        if(err) throw err;
-        console.log(result+' insert success!');
+function createAccountModel(username, password, email, is_game_account) {
+    return new Promise((resolve, reject) => {
+      const values = [username, password, email, is_game_account];
+      const sql = `
+        INSERT INTO user_account
+        (username, password, email, is_game_account)
+        VALUES (?, ?, ?, ?)
+      `;
+  
+      database.query(sql, values, (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
     });
-    return;
 }
 
-exports.signUpRepository = signUpRepository;
+function checkExistingAccountModel(username){
+    const values = [username];
+    const sql = 'select username from user_account where id = (?)';
+    database.query(sql,values,(err,result)=>{
+        if(result.length > 0) {console.log('이미 존재하는 아이디입니다.')}
+        if(err) console.log(err);
+    });
+}
+
+exports.createAccountModel = createAccountModel;
+exports.checkExistingAccountModel = checkExistingAccountModel;

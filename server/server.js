@@ -2,13 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
-const bodyParser = require('body-parser')
-const database = require('./config/database')
+const bodyParser = require('body-parser');
+const database = require('./config/database');
+
 require("dotenv").config(); // 모듈 불러오기
 
 const app = express();
 app.use(bodyParser.json())
-app.set('port',process.env.PORT || 8080);
+app.set('port',process.env.PORT || 8081);
 const server = createServer(app);
 database.connect();
 
