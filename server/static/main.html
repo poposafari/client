@@ -29,6 +29,12 @@
       box-sizing: border-box;
     }
 
+    .error {
+      color: red;
+      margin: 5px;
+      font-size: 12px;
+    }
+
     a {
       text-decoration: none;
       color: #4caf50;
@@ -51,19 +57,63 @@
 <body>
   <div class="container">
     <h1>PoPoSeop</h1>
-    <input type="text" placeholder="아이디 입력" required>
-    <input type="password" placeholder="비밀번호 입력" required>
+    <input type="text" id="username" placeholder="아이디 입력" required>
+    <input type="password" id="password" placeholder="비밀번호 입력" required>
+    <div id="Error" class="error"></div>
+    <button type="submit" onclick="redirectToSignin()">로그인</button>
     <br>
     <a href="#">아이디 찾기</a>
     <a href="#">비밀번호 찾기</a>
-    <br>
-    <button type="submit" onclick="redirectToSignin()">로그인</button>
-    <button type="button" onclick="redirectToSignup()">회원가입</button>
+    <a href="#" onclick="redirectToSignup()">회원가입</a>
   </div>
 
   <script>
     function redirectToSignup() {
       window.location.href = '/account/signup/';
+    }
+
+    function redirectToSignin() {
+      // Reset error messages
+      document.getElementById('Error').textContent = '';
+
+      // Validate username
+      const username = document.getElementById('username').value;
+      if (!username) {
+        document.getElementById('Error').textContent = '아이디를 입력해 주세요.';
+        return;
+      }
+
+      // Validate password
+      const password = document.getElementById('password').value;
+      if (!password) {
+        document.getElementById('Error').textContent = '비밀번호를 입력해 주세요.';
+        return;
+      }
+      // If all validations pass, send POST request
+      const formData = {
+        username: username,
+        password: password,
+      };
+
+      fetch('http://localhost:8081/account/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(response => {
+        if(response.ok){
+          console.log(response);
+          alert("로그인 성공!");
+        }
+        else if(response.status === 404){
+          document.getElementById('Error').textContent = '아이디 또는 비밀번호를 잘못 입력했습니다.';
+        }
+      })
+
+
+      // Implement the logic for redirecting to the login page
     }
   </script>
 </body>

@@ -45,6 +45,15 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    #loginText {
+      margin-top: 10px;
+    }
+
+    #loginLink {
+      color: #4caf50;
+      text-decoration: none;
+    }
   </style>
   <title>회원가입</title>
 </head>
@@ -60,6 +69,7 @@
     <input type="email" id="email" placeholder="이메일주소(비밀번호 찾기 등 본인 확인용)" required>
     <div id="emailError" class="error"></div>
     <button type="button" onclick="validateForm()">회원가입</button>
+    <div id="loginText">이미 계정이 있으세요? <a id="loginLink" href="/">로그인</a></div>
   </div>
 
   <script>
@@ -118,14 +128,18 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        redirect: 'follow'
       })
-      .then(response => response.json())
-      .then(data => {
-        alert('회원가입이 완료되었습니다.');
-        console.log(data);
+      .then(response => {
+        if(response.ok){
+          console.log(response);
+          window.location.href = "/account/signup-success/";
+        }
+        else if(response.status === 409){
+          document.getElementById('usernameError').textContent = '이미 존재하는 아이디입니다.';
+        }
       })
-      .catch(error => console.error('Error:', error));
     }
   </script>
 </body>

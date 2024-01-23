@@ -19,14 +19,24 @@ function createAccountModel(username, password, email, is_game_account) {
     });
 }
 
-function checkExistingAccountModel(username){
+function getAccountDataModel(username){
+  return new Promise((resolve, reject) => {
     const values = [username];
-    const sql = 'select username from user_account where id = (?)';
-    database.query(sql,values,(err,result)=>{
-        if(result.length > 0) {console.log('이미 존재하는 아이디입니다.')}
-        if(err) console.log(err);
+    const sql = `
+      SELECT username, password
+      FROM user_account
+      WHERE username = (?)
+    `;
+    database.query(sql, values, (error, results) => {
+      if(results.length > 0){
+        resolve(results);
+      }
+      else{
+        reject({message:'not user'});
+      }
     });
+  });
 }
 
 exports.createAccountModel = createAccountModel;
-exports.checkExistingAccountModel = checkExistingAccountModel;
+exports.getAccountDataModel = getAccountDataModel;

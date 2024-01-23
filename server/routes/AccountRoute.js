@@ -1,21 +1,40 @@
 const express = require('express');
 const router = express.Router();
 const { join } = require('node:path');
-const {createAccount} = require('../services/AccountService');
+const {createAccount, signIn} = require('../services/AccountService');
 
 router.get('/signup',(req,res)=>{
     res.sendFile(join(__dirname, '../static/signup.html'));
 });
 
+router.get('/signup-success',(req,res)=>{
+    res.sendFile(join(__dirname, '../static/signup-success.html'));
+});
+
 router.post('/signup', async (req, res) => {
     const dto = req.body;
     createAccount(dto)
-    .then((result) => {
-      res.status(200).json({ message: 'Account created successfully', result });
+    .then(() => {
+        res.status(200).json({ success: 'create account' });
     })
     .catch((error) => {
       res.status(409).json({ error: error.message });
     });
 });
+
+router.post('/signin', async (req, res) => {
+    const dto = req.body;
+    try {
+        const success = await signIn(dto);
+        if (success) {
+            res.status(200).json({ success: 'find account' });
+        } else {
+            res.status(404).json({ error: 'Invalid credentials' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;
