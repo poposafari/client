@@ -8,7 +8,6 @@ const database = require('./config/database');
 const {verifyToken} = require('./middleware/authMiddleware');
 
 require("dotenv").config();
-console.log(process.env.PORT);
 
 const app = express();
 app.use(bodyParser.json());
@@ -24,7 +23,7 @@ app.use(cors({
 const AccountRouter = require('./routes/AccountRoute');
 
 app.get('/', verifyToken, (req, res) => {
-  res.sendFile(join(__dirname, './static/main.html'));
+  res.sendFile(join(__dirname, '../index.html'));
 });
 
 app.use('/account',AccountRouter);

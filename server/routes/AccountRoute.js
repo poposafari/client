@@ -30,7 +30,6 @@ router.post('/signin', async (req, res) => {
     const dto = req.body;
     try {
         const result = await signIn(dto);
-        console.log(result);
         if (result.success) {
             res.status(200).cookie('Authorization',result.token,{httpOnly:true}).send();
         } else {

@@ -4,9 +4,15 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    app: "./src/Main.ts",
+    app: "./client/src/Main.ts",
   },
-
+  output: {
+    filename: "app.js",
+    path: path.resolve(__dirname, "dist")
+  },
+  plugins:[
+    new webpack.optimize.UglifyJsPlugin() //번들링 될때 소스코드를 난독화 시켜서 번들링 하기 때문에 상용화를 할때는 해당 플러그인을 통해서 번들링 후 배포.
+  ],
   module: {
     rules: [
       {
@@ -21,10 +27,6 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"]
   },
 
-  output: {
-    filename: "app.js",
-    path: path.resolve(__dirname, "dist")
-  },
 
   mode: "development",
 
