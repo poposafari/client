@@ -1,5 +1,7 @@
 const {createAccountModel, getAccountDataModel} = require('../models/AccountModel');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+require("dotenv").config();
 
 async function createAccount(dto) {
     const hashedPassword = await setPasswordBycrypt(dto.password);
@@ -21,9 +23,10 @@ async function signIn(dto) {
     try {
       const result = await getAccountDataModel(dto.username);
       await validUserData(result[0].password, dto.password);
-      return true;
+      const token = jwt.sign({ username: dto.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+      return {success:true,token};
     } catch (error) {
-      return false;
+      return {success:false,error:error.message};
     }
 }
   
@@ -32,9 +35,10 @@ async function validUserData(hashedPassword, plainPassword) {
         bcrypt.compare(plainPassword, hashedPassword)
         .then(res => {
             if (res) {
-            resolve();
-            } else {
-            reject(new Error('Invalid'));
+                resolve();
+            } 
+            else {
+                reject(new Error('Invalid'));
             }
         })
         .catch(err => {

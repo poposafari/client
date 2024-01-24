@@ -7,6 +7,10 @@ router.get('/signup',(req,res)=>{
     res.sendFile(join(__dirname, '../static/signup.html'));
 });
 
+router.get('/signin',(req,res)=>{
+    res.sendFile(join(__dirname,'../static/signin.html'));
+});
+
 router.get('/signup-success',(req,res)=>{
     res.sendFile(join(__dirname, '../static/signup-success.html'));
 });
@@ -25,9 +29,10 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
     const dto = req.body;
     try {
-        const success = await signIn(dto);
-        if (success) {
-            res.status(200).json({ success: 'find account' });
+        const result = await signIn(dto);
+        console.log(result);
+        if (result.success) {
+            res.status(200).cookie('Authorization',result.token,{httpOnly:true}).send();
         } else {
             res.status(404).json({ error: 'Invalid credentials' });
         }
@@ -35,6 +40,5 @@ router.post('/signin', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
 
 module.exports = router;

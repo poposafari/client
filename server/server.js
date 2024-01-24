@@ -3,12 +3,16 @@ const cors = require('cors');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const database = require('./config/database');
+const {verifyToken} = require('./middleware/authMiddleware');
 
-require("dotenv").config(); // 모듈 불러오기
+require("dotenv").config();
+console.log(process.env.PORT);
 
 const app = express();
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.set('port',process.env.PORT || 8081);
 const server = createServer(app);
 database.connect();
@@ -19,7 +23,7 @@ app.use(cors({
 
 const AccountRouter = require('./routes/AccountRoute');
 
-app.get('/', (req, res) => {
+app.get('/', verifyToken, (req, res) => {
   res.sendFile(join(__dirname, './static/main.html'));
 });
 
