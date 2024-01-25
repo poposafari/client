@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import { GameScene } from "./Main";
+import {OverworldScene} from "./OverworldScene";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
@@ -57,7 +57,7 @@ export class WildPokemonMovements{
         this.pixelsToWalkThisUpdate = this.POKEMON_MOVEMENT_SPEED;
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE;
+        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= OverworldScene.TILE_SIZE;
     }
     private moveSprite(pixelsToWalkThisUpdate:number){
         const wildPokemonDirectionVector = this.movementDirectionVectors[this.wildPokemonMovementDirection].clone();
@@ -66,7 +66,7 @@ export class WildPokemonMovements{
         this.pokemon.setPosition(newWildPokemonPos);
 
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
-        this.tileSizePixelsWalked %= GameScene.TILE_SIZE;
+        this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;
     }
     private updatePosition(){
         this.setMovementSpeed();
@@ -89,14 +89,14 @@ export class WildPokemonMovements{
         return this.wildPokemonMovementDirection != Direction.NONE;
     }
     private hasBlockingPlayer(direction: Direction):boolean{
-        for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
+        for(let i =0; i<OverworldScene.MAX_WILDPOKEMON;i++){
             if(this.tilePosInDirection(direction).equals(this.player.getTilePos())){
                 return true;
             }
         }
     }
     private hasBlockingWildPokemon(direction: Direction):boolean{
-        for(let i =0; i<GameScene.MAX_WILDPOKEMON;i++){
+        for(let i =0; i<OverworldScene.MAX_WILDPOKEMON;i++){
             if(i === this.index) continue;
             if(this.tilePosInDirection(direction).equals(this.wildPokemonList[i].getTilePos())){
                 return true;

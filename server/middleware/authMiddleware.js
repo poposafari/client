@@ -10,8 +10,10 @@ function verifyToken(req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         req.userId = decoded.userId;
+        req.result = { auth: true, userId: decoded.userId };
         next();
     } catch (error) {
+        
         res.status(401).json({ error: 'Invalid token' });
     }
 };

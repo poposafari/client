@@ -4,15 +4,15 @@ const { join } = require('node:path');
 const {createAccount, signIn} = require('../services/AccountService');
 
 router.get('/signup',(req,res)=>{
-    res.sendFile(join(__dirname, '../static/signup.html'));
+    res.sendFile(join(__dirname, '../../client/public/html/signup.html'));
 });
 
 router.get('/signin',(req,res)=>{
-    res.sendFile(join(__dirname,'../static/signin.html'));
+    res.sendFile(join(__dirname,'../../client/public/html/signin.html'));
 });
 
 router.get('/signup-success',(req,res)=>{
-    res.sendFile(join(__dirname, '../static/signup-success.html'));
+    res.sendFile(join(__dirname, '../../client/public/html/signup-success.html'));
 });
 
 router.post('/signup', async (req, res) => {

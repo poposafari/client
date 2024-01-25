@@ -1,6 +1,6 @@
 import { Direction } from "./Direction";
 import { ITEM_CODE, Item } from "./Item";
-import { GameScene } from "./Main";
+import {OverworldScene} from "./OverworldScene";
 import { Pokemon } from "./Pokemon";
 import { ImageManagement } from "./ImageManagement";
 import { WildPokemon } from "./WildPokemon";
@@ -79,10 +79,10 @@ export class ItemMovements{
         this.movementDirection = Direction.NONE;
     }
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
-        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= GameScene.TILE_SIZE*this.THROW_RANGE;
+        return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= OverworldScene.TILE_SIZE*this.THROW_RANGE;
     }
     private hasBlockingWildPokemon():boolean{
-        for(let i =0;i<GameScene.MAX_WILDPOKEMON;i++){
+        for(let i =0;i<OverworldScene.MAX_WILDPOKEMON;i++){
             if(this.item.getTilePos().equals(this.wildPokemonList[i].getTilePos()) && this.wildPokemonList[i].getStatus() === 1){
                 this.isMovementFinish = true;
                 this.throwItemCount++;
@@ -105,7 +105,7 @@ export class ItemMovements{
         const newPlayerPos = this.item.getPosition().add(playerMovementDistance);
         this.item.setPosition(newPlayerPos);
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
-        const targetStr = (this.tileSizePixelsWalked / GameScene.TILE_SIZE);
+        const targetStr = (this.tileSizePixelsWalked / OverworldScene.TILE_SIZE);
         if(targetStr.toString().length === 1){
             this.item.setTilePos(this.item.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
             console.log(this.item.getTilePos());
@@ -114,7 +114,7 @@ export class ItemMovements{
                 return true;
             }
         }
-        this.tileSizePixelsWalked %= (GameScene.TILE_SIZE*this.THROW_RANGE);
+        this.tileSizePixelsWalked %= (OverworldScene.TILE_SIZE*this.THROW_RANGE);
     }
     private isMoving(){
         return this.movementDirection != Direction.NONE;

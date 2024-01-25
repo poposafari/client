@@ -1,62 +1,38 @@
-import * as Phaser from "phaser";
-import { ImageManagement } from "./ImageManagement";
-import { KeyControl } from "./KeyControl"
-import { Player } from "./Player";
-import { PlayerBehavior } from "./PlayerBehavior";
-import { WildPokemonBehavior } from "./WildPokemonBehavior";
-import { WildPokemon } from "./WildPokemon";
-import {io} from 'socket.io-client';
+import * as Phaser from 'phaser';
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT =600;
 
-const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
-  active: false,
-  visible: false,
-  key: "Game",
-};
-
-export class GameScene extends Phaser.Scene {
-  constructor(){ super(sceneConfig) }
-
-  static readonly TILE_SIZE = 32;
-  static readonly MAX_WILDPOKEMON = 4;
-
-  private imageManagement: ImageManagement;
-  private keyControl: KeyControl;
-
-  private player: Player;
-  private playerBehavior: PlayerBehavior;
-  private wildPokemonBehavior: WildPokemonBehavior;
-  private wildPokemonList: Array<WildPokemon>=[];
-  
-  public preload(){
-    this.imageManagement = new ImageManagement(this);
-    this.imageManagement.loadMapImage();
-    this.imageManagement.loadPlayerImage();
-    this.imageManagement.loadItemImage();
-    this.imageManagement.loadPokemonImage();
+class NicknameScene extends Phaser.Scene{
+  constructor(){
+      super({key: 'NicknameScene'});
   }
-  public create(){
-    this.imageManagement.createMap();
-    this.imageManagement.createPlayer('player_nickname');
-
-    this.player = new Player(this.imageManagement.playerSprite,new Phaser.Math.Vector2(4, 3));
-    this.playerBehavior = new PlayerBehavior(this.player,this.imageManagement,this.wildPokemonList);
-    this.wildPokemonBehavior = new WildPokemonBehavior(this.player,this.imageManagement,this.wildPokemonList,this.time);
-    this.keyControl = new KeyControl(this.input,this.playerBehavior);
-    this.playerBehavior.create();
-    this.wildPokemonBehavior.create();
-
-    const socket = io('http://localhost:8080');
-    socket.emit('test',this.player.getPosition());
-
+  preload(){
+      console.log('??');
+      this.load.html('nicknameform','../client/public/html/nicknameform.html');
   }
-  public update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
-    this.keyControl.update();
-    this.wildPokemonBehavior.update();
-    this.playerBehavior.update();
+  create(){
+      const element = this.add.dom(400, 600).createFromCache('nicknameform');
+      element.addListener('click');
+      element.on('click',function(event){
+          if (event.target.name === 'playButton')
+          {
+              const inputText = this.getChildByName('nameField');
+              console.log(inputText.value);
+          }
+      });
   }
+}
+
+class Main extends Phaser.Scene{
+    constructor(){super({key:'Main',active: true})}
+    preload(){
+      console.log('!');
+      this.scene.add('NicknameScene',gameConfig);
+    }
+    create(){
+      this.scene.start('NicknameScene');
+    }
 }
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -65,15 +41,18 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     antialias: false,
   },
   type: Phaser.AUTO,
-  scene: GameScene,
+  scene: [Main,NicknameScene],
   scale: {
     width: CANVAS_WIDTH,
     height: CANVAS_HEIGHT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  parent: "game",
-  backgroundColor: "#48C4F8",
-  pixelArt:true
+  dom: {
+    createContainer: true
+  },
+  backgroundColor: '#4488aa',
+  pixelArt:true,
 };
 
-export const game = new Phaser.Game(gameConfig);
+const game = new Phaser.Game(gameConfig);
+

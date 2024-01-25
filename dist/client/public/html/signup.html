@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+      width: 380px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    input {
+      margin: 5px;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .error {
+      color: red;
+      margin: 5px;
+      font-size: 12px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #loginText {
+      margin-top: 10px;
+    }
+
+    #loginLink {
+      color: #4caf50;
+      text-decoration: none;
+    }
+  </style>
+  <title>회원가입</title>
+</head>
+<body>
+  <div class="container">
+    <h1>회원가입</h1>
+    <input type="text" id="username" placeholder="아이디 입력" required>
+    <div id="usernameError" class="error"></div>
+    <input type="password" id="password" placeholder="비밀번호 입력" required>
+    <div id="passwordError" class="error"></div>
+    <input type="password" id="confirmPassword" placeholder="비밀번호 다시 입력" required>
+    <div id="confirmPasswordError" class="error"></div>
+    <input type="email" id="email" placeholder="이메일주소(비밀번호 찾기 등 본인 확인용)" required>
+    <div id="emailError" class="error"></div>
+    <button type="button" onclick="validateForm()">회원가입</button>
+    <div id="loginText">이미 계정이 있으세요? <a id="loginLink" href="/">로그인</a></div>
+  </div>
+
+  <script>
+    function validateForm() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const email = document.getElementById('email').value;
+
+      // Reset error messages
+      document.getElementById('usernameError').textContent = '';
+      document.getElementById('passwordError').textContent = '';
+      document.getElementById('confirmPasswordError').textContent = '';
+      document.getElementById('emailError').textContent = '';
+
+      // Validate username
+      const usernameRegex = /^[a-z0-9_-]{5,20}$/;
+      if (!usernameRegex.test(username)) {
+        document.getElementById('usernameError').textContent = '아이디는 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.';
+      }
+
+      // Validate password
+      const passwordRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{8,16}$/;
+      if (!passwordRegex.test(password)) {
+        document.getElementById('passwordError').textContent = '비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용 가능합니다.';
+      }
+
+      // Validate password match
+      if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = '비밀번호가 일치하지 않습니다.';
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        document.getElementById('emailError').textContent = '올바른 양식의 이메일을 입력해야 합니다.';
+      }
+
+      // Check if there are any error messages
+      const errorMessages = document.querySelectorAll('.error');
+      for (const errorMessage of errorMessages) {
+        if (errorMessage.textContent !== '') {
+          return;
+        }
+      }
+
+      // If all validations pass, send POST request
+      const formData = {
+        username: username,
+        password: password,
+        email: email
+      };
+
+      fetch('http://localhost:8081/account/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+        redirect: 'follow'
+      })
+      .then(response => {
+        if(response.ok){
+          console.log(response);
+          window.location.href = "/account/signup-success/";
+        }
+        else if(response.status === 409){
+          document.getElementById('usernameError').textContent = '이미 존재하는 아이디입니다.';
+        }
+      })
+    }
+  </script>
+</body>
+</html>

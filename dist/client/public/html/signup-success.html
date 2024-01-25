@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #successMessage {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    #redirectButton {
+      padding: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <title>회원가입 성공</title>
+</head>
+<body>
+  <div id="successMessage">회원가입 성공</div>
+  <button id="redirectButton" onclick="redirectToLoginPage()">로그인 페이지 이동</button>
+
+  <script>
+    function redirectToLoginPage() {
+      // Redirect to the login page
+      window.location.href = "/";
+    }
+  </script>
+</body>
+</html>
