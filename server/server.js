@@ -8,6 +8,7 @@ const database = require('./config/database');
 const {verifyToken} = require('./middleware/authMiddleware');
 const AccountRouter = require('./routes/AccountRoute');
 const GameRouter = require('./routes/GameRoute');
+const socketio = require('socket.io');
 require("dotenv").config();
 
 const app = express();
