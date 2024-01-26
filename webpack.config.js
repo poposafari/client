@@ -1,53 +1,49 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  mode:"development",
-  devServer: {
-    static: path.resolve(__dirname, "dist"),
-    https: false,
-  },
-  entry: {
-    app: "./client/src/Main.ts",
-  },
+  entry: './client/Main.ts',
   output: {
-    filename: "bundle.js",
-    publicPath: "./client/public/html/",
-    path: path.resolve(__dirname, "dist")
+    filename: 'bundle.js',
+    //publicPath: "/dist/",
+    path: path.resolve(__dirname, 'dist'),
   },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js"]
-  },
-  devtool: "source-map",
-  watchOptions: {
-    ignored: /node_modules/,
+  mode: 'development',
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'client'),
+    },
+    port: 8080,
+    hot: true,
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/
-      }
-    ]
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   plugins: [
-    new webpack.DefinePlugin({
-      CANVAS_RENDERER: JSON.stringify(true),
-      WEBGL_RENDERER: JSON.stringify(true),
+    new HtmlWebpackPlugin({
+      template: './client/index.html'
     }),
     // new CopyWebpackPlugin({
     //   patterns: [
     //     {
-    //       from: path.resolve(__dirname, "index.html").replace(/\\/g, '/'),
+    //       from: path.resolve(__dirname,"client","index.html").replace(/\\/g, '/'),
     //       to: path.resolve(__dirname, "dist").replace(/\\/g, '/')
     //     },
     //     {
-    //       from: path.resolve(__dirname, "client","public", "**", "*").replace(/\\/g, '/'),
+    //       from: path.resolve(__dirname, "assets", "**", "*").replace(/\\/g, '/'),
     //       to: path.resolve(__dirname, "dist").replace(/\\/g, '/')
     //     }
     //   ]
     // })
   ],
-}
+};

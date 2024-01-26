@@ -105,8 +105,7 @@
       .then(response => {
         if(response.ok){
           alert("로그인 성공!");
-          const token = response.headers.get('Authorization');
-          console.log(token);
+          window.location.href = "/";
         }
         else if(response.status === 404){
           document.getElementById('Error').textContent = '아이디 또는 비밀번호를 잘못 입력했습니다.';
