@@ -29,9 +29,9 @@ export class OverworldScene extends Phaser.Scene {
   }
   public create(){
     this.imageManagement.createMap();
-    this.imageManagement.createPlayer('player_nickname');
+    this.imageManagement.createPlayer('player_movement');
 
-    this.player = new Player(this.imageManagement.playerSprite,new Phaser.Math.Vector2(4, 3));
+    this.player = new Player(this.imageManagement.playerSprite,new Phaser.Math.Vector2(4, 3),this.add.text(0,0,'turt1e18',{fontSize:13,color: '#fff',backgroundColor:'#000000'}));
     this.playerBehavior = new PlayerBehavior(this.player,this.imageManagement,this.wildPokemonList);
     this.wildPokemonBehavior = new WildPokemonBehavior(this.player,this.imageManagement,this.wildPokemonList,this.time);
     this.keyControl = new KeyControl(this.input,this.playerBehavior);

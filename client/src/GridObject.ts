@@ -5,7 +5,7 @@ import {OverworldScene} from "./OverworldScene";
 export class GridObject{
   constructor(
     private sprite: Phaser.GameObjects.Sprite,
-    private tilePos: Phaser.Math.Vector2
+    private tilePos: Phaser.Math.Vector2,
   ) {
     const offsetX = OverworldScene.TILE_SIZE/2;
     const offsetY = OverworldScene.TILE_SIZE;

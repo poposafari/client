@@ -65,6 +65,7 @@ export class PlayerMovements{
         }
         if(this.isMoving()){
             this.updatePosition();
+            this.player.setNicknamePosition(this.player.getPosition());
         }
     }
     private hasBlockingWildPokemon(direction: Direction):boolean{
@@ -124,6 +125,7 @@ export class PlayerMovements{
         else{
             this.isMovementFinish = false;
             this.moveSprite(this.pixelsToWalkThisUpdate);
+            
         }
     }
     private setMovementSpeed(){

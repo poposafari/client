@@ -6,6 +6,7 @@ class Main extends Phaser.Game{
   constructor(){
     super(gameConfig);
     this.scene.add('OverworldScene',OverworldScene);
+    this.scene.start('OverworldScene');
   }
 }
 

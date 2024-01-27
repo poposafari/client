@@ -9,7 +9,7 @@ export class ImageManagement{
     private readonly DEFAULT_DELAY = 0;
     private readonly PLAYER_FRAME_MAX = 23;
     private readonly POKEMON_FRAME_MAX = 15;
-    private playerIndex:string = 'player_nickname';
+    private playerIndex:number = 6;
     private playerPokemonIndex:string = null;
     private itemIndex:string = null;
 
@@ -40,7 +40,7 @@ export class ImageManagement{
         this.phaser.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     }
     loadPlayerImage(){
-        this.phaser.load.atlas(`${this.playerIndex}`,`assets/character/${this.playerIndex}.png`,`assets/character/${this.playerIndex}.json`);
+        this.phaser.load.atlas(`player_movement`,`assets/player/player_${this.playerIndex}_movement.png`,`assets/player/player_movement.json`);
     }
     loadItemImage(){
         for(let i=0;i<4;i++){
@@ -54,8 +54,8 @@ export class ImageManagement{
             console.log(index);
             //this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/${index}.json`);
             //this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/${index}s.json`);
-            this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/001.json`);
-            this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/001.json`);
+            this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
+            this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
         }
     }
     createMap(){
@@ -66,6 +66,7 @@ export class ImageManagement{
     }
     private createPlayerSprite(index: string){
         this.playerSprite = this.createSprite(0,0,`${index}`);
+        this.playerSprite.scale = 2;
         this.playerSprite.setDepth(0);
 
         this.phaser.cameras.main.startFollow(this.playerSprite);
@@ -257,7 +258,7 @@ export class ImageManagement{
     }
     createPokemonSpriteAnimation(index:string){
         this.pokemonFrames = this.phaser.anims.generateFrameNames(index,{
-            prefix:`001-`, //${index}
+            prefix:`size0-`, //${index}
             suffix:"",
             start:0,
             end:this.POKEMON_FRAME_MAX,

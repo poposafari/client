@@ -19,7 +19,7 @@ export const enum ITEM_CODE{
 export class Item extends GridObject{
   constructor(
     sprite: Phaser.GameObjects.Sprite,
-    tilePos: Phaser.Math.Vector2
+    tilePos: Phaser.Math.Vector2,
   ){
     super(sprite,tilePos);
   }
