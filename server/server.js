@@ -19,13 +19,13 @@ const server = createServer(app);
 database.connect();
 
 // 정적 파일 제공 (dist 디렉터리의 index.html 및 bundle.js)
-app.use(express.static(join(__dirname, 'dist')));
+app.use(express.static(join(__dirname,'..','public')));
 
 app.use(cors({
   origin: '*' //모든 요청 승인. 테스트 용도로만 이렇게 놔두도록 하자.
 }));
 app.get('/',verifyToken,(req, res) => {
-    res.status(200).sendFile(join(__dirname, '../client/index.html')); //in game html!!
+    res.status(200).sendFile(join(__dirname,'..','public/index.html')); //in game html!!
 });
 
 app.use('/account',AccountRouter);

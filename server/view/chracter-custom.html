@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Customization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .customization-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 추가: 수직 중앙 정렬 */
+            height: 100%;
+        }
+
+        .character-preview {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center; /* 추가: 수평 중앙 정렬 */
+            margin-top: 20px;
+        }
+
+        .customization-block {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center; /* 추가: 수평 중앙 정렬 */
+            width: 250px;
+            margin-top: 10px;
+        }
+
+        .nickname-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 추가: 수직 중앙 정렬 */
+            margin-top: 10px;
+        }
+
+        .confirm-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .label {
+            border: 1px solid gray;
+            border-radius: 5px;
+            margin-right: 10px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        select {
+            font-size: 16px;
+            height: 40px;
+            width: 200px;
+            text-align-last: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="customization-container">
+        <div class="character-preview">
+            <img src="" alt="Preview 1" class="character-image">
+            <img src="" alt="Preview 2" class="character-image">
+            <img src="" alt="Preview 3" class="character-image">
+        </div>
+        <div class="customization-block">
+            <div class="label"><p>세트</p></div>
+            <select class="customization-dropdown">
+                <option value="1">Boy 1</option>
+                <option value="2">Girl 2</option>
+                <option value="3">Boy 3</option>
+                <option value="4">Girl 4</option>
+                <option value="5">Boy 5</option>
+                <option value="6">Girl 6</option>
+                <option value="7">Boy 7</option>
+                <option value="8">Girl 8</option>
+            </select>
+        </div>
+        <div class="nickname-input">
+            <input type="text" class="nickname" placeholder="Enter nickname">
+            <button class="confirm-button" onclick="confirmCustomization()">확인</button>
+        </div>
+    </div>
+
+    <script>
+    </script>
+</body>
+</html>

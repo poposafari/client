@@ -7,6 +7,7 @@ import { WildPokemonBehavior } from "./WildPokemonBehavior";
 import { WildPokemon } from "./WildPokemon";
 
 export class OverworldScene extends Phaser.Scene {
+  
   constructor(){ super({key: 'OverworldScene'}) }
 
   static readonly TILE_SIZE = 32;

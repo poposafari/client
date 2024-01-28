@@ -6,17 +6,11 @@ module.exports = {
   entry: './client/Main.ts',
   output: {
     filename: 'bundle.js',
-    //publicPath: "/dist/",
-    path: path.resolve(__dirname, 'dist'),
+    publicPath: "/public/",
+    path: path.resolve(__dirname, 'public'),
   },
+  devtool: "source-map",
   mode: 'development',
-  devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'client'),
-    },
-    port: 8080,
-    hot: true,
-  },
   module: {
     rules: [
       {
@@ -30,9 +24,6 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './client/index.html'
-    }),
     // new CopyWebpackPlugin({
     //   patterns: [
     //     {
