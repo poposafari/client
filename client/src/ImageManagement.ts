@@ -15,7 +15,11 @@ export class ImageManagement{
 
     public map:Phaser.Tilemaps.Tilemap;
     public playerSprite: Phaser.GameObjects.Sprite;
+    public otherPlayerSprite: Phaser.GameObjects.Sprite;
+    public otherPlayerSprites: object={};
     public petSprite: Phaser.GameObjects.Sprite;
+    public otherPetSprite: Phaser.GameObjects.Sprite;
+    public otherPlayerPetSprites: Array<Phaser.GameObjects.Sprite>=[];
     public pokemonSprite: Phaser.GameObjects.Sprite;
     public itemSprite: Phaser.GameObjects.Sprite;
 
@@ -61,6 +65,11 @@ export class ImageManagement{
             this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
         }
     }
+    loadPlayerAnimation(){
+      for(let i=0;i<this.MAX_PLAYER_SPRITE;i++){
+        this.createPlayerSpriteAnimation(`player_${i}_movement`);
+      } 
+    }
     createMap(){
         this.map = this.phaser.make.tilemap({ key: "test-town-map" })
         this.map.addTilesetImage("nature_1", "nature_1");
@@ -78,6 +87,15 @@ export class ImageManagement{
         this.petSprite = this.createSprite(0,1,'000');
         this.petSprite.setDepth(1);
         this.petSprite.visible = false;
+    }
+    createOtherPlayerSprite(sprite_key: string,socketId:string){
+      this.otherPlayerSprite = this.createSprite(0,0,`${sprite_key}`);
+      this.otherPlayerSprites[socketId] = {
+        sprite: this.otherPlayerSprite,
+        socketId: socketId,
+      }
+      this.otherPlayerSprites[socketId].sprite.scale=2;
+      this.otherPlayerSprites[socketId].sprite.setDepth(0);
     }
     private createPlayerSpriteAnimation(index: string){
         this.playerFrames = this.phaser.anims.generateFrameNames(`${index}`,{

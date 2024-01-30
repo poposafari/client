@@ -44,17 +44,18 @@ server.listen(app.get('port'), () => {
 
 const gameSocket = ioServer.of('/game');
 
-const players = [];
+const players = {};
 
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
   socket.on('newPlayer',(data)=>{
-    players.push(data);
+    players[socket.id] = data;
     socket.emit('currentPlayers',players);
     socket.broadcast.emit('newPlayer',data);
   });
   socket.on('disconnect',function(){
     console.log(`disconnected: `,socket.id);
-    gameSocket.emit('disconnect',socket.id);
+    delete players[socket.id];
+    socket.broadcast.emit('playerDisconnect',socket.id);
   })
 });
