@@ -4,12 +4,12 @@ export class ImageManagement{
     constructor(
         private phaser: Phaser.Scene
     ){}
+    private readonly MAX_PLAYER_SPRITE = 8;
     private readonly MAX_POKEMON = 50;
     private readonly DEFAULT_FRAMERATE = 6;
     private readonly DEFAULT_DELAY = 0;
     private readonly PLAYER_FRAME_MAX = 23;
     private readonly POKEMON_FRAME_MAX = 15;
-    private playerIndex:number = 6;
     private playerPokemonIndex:string = null;
     private itemIndex:string = null;
 
@@ -40,7 +40,12 @@ export class ImageManagement{
         this.phaser.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     }
     loadPlayerImage(){
-        this.phaser.load.atlas(`player_movement`,`assets/player/player_${this.playerIndex}_movement.png`,`assets/player/player_movement.json`);
+      for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
+        this.phaser.load.atlas(`player_${i}_movement`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
+        // this.phaser.load.atlas(`player_bike`,`assets/player/player_${i}_bike.png`,`assets/player/player_bike.json`);
+        // this.phaser.load.atlas(`player_surf`,`assets/player/player_${i}_surf.png`,`assets/player/player_surf.json`);
+        // this.phaser.load.atlas(`player_fishing`,`assets/player/player_${i}_fishing.png`,`assets/player/player_fishing.json`);
+      }
     }
     loadItemImage(){
         for(let i=0;i<4;i++){
@@ -52,8 +57,6 @@ export class ImageManagement{
         for(let i=0;i<=this.MAX_POKEMON;i++){
             const index = this.addZeroPadding(i,3);
             console.log(index);
-            //this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/${index}.json`);
-            //this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/${index}s.json`);
             this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
             this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
         }
@@ -64,8 +67,8 @@ export class ImageManagement{
         this.map.createLayer(0,"nature_1",0,0);
         this.map.createLayer(1,"nature_1",0,0);
     }
-    private createPlayerSprite(index: string){
-        this.playerSprite = this.createSprite(0,0,`${index}`);
+    private createPlayerSprite(sprite_key: string){
+        this.playerSprite = this.createSprite(0,0,`${sprite_key}`);
         this.playerSprite.scale = 2;
         this.playerSprite.setDepth(0);
 
@@ -78,7 +81,7 @@ export class ImageManagement{
     }
     private createPlayerSpriteAnimation(index: string){
         this.playerFrames = this.phaser.anims.generateFrameNames(`${index}`,{
-            prefix:`${index}-`,
+            prefix:`player_movement-`,
             suffix:"",
             start:0,
             end:this.PLAYER_FRAME_MAX,
@@ -246,9 +249,9 @@ export class ImageManagement{
             this.DEFAULT_DELAY
           );
     }
-    createPlayer(index: string){
-        this.createPlayerSprite(index);
-        this.createPlayerSpriteAnimation(index);
+    createPlayer(sprite_key: string){
+        this.createPlayerSprite(sprite_key);
+        this.createPlayerSpriteAnimation(sprite_key);
     }
     createPokemonSprite(index: string){
         this.pokemonSprite = this.createSprite(0,1,index);

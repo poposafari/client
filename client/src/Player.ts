@@ -14,4 +14,7 @@ export class Player extends GridObject{
     this.nickname.setX(position.x);
     this.nickname.setY(position.y-65);
   }
+  getNickname():object{
+    return this.nickname.data;
+  }
 }
