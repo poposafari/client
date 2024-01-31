@@ -36,9 +36,9 @@ export class PlayerBehavior{
 
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
-
+    
     public create(){
-        this.pet = new Pokemon(this.imageManagement.petSprite,new Phaser.Math.Vector2(3,3));
+        this.pet = new Pokemon(this.imageManagement.petSprite,new Phaser.Math.Vector2(4,5));
         this.playerMovement = new PlayerMovements(
             this.player,
             this.pet,

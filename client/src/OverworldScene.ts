@@ -2,10 +2,11 @@ import * as Phaser from "phaser";
 import { ImageManagement } from "./ImageManagement";
 import { KeyControl } from "./KeyControl"
 import { Player } from "./Player";
-// import { PlayerBehavior } from "./PlayerBehavior";
+import { PlayerBehavior } from "./PlayerBehavior";
 import { WildPokemonBehavior } from "./WildPokemonBehavior";
 import { WildPokemon } from "./WildPokemon";
 import {io} from 'socket.io-client';
+import { Pokemon } from "./Pokemon";
 
 export class OverworldScene extends Phaser.Scene {
   
@@ -18,30 +19,34 @@ export class OverworldScene extends Phaser.Scene {
   private keyControl: KeyControl;
 
   private player: Player;
-  // private playerBehavior: PlayerBehavior;
+  private playerBehavior: PlayerBehavior;
   private wildPokemonBehavior: WildPokemonBehavior;
   private wildPokemonList: Array<WildPokemon>=[];
 
   private nickname: string = 'null';
   private lastTilePosX: number = null;
   private lastTilePosY: number = null;
-  private petPokdex: string = '000';
+  private petPokdex: string = '001';
   private spriteType: number = null;
   private socket:any = null;
+
+  private players:object={};
   
   public preload(){
     this.imageManagement = new ImageManagement(this);
     this.imageManagement.loadMapImage();
     this.imageManagement.loadPlayerImage();
+    this.imageManagement.loadPlayerAnimation();
     this.imageManagement.loadItemImage();
     this.imageManagement.loadPokemonImage();
+    this.imageManagement.loadPokemonAnimation();
     //axios로 사용자 정보 가져와야 함.
-    this.socket = io('/game');
     this.nickname = 'seophohoho';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
     this.petPokdex = '000';
     this.spriteType = 8;
+    this.socket = io('/game');
   }
   public create(){
     this.imageManagement.createMap();
@@ -55,50 +60,46 @@ export class OverworldScene extends Phaser.Scene {
     });
     this.socket.on('currentPlayers',(players:object)=>{
       Object.keys(players).forEach((id)=>{
-          console.log(id);
-          if(players[id]['socketId'] === this.socket.id){
-            this.imageManagement.createPlayer(`player_${players[id]['spriteType']}_movement`); 
+          if(players[id].socketId === this.socket.id){
+            const playerSprite = this.imageManagement.createPlayerSprite(`player_${players[id].spriteType}_movement`);
+            const petSprite = this.imageManagement.createPetSprite(players[id].petPokedex);
             this.player = new Player(
-              this.imageManagement.playerSprite,
-              new Phaser.Math.Vector2(players[id]['tilePosX'], players[id]['tilePosY']),
-              this.add.text(0,0,players[id]['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'})
+              playerSprite,
+              new Phaser.Math.Vector2(players[id].tilePosX, players[id].tilePosY),
+              this.add.text(0,0,players[id].nickname,{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
+              petSprite,
+              new Pokemon(petSprite,new Phaser.Math.Vector2(players[id].tilePosX, players[id].tilePosY+1)),
             )
           } 
           else{
-            this.imageManagement.createOtherPlayerSprite(`player_${players[id]['spriteType']}_movement`,players[id]['socketId']); 
-            new Player(
-                this.imageManagement.otherPlayerSprites[id]['sprite'],
-                new Phaser.Math.Vector2(players[id]['tilePosX'], players[id]['tilePosY']),
-                this.add.text(0,0,players[id]['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'})
-              )
-            }
+            const playerSprite = this.imageManagement.createOtherPlayerSprite(`player_${players[id].spriteType}_movement`);
+            const petSprite = this.imageManagement.createPetSprite(players[id].petPokedex);
+            this.players[players[id].socketId] = new Player(
+              playerSprite,
+              new Phaser.Math.Vector2(players[id].tilePosX, players[id].tilePosY),
+              this.add.text(0,0,players[id].nickname,{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
+              petSprite,
+              new Pokemon(petSprite,new Phaser.Math.Vector2(players[id].tilePosX, players[id].tilePosY+1)),
+            );
+          }
         })
-        console.log(this.imageManagement.otherPlayerSprites);
       });
       this.socket.on('newPlayer',(player:object)=>{
-        this.imageManagement.createOtherPlayerSprite(`player_${player['spriteType']}_movement`,player['socketId']); 
-        new Player(
-          this.imageManagement.otherPlayerSprites[player['socketId']]['sprite'],
+        const playerSprite = this.imageManagement.createOtherPlayerSprite(`player_${player['spriteType']}_movement`); 
+        const petSprite = this.imageManagement.createPetSprite(player['petPokedex']);
+        this.players[player['socketId']] = new Player(
+          playerSprite,
           new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']),
-          this.add.text(0,0,player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'})
+          this.add.text(0,0,player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
+          petSprite,
+          new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']+1)),
         )
-        console.log(this.imageManagement.otherPlayerSprites);
+        console.log(this.players);
       });
-      this.socket.on('playerDisconnect',(data:string)=>{
-        this.imageManagement.otherPlayerSprites[data]['sprite'].destroy();
+      this.socket.on('playerDisconnect',(socketId:string)=>{
+        this.players[socketId].sprite.destroy();
+        this.players[socketId].petSprite.destroy();
       });
-      // this.imageManagement.createPlayer(`player_${data}_movement`);
-      // this.player = new Player(
-      // this.imageManagement.playerSprite,
-      // new Phaser.Math.Vector2(players[key].tilePosX, players[key].tilePosY),
-      // this.add.text(0,0,players[key].nickname,{fontSize:13,color: '#fff',backgroundColor:'#000000'})
-
-    // this.imageManagement.createPlayer(`player_${players[key].spriteType}_movement`);
-    // this.player = new Player(
-    //   this.imageManagement.playerSprite,
-    //   new Phaser.Math.Vector2(players[key].tilePosX, players[key].tilePosY),
-    //   this.add.text(0,0,players[key].nickname,{fontSize:13,color: '#fff',backgroundColor:'#000000'})
-    // );
     // this.playerBehavior = new PlayerBehavior(this.player,this.imageManagement,this.wildPokemonList);
     // this.keyControl = new KeyControl(this.input,this.playerBehavior);
     // this.playerBehavior.create();  
@@ -107,7 +108,7 @@ export class OverworldScene extends Phaser.Scene {
   }
   update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
     // this.keyControl.update();
-    // this.wildPokemonBehavior.update();
+    // // this.wildPokemonBehavior.update();
     // this.playerBehavior.update();
   }
 }

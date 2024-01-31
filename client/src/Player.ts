@@ -1,11 +1,14 @@
 import { GridObject } from "./GridObject";
 import {OverworldScene} from "./OverworldScene";
+import { Pokemon } from "./Pokemon";
 
 export class Player extends GridObject{
   constructor(
     sprite: Phaser.GameObjects.Sprite,
     tilePos: Phaser.Math.Vector2,
     private nickname: Phaser.GameObjects.Text,
+    private petSprite: Phaser.GameObjects.Sprite,
+    private pet: Pokemon,
   ){
     super(sprite,tilePos);
   }

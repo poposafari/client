@@ -19,7 +19,7 @@ export class ImageManagement{
     public otherPlayerSprites: object={};
     public petSprite: Phaser.GameObjects.Sprite;
     public otherPetSprite: Phaser.GameObjects.Sprite;
-    public otherPlayerPetSprites: Array<Phaser.GameObjects.Sprite>=[];
+    public otherPetSprites: object={};
     public pokemonSprite: Phaser.GameObjects.Sprite;
     public itemSprite: Phaser.GameObjects.Sprite;
 
@@ -60,15 +60,21 @@ export class ImageManagement{
     loadPokemonImage(){
         for(let i=0;i<=this.MAX_POKEMON;i++){
             const index = this.addZeroPadding(i,3);
-            console.log(index);
             this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
             this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
+            
         }
     }
     loadPlayerAnimation(){
-      for(let i=0;i<this.MAX_PLAYER_SPRITE;i++){
+      for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
         this.createPlayerSpriteAnimation(`player_${i}_movement`);
       } 
+    }
+    loadPokemonAnimation(){
+      for(let i=0;i<=this.MAX_POKEMON;i++){
+        const index = this.addZeroPadding(i,3);
+        this.createPokemonSpriteAnimation(`${index}`);
+      }
     }
     createMap(){
         this.map = this.phaser.make.tilemap({ key: "test-town-map" })
@@ -76,26 +82,32 @@ export class ImageManagement{
         this.map.createLayer(0,"nature_1",0,0);
         this.map.createLayer(1,"nature_1",0,0);
     }
-    private createPlayerSprite(sprite_key: string){
+    createPlayerSprite(sprite_key: string){
         this.playerSprite = this.createSprite(0,0,`${sprite_key}`);
         this.playerSprite.scale = 2;
         this.playerSprite.setDepth(0);
-
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
-
-        this.petSprite = this.createSprite(0,1,'000');
-        this.petSprite.setDepth(1);
-        this.petSprite.visible = false;
+        return this.playerSprite;
     }
-    createOtherPlayerSprite(sprite_key: string,socketId:string){
+    createOtherPlayerSprite(sprite_key: string){
       this.otherPlayerSprite = this.createSprite(0,0,`${sprite_key}`);
-      this.otherPlayerSprites[socketId] = {
-        sprite: this.otherPlayerSprite,
-        socketId: socketId,
-      }
-      this.otherPlayerSprites[socketId].sprite.scale=2;
-      this.otherPlayerSprites[socketId].sprite.setDepth(0);
+      this.otherPlayerSprite.scale=2;
+      this.otherPlayerSprite.setDepth(0);
+      return this.otherPlayerSprite;
+    }
+    createPokemonSprite(index: string){
+      this.pokemonSprite = this.createSprite(0,1,index);
+      this.pokemonSprite.setDepth(0);
+      this.pokemonSprite.visible = true;
+      return this.pokemonSprite;
+    }
+    createPetSprite(pokedex: string){
+      this.petSprite = this.createSprite(0,1,`${pokedex}`);
+      this.petSprite.setDepth(1);
+      if(pokedex === '000'){this.petSprite.visible = false;}
+      else{this.petSprite.visible = true;}
+      return this.petSprite;
     }
     private createPlayerSpriteAnimation(index: string){
         this.playerFrames = this.phaser.anims.generateFrameNames(`${index}`,{
@@ -267,19 +279,9 @@ export class ImageManagement{
             this.DEFAULT_DELAY
           );
     }
-    createPlayer(sprite_key: string){
-        this.createPlayerSprite(sprite_key);
-        this.createPlayerSpriteAnimation(sprite_key);
-    }
-    createPokemonSprite(index: string){
-        this.pokemonSprite = this.createSprite(0,1,index);
-        this.pokemonSprite.setDepth(0);
-        this.pokemonSprite.visible = true;
-        return this.pokemonSprite;
-    }
     createPokemonSpriteAnimation(index:string){
         this.pokemonFrames = this.phaser.anims.generateFrameNames(index,{
-            prefix:`size0-`, //${index}
+            prefix:`size0-`,
             suffix:"",
             start:0,
             end:this.POKEMON_FRAME_MAX,
@@ -350,7 +352,6 @@ export class ImageManagement{
     }
     private addZeroPadding(index: number, zeroSize: number): string {
         const paddedIndex = index.toString().padStart(zeroSize, '0');
-        console.log(paddedIndex);
         return paddedIndex;
     }
 }
