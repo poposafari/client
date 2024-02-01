@@ -11,6 +11,7 @@ export class KeyControl{
         this.rideKey = this.keyInput.keyboard.addKey('R');
         this.choiceNextItemKey = this.keyInput.keyboard.addKey('M');
         this.choicePrevItemKey = this.keyInput.keyboard.addKey('N');
+        console.log('create KeyControl??');
     }
     private isPressAnyMovementKey:boolean;
 
@@ -42,7 +43,6 @@ export class KeyControl{
             right:this.cursorKey.right.isDown,
             left:this.cursorKey.left.isDown,
         };
-
         this.isPressRunKey = this.cursorKey.shift.isDown;
         this.isPressPetKey = this.petKey.isDown;
         this.isPressThrowPokeballKey = this.throwPokeballKey.isDown;

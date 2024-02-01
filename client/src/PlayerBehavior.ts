@@ -38,7 +38,8 @@ export class PlayerBehavior{
     private movementKeyDeatailInfo:object;
     
     public create(){
-        this.pet = new Pokemon(this.imageManagement.petSprite,new Phaser.Math.Vector2(4,5));
+        console.log(this.player);
+        this.pet = this.player['pet'];
         this.playerMovement = new PlayerMovements(
             this.player,
             this.pet,

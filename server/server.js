@@ -51,8 +51,8 @@ gameSocket.on('connection',(socket)=>{
   socket.on('newPlayer',(data)=>{
     players[socket.id] = data;
     socket.emit('currentPlayers',players);
-    socket.broadcast.emit('newPlayer',data);
-    console.log(data);
+    socket.broadcast.emit('newPlayer',players[socket.id]);
+    console.log(players[socket.id]);
   });
   socket.on('disconnect',function(){
     console.log(`disconnected: `,socket.id);
