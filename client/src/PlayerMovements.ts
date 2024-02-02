@@ -12,7 +12,9 @@ export class PlayerMovements{
         private pet: Pokemon,
         private map: Phaser.Tilemaps.Tilemap,
         private wildPokemonList: Array<WildPokemon>,
-    ){}
+    ){
+        console.log(this.player);
+    }
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
 
@@ -125,7 +127,6 @@ export class PlayerMovements{
         else{
             this.isMovementFinish = false;
             this.moveSprite(this.pixelsToWalkThisUpdate);
-            
         }
     }
     private setMovementSpeed(){

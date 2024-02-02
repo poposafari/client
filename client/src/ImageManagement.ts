@@ -40,12 +40,10 @@ export class ImageManagement{
     private pokemonCustomFrameMovementUp: Phaser.Types.Animations.AnimationFrame[][];
 
     loadMapImage(){
-        console.log('load map');
         this.phaser.load.image("nature_1","assets/map/nature_1.png");
         this.phaser.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
     }
     loadPlayerImage(){
-      console.log('load player');
       for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
         this.phaser.load.atlas(`player_${i}_movement`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
         // this.phaser.load.atlas(`player_bike`,`assets/player/player_${i}_bike.png`,`assets/player/player_bike.json`);
@@ -54,14 +52,12 @@ export class ImageManagement{
       }
     }
     loadItemImage(){
-      console.log('load item');
       for(let i=0;i<4;i++){
           this.phaser.load.image(`item_${i}_ground`,`assets/item/item_${i}_ground.png`);
           this.phaser.load.image(`item_${i}_thrown`,`assets/item/item_${i}_thrown.png`);
       }
     }
     loadPokemonImage(){
-      console.log('load pokemon');
       for(let i=0;i<=this.MAX_POKEMON;i++){
           const index = this.addZeroPadding(i,3);
           this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
@@ -69,13 +65,11 @@ export class ImageManagement{
       }
     }
     loadPlayerAnimation(){
-      console.log('load player anime');
       for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
         this.createPlayerSpriteAnimation(`player_${i}_movement`);
       } 
     }
     loadPokemonAnimation(){
-      console.log('load pokemon anime');
       for(let i=0;i<=this.MAX_POKEMON;i++){
         const index = this.addZeroPadding(i,3);
         this.createPokemonSpriteAnimation(`${index}`);
@@ -111,7 +105,6 @@ export class ImageManagement{
       return this.pokemonSprite;
     }
     createPetSprite(pokedex: string){
-      console.log('createPetSprite pokedex is..',pokedex);
       this.petSprite = this.createSprite(0,1,pokedex);
       this.petSprite.setDepth(1);
       if(pokedex === '000'){this.petSprite.visible = false;}
@@ -290,7 +283,6 @@ export class ImageManagement{
           );
     }
     createPokemonSpriteAnimation(pokedex:string){
-      console.log('createPokemonSpriteAnimation pokedex is..',pokedex);
         this.pokemonFrames = this.phaser.anims.generateFrameNames(pokedex,{
             prefix:`size0-`,
             suffix:"",

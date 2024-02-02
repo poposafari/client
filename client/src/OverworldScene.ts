@@ -7,13 +7,14 @@ import { WildPokemonBehavior } from "./WildPokemonBehavior";
 import { WildPokemon } from "./WildPokemon";
 import {io} from 'socket.io-client';
 import { Pokemon } from "./Pokemon";
+import { OtherPlayerBehavior } from "./OtherPlayerBehavior";
 
 export class OverworldScene extends Phaser.Scene {
   
   constructor(){ super({key: 'OverworldScene'}) }
 
   static readonly TILE_SIZE = 32;
-  static readonly MAX_WILDPOKEMON = 4;
+  static readonly MAX_WILDPOKEMON = 0;
 
   private imageManagement: ImageManagement;
   private keyControl: KeyControl;
@@ -43,7 +44,7 @@ export class OverworldScene extends Phaser.Scene {
     this.nickname = 'seophohoho';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '001';
+    this.petPokedex = '004';
     this.spriteType = 8;
     this.socket = io('/game');
   }
@@ -55,20 +56,32 @@ export class OverworldScene extends Phaser.Scene {
     else{
       playerSprite = this.imageManagement.createOtherPlayerSprite(`player_${player['spriteType']}_movement`);
     }
+    
     const petSprite = this.imageManagement.createPetSprite(player['petPokedex']);
-    this.players[player['socketId']] = new Player(
+    const playerObj = new Player(
       playerSprite,
       new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']),
       this.add.text(0,0,player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
       petSprite,
       new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']+1)),
-    );
+      );
+    if(type){
+      this.players[player['socketId']] = {
+        playerObj: playerObj,
+      }
+    }
+    else{
+      this.players[player['socketId']] = {
+        playerObj: playerObj,
+        behavior: new OtherPlayerBehavior(playerObj,this.imageManagement,this.wildPokemonList),
+      }
+    }
+
   }
   public async create(){
     this.imageManagement.createMap();
-    this.socketId = this.socket.id;
-    
     const promise_1 = new Promise<void>((resolve)=>{
+      this.socketId = this.socket.id;
       this.socket.emit('newPlayer',{
         socketId:this.socketId,
         nickname:this.nickname,
@@ -81,37 +94,43 @@ export class OverworldScene extends Phaser.Scene {
         this.players = players; 
         resolve();
       });
-      console.log('promise_1 finish~!');
     });
     await promise_1;
-    console.log('start~!');
     Object.keys(this.players).forEach((id)=>{
       if(this.players[id].socketId === this.socketId){
         this.addPlayer(this.players[id],true);
       }
       else{
         this.addPlayer(this.players[id],false);
+        this.players[id].behavior.create();
       }
     });
     this.socket.on('newPlayer',(player:object)=>{
       this.addPlayer(player,false);
+      this.players[player['socketId']].behavior.create();
     });
     this.socket.on('playerDisconnect',(socketId:string)=>{
-      this.players[socketId].sprite.destroy();
-      this.players[socketId].petSprite.destroy();
+      this.players[socketId].playerObj['sprite'].destroy();
+      this.players[socketId].playerObj['petSprite'].destroy();
       delete this.players[socketId];
     });
-    console.log(this.players[this.socketId]);
-    this.playerBehavior = new PlayerBehavior(this.players[this.socketId],this.imageManagement,this.wildPokemonList);
+    this.socket.on('playerBehavior',(data:string)=>{
+      this.players[data['socketId']].behavior.setBehavior(data);
+    });
+    this.playerBehavior = new PlayerBehavior(this.socket,this.players[this.socketId].playerObj,this.imageManagement,this.wildPokemonList);
     this.playerBehavior.create();  
     this.keyControl = new KeyControl(this.input,this.playerBehavior);
-    // this.wildPokemonBehavior = new WildPokemonBehavior(this.player,this.imageManagement,this.wildPokemonList,this.time);
-    // this.wildPokemonBehavior.create();
-
+    this.wildPokemonBehavior = new WildPokemonBehavior(this.players[this.socketId].playerObj,this.imageManagement,this.wildPokemonList,this.time);
+    this.wildPokemonBehavior.create();
   }
   update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
     if(this.keyControl){this.keyControl.update();}
     if(this.playerBehavior){this.playerBehavior.update();}
-    // // this.wildPokemonBehavior.update();
+    if(this.wildPokemonBehavior){this.wildPokemonBehavior.update();}
+    Object.keys(this.players).forEach((id)=>{
+      if(this.players[id].behavior){
+        this.players[id].behavior.update();
+      }
+    });
   }
 }

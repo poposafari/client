@@ -1,11 +1,11 @@
+import { Direction } from "./Direction";
+import { ImageManagement } from "./ImageManagement";
+import { ITEM_CODE } from "./Item";
+import { ItemMovements } from "./ItemMovements";
 import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
-import { Direction } from "./Direction";
-import { ItemMovements } from "./ItemMovements";
-import { ImageManagement } from "./ImageManagement";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
-import { ITEM_CODE } from "./Item";
 
 export enum BEHAVIOR_STATUS {
     NONE_MODE="none",
@@ -17,9 +17,8 @@ export enum BEHAVIOR_STATUS {
     CHOICE_ITEM_PREV="choiceitemnprev"
 }
 
-export class PlayerBehavior{
+export class OtherPlayerBehavior{
     constructor(
-        private socket:any,
         private player: Player,
         private imageManagement: ImageManagement,
         private wildPokemonList: Array<WildPokemon>,
@@ -33,11 +32,10 @@ export class PlayerBehavior{
         2:{thrown: ITEM_CODE.ULTRA_BALL_THROWN,ground: ITEM_CODE.ULTRA_BALL_GROUND},
         3:{thrown: ITEM_CODE.MASTER_BALL_THROWN,ground: ITEM_CODE.MASTER_BALL_GROUND}
     };
-    private choiceItemIndex:number = 0;
-
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
-    
+    private choiceItemIndex:number = 0;
+    private otherPlayerBehaviorInfo:object;
     public create(){
         this.pet = this.player['pet'];
         this.playerMovement = new PlayerMovements(
@@ -48,29 +46,13 @@ export class PlayerBehavior{
         );
         this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList,ITEM_CODE.NONE);
     }
-    public setBehavior(movementKey:object,walk:boolean,run:boolean,pet:boolean,pokeball:boolean,choiceItemNext:boolean,choiceItemPrev:boolean){
-        this.movementKeyDeatailInfo = movementKey;
-        if(this.playerMovement.isMovementFinish && !walk){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
-        }
-        if(this.playerMovement.isMovementFinish){
-            if(walk){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
-            if(walk && run){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
-            if(!walk && !run && pet){this.playerBehaviorStatus = BEHAVIOR_STATUS.PET_MODE}
-            if(!walk && !run && pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
-            if(!walk && !run && !pet && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
-            if(choiceItemNext && !choiceItemPrev && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_NEXT}
-            if(choiceItemPrev && !choiceItemNext && !pokeball){this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_PREV}
-        }
-        this.socket.emit('playerBehavior',{
-            socketId:this.socket.id,
-            behavior:this.playerBehaviorStatus,
-            movementKeyDetail:this.movementKeyDeatailInfo,
-            walkMovementCount:this.playerMovement.playerMovementWalkCount,
-            runMovementCount:this.playerMovement.playerMovementRunCount,
-            lastMovement:this.playerMovement.playerLastMovementDirection,
-            choiceItem: this.choiceItemIndex,
-        });
+    public setBehavior(data:object){
+        this.otherPlayerBehaviorInfo = data;
+        if(this.otherPlayerBehaviorInfo['behavior'] !='walk'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
+        if(this.otherPlayerBehaviorInfo['behavior'] === 'walk'){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
+        if(this.otherPlayerBehaviorInfo['behavior'] === 'run'){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
+        if(this.otherPlayerBehaviorInfo['behavior'] === 'throwitem'){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
+        if(this.otherPlayerBehaviorInfo['behavior'] === 'none'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
     }
     public update(){
         switch(this.playerBehaviorStatus){
@@ -79,28 +61,13 @@ export class PlayerBehavior{
                 this.player.standStopAnimation(this.playerMovement.playerLastMovementDirection);
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
-                this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
+                this.readyMovementWalkPlayer(this.otherPlayerBehaviorInfo['behavior'].movementKeyDetail);
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
-                this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
-                break;
-            case BEHAVIOR_STATUS.PET_MODE:
-                this.readyPet();
+                this.readyMovementRunPlayer(this.otherPlayerBehaviorInfo['behavior'].movementKeyDetail);
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
-                this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
-                break;
-            case BEHAVIOR_STATUS.CHOICE_ITEM_NEXT:
-                this.choiceItemIndex++;
-                if(this.choiceItemIndex > 3){
-                    this.choiceItemIndex = 0;
-                }
-                break;
-            case BEHAVIOR_STATUS.CHOICE_ITEM_PREV:
-                this.choiceItemIndex--;
-                if(this.choiceItemIndex < 0){
-                    this.choiceItemIndex = 3;
-                }
+                this.readyMovementItem(this.itemList[`${this.otherPlayerBehaviorInfo['choiceItem']}`]);
                 break;
         }
         this.playerMovement.update();
@@ -123,8 +90,8 @@ export class PlayerBehavior{
         }
     }
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
-        this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
-        if(movementKeyDeatailInfo["up"]){
+        this.playerMovement.playerMovementType = this.otherPlayerBehaviorInfo['behavior']; 
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].up){
             this.imageManagement.playerSprite.setDepth(0);
             this.imageManagement.petSprite.setDepth(1);
             if(this.playerMovement.playerMovementWalkCount % 2){
@@ -134,30 +101,30 @@ export class PlayerBehavior{
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_UP_2);
             } 
         }
-        if(movementKeyDeatailInfo["down"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].down){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
-            if(this.playerMovement.playerMovementWalkCount % 2){
+            if(this.otherPlayerBehaviorInfo['walkMovementCount'] % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_1);
             }
             else{
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_2);
             }
         }
-        if(movementKeyDeatailInfo["left"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].left){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
-            if(this.playerMovement.playerMovementWalkCount % 2){
+            if(this.otherPlayerBehaviorInfo['walkMovementCount']  % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_1);
             }
             else {
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_2);
             }
         }
-        if(movementKeyDeatailInfo["right"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].right){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
-            if(this.playerMovement.playerMovementWalkCount % 2){
+            if(this.otherPlayerBehaviorInfo['walkMovementCount'] % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_RIGHT_1);
             }
             else {
@@ -167,7 +134,7 @@ export class PlayerBehavior{
     }
     private readyMovementRunPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
-        if(movementKeyDeatailInfo["up"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].up){
             this.imageManagement.playerSprite.setDepth(0);
             this.imageManagement.petSprite.setDepth(1);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_1);
@@ -175,7 +142,7 @@ export class PlayerBehavior{
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);  
         }
-        if(movementKeyDeatailInfo["down"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].down){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_1);
@@ -183,7 +150,7 @@ export class PlayerBehavior{
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);  
         }
-        if(movementKeyDeatailInfo["left"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].left){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_1);
@@ -191,7 +158,7 @@ export class PlayerBehavior{
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);  
         }
-        if(movementKeyDeatailInfo["right"]){
+        if(this.otherPlayerBehaviorInfo['movementKeyDetail'].right){
             this.imageManagement.playerSprite.setDepth(1);
             this.imageManagement.petSprite.setDepth(0);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_1);
@@ -202,17 +169,17 @@ export class PlayerBehavior{
     }
     private getMovementPlayerStep(){
         if(this.playerBehaviorStatus == BEHAVIOR_STATUS.RUN_MODE){
-            if(this.playerMovement.playerMovementRunCount === 0) return 1;
-            if(this.playerMovement.playerMovementRunCount === 1) return 2;  
-            if(this.playerMovement.playerMovementRunCount === 2) return 3;
-            if(this.playerMovement.playerMovementRunCount === 3) return 4;
-            if(this.playerMovement.playerMovementRunCount === 4){
-                this.playerMovement.playerMovementRunCount = 0;
+            if(this.otherPlayerBehaviorInfo['runMovementCount'] === 0) return 1;
+            if(this.otherPlayerBehaviorInfo['runMovementCount'] === 1) return 2;  
+            if(this.otherPlayerBehaviorInfo['runMovementCount'] === 2) return 3;
+            if(this.otherPlayerBehaviorInfo['runMovementCount'] === 3) return 4;
+            if(this.otherPlayerBehaviorInfo['runMovementCount'] === 4){
+                this.otherPlayerBehaviorInfo['runMovementCount'] = 0;
             }
         }
     }
-    private readyPet(){
-        if(this.imageManagement.petSprite.visible){this.imageManagement.petSprite.visible = false}
-        else{this.imageManagement.petSprite.visible = true}
-    }
+
+
+
+
 }

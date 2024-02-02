@@ -59,4 +59,7 @@ gameSocket.on('connection',(socket)=>{
     delete players[socket.id];
     socket.broadcast.emit('playerDisconnect',socket.id);
   })
+  socket.on('playerBehavior',(data)=>{
+    socket.broadcast.emit('playerBehavior',data);
+  })
 });
