@@ -41,6 +41,7 @@ export class PlayerBehavior{
     public create(){
         this.pet = this.player['pet'];
         this.playerMovement = new PlayerMovements(
+            this.socket,
             this.player,
             this.pet,
             this.imageManagement.map,

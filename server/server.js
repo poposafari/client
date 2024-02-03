@@ -52,14 +52,17 @@ gameSocket.on('connection',(socket)=>{
     players[socket.id] = data;
     socket.emit('currentPlayers',players);
     socket.broadcast.emit('newPlayer',players[socket.id]);
-    console.log(players[socket.id]);
+    console.log(players);
   });
   socket.on('disconnect',function(){
-    console.log(`disconnected: `,socket.id);
     delete players[socket.id];
     socket.broadcast.emit('playerDisconnect',socket.id);
   })
   socket.on('playerBehavior',(data)=>{
     socket.broadcast.emit('playerBehavior',data);
-  })
+  });
+  socket.on('saveTilePos',(data)=>{
+    players[socket.id].tilePosX = data.x;
+    players[socket.id].tilePosY = data.y;
+  });
 });

@@ -16,6 +16,10 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     dom: {
       createContainer: true
     },
+    fps:{
+      target: 60,
+      forceSetTimeOut: true
+    },
     backgroundColor: '#4488aa',
     pixelArt:true,
   };

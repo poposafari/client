@@ -19,6 +19,7 @@ export enum BEHAVIOR_STATUS {
 
 export class OtherPlayerBehavior{
     constructor(
+        private socket: any,
         private player: Player,
         private imageManagement: ImageManagement,
         private wildPokemonList: Array<WildPokemon>,
@@ -39,6 +40,7 @@ export class OtherPlayerBehavior{
     public create(){
         this.pet = this.player['pet'];
         this.playerMovement = new PlayerMovements(
+            this.socket,
             this.player,
             this.pet,
             this.imageManagement.map,

@@ -30,7 +30,6 @@ export class GridObject{
     this.tilePos = tilePosition.clone();
   }
   standStopAnimation(direction: Direction){
-    console.log(direction);
     const tempString = direction.split('_',3);
     const animationManager = this.sprite.anims.animationManager;
     this.sprite.setFrame(animationManager.get(`player_walk_${tempString[2]}_1`).frames[1].frame.name);

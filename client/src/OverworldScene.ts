@@ -66,17 +66,17 @@ export class OverworldScene extends Phaser.Scene {
       new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']+1)),
       );
     if(type){
-      this.players[player['socketId']] = {
-        playerObj: playerObj,
-      }
+      this.player = playerObj;
+      // this.players[player['socketId']] = {
+      //   playerObj: playerObj,
+      // }
     }
     else{
       this.players[player['socketId']] = {
         playerObj: playerObj,
-        behavior: new OtherPlayerBehavior(playerObj,this.imageManagement,this.wildPokemonList),
+        behavior: new OtherPlayerBehavior(this.socket,playerObj,this.imageManagement,this.wildPokemonList),
       }
     }
-
   }
   public async create(){
     this.imageManagement.createMap();
@@ -112,15 +112,16 @@ export class OverworldScene extends Phaser.Scene {
     this.socket.on('playerDisconnect',(socketId:string)=>{
       this.players[socketId].playerObj['sprite'].destroy();
       this.players[socketId].playerObj['petSprite'].destroy();
+      this.players[socketId].playerObj['nickname'].destroy();
       delete this.players[socketId];
     });
     this.socket.on('playerBehavior',(data:string)=>{
       this.players[data['socketId']].behavior.setBehavior(data);
     });
-    this.playerBehavior = new PlayerBehavior(this.socket,this.players[this.socketId].playerObj,this.imageManagement,this.wildPokemonList);
+    this.playerBehavior = new PlayerBehavior(this.socket,this.player,this.imageManagement,this.wildPokemonList);
     this.playerBehavior.create();  
     this.keyControl = new KeyControl(this.input,this.playerBehavior);
-    this.wildPokemonBehavior = new WildPokemonBehavior(this.players[this.socketId].playerObj,this.imageManagement,this.wildPokemonList,this.time);
+    this.wildPokemonBehavior = new WildPokemonBehavior(this.player,this.imageManagement,this.wildPokemonList,this.time);
     this.wildPokemonBehavior.create();
   }
   update(_time: number, delta: number) { //최적화할때, 키보드 값이 들어갈때만 업데이트가 진행되도록 한다.
