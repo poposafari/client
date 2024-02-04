@@ -115,7 +115,7 @@ export class OverworldScene extends Phaser.Scene {
       this.players[socketId].playerObj['nickname'].destroy();
       delete this.players[socketId];
     });
-    this.socket.on('playerBehavior',(data:string)=>{
+    this.socket.on('playerBehavior',(data:object)=>{
       this.players[data['socketId']].behavior.setBehavior(data);
     });
     this.playerBehavior = new PlayerBehavior(this.socket,this.player,this.imageManagement,this.wildPokemonList);

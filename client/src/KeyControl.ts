@@ -11,7 +11,6 @@ export class KeyControl{
         this.rideKey = this.keyInput.keyboard.addKey('R');
         this.choiceNextItemKey = this.keyInput.keyboard.addKey('M');
         this.choicePrevItemKey = this.keyInput.keyboard.addKey('N');
-        console.log('create KeyControl??');
     }
     private isPressAnyMovementKey:boolean;
 

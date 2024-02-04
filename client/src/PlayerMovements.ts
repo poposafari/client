@@ -122,12 +122,12 @@ export class PlayerMovements{
             this.playerMovementCount++;
             this.playerLastMovementDirection = this.playerMovementDirection;
             this.stopMoving();
+            this.socket.emit('saveTilePos',this.player.getTilePos());
         }
         else{
             this.isMovementFinish = false;
             this.moveSprite(this.pixelsToWalkThisUpdate);
         }
-        this.socket.emit('saveTilePos',this.player.getTilePos());
     }
     private setMovementSpeed(){
         if(this.playerMovementType == "walk") this.pixelsToWalkThisUpdate = this.PLAYER_MOVEMENT_SPEED;
@@ -149,7 +149,6 @@ export class PlayerMovements{
 
         const playerDirectionVector = this.movementDirectionVectors[this.playerLastMovementDirection].clone();
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
-        console.log(playerMovementDistance);
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
 
