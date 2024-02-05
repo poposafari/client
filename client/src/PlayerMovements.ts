@@ -116,17 +116,17 @@ export class PlayerMovements{
         this.setMovementSpeed();
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.moveSprite(this.pixelsToWalkThisUpdate);
-            this.isMovementFinish = true;
             if(this.playerMovementType === "walk") this.playerMovementWalkCount++;
             else if(this.playerMovementType === "run") this.playerMovementRunCount++;
             this.playerMovementCount++;
             this.playerLastMovementDirection = this.playerMovementDirection;
-            this.stopMoving();
+            this.stopMoving(); 
             this.socket.emit('saveTilePos',this.player.getTilePos());
+            this.isMovementFinish = true;
         }
         else{
-            this.isMovementFinish = false;
             this.moveSprite(this.pixelsToWalkThisUpdate);
+            this.isMovementFinish = false;
         }
     }
     private setMovementSpeed(){

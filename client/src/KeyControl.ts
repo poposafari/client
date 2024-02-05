@@ -33,14 +33,13 @@ export class KeyControl{
     private rideKey: Phaser.Input.Keyboard.Key;
     private choiceNextItemKey: Phaser.Input.Keyboard.Key;
     private choicePrevItemKey: Phaser.Input.Keyboard.Key;
-
-    update(){
+    update(){    
         this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.movementKeyDetail = {
-            up:this.cursorKey.up.isDown,
-            down:this.cursorKey.down.isDown,
-            right:this.cursorKey.right.isDown,
-            left:this.cursorKey.left.isDown,
+            up: this.cursorKey.up.isDown,
+            down: this.cursorKey.down.isDown,
+            right: this.cursorKey.right.isDown,
+            left: this.cursorKey.left.isDown,
         };
         this.isPressRunKey = this.cursorKey.shift.isDown;
         this.isPressPetKey = this.petKey.isDown;
@@ -48,6 +47,7 @@ export class KeyControl{
         this.isPressRideKey = this.rideKey.isDown;
         this.isPressChoiceNextItemKey = Phaser.Input.Keyboard.JustDown(this.choiceNextItemKey);
         this.isPressChoicePrevItemKey = Phaser.Input.Keyboard.JustDown(this.choicePrevItemKey);
+
         this.behavior.setBehavior(
             this.movementKeyDetail,
             this.isPressAnyMovementKey,
