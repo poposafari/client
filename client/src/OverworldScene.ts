@@ -67,12 +67,14 @@ export class OverworldScene extends Phaser.Scene {
       );
     if(type){
       this.player = playerObj;
+      this.player.setNicknamePosition(this.player.getPosition());
     }
     else{
       this.players[player['socketId']] = {
         playerObj: playerObj,
         behavior: new OtherPlayerBehavior(this.socket,playerObj,this.imageManagement,this.wildPokemonList),
       }
+      this.players[player['socketId']].playerObj.setNicknamePosition(this.players[player['socketId']].playerObj.getPosition());
     }
   }
   public async create(){
