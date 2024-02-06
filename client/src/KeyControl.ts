@@ -43,8 +43,8 @@ export class KeyControl{
         };
         this.isPressRunKey = this.cursorKey.shift.isDown;
         this.isPressPetKey = this.petKey.isDown;
-        this.isPressThrowPokeballKey = this.throwPokeballKey.isDown;
-        this.isPressRideKey = this.rideKey.isDown;
+        this.isPressThrowPokeballKey = Phaser.Input.Keyboard.JustDown(this.throwPokeballKey);
+        this.isPressRideKey = Phaser.Input.Keyboard.JustDown(this.rideKey);
         this.isPressChoiceNextItemKey = Phaser.Input.Keyboard.JustDown(this.choiceNextItemKey);
         this.isPressChoicePrevItemKey = Phaser.Input.Keyboard.JustDown(this.choicePrevItemKey);
 
