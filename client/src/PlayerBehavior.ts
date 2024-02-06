@@ -37,7 +37,7 @@ export class PlayerBehavior{
 
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
-    
+
     public create(){
         this.pet = this.player['pet'];
         this.playerMovement = new PlayerMovements(
@@ -54,7 +54,7 @@ export class PlayerBehavior{
         if(this.playerMovement.isMovementFinish && !walk){
             this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
         }
-        if(this.playerMovement.isMovementFinish){
+        if(this.playerMovement.isMovementFinish){ 
             if(walk){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
             if(walk && run){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
             if(!walk && !run && pet){this.playerBehaviorStatus = BEHAVIOR_STATUS.PET_MODE}
@@ -65,12 +65,15 @@ export class PlayerBehavior{
         }
         this.socket.emit('playerBehavior',{
             socketId:this.socket.id,
+            behavior: this.playerBehaviorStatus,
             walk:walk,
             run:run,
             throwItem:pokeball,
             choiceItem:this.choiceItemIndex,
             movementType:this.movementKeyDeatailInfo,
             isMovementFinish:this.playerMovement.isMovementFinish,
+            playerPos:this.player.getPosition(),
+            petPos:this.player['pet'].getPosition()
         });
     }
     public update(){

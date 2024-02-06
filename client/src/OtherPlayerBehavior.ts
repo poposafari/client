@@ -3,6 +3,7 @@ import { ImageManagement } from "./ImageManagement";
 import { ITEM_CODE } from "./Item";
 import { ItemMovements } from "./ItemMovements";
 import { Player } from "./Player";
+import { PlayerBehavior } from "./PlayerBehavior";
 import { PlayerMovements } from "./PlayerMovements";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
@@ -50,15 +51,22 @@ export class OtherPlayerBehavior{
     public setBehavior(data:object){
         this.choiceItemIndex = data['choiceItemIndex'];
         this.movementKeyDeatailInfo = data['movementType'];
-        if(this.playerMovement.isMovementFinish && !data['walk']){
+        if(data['isMovementFinish'] && !data['walk']){
             this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
         }
         if(this.playerMovement.isMovementFinish){
             if(data['walk']){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
             if(data['walk'] && data['run']){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
-            if(!data['walk'] && !data['run'] && data['throwItem']){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE}
-            if(!data['walk'] && !data['run'] && !data['throwItem']){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE}
+            if(!data['walk'] && !data['run'] && data['throwItem']){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE;}
+            if(!data['walk'] && !data['run'] && !data['throwItem']){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
         }
+        if(data['playerPos'] != this.player.getPosition()){
+            this.player.setPosition(new Phaser.Math.Vector2(data['playerPos'].x,data['playerPos'].y));
+        }
+        if(data['petPos'] != this.player['pet'].getPosition()){
+            this.player['pet'].setPosition(new Phaser.Math.Vector2(data['petPos'].x,data['petPos'].y));
+        }
+        
     }
     public update(){
         switch(this.playerBehaviorStatus){

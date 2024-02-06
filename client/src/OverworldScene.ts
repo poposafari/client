@@ -67,9 +67,6 @@ export class OverworldScene extends Phaser.Scene {
       );
     if(type){
       this.player = playerObj;
-      // this.players[player['socketId']] = {
-      //   playerObj: playerObj,
-      // }
     }
     else{
       this.players[player['socketId']] = {
