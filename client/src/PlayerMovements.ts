@@ -26,6 +26,7 @@ export class PlayerMovements{
     playerMovementRunCount: number=0;
     playerMovementType:string="";
     isMovementFinish:boolean=true;
+    isMovementOtherPlayer:boolean = false;
     
     private petMovementDirection: Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -145,13 +146,16 @@ export class PlayerMovements{
         const petDirectionVector = this.movementDirectionVectors[this.petMovementDirection].clone();
         const petMovementDistance = petDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPetPos = this.pet.getPosition().add(petMovementDistance);
-        this.pet.setPosition(newPetPos);
-
+        
         const playerDirectionVector = this.movementDirectionVectors[this.playerLastMovementDirection].clone();
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
-        this.player.setPosition(newPlayerPos);
-
+        
+        if(!this.isMovementOtherPlayer){
+            this.pet.setPosition(newPetPos);
+            this.player.setPosition(newPlayerPos);
+        }
+        
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;
     }

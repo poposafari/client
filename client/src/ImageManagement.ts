@@ -84,7 +84,7 @@ export class ImageManagement{
     createPlayerSprite(sprite_key: string){
         this.playerSprite = this.createSprite(0,0,sprite_key);
         this.playerSprite.scale = 2;
-        this.playerSprite.setDepth(0);
+        this.playerSprite.setDepth(2);
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
         this.createPlayerSpriteAnimation(sprite_key);
@@ -93,7 +93,7 @@ export class ImageManagement{
     createOtherPlayerSprite(sprite_key: string){
       this.otherPlayerSprite = this.createSprite(0,0,sprite_key);
       this.otherPlayerSprite.scale=2;
-      this.otherPlayerSprite.setDepth(0);
+      this.otherPlayerSprite.setDepth(2);
       this.createPlayerSpriteAnimation(sprite_key);
       return this.otherPlayerSprite;
     }

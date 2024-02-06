@@ -41,7 +41,7 @@ export class OverworldScene extends Phaser.Scene {
     this.imageManagement.loadItemImage();
     this.imageManagement.loadPokemonImage();
     //axios로 사용자 정보 가져와야 함.
-    this.nickname = 'seophohoho';
+    this.nickname = '불주먹이호섭';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
     this.petPokedex = '004';
