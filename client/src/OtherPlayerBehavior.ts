@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import { ImageManagement } from "./ImageManagement";
+import { DEPTH, ImageManagement } from "./ImageManagement";
 import { ITEM_CODE } from "./Item";
 import { ItemMovements } from "./ItemMovements";
 import { Player } from "./Player";
@@ -99,8 +99,6 @@ export class OtherPlayerBehavior{
     private readyMovementWalkPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus;
         if(movementKeyDeatailInfo['up']){
-            this.imageManagement.playerSprite.setDepth(2);
-            this.imageManagement.petSprite.setDepth(1);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_UP_1);
             }
@@ -109,8 +107,6 @@ export class OtherPlayerBehavior{
             } 
         }
         if(movementKeyDeatailInfo['down']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(1);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_1);
             }
@@ -119,8 +115,6 @@ export class OtherPlayerBehavior{
             }
         }
         if(movementKeyDeatailInfo['left']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(0);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_1);
             }
@@ -129,8 +123,6 @@ export class OtherPlayerBehavior{
             }
         }
         if(movementKeyDeatailInfo['right']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(1);
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_RIGHT_1);
             }
@@ -142,32 +134,24 @@ export class OtherPlayerBehavior{
     private readyMovementRunPlayer(movementKeyDeatailInfo:object){
         this.playerMovement.playerMovementType = this.playerBehaviorStatus; 
         if(movementKeyDeatailInfo['up']){
-            this.imageManagement.playerSprite.setDepth(2);
-            this.imageManagement.petSprite.setDepth(1);
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);  
         }
-        else if(movementKeyDeatailInfo['down']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(1);
+        if(movementKeyDeatailInfo['down']){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);  
         }
-        else if(movementKeyDeatailInfo['left']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(1);
+        if(movementKeyDeatailInfo['left']){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);  
         }
-        else if(movementKeyDeatailInfo['right']){
-            this.imageManagement.playerSprite.setDepth(3);
-            this.imageManagement.petSprite.setDepth(1);
+        if(movementKeyDeatailInfo['right']){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_2);

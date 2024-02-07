@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { ImageManagement } from "./ImageManagement";
+import { DEPTH, ImageManagement } from "./ImageManagement";
 import { KeyControl } from "./KeyControl"
 import { Player } from "./Player";
 import { PlayerBehavior } from "./PlayerBehavior";
@@ -44,8 +44,8 @@ export class OverworldScene extends Phaser.Scene {
     this.nickname = '불주먹이호섭';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '004';
-    this.spriteType = 8;
+    this.petPokedex = '000';
+    this.spriteType = 5;
     this.socket = io('/game');
   }
   private addPlayer(player: object,type:boolean){
@@ -57,7 +57,7 @@ export class OverworldScene extends Phaser.Scene {
       playerSprite = this.imageManagement.createOtherPlayerSprite(`player_${player['spriteType']}_movement`);
     }
     
-    const petSprite = this.imageManagement.createPetSprite(player['petPokedex']);
+    const petSprite = this.imageManagement.createPetSprite(player['petPokedex'],type);
     const playerObj = new Player(
       playerSprite,
       new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']),
@@ -68,6 +68,7 @@ export class OverworldScene extends Phaser.Scene {
     if(type){
       this.player = playerObj;
       this.player.setNicknamePosition(this.player.getPosition());
+      this.player['nickname'].setDepth(DEPTH.NICKNAME);
     }
     else{
       this.players[player['socketId']] = {
@@ -75,6 +76,7 @@ export class OverworldScene extends Phaser.Scene {
         behavior: new OtherPlayerBehavior(this.socket,playerObj,this.imageManagement,this.wildPokemonList),
       }
       this.players[player['socketId']].playerObj.setNicknamePosition(this.players[player['socketId']].playerObj.getPosition());
+      this.players[player['socketId']].playerObj.nickname.setDepth(DEPTH.NICKNAME);
     }
   }
   public async create(){
@@ -130,6 +132,19 @@ export class OverworldScene extends Phaser.Scene {
     Object.keys(this.players).forEach((id)=>{
       if(this.players[id].behavior){
         this.players[id].behavior.update();
+        if(this.player.getTilePos().x === this.players[id].playerObj.getTilePos().x){
+          if(this.player.getTilePos().y+1 === this.players[id].playerObj.getTilePos().y) {
+            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIN,DEPTH.PLAYER_MIN);
+            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+          }
+          if(this.player.getTilePos().y-1 === this.players[id].playerObj.getTilePos().y){
+            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MAX,DEPTH.PLAYER_MAX);
+            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+          }
+        }
+        else{
+          this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+        }
       }
     });
   }

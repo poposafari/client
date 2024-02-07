@@ -1,15 +1,25 @@
 import { Direction } from "./Direction";
 
+export const enum DEPTH {
+  NICKNAME = 7,
+  ITEM = 5,
+  WILD_POKEMON = 5,
+  PLAYER_MIN = 2,
+  PLAYER_MIDDLE = 3,
+  PLAYER_MAX = 4,
+}
+
 export class ImageManagement{
     constructor(
         private phaser: Phaser.Scene
     ){}
     private readonly MAX_PLAYER_SPRITE = 8;
-    private readonly MAX_POKEMON = 50;
+    private readonly MAX_POKEMON = 151;
     private readonly DEFAULT_FRAMERATE = 6;
     private readonly DEFAULT_DELAY = 0;
     private readonly PLAYER_FRAME_MAX = 23;
     private readonly POKEMON_FRAME_MAX = 15;
+
     private playerPokemonIndex:string = null;
     private itemIndex:string = null;
 
@@ -78,13 +88,14 @@ export class ImageManagement{
     createMap(){
         this.map = this.phaser.make.tilemap({ key: "test-town-map" })
         this.map.addTilesetImage("nature_1", "nature_1");
-        this.map.createLayer(0,"nature_1",0,0);
-        this.map.createLayer(1,"nature_1",0,0);
+        const layer1 = this.map.createLayer(0,"nature_1",0,0);
+        const layer2 = this.map.createLayer(1,"nature_1",0,0);
+
     }
     createPlayerSprite(sprite_key: string){
         this.playerSprite = this.createSprite(0,0,sprite_key);
         this.playerSprite.scale = 2;
-        this.playerSprite.setDepth(2);
+        this.playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
         this.createPlayerSpriteAnimation(sprite_key);
@@ -93,20 +104,21 @@ export class ImageManagement{
     createOtherPlayerSprite(sprite_key: string){
       this.otherPlayerSprite = this.createSprite(0,0,sprite_key);
       this.otherPlayerSprite.scale=2;
-      this.otherPlayerSprite.setDepth(2);
+      this.otherPlayerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
       this.createPlayerSpriteAnimation(sprite_key);
       return this.otherPlayerSprite;
     }
     createPokemonSprite(pokedex: string){
       this.pokemonSprite = this.createSprite(0,1,pokedex);
-      this.pokemonSprite.setDepth(0);
+      this.pokemonSprite.setDepth(DEPTH.WILD_POKEMON);
       this.pokemonSprite.visible = true;
       this.createPokemonSpriteAnimation(pokedex);
       return this.pokemonSprite;
     }
-    createPetSprite(pokedex: string){
+    createPetSprite(pokedex: string,check:boolean){
       this.petSprite = this.createSprite(0,1,pokedex);
-      this.petSprite.setDepth(1);
+      this.petSprite.setDepth(DEPTH.PLAYER_MIDDLE);
+
       if(pokedex === '000'){this.petSprite.visible = false;}
       else{this.petSprite.visible = true;}
       this.createPokemonSpriteAnimation(pokedex);

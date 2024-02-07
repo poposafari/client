@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 import { Direction } from "./Direction";
 import {OverworldScene} from "./OverworldScene";
+import { DEPTH } from "./ImageManagement";
 
 export class GridObject{
   constructor(
@@ -47,5 +48,11 @@ export class GridObject{
   setHide(type: boolean){
     if(type){this.sprite.setVisible(false)}
     else{this.sprite.setVisible(true)}
+  }
+  setDepth(value: DEPTH){
+    this.sprite.setDepth(value);
+  }
+  getDepth(): number{
+    return this.sprite.depth;
   }
 }
