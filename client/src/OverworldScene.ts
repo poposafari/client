@@ -133,11 +133,13 @@ export class OverworldScene extends Phaser.Scene {
       if(this.players[id].behavior){
         this.players[id].behavior.update();
         if(this.player.getTilePos().x === this.players[id].playerObj.getTilePos().x){
-          if(this.player.getTilePos().y+1 === this.players[id].playerObj.getTilePos().y) {
+          if(this.player.getTilePos().y+1 === this.players[id].playerObj.getTilePos().y){
+            console.log('아래에 다른 플레이어');
             this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIN,DEPTH.PLAYER_MIN);
             this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
           }
           if(this.player.getTilePos().y-1 === this.players[id].playerObj.getTilePos().y){
+            console.log('위에 다른 플레이어');
             this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MAX,DEPTH.PLAYER_MAX);
             this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
           }

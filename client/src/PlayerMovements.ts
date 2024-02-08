@@ -20,13 +20,12 @@ export class PlayerMovements{
     private readonly PLAYER_MOVEMENT_SPEED=2; //default 2.
 
     private playerMovementDirection: Direction = Direction.NONE;
-    playerLastMovementDirection: Direction = Direction.PLAYER_WALK_UP_1;
+    playerLastMovementDirection: Direction = Direction.PLAYER_WALK_DOWN_1;
     playerMovementCount: number=0;
     playerMovementWalkCount: number=0;
     playerMovementRunCount: number=0;
     playerMovementType:string="";
     isMovementFinish:boolean=true;
-    isOtherPlayer:boolean = false;
     
     private petMovementDirection: Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -129,6 +128,7 @@ export class PlayerMovements{
             this.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = false;
         }
+        this.socket.emit('playerMovement',{playerPos:this.player.getPosition(),petPos:this.pet.getPosition()});
     }
     private setMovementSpeed(){
         if(this.playerMovementType == "walk") this.pixelsToWalkThisUpdate = this.PLAYER_MOVEMENT_SPEED;
@@ -151,7 +151,7 @@ export class PlayerMovements{
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
         this.player.setPosition(newPlayerPos);
-        this.pet.setPosition(newPetPos); 
+        this.pet.setPosition(newPetPos);
 
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;

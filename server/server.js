@@ -61,6 +61,9 @@ gameSocket.on('connection',(socket)=>{
   socket.on('playerBehavior',(data)=>{
     socket.broadcast.emit('playerBehavior',data);
   });
+  socket.on('playerMovement',(data)=>{
+    socket.broadcast.emit('playerMovement',data);
+  });
   socket.on('saveTilePos',(data)=>{
     players[socket.id].tilePosX = data.x;
     players[socket.id].tilePosY = data.y;

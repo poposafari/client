@@ -82,8 +82,6 @@ export class PlayerBehavior{
             socketId:this.socket.id,
             behavior: this.playerBehaviorStatus,
             movementKeyDeatailInfo:this.movementKeyDeatailInfo,
-            playerPos:this.player.getPosition(),
-            petPos:this.pet.getPosition(),
             choiceItem:this.choiceItemIndex,
         });
     }
@@ -96,12 +94,10 @@ export class PlayerBehavior{
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
-                this.playerMovement.update();
                 this.isBehaviorFinish = true;
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
-                this.playerMovement.update();
                 this.isBehaviorFinish = true;
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
@@ -123,6 +119,7 @@ export class PlayerBehavior{
                 this.isBehaviorFinish = true;
                 break;
         }
+        this.playerMovement.update();
         this.itemMovement.update();
     }
     private readyMovementItem(item:object){

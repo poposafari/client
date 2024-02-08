@@ -2,6 +2,7 @@ import { Direction } from "./Direction";
 import { DEPTH, ImageManagement } from "./ImageManagement";
 import { ITEM_CODE } from "./Item";
 import { ItemMovements } from "./ItemMovements";
+import { OtherPlayerMovements } from "./OtherPlayerMovements";
 import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
 import { Pokemon } from "./Pokemon";
@@ -25,7 +26,7 @@ export class OtherPlayerBehavior{
         private wildPokemonList: Array<WildPokemon>,
     ){}
     private pet:Pokemon;
-    private playerMovement: PlayerMovements;
+    private playerMovement: OtherPlayerMovements;
     private itemMovement: ItemMovements;
     private itemList: object = {
         0:{thrown: ITEM_CODE.POKE_BALL_THROWN,ground: ITEM_CODE.POKE_BALL_GROUND},
@@ -38,12 +39,10 @@ export class OtherPlayerBehavior{
     private choiceItemIndex:number = 0;
     public create(){
         this.pet = this.player['pet'];
-        this.playerMovement = new PlayerMovements(
+        this.playerMovement = new OtherPlayerMovements(
             this.socket,
             this.player,
             this.pet,
-            this.imageManagement.map,
-            this.wildPokemonList
         );
         this.itemMovement = new ItemMovements(
             this.imageManagement,
@@ -55,11 +54,15 @@ export class OtherPlayerBehavior{
         this.choiceItemIndex = data['choiceItem'];
         this.movementKeyDeatailInfo = data['movementKeyDeatailInfo'];
         if(data['behavior'] === 'none'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
-        if(data['behavior'] === 'walk'){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
-        if(data['behavior'] === 'run'){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
-        if(data['behavior'] === 'throw'){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE;}
-        this.player.setPosition(data['playerPos']);
-        this.pet.setPosition(data['petPos']);
+        else if(data['behavior'] === 'walk'){
+            this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;
+        }
+        else if(data['behavior'] === 'run'){
+            this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;
+        }
+        else if(data['behavior'] === 'throw'){
+            this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE;
+        }
     }
     public update(){
         switch(this.playerBehaviorStatus){
@@ -69,18 +72,16 @@ export class OtherPlayerBehavior{
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
-                this.playerMovement.update();
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
-                this.playerMovement.update();
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
                 this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
-                this.itemMovement.update();
                 break;
         }
-        
+        this.playerMovement.update();
+        this.itemMovement.update();
     }
     private readyMovementItem(item:object){
         const tempString = this.playerMovement.playerLastMovementDirection.split('_');
