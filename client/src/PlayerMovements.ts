@@ -26,7 +26,7 @@ export class PlayerMovements{
     playerMovementRunCount: number=0;
     playerMovementType:string="";
     isMovementFinish:boolean=true;
-    isMovementOtherPlayer:boolean = false;
+    isOtherPlayer:boolean = false;
     
     private petMovementDirection: Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -122,8 +122,8 @@ export class PlayerMovements{
             this.playerMovementCount++;
             this.playerLastMovementDirection = this.playerMovementDirection;
             this.stopMoving(); 
-            this.socket.emit('saveTilePos',this.player.getTilePos());
             this.isMovementFinish = true;
+            this.socket.emit('saveTilePos',this.player.getTilePos());
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
@@ -142,7 +142,7 @@ export class PlayerMovements{
     private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number):boolean{
         return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= OverworldScene.TILE_SIZE;
     }
-    private moveSprite(pixelsToWalkThisUpdate:number){
+    private moveSprite(pixelsToWalkThisUpdate:number){       
         const petDirectionVector = this.movementDirectionVectors[this.petMovementDirection].clone();
         const petMovementDistance = petDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPetPos = this.pet.getPosition().add(petMovementDistance);
@@ -150,12 +150,9 @@ export class PlayerMovements{
         const playerDirectionVector = this.movementDirectionVectors[this.playerLastMovementDirection].clone();
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
-        
-        if(!this.isMovementOtherPlayer){
-            this.pet.setPosition(newPetPos);
-            this.player.setPosition(newPlayerPos);
-        }
-        
+        this.player.setPosition(newPlayerPos);
+        this.pet.setPosition(newPetPos); 
+
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;
     }

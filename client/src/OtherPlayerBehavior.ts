@@ -45,21 +45,21 @@ export class OtherPlayerBehavior{
             this.imageManagement.map,
             this.wildPokemonList
         );
-        this.playerMovement.isMovementOtherPlayer = true;
-        this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList,ITEM_CODE.NONE);
+        this.itemMovement = new ItemMovements(
+            this.imageManagement,
+            this.wildPokemonList,
+            ITEM_CODE.NONE
+        );
     }
     public setBehavior(data:object){
         this.choiceItemIndex = data['choiceItem'];
         this.movementKeyDeatailInfo = data['movementKeyDeatailInfo'];
-        if(data['isMovementFinish']){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
-        }
+        if(data['behavior'] === 'none'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
         if(data['behavior'] === 'walk'){this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;}
         if(data['behavior'] === 'run'){this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;}
         if(data['behavior'] === 'throw'){this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE;}
-        if(data['behavior'] === 'none'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
-        this.player.setPosition(new Phaser.Math.Vector2(data['playerPos'].x,data['playerPos'].y));
-        this.player['pet'].setPosition(new Phaser.Math.Vector2(data['petPos'].x,data['petPos'].y));
+        this.player.setPosition(data['playerPos']);
+        this.pet.setPosition(data['petPos']);
     }
     public update(){
         switch(this.playerBehaviorStatus){
@@ -69,16 +69,18 @@ export class OtherPlayerBehavior{
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
+                this.playerMovement.update();
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
+                this.playerMovement.update();
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
                 this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
+                this.itemMovement.update();
                 break;
         }
-        this.playerMovement.update();
-        this.itemMovement.update();
+        
     }
     private readyMovementItem(item:object){
         const tempString = this.playerMovement.playerLastMovementDirection.split('_');
