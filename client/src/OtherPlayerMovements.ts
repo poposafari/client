@@ -2,6 +2,7 @@ import { Direction } from "./Direction";
 import { OverworldScene } from "./OverworldScene";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
+import { WildPokemon } from "./WildPokemon";
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -9,7 +10,9 @@ export class OtherPlayerMovements{
     constructor(
         private socket:any,
         private player:Player,
-        private pet: Pokemon,  
+        private pet: Pokemon,
+        private map: Phaser.Tilemaps.Tilemap,
+        private wildPokemonList: Array<WildPokemon>,
     ){}
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
@@ -56,7 +59,6 @@ export class OtherPlayerMovements{
         [Direction.POKEMON_RIGHT] : Vector2.RIGHT,
         [Direction.POKEMON_UP] : Vector2.UP,
     };
-
     update(){
         if(this.isPetMovementChange){
             this.pet.startAnimation(this.petMovementDirection);
@@ -64,9 +66,37 @@ export class OtherPlayerMovements{
         }
         if(this.isMoving()){
             this.updatePosition();
-            this.player.setNicknamePosition(this.player.getPosition());
         }
     }
+    private hasBlockingWildPokemon(direction: Direction):boolean{
+        for(let i =0; i<OverworldScene.MAX_WILDPOKEMON;i++){
+            if(this.tilePosInDirection(direction).equals(this.wildPokemonList[i].getTilePos())){
+                return true;
+            }
+        }
+    }
+    private isBlockingDirection(direction: Direction): boolean {
+        this.playerLastMovementDirection = direction;
+        return this.hasBlockingTile(this.tilePosInDirection(direction)) || this.hasBlockingWildPokemon(direction);
+    }    
+    private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {
+        return this.player
+            .getTilePos()
+            .add(this.movementDirectionVectors[direction]);
+    }
+    private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+        if (this.hasNoTile(pos)) return true; //Tile이 없다면,
+        return this.map.layers.some((layer) => {
+            const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
+            return tile && tile.properties.collides;
+        }); 
+    }
+    private hasNoTile(pos: Phaser.Math.Vector2): boolean {
+        return !this.map.layers.some((layer) =>
+            this.map.hasTileAt(pos.x, pos.y, layer.name)
+        );
+    }
+
     private setMovementSpeed(){
         if(this.playerMovementType == "walk") this.pixelsToWalkThisUpdate = this.PLAYER_MOVEMENT_SPEED;
         else if(this.playerMovementType == "run") this.pixelsToWalkThisUpdate = this.PLAYER_MOVEMENT_SPEED*2;
@@ -80,15 +110,10 @@ export class OtherPlayerMovements{
         return this.tileSizePixelsWalked+pixelsToWalkThisUpdate >= OverworldScene.TILE_SIZE;
     }
     private moveSprite(pixelsToWalkThisUpdate:number){
-        this.socket.on('playerMovement',(data)=>{
-            this.player.setPosition(data['playerPos']);
-            this.pet.setPosition(data['petPos']);
-        });       
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;
     }
     private updatePosition(){
-        this.setMovementSpeed();
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.moveSprite(this.pixelsToWalkThisUpdate);
             if(this.playerMovementType === "walk") this.playerMovementWalkCount++;
@@ -102,12 +127,23 @@ export class OtherPlayerMovements{
             this.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = false;
         }
+        this.socket.on('playerMovement',(data:object)=>{
+            this.player.setPosition(data['playerPos']);
+            this.pet.setPosition(data['petPos']);
+        });
+        this.player.setNicknamePosition(this.player.getPosition());
     }
     private isMoving(){
         return this.playerMovementDirection != Direction.NONE;
     }
     checkMovement(direction: Direction){
-        this.startMoving(direction);
+        if(this.isMoving()){return;}
+        if(this.isBlockingDirection(direction)){
+            this.player.standStopAnimation(direction);
+        }
+        else{
+            this.startMoving(direction);
+        }
     }
     setPetMovementDirection(): void{
         if(this.player.getPosition().x - this.pet.getPosition().x > 0){
@@ -140,5 +176,13 @@ export class OtherPlayerMovements{
         this.setPetMovementDirection();
         this.setPetMovementHistory();
         this.player.startAnimation(this.playerMovementDirection);
+        this.updateTilePosition();
+        this.setMovementSpeed();
+    }
+    private updateTilePosition(){
+        this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
+        this.pet.setTilePos(this.pet.getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
+        console.log('Other updateTilePosition');
+        console.log(this.player.getTilePos());
     }
 } 

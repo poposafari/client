@@ -6,6 +6,7 @@ import { DEPTH, ImageManagement } from "./ImageManagement";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
 import { ITEM_CODE } from "./Item";
+import { Tilemaps } from "phaser";
 
 export enum BEHAVIOR_STATUS {
     NONE_MODE="none",
@@ -51,57 +52,46 @@ export class PlayerBehavior{
         this.itemMovement = new ItemMovements(this.imageManagement,this.wildPokemonList,ITEM_CODE.NONE);
     }
     public isReadyBehavior():boolean{
-        return this.playerMovement.isMovementFinish && this.isBehaviorFinish;
+        return this.isBehaviorFinish;
     }
     public setBehavior(keyInfo:object){
         this.isBehaviorFinish = false;
-        if(keyInfo['type'] === 'none'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;
-        }
-        else if(keyInfo['type'] === 'walk'){
-            this.movementKeyDeatailInfo = keyInfo['movementDetail'];
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;
-        }
-        else if(keyInfo['type'] === 'run'){
-            this.movementKeyDeatailInfo = keyInfo['movementDetail'];
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;
-        }
-        else if(keyInfo['type'] === 'ride'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.RIDE_MODE
-        }
-        else if(keyInfo['type'] === 'throw'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE
-        }
-        else if(keyInfo['type'] === 'choice-next'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_NEXT
-        }
-        else if(keyInfo['type'] === 'choice-prev'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.CHOICE_ITEM_PREV
-        }
-        this.socket.emit('playerBehavior',{
-            socketId:this.socket.id,
-            behavior: this.playerBehaviorStatus,
-            movementKeyDeatailInfo:this.movementKeyDeatailInfo,
-            choiceItem:this.choiceItemIndex,
-        });
-    }
-    public update(){
+        this.playerBehaviorStatus = keyInfo['type'];
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
                 this.playerMovement.playerMovementWalkCount = 0;
-                this.player.standStopAnimation(this.playerMovement.playerLastMovementDirection)
+                this.player.standStopAnimation(this.playerMovement.playerLastMovementDirection);
+                this.socket.emit('playerBehavior',{
+                    socketId:this.socket.id,
+                    behavior: BEHAVIOR_STATUS.NONE_MODE,
+                });
                 this.isBehaviorFinish = true;
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
+                this.movementKeyDeatailInfo = keyInfo['movementDetail'];
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
-                this.isBehaviorFinish = true;
+                this.socket.emit('playerBehavior',{
+                    socketId:this.socket.id,
+                    behavior: BEHAVIOR_STATUS.WALK_MODE,
+                    detail:this.movementKeyDeatailInfo,
+                });
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
+                this.movementKeyDeatailInfo = keyInfo['movementDetail'];
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
-                this.isBehaviorFinish = true;
+                this.socket.emit('playerBehavior',{
+                    socketId:this.socket.id,
+                    behavior: BEHAVIOR_STATUS.RUN_MODE,
+                    detail:this.movementKeyDeatailInfo,
+                });
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
                 this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
+                this.socket.emit('playerBehavior',{
+                    socketId:this.socket.id,
+                    behavior: BEHAVIOR_STATUS.THROW_ITEM_MODE,
+                    detail:this.choiceItemIndex,
+                });
                 this.isBehaviorFinish = true;
                 break;
             case BEHAVIOR_STATUS.CHOICE_ITEM_NEXT:
@@ -118,6 +108,11 @@ export class PlayerBehavior{
                 }
                 this.isBehaviorFinish = true;
                 break;
+        }
+    }
+    public update(){
+        if(this.playerMovement.isMovementFinish){
+            this.isBehaviorFinish = true;
         }
         this.playerMovement.update();
         this.itemMovement.update();
@@ -148,7 +143,7 @@ export class PlayerBehavior{
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_UP_2);
             } 
         }
-        else if(movementKeyDeatailInfo["down"]){
+        if(movementKeyDeatailInfo["down"]){
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_1);
             }
@@ -156,7 +151,7 @@ export class PlayerBehavior{
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_DOWN_2);
             }
         }
-        else if(movementKeyDeatailInfo["left"]){
+        if(movementKeyDeatailInfo["left"]){
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_1);
             }
@@ -164,7 +159,7 @@ export class PlayerBehavior{
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_LEFT_2);
             }
         }
-        else if(movementKeyDeatailInfo["right"]){
+        if(movementKeyDeatailInfo["right"]){
             if(this.playerMovement.playerMovementWalkCount % 2){
                 this.playerMovement.checkMovement(Direction.PLAYER_WALK_RIGHT_1);
             }
@@ -181,19 +176,19 @@ export class PlayerBehavior{
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_UP_3);  
         }
-        else if(movementKeyDeatailInfo["down"]){
+        if(movementKeyDeatailInfo["down"]){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_DOWN_3);  
         }
-        else if(movementKeyDeatailInfo["left"]){
+        if(movementKeyDeatailInfo["left"]){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_2);
             if(this.getMovementPlayerStep() === 4) this.playerMovement.checkMovement(Direction.PLAYER_RUN_LEFT_3);  
         }
-        else if(movementKeyDeatailInfo["right"]){
+        if(movementKeyDeatailInfo["right"]){
             if(this.getMovementPlayerStep() === 1) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_1);
             if(this.getMovementPlayerStep() === 2) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_3);
             if(this.getMovementPlayerStep() === 3) this.playerMovement.checkMovement(Direction.PLAYER_RUN_RIGHT_2);

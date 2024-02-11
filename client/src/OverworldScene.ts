@@ -117,7 +117,9 @@ export class OverworldScene extends Phaser.Scene {
       delete this.players[socketId];
     });
     this.socket.on('playerBehavior',(data:object)=>{
-      this.players[data['socketId']].behavior.setBehavior(data);
+      if(this.players[data['socketId']].behavior.isReadyBehavior()){
+        this.players[data['socketId']].behavior.setBehavior(data);
+      }
     });
     this.playerBehavior = new PlayerBehavior(this.socket,this.player,this.imageManagement,this.wildPokemonList);
     this.playerBehavior.create();  

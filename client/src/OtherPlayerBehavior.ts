@@ -37,12 +37,15 @@ export class OtherPlayerBehavior{
     private playerBehaviorStatus: BEHAVIOR_STATUS = BEHAVIOR_STATUS.NONE_MODE;
     private movementKeyDeatailInfo:object;
     private choiceItemIndex:number = 0;
+    isBehaviorFinish:boolean = true;
     public create(){
         this.pet = this.player['pet'];
         this.playerMovement = new OtherPlayerMovements(
             this.socket,
             this.player,
             this.pet,
+            this.imageManagement.map,
+            this.wildPokemonList,
         );
         this.itemMovement = new ItemMovements(
             this.imageManagement,
@@ -50,35 +53,36 @@ export class OtherPlayerBehavior{
             ITEM_CODE.NONE
         );
     }
-    public setBehavior(data:object){
-        this.choiceItemIndex = data['choiceItem'];
-        this.movementKeyDeatailInfo = data['movementKeyDeatailInfo'];
-        if(data['behavior'] === 'none'){this.playerBehaviorStatus = BEHAVIOR_STATUS.NONE_MODE;}
-        else if(data['behavior'] === 'walk'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.WALK_MODE;
-        }
-        else if(data['behavior'] === 'run'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.RUN_MODE;
-        }
-        else if(data['behavior'] === 'throw'){
-            this.playerBehaviorStatus = BEHAVIOR_STATUS.THROW_ITEM_MODE;
-        }
+    public isReadyBehavior():boolean{
+        return this.isBehaviorFinish && this.playerMovement.isMovementFinish;
     }
-    public update(){
+    public setBehavior(data:object){
+        this.isBehaviorFinish = false;
+        this.playerBehaviorStatus = data['behavior'];
         switch(this.playerBehaviorStatus){
             case BEHAVIOR_STATUS.NONE_MODE:
                 this.playerMovement.playerMovementWalkCount = 0;
                 this.player.standStopAnimation(this.playerMovement.playerLastMovementDirection);
+                this.isBehaviorFinish = true;
                 break;
             case BEHAVIOR_STATUS.WALK_MODE:
+                this.movementKeyDeatailInfo = data['detail'];
                 this.readyMovementWalkPlayer(this.movementKeyDeatailInfo);
                 break;
             case BEHAVIOR_STATUS.RUN_MODE:
+                this.movementKeyDeatailInfo = data['detail'];
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
+                this.choiceItemIndex = data['detail'];
                 this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
+                this.isBehaviorFinish = true;
                 break;
+        }
+    }
+    public update(){
+        if(this.playerMovement.isMovementFinish){
+            this.isBehaviorFinish = true;
         }
         this.playerMovement.update();
         this.itemMovement.update();

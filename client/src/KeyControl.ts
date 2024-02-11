@@ -1,4 +1,4 @@
-import { PlayerBehavior } from "./PlayerBehavior";
+import { BEHAVIOR_STATUS, PlayerBehavior } from "./PlayerBehavior";
 
 export class KeyControl{
     constructor(
@@ -50,26 +50,26 @@ export class KeyControl{
         if(this.behavior.isReadyBehavior()){
             if(this.isPressAnyMovementKey){
                 if(this.isPressRunKey){
-                    this.behavior.setBehavior({type:'run',movementDetail: this.movementKeyDetail});
+                    this.behavior.setBehavior({type:BEHAVIOR_STATUS.RUN_MODE,movementDetail: this.movementKeyDetail});
                 }
                 else{
-                    this.behavior.setBehavior({type:'walk',movementDetail: this.movementKeyDetail});
+                    this.behavior.setBehavior({type:BEHAVIOR_STATUS.WALK_MODE,movementDetail: this.movementKeyDetail});
                 }
             }
             else if(this.isPressRideKey){
-                this.behavior.setBehavior({type:'ride'});
+                this.behavior.setBehavior({type:BEHAVIOR_STATUS.RIDE_MODE});
             }
             else if(this.isPressThrowItemKey){
-                this.behavior.setBehavior({type:'throw'});
+                this.behavior.setBehavior({type:BEHAVIOR_STATUS.THROW_ITEM_MODE});
             }
             else if(this.isPressChoiceNextItemKey){
-                this.behavior.setBehavior({type:'choice-next'});
+                this.behavior.setBehavior({type:BEHAVIOR_STATUS.CHOICE_ITEM_NEXT});
             }
             else if(this.isPressChoicePrevItemKey){
-                this.behavior.setBehavior({type:'choice-prev'});
+                this.behavior.setBehavior({type:BEHAVIOR_STATUS.CHOICE_ITEM_PREV});
             }
             else{
-                this.behavior.setBehavior({type:'none'});
+                this.behavior.setBehavior({type:BEHAVIOR_STATUS.NONE_MODE});
             }
         }
     }    

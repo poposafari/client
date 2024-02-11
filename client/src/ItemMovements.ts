@@ -98,7 +98,7 @@ export class ItemMovements{
                 return true;
             }
         }
-    }
+    } 
     private moveSprite(pixelsToWalkThisUpdate:number){
         const directionVector = this.movementDirectionVectors[this.movementDirection].clone();
         const playerMovementDistance = directionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
@@ -108,9 +108,7 @@ export class ItemMovements{
         const targetStr = (this.tileSizePixelsWalked / OverworldScene.TILE_SIZE);
         if(targetStr.toString().length === 1){
             this.item.setTilePos(this.item.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
-            console.log(this.item.getTilePos());
             if(this.hasBlockingWildPokemon()){
-                
                 return true;
             }
         }

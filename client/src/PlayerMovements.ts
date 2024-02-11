@@ -26,6 +26,7 @@ export class PlayerMovements{
     playerMovementRunCount: number=0;
     playerMovementType:string="";
     isMovementFinish:boolean=true;
+    isMovementBlocking:boolean = false;
     
     private petMovementDirection: Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -66,7 +67,6 @@ export class PlayerMovements{
         }
         if(this.isMoving()){
             this.updatePosition();
-            this.player.setNicknamePosition(this.player.getPosition());
         }
     }
     private hasBlockingWildPokemon(direction: Direction):boolean{
@@ -113,7 +113,6 @@ export class PlayerMovements{
         return this.petMovementHistory;
     }
     private updatePosition(){
-        this.setMovementSpeed();
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.moveSprite(this.pixelsToWalkThisUpdate);
             if(this.playerMovementType === "walk") this.playerMovementWalkCount++;
@@ -128,7 +127,7 @@ export class PlayerMovements{
             this.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = false;
         }
-        this.socket.emit('playerMovement',{playerPos:this.player.getPosition(),petPos:this.pet.getPosition()});
+        this.player.setNicknamePosition(this.player.getPosition());
     }
     private setMovementSpeed(){
         if(this.playerMovementType == "walk") this.pixelsToWalkThisUpdate = this.PLAYER_MOVEMENT_SPEED;
@@ -150,9 +149,9 @@ export class PlayerMovements{
         const playerDirectionVector = this.movementDirectionVectors[this.playerLastMovementDirection].clone();
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
+        this.socket.emit('playerMovement',{isBlocking:this.isMovementBlocking,playerPos: newPlayerPos,petPos:newPetPos});
         this.player.setPosition(newPlayerPos);
         this.pet.setPosition(newPetPos);
-
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
         this.tileSizePixelsWalked %= OverworldScene.TILE_SIZE;
     }
@@ -161,7 +160,9 @@ export class PlayerMovements{
         if(this.isBlockingDirection(direction)){
             this.player.standStopAnimation(direction);
         }
-        else {this.startMoving(direction)}
+        else {
+            this.startMoving(direction)
+        }
     }
     private isMoving(){
         return this.playerMovementDirection != Direction.NONE;
@@ -185,10 +186,13 @@ export class PlayerMovements{
         this.setPetMovementDirection();
         this.setPetMovementHistory();
         this.player.startAnimation(this.playerMovementDirection);
+        this.setMovementSpeed();
         this.updateTilePosition();
     }
     private updateTilePosition(){
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
         this.pet.setTilePos(this.pet.getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
+        console.log('player updateTilePosition');
+        console.log(this.player.getTilePos());
     }
 }
