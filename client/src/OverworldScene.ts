@@ -44,8 +44,8 @@ export class OverworldScene extends Phaser.Scene {
     this.nickname = '불주먹이호섭';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '150';
-    this.spriteType = 5;
+    this.petPokedex = '004';
+    this.spriteType = 3;
     this.socket = io('/game');
   }
   private addPlayer(player: object,type:boolean){
@@ -63,7 +63,7 @@ export class OverworldScene extends Phaser.Scene {
       new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']),
       this.add.text(0,0,player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
       petSprite,
-      new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']+1)),
+      new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']-1)),
       );
     if(type){
       this.player = playerObj;

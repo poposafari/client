@@ -27,10 +27,8 @@ export class ImageManagement{
     public map:Phaser.Tilemaps.Tilemap;
     public playerSprite: Phaser.GameObjects.Sprite;
     public otherPlayerSprite: Phaser.GameObjects.Sprite;
-    public otherPlayerSprites: object={};
     public petSprite: Phaser.GameObjects.Sprite;
     public otherPetSprite: Phaser.GameObjects.Sprite;
-    public otherPetSprites: object={};
     public pokemonSprite: Phaser.GameObjects.Sprite;
     public itemSprite: Phaser.GameObjects.Sprite;
 
