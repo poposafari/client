@@ -7,6 +7,7 @@ export const enum DEPTH {
   PLAYER_MIN = 2,
   PLAYER_MIDDLE = 3,
   PLAYER_MAX = 4,
+  PET=1,
 }
 
 export class ImageManagement{
@@ -117,7 +118,7 @@ export class ImageManagement{
     }
     createPetSprite(pokedex: string,check:boolean){
       this.petSprite = this.createSprite(0,1,pokedex);
-      this.petSprite.setDepth(DEPTH.PLAYER_MIDDLE);
+      this.petSprite.setDepth(DEPTH.PET);
 
       if(pokedex === '000'){this.petSprite.visible = false;}
       else{this.petSprite.visible = true;}

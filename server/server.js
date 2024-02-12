@@ -52,7 +52,6 @@ gameSocket.on('connection',(socket)=>{
     players[socket.id] = data;
     socket.emit('currentPlayers',players);
     socket.broadcast.emit('newPlayer',players[socket.id]);
-    console.log(players);
   });
   socket.on('disconnect',function(){
     delete players[socket.id];

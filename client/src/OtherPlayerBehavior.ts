@@ -13,7 +13,7 @@ export enum BEHAVIOR_STATUS {
     WALK_MODE="walk",
     RUN_MODE="run",
     PET_MODE="pet",
-    THROW_ITEM_MODE="throwitem",
+    THROW_ITEM_MODE="throw",
     CHOICE_ITEM_NEXT="choiceitemnext",
     CHOICE_ITEM_PREV="choiceitemnprev"
 }
@@ -74,6 +74,7 @@ export class OtherPlayerBehavior{
                 this.readyMovementRunPlayer(this.movementKeyDeatailInfo);
                 break;
             case BEHAVIOR_STATUS.THROW_ITEM_MODE:
+                console.log('other player throw item!!');
                 this.choiceItemIndex = data['detail'];
                 this.readyMovementItem(this.itemList[`${this.choiceItemIndex}`]);
                 this.isBehaviorFinish = true;

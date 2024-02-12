@@ -44,7 +44,7 @@ export class OverworldScene extends Phaser.Scene {
     this.nickname = '불주먹이호섭';
     this.lastTilePosX = Phaser.Math.Between(1,10);
     this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '000';
+    this.petPokedex = '150';
     this.spriteType = 5;
     this.socket = io('/game');
   }
@@ -136,18 +136,17 @@ export class OverworldScene extends Phaser.Scene {
         this.players[id].behavior.update();
         if(this.player.getTilePos().x === this.players[id].playerObj.getTilePos().x){
           if(this.player.getTilePos().y+1 === this.players[id].playerObj.getTilePos().y){
-            console.log('아래에 다른 플레이어');
-            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIN,DEPTH.PLAYER_MIN);
-            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIN,DEPTH.PET);
+            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
           }
           if(this.player.getTilePos().y-1 === this.players[id].playerObj.getTilePos().y){
-            console.log('위에 다른 플레이어');
-            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MAX,DEPTH.PLAYER_MAX);
-            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+            this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MAX,DEPTH.PET);
+            this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
           }
         }
         else{
-          this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PLAYER_MIDDLE);
+          this.player.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
+          this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
         }
       }
     });

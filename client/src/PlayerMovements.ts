@@ -149,7 +149,7 @@ export class PlayerMovements{
         const playerDirectionVector = this.movementDirectionVectors[this.playerLastMovementDirection].clone();
         const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
         const newPlayerPos = this.player.getPosition().add(playerMovementDistance);
-        this.socket.emit('playerMovement',{isBlocking:this.isMovementBlocking,playerPos: newPlayerPos,petPos:newPetPos});
+        this.socket.emit('playerMovement',{playerPos: newPlayerPos,petPos:newPetPos,});
         this.player.setPosition(newPlayerPos);
         this.pet.setPosition(newPetPos);
         this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
@@ -161,7 +161,7 @@ export class PlayerMovements{
             this.player.standStopAnimation(direction);
         }
         else {
-            this.startMoving(direction)
+            this.startMoving(direction);
         }
     }
     private isMoving(){
@@ -192,7 +192,5 @@ export class PlayerMovements{
     private updateTilePosition(){
         this.player.setTilePos(this.player.getTilePos().add(this.movementDirectionVectors[this.playerMovementDirection]));
         this.pet.setTilePos(this.pet.getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
-        console.log('player updateTilePosition');
-        console.log(this.player.getTilePos());
     }
 }
