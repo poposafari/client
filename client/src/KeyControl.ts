@@ -15,10 +15,6 @@ export class KeyControl{
     private isPressAnyMovementKey:boolean;
 
     private movementKeyDetail:object;
-    private isPressUpMovementKey:boolean;
-    private isPressDownMovementKey:boolean;
-    private isPressRightMovementKey:boolean;
-    private isPressLeftMovementKey:boolean;
 
     private isPressRunKey:boolean;
     private isPressPetKey:boolean;

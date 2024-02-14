@@ -89,7 +89,6 @@ export class ImageManagement{
         this.map.addTilesetImage("nature_1", "nature_1");
         const layer1 = this.map.createLayer(0,"nature_1",0,0);
         const layer2 = this.map.createLayer(1,"nature_1",0,0);
-
     }
     createPlayerSprite(sprite_key: string){
         this.playerSprite = this.createSprite(0,0,sprite_key);
@@ -97,7 +96,7 @@ export class ImageManagement{
         this.playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
-        this.createPlayerSpriteAnimation(sprite_key);
+       this.createPlayerSpriteAnimation(sprite_key);
         return this.playerSprite;
     }
     createOtherPlayerSprite(sprite_key: string){

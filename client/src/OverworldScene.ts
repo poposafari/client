@@ -21,8 +21,11 @@ export class OverworldScene extends Phaser.Scene {
 
   private player: Player;
   private playerBehavior: PlayerBehavior;
+
   private wildPokemonBehavior: WildPokemonBehavior;
   private wildPokemonList: Array<WildPokemon>=[];
+
+  private players:object={};
 
   private nickname: string = 'null';
   private lastTilePosX: number = null;
@@ -32,14 +35,8 @@ export class OverworldScene extends Phaser.Scene {
   private socket:any = null;
   private socketId:string;
 
-  private players:object={};
-  
   public preload(){
     this.imageManagement = new ImageManagement(this);
-    this.imageManagement.loadMapImage();
-    this.imageManagement.loadPlayerImage();
-    this.imageManagement.loadItemImage();
-    this.imageManagement.loadPokemonImage();
     //axios로 사용자 정보 가져와야 함.
     this.nickname = '불주먹이호섭';
     this.lastTilePosX = Phaser.Math.Between(1,10);
@@ -62,9 +59,8 @@ export class OverworldScene extends Phaser.Scene {
       playerSprite,
       new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']),
       this.add.text(0,0,player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
-      petSprite,
       new Pokemon(petSprite,new Phaser.Math.Vector2(player['tilePosX'], player['tilePosY']-1)),
-      );
+    );
     if(type){
       this.player = playerObj;
       this.player.setNicknamePosition(this.player.getPosition());

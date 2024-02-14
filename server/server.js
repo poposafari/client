@@ -25,9 +25,11 @@ app.use(cors({
   origin: '*' //모든 요청 승인. 테스트 용도로만 이렇게 놔두도록 하자.
 }));
 
+app.use(express.static(join(__dirname,'..','public')));
+
 app.get('/',verifyToken,(req, res) => {
   if(req.result.auth){
-    app.use(express.static(join(__dirname,'..','public')));
+    // app.use(express.static(join(__dirname,'..','public')));
     res.status(200).sendFile(join(__dirname,'..','public/index.html')); //in game html!!
   }
   else{
