@@ -3,6 +3,11 @@ import { ImageManagement } from "../ImageManagement";
 import { OverworldScene } from "../OverworldScene";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../Config";
 
+//#74CEFB - summer
+//B7E763 - spring
+//FDAC7D - autumn
+//E5D2E1 - winter
+
 export class LoadScene extends Phaser.Scene{
     constructor(){super({key:'LoadScene'});this.imageManagement = new ImageManagement(this);}
     
@@ -17,20 +22,20 @@ export class LoadScene extends Phaser.Scene{
     
         const seasonChineseText = this.make.text({
             x: CANVAS_WIDTH/2,
-            y: CANVAS_HEIGHT/2 - 30, // Adjusted Y coordinate
+            y: CANVAS_HEIGHT/2 - 25, // Adjusted Y coordinate
             text: '冬',
             style:{
-                font: 'Bold 60px Arial',
-                color: '#A1E1FF'
+                font: 'Bold 70px Arial',
+                color: '#FFFFFF'
             }
         });
         const seasonText = this.make.text({
             x: CANVAS_WIDTH/2,
-            y: CANVAS_HEIGHT/2 + 30, // Adjusted Y coordinate
+            y: CANVAS_HEIGHT/2 + 25, // Adjusted Y coordinate
             text: 'Winter',
             style:{
                 font: 'bold 30px Arial',
-                color: '#A1E1FF'
+                color: '#E5D2E1'
             }
         });
         seasonChineseText.setOrigin(0.5,0.5);
