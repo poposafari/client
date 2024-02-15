@@ -34,17 +34,7 @@ export class OverworldScene extends Phaser.Scene {
   private spriteType: number = null;
   private socket:any = null;
   private socketId:string;
-
-  public preload(){
-    this.imageManagement = new ImageManagement(this);
-    //axios로 사용자 정보 가져와야 함.
-    this.nickname = '불주먹이호섭';
-    this.lastTilePosX = Phaser.Math.Between(1,10);
-    this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '004';
-    this.spriteType = 3;
-    this.socket = io('/game');
-  }
+  
   private addPlayer(player: object,type:boolean){
     let playerSprite:Phaser.GameObjects.Sprite;
     if(type){
@@ -75,10 +65,24 @@ export class OverworldScene extends Phaser.Scene {
       this.players[player['socketId']].playerObj.nickname.setDepth(DEPTH.NICKNAME);
     }
   }
+
+  public init(){
+    //axios
+    this.nickname = '불주먹이호섭';
+    this.lastTilePosX = Phaser.Math.Between(1,10);
+    this.lastTilePosY = Phaser.Math.Between(1,10);
+    this.petPokedex = '004';
+    this.spriteType = 3;
+    this.socket = io('/game');
+  }
+  public preload(){
+    this.imageManagement = new ImageManagement(this);
+  }
   public async create(){
     this.imageManagement.createMap();
-    const promise_1 = new Promise<void>((resolve)=>{
-      this.socketId = this.socket.id;
+    this.socketId = this.socket.id;
+
+    this.players = new Promise<object>((resolve)=>{
       this.socket.emit('newPlayer',{
         socketId:this.socketId,
         nickname:this.nickname,
@@ -88,11 +92,10 @@ export class OverworldScene extends Phaser.Scene {
         spriteType:this.spriteType
       });
       this.socket.on('currentPlayers',(players:object)=>{
-        this.players = players; 
-        resolve();
+        resolve(players);
       });
     });
-    await promise_1;
+
     Object.keys(this.players).forEach((id)=>{
       if(this.players[id].socketId === this.socketId){
         this.addPlayer(this.players[id],true);
