@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import {OverworldScene} from "./OverworldScene";
+import {OverworldScene} from "./scene/OverworldScene";
 import { Pokemon } from "./Pokemon";
 import { Player } from "./Player";
 import { WildPokemon } from "./WildPokemon";

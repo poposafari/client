@@ -1,8 +1,8 @@
 import { Pokemon } from "./Pokemon";
 import { WildPokemonMovements } from "./WildPokemonMovements";
-import {OverworldScene} from "./OverworldScene";
+import {OverworldScene} from "./scene/OverworldScene";
 import { Player } from "./Player";
-import { ImageManagement } from "./ImageManagement";
+import { ImageManagement } from "./management/ImageManagement";
 import { WildPokemon } from "./WildPokemon";
 
 export const enum WILDPOKEMON_STATUS{

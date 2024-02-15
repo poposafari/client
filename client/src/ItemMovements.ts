@@ -1,8 +1,8 @@
 import { Direction } from "./Direction";
 import { ITEM_CODE, Item } from "./Item";
-import {OverworldScene} from "./OverworldScene";
+import {OverworldScene} from "./scene/OverworldScene";
 import { Pokemon } from "./Pokemon";
-import { ImageManagement } from "./ImageManagement";
+import { ImageManagement } from "./management/ImageManagement";
 import { WildPokemon } from "./WildPokemon";
 import { WILDPOKEMON_STATUS } from "./WildPokemonBehavior";
 

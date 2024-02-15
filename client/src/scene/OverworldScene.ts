@@ -1,13 +1,14 @@
 import * as Phaser from "phaser";
-import { DEPTH, ImageManagement } from "./ImageManagement";
-import { KeyControl } from "./KeyControl"
-import { Player } from "./Player";
-import { PlayerBehavior } from "./PlayerBehavior";
-import { WildPokemonBehavior } from "./WildPokemonBehavior";
-import { WildPokemon } from "./WildPokemon";
+import { DEPTH, ImageManagement } from "../management/ImageManagement";
+import { KeyControl } from "../KeyControl"
+import { Player } from "../Player";
+import { PlayerBehavior } from "../PlayerBehavior";
+import { WildPokemonBehavior } from "../WildPokemonBehavior";
+import { WildPokemon } from "../WildPokemon";
 import {io} from 'socket.io-client';
-import { Pokemon } from "./Pokemon";
-import { OtherPlayerBehavior } from "./OtherPlayerBehavior";
+import { Pokemon } from "../Pokemon";
+import { OtherPlayerBehavior } from "../OtherPlayerBehavior";
+import { PlayerManagement } from "../management/PlayerManagement";
 
 export class OverworldScene extends Phaser.Scene {
   
@@ -16,6 +17,7 @@ export class OverworldScene extends Phaser.Scene {
   static readonly TILE_SIZE = 32;
   static readonly MAX_WILDPOKEMON = 0;
 
+  private playerManagement: PlayerManagement;
   private imageManagement: ImageManagement;
   private keyControl: KeyControl;
 
@@ -66,13 +68,9 @@ export class OverworldScene extends Phaser.Scene {
     }
   }
 
-  public init(){
-    //axios
-    this.nickname = '불주먹이호섭';
-    this.lastTilePosX = Phaser.Math.Between(1,10);
-    this.lastTilePosY = Phaser.Math.Between(1,10);
-    this.petPokedex = '004';
-    this.spriteType = 3;
+  public init(data:object){
+    console.log(data);
+    this.playerManagement = data['playerManagement'];
     this.socket = io('/game');
   }
   public preload(){

@@ -1,9 +1,11 @@
 import axios from "axios";
-import { ImageManagement } from "../ImageManagement";
-import { OverworldScene } from "../OverworldScene";
+import { ImageManagement } from "../management/ImageManagement";
+import { OverworldScene } from "../scene/OverworldScene";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../Config";
 import { TextManagement } from "../management/TextManagement";
 import { AnimationManagement } from "../management/AnimationManagement";
+import { PlayerManagement } from "../management/PlayerManagement";
+import { Player } from "../Player";
 
 //#74CEFB - summer
 //B7E763 - spring
@@ -16,10 +18,12 @@ export class LoadScene extends Phaser.Scene{
         this.imageManagement = new ImageManagement(this);
         this.textManagement = new TextManagement(this);
         this.animationManagement = new AnimationManagement(this);
+        this.playerManagement = new PlayerManagement();
     }
     private textManagement: TextManagement;
     private imageManagement: ImageManagement;
     private animationManagement: AnimationManagement;
+    private playerManagement: PlayerManagement;
 
     private seasonTextChinese: Phaser.GameObjects.Text;
     private seasonText: Phaser.GameObjects.Text;
@@ -51,11 +55,14 @@ export class LoadScene extends Phaser.Scene{
         });
     }
     public async create(){
-        
-        //this.startOverworldScene();
+        //axios를 사용하자.
+        const obj={};
+        this.playerManagement.setPlayerInfo(obj);
+        this.startOverworldScene();
     }
     private startOverworldScene(){
-        this.scene.start('OverworldScene', { imageManagement: this.imageManagement });
+
+        this.scene.start('OverworldScene', { playerManagement: this.playerManagement });
     }
     private textDestory(){
         this.seasonText.destroy();

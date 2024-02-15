@@ -1,4 +1,4 @@
-import { Direction } from "./Direction";
+import { Direction } from "../Direction";
 
 export const enum DEPTH {
   NICKNAME = 7,
