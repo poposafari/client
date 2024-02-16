@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import { DEPTH, ImageManagement } from "./ImageManagement";
+import { DEPTH, ImageManagement } from "./management/ImageManagement";
 import { ITEM_CODE } from "./Item";
 import { ItemMovements } from "./ItemMovements";
 import { OtherPlayerMovements } from "./OtherPlayerMovements";

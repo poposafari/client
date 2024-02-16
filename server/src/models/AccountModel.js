@@ -1,16 +1,18 @@
 const database = require('../config/database');
 
-function createAccountModel(username, password, email, is_game_account) {
+function createAccountModel(username, password, email, gender) {
+    console.log(username);
     return new Promise((resolve, reject) => {
-      const values = [username, password, email, is_game_account];
+      const values = [username, password, email, gender];
       const sql = `
-        INSERT INTO user_account
-        (username, password, email, is_game_account)
+        INSERT INTO account
+        (username, password, email, gender)
         VALUES (?, ?, ?, ?)
       `;
   
       database.query(sql, values, (error, results) => {
         if (error) {
+          console.log(error);
           reject(error);
         } else {
           resolve(results);
@@ -24,7 +26,7 @@ function getAccountDataModel(username){
     const values = [username];
     const sql = `
       SELECT username, password
-      FROM user_account
+      FROM account
       WHERE username = (?)
     `;
     database.query(sql, values, (error, results) => {

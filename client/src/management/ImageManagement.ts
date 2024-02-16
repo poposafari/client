@@ -73,11 +73,6 @@ export class ImageManagement{
           this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
       }
     }
-    loadPlayerAnimation(){
-      for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
-        this.createPlayerSpriteAnimation(`player_${i}_movement`);
-      } 
-    }
     loadPokemonAnimation(){
       for(let i=0;i<=this.MAX_POKEMON;i++){
         const index = this.addZeroPadding(i,3);
@@ -90,20 +85,20 @@ export class ImageManagement{
         const layer1 = this.map.createLayer(0,"nature_1",0,0);
         const layer2 = this.map.createLayer(1,"nature_1",0,0);
     }
-    createPlayerSprite(sprite_key: string){
-        this.playerSprite = this.createSprite(0,0,sprite_key);
+    createPlayerSprite(spriteIndex:number){
+        this.playerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
         this.playerSprite.scale = 2;
         this.playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
         this.phaser.cameras.main.startFollow(this.playerSprite);
         this.phaser.cameras.main.roundPixels = true;
-       this.createPlayerSpriteAnimation(sprite_key);
+        this.createPlayerSpriteAnimation(spriteIndex);
         return this.playerSprite;
     }
-    createOtherPlayerSprite(sprite_key: string){
-      this.otherPlayerSprite = this.createSprite(0,0,sprite_key);
+    createOtherPlayerSprite(spriteIndex:number){
+      this.otherPlayerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
       this.otherPlayerSprite.scale=2;
       this.otherPlayerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
-      this.createPlayerSpriteAnimation(sprite_key);
+      this.createPlayerSpriteAnimation(spriteIndex);
       return this.otherPlayerSprite;
     }
     createPokemonSprite(pokedex: string){
@@ -113,7 +108,7 @@ export class ImageManagement{
       this.createPokemonSpriteAnimation(pokedex);
       return this.pokemonSprite;
     }
-    createPetSprite(pokedex: string,check:boolean){
+    createPetSprite(pokedex: string){
       this.petSprite = this.createSprite(0,1,pokedex);
       this.petSprite.setDepth(DEPTH.PET);
 
@@ -122,8 +117,8 @@ export class ImageManagement{
       this.createPokemonSpriteAnimation(pokedex);
       return this.petSprite;
     }
-    private createPlayerSpriteAnimation(index: string){
-        this.playerFrames = this.phaser.anims.generateFrameNames(`${index}`,{
+    private createPlayerSpriteAnimation(spriteIndex: number){
+        this.playerFrames = this.phaser.anims.generateFrameNames(`player_${spriteIndex}_movement`,{
             prefix:`player_movement-`,
             suffix:"",
             start:0,

@@ -1,4 +1,4 @@
-import AwaitLoaderPlugin from 'phaser3-rex-plugins/plugins/awaitloader-plugin.js';
+import { LoadScene } from "./scene/LoadScene";
 
 export const CANVAS_WIDTH = 1000;
 export const CANVAS_HEIGHT = 600;
@@ -21,15 +21,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     fps:{
       target: 60,
       forceSetTimeOut: true
-    },
-    plugins: {
-      global: [
-        {
-          key: "rexAwaitLoader",
-          plugin: AwaitLoaderPlugin,
-          start: true,
-        },
-      ],
     },
     backgroundColor: '#000000',
     pixelArt:true,

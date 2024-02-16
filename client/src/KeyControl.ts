@@ -6,9 +6,7 @@ export class KeyControl{
         private behavior:PlayerBehavior,
     ){
         this.cursorKey = this.keyInput.keyboard.createCursorKeys();
-        this.petKey = this.keyInput.keyboard.addKey('P');
         this.throwItemKey = this.keyInput.keyboard.addKey('C');
-        this.rideKey = this.keyInput.keyboard.addKey('R');
         this.choiceNextItemKey = this.keyInput.keyboard.addKey('M');
         this.choicePrevItemKey = this.keyInput.keyboard.addKey('N');
     }
@@ -29,6 +27,7 @@ export class KeyControl{
     private rideKey: Phaser.Input.Keyboard.Key;
     private choiceNextItemKey: Phaser.Input.Keyboard.Key;
     private choicePrevItemKey: Phaser.Input.Keyboard.Key;
+    
     update(){
         this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.movementKeyDetail = {
@@ -38,9 +37,7 @@ export class KeyControl{
             left: this.cursorKey.left.isDown,
         };
         this.isPressRunKey = this.cursorKey.shift.isDown;
-        this.isPressPetKey = Phaser.Input.Keyboard.JustDown(this.petKey);
         this.isPressThrowItemKey = Phaser.Input.Keyboard.JustDown(this.throwItemKey);
-        this.isPressRideKey = Phaser.Input.Keyboard.JustDown(this.rideKey);
         this.isPressChoiceNextItemKey = Phaser.Input.Keyboard.JustDown(this.choiceNextItemKey);
         this.isPressChoicePrevItemKey = Phaser.Input.Keyboard.JustDown(this.choicePrevItemKey);
         if(this.behavior.isReadyBehavior()){

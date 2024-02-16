@@ -19,4 +19,24 @@ function checkNewbieModel(username){
     });
 }
 
+function getUserInfoModel(username){
+    const values = [username];
+    const sql = `
+      SELECT *
+      FROM game_account
+      WHERE username=(?)
+    `;
+    return new Promise((resolve, reject) => {
+        database.query(sql, values, (error, results) => {
+            if(error){
+                reject(error);
+            } 
+            else{
+                resolve(results);
+            }
+        });
+    });
+}
+
 exports.checkNewbieModel = checkNewbieModel;
+exports.getUserInfoModel = getUserInfoModel;

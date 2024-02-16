@@ -5,7 +5,7 @@ require("dotenv").config();
 
 async function createAccount(dto) {
     const hashedPassword = await setPasswordBycrypt(dto.password);
-    return createAccountModel(dto.username, hashedPassword, dto.email, 0);
+    return createAccountModel(dto.username, hashedPassword, dto.email, 1);
 }
 
 async function setPasswordBycrypt(password) {

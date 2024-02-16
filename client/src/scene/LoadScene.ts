@@ -1,10 +1,12 @@
 import axios from "axios";
+import EventManager, { EVENTS } from "../management/EventManager";
 import { ImageManagement } from "../management/ImageManagement";
 import { OverworldScene } from "../scene/OverworldScene";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../Config";
 import { TextManagement } from "../management/TextManagement";
 import { AnimationManagement } from "../management/AnimationManagement";
 import { PlayerManagement } from "../management/PlayerManagement";
+
 import { Player } from "../Player";
 
 //#74CEFB - summer
@@ -16,56 +18,37 @@ export class LoadScene extends Phaser.Scene{
     constructor(){
         super({key:'LoadScene'});
         this.imageManagement = new ImageManagement(this);
-        this.textManagement = new TextManagement(this);
-        this.animationManagement = new AnimationManagement(this);
         this.playerManagement = new PlayerManagement();
     }
-    private textManagement: TextManagement;
+
     private imageManagement: ImageManagement;
-    private animationManagement: AnimationManagement;
     private playerManagement: PlayerManagement;
 
-    private seasonTextChinese: Phaser.GameObjects.Text;
-    private seasonText: Phaser.GameObjects.Text;
-
     public init(){
-        this.seasonTextChinese = this.textManagement.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,'冬','Bold 70px Arial','#FFFFFF');
-        this.seasonText = this.textManagement.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,'Winter','Bold 30px Arial','#E5D2E1');
-        this.seasonText.setOrigin(0.5,0.5);
-        this.seasonText.alpha = 0;
-        this.seasonTextChinese.setOrigin(0.5,0.5);
-        this.seasonTextChinese.alpha = 0;
-    }
-    public preload(){
-        this.scene.add('OverworldScene',OverworldScene);
 
+    }
+    public async preload(){
+        this.scene.add('OverworldScene',OverworldScene);
         this.imageManagement.loadMapImage();
         this.imageManagement.loadPlayerImage();
         this.imageManagement.loadItemImage();
         this.imageManagement.loadPokemonImage();
-
-        this.load.on('progress',()=>{
-            this.animationManagement.fade([this.seasonText,this.seasonTextChinese],1,1000,null);
-        });
-    
-        this.load.on('complete',()=>{
-            setTimeout(()=>{
-                this.animationManagement.fade([this.seasonText,this.seasonTextChinese],0,3000,this.textDestory);
-            },2000);
-        });
     }
     public async create(){
-        //axios를 사용하자.
-        const obj={};
-        this.playerManagement.setPlayerInfo(obj);
-        this.startOverworldScene();
+        try{
+            const res = await axios.get('http://localhost:8081/game/user-info');
+            EventManager.triggerEvent(EVENTS.PLAYER_DATA,res.data[0]);
+            EventManager.socketEvent();
+            this.playerManagement.setPlayerInfo(this.socket.id,res.data[0]);
+            this.startSeasonScene();
+        }catch(error){
+            console.error(error);
+        }
     }
-    private startOverworldScene(){
-
-        this.scene.start('OverworldScene', { playerManagement: this.playerManagement });
-    }
-    private textDestory(){
-        this.seasonText.destroy();
-        this.seasonTextChinese.destroy();
+    private startSeasonScene(){
+        this.scene.start('SeasonScene', {
+            socket: this.socket,
+            playerManagement: this.playerManagement
+        });
     }
 }

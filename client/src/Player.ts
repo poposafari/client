@@ -1,6 +1,6 @@
 import { GridObject } from "./GridObject";
-import { DEPTH } from "./ImageManagement";
-import {OverworldScene} from "./OverworldScene";
+import { DEPTH } from "./management/ImageManagement";
+import {OverworldScene} from "./scene/OverworldScene";
 import { Pokemon } from "./Pokemon";
 
 export class Player extends GridObject{
@@ -24,5 +24,10 @@ export class Player extends GridObject{
   setDepthPlayerAndPet(operandA: DEPTH, operandB: DEPTH):void{
     super.setDepth(operandA);
     this.pet.setDepth(operandB);
+  }
+  destoryAll(){
+    this.destroySprite();
+    this.pet.destroySprite();
+    this.nickname.destroy();
   }
 }

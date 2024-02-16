@@ -2,7 +2,7 @@ import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
 import { Direction } from "./Direction";
 import { ItemMovements } from "./ItemMovements";
-import { DEPTH, ImageManagement } from "./ImageManagement";
+import { DEPTH, ImageManagement } from "./management/ImageManagement";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
 import { ITEM_CODE } from "./Item";

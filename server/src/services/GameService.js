@@ -1,13 +1,13 @@
-const {checkNewbieModel} = require('../models/GameModel');
+const {getUserInfoModel} = require('../models/GameModel');
 
-async function checkNewbie(username){
+async function getUserInfo(username){
     try{
-        const result = await checkNewbieModel(username);
+        const result = await getUserInfoModel(username);
         return result;
     }
-    catch{
-        console.error(err.message);
+    catch(error){
+        console.log(error);
     }
 }
 
-exports.checkNewbie = checkNewbie;
+exports.getUserInfo = getUserInfo;

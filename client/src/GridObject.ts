@@ -55,4 +55,7 @@ export class GridObject{
   getDepth(): number{
     return this.sprite.depth;
   }
+  destroySprite(){
+    this.sprite.destroy();
+  }
 }

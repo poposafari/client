@@ -25,11 +25,9 @@ app.use(cors({
   origin: '*' //모든 요청 승인. 테스트 용도로만 이렇게 놔두도록 하자.
 }));
 
-app.use(express.static(join(__dirname,'..','public')));
-
 app.get('/',verifyToken,(req, res) => {
   if(req.result.auth){
-    // app.use(express.static(join(__dirname,'..','public')));
+    app.use(express.static(join(__dirname,'..','public')));
     res.status(200).sendFile(join(__dirname,'..','public/index.html')); //in game html!!
   }
   else{
@@ -51,7 +49,18 @@ const players = {};
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
   socket.on('newPlayer',(data)=>{
-    players[socket.id] = data;
+    players[socket.id] = {
+      socketId: data.socketId,
+      playerObj: null,
+      behavior: null,
+      nickname: data.nickname,
+      pokedex: data.pokedex,
+      spriteIndex: data.spriteIndex,
+      player_x: data.player_x,
+      player_y: data.player_y,
+      pet_x: data.pet_x,
+      pet_y: data.pet_y,
+    };
     socket.emit('currentPlayers',players);
     socket.broadcast.emit('newPlayer',players[socket.id]);
   });
