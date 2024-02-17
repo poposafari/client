@@ -2,7 +2,7 @@ import { Player } from "./Player";
 import { PlayerMovements } from "./PlayerMovements";
 import { Direction } from "./Direction";
 import { ItemMovements } from "./ItemMovements";
-import { DEPTH, ImageManagement } from "./management/ImageManagement";
+import { DEPTH, ImageManager } from "./manager/ImageManager";
 import { Pokemon } from "./Pokemon";
 import { WildPokemon } from "./WildPokemon";
 import { ITEM_CODE } from "./Item";
@@ -23,7 +23,7 @@ export class PlayerBehavior{
     constructor(
         private socket:any,
         private player: Player,
-        private imageManagement: ImageManagement,
+        private imageManagement: ImageManager,
         private wildPokemonList: Array<WildPokemon>,
     ){}
     private pet:Pokemon;

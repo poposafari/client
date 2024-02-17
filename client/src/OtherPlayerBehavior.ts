@@ -1,5 +1,5 @@
 import { Direction } from "./Direction";
-import { DEPTH, ImageManagement } from "./management/ImageManagement";
+import { DEPTH, ImageManager } from "./manager/ImageManager";
 import { ITEM_CODE } from "./Item";
 import { ItemMovements } from "./ItemMovements";
 import { OtherPlayerMovements } from "./OtherPlayerMovements";
@@ -22,7 +22,7 @@ export class OtherPlayerBehavior{
     constructor(
         private socket: any,
         private player: Player,
-        private imageManagement: ImageManagement,
+        private imageManagement: ImageManager,
         private wildPokemonList: Array<WildPokemon>,
     ){}
     private pet:Pokemon;

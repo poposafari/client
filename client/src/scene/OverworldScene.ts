@@ -1,13 +1,12 @@
 import * as Phaser from "phaser";
-import { DEPTH, ImageManagement } from "../management/ImageManagement";
+import { DEPTH, ImageManager } from "../manager/ImageManager";
 import { KeyControl } from "../KeyControl"
 import { Player } from "../Player";
 import { PlayerBehavior } from "../PlayerBehavior";
 import { WildPokemonBehavior } from "../WildPokemonBehavior";
 import { WildPokemon } from "../WildPokemon";
-import { Pokemon } from "../Pokemon";
 import { OtherPlayerBehavior } from "../OtherPlayerBehavior";
-import { PlayerManagement } from "../management/PlayerManagement";
+import { PlayerManagement } from "../manager/PlayerManager";
 
 export class OverworldScene extends Phaser.Scene {
   
@@ -17,7 +16,7 @@ export class OverworldScene extends Phaser.Scene {
   static readonly MAX_WILDPOKEMON = 0;
 
   private playerManagement: PlayerManagement;
-  private imageManagement: ImageManagement;
+  private imageManagement: ImageManager;
 
   private socket: any;
   private keyControl: KeyControl;
@@ -33,7 +32,7 @@ export class OverworldScene extends Phaser.Scene {
     this.socket = data['socket'];
   }
   public preload(){
-    this.imageManagement = new ImageManagement(this);
+    this.imageManagement = new ImageManager(this);
   }
   public async create(){
     this.imageManagement.createMap();
@@ -59,6 +58,7 @@ export class OverworldScene extends Phaser.Scene {
     this.socket.on('playerBehavior',(data:object)=>{
       this.playerManagement.setBehavior(data);
     });
+
     this.playerBehavior = this.playerManagement.getBehavior();
     this.keyControl = new KeyControl(this.input,this.playerBehavior);
     this.wildPokemonBehavior = new WildPokemonBehavior(this.player,this.imageManagement,this.wildPokemonList,this.time);

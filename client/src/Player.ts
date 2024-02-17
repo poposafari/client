@@ -1,5 +1,5 @@
 import { GridObject } from "./GridObject";
-import { DEPTH } from "./management/ImageManagement";
+import { DEPTH } from "./manager/ImageManager";
 import {OverworldScene} from "./scene/OverworldScene";
 import { Pokemon } from "./Pokemon";
 

@@ -2,7 +2,7 @@ import { Pokemon } from "./Pokemon";
 import { WildPokemonMovements } from "./WildPokemonMovements";
 import {OverworldScene} from "./scene/OverworldScene";
 import { Player } from "./Player";
-import { ImageManagement } from "./management/ImageManagement";
+import { ImageManager } from "./manager/ImageManager";
 import { WildPokemon } from "./WildPokemon";
 
 export const enum WILDPOKEMON_STATUS{
@@ -15,7 +15,7 @@ export const enum WILDPOKEMON_STATUS{
 export class WildPokemonBehavior{
     constructor(
         private player: Player,
-        private imageManagement: ImageManagement,
+        private imageManagement: ImageManager,
         private wildPokemonList: Array<WildPokemon>,
         private phaserTime: Phaser.Time.Clock,
     ){}

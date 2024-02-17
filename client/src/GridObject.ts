@@ -1,7 +1,7 @@
 import * as Phaser from "phaser";
 import { Direction } from "./Direction";
 import {OverworldScene} from "./scene/OverworldScene";
-import { DEPTH } from "./management/ImageManagement";
+import { DEPTH } from "./manager/ImageManager";
 
 export class GridObject{
   constructor(

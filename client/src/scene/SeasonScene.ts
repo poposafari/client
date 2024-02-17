@@ -1,47 +1,47 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../Config";
-import { AnimationManagement } from "../management/AnimationManagement";
-import { TextManagement } from "../management/TextManagement";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../constants/Game";
+import { TextManager } from "../manager/TextManager";
+import { SEASON_TEXT } from "../../constants/Text";
+import { AnimationManager } from "../manager/AnimationManager";
+import { InitScene } from "./InitScene";
+import { MapScene } from "./MapScene";
+import { ImageManager } from "../manager/ImageManager";
 
 export class SeasonScene extends Phaser.Scene{
     constructor(){
-        super({key:'SeasonScene'});
-        this.textManagement = new TextManagement(this);
-        this.animationManagement = new AnimationManagement(this);
+        super('SeasonScene');
+        this.textManager = new TextManager(this);
+        this.animationManager = new AnimationManager(this);
     }
 
-    private textManagement: TextManagement;
-    private animationManagement: AnimationManagement;
+    private textManager: TextManager;
+    private animationManager: AnimationManager;
+    private imageManager:ImageManager;
 
-    private seasonTextChinese: Phaser.GameObjects.Text;
     private seasonText: Phaser.GameObjects.Text;
+    private seasonChineseText: Phaser.GameObjects.Text;
+
+    private season:number=null;
     
-    init(){
-        this.seasonTextChinese = this.textManagement.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,'冬','Bold 70px Arial','#FFFFFF');
-        this.seasonText = this.textManagement.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,'Winter','Bold 30px Arial','#E5D2E1');
+    create(data:object){
+        this.season = data['season'];
+        this.season = data['im'];
+        this.seasonChineseText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,SEASON_TEXT[this.season].chinese,'Bold 70px Arial',SEASON_TEXT[this.season].chineseColor);
+        this.seasonText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,SEASON_TEXT[this.season].text,'Bold 30px Arial',SEASON_TEXT[this.season].textColor);
         this.seasonText.setOrigin(0.5,0.5);
         this.seasonText.alpha = 0;
-        this.seasonTextChinese.setOrigin(0.5,0.5);
-        this.seasonTextChinese.alpha = 0;
+        this.seasonChineseText.setOrigin(0.5,0.5);
+        this.seasonChineseText.alpha = 0;
 
-    }
-    preload(){
-        this.load.on('progress',()=>{
-            this.animationManagement.fade([this.seasonText,this.seasonTextChinese],1,1000,null);
-        });
-        this.load.on('complete',()=>{
-            setTimeout(()=>{
-                this.animationManagement.fade([this.seasonText,this.seasonTextChinese],0,3000,this.textDestory());
-            },1000);
+        this.animationManager.fade([this.seasonText, this.seasonChineseText], 1, 1000, () => {
+            this.animationManager.fade([this.seasonText, this.seasonChineseText], 0, 2000, () => {
+                this.textDestroy();
+            });
         });
     }
-    private startOverworldScene(){
-        this.scene.start('OverworldScene', {
-            socket: this.socket,
-            playerManagement: this.playerManagement
-        });
-    }
-    private textDestory(){
+    private textDestroy(){
         this.seasonText.destroy();
-        this.seasonTextChinese.destroy();
-    }   
+        this.seasonChineseText.destroy();
+        InitScene.BootSceneSeq++;
+        this.scene.launch('MapScene',{im:this.imageManager});
+    }
 }

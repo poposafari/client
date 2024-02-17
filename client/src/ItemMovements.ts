@@ -2,7 +2,7 @@ import { Direction } from "./Direction";
 import { ITEM_CODE, Item } from "./Item";
 import {OverworldScene} from "./scene/OverworldScene";
 import { Pokemon } from "./Pokemon";
-import { ImageManagement } from "./management/ImageManagement";
+import { ImageManager } from "./manager/ImageManager";
 import { WildPokemon } from "./WildPokemon";
 import { WILDPOKEMON_STATUS } from "./WildPokemonBehavior";
 
@@ -10,7 +10,7 @@ const Vector2 = Phaser.Math.Vector2;
 
 export class ItemMovements{
     constructor(
-        private imageManagement: ImageManagement,
+        private imageManagement: ImageManager,
         private wildPokemonList: Array<WildPokemon>,
         private itemCode: ITEM_CODE,
     ){}
