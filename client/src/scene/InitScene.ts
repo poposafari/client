@@ -14,8 +14,8 @@ export class InitScene extends Phaser.Scene{
 
     async init(){
         //register Event
-        EventManager.onEvent(EVENTS.PLAYER_DATA,(data)=>{
-            console.log(data);
+        EventManager.onEvent(EVENTS.SEASONSCENE_END,()=>{
+            this.scene.launch('MapScene',{im:this.imageManager});
         });
 
         try{
@@ -35,6 +35,6 @@ export class InitScene extends Phaser.Scene{
         this.imageManager.loadPokemonImage();
     }
     create(){
-        this.scene.launch('SeasonScene',{season:this.season,im:this.imageManager})
+        this.scene.launch('SeasonScene',{season:this.season});
     }
 }

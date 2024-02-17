@@ -2,6 +2,7 @@ import {io} from 'socket.io-client';
 
 export const enum EVENTS {
     PLAYER_DATA = "player-data",
+    SEASONSCENE_END = "season-end",
     MOVEMENT = "movement",
     THROW = "throw",
     RIDE = "ride"
@@ -20,6 +21,7 @@ class EventManager extends Phaser.Events.EventEmitter {
             [EVENTS.PLAYER_DATA]: new Phaser.Events.EventEmitter(),
             [EVENTS.MOVEMENT]: new Phaser.Events.EventEmitter(),
             [EVENTS.THROW]: new Phaser.Events.EventEmitter(),
+            [EVENTS.SEASONSCENE_END]: new Phaser.Events.EventEmitter(),
         };
         this.registeredSocketEvents = {
             [EVENTS.MOVEMENT]: new Phaser.Events.EventEmitter(),

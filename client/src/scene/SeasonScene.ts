@@ -5,6 +5,7 @@ import { AnimationManager } from "../manager/AnimationManager";
 import { InitScene } from "./InitScene";
 import { MapScene } from "./MapScene";
 import { ImageManager } from "../manager/ImageManager";
+import EventManager, { EVENTS } from "../manager/EventManager";
 
 export class SeasonScene extends Phaser.Scene{
     constructor(){
@@ -21,10 +22,9 @@ export class SeasonScene extends Phaser.Scene{
     private seasonChineseText: Phaser.GameObjects.Text;
 
     private season:number=null;
-    
+
     create(data:object){
         this.season = data['season'];
-        this.season = data['im'];
         this.seasonChineseText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,SEASON_TEXT[this.season].chinese,'Bold 70px Arial',SEASON_TEXT[this.season].chineseColor);
         this.seasonText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,SEASON_TEXT[this.season].text,'Bold 30px Arial',SEASON_TEXT[this.season].textColor);
         this.seasonText.setOrigin(0.5,0.5);
@@ -42,6 +42,6 @@ export class SeasonScene extends Phaser.Scene{
         this.seasonText.destroy();
         this.seasonChineseText.destroy();
         InitScene.BootSceneSeq++;
-        this.scene.launch('MapScene',{im:this.imageManager});
+        EventManager.triggerEvent(EVENTS.SEASONSCENE_END);
     }
 }
