@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import {gameConfig} from './constants/Game';
+import {gameConfig} from './src/constants/Game';
 
 class Main extends Phaser.Game{
   constructor(){

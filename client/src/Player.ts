@@ -1,4 +1,3 @@
-import { TILE_SIZE } from "../constants/Game";
 import { GridObject } from "./GridObject";
 import { DEPTH } from "./manager/ImageManager";
 import { Pokemon } from "./Pokemon";

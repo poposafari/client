@@ -1,6 +1,6 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../constants/Game";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants/Game";
 import { TextManager } from "../manager/TextManager";
-import { SEASON_TEXT } from "../../constants/Text";
+import { SEASON_TEXT } from "../constants/Text";
 import { AnimationManager } from "../manager/AnimationManager";
 import { InitScene } from "./InitScene";
 import { MapScene } from "./MapScene";

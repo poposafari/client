@@ -1,4 +1,4 @@
-import { nicknameConfig } from "../../constants/Text";
+import { nicknameConfig } from "../constants/Text";
 
 export class TextManager{
     constructor(
