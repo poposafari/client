@@ -65,7 +65,7 @@ gameSocket.on('connection',(socket)=>{
   });
   socket.on('disconnect',function(){
     delete players[socket.id];
-    socket.broadcast.emit('playerDisconnect',socket.id);
+    socket.broadcast.emit('disconnect-player',socket.id);
     console.log(`disconnected: `,socket.id);
   })
   socket.on('playerBehavior',(data)=>{

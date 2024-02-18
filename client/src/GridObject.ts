@@ -2,19 +2,20 @@ import * as Phaser from "phaser";
 import { Direction } from "./Direction";
 import {OverworldScene} from "./scene/OverworldScene";
 import { DEPTH } from "./manager/ImageManager";
+import { TILE_SIZE } from "../constants/Game";
 
 export class GridObject{
   constructor(
     private sprite: Phaser.GameObjects.Sprite,
     private tilePos: Phaser.Math.Vector2,
   ) {
-    const offsetX = OverworldScene.TILE_SIZE/2;
-    const offsetY = OverworldScene.TILE_SIZE;
+    const offsetX = TILE_SIZE/2;
+    const offsetY = TILE_SIZE;
 
     this.sprite.setOrigin(0.5, 1);
     this.sprite.setPosition(
-      tilePos.x * OverworldScene.TILE_SIZE + offsetX,
-      tilePos.y * OverworldScene.TILE_SIZE + offsetY
+      tilePos.x * TILE_SIZE + offsetX,
+      tilePos.y * TILE_SIZE + offsetY
     );
     this.sprite.setFrame(0);
   }

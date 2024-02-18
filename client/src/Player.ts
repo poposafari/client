@@ -1,3 +1,4 @@
+import { TILE_SIZE } from "../constants/Game";
 import { GridObject } from "./GridObject";
 import { DEPTH } from "./manager/ImageManager";
 import { Pokemon } from "./Pokemon";
@@ -13,6 +14,7 @@ export class Player extends GridObject{
   }
   setNicknamePosition(position: Phaser.Math.Vector2){
     this.nickname.setOrigin(0.5,0.5);
+    console.log(this.nickname);
     this.nickname.setX(position.x);
     this.nickname.setY(position.y-60);
   }

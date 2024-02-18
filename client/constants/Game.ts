@@ -6,6 +6,8 @@ import { SeasonScene } from "../src/scene/SeasonScene";
 export const CANVAS_WIDTH = 1000;
 export const CANVAS_HEIGHT = 600;
 
+export const TILE_SIZE = 32;
+
 export const gameConfig: Phaser.Types.Core.GameConfig = {
     title: "PoPoSeop",
     render: {

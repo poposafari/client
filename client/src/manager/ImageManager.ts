@@ -86,7 +86,7 @@ export class ImageManager{
         const layer2 = this.map.createLayer(1,"nature_1",0,0);
         return this.map;
     }
-    createPlayerSprite(spriteIndex:number,isPlayer:boolean){
+    createPlayerSprite(spriteIndex:number,isPlayer:boolean):Phaser.GameObjects.Sprite{
         const playerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
         playerSprite.scale = 2;
         playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);

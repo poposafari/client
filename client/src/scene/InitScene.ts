@@ -4,17 +4,20 @@ import { ImageManager } from "../manager/ImageManager";
 import PlayerManager from "../manager/PlayerManager";
 import {io} from 'socket.io-client';
 import { Player } from "../Player";
+import { TextManager } from "../manager/TextManager";
 
 
 export class InitScene extends Phaser.Scene{
     constructor(){
         super({key:'InitScene'});
         this.imageManager = new ImageManager(this);
+        this.textManager = new TextManager(this);
         this.socket = io('/game');
     }
     static BootSceneSeq:number = 0;
 
     private imageManager:ImageManager;
+    private textManager:TextManager;
     
     private season:number;
 
@@ -24,14 +27,20 @@ export class InitScene extends Phaser.Scene{
         //register Event
         EventManager.onEvent(EVENTS.SEASONSCENE_END,()=>{
             this.scene.launch('MapScene',{im:this.imageManager});
-            this.scene.launch('PlayerScene',{im:this.imageManager,socket:this.socket});
+            this.scene.launch('PlayerScene',{im:this.imageManager,tm:this.textManager});
         });
         EventManager.onEvent(EVENTS.PLAYER_DATA,(playerData:any)=>{
             PlayerManager.setPlayerInfo(playerData[0],playerData[1]);
             this.socket.emit(SOCKET_EVENTS.NEW_PLAYER,PlayerManager.getPlayerInfo());
-            this.socket.on(SOCKET_EVENTS.CURRENT_PLAYERS,(players:object)=>{PlayerManager.setOtherPlayersInfo(players)});
+            this.socket.on(SOCKET_EVENTS.CURRENT_PLAYERS,(players:object)=>{PlayerManager.setCurrentPlayersInfo(players)});
         });
-        this.socket.on(SOCKET_EVENTS.NEW_PLAYER,(playerData:object)=>{PlayerManager.setOtherPlayerInfo(playerData)});
+        this.socket.on(SOCKET_EVENTS.NEW_PLAYER,(playerData:object)=>{
+            PlayerManager.setOtherPlayersWaitQueue(playerData);
+            EventManager.triggerEvent(EVENTS.ADD_PLAYER,playerData);
+        });
+        this.socket.on(SOCKET_EVENTS.DISCONNECT_PLAYER,(socketId:string)=>{
+            EventManager.triggerEvent(EVENTS.REMOVE_PLAYER,socketId);
+        });
     }
     preload(){
         this.imageManager.loadMapImage();

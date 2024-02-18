@@ -7,6 +7,7 @@ class PlayerManager{
     constructor(){}
     
     private players:object={};
+    private playersWaitQueue:object={};
     private playerInfo:object={
         socketId: null,
         pokedex: '000',
@@ -43,21 +44,30 @@ class PlayerManager{
         return this.playerInfo;
     }
 
-    public setOtherPlayersInfo(players:object){
+    public setCurrentPlayersInfo(players:object){
         this.players = players;
-        console.log(this.players);
     }
-    public setOtherPlayerInfo(player:object){
-        this.players[player['socketId']] = player;
+    public setOtherPlayersWaitQueue(player:object){
+        this.playersWaitQueue[player['socketId']] = player;
     }
-    public getOtherPlayerInfo():object{
+    public getOtherPlayersWaitQueue():object{
+        return this.playersWaitQueue;
+    }
+    public getCurrentPlayersInfo():object{
         return this.players;
+    }
+    public addCurrentPlayers(socketId:string){
+        this.players[socketId] = this.playersWaitQueue[socketId];
+        delete this.playersWaitQueue[socketId];
+    }
+    public deletePlayer(socketId:string){
+        delete this.players[socketId];
     }
     public createPlayer(imageManager:ImageManager,textManager:TextManager,playerInfo:object,isPlayer:boolean):Player{
         return new Player(
             imageManager.createPlayerSprite(playerInfo['spriteIndex'],isPlayer),
             new Phaser.Math.Vector2(playerInfo['player_x'],playerInfo['player_y']),
-            textManager.addText(playerInfo['player_x'],playerInfo['player_y'],playerInfo['nickname']),
+            textManager.addText(0,0,playerInfo['nickname']),
             new Pokemon(
                 imageManager.createPetSprite(playerInfo['pokedex']),
                 new Phaser.Math.Vector2(playerInfo['pet_x'],playerInfo['pet_y'])

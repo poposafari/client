@@ -2,6 +2,8 @@
 export const enum EVENTS {
     PLAYER_DATA = "player-data",
     OTHERPLAYER_DATA = "otherplayer-data",
+    ADD_PLAYER = "add-player",
+    REMOVE_PLAYER = "remove-player",
     SEASONSCENE_END = "season-end",
     MOVEMENT = "movement",
     THROW = "throw",
@@ -12,6 +14,7 @@ export const enum SOCKET_EVENTS {
     SEASON = "season",
     CURRENT_PLAYERS = "current-players",
     NEW_PLAYER = "new-player",
+    DISCONNECT_PLAYER = "disconnect-player",
 }
 
 class EventManager extends Phaser.Events.EventEmitter {
@@ -22,6 +25,8 @@ class EventManager extends Phaser.Events.EventEmitter {
             [EVENTS.MOVEMENT]: new Phaser.Events.EventEmitter(),
             [EVENTS.THROW]: new Phaser.Events.EventEmitter(),
             [EVENTS.SEASONSCENE_END]: new Phaser.Events.EventEmitter(),
+            [EVENTS.ADD_PLAYER]: new Phaser.Events.EventEmitter(),
+            [EVENTS.REMOVE_PLAYER]: new Phaser.Events.EventEmitter(),
         };
         this.registeredSocketEvents = {
             [EVENTS.MOVEMENT]: new Phaser.Events.EventEmitter(),
