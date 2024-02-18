@@ -1,11 +1,9 @@
 import * as Phaser from 'phaser';
-import {gameConfig} from './src/Config';
+import {gameConfig} from './constants/Game';
 
 class Main extends Phaser.Game{
   constructor(){
     super(gameConfig);
-    // this.scene.add('LoadScene',LoadScene);
-    // this.scene.start('LoadScene');
   }
 }
 

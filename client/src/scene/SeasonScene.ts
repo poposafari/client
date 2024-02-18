@@ -25,8 +25,8 @@ export class SeasonScene extends Phaser.Scene{
 
     create(data:object){
         this.season = data['season'];
-        this.seasonChineseText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,SEASON_TEXT[this.season].chinese,'Bold 70px Arial',SEASON_TEXT[this.season].chineseColor);
-        this.seasonText = this.textManager.createText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,SEASON_TEXT[this.season].text,'Bold 30px Arial',SEASON_TEXT[this.season].textColor);
+        this.seasonChineseText = this.textManager.makeText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,SEASON_TEXT[this.season].chinese,'Bold 70px Arial',SEASON_TEXT[this.season].chineseColor);
+        this.seasonText = this.textManager.makeText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,SEASON_TEXT[this.season].text,'Bold 30px Arial',SEASON_TEXT[this.season].textColor);
         this.seasonText.setOrigin(0.5,0.5);
         this.seasonText.alpha = 0;
         this.seasonChineseText.setOrigin(0.5,0.5);

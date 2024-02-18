@@ -48,11 +48,10 @@ const players = {};
 
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
-  socket.on('newPlayer',(data)=>{
+  socket.on('new-player',(data)=>{
     players[socket.id] = {
       socketId: data.socketId,
       playerObj: null,
-      behavior: null,
       nickname: data.nickname,
       pokedex: data.pokedex,
       spriteIndex: data.spriteIndex,
@@ -61,8 +60,8 @@ gameSocket.on('connection',(socket)=>{
       pet_x: data.pet_x,
       pet_y: data.pet_y,
     };
-    socket.emit('currentPlayers',players);
-    socket.broadcast.emit('newPlayer',players[socket.id]);
+    socket.emit('current-players',players);
+    socket.broadcast.emit('new-player',players[socket.id]);
   });
   socket.on('disconnect',function(){
     delete players[socket.id];

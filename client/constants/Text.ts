@@ -4,3 +4,9 @@ export const SEASON_TEXT=[
     {text:'Autumn',chinese:'秋',textColor:'#FDAC7D',chineseColor:'#FFFFFF'},
     {text:'Winter',chinese:'冬',textColor:'#E5D2E1',chineseColor:'#FFFFFF'},
 ];
+
+export const nicknameConfig={
+    fontSize:13,
+    color: '#fff',
+    backgroundColor:'#000000'
+}

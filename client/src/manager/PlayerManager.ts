@@ -1,12 +1,9 @@
-import { OtherPlayerBehavior } from "../OtherPlayerBehavior";
 import { Player } from "../Player";
-import { PlayerBehavior } from "../PlayerBehavior";
+import { ImageManager } from "./ImageManager";
+import { TextManager } from "./TextManager";
 import { Pokemon } from "../Pokemon";
-import { WildPokemon } from "../WildPokemon";
-import { OverworldScene } from "../scene/OverworldScene";
-import { DEPTH, ImageManager } from "./ImageManager";
 
-export class PlayerManagement{
+class PlayerManager{
     constructor(){}
     
     private players:object={};
@@ -41,84 +38,32 @@ export class PlayerManagement{
         this.playerInfo['pet_x'] = obj['pet_x'];
         this.playerInfo['pet_y'] = obj['pet_y'];
     }
+
     public getPlayerInfo():object{
         return this.playerInfo;
     }
-    public getSocketId(){
-        return this.playerInfo['socketId'];
-    }
-    public getBehavior():PlayerBehavior{
-        return this.players[this.playerInfo['socketId']]['behavior'];
-    }
-    public getOtherPlayerInfo(socketId:string):object{
-        return this.players[socketId];
-    }
-    public setPlayers(players:object):void{
+
+    public setOtherPlayersInfo(players:object){
         this.players = players;
-    } 8
-    public getPlayers():object{
+        console.log(this.players);
+    }
+    public setOtherPlayerInfo(player:object){
+        this.players[player['socketId']] = player;
+    }
+    public getOtherPlayerInfo():object{
         return this.players;
     }
-    public addPlayer(scene:Phaser.Scene,imageManagement:ImageManager,player:object,socket:any,wildPokemonList:Array<WildPokemon>){
-        player['playerObj'] = new Player(
-            imageManagement.createPlayerSprite(player['spriteIndex']),
-            new Phaser.Math.Vector2(player['player_x'],player['player_x']),
-            scene.add.text(player['player_x'],player['player_y'],player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
+    public createPlayer(imageManager:ImageManager,textManager:TextManager,playerInfo:object,isPlayer:boolean):Player{
+        return new Player(
+            imageManager.createPlayerSprite(playerInfo['spriteIndex'],isPlayer),
+            new Phaser.Math.Vector2(playerInfo['player_x'],playerInfo['player_y']),
+            textManager.addText(playerInfo['player_x'],playerInfo['player_y'],playerInfo['nickname']),
             new Pokemon(
-                imageManagement.createPetSprite(player['pokedex']),
-                new Phaser.Math.Vector2(player['pet_x'],player['pet_y'])
-            ),
+                imageManager.createPetSprite(playerInfo['pokedex']),
+                new Phaser.Math.Vector2(playerInfo['pet_x'],playerInfo['pet_y'])
+            )
         );
-        player['behavior'] = new PlayerBehavior(socket,player['playerObj'],imageManagement,wildPokemonList);
-        player['behavior'].create();
-    }
-    public addOtherPlayer(scene:Phaser.Scene,imageManagement:ImageManager,player:object,socket:any,wildPokemonList:Array<WildPokemon>){
-        player['playerObj'] = new Player(
-            imageManagement.createOtherPlayerSprite(player['spriteIndex']),
-            new Phaser.Math.Vector2(player['player_x'],player['player_y']),
-            scene.add.text(player['player_x'],player['player_y'],player['nickname'],{fontSize:13,color: '#fff',backgroundColor:'#000000'}),
-            new Pokemon(
-                imageManagement.createPetSprite(player['pokedex']),
-                new Phaser.Math.Vector2(player['pet_x'],player['pet_y'])
-            ),
-        );
-        player['behavior'] = new OtherPlayerBehavior(socket,player['playerObj'],imageManagement,wildPokemonList);
-        player['behavior'].create();
-    }
-    public addNewPlayer(player:object){
-        this.players[player['socketId']] = player;
-        console.log(this.players[player['socketId']]);
-    }
-    public destoryPlayer(socketId:string){
-        this.players[socketId].playerObj.destoryAll();
-        delete this.players[socketId];
-    }
-    public setBehavior(data:object){
-        if(this.players[data['socketId']]['behavior'].isReadyBehavior()){
-            this.players[data['socketId']]['behavior'].setBehavior(data);
-        }
-    }
-    public behaviorUpdate(){
-        Object.keys(this.players).forEach((id)=>{
-            if(this.players[id]['socketId'] != this.getSocketId()){
-                if(this.players[id]['behavior']){
-                  this.players[id]['behavior'].update();
-                  if(this.players[id]['playerObj'].getTilePos().x === this.players[id].playerObj.getTilePos().x){
-                    if(this.players[this.playerInfo['socketId']]['playerObj'].getTilePos().y+1 === this.players[id].playerObj.getTilePos().y){
-                        this.players[this.playerInfo['socketId']]['playerObj'].setDepthPlayerAndPet(DEPTH.PLAYER_MIN,DEPTH.PET);
-                        this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
-                    }
-                    if(this.players[this.playerInfo['socketId']]['playerObj'].getTilePos().y-1 === this.players[id].playerObj.getTilePos().y){
-                        this.players[this.playerInfo['socketId']]['playerObj'].setDepthPlayerAndPet(DEPTH.PLAYER_MAX,DEPTH.PET);
-                        this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
-                    }
-                  }
-                  else{
-                    this.players[this.playerInfo['socketId']]['playerObj'].setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
-                    this.players[id].playerObj.setDepthPlayerAndPet(DEPTH.PLAYER_MIDDLE,DEPTH.PET);
-                  }
-                }
-            }
-        });
     }
 }
+
+export default new PlayerManager();

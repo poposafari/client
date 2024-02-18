@@ -55,9 +55,9 @@ export class ImageManager{
     loadPlayerImage(){
       for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
         this.phaser.load.atlas(`player_${i}_movement`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
-        // this.phaser.load.atlas(`player_bike`,`assets/player/player_${i}_bike.png`,`assets/player/player_bike.json`);
-        // this.phaser.load.atlas(`player_surf`,`assets/player/player_${i}_surf.png`,`assets/player/player_surf.json`);
-        // this.phaser.load.atlas(`player_fishing`,`assets/player/player_${i}_fishing.png`,`assets/player/player_fishing.json`);
+        // this.phaser.load.atlas(`player_${i}_bike`,`assets/player/player_${i}_bike.png`,`assets/player/player_bike.json`);
+        // this.phaser.load.atlas(`player_${i}_surf`,`assets/player/player_${i}_surf.png`,`assets/player/player_surf.json`);
+        // this.phaser.load.atlas(`player_${i}_fishing`,`assets/player/player_${i}_fishing.png`,`assets/player/player_fishing.json`);
       }
     }
     loadItemImage(){
@@ -86,21 +86,16 @@ export class ImageManager{
         const layer2 = this.map.createLayer(1,"nature_1",0,0);
         return this.map;
     }
-    createPlayerSprite(spriteIndex:number){
-        this.playerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
-        this.playerSprite.scale = 2;
-        this.playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
-        this.phaser.cameras.main.startFollow(this.playerSprite);
-        this.phaser.cameras.main.roundPixels = true;
+    createPlayerSprite(spriteIndex:number,isPlayer:boolean){
+        const playerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
+        playerSprite.scale = 2;
+        playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
         this.createPlayerSpriteAnimation(spriteIndex);
-        return this.playerSprite;
-    }
-    createOtherPlayerSprite(spriteIndex:number){
-      this.otherPlayerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
-      this.otherPlayerSprite.scale=2;
-      this.otherPlayerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
-      this.createPlayerSpriteAnimation(spriteIndex);
-      return this.otherPlayerSprite;
+        if(isPlayer){
+          this.phaser.cameras.main.startFollow(playerSprite);
+          this.phaser.cameras.main.roundPixels = true;
+        }
+        return playerSprite;
     }
     createPokemonSprite(pokedex: string){
       this.pokemonSprite = this.createSprite(0,1,pokedex);
@@ -110,13 +105,12 @@ export class ImageManager{
       return this.pokemonSprite;
     }
     createPetSprite(pokedex: string){
-      this.petSprite = this.createSprite(0,1,pokedex);
-      this.petSprite.setDepth(DEPTH.PET);
-
-      if(pokedex === '000'){this.petSprite.visible = false;}
-      else{this.petSprite.visible = true;}
+      const petSprite = this.createSprite(0,1,pokedex);
+      petSprite.setDepth(DEPTH.PET);
+      if(pokedex === '000'){petSprite.visible = false;}
+      else{petSprite.visible = true;}
       this.createPokemonSpriteAnimation(pokedex);
-      return this.petSprite;
+      return petSprite;
     }
     private createPlayerSpriteAnimation(spriteIndex: number){
         this.playerFrames = this.phaser.anims.generateFrameNames(`player_${spriteIndex}_movement`,{

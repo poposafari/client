@@ -3,7 +3,6 @@ const {getUserInfoModel} = require('../models/GameModel');
 async function getUserInfo(username){
     try{
         let result = await getUserInfoModel(username);
-        console.log(result);
         return result;
     }
     catch(error){
