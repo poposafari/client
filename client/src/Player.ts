@@ -1,31 +1,40 @@
+import { Behavior } from "./Behavior";
+import { OBJECT_TYPE } from "./constants/Game";
 import { GridObject } from "./GridObject";
 import { DEPTH } from "./manager/ImageManager";
 import { Pokemon } from "./Pokemon";
 
-export class Player extends GridObject{
-  constructor(  
+export class Player extends GridObject {
+  constructor(
     sprite: Phaser.GameObjects.Sprite,
     tilePos: Phaser.Math.Vector2,
     private nickname: Phaser.GameObjects.Text,
     private pet: Pokemon,
-  ){
-    super(sprite,tilePos);
+    private type: OBJECT_TYPE,
+  ) {
+    super(sprite, tilePos);
   }
-  setNicknamePosition(position: Phaser.Math.Vector2){
-    this.nickname.setOrigin(0.5,0.5);
-    console.log(this.nickname);
+
+  setNicknamePosition(position: Phaser.Math.Vector2) {
+    this.nickname.setOrigin(0.5, 0.5);
     this.nickname.setX(position.x);
-    this.nickname.setY(position.y-60);
+    this.nickname.setY(position.y - 60);
   }
-  getNickname():object{
+  getType():OBJECT_TYPE{
+    return this.type;
+  }
+  getNickname(): object {
     return this.nickname.data;
   }
   //operandA: Player, operandB: Pet
-  setDepthPlayerAndPet(operandA: DEPTH, operandB: DEPTH):void{
-    super.setDepth(operandA);
-    this.pet.setDepth(operandB);
+  setDepthPlayerAndPet(playerDepth: DEPTH, petDepth: DEPTH): void {
+    super.setDepth(playerDepth);
+    this.pet.setDepth(petDepth);
   }
-  destoryAll(){
+  getPet(){
+    return this.pet;
+  }
+  destoryAll() {
     this.destroySprite();
     this.pet.destroySprite();
     this.nickname.destroy();

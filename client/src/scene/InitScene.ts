@@ -14,8 +14,6 @@ export class InitScene extends Phaser.Scene{
         this.textManager = new TextManager(this);
         this.socket = io('/game');
     }
-    static BootSceneSeq:number = 0;
-
     private imageManager:ImageManager;
     private textManager:TextManager;
     

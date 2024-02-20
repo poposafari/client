@@ -1,6 +1,5 @@
 import * as Phaser from "phaser";
 import { Direction } from "./constants/Direction";
-import {OverworldScene} from "./scene/OverworldScene";
 import { DEPTH } from "./manager/ImageManager";
 import { TILE_SIZE } from "./constants/Game";
 

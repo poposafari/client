@@ -52,6 +52,7 @@ gameSocket.on('connection',(socket)=>{
     players[socket.id] = {
       socketId: data.socketId,
       playerObj: null,
+      behavior: null,
       nickname: data.nickname,
       pokedex: data.pokedex,
       spriteIndex: data.spriteIndex,

@@ -8,6 +8,22 @@ export const CANVAS_HEIGHT = 600;
 
 export const TILE_SIZE = 32;
 
+export const MOVEMENT_SPEED = 2;
+
+export const enum OBJECT_TYPE {
+  PLAYER = 'player',
+  PET = 'pet',
+}
+
+export const enum BEHAVIOR_STATUS {
+  NONE = 'none',
+  WALK = 'walk',
+  RUN = 'run',
+  THROW = 'throw',
+  THROW_PREV = 'throw-prev',
+  THROW_NEXT = 'throw-next',
+}
+
 export const gameConfig: Phaser.Types.Core.GameConfig = {
     title: "PoPoSeop",
     render: {
@@ -30,3 +46,4 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     backgroundColor: '#000000',
     pixelArt:true,
 };
+

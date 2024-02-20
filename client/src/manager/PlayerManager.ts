@@ -2,6 +2,7 @@ import { Player } from "../Player";
 import { ImageManager } from "./ImageManager";
 import { TextManager } from "./TextManager";
 import { Pokemon } from "../Pokemon";
+import { OBJECT_TYPE } from "../constants/Game";
 
 class PlayerManager{
     constructor(){}
@@ -71,7 +72,8 @@ class PlayerManager{
             new Pokemon(
                 imageManager.createPetSprite(playerInfo['pokedex']),
                 new Phaser.Math.Vector2(playerInfo['pet_x'],playerInfo['pet_y'])
-            )
+            ),
+            OBJECT_TYPE.PLAYER
         );
     }
 }

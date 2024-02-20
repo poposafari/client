@@ -41,7 +41,6 @@ export class SeasonScene extends Phaser.Scene{
     private textDestroy(){
         this.seasonText.destroy();
         this.seasonChineseText.destroy();
-        InitScene.BootSceneSeq++;
         EventManager.triggerEvent(EVENTS.SEASONSCENE_END);
     }
 }
