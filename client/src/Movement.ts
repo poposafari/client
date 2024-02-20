@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 import { Direction } from "./constants/Direction";
 import { MOVEMENT_SPEED, TILE_SIZE } from "./constants/Game";
+import EventManager, { EVENTS } from "./manager/EventManager";
 import { MapScene } from "./scene/MapScene";
 
 const Vector2 = Phaser.Math.Vector2;
@@ -20,7 +21,7 @@ export class Movement{
     private pixelsToWalkThisUpdate:number = 0;
 
     private movementDirection:Direction = Direction.NONE;
-    private lastMovementDirection:Direction = Direction.PLAYER_WALK_DOWN_1;
+    private lastMovementDirection:Direction = Direction.WALK_DOWN_1;
 
     private petMovementDirection:Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -29,30 +30,26 @@ export class Movement{
     private movementDirectionVectors: {
         [key in Direction]?: Phaser.Math.Vector2;
       } = {
-        [Direction.PLAYER_WALK_UP_1]: Vector2.UP,
-        [Direction.PLAYER_WALK_UP_2]: Vector2.UP,
-        [Direction.PLAYER_WALK_DOWN_1]: Vector2.DOWN,
-        [Direction.PLAYER_WALK_DOWN_2]: Vector2.DOWN,
-        [Direction.PLAYER_WALK_LEFT_1]: Vector2.LEFT,
-        [Direction.PLAYER_WALK_LEFT_2]: Vector2.LEFT,
-        [Direction.PLAYER_WALK_RIGHT_1]: Vector2.RIGHT,
-        [Direction.PLAYER_WALK_RIGHT_2]: Vector2.RIGHT,
-        [Direction.PLAYER_RUN_UP_1]: Vector2.UP,
-        [Direction.PLAYER_RUN_UP_2]: Vector2.UP,
-        [Direction.PLAYER_RUN_UP_3]: Vector2.UP,
-        [Direction.PLAYER_RUN_DOWN_1]: Vector2.DOWN,
-        [Direction.PLAYER_RUN_DOWN_2]: Vector2.DOWN,
-        [Direction.PLAYER_RUN_DOWN_3]: Vector2.DOWN,
-        [Direction.PLAYER_RUN_LEFT_1]: Vector2.LEFT,
-        [Direction.PLAYER_RUN_LEFT_2]: Vector2.LEFT,
-        [Direction.PLAYER_RUN_LEFT_3]: Vector2.LEFT,
-        [Direction.PLAYER_RUN_RIGHT_1]: Vector2.RIGHT,
-        [Direction.PLAYER_RUN_RIGHT_2]: Vector2.RIGHT,
-        [Direction.PLAYER_RUN_RIGHT_3]: Vector2.RIGHT,
-        [Direction.POKEMON_DOWN] : Vector2.DOWN,
-        [Direction.POKEMON_LEFT] : Vector2.LEFT,
-        [Direction.POKEMON_RIGHT] : Vector2.RIGHT,
-        [Direction.POKEMON_UP] : Vector2.UP,
+        [Direction.WALK_UP_1]: Vector2.UP,
+        [Direction.WALK_UP_2]: Vector2.UP,
+        [Direction.WALK_DOWN_1]: Vector2.DOWN,
+        [Direction.WALK_DOWN_2]: Vector2.DOWN,
+        [Direction.WALK_LEFT_1]: Vector2.LEFT,
+        [Direction.WALK_LEFT_2]: Vector2.LEFT,
+        [Direction.WALK_RIGHT_1]: Vector2.RIGHT,
+        [Direction.WALK_RIGHT_2]: Vector2.RIGHT,
+        [Direction.RUN_UP_1]: Vector2.UP,
+        [Direction.RUN_UP_2]: Vector2.UP,
+        [Direction.RUN_UP_3]: Vector2.UP,
+        [Direction.RUN_DOWN_1]: Vector2.DOWN,
+        [Direction.RUN_DOWN_2]: Vector2.DOWN,
+        [Direction.RUN_DOWN_3]: Vector2.DOWN,
+        [Direction.RUN_LEFT_1]: Vector2.LEFT,
+        [Direction.RUN_LEFT_2]: Vector2.LEFT,
+        [Direction.RUN_LEFT_3]: Vector2.LEFT,
+        [Direction.RUN_RIGHT_1]: Vector2.RIGHT,
+        [Direction.RUN_RIGHT_2]: Vector2.RIGHT,
+        [Direction.RUN_RIGHT_3]: Vector2.RIGHT,
     };
 
     getWalkStep(){
@@ -76,17 +73,20 @@ export class Movement{
             this.owner.startAnimation(this.movementDirection);
             this.owner.setTilePos(this.owner.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
             this.pixelsToWalkThisUpdate = MOVEMENT_SPEED;
+
             if(this.isPlayer(this.owner)){
-                if(this.owner.getPosition().x - this.owner.getPet().getPosition().x > 0){this.petMovementDirection = Direction.POKEMON_RIGHT}
-                if(this.owner.getPosition().x - this.owner.getPet().getPosition().x < 0){this.petMovementDirection = Direction.POKEMON_LEFT}
-                if(this.owner.getPosition().y - this.owner.getPet().getPosition().y > 0){this.petMovementDirection = Direction.POKEMON_DOWN}
-                if(this.owner.getPosition().y - this.owner.getPet().getPosition().y < 0){this.petMovementDirection = Direction.POKEMON_UP}
+                if(this.owner.getPosition().x - this.owner.getPet().getPosition().x > 0){this.petMovementDirection = Direction.WALK_RIGHT_1}
+                if(this.owner.getPosition().x - this.owner.getPet().getPosition().x < 0){this.petMovementDirection = Direction.WALK_LEFT_1}
+                if(this.owner.getPosition().y - this.owner.getPet().getPosition().y > 0){this.petMovementDirection = Direction.WALK_DOWN_1}
+                if(this.owner.getPosition().y - this.owner.getPet().getPosition().y < 0){this.petMovementDirection = Direction.WALK_UP_1}
+                
                 this.setPetMovementHistory();
+                this.owner.getPet().setTilePos(this.owner.getPet().getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
+                
                 if(this.isPetMovementChange){
                     this.owner.getPet().startAnimation(this.petMovementDirection);
                     this.isPetMovementChange = false;
                 }
-                this.owner.getPet().setTilePos(this.owner.getPet().getTilePos().add(this.movementDirectionVectors[this.petMovementDirection]));
             }
         }
     }
@@ -96,15 +96,17 @@ export class Movement{
             this.walkStep++;
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving(); 
+            EventManager.triggerEvent(EVENTS.SAVE_PLAYER);
             Behavior.isBehaviorFinish = true;
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
         }
-        
+
+        EventManager.triggerEvent(EVENTS.MOVEMENT,this.owner.getPosition());
+
         if(this.isPlayer(this.owner)){
             this.owner.setNicknamePosition(this.owner.getPosition());
-
         }
     }
     private stopMoving(){
@@ -136,15 +138,9 @@ export class Movement{
     }
     private setPetMovementHistory(): void{
         this.petMovementHistory.push(this.petMovementDirection);
-        if(this.petMovementHistory.length > 2){
-            this.petMovementHistory.shift();
-        }
-        if(this.petMovementHistory[0] != this.petMovementHistory[1]){
-            this.isPetMovementChange = true;
-        }
-        else{
-            this.isPetMovementChange = false;  
-        }
+        if(this.petMovementHistory.length > 2){this.petMovementHistory.shift();}
+        if(this.petMovementHistory[0] != this.petMovementHistory[1]){this.isPetMovementChange = true;}
+        else{this.isPetMovementChange = false;}
     }
     private isBlockingDirection(direction: Direction): boolean {
         this.lastMovementDirection = direction;

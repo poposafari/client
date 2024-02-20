@@ -66,14 +66,15 @@ class PlayerManager{
     }
     public createPlayer(imageManager:ImageManager,textManager:TextManager,playerInfo:object,isPlayer:boolean):Player{
         return new Player(
-            imageManager.createPlayerSprite(playerInfo['spriteIndex'],isPlayer),
+            `player_${playerInfo['spriteIndex']}`,
+            imageManager.createSpritePlayer(playerInfo['spriteIndex'],isPlayer),
             new Phaser.Math.Vector2(playerInfo['player_x'],playerInfo['player_y']),
             textManager.addText(0,0,playerInfo['nickname']),
             new Pokemon(
-                imageManager.createPetSprite(playerInfo['pokedex']),
+                `pokemon_${playerInfo['pokedex']}`,
+                imageManager.createSpritePet(playerInfo['pokedex']),
                 new Phaser.Math.Vector2(playerInfo['pet_x'],playerInfo['pet_y'])
             ),
-            OBJECT_TYPE.PLAYER
         );
     }
 }

@@ -6,7 +6,6 @@ import {io} from 'socket.io-client';
 import { Player } from "../Player";
 import { TextManager } from "../manager/TextManager";
 
-
 export class InitScene extends Phaser.Scene{
     constructor(){
         super({key:'InitScene'});
@@ -32,6 +31,8 @@ export class InitScene extends Phaser.Scene{
             this.socket.emit(SOCKET_EVENTS.NEW_PLAYER,PlayerManager.getPlayerInfo());
             this.socket.on(SOCKET_EVENTS.CURRENT_PLAYERS,(players:object)=>{PlayerManager.setCurrentPlayersInfo(players)});
         });
+        EventManager.onEvent(EVENTS.MOVEMENT,(data)=>{
+        })
         this.socket.on(SOCKET_EVENTS.NEW_PLAYER,(playerData:object)=>{
             PlayerManager.setOtherPlayersWaitQueue(playerData);
             EventManager.triggerEvent(EVENTS.ADD_PLAYER,playerData);
@@ -41,10 +42,10 @@ export class InitScene extends Phaser.Scene{
         });
     }
     preload(){
-        this.imageManager.loadMapImage();
-        this.imageManager.loadItemImage();
-        this.imageManager.loadPlayerImage();
-        this.imageManager.loadPokemonImage();
+        this.imageManager.loadImageMap();
+        this.imageManager.loadImageItem();
+        this.imageManager.loadImagePlayer();
+        this.imageManager.loadImagePokemon();
     }
     async create(){
         try{

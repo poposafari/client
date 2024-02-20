@@ -36,20 +36,20 @@ export class Behavior{
     }
     setWalkType(data:object){
         if(data['up']){
-            if(this.movement.getWalkStep()){this.movement.ready(Direction.PLAYER_WALK_UP_1)}
-            else{this.movement.ready(Direction.PLAYER_WALK_UP_2)}
+            if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_UP_1)}
+            else{this.movement.ready(Direction.WALK_UP_2)}
         }
         if(data['down']){
-            if(this.movement.getWalkStep()){this.movement.ready(Direction.PLAYER_WALK_DOWN_1)}
-            else{this.movement.ready(Direction.PLAYER_WALK_DOWN_2)}
+            if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_DOWN_1)}
+            else{this.movement.ready(Direction.WALK_DOWN_2)}
         }
         if(data['left']){
-            if(this.movement.getWalkStep()){this.movement.ready(Direction.PLAYER_WALK_LEFT_1)}
-            else{this.movement.ready(Direction.PLAYER_WALK_LEFT_2)}
+            if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_LEFT_1)}
+            else{this.movement.ready(Direction.WALK_LEFT_2)}
         }
         if(data['right']){
-            if(this.movement.getWalkStep()){this.movement.ready(Direction.PLAYER_WALK_RIGHT_1)}
-            else{this.movement.ready(Direction.PLAYER_WALK_RIGHT_2)}
+            if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_RIGHT_1)}
+            else{this.movement.ready(Direction.WALK_RIGHT_2)}
         }  
     }
     update(){

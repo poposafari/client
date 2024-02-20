@@ -2,10 +2,11 @@ import { GridObject } from "./GridObject";
 
 export class Pokemon extends GridObject{
   constructor(
+    index:string,
     sprite: Phaser.GameObjects.Sprite,
     tilePos: Phaser.Math.Vector2,
   ){
-    super(sprite,tilePos);
+    super(index,sprite,tilePos);
   }
   setVisible(type:boolean){
     super.setHide(type);

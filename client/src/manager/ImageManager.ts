@@ -1,360 +1,307 @@
-import { Direction } from "../constants/Direction";
-
-export const enum DEPTH {
-  NICKNAME = 7,
-  ITEM = 5,
-  WILD_POKEMON = 5,
-  PLAYER_MIN = 2,
-  PLAYER_MIDDLE = 3,
-  PLAYER_MAX = 4,
-  PET=1,
-}
+import { DEFAULT_DELAY, DEFAULT_FRAMERATE, IMAGE_KEY, MAX_PLAYER_MOVEMENT_FRAME, MAX_PLAYER_SPRITE, MAX_POKEMON, MAX_POKEMON_FRAME, SPRITE_DEPTH } from "../constants/Game";
 
 export class ImageManager{
-    constructor(
-        private phaser: Phaser.Scene
-    ){}
-    private readonly MAX_PLAYER_SPRITE = 8;
-    private readonly MAX_POKEMON = 151;
-    private readonly DEFAULT_FRAMERATE = 6;
-    private readonly DEFAULT_DELAY = 0;
-    private readonly PLAYER_FRAME_MAX = 23;
-    private readonly POKEMON_FRAME_MAX = 15;
+  constructor(private phaser: Phaser.Scene){}
 
-    private playerPokemonIndex:string = null;
-    private itemIndex:string = null;
-
-    public map:Phaser.Tilemaps.Tilemap;
-    public playerSprite: Phaser.GameObjects.Sprite;
-    public otherPlayerSprite: Phaser.GameObjects.Sprite;
-    public petSprite: Phaser.GameObjects.Sprite;
-    public otherPetSprite: Phaser.GameObjects.Sprite;
-    public pokemonSprite: Phaser.GameObjects.Sprite;
-    public itemSprite: Phaser.GameObjects.Sprite;
-
-    private playerFrames: Phaser.Types.Animations.AnimationFrame[];
-    private playerCustomFrameWalkUp: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameWalkDown: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameWalkLeft: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameWalkRight: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameRunUp: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameRunDown: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameRunLeft: Phaser.Types.Animations.AnimationFrame[][];
-    private playerCustomFrameRunRight: Phaser.Types.Animations.AnimationFrame[][];
-
-    private pokemonFrames: Phaser.Types.Animations.AnimationFrame[];
-    private pokemonCustomFrameMovementDown: Phaser.Types.Animations.AnimationFrame[][];
-    private pokemonCustomFrameMovementLeft: Phaser.Types.Animations.AnimationFrame[][];
-    private pokemonCustomFrameMovementRight: Phaser.Types.Animations.AnimationFrame[][];
-    private pokemonCustomFrameMovementUp: Phaser.Types.Animations.AnimationFrame[][];
-
-    loadMapImage(){
-        this.phaser.load.image("nature_1","assets/map/nature_1.png");
-        this.phaser.load.tilemapTiledJSON("test-town-map","assets/map/test_map_grid.json");
+  loadImageMap():void{
+    this.phaser.load.image(IMAGE_KEY.TILESET,"assets/map/nature_1.png");
+    this.phaser.load.tilemapTiledJSON(IMAGE_KEY.MAP,"assets/map/test_map_grid.json");
+  }
+  loadImagePlayer():void{
+    for(let i=1;i<=MAX_PLAYER_SPRITE;i++){
+      this.phaser.load.atlas(IMAGE_KEY.PLAYER_MOVEMENT+`_${i}`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
     }
-    loadPlayerImage(){
-      for(let i=1;i<=this.MAX_PLAYER_SPRITE;i++){
-        this.phaser.load.atlas(`player_${i}_movement`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
-        // this.phaser.load.atlas(`player_${i}_bike`,`assets/player/player_${i}_bike.png`,`assets/player/player_bike.json`);
-        // this.phaser.load.atlas(`player_${i}_surf`,`assets/player/player_${i}_surf.png`,`assets/player/player_surf.json`);
-        // this.phaser.load.atlas(`player_${i}_fishing`,`assets/player/player_${i}_fishing.png`,`assets/player/player_fishing.json`);
-      }
+  }
+  loadImageItem():void{
+    for(let i=0;i<4;i++){
+        this.phaser.load.image(IMAGE_KEY.ITEM_GROUND+`_${i}`,`assets/item/item_${i}_ground.png`);
+        this.phaser.load.image(IMAGE_KEY.ITEM_THROW+`_${i}`,`assets/item/item_${i}_thrown.png`);
     }
-    loadItemImage(){
-      for(let i=0;i<4;i++){
-          this.phaser.load.image(`item_${i}_ground`,`assets/item/item_${i}_ground.png`);
-          this.phaser.load.image(`item_${i}_thrown`,`assets/item/item_${i}_thrown.png`);
-      }
-    }
-    loadPokemonImage(){
-      for(let i=0;i<=this.MAX_POKEMON;i++){
-          const index = this.addZeroPadding(i,3);
-          this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
-          this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
-      }
-    }
-    loadPokemonAnimation(){
-      for(let i=0;i<=this.MAX_POKEMON;i++){
+  }
+  loadImagePokemon():void{
+    for(let i=0;i<=MAX_POKEMON;i++){
         const index = this.addZeroPadding(i,3);
-        this.createPokemonSpriteAnimation(`${index}`);
-      }
+        this.phaser.load.atlas(`${index}`,`assets/pokemon/${index}.png`,`assets/pokemon/size_0.json`);
+        this.phaser.load.atlas(`${index}s`,`assets/pokemon/${index}s.png`,`assets/pokemon/size_0.json`);
     }
-    createMap():Phaser.Tilemaps.Tilemap{
-        this.map = this.phaser.make.tilemap({ key: "test-town-map" })
-        this.map.addTilesetImage("nature_1", "nature_1");
-        const layer1 = this.map.createLayer(0,"nature_1",0,0);
-        const layer2 = this.map.createLayer(1,"nature_1",0,0);
-        return this.map;
+  }
+  createMap():Phaser.Tilemaps.Tilemap{
+    const map = this.phaser.make.tilemap({ key: "test-town-map" });
+    map.addTilesetImage("nature_1", "nature_1");
+    const layer1 = map.createLayer(0,"nature_1",0,0);
+    const layer2 = map.createLayer(1,"nature_1",0,0);
+    return map;
+  }
+  createSpritePlayer(spriteIndex:number,isPlayer:boolean):Phaser.GameObjects.Sprite{
+    const playerSprite = this.createSprite(0,0,IMAGE_KEY.PLAYER_MOVEMENT+`_${spriteIndex}`);
+    playerSprite.scale = 2;
+    playerSprite.setDepth(SPRITE_DEPTH.PLAYER_MIDDLE);
+    this.createSpriteAnimationPlayer(spriteIndex);
+    if(isPlayer){
+      this.phaser.cameras.main.startFollow(playerSprite);
+      this.phaser.cameras.main.roundPixels = true;
     }
-    createPlayerSprite(spriteIndex:number,isPlayer:boolean):Phaser.GameObjects.Sprite{
-        const playerSprite = this.createSprite(0,0,`player_${spriteIndex}_movement`);
-        playerSprite.scale = 2;
-        playerSprite.setDepth(DEPTH.PLAYER_MIDDLE);
-        this.createPlayerSpriteAnimation(spriteIndex);
-        if(isPlayer){
-          this.phaser.cameras.main.startFollow(playerSprite);
-          this.phaser.cameras.main.roundPixels = true;
-        }
-        return playerSprite;
-    }
-    createPokemonSprite(pokedex: string){
-      this.pokemonSprite = this.createSprite(0,1,pokedex);
-      this.pokemonSprite.setDepth(DEPTH.WILD_POKEMON);
-      this.pokemonSprite.visible = true;
-      this.createPokemonSpriteAnimation(pokedex);
-      return this.pokemonSprite;
-    }
-    createPetSprite(pokedex: string){
-      const petSprite = this.createSprite(0,1,pokedex);
-      petSprite.setDepth(DEPTH.PET);
-      if(pokedex === '000'){petSprite.visible = false;}
-      else{petSprite.visible = true;}
-      this.createPokemonSpriteAnimation(pokedex);
-      return petSprite;
-    }
-    private createPlayerSpriteAnimation(spriteIndex: number){
-        this.playerFrames = this.phaser.anims.generateFrameNames(`player_${spriteIndex}_movement`,{
-            prefix:`player_movement-`,
-            suffix:"",
-            start:0,
-            end:this.PLAYER_FRAME_MAX,
-        });
-        this.playerCustomFrameWalkUp = [
-            [this.playerFrames[1],this.playerFrames[0]],
-            [this.playerFrames[2],this.playerFrames[0]]
-        ];
-        this.playerCustomFrameWalkDown = [
-            [this.playerFrames[4],this.playerFrames[3]],
-            [this.playerFrames[5],this.playerFrames[3]]
-        ];
-        this.playerCustomFrameWalkLeft = [
-            [this.playerFrames[7],this.playerFrames[6]],
-            [this.playerFrames[8],this.playerFrames[6]]
-        ];
-        this.playerCustomFrameWalkRight = [
-            [this.playerFrames[10],this.playerFrames[9]],
-            [this.playerFrames[11],this.playerFrames[9]]
-        ];
-        this.playerCustomFrameRunUp = [
-            [this.playerFrames[14],this.playerFrames[12]],
-            [this.playerFrames[13],this.playerFrames[12]],
-            [this.playerFrames[12],this.playerFrames[12]]
-        ];
-        this.playerCustomFrameRunDown = [
-            [this.playerFrames[16],this.playerFrames[15]],
-            [this.playerFrames[17],this.playerFrames[15]],
-            [this.playerFrames[15],this.playerFrames[15]]
-        ];
-        this.playerCustomFrameRunLeft = [
-            [this.playerFrames[19],this.playerFrames[18]],
-            [this.playerFrames[20],this.playerFrames[18]],
-            [this.playerFrames[18],this.playerFrames[18]]
-        ];
-        this.playerCustomFrameRunRight = [
-            [this.playerFrames[22],this.playerFrames[21]],
-            [this.playerFrames[23],this.playerFrames[21]],
-            [this.playerFrames[21],this.playerFrames[21]]
-        ];
 
-        this.createAnimation(
-            Direction.PLAYER_WALK_UP_1, 
-            this.playerCustomFrameWalkUp[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_UP_2, 
-            this.playerCustomFrameWalkUp[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_DOWN_1, 
-            this.playerCustomFrameWalkDown[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_DOWN_2, 
-            this.playerCustomFrameWalkDown[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_LEFT_1, 
-            this.playerCustomFrameWalkLeft[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_LEFT_2, 
-            this.playerCustomFrameWalkLeft[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_RIGHT_1, 
-            this.playerCustomFrameWalkRight[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_WALK_RIGHT_2, 
-            this.playerCustomFrameWalkRight[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-  
-      //sprite(player) run frames.
-          this.createAnimation(
-            Direction.PLAYER_RUN_UP_1, 
-            this.playerCustomFrameRunUp[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_UP_2, 
-            this.playerCustomFrameRunUp[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_UP_3, 
-            this.playerCustomFrameRunUp[2],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-      
-          this.createAnimation(
-            Direction.PLAYER_RUN_DOWN_1, 
-            this.playerCustomFrameRunDown[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_DOWN_2, 
-            this.playerCustomFrameRunDown[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_DOWN_3, 
-            this.playerCustomFrameRunDown[2],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-  
-          this.createAnimation(
-            Direction.PLAYER_RUN_LEFT_1, 
-            this.playerCustomFrameRunLeft[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_LEFT_2, 
-            this.playerCustomFrameRunLeft[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_LEFT_3, 
-            this.playerCustomFrameRunLeft[2],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-      
-          this.createAnimation(
-            Direction.PLAYER_RUN_RIGHT_1, 
-            this.playerCustomFrameRunRight[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_RIGHT_2, 
-            this.playerCustomFrameRunRight[1],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.PLAYER_RUN_RIGHT_3, 
-            this.playerCustomFrameRunRight[2],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-    }
-    createPokemonSpriteAnimation(pokedex:string){
-        this.pokemonFrames = this.phaser.anims.generateFrameNames(pokedex,{
-            prefix:`size0-`,
-            suffix:"",
-            start:0,
-            end:this.POKEMON_FRAME_MAX,
-        });
-        this.pokemonCustomFrameMovementDown = [
-            [this.pokemonFrames[0],this.pokemonFrames[1],this.pokemonFrames[2],this.pokemonFrames[3]],
-        ];
-        this.pokemonCustomFrameMovementLeft = [
-            [this.pokemonFrames[4],this.pokemonFrames[5],this.pokemonFrames[6],this.pokemonFrames[7]],
-        ];
-        this.pokemonCustomFrameMovementRight = [
-            [this.pokemonFrames[8],this.pokemonFrames[9],this.pokemonFrames[10],this.pokemonFrames[11]],
-        ];
-        this.pokemonCustomFrameMovementUp = [
-            [this.pokemonFrames[12],this.pokemonFrames[13],this.pokemonFrames[14],this.pokemonFrames[15]],
-        ];
-        this.createAnimation(
-            Direction.POKEMON_DOWN, 
-            this.pokemonCustomFrameMovementDown[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.POKEMON_LEFT, 
-            this.pokemonCustomFrameMovementLeft[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.POKEMON_RIGHT, 
-            this.pokemonCustomFrameMovementRight[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-          this.createAnimation(
-            Direction.POKEMON_UP, 
-            this.pokemonCustomFrameMovementUp[0],
-            this.DEFAULT_FRAMERATE,
-            this.DEFAULT_DELAY
-          );
-    }
-    createItemSprite(index:string){
-        this.itemSprite = this.createSprite(0,0,`${index}`);
-        this.itemSprite.setDepth(0);
-        this.itemSprite.visible = true;
-        return this.itemSprite;
-    }
-    private createAnimation(
-        name: string,
-        frames: Phaser.Types.Animations.AnimationFrame[],
-        frameRate: number,
-        delay: number
-      ) {
-        this.phaser.anims.create({
-          key: name,
-          frames: frames,
-          frameRate: frameRate,
-          repeat: -1,
-          delay:delay,
-          yoyo:false
-      });
-    }
-    getPlayerPokemonIndex(){
-        return this.playerPokemonIndex;
-    }
-    createSprite(posX:number,posY:number,key:string){
-        return this.phaser.add.sprite(posX,posY,key);
-    }
-    private addZeroPadding(index: number, zeroSize: number): string {
-        const paddedIndex = index.toString().padStart(zeroSize, '0');
-        return paddedIndex;
-    }
+    return playerSprite;
+  }
+  createSpritePokemon(pokedex:string){
+    const pokemonSprite = this.createSprite(0,1,pokedex);
+    this.createSpriteAnimationPokemon(pokedex);
+    pokemonSprite.setDepth(SPRITE_DEPTH.WILD_POKEMON);
+    pokemonSprite.visible = true;
+
+    return pokemonSprite;
+  }
+  createSpritePet(pokedex:string){
+    const petSprite = this.createSprite(0,1,pokedex);
+    this.createSpriteAnimationPokemon(pokedex);
+    petSprite.setDepth(SPRITE_DEPTH.PET);
+    if(pokedex === '000'){petSprite.visible = false;}
+    else{petSprite.visible = true;}
+    return petSprite;
+  }
+  private createSpriteAnimationPlayer(spriteIndex:number){
+    const playerFrameMovement = this.phaser.anims.generateFrameNames(IMAGE_KEY.PLAYER_MOVEMENT+`_${spriteIndex}`,{
+      prefix:`player_movement-`,
+      suffix:"",
+      start:0,
+      end:MAX_PLAYER_MOVEMENT_FRAME,
+    });
+
+    const playerCustomFrameWalkUp = [
+      [playerFrameMovement[1],playerFrameMovement[0]],
+      [playerFrameMovement[2],playerFrameMovement[0]]
+    ];
+
+    const playerCustomFrameWalkDown = [
+      [playerFrameMovement[4],playerFrameMovement[3]],
+      [playerFrameMovement[5],playerFrameMovement[3]]
+    ];
+
+    const playerCustomFrameWalkLeft = [
+      [playerFrameMovement[7],playerFrameMovement[6]],
+      [playerFrameMovement[8],playerFrameMovement[6]]
+    ];
+
+    const playerCustomFrameWalkRight = [
+      [playerFrameMovement[10],playerFrameMovement[9]],
+      [playerFrameMovement[11],playerFrameMovement[9]]
+    ];
+    const playerCustomFrameRunUp = [
+      [playerFrameMovement[14],playerFrameMovement[12]],
+      [playerFrameMovement[13],playerFrameMovement[12]],
+      [playerFrameMovement[12],playerFrameMovement[12]]
+    ];
+    const playerCustomFrameRunDown = [
+      [playerFrameMovement[16],playerFrameMovement[15]],
+      [playerFrameMovement[17],playerFrameMovement[15]],
+      [playerFrameMovement[15],playerFrameMovement[15]]
+    ];
+    const playerCustomFrameRunLeft = [
+      [playerFrameMovement[19],playerFrameMovement[18]],
+      [playerFrameMovement[20],playerFrameMovement[18]],
+      [playerFrameMovement[18],playerFrameMovement[18]]
+    ];
+    const playerCustomFrameRunRight = [
+      [playerFrameMovement[22],playerFrameMovement[21]],
+      [playerFrameMovement[23],playerFrameMovement[21]],
+      [playerFrameMovement[21],playerFrameMovement[21]]
+    ];
+
+    this.createAnimation(
+      `player_${spriteIndex}_walk_up_1`,
+      playerCustomFrameWalkUp[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_up_2`,
+      playerCustomFrameWalkUp[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_down_1`,
+      playerCustomFrameWalkDown[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_down_2`,
+      playerCustomFrameWalkDown[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_left_1`,
+      playerCustomFrameWalkLeft[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_left_2`,
+      playerCustomFrameWalkLeft[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_right_1`,
+      playerCustomFrameWalkRight[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_walk_right_2`,
+      playerCustomFrameWalkRight[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+
+    this.createAnimation(
+      `player_${spriteIndex}_run_up_1`,
+      playerCustomFrameRunUp[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_up_2`,
+      playerCustomFrameRunUp[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_up_3`,
+      playerCustomFrameRunUp[2],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    
+    this.createAnimation(
+      `player_${spriteIndex}_run_down_1`,
+      playerCustomFrameRunDown[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_down_2`,
+      playerCustomFrameRunDown[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_down_3`,
+      playerCustomFrameRunDown[2],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+
+    this.createAnimation(
+      `player_${spriteIndex}_run_left_1`,
+      playerCustomFrameRunLeft[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_left_2`,
+      playerCustomFrameRunLeft[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_left_3`,
+      playerCustomFrameRunLeft[2],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    
+    this.createAnimation(
+      `player_${spriteIndex}_run_right_1`,
+      playerCustomFrameRunRight[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_right_2`,
+      playerCustomFrameRunRight[1],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `player_${spriteIndex}_run_right_3`,
+      playerCustomFrameRunRight[2],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+  }
+
+  private createSpriteAnimationPokemon(pokedex:string){
+    const pokemonFrames = this.phaser.anims.generateFrameNames(pokedex,{
+      prefix:`size0-`,
+      suffix:"",
+      start:0,
+      end:MAX_POKEMON_FRAME,
+    });
+    
+    const pokemonCustomFrameMovementDown = [
+      [pokemonFrames[0],pokemonFrames[1],pokemonFrames[2],pokemonFrames[3]],
+    ];
+    const pokemonCustomFrameMovementLeft = [
+      [pokemonFrames[4],pokemonFrames[5],pokemonFrames[6],pokemonFrames[7]],
+    ];
+    const pokemonCustomFrameMovementRight = [
+      [pokemonFrames[8],pokemonFrames[9],pokemonFrames[10],pokemonFrames[11]],
+    ];
+    const pokemonCustomFrameMovementUp = [
+      [pokemonFrames[12],pokemonFrames[13],pokemonFrames[14],pokemonFrames[15]],
+    ];
+
+    this.createAnimation(
+      `pokemon_${pokedex}_walk_down_1`,
+      pokemonCustomFrameMovementDown[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `pokemon_${pokedex}_walk_left_1`,
+      pokemonCustomFrameMovementLeft[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `pokemon_${pokedex}_walk_right_1`,
+      pokemonCustomFrameMovementRight[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+    this.createAnimation(
+      `pokemon_${pokedex}_walk_up_1`,
+      pokemonCustomFrameMovementUp[0],
+      DEFAULT_FRAMERATE,
+      DEFAULT_DELAY
+    );
+  }
+
+  private createAnimation(
+    name: string,
+    frames: Phaser.Types.Animations.AnimationFrame[],
+    frameRate: number,
+    delay: number
+  ) {
+      this.phaser.anims.create({
+        key: name,
+        frames: frames,
+        frameRate: frameRate,
+        repeat: -1,
+        delay:delay,
+        yoyo:false
+    });
+  }
+
+  private createSprite(posX:number,posY:number,key:string){
+    return this.phaser.add.sprite(posX,posY,key);
+  }
+  private addZeroPadding(index: number, zeroSize: number): string {
+    const paddedIndex = index.toString().padStart(zeroSize, '0');
+    return paddedIndex;
+  }
 }
