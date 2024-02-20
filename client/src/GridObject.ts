@@ -38,8 +38,9 @@ export class GridObject{
     return this.sprite;
   }
   standStopAnimation(direction: Direction){
+    const splitString = direction.split('_')[2];
     const animationManager = this.sprite.anims.animationManager;
-    this.sprite.setFrame(animationManager.get(this.index+direction).frames[1].frame.name);
+    this.sprite.setFrame(animationManager.get(this.index+`_walk_${splitString}_1`).frames[1].frame.name);
     this.sprite.anims.stop();
   }
   stopAnimation(direction: Direction){

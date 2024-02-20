@@ -12,7 +12,8 @@ export class Movement{
     constructor(
         private owner: Player | Pokemon,
     ){}
-
+    
+    private movementType:string = null;
     private movementCount:number = 0;
     private walkStep:number = 0;
     private runStep:number = 0;
@@ -21,7 +22,7 @@ export class Movement{
     private pixelsToWalkThisUpdate:number = 0;
 
     private movementDirection:Direction = Direction.NONE;
-    private lastMovementDirection:Direction = Direction.WALK_DOWN_1;
+    lastMovementDirection:Direction = Direction.WALK_DOWN_1;
 
     private petMovementDirection:Direction = Direction.NONE;
     private petMovementHistory: Array<String>=[];
@@ -60,7 +61,10 @@ export class Movement{
         if(this.runStep === 1){return 2;}
         if(this.runStep === 2){return 3;}
         if(this.runStep === 3){return 4;}
-        if(this.runStep === 4){this.runStep = 0;}
+        if(this.runStep === 4){
+            this.runStep = 0;
+            return 1;
+        }
     }
     update(){
         if(this.isMoving()){this.updatePosition();}
@@ -69,10 +73,11 @@ export class Movement{
         if(this.isMoving()){return;}
         if(this.isBlockingDirection(direction)){this.owner.standStopAnimation(direction);}
         else{
+            this.movementType = this.getMovementType(direction);
+            this.setMovementSpeed();
             this.movementDirection = direction;
             this.owner.startAnimation(this.movementDirection);
             this.owner.setTilePos(this.owner.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
-            this.pixelsToWalkThisUpdate = MOVEMENT_SPEED;
 
             if(this.isPlayer(this.owner)){
                 if(this.owner.getPosition().x - this.owner.getPet().getPosition().x > 0){this.petMovementDirection = Direction.WALK_RIGHT_1}
@@ -90,10 +95,23 @@ export class Movement{
             }
         }
     }
+    standStopMoving(direction:Direction){
+        this.owner.standStopAnimation(direction);
+    }
+    private getMovementType(direction: Direction):string{
+        return direction.split('_')[1];
+    }
+    private setMovementSpeed(){
+        if(this.movementType === 'walk'){this.pixelsToWalkThisUpdate = MOVEMENT_SPEED}
+        if(this.movementType === 'run'){this.pixelsToWalkThisUpdate = MOVEMENT_SPEED*2}
+    }
     private updatePosition(){
         if(this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate)){
             this.moveSprite(this.pixelsToWalkThisUpdate);
-            this.walkStep++;
+
+            if(this.movementType === 'walk'){this.walkStep++;}
+            if(this.movementType === 'run'){this.runStep++;}
+
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving(); 
             EventManager.triggerEvent(EVENTS.SAVE_PLAYER);

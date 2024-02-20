@@ -24,11 +24,14 @@ export class Behavior{
         switch(behaviorStatus){
             case BEHAVIOR_STATUS.NONE:
                 Behavior.isBehaviorFinish = true;
+                this.movement.standStopMoving(this.movement.lastMovementDirection);
                 break;
             case BEHAVIOR_STATUS.WALK: 
                 this.setWalkType(data);
                 break;
-            case BEHAVIOR_STATUS.RUN: break;
+            case BEHAVIOR_STATUS.RUN: 
+                this.setRunType(data);
+                break;
             case BEHAVIOR_STATUS.THROW: break;
             case BEHAVIOR_STATUS.THROW_PREV: break;
             case BEHAVIOR_STATUS.THROW_NEXT: break;
@@ -51,6 +54,32 @@ export class Behavior{
             if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_RIGHT_1)}
             else{this.movement.ready(Direction.WALK_RIGHT_2)}
         }  
+    }
+    setRunType(data:object){
+        if(data['up']){
+            if(this.movement.getRunStep() === 1){this.movement.ready(Direction.RUN_UP_1)}
+            if(this.movement.getRunStep() === 2){this.movement.ready(Direction.RUN_UP_3)}
+            if(this.movement.getRunStep() === 3){this.movement.ready(Direction.RUN_UP_2)}
+            if(this.movement.getRunStep() === 4){this.movement.ready(Direction.RUN_UP_3)}
+        }
+        if(data['down']){
+            if(this.movement.getRunStep() === 1){this.movement.ready(Direction.RUN_DOWN_1)}
+            if(this.movement.getRunStep() === 2){this.movement.ready(Direction.RUN_DOWN_3)}
+            if(this.movement.getRunStep() === 3){this.movement.ready(Direction.RUN_DOWN_2)}
+            if(this.movement.getRunStep() === 4){this.movement.ready(Direction.RUN_DOWN_3)}
+        }
+        if(data['left']){
+            if(this.movement.getRunStep() === 1){this.movement.ready(Direction.RUN_LEFT_1)}
+            if(this.movement.getRunStep() === 2){this.movement.ready(Direction.RUN_LEFT_3)}
+            if(this.movement.getRunStep() === 3){this.movement.ready(Direction.RUN_LEFT_2)}
+            if(this.movement.getRunStep() === 4){this.movement.ready(Direction.RUN_LEFT_3)}
+        }
+        if(data['right']){
+            if(this.movement.getRunStep() === 1){this.movement.ready(Direction.RUN_RIGHT_1)}
+            if(this.movement.getRunStep() === 2){this.movement.ready(Direction.RUN_RIGHT_3)}
+            if(this.movement.getRunStep() === 3){this.movement.ready(Direction.RUN_RIGHT_2)}
+            if(this.movement.getRunStep() === 4){this.movement.ready(Direction.RUN_RIGHT_3)}
+        }
     }
     update(){
         this.movement.update();
