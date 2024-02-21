@@ -46,9 +46,23 @@ const gameSocket = ioServer.of('/game');
 
 const players = {};
 
+class Queue {
+  constructor() {
+    this._arr = [];
+  }
+  enqueue(item) {
+    this._arr.push(item);
+  }
+  dequeue() {
+    return this._arr.shift();
+  }
+}
+
+const movementQueue = new Queue();
+
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
-  socket.on('new-player',(data)=>{
+  socket.on('connect-player',(data)=>{
     players[socket.id] = {
       socketId: data.socketId,
       playerObj: null,
@@ -61,19 +75,17 @@ gameSocket.on('connection',(socket)=>{
       pet_x: data.pet_x,
       pet_y: data.pet_y,
     };
-    socket.emit('current-players',players);
-    socket.broadcast.emit('new-player',players[socket.id]);
+    socket.emit('connected-players',players);
+    socket.broadcast.emit('connect-player',players[socket.id]);
   });
-  socket.on('disconnect',function(){
+  socket.on('emit-movement-player',(data)=>{
+    movementQueue.enqueue(data);
+    socket.broadcast.emit('on-movement-player',movementQueue.dequeue());
+  })
+  socket.on('disconnect',()=>{
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);
     console.log(`disconnected: `,socket.id);
-  })
-  socket.on('playerBehavior',(data)=>{
-    socket.broadcast.emit('playerBehavior',data);
-  });
-  socket.on('movement',(data)=>{
-    socket.broadcast.emit('movement',data);
   });
   socket.on('saveTilePos',(data)=>{
     players[socket.id].tilePosX = data.x;

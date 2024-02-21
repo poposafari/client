@@ -95,6 +95,12 @@ export class Movement{
             }
         }
     }
+    getDirection():Direction{
+        return this.movementDirection;
+    }
+    getPostion():Phaser.Math.Vector2{
+        return this.owner.getPosition();
+    }
     standStopMoving(direction:Direction){
         this.owner.standStopAnimation(direction);
     }
@@ -113,15 +119,12 @@ export class Movement{
             if(this.movementType === 'run'){this.runStep++;}
 
             this.lastMovementDirection = this.movementDirection;
-            this.stopMoving(); 
-            EventManager.triggerEvent(EVENTS.SAVE_PLAYER);
+            this.stopMoving();
             Behavior.isBehaviorFinish = true;
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
         }
-
-        EventManager.triggerEvent(EVENTS.MOVEMENT,this.owner.getPosition());
 
         if(this.isPlayer(this.owner)){
             this.owner.setNicknamePosition(this.owner.getPosition());

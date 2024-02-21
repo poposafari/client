@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 import { Direction } from "./constants/Direction";
 import { BEHAVIOR_STATUS, OBJECT_TYPE } from "./constants/Game";
+import EventManager, { EVENTS } from "./manager/EventManager";
 
 export class Behavior{
     constructor(
@@ -26,16 +27,21 @@ export class Behavior{
                 Behavior.isBehaviorFinish = true;
                 this.movement.standStopMoving(this.movement.lastMovementDirection);
                 break;
-            case BEHAVIOR_STATUS.WALK: 
+            case BEHAVIOR_STATUS.WALK:
                 this.setWalkType(data);
+                EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());  
                 break;
             case BEHAVIOR_STATUS.RUN: 
                 this.setRunType(data);
+                EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());  
                 break;
             case BEHAVIOR_STATUS.THROW: break;
             case BEHAVIOR_STATUS.THROW_PREV: break;
             case BEHAVIOR_STATUS.THROW_NEXT: break;
         }
+    }
+    setDirectMovementType(direction:Direction){
+        this.movement.ready(direction);
     }
     setWalkType(data:object){
         if(data['up']){
@@ -53,7 +59,7 @@ export class Behavior{
         if(data['right']){
             if(this.movement.getWalkStep()){this.movement.ready(Direction.WALK_RIGHT_1)}
             else{this.movement.ready(Direction.WALK_RIGHT_2)}
-        }  
+        }
     }
     setRunType(data:object){
         if(data['up']){

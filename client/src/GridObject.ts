@@ -8,7 +8,6 @@ export class GridObject{
     private sprite: Phaser.GameObjects.Sprite,
     private tilePos: Phaser.Math.Vector2,
   ) {
-      console.log(this.index);
       const offsetX = TILE_SIZE/2;
       const offsetY = TILE_SIZE;
 
