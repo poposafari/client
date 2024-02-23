@@ -2,7 +2,7 @@ import { Behavior } from "./Behavior";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 import { Direction } from "./constants/Direction";
-import { MOVEMENT_SPEED, TILE_SIZE } from "./constants/Game";
+import { BEHAVIOR_STATUS, MOVEMENT_SPEED, TILE_SIZE } from "./constants/Game";
 import EventManager, { EVENTS } from "./manager/EventManager";
 import { MapScene } from "./scene/MapScene";
 
@@ -14,7 +14,8 @@ export class Movement{
     ){}
     
     private movementType:string = null;
-    private movementCount:number = 0;
+
+    private movementStep:number = 0;
     private walkStep:number = 0;
     private runStep:number = 0;
 
@@ -52,11 +53,57 @@ export class Movement{
         [Direction.RUN_RIGHT_2]: Vector2.RIGHT,
         [Direction.RUN_RIGHT_3]: Vector2.RIGHT,
     };
-
-    getWalkStep(){
+    setWalkDirection(data:object):Direction{
+        if(data['up']){
+            if(this.getWalkStep()){return Direction.WALK_UP_1}
+            else{return Direction.WALK_UP_2}
+        }
+        if(data['down']){
+            if(this.getWalkStep()){return Direction.WALK_DOWN_1}
+            else{return Direction.WALK_DOWN_2}
+        }
+        if(data['left']){
+            if(this.getWalkStep()){return Direction.WALK_LEFT_1}
+            else{return Direction.WALK_LEFT_2}
+        }
+        if(data['right']){
+            if(this.getWalkStep()){return Direction.WALK_RIGHT_1}
+            else{return Direction.WALK_RIGHT_2}
+        }
+    }
+    setRunDirection(data:object):Direction{
+        if(data['up']){
+            if(this.getRunStep() === 1){return Direction.RUN_UP_1}
+            if(this.getRunStep() === 2){return Direction.RUN_UP_3}
+            if(this.getRunStep() === 3){return Direction.RUN_UP_2}
+            if(this.getRunStep() === 4){return Direction.RUN_UP_3}
+        }
+        if(data['down']){
+            if(this.getRunStep() === 1){return Direction.RUN_DOWN_1}
+            if(this.getRunStep() === 2){return Direction.RUN_DOWN_3}
+            if(this.getRunStep() === 3){return Direction.RUN_DOWN_2}
+            if(this.getRunStep() === 4){return Direction.RUN_DOWN_3}
+        }
+        if(data['left']){
+            if(this.getRunStep() === 1){return Direction.RUN_LEFT_1}
+            if(this.getRunStep() === 2){return Direction.RUN_LEFT_3}
+            if(this.getRunStep() === 3){return Direction.RUN_LEFT_2}
+            if(this.getRunStep() === 4){return Direction.RUN_LEFT_3}
+        }
+        if(data['right']){
+            if(this.getRunStep() === 1){return Direction.RUN_RIGHT_1}
+            if(this.getRunStep() === 2){return Direction.RUN_RIGHT_3}
+            if(this.getRunStep() === 3){return Direction.RUN_RIGHT_2}
+            if(this.getRunStep() === 4){return Direction.RUN_RIGHT_3}
+        }
+    }
+    setDirection(direction:Direction){
+        this.ready(direction);
+    }
+    private getWalkStep(){
         return this.walkStep % 2;
     }
-    getRunStep(){
+    private getRunStep(){
         if(this.runStep === 0){return 1;}
         if(this.runStep === 1){return 2;}
         if(this.runStep === 2){return 3;}
@@ -117,10 +164,11 @@ export class Movement{
 
             if(this.movementType === 'walk'){this.walkStep++;}
             if(this.movementType === 'run'){this.runStep++;}
-
+            this.movementStep++;
+        
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving();
-            Behavior.isBehaviorFinish = true;
+            this.owner.setBehaviorStatus(BEHAVIOR_STATUS.READY);
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
@@ -164,8 +212,8 @@ export class Movement{
         else{this.isPetMovementChange = false;}
     }
     private isBlockingDirection(direction: Direction): boolean {
+        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.READY);
         this.lastMovementDirection = direction;
-        Behavior.isBehaviorFinish = true;
         return this.hasBlockingTile(this.tilePosInDirection(direction));
     }
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {

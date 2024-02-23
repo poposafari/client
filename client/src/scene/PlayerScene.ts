@@ -23,20 +23,18 @@ export class PlayerScene extends Phaser.Scene{
             if(PlayerManager.getCurrentPlayersInfo()[id].socketId === PlayerManager.getPlayerInfo()['socketId']){
                 PlayerManager.getCurrentPlayersInfo()[id].playerObj = PlayerManager.createPlayer(this.imageManager,this.textManager,PlayerManager.getCurrentPlayersInfo()[id],true);
                 PlayerManager.getCurrentPlayersInfo()[id].playerObj.setNicknamePosition(PlayerManager.getCurrentPlayersInfo()[id].playerObj.getPosition());
-                PlayerManager.getCurrentPlayersInfo()[id].behavior = new Behavior(OBJECT_TYPE.PLAYER,PlayerManager.getCurrentPlayersInfo()[id].playerObj);
-                this.keyControl = new KeyControl(this.input,PlayerManager.getCurrentPlayersInfo()[id].behavior);
+                this.keyControl = new KeyControl(this.input,PlayerManager.getCurrentPlayersInfo()[id].playerObj);
             }
             else{
                 PlayerManager.getCurrentPlayersInfo()[id].playerObj = PlayerManager.createPlayer(this.imageManager,this.textManager,PlayerManager.getCurrentPlayersInfo()[id],false);
                 PlayerManager.getCurrentPlayersInfo()[id].playerObj.setNicknamePosition(PlayerManager.getCurrentPlayersInfo()[id].playerObj.getPosition());
-                PlayerManager.getCurrentPlayersInfo()[id].behavior = new Behavior(OBJECT_TYPE.PLAYER,PlayerManager.getCurrentPlayersInfo()[id].playerObj);
             }
         });
     }
     update(){
         if(this.keyControl){this.keyControl.update()}
         Object.keys(PlayerManager.getCurrentPlayersInfo()).forEach((id)=>{
-            PlayerManager.getCurrentPlayersInfo()[id].behavior.update();
+            PlayerManager.getCurrentPlayersInfo()[id].playerObj.movement.update();
         });
     }
 }

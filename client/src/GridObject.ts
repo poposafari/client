@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import { Direction } from "./constants/Direction";
-import { IMAGE_KEY, SPRITE_DEPTH, TILE_SIZE } from "./constants/Game";
+import { BEHAVIOR_STATUS, IMAGE_KEY, SPRITE_DEPTH, TILE_SIZE } from "./constants/Game";
 
 export class GridObject{
   constructor(
@@ -18,6 +18,16 @@ export class GridObject{
     );
     this.sprite.setFrame(0);
   }
+  
+  private behaviorStatus:BEHAVIOR_STATUS = BEHAVIOR_STATUS.READY;
+  
+  getBehaviorStatus():BEHAVIOR_STATUS{
+    return this.behaviorStatus;
+  }
+  setBehaviorStatus(behavior:BEHAVIOR_STATUS){
+    this.behaviorStatus = behavior;
+  }
+
   getIndex():string{
     return this.index;
   }

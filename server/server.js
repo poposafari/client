@@ -56,10 +56,13 @@ class Queue {
   dequeue() {
     return this._arr.shift();
   }
+  length(){
+    return this._arr.length;
+  }
 }
 
 const movementQueue = new Queue();
-
+let count = 0;
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
   socket.on('connect-player',(data)=>{
@@ -81,7 +84,7 @@ gameSocket.on('connection',(socket)=>{
   socket.on('emit-movement-player',(data)=>{
     movementQueue.enqueue(data);
     socket.broadcast.emit('on-movement-player',movementQueue.dequeue());
-  })
+  });
   socket.on('disconnect',()=>{
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);

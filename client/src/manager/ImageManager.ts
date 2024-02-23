@@ -61,6 +61,14 @@ export class ImageManager{
     return petSprite;
   }
   private createSpriteAnimationPlayer(spriteIndex:number){
+    /* 
+    {obj_type}_{index}_{behavior}_{direction}_{direction_index}
+    obj_type: player | pokemon | npc | item
+    index : 1~8 | 001~151 | 1~N | 1~N
+    behavior: walk | run | ride | fishing | none
+    direction: up,down,left,right | up,down,left,right | none
+    direction_index: 1~2 | 1~3 | none
+    */
     const playerFrameMovement = this.phaser.anims.generateFrameNames(IMAGE_KEY.PLAYER_MOVEMENT+`_${spriteIndex}`,{
       prefix:`player_movement-`,
       suffix:"",

@@ -4,7 +4,8 @@ export const enum EVENTS {
     ADD_PLAYER = "add-player",
     REMOVE_PLAYER = "remove-player",
     MOVEMENT_PLAYER = "movement-player",
-    MOVEMENT_OTHERPLAYER = "movement-otherplayer"
+    MOVEMENT_OTHERPLAYER = "movement-otherplayer",
+    SAVE_PLAYER = "save-player"
 }
 
 export const enum SOCKET_EVENTS {
@@ -14,6 +15,7 @@ export const enum SOCKET_EVENTS {
     DISCONNECT_PLAYER = "disconnect-player",
     EMIT_MOVEMENT_PLAYER = "emit-movement-player",
     ON_MOVEMENT_PLAYER = "on-movement-player",
+    EMIT_SAVE_PLAYER = "emit-save-player"
 }
 
 class EventManager extends Phaser.Events.EventEmitter {
@@ -26,6 +28,7 @@ class EventManager extends Phaser.Events.EventEmitter {
             [EVENTS.REMOVE_PLAYER]: new Phaser.Events.EventEmitter(),
             [EVENTS.MOVEMENT_PLAYER]: new Phaser.Events.EventEmitter(),
             [EVENTS.MOVEMENT_OTHERPLAYER]: new Phaser.Events.EventEmitter(),
+            [EVENTS.SAVE_PLAYER]: new Phaser.Events.EventEmitter(),
         };
     }
 

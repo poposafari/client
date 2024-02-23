@@ -1,6 +1,8 @@
 import { Behavior } from "./Behavior";
-import { OBJECT_TYPE, SPRITE_DEPTH } from "./constants/Game";
+import { BEHAVIOR_STATUS, OBJECT_TYPE, SPRITE_DEPTH } from "./constants/Game";
 import { GridObject } from "./GridObject";
+import EventManager, { EVENTS } from "./manager/EventManager";
+import { Movement } from "./Movement";
 import { Pokemon } from "./Pokemon";
 
 export class Player extends GridObject {
@@ -12,8 +14,23 @@ export class Player extends GridObject {
     private pet: Pokemon,
   ) {
     super(index,sprite,tilePos);
+    this.movement = new Movement(this);
   }
 
+  private movement:Movement;
+
+  setBehavior(behavior:BEHAVIOR_STATUS,data?:object){
+    if(behavior === BEHAVIOR_STATUS.WALK){
+      super.setBehaviorStatus(BEHAVIOR_STATUS.WALK);
+      this.movement.ready(this.movement.setWalkDirection(data));
+      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());
+    }
+    if(behavior === BEHAVIOR_STATUS.RUN){
+      super.setBehaviorStatus(BEHAVIOR_STATUS.RUN);
+      this.movement.ready(this.movement.setRunDirection(data));
+      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());  
+    }
+  }
   setNicknamePosition(position: Phaser.Math.Vector2) {
     this.nickname.setOrigin(0.5, 0.5);
     this.nickname.setX(position.x);

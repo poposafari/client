@@ -48,7 +48,7 @@ export class InitScene extends Phaser.Scene{
             this.socket.emit(SOCKET_EVENTS.EMIT_MOVEMENT_PLAYER,{socketId:this.socket.id,direction:data[0]});
         });
         EventManager.onEvent(EVENTS.MOVEMENT_OTHERPLAYER,(data)=>{
-            PlayerManager.getCurrentPlayersInfo()[data[0]]['behavior'].setDirectMovementType(data[1]);
+            PlayerManager.getCurrentPlayersInfo()[data[0]]['playerObj'].movement.setDirection(data[1]);
         });
 
         this.socket.on(SOCKET_EVENTS.ON_MOVEMENT_PLAYER,(data:object)=>{
