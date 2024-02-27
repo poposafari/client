@@ -26,7 +26,7 @@ export const enum OBJECT_TYPE {
 }
 
 export const enum BEHAVIOR_STATUS {
-  READY = 'ready',
+  IDLE = 'idle',
   FINISH = 'finish',
   WALK = 'walk',
   RUN = 'run',

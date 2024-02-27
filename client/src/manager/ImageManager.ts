@@ -11,7 +11,7 @@ export class ImageManager{
     for(let i=1;i<=MAX_PLAYER_SPRITE;i++){
       this.phaser.load.atlas(IMAGE_KEY.PLAYER_MOVEMENT+`_${i}`,`assets/player/player_${i}_movement.png`,`assets/player/player_movement.json`);
     }
-  }
+  }l
   loadImageItem():void{
     for(let i=0;i<4;i++){
         this.phaser.load.image(IMAGE_KEY.ITEM_GROUND+`_${i}`,`assets/item/item_${i}_ground.png`);

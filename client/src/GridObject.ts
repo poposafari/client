@@ -19,7 +19,7 @@ export class GridObject{
     this.sprite.setFrame(0);
   }
   
-  private behaviorStatus:BEHAVIOR_STATUS = BEHAVIOR_STATUS.READY;
+  private behaviorStatus:BEHAVIOR_STATUS = BEHAVIOR_STATUS.IDLE;
   
   getBehaviorStatus():BEHAVIOR_STATUS{
     return this.behaviorStatus;

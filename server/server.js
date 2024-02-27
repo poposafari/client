@@ -48,16 +48,25 @@ const players = {};
 
 class Queue {
   constructor() {
-    this._arr = [];
+    this._set = new Set();
   }
+  
   enqueue(item) {
-    this._arr.push(item);
+    // Serialize the item to a string to store it in the Set
+    const serializedItem = JSON.stringify(item);
+    this._set.add(serializedItem);
   }
+  
   dequeue() {
-    return this._arr.shift();
+    // Convert the Set to an array, get the first item, and parse it back to its original object
+    const serializedItem = [...this._set][0];
+    const item = JSON.parse(serializedItem);
+    this._set.delete(serializedItem);
+    return item;
   }
-  length(){
-    return this._arr.length;
+  
+  length() {
+    return this._set.size;
   }
 }
 

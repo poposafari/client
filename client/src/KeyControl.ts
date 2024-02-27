@@ -30,27 +30,25 @@ export class KeyControl{
 
     private inputEnabled: boolean;
 
-    private test:number=0;
-
     update(){
-        if(this.player.getBehaviorStatus() === BEHAVIOR_STATUS.READY){
-            this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
-            this.isPressRunKey = this.cursorKey.shift.isDown;
-            this.isPressThrowKey = Phaser.Input.Keyboard.JustDown(this.throwKey);
-            this.isPressThrowPrevKey = Phaser.Input.Keyboard.JustDown(this.throwPrevKey);
-            this.isPressThrowNextKey = Phaser.Input.Keyboard.JustDown(this.throwNextKey);
-    
-            this.cursorKeyState = {
-                up: this.cursorKey.up.isDown,
-                down: this.cursorKey.down.isDown,
-                right: this.cursorKey.right.isDown,
-                left: this.cursorKey.left.isDown,
-            };
+        if(this.player.getBehaviorStatus() != BEHAVIOR_STATUS.IDLE) return;
+        
+        this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
+        this.isPressRunKey = this.cursorKey.shift.isDown;
+        this.isPressThrowKey = Phaser.Input.Keyboard.JustDown(this.throwKey);
+        this.isPressThrowPrevKey = Phaser.Input.Keyboard.JustDown(this.throwPrevKey);
+        this.isPressThrowNextKey = Phaser.Input.Keyboard.JustDown(this.throwNextKey);
 
-            if(this.isPressAnyMovementKey){
-                if(this.isPressRunKey){this.player.setBehavior(BEHAVIOR_STATUS.RUN, this.cursorKeyState);}
-                else{this.player.setBehavior(BEHAVIOR_STATUS.WALK, this.cursorKeyState);}
-            }
+        this.cursorKeyState = {
+            up: this.cursorKey.up.isDown,
+            down: this.cursorKey.down.isDown,
+            right: this.cursorKey.right.isDown,
+            left: this.cursorKey.left.isDown,
+        };
+
+        if(this.isPressAnyMovementKey){
+            if(this.isPressRunKey){this.player.setBehavior(BEHAVIOR_STATUS.RUN, this.cursorKeyState);}
+            else{this.player.setBehavior(BEHAVIOR_STATUS.WALK, this.cursorKeyState);}
         }
     }
     delayedBehavior(behaviorStatus: BEHAVIOR_STATUS, keyState: object,delay:number) {

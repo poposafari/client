@@ -168,7 +168,7 @@ export class Movement{
         
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving();
-            this.owner.setBehaviorStatus(BEHAVIOR_STATUS.READY);
+            this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
@@ -212,7 +212,7 @@ export class Movement{
         else{this.isPetMovementChange = false;}
     }
     private isBlockingDirection(direction: Direction): boolean {
-        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.READY);
+        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         this.lastMovementDirection = direction;
         return this.hasBlockingTile(this.tilePosInDirection(direction));
     }
