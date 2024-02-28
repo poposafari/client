@@ -18,9 +18,12 @@ export class Player extends GridObject {
   }
 
   private movement:Movement;
-
+  getMovementFinishCheck():boolean{
+    return this.movement.isMovementFinish;
+  }
   setBehavior(behavior:BEHAVIOR_STATUS,data?:object){
     if(behavior === BEHAVIOR_STATUS.IDLE){
+      super.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
       super.standStopAnimation(this.movement.lastMovementDirection);
     }
     if(behavior === BEHAVIOR_STATUS.WALK){

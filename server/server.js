@@ -46,31 +46,6 @@ const gameSocket = ioServer.of('/game');
 
 const players = {};
 
-class Queue {
-  constructor() {
-    this._set = new Set();
-  }
-  
-  enqueue(item) {
-    // Serialize the item to a string to store it in the Set
-    const serializedItem = JSON.stringify(item);
-    this._set.add(serializedItem);
-  }
-  
-  dequeue() {
-    // Convert the Set to an array, get the first item, and parse it back to its original object
-    const serializedItem = [...this._set][0];
-    const item = JSON.parse(serializedItem);
-    this._set.delete(serializedItem);
-    return item;
-  }
-  
-  length() {
-    return this._set.size;
-  }
-}
-
-const movementQueue = new Queue();
 let count = 0;
 gameSocket.on('connection',(socket)=>{
   console.log(`connected: `,socket.id);
@@ -91,8 +66,7 @@ gameSocket.on('connection',(socket)=>{
     socket.broadcast.emit('connect-player',players[socket.id]);
   });
   socket.on('emit-movement-player',(data)=>{
-    movementQueue.enqueue(data);
-    socket.broadcast.emit('on-movement-player',movementQueue.dequeue());
+    socket.broadcast.emit('on-movement-player',data);
   });
   socket.on('disconnect',()=>{
     delete players[socket.id];

@@ -22,6 +22,8 @@ export class Movement{
     private tileSizePixelsWalked:number = 0;
     private pixelsToWalkThisUpdate:number = 0;
 
+    isMovementFinish:boolean = true;
+
     private movementDirection:Direction = Direction.NONE;
     lastMovementDirection:Direction = Direction.WALK_DOWN_1;
 
@@ -168,9 +170,11 @@ export class Movement{
         
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving();
+            this.isMovementFinish = true;
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
+            this.isMovementFinish = false;
         }
 
         if(this.isPlayer(this.owner)){
@@ -211,6 +215,7 @@ export class Movement{
         else{this.isPetMovementChange = false;}
     }
     private isBlockingDirection(direction: Direction): boolean {
+        this.isMovementFinish = true;
         this.lastMovementDirection = direction;
         return this.hasBlockingTile(this.tilePosInDirection(direction));
     }

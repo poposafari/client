@@ -28,7 +28,8 @@ export class KeyControl{
     private cursorKeyState:object;
 
     update(){
-        
+        // if(this.player.getBehaviorStatus() !== BEHAVIOR_STATUS.IDLE){return;}
+
         this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.isPressRunKey = this.cursorKey.shift.isDown;
         this.isPressThrowKey = Phaser.Input.Keyboard.JustDown(this.throwKey);
@@ -42,10 +43,10 @@ export class KeyControl{
             right:this.cursorKey.right.isDown,
         }
 
-        if(this.isPressAnyMovementKey){
+        if(this.isPressAnyMovementKey && this.player.getMovementFinishCheck()){
             this.setMovementDirection(this.cursorKeyState,this.isPressRunKey);
         }
-        else{
+        else if(!this.isPressAnyMovementKey && this.player.getMovementFinishCheck()){
             this.player.setBehavior(BEHAVIOR_STATUS.IDLE);
         }
     }
