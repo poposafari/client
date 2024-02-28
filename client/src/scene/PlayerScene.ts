@@ -1,6 +1,6 @@
 import { Behavior } from "../Behavior";
 import { KeyControl } from "../KeyControl";
-import { OBJECT_TYPE } from "../constants/Game";
+import { BEHAVIOR_STATUS, OBJECT_TYPE } from "../constants/Game";
 import EventManager, { EVENTS, SOCKET_EVENTS } from "../manager/EventManager";
 import { ImageManager } from "../manager/ImageManager"
 import PlayerManager from "../manager/PlayerManager";
@@ -31,8 +31,9 @@ export class PlayerScene extends Phaser.Scene{
             }
         });
     }
+
     update(){
-        if(this.keyControl){this.keyControl.update()}
+        if(this.keyControl){this.keyControl.update();}
         Object.keys(PlayerManager.getCurrentPlayersInfo()).forEach((id)=>{
             PlayerManager.getCurrentPlayersInfo()[id].playerObj.movement.update();
         });

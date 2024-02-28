@@ -1,3 +1,4 @@
+import { DOWN } from "phaser";
 import { Player } from "./Player";
 import { BEHAVIOR_STATUS } from "./constants/Game";
 import { KeyInput } from "./constants/KeyInput";
@@ -11,8 +12,6 @@ export class KeyControl{
         this.throwKey = this.keyInput.keyboard.addKey(KeyInput.THROW);
         this.throwPrevKey = this.keyInput.keyboard.addKey(KeyInput.THROW_PREV);
         this.throwNextKey = this.keyInput.keyboard.addKey(KeyInput.THROW_NEXT);
-
-        this.inputEnabled = true;
     }
 
     private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -28,10 +27,7 @@ export class KeyControl{
 
     private cursorKeyState:object;
 
-    private inputEnabled: boolean;
-
     update(){
-        if(this.player.getBehaviorStatus() != BEHAVIOR_STATUS.IDLE) return;
         
         this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.isPressRunKey = this.cursorKey.shift.isDown;
@@ -39,23 +35,22 @@ export class KeyControl{
         this.isPressThrowPrevKey = Phaser.Input.Keyboard.JustDown(this.throwPrevKey);
         this.isPressThrowNextKey = Phaser.Input.Keyboard.JustDown(this.throwNextKey);
 
-        this.cursorKeyState = {
-            up: this.cursorKey.up.isDown,
-            down: this.cursorKey.down.isDown,
-            right: this.cursorKey.right.isDown,
-            left: this.cursorKey.left.isDown,
-        };
+        this.cursorKeyState={
+            up:this.cursorKey.up.isDown,
+            down:this.cursorKey.down.isDown,
+            left:this.cursorKey.left.isDown,
+            right:this.cursorKey.right.isDown,
+        }
 
         if(this.isPressAnyMovementKey){
-            if(this.isPressRunKey){this.player.setBehavior(BEHAVIOR_STATUS.RUN, this.cursorKeyState);}
-            else{this.player.setBehavior(BEHAVIOR_STATUS.WALK, this.cursorKeyState);}
+            this.setMovementDirection(this.cursorKeyState,this.isPressRunKey);
+        }
+        else{
+            this.player.setBehavior(BEHAVIOR_STATUS.IDLE);
         }
     }
-    delayedBehavior(behaviorStatus: BEHAVIOR_STATUS, keyState: object,delay:number) {
-        this.inputEnabled = false;
-        this.player.setBehavior(behaviorStatus, keyState);
-        setTimeout(() => {
-            this.inputEnabled = true;
-        }, delay);
+    setMovementDirection(cursorState:object, isShiftPressed: boolean){
+        const behaviorStatus = isShiftPressed ? BEHAVIOR_STATUS.RUN : BEHAVIOR_STATUS.WALK;
+        this.player.setBehavior(behaviorStatus, cursorState);
     }
 }
