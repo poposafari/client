@@ -29,12 +29,12 @@ export class Player extends GridObject {
     if(behavior === BEHAVIOR_STATUS.WALK){
       super.setBehaviorStatus(BEHAVIOR_STATUS.WALK);
       this.movement.ready(this.movement.setWalkDirection(data));
-      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());
+      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.setWalkDirection(data));
     }
     if(behavior === BEHAVIOR_STATUS.RUN){
       super.setBehaviorStatus(BEHAVIOR_STATUS.RUN);
       this.movement.ready(this.movement.setRunDirection(data));
-      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.getDirection());  
+      EventManager.triggerEvent(EVENTS.MOVEMENT_PLAYER,this.movement.setRunDirection(data));  
     }
   }
   setNicknamePosition(position: Phaser.Math.Vector2) {

@@ -66,6 +66,7 @@ gameSocket.on('connection',(socket)=>{
     socket.broadcast.emit('connect-player',players[socket.id]);
   });
   socket.on('emit-movement-player',(data)=>{
+    console.log(data);
     socket.broadcast.emit('on-movement-player',data);
   });
   socket.on('disconnect',()=>{

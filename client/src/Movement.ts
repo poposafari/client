@@ -125,6 +125,7 @@ export class Movement{
             this.movementType = this.getMovementType(direction);
             this.setMovementSpeed();
             this.movementDirection = direction;
+            console.log(this.movementDirection);
             this.owner.startAnimation(this.movementDirection);
             this.owner.setTilePos(this.owner.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
 
