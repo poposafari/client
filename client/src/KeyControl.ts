@@ -2,6 +2,7 @@ import { DOWN } from "phaser";
 import { Player } from "./Player";
 import { BEHAVIOR_STATUS } from "./constants/Game";
 import { KeyInput } from "./constants/KeyInput";
+import { Direction } from "./constants/Direction";
 
 export class KeyControl{
     constructor(

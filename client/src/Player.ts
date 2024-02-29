@@ -1,4 +1,5 @@
 import { Behavior } from "./Behavior";
+import { Direction } from "./constants/Direction";
 import { BEHAVIOR_STATUS, OBJECT_TYPE, SPRITE_DEPTH } from "./constants/Game";
 import { GridObject } from "./GridObject";
 import EventManager, { EVENTS } from "./manager/EventManager";

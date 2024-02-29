@@ -24,6 +24,7 @@ export class Movement{
 
     isMovementFinish:boolean = true;
 
+    private movementDirectionQueue:Array<Direction> = [];
     private movementDirection:Direction = Direction.NONE;
     lastMovementDirection:Direction = Direction.WALK_DOWN_1;
 
@@ -99,11 +100,16 @@ export class Movement{
             if(this.getRunStep() === 4){return Direction.RUN_RIGHT_3}
         }
     }
-    setDirection(direction:Direction){
-        this.ready(direction);
+    addMovementDirectionQueue(direction:Direction){
+        this.movementDirectionQueue.push(direction);
     }
     private getWalkStep(){
-        return this.walkStep % 2;
+        if(this.walkStep === 0){return 1;}
+        if(this.walkStep === 1){return 0;}
+        if(this.walkStep === 2){
+            this.walkStep = 0;
+            return 1;
+        }
     }
     private getRunStep(){
         if(this.runStep === 0){return 1;}
@@ -116,6 +122,9 @@ export class Movement{
         }
     }
     update(){
+        if(this.isMovementFinish && this.movementDirectionQueue.length > 0){
+            this.ready(this.movementDirectionQueue.shift());
+        }
         if(this.isMoving()){this.updatePosition();}
     }
     ready(direction: Direction){
@@ -125,10 +134,9 @@ export class Movement{
             this.movementType = this.getMovementType(direction);
             this.setMovementSpeed();
             this.movementDirection = direction;
-            console.log(this.movementDirection);
             this.owner.startAnimation(this.movementDirection);
             this.owner.setTilePos(this.owner.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
-
+    
             if(this.isPlayer(this.owner)){
                 if(this.owner.getPosition().x - this.owner.getPet().getPosition().x > 0){this.petMovementDirection = Direction.WALK_RIGHT_1}
                 if(this.owner.getPosition().x - this.owner.getPet().getPosition().x < 0){this.petMovementDirection = Direction.WALK_LEFT_1}

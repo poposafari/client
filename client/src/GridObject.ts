@@ -55,7 +55,6 @@ export class GridObject{
   stopAnimation(direction: Direction){
     const animationManager = this.sprite.anims.animationManager;
     this.sprite.setFrame(animationManager.get(this.index+direction).frames[1].frame.name);
-    //player run logic should add.
     this.sprite.anims.stop();
   }
   startAnimation(direction: Direction){
