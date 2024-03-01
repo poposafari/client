@@ -66,6 +66,7 @@ class PlayerManager{
     }
     public createPlayer(imageManager:ImageManager,textManager:TextManager,playerInfo:object,isPlayer:boolean):Player{
         return new Player(
+            isPlayer,
             `player_${playerInfo['spriteIndex']}`,
             imageManager.createSpritePlayer(playerInfo['spriteIndex'],isPlayer),
             new Phaser.Math.Vector2(playerInfo['player_x'],playerInfo['player_y']),

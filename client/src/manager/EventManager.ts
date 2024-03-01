@@ -6,7 +6,8 @@ export const enum EVENTS {
     MOVEMENT_PLAYER = "movement-player",
     MOVEMENT_OTHERPLAYER = "movement-otherplayer",
     SAVE_PLAYER = "save-player",
-    MOVEMENT_FINISH_PLAYER = "movement-finish-player"
+    MOVEMENT_FINISH_PLAYER = "movement-finish-player",
+    STAND_PLAYER = "stand-player"
 }
 
 export const enum SOCKET_EVENTS {
@@ -34,8 +35,6 @@ class EventManager extends Phaser.Events.EventEmitter {
     }
 
     private registeredEvents: Record<string, Phaser.Events.EventEmitter>;
-
-    private socket:any = null;
 
     triggerEvent(eventName: string, ...args: any[]) {
         if (this.registeredEvents[eventName]) {

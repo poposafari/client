@@ -1,4 +1,3 @@
-import { Behavior } from "./Behavior";
 import { Direction } from "./constants/Direction";
 import { BEHAVIOR_STATUS, OBJECT_TYPE, SPRITE_DEPTH } from "./constants/Game";
 import { GridObject } from "./GridObject";
@@ -8,6 +7,7 @@ import { Pokemon } from "./Pokemon";
 
 export class Player extends GridObject {
   constructor(
+    isPlayer:boolean,
     index: string,
     sprite: Phaser.GameObjects.Sprite,
     tilePos: Phaser.Math.Vector2,
@@ -15,10 +15,11 @@ export class Player extends GridObject {
     private pet: Pokemon,
   ) {
     super(index,sprite,tilePos);
-    this.movement = new Movement(this);
+    this.movement = new Movement(this,isPlayer);
   }
 
   private movement:Movement;
+  
   getMovementFinishCheck():boolean{
     return this.movement.isMovementFinish;
   }
@@ -26,12 +27,6 @@ export class Player extends GridObject {
     if(behavior === BEHAVIOR_STATUS.IDLE){
       super.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
       super.standStopAnimation(this.movement.lastMovementDirection);
-      EventManager.triggerEvent(EVENTS.SAVE_PLAYER,
-        super.getTilePos().x,
-        super.getTilePos().y,
-        this.pet.getTilePos().x,
-        this.pet.getTilePos().y
-      );
     }
     if(behavior === BEHAVIOR_STATUS.WALK){
       super.setBehaviorStatus(BEHAVIOR_STATUS.WALK);

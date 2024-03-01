@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { BEHAVIOR_STATUS } from "./constants/Game";
 import { KeyInput } from "./constants/KeyInput";
 import { Direction } from "./constants/Direction";
+import EventManager from "./manager/EventManager";
 
 export class KeyControl{
     constructor(

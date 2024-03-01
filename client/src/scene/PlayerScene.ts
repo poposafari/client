@@ -1,4 +1,3 @@
-import { Behavior } from "../Behavior";
 import { KeyControl } from "../KeyControl";
 import { BEHAVIOR_STATUS, OBJECT_TYPE } from "../constants/Game";
 import EventManager, { EVENTS, SOCKET_EVENTS } from "../manager/EventManager";

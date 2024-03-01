@@ -1,4 +1,3 @@
-import { Behavior } from "./Behavior";
 import { Player } from "./Player";
 import { Pokemon } from "./Pokemon";
 import { Direction } from "./constants/Direction";
@@ -11,6 +10,7 @@ const Vector2 = Phaser.Math.Vector2;
 export class Movement{
     constructor(
         private owner: Player | Pokemon,
+        private isPlayer:boolean,
     ){}
     
     private movementType:string = null;
@@ -137,7 +137,7 @@ export class Movement{
             this.owner.startAnimation(this.movementDirection);
             this.owner.setTilePos(this.owner.getTilePos().add(this.movementDirectionVectors[this.movementDirection]));
     
-            if(this.isPlayer(this.owner)){
+            if(this.isPlayerObject(this.owner)){
                 if(this.owner.getPosition().x - this.owner.getPet().getPosition().x > 0){this.petMovementDirection = Direction.WALK_RIGHT_1}
                 if(this.owner.getPosition().x - this.owner.getPet().getPosition().x < 0){this.petMovementDirection = Direction.WALK_LEFT_1}
                 if(this.owner.getPosition().y - this.owner.getPet().getPosition().y > 0){this.petMovementDirection = Direction.WALK_DOWN_1}
@@ -181,13 +181,26 @@ export class Movement{
             this.stopMoving();
             this.isMovementFinish = true;
             this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
+
+            if(this.isPlayerObject(this.owner)){
+                if(this.isPlayer){
+                    EventManager.triggerEvent(
+                        EVENTS.SAVE_PLAYER,
+                        this.owner.getTilePos().x,
+                        this.owner.getTilePos().y,
+                        this.owner.getPet().getTilePos().x,
+                        this.owner.getPet().getTilePos().y
+                    );
+                }
+            }
+
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
             this.isMovementFinish = false;
         }
 
-        if(this.isPlayer(this.owner)){
+        if(this.isPlayerObject(this.owner)){
             this.owner.setNicknamePosition(this.owner.getPosition());
         }
     }
@@ -195,7 +208,7 @@ export class Movement{
         this.owner.stopAnimation(this.movementDirection);
         this.movementDirection = Direction.NONE;
 
-        if(this.isPlayer(this.owner)){
+        if(this.isPlayerObject(this.owner)){
             this.petMovementDirection = Direction.NONE;
         }
     }
@@ -205,7 +218,7 @@ export class Movement{
         const newPlayerPos = this.owner.getPosition().add(playerMovementDistance);
         this.owner.setPosition(newPlayerPos);
 
-        if(this.isPlayer(this.owner)){
+        if(this.isPlayerObject(this.owner)){
             const petDirectionVector = this.movementDirectionVectors[this.petMovementDirection].clone();
             const petMovementDistance = petDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
             const newPetPos = this.owner.getPet().getPosition().add(petMovementDistance);
@@ -225,9 +238,9 @@ export class Movement{
         else{this.isPetMovementChange = false;}
     }
     private isBlockingDirection(direction: Direction): boolean {
+        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         this.isMovementFinish = true;
         this.lastMovementDirection = direction;
-        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         return this.hasBlockingTile(this.tilePosInDirection(direction));
     }
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {
@@ -247,7 +260,7 @@ export class Movement{
             MapScene.map.hasTileAt(pos.x, pos.y, layer.name)
         );
     }
-    private isPlayer(object:any):object is Player{
+    private isPlayerObject(object:any):object is Player{
         return object instanceof Player;
     }
     private isMoving(){

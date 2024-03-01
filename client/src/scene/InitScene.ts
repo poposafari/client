@@ -5,7 +5,6 @@ import PlayerManager from "../manager/PlayerManager";
 import {io} from 'socket.io-client';
 import { Player } from "../Player";
 import { TextManager } from "../manager/TextManager";
-import { Behavior } from "../Behavior";
 import { OBJECT_TYPE } from "../constants/Game";
 
 export class InitScene extends Phaser.Scene{
@@ -38,7 +37,6 @@ export class InitScene extends Phaser.Scene{
             PlayerManager.addCurrentPlayers(playerInfo[0].socketId);
             PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId].playerObj = PlayerManager.createPlayer(this.imageManager,this.textManager,PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId],false);
             PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId].playerObj.setNicknamePosition(PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId].playerObj.getPosition());
-            PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId].behavior = new Behavior(OBJECT_TYPE.PLAYER,PlayerManager.getCurrentPlayersInfo()[playerInfo[0].socketId].playerObj);
         });
         EventManager.onEvent(EVENTS.REMOVE_PLAYER,(playerInfo)=>{
             PlayerManager.getCurrentPlayersInfo()[playerInfo[0]].playerObj.destoryAll();
