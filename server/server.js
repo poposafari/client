@@ -71,6 +71,9 @@ gameSocket.on('connection',(socket)=>{
   socket.on('emit-save-player',(data)=>{
     players[socket.id].player_x = data.player_x;
     players[socket.id].player_y = data.player_y;
+    players[socket.id].pet_x = data.pet_x;
+    players[socket.id].pet_y = data.pet_y;
+
   });
   socket.on('emit-stand-player',()=>{
     socket.broadcast.emit('on-stand-player',{socketId:socket.id});
