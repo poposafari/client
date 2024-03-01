@@ -26,6 +26,12 @@ export class Player extends GridObject {
     if(behavior === BEHAVIOR_STATUS.IDLE){
       super.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
       super.standStopAnimation(this.movement.lastMovementDirection);
+      EventManager.triggerEvent(EVENTS.SAVE_PLAYER,
+        super.getTilePos().x,
+        super.getTilePos().y,
+        this.pet.getTilePos().x,
+        this.pet.getTilePos().y
+      );
     }
     if(behavior === BEHAVIOR_STATUS.WALK){
       super.setBehaviorStatus(BEHAVIOR_STATUS.WALK);

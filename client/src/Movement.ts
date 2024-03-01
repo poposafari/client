@@ -180,6 +180,7 @@ export class Movement{
             this.lastMovementDirection = this.movementDirection;
             this.stopMoving();
             this.isMovementFinish = true;
+            this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         }
         else{
             this.moveSprite(this.pixelsToWalkThisUpdate);
@@ -226,6 +227,7 @@ export class Movement{
     private isBlockingDirection(direction: Direction): boolean {
         this.isMovementFinish = true;
         this.lastMovementDirection = direction;
+        this.owner.setBehaviorStatus(BEHAVIOR_STATUS.IDLE);
         return this.hasBlockingTile(this.tilePosInDirection(direction));
     }
     private tilePosInDirection(direction: Direction): Phaser.Math.Vector2 {

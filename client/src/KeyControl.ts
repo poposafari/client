@@ -29,7 +29,7 @@ export class KeyControl{
     private cursorKeyState:object;
 
     update(){
-        // if(this.player.getBehaviorStatus() !== BEHAVIOR_STATUS.IDLE){return;}
+        if(this.player.getBehaviorStatus() !== BEHAVIOR_STATUS.IDLE){return;}
 
         this.isPressAnyMovementKey = this.cursorKey.left.isDown || this.cursorKey.right.isDown || this.cursorKey.up.isDown || this.cursorKey.down.isDown;
         this.isPressRunKey = this.cursorKey.shift.isDown;

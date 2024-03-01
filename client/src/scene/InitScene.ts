@@ -50,6 +50,9 @@ export class InitScene extends Phaser.Scene{
         EventManager.onEvent(EVENTS.MOVEMENT_OTHERPLAYER,(data)=>{
             PlayerManager.getCurrentPlayersInfo()[data[0]]['playerObj'].movement.addMovementDirectionQueue(data[1]);
         });
+        EventManager.onEvent(EVENTS.SAVE_PLAYER,(data)=>{
+            this.socket.emit(SOCKET_EVENTS.EMIT_SAVE_PLAYER,{player_x:data[0],player_y:data[1],pet_x:data[2],pet_y:data[3]});
+        });
 
         this.socket.on(SOCKET_EVENTS.ON_MOVEMENT_PLAYER,(data:object)=>{
             EventManager.triggerEvent(EVENTS.MOVEMENT_OTHERPLAYER,data['socketId'],data['direction']);

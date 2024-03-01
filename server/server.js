@@ -69,13 +69,13 @@ gameSocket.on('connection',(socket)=>{
     console.log(data);
     socket.broadcast.emit('on-movement-player',data);
   });
+  socket.on('emit-save-player',(data)=>{
+    players[socket.id].player_x = data.player_x;
+    players[socket.id].player_y = data.player_y;
+  });
   socket.on('disconnect',()=>{
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);
     console.log(`disconnected: `,socket.id);
-  });
-  socket.on('saveTilePos',(data)=>{
-    players[socket.id].tilePosX = data.x;
-    players[socket.id].tilePosY = data.y;
   });
 });
