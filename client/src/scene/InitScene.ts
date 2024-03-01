@@ -5,7 +5,7 @@ import PlayerManager from "../manager/PlayerManager";
 import {io} from 'socket.io-client';
 import { Player } from "../Player";
 import { TextManager } from "../manager/TextManager";
-import { OBJECT_TYPE } from "../constants/Game";
+import { BEHAVIOR_STATUS, OBJECT_TYPE } from "../constants/Game";
 
 export class InitScene extends Phaser.Scene{
     constructor(){
@@ -51,6 +51,12 @@ export class InitScene extends Phaser.Scene{
         EventManager.onEvent(EVENTS.SAVE_PLAYER,(data)=>{
             this.socket.emit(SOCKET_EVENTS.EMIT_SAVE_PLAYER,{player_x:data[0],player_y:data[1],pet_x:data[2],pet_y:data[3]});
         });
+        EventManager.onEvent(EVENTS.STAND_PLAYER,()=>{
+            this.socket.emit(SOCKET_EVENTS.EMIT_STAND_PLAYER);
+        });
+        EventManager.onEvent(EVENTS.STAND_OTHER_PLAYER,(data)=>{
+            PlayerManager.getCurrentPlayersInfo()[data[0]]['playerObj'].setBehavior(BEHAVIOR_STATUS.IDLE);
+        });
 
         this.socket.on(SOCKET_EVENTS.ON_MOVEMENT_PLAYER,(data:object)=>{
             EventManager.triggerEvent(EVENTS.MOVEMENT_OTHERPLAYER,data['socketId'],data['direction']);
@@ -61,6 +67,9 @@ export class InitScene extends Phaser.Scene{
         });
         this.socket.on(SOCKET_EVENTS.DISCONNECT_PLAYER,(socketId:string)=>{
             EventManager.triggerEvent(EVENTS.REMOVE_PLAYER,socketId);
+        });
+        this.socket.on(SOCKET_EVENTS.ON_STAND_PLAYER,(data:object)=>{
+            EventManager.triggerEvent(EVENTS.STAND_OTHER_PLAYER,data['socketId']);
         });
     }
     preload(){

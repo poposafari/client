@@ -3,7 +3,7 @@ import { Player } from "./Player";
 import { BEHAVIOR_STATUS } from "./constants/Game";
 import { KeyInput } from "./constants/KeyInput";
 import { Direction } from "./constants/Direction";
-import EventManager from "./manager/EventManager";
+import EventManager, { EVENTS } from "./manager/EventManager";
 
 export class KeyControl{
     constructor(
@@ -50,6 +50,7 @@ export class KeyControl{
         }
         else if(!this.isPressAnyMovementKey && this.player.getMovementFinishCheck()){
             this.player.setBehavior(BEHAVIOR_STATUS.IDLE);
+            EventManager.triggerEvent(EVENTS.STAND_PLAYER);
         }
     }
     setMovementDirection(cursorState:object, isShiftPressed: boolean){

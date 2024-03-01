@@ -72,6 +72,9 @@ gameSocket.on('connection',(socket)=>{
     players[socket.id].player_x = data.player_x;
     players[socket.id].player_y = data.player_y;
   });
+  socket.on('emit-stand-player',()=>{
+    socket.broadcast.emit('on-stand-player',{socketId:socket.id});
+  });
   socket.on('disconnect',()=>{
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);
