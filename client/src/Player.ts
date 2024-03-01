@@ -42,7 +42,7 @@ export class Player extends GridObject {
   setNicknamePosition(position: Phaser.Math.Vector2) {
     this.nickname.setOrigin(0.5, 0.5);
     this.nickname.setX(position.x);
-    this.nickname.setY(position.y - 60);
+    this.nickname.setY(position.y - 65);
   }
   getNickname(): object {
     return this.nickname.data;

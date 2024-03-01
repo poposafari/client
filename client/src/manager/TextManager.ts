@@ -1,3 +1,4 @@
+import { SPRITE_DEPTH } from "../constants/Game";
 import { nicknameConfig } from "../constants/Text";
 
 export class TextManager{
@@ -18,11 +19,14 @@ export class TextManager{
     }
 
     public addText(x:number,y:number,nickname:string){
-        return this.scene.add.text(
+        const text = this.scene.add.text(
             x,
             y,
             nickname,
             nicknameConfig
         );
+        text.depth = SPRITE_DEPTH.NICKNAME;
+        text.setAlign('center');
+        return text;
     }
 }

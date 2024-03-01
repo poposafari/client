@@ -7,6 +7,8 @@ export const SEASON_TEXT=[
 
 export const nicknameConfig={
     fontSize:13,
-    color: '#fff',
-    backgroundColor:'#000000'
+    color: '#00f800',
+    stroke:'#000000',
+    strokeThickness :3,
+    fontFamily:'monospace',
 }
