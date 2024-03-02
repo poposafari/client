@@ -55,7 +55,9 @@ export class InitScene extends Phaser.Scene{
             this.socket.emit(SOCKET_EVENTS.EMIT_STAND_PLAYER);
         });
         EventManager.onEvent(EVENTS.STAND_OTHER_PLAYER,(data)=>{
-            PlayerManager.getCurrentPlayersInfo()[data[0]]['playerObj'].setBehavior(BEHAVIOR_STATUS.IDLE);
+            if(PlayerManager.getCurrentPlayersInfo()[data[0]].playerObj){
+                PlayerManager.getCurrentPlayersInfo()[data[0]].playerObj.setBehavior(BEHAVIOR_STATUS.IDLE);
+            }
         });
 
         this.socket.on(SOCKET_EVENTS.ON_MOVEMENT_PLAYER,(data:object)=>{
@@ -80,7 +82,7 @@ export class InitScene extends Phaser.Scene{
     }
     async create(){
         try{
-            const res = await axios.get('http://localhost:8081/game/user-info');
+            const res = await axios.get('http://36.38.61.149:8081/game/user-info');
             this.season = res.data[0].season;
             EventManager.triggerEvent(EVENTS.INITIAL_PLAYER_DATA,this.socket.id,res.data[0]);
         } catch(error){

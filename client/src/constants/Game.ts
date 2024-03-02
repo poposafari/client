@@ -62,7 +62,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
       antialias: false,
     },
     type: Phaser.AUTO,
-    scene: [InitScene,SeasonScene,MapScene,PlayerScene],
+    scene: [InitScene,SeasonScene,MapScene,PlayerScene], 
     scale: {
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
