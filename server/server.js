@@ -16,7 +16,7 @@ require("dotenv").config();
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.set('port',process.env.PORT || 8081);
+app.set('port',process.env.ACCOUNT_PORT);
 const server = createServer(app);
 const ioServer = new socketio.Server(server,{cookie:true});
 database.connect();
@@ -46,26 +46,29 @@ const gameSocket = ioServer.of('/game');
 
 const players = {};
 
-let count = 0;
 gameSocket.on('connection',(socket)=>{
-  console.log(`connected: `,socket.id);
   socket.on('connect-player',(data)=>{
     players[socket.id] = {
       socketId: data.socketId,
       playerObj: null,
-      nickname: data.nickname,
       pokedex: data.pokedex,
+      nickname: data.nickname,
       spriteIndex: data.spriteIndex,
+      money: data.money,
+      pokeball: data.pokeball,
+      greatball: data.greatball,
+      ultraball: data.ultraball,
+      masterball: data.masterball,
       player_x: data.player_x,
       player_y: data.player_y,
       pet_x: data.pet_x,
       pet_y: data.pet_y,
     };
+    console.log(`connected:`,socket.id,data.nickname);
     socket.emit('connected-players',players);
     socket.broadcast.emit('connect-player',players[socket.id]);
   });
   socket.on('emit-movement-player',(data)=>{
-    console.log(data);
     socket.broadcast.emit('on-movement-player',data);
   });
   socket.on('emit-save-player',(data)=>{
@@ -79,8 +82,9 @@ gameSocket.on('connection',(socket)=>{
     socket.broadcast.emit('on-stand-player',{socketId:socket.id});
   });
   socket.on('disconnect',()=>{
+    console.log(`disconnected:`,socket.id,players[socket.id].nickname);
+    //GameRouter쪽으로 players[socket.id] 값을 넘겨서 데이터베이스 처리를 하고자 한다.
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);
-    console.log(`disconnected: `,socket.id);
   });
 });

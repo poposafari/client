@@ -1,5 +1,5 @@
 const database = require('mysql');
-require("dotenv").config();
+
 const db_connection = database.createConnection({
     host:'localhost',
     port:3306,
