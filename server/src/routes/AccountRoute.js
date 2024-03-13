@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { join } = require('node:path');
-const {createAccount, signIn} = require('../services/AccountService');
+const {signUp, signIn} = require('../services/AccountService');
 
 router.get('/signup',(req,res)=>{
     res.sendFile(join(__dirname, '../../view/signup.html'));
@@ -17,7 +17,7 @@ router.get('/signup-success',(req,res)=>{
 
 router.post('/signup', async (req, res) => {
     const dto = req.body;
-    createAccount(dto)
+    signUp(dto)
     .then(() => {
         res.status(200).json({ success: 'create account' });
     })

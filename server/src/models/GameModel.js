@@ -1,4 +1,4 @@
-const database = require('../config/database');
+const database = require('../../config/database');
 
 function checkNewbieModel(username){
     const values = [username];

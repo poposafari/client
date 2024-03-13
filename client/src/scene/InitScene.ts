@@ -82,7 +82,7 @@ export class InitScene extends Phaser.Scene{
     }
     async create(){
         try{
-            const res = await axios.get('http://36.38.61.149:8081/game/user-info');
+            const res = await axios.get('http://localhost:9991/game/user-info');
             this.season = res.data[0].season;
             EventManager.triggerEvent(EVENTS.INITIAL_PLAYER_DATA,this.socket.id,res.data[0]);
         } catch(error){

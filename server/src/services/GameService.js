@@ -2,8 +2,7 @@ const {getUserInfoModel} = require('../models/GameModel');
 
 async function getUserInfo(username){
     try{
-        let result = await getUserInfoModel(username);
-        return result;
+        return await getUserInfoModel(username);
     }
     catch(error){
         console.log(error);
