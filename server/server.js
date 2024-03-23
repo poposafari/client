@@ -45,6 +45,36 @@ server.listen(app.get('port'), () => {
 const gameSocket = ioServer.of('/game');
 
 const players = {};
+const wildPokemons = {
+  0:{
+    pokedex:'001',
+    name:'test1',
+    posX:1,
+    posY:1,
+    state:0,
+  },
+  1:{
+    pokedex:'003',
+    name:'test3',
+    posX:1,
+    posY:2,
+    state:0
+  },
+  2:{
+    pokedex:'006',
+    name:'test4',
+    posX:1,
+    posY:3,
+    state:0
+  },
+  3:{
+    pokedex:'012',
+    name:'test1',
+    posX:1,
+    posY:4,
+    state:0
+  }
+};
 
 gameSocket.on('connection',(socket)=>{
   socket.on('connect-player',(data)=>{
@@ -66,6 +96,7 @@ gameSocket.on('connection',(socket)=>{
     };
     console.log(`connected:`,socket.id,data.nickname);
     socket.emit('connected-players',players);
+    socket.emit('on-wild-pokemon',wildPokemons);
     socket.broadcast.emit('connect-player',players[socket.id]);
   });
   socket.on('emit-movement-player',(data)=>{
@@ -76,15 +107,16 @@ gameSocket.on('connection',(socket)=>{
     players[socket.id].player_y = data.player_y;
     players[socket.id].pet_x = data.pet_x;
     players[socket.id].pet_y = data.pet_y;
-
   });
   socket.on('emit-stand-player',()=>{
     socket.broadcast.emit('on-stand-player',{socketId:socket.id});
   });
   socket.on('disconnect',()=>{
     console.log(`disconnected:`,socket.id,players[socket.id].nickname);
-    //GameRouter쪽으로 players[socket.id] 값을 넘겨서 데이터베이스 처리를 하고자 한다.
     delete players[socket.id];
     socket.broadcast.emit('disconnect-player',socket.id);
   });
+  const interval = setInterval(() => {
+    
+  }, 1000);
 });

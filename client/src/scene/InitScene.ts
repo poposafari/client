@@ -6,6 +6,7 @@ import {io} from 'socket.io-client';
 import { Player } from "../Player";
 import { TextManager } from "../manager/TextManager";
 import { BEHAVIOR_STATUS, OBJECT_TYPE } from "../constants/Game";
+import WildPokemonManager from "../manager/WildPokemonManager";
 
 export class InitScene extends Phaser.Scene{
     constructor(){
@@ -73,6 +74,13 @@ export class InitScene extends Phaser.Scene{
         this.socket.on(SOCKET_EVENTS.ON_STAND_PLAYER,(data:object)=>{
             EventManager.triggerEvent(EVENTS.STAND_OTHER_PLAYER,data['socketId']);
         });
+        this.socket.on(SOCKET_EVENTS.ON_WILD_POKEMON,(data:object)=>{
+            WildPokemonManager.setWildPokemonInfo(data);
+            if(Object.keys(WildPokemonManager.getWildPokemonInfo()).length != 0){
+                console.log('is there!');
+                this.scene.launch('WildPokemonScene',{im:this.imageManager,tm:this.textManager});
+            }
+        })
     }
     preload(){
         this.imageManager.loadImageMap();

@@ -9,6 +9,7 @@ export const enum EVENTS {
     MOVEMENT_FINISH_PLAYER = "movement-finish-player",
     STAND_PLAYER = "stand-player",
     STAND_OTHER_PLAYER = "stand-other-player",
+    WILD_POKEMON = "wild-pokemon"
 }
 
 export const enum SOCKET_EVENTS {
@@ -20,7 +21,8 @@ export const enum SOCKET_EVENTS {
     ON_MOVEMENT_PLAYER = "on-movement-player",
     EMIT_SAVE_PLAYER = "emit-save-player",
     EMIT_STAND_PLAYER = "emit-stand-player",
-    ON_STAND_PLAYER = "on-stand-player"
+    ON_STAND_PLAYER = "on-stand-player",
+    ON_WILD_POKEMON = "on-wild-pokemon"
 }
 
 class EventManager extends Phaser.Events.EventEmitter {
@@ -36,6 +38,7 @@ class EventManager extends Phaser.Events.EventEmitter {
             [EVENTS.SAVE_PLAYER]: new Phaser.Events.EventEmitter(),
             [EVENTS.STAND_PLAYER]: new Phaser.Events.EventEmitter(),
             [EVENTS.STAND_OTHER_PLAYER]: new Phaser.Events.EventEmitter(),
+            [EVENTS.WILD_POKEMON]: new Phaser.Events.EventEmitter(),
         };
     }
 

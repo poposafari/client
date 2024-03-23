@@ -2,6 +2,7 @@ import { InitScene } from "..//scene/InitScene";
 import { MapScene } from "..//scene/MapScene";
 import { PlayerScene } from "..//scene/PlayerScene";
 import { SeasonScene } from "..//scene/SeasonScene";
+import {WildPokemonScene} from "../scene/WildPokemonScene";
 
 export const CANVAS_WIDTH = 1000;
 export const CANVAS_HEIGHT = 600;
@@ -13,6 +14,8 @@ export const MOVEMENT_SPEED = 2;
 export const MAX_PLAYER_SPRITE = 8;
 
 export const MAX_POKEMON = 151;
+
+export const MAX_WILD_POKEMON = 3;
 
 export const MAX_PLAYER_MOVEMENT_FRAME = 23;
 export const MAX_POKEMON_FRAME = 15;
@@ -62,7 +65,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
       antialias: false,
     },
     type: Phaser.AUTO,
-    scene: [InitScene,SeasonScene,MapScene,PlayerScene], 
+    scene: [InitScene,SeasonScene,MapScene,PlayerScene,WildPokemonScene],
     scale: {
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,

@@ -72,6 +72,7 @@ class PlayerManager{
             new Phaser.Math.Vector2(playerInfo['player_x'],playerInfo['player_y']),
             textManager.addText(0,0,playerInfo['nickname']),
             new Pokemon(
+                false,
                 `pokemon_${playerInfo['pokedex']}`,
                 imageManager.createSpritePet(playerInfo['pokedex']),
                 new Phaser.Math.Vector2(playerInfo['pet_x'],playerInfo['pet_y'])
