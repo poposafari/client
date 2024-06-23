@@ -14,6 +14,7 @@ export class InitScene extends Phaser.Scene{
         this.imageManager = new ImageManager(this);
         this.textManager = new TextManager(this);
         this.socket = io('/game');
+        console.log('InitScene constructor');
     }
 
     private imageManager:ImageManager;
@@ -24,10 +25,12 @@ export class InitScene extends Phaser.Scene{
     private socket:any;
 
     init(){
-        //register Event
+        console.log('InitScene init');
+
+        //events
         EventManager.onEvent(EVENTS.SEASONSCENE_FIN,()=>{
             this.scene.launch('MapScene',{im:this.imageManager});
-            this.scene.launch('PlayerScene',{im:this.imageManager,tm:this.textManager});
+            this.scene.launch('PlayerScene',{im:this.imageManager,tm:this.textManager,socket:this.socket});
         });
         EventManager.onEvent(EVENTS.INITIAL_PLAYER_DATA,(playerData:any)=>{
             PlayerManager.setPlayerInfo(playerData[0],playerData[1]);
@@ -44,9 +47,12 @@ export class InitScene extends Phaser.Scene{
             PlayerManager.deletePlayer(playerInfo[0]);
         });
         EventManager.onEvent(EVENTS.MOVEMENT_PLAYER,(data)=>{
-            this.socket.emit(SOCKET_EVENTS.EMIT_MOVEMENT_PLAYER,{socketId:this.socket.id,direction:data[0]});
+            this.socket.emit(SOCKET_EVENTS.EMIT_MOVEMENT_PLAYER,{socketId:this.socket.id,direction:data[0],player_x:data[1],player_y:data[2]});
         });
         EventManager.onEvent(EVENTS.MOVEMENT_OTHERPLAYER,(data)=>{
+            if(PlayerManager.getCurrentPlayersInfo()[data[0]]['player_x'] != data[2] || PlayerManager.getCurrentPlayersInfo()[data[0]]['player_y'] != data[3]){
+                
+            }
             PlayerManager.getCurrentPlayersInfo()[data[0]]['playerObj'].movement.addMovementDirectionQueue(data[1]);
         });
         EventManager.onEvent(EVENTS.SAVE_PLAYER,(data)=>{
@@ -61,8 +67,9 @@ export class InitScene extends Phaser.Scene{
             }
         });
 
+        //socket events.
         this.socket.on(SOCKET_EVENTS.ON_MOVEMENT_PLAYER,(data:object)=>{
-            EventManager.triggerEvent(EVENTS.MOVEMENT_OTHERPLAYER,data['socketId'],data['direction']);
+            EventManager.triggerEvent(EVENTS.MOVEMENT_OTHERPLAYER,data['socketId'],data['direction'],data['player_x'],data['player_y']);
         });
         this.socket.on(SOCKET_EVENTS.CONNECT_PLAYER,(playerData:object)=>{
             PlayerManager.setOtherPlayersWaitQueue(playerData);
@@ -77,25 +84,27 @@ export class InitScene extends Phaser.Scene{
         this.socket.on(SOCKET_EVENTS.ON_WILD_POKEMON,(data:object)=>{
             WildPokemonManager.setWildPokemonInfo(data);
             if(Object.keys(WildPokemonManager.getWildPokemonInfo()).length != 0){
-                console.log('is there!');
                 this.scene.launch('WildPokemonScene',{im:this.imageManager,tm:this.textManager});
             }
-        })
+        });
     }
     preload(){
+        console.log('InitScene preload');
         this.imageManager.loadImageMap();
         this.imageManager.loadImageItem();
         this.imageManager.loadImagePlayer();
         this.imageManager.loadImagePokemon();
     }
     async create(){
+        console.log('InitScene create');
+    
         try{
             const res = await axios.get('http://localhost:9991/game/user-info');
-            this.season = res.data[0].season;
             EventManager.triggerEvent(EVENTS.INITIAL_PLAYER_DATA,this.socket.id,res.data[0]);
         } catch(error){
             console.error(error);
         }
-        this.scene.launch('SeasonScene',{season:this.season});
+
+        this.scene.launch('SeasonScene');
     }
 }

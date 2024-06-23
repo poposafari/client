@@ -6,12 +6,14 @@ import { InitScene } from "./InitScene";
 import { MapScene } from "./MapScene";
 import { ImageManager } from "../manager/ImageManager";
 import EventManager, { EVENTS } from "../manager/EventManager";
+import axios from "axios";
 
 export class SeasonScene extends Phaser.Scene{
     constructor(){
         super('SeasonScene');
         this.textManager = new TextManager(this);
         this.animationManager = new AnimationManager(this);
+        console.log('SeasonScene constructor');
     }
 
     private textManager: TextManager;
@@ -23,8 +25,21 @@ export class SeasonScene extends Phaser.Scene{
 
     private season:number=null;
 
-    create(data:object){
-        this.season = data['season'];
+    async init(){
+        console.log('SeasonScene init');
+    }
+    
+    async create(){
+        console.log('SeasonScene create');
+        
+        try{
+            const res = await axios.get('http://localhost:9991/game/season');
+            this.season = res.data;
+        } catch(error){
+            console.error(error);
+        }
+        console.log('SeasonScene axios end');
+        
         this.seasonChineseText = this.textManager.makeText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 - 25,SEASON_TEXT[this.season].chinese,'Bold 70px Arial',SEASON_TEXT[this.season].chineseColor);
         this.seasonText = this.textManager.makeText(CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 25,SEASON_TEXT[this.season].text,'Bold 30px Arial',SEASON_TEXT[this.season].textColor);
         this.seasonText.setOrigin(0.5,0.5);

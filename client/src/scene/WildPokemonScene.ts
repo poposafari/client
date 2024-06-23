@@ -8,12 +8,14 @@ import {KeyControl} from "../KeyControl";
 export class WildPokemonScene extends Phaser.Scene{
     constructor() {
         super({key:'WildPokemonScene'});
+        console.log('WildPokemonScene constructor');
     }
 
     private im: ImageManager;
     private tm: TextManager;
 
     create(data:object){
+        console.log('WildPokemonScene create');
         this.im = data['im'];
         this.tm = data['tm'];
         Object.keys(WildPokemonManager.getWildPokemonInfo()).forEach((id)=>{

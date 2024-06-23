@@ -1,4 +1,5 @@
 export const enum EVENTS {
+    LOAD_IMAGE_FIN = "load-image-fin",
     SEASONSCENE_FIN = "seasonscene-fin",
     INITIAL_PLAYER_DATA = "initial-player-data",
     ADD_PLAYER = "add-player",
