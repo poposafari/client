@@ -1,0 +1,137 @@
+@font-face {
+    font-family: 'MyFont';
+    src: url('assets/fonts/unifont-15.1.05.otf') format('opentype');
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-form,
+.register-form {
+    background-color: #ffffff;
+    border-style: solid;
+    border-color: rgb(24, 176, 94);
+    border-width: 7px;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
+    font-family: 'MyFont', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    animation: slideIn 0.8s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login-form h2,
+.register-form h2 {
+    color: rgb(24, 176, 94);
+    margin-bottom: 50px;
+    margin-top: 10px;
+    font-size: 50px;
+}
+
+.login-form .input-group,
+.register-form .input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.login-form label,
+.register-form label {
+    color: black;
+    margin-bottom: 5px;
+}
+
+.login-form input,
+.register-form input {
+    width: 95%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: 'MyFont', sans-serif;
+}
+
+.login-form .buttons,
+.register-form .buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-form button,
+.register-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.login-form .login-button,
+.register-form .register-button {
+    background-color: rgb(24, 176, 94);
+    font-family: 'MyFont', sans-serif;
+}
+
+.login-form .link,
+.register-form .link {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.login-form .link p,
+.register-form .link p {
+    margin: 0 10px;
+    color: grey;
+    cursor: pointer;
+}
+
+.login-form .link p a,
+.register-form .link p a {
+    text-decoration: none;
+    color: grey;
+}
+
+.login-form .input-group #error-msg,
+.register-form .input-group #error-msg {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: red;
+    font-size: 13px;
+}
