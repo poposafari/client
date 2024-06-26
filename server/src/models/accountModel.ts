@@ -14,8 +14,10 @@ export const createAccount = async(user:User)=>{
             [user.username,user.password,user.email,0]
         );
         return res;
-    } catch(e){
-        console.error(e);
+    } catch(e:any){
+        if(e.code === 'ER_DUP_ENTRY'){
+            throw new Error('Duplicate entry for unique key');
+        }
     } finally{
         con.release();
     }

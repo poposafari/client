@@ -114,10 +114,17 @@ export class SignUpScene extends Phaser.Scene {
                 email:emailInput.value
             })
             .then(res=>{
-                console.log(res);
+                //register success!!
             })
             .catch(error=>{
-                console.error(error);
+                if(error.response.data.message==='Username already exists'){
+                    const errorMsg = document.querySelector('.error-msg-0')!;
+                    errorMsg.textContent = '이미 사용중인 아이디입니다.';
+                }
+                if(error.response.data.message==='Email already exists'){
+                    const errorMsg = document.querySelector('.error-msg-3')!;
+                    errorMsg.textContent = '이미 사용중인 이메일입니다.';
+                }
             })
         }
     }
@@ -136,7 +143,7 @@ export class SignUpScene extends Phaser.Scene {
         }
     }
 
-    validatePassword(event: Event) {
+    validatePassword(event: Event){
         const input = event.target as HTMLInputElement;
         const value = input.value;
         const errorMsg = document.querySelector('.error-msg-1')!;
