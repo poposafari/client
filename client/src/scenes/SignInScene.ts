@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import api from '../utils/api';
 
 export class SignInScene extends Phaser.Scene {
 
@@ -63,7 +64,16 @@ export class SignInScene extends Phaser.Scene {
     event.preventDefault();
     const username = (document.getElementById('userId') as HTMLInputElement).value;
     const password = (document.getElementById('password') as HTMLInputElement).value;
-    console.log(`로그인 시도: ${username}, ${password}`);
+    api.post('/account/login',{
+      username:username,
+      password:password
+    })
+    .then(res=>{
+      console.log(res);
+    })
+    .catch(error=>{
+      console.error(error);
+    })
   }
 
   handleFindId(event: Event) {

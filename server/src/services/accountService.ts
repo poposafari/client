@@ -1,5 +1,5 @@
 import { User, createAccount, getUserByUsername } from "../models/accountModel";
-import crypto from 'crypto';
+import crypto, { hash } from 'crypto';
 
 const setCryptoPassword = (password:string)=>{
     return crypto.createHash('sha256').update(password).digest('hex');
@@ -16,4 +16,9 @@ export const createAccountService = async(data:any)=>{
         email:data.email
     }
     return await createAccount(user);
+}
+
+export const comparePassword = async(plainPassword:string, hashedPassword:string)=>{
+    const targetPassword = setCryptoPassword(plainPassword);
+    return hashedPassword === targetPassword;
 }
