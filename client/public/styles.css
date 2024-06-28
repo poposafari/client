@@ -141,13 +141,15 @@ body {
 .nickname-form {
     text-align: center;
     display: flex;
-    justify-content: center;
     flex-direction: column;
+    align-items: center;
+    width: 400px;
 }
 
 .nickname-form label {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     width: 100%;
     font-size: 18px;
     color: #ffffff;

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { SignInScene } from './scenes/SignInScene';
 import { LoadingScene } from './scenes/LoadingScene';
 import { SignUpScene } from './scenes/SignUpScene';
-import { ClosetScene } from './scenes/ClosetScene';
+import { SetAvatarScene } from './scenes/SetAvatarScene';
 
 const CANVAS_WIDTH = 1500;
 const CANVAS_HEIGHT = 900;
@@ -14,7 +14,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     },
     parent: 'game-container',
     type: Phaser.AUTO,
-    scene: [LoadingScene,SignUpScene,SignInScene,ClosetScene],
+    scene: [LoadingScene,SignUpScene,SignInScene,SetAvatarScene],
     scale: {
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
