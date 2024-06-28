@@ -20,6 +20,7 @@ export class SignInScene extends Phaser.Scene {
                   <label for="password">비밀번호</label>
                   <input type="password" name="password" id="password">
               </div>
+              <p id="error-msg"></p>
               <div class="buttons">
                   <button id="login-button" class="login-button">로그인</button>
               </div>
@@ -35,25 +36,21 @@ export class SignInScene extends Phaser.Scene {
 
       const loginFormElement = this.add.dom(this.cameras.main.centerX, this.cameras.main.centerY).createFromHTML(loginFormHTML);
 
-      // 로그인 버튼 이벤트 리스너 추가
       const loginButton = loginFormElement.getChildByID('login-button') as HTMLButtonElement;
       if (loginButton) {
           loginButton.addEventListener('click', this.handleLogin.bind(this));
       }
 
-      // 아이디 찾기 링크 이벤트 리스너 추가
       const findIdLink = loginFormElement.getChildByID('find-id') as HTMLAnchorElement;
       if (findIdLink) {
           findIdLink.addEventListener('click', this.handleFindId.bind(this));
       }
 
-      // 비밀번호 찾기 링크 이벤트 리스너 추가
       const findPasswordLink = loginFormElement.getChildByID('find-password') as HTMLAnchorElement;
       if (findPasswordLink) {
           findPasswordLink.addEventListener('click', this.handleFindPassword.bind(this));
       }
 
-      // 회원가입 링크 이벤트 리스너 추가
       const registerLink = loginFormElement.getChildByID('register') as HTMLAnchorElement;
       if (registerLink) {
           registerLink.addEventListener('click', this.handleRegister.bind(this));
@@ -62,17 +59,39 @@ export class SignInScene extends Phaser.Scene {
 
   handleLogin(event: Event) {
     event.preventDefault();
+
     const username = (document.getElementById('userId') as HTMLInputElement).value;
     const password = (document.getElementById('password') as HTMLInputElement).value;
+    const errorMsg = document.getElementById('error-msg') as HTMLInputElement;  
+
+    if (!username || !password) {
+      errorMsg.textContent = '아이디와 비밀번호를 입력해주세요.';
+      return;
+    }
+
+    if (username.includes(' ') || password.includes(' ')) {
+      errorMsg.textContent = '아이디와 비밀번호에는 공백을 포함할 수 없습니다.';
+      return;
+    }
+
     api.post('/account/login',{
       username:username,
       password:password
     })
     .then(res=>{
       console.log(res);
+      if(!res.data.data){
+        this.scene.start('ClosetScene');
+      }
+      else{
+        //start! Season Scene
+      }
     })
     .catch(error=>{
-      console.error(error);
+      console.log(error);
+      if(error.response.status === 400){
+        errorMsg.textContent = '아이디 또는 비밀번호가 일치하지 않습니다.';
+      }
     })
   }
 

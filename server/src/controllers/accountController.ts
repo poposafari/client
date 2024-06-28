@@ -24,7 +24,7 @@ export const orderLogin = async(req:Request,res:Response)=>{
         if(userInfo){
             const result = await comparePassword(req.body.password,userInfo.password);
             if(result){
-                return res.status(200).json({message:'Success Login'});
+                return res.status(200).json({message:'Success Login',data:userInfo.isGameAccount});
             }else{
                 return res.status(400).json({message:'Invalid username or password'});
             }

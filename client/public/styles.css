@@ -128,10 +128,36 @@ body {
     color: grey;
 }
 
-.login-form .input-group #error-msg,
-.register-form .input-group #error-msg {
+.login-form #error-msg,
+.register-form .input-group #error-msg,
+.nickname-form #error-msg {
     margin-top: 0px;
     margin-bottom: 0px;
     color: red;
     font-size: 13px;
+    font-family: 'Myfont', sans-serif;
+}
+
+.nickname-form {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.nickname-form label {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-size: 18px;
+    color: #ffffff;
+    font-family: 'Myfont', sans-serif;
+}
+
+.nickname-form input {
+    height: 13px;
+    padding: 5px;
+    font-size: 18px;
+    margin-bottom: 5px;
+    font-family: 'Myfont', sans-serif;
 }
