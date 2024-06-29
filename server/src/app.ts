@@ -10,5 +10,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/account',accountRoute);
+// app.use('/game',);
 
 export default app;

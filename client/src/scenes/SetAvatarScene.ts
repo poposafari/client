@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { messageBox } from '../utils/messageBox';
 
 export class SetAvatarScene extends Phaser.Scene {
     constructor() {
@@ -38,6 +39,8 @@ export class SetAvatarScene extends Phaser.Scene {
         const okBox = this.add.image(this.cameras.main.centerX, this.START_POS_Y + 255, 'okBox').setInteractive();
 
         okBox.on('pointerdown', this.handleStartButtonClick.bind(this));
+
+        messageBox(this,"TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST!!");
     }
 
     handleArrow(direction: string, skinNumberText: Phaser.GameObjects.Text): void {
@@ -75,9 +78,32 @@ export class SetAvatarScene extends Phaser.Scene {
     }
 
     isValidNickname(nickname: string): boolean {
-        const koreanRegex = /^[가-힣]{2,6}$/;
-        const englishRegex = /^[a-zA-Z0-9]{4,12}$/;
-        return koreanRegex.test(nickname) || englishRegex.test(nickname);
+        const koreanCount = (nickname.match(/[가-힣]/g) || []).length;
+        const alphanumericCount = (nickname.match(/[a-zA-Z0-9]/g) || []).length;
+        const invalidChars = (nickname.match(/[^가-힣a-zA-Z0-9]/g) || []).length;
+
+        const totalLength = koreanCount + alphanumericCount;
+
+        if (totalLength < 2 || invalidChars > 0) {
+            return false; // 최소 길이 미달 또는 유효하지 않은 문자 포함
+        }
+
+        if (koreanCount > 0 && alphanumericCount === 0) {
+            // 한글만 포함된 경우 2 ~ 6자
+            return totalLength >= 2 && totalLength <= 6;
+        }
+
+        if (alphanumericCount > 0 && koreanCount === 0) {
+            // 영문/숫자만 포함된 경우 4 ~ 12자
+            return totalLength >= 4 && totalLength <= 12;
+        }
+
+        if (koreanCount > 0 && alphanumericCount > 0) {
+            // 혼합된 경우 4 ~ 12자
+            return totalLength >= 4 && totalLength <= 12;
+        }
+
+        return false; // 기타 경우는 유효하지 않음
     }
 
     createGenderIcons(centerX: number, centerY: number): [Phaser.GameObjects.Image, Phaser.GameObjects.Image, Phaser.GameObjects.Image] {

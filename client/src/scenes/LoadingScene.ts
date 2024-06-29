@@ -8,9 +8,10 @@ export class LoadingScene extends Phaser.Scene{
         
     }
     preload(){
+        this.load.image('messageBox','/assets/images/message_box.png')
         this.load.image('maleIcon', '/assets/images/gender-0.png');
         this.load.image('femaleIcon', '/assets/images/gender-1.png');
-        this.load.image('genderTarget','/assets/images/gender-target.png');       
+        this.load.image('genderTarget','/assets/images/gender-target.png');
         this.load.image('leftArrow', '/assets/images/left-arrow.png');
         this.load.image('rightArrow', '/assets/images/right-arrow.png');
         this.load.image('okBox','/assets/images/okBox.png');
@@ -26,6 +27,6 @@ export class LoadingScene extends Phaser.Scene{
         this.load.image('female_4','/assets/images/female_4.png');
     }
     create(){
-        this.scene.launch('SignInScene');
+        this.scene.start('SignInScene');
     }
 }

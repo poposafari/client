@@ -33,9 +33,9 @@ export class SignInScene extends Phaser.Scene {
               </div>
           </div>
       `;
-
+      
       const loginFormElement = this.add.dom(this.cameras.main.centerX, this.cameras.main.centerY).createFromHTML(loginFormHTML);
-
+    
       const loginButton = loginFormElement.getChildByID('login-button') as HTMLButtonElement;
       if (loginButton) {
           loginButton.addEventListener('click', this.handleLogin.bind(this));
