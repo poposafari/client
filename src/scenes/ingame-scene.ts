@@ -5,5 +5,7 @@ export class InGameScene extends BaseScene{
         super("InGameScene");
     }
 
-    
+    create(){
+        
+    }
 }
