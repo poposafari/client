@@ -4,7 +4,7 @@ export class BaseScene extends Phaser.Scene{
     }
 
     loadImage(key:string, folder:string, filename:string){
-        if(!filename){
+        if(filename){
             filename = `${filename}.png`;
         }
         this.load.image(key,`${folder}/${filename}`);

@@ -13,6 +13,9 @@
     "vite": "^5.4.1"
   },
   "dependencies": {
-    "phaser": "^3.80.1"
+    "i18next": "^23.14.0",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "phaser": "^3.80.1",
+    "phaser3-rex-plugins": "^1.80.6"
   }
 }
