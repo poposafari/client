@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    background: #242424;
+}
+
+#app {
+    display: flex;
+    justify-content: center;
+}
+
+#app>div:first-child {
+    transform-origin: top !important;
+}
