@@ -6,4 +6,8 @@ export const menu:TranslationDefault={
     "loginButton":"Login",
     "moveToRegister":"Register",
     "moveToFindAccount":"Find Account",
+    "moveToLogin":"Login",
+    "inputUsername":"Username",
+    "inputPassword":"Password",
+    "inputEmail":"Email",
 }

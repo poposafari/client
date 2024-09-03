@@ -5,18 +5,21 @@ import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
 import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
+import { ModeManager } from "../mode-manager";
+import { MODE } from "../enums/mode";
 
 export class LoginFormUi extends ModalFormUi{
     private inputs: InputText[] = [];
     private buttons: Phaser.GameObjects.NineSlice[] = [];
+    private modeManager: ModeManager;
 
-    constructor(scene:InGameScene){
+    constructor(modeManager:ModeManager,scene:InGameScene){
         super(scene);
+        this.modeManager = modeManager;
     }
 
     setup(): void {
         super.setup();
-
         for(let i=0;i<2;i++){
             const inputContainer = this.scene.add.container(240,i===0?100:122);
             const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,120,18);
@@ -26,7 +29,6 @@ export class LoginFormUi extends ModalFormUi{
                     placeholder:i===0?i18next.t("menu:usernamePlaceholder"):i18next.t("menu:passwordPlaceholder"),
                 }
             );
-    
             inputContainer.add(inputBg);
             inputContainer.add(input);
             this.inputs.push(input);
@@ -45,8 +47,8 @@ export class LoginFormUi extends ModalFormUi{
         loginTextContainer.add(loginText);
         this.modalContainer.add(loginTextContainer);
 
-        const moveToRegisterContainer = this.scene.add.container(239,180);
-        const moveToRegisterBg = addWindow(this.scene,TEXTURE.ACCOUNT_SUBBUTTON,-30,0,56,18);
+        const moveToRegisterContainer = this.scene.add.container(239,182);
+        const moveToRegisterBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,-30,0,56,18);
         moveToRegisterContainer.add(moveToRegisterBg);
         this.modalContainer.add(moveToRegisterContainer);
         this.buttons.push(moveToRegisterBg);
@@ -55,8 +57,8 @@ export class LoginFormUi extends ModalFormUi{
         moveToRegisterContainer.add(moveToRegisterText);
         this.modalContainer.add(moveToRegisterContainer);
 
-        const moveToFindAccountContainer = this.scene.add.container(241,180);
-        const moveToFindAccountBg = addWindow(this.scene,TEXTURE.ACCOUNT_SUBBUTTON,30,0,56,18);
+        const moveToFindAccountContainer = this.scene.add.container(241,182);
+        const moveToFindAccountBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,30,0,56,18);
         moveToFindAccountContainer.add(moveToFindAccountBg);
         this.modalContainer.add(moveToRegisterContainer);
         this.buttons.push(moveToFindAccountBg);
@@ -64,28 +66,31 @@ export class LoginFormUi extends ModalFormUi{
         moveToFindAccountText.setOrigin(0.5,0.5);
         moveToFindAccountContainer.add(moveToFindAccountText);
         this.modalContainer.add(moveToFindAccountContainer);
-
-        super.show();
-        this.show();
     }
 
     show(): void {
+        super.show();
         for(const item of this.buttons){
             item.setInteractive();
         }
-
+        
         this.buttons[0].on("pointerdown",()=>{
             console.log('tryToLogin');
             console.log(this.inputs[0].text);
             console.log(this.inputs[1].text);
         });
-
+        
         this.buttons[1].on("pointerdown",()=>{
             console.log('moveToRegister');
+            this.modeManager.setMode(MODE.REGISTRATION);
         });
 
         this.buttons[2].on("pointerdown",()=>{
             console.log('moveToFindAccount');
         });
+    }
+
+    clean():void{
+
     }
 }

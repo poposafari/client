@@ -1,8 +1,10 @@
-import { UI } from "../ui/ui";
+import { MODE } from "../enums/mode";
+import { ModeManager } from "../mode-manager";
 import { BaseScene } from "./base-scene";
 
 export class InGameScene extends BaseScene{
-    public ui!: UI;
+    public ui!: Phaser.GameObjects.Container;
+    public modeManager!:ModeManager;
     private uiContainer!: Phaser.GameObjects.Container;
 
     constructor(){
@@ -10,11 +12,10 @@ export class InGameScene extends BaseScene{
     }
 
     create(){
-        this.uiContainer = this.add.container(0,0);
-        this.uiContainer.setScale(4);
-        this.ui = new UI(this);
-        this.ui.setup();
+        this.ui = this.add.container(0,0);
+        this.ui.setScale(4);
 
-        this.uiContainer.add(this.ui);
+        this.modeManager = new ModeManager(this);
+        this.modeManager.setMode(MODE.LOGIN);
     }
 }
