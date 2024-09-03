@@ -14,15 +14,17 @@ export class ModalFormUi extends UiManager{
         const ui = this.getUi();
 
         this.modalContainer = this.scene.add.container(0,0);
-        // this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
 
         this.modalBg = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/8,this.scene.game.canvas.height/8,180,230);
         this.modalContainer.add(this.modalBg);
 
+        this.modalContainer.setVisible(false);
         ui.add(this.modalContainer);
     }
 
     show(): void {
+        this.modalContainer.setVisible(true);
+
         this.modalContainer.y += 24;
         this.modalContainer.setAlpha(0);
   
@@ -33,5 +35,9 @@ export class ModalFormUi extends UiManager{
           y: "-=24",
           alpha: 1
         });
+    }
+
+    clean():void{
+        this.modalContainer.setVisible(false);
     }
 }

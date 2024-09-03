@@ -62,8 +62,10 @@ export abstract class UiManager{
     constructor(scene:InGameScene){
         this.scene = scene;
     }
+    
     abstract setup(): void;
     abstract show(): void;
+    abstract clean(): void;
 
     getUi(){
         return this.scene.ui;
