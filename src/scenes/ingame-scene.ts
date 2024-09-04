@@ -15,7 +15,7 @@ export class InGameScene extends BaseScene{
     create(){
         this.modeManager = new ModeManager(this);
         ServiceLocator.register('mode-manager',this.modeManager);
-        
+
         this.ui = new UI(this,this.modeManager);
         this.add.existing(this.ui);
         this.ui.setScale(4);

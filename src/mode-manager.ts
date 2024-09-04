@@ -25,7 +25,6 @@ export class ModeManager{
             case MODE.REGISTRATION:
                 this.currentMode = new RegistrationMode(this.scene);
                 break;
-            // 다른 모드에 대한 처리
         }
 
         if (this.currentMode) {
