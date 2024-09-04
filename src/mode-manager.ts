@@ -2,6 +2,8 @@ import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
 import { LoginMode, RegistrationMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
+import { LoginFormUi } from "./ui/login-form-ui";
+import { UiManager } from "./ui/ui-manger";
 
 export class ModeManager{
     private currentMode: Mode | null = null;
@@ -18,10 +20,10 @@ export class ModeManager{
 
         switch (mode) {
             case MODE.LOGIN:
-                this.currentMode = new LoginMode(this,this.scene);
+                this.currentMode = new LoginMode(this.scene);
                 break;
             case MODE.REGISTRATION:
-                this.currentMode = new RegistrationMode(this,this.scene);
+                this.currentMode = new RegistrationMode(this.scene);
                 break;
             // 다른 모드에 대한 처리
         }

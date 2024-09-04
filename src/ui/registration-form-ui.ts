@@ -6,15 +6,16 @@ import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
 import i18next from "i18next";
+import { ServiceLocator } from "../utils/service-locator";
 
 export class RegistrationFormUi extends ModalFormUi{
     private inputs: InputText[]=[];
     private buttons: Phaser.GameObjects.NineSlice[]=[];
     private modeManager: ModeManager;
 
-    constructor(modeManager:ModeManager, scene:InGameScene){
+    constructor(scene:InGameScene){
         super(scene);
-        this.modeManager = modeManager;
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
     }
 
     setup(): void {

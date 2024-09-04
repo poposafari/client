@@ -7,90 +7,133 @@ import { TEXTSTYLE } from "../enums/textstyle";
 import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 import { ModeManager } from "../mode-manager";
 import { MODE } from "../enums/mode";
+import { ServiceLocator } from "../utils/service-locator";
 
 export class LoginFormUi extends ModalFormUi{
+    private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[] = [];
-    private buttons: Phaser.GameObjects.NineSlice[] = [];
+    private btns: Phaser.GameObjects.NineSlice[] = [];
     private modeManager: ModeManager;
 
-    constructor(modeManager:ModeManager,scene:InGameScene){
+    private inputConfig = [
+        {
+            key: i18next.t("menu:username"),
+            containerY: 100,
+            type: 'text',
+            placeholder: i18next.t("menu:usernamePlaceholder")
+        },
+        {
+            key: i18next.t("menu:password"),
+            containerY: 122,
+            type: 'password',
+            placeholder: i18next.t("menu:passwordPlaceholder")
+        }
+    ];
+
+    private btnConfig = [
+        {
+            key: i18next.t("menu:loginBtn"),
+            containerX: 240,
+            containerY: 160,
+            bgX: 0,
+            bgY: 0,
+            bgWidth: 120,
+            bgHeight: 18
+        },
+        {
+            key: i18next.t("menu:moveToRegisterBtn"),
+            containerX: 239,
+            containerY: 182,
+            bgX: -30,
+            bgY: 0,
+            bgWidth: 56,
+            bgHeight: 18
+        },
+        {
+            key: i18next.t("menu:moveToFindBtn"),
+            containerX: 241,
+            containerY: 182,
+            bgX: 30,
+            bgY: 0,
+            bgWidth: 56,
+            bgHeight: 18
+        }
+    ]
+
+    constructor(scene:InGameScene){
         super(scene);
-        this.modeManager = modeManager;
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
     }
 
     setup(): void {
         super.setup();
-        for(let i=0;i<2;i++){
-            const inputContainer = this.scene.add.container(240,i===0?100:122);
-            const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,120,18);
-            const input = addTextInput(this.scene,0,0,115,18,TEXTSTYLE.ACCOUNT_INPUT,{
-                    type:i===0?'text':'password',
-                    fontSize:'8px',
-                    placeholder:i===0?i18next.t("menu:usernamePlaceholder"):i18next.t("menu:passwordPlaceholder"),
-                }
-            );
-            inputContainer.add(inputBg);
-            inputContainer.add(input);
-            this.inputs.push(input);
-            this.modalContainer.add(inputContainer);
+        const field1 = this.getField('inputs')!;
+        const field2 = this.getField('btns')!;
+
+        for (const item of field1) {
+            const config = this.inputConfig.find(config => config.key === item);
+            if (config) {
+                const inputContainer = this.scene.add.container(240, config.containerY);
+                const inputBg = addWindow(this.scene, TEXTURE.ACCOUNT_INPUT, 0, 0, 120, 18);
+                const input = addTextInput(this.scene, 0, 0, 115, 18, TEXTSTYLE.ACCOUNT_INPUT, {
+                    type: config.type,
+                    fontSize: '8px',
+                    placeholder: config.placeholder,
+                });
+                
+                inputContainer.add(inputBg);
+                inputContainer.add(input);
+                inputContainer.setVisible(false);
+        
+                this.inputs.push(input);
+                this.inputContainers.push(inputContainer);
+                this.modalContainer.add(inputContainer);
+            }
         }
+        for (const item of field2) {
+            const config = this.btnConfig.find(config => config.key === item);
+            if (config) {
+                const btnContainer = this.scene.add.container(config.containerX, config.containerY);
+                const btnBg = addWindow(this.scene, TEXTURE.ACCOUNT_BUTTON, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
+                const btnText = addText(this.scene, config.bgX, 0, item, TEXTSTYLE.ACCOUNT);
+                btnText.setOrigin(0.5, 0.5);
 
-        const loginBtnContainer = this.scene.add.container(240,160);
-        const loginBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,0,0,120,18);
-        const loginText = addText(this.scene,0,0,i18next.t("menu:loginButton"),TEXTSTYLE.ACCOUNT);
-        loginBtnContainer.add(loginBg);
-        this.modalContainer.add(loginBtnContainer);
-        this.buttons.push(loginBg);
-
-        const loginTextContainer = this.scene.add.container(240,160);
-        loginText.setOrigin(0.5, 0.5);
-        loginTextContainer.add(loginText);
-        this.modalContainer.add(loginTextContainer);
-
-        const moveToRegisterContainer = this.scene.add.container(239,182);
-        const moveToRegisterBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,-30,0,56,18);
-        moveToRegisterContainer.add(moveToRegisterBg);
-        this.modalContainer.add(moveToRegisterContainer);
-        this.buttons.push(moveToRegisterBg);
-        const moveToRegisterText = addText(this.scene,-30,0,i18next.t("menu:moveToRegister"),TEXTSTYLE.ACCOUNT);
-        moveToRegisterText.setOrigin(0.5,0.5);
-        moveToRegisterContainer.add(moveToRegisterText);
-        this.modalContainer.add(moveToRegisterContainer);
-
-        const moveToFindAccountContainer = this.scene.add.container(241,182);
-        const moveToFindAccountBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,30,0,56,18);
-        moveToFindAccountContainer.add(moveToFindAccountBg);
-        this.modalContainer.add(moveToRegisterContainer);
-        this.buttons.push(moveToFindAccountBg);
-        const moveToFindAccountText = addText(this.scene,30,0,i18next.t("menu:moveToFindAccount"),TEXTSTYLE.ACCOUNT);
-        moveToFindAccountText.setOrigin(0.5,0.5);
-        moveToFindAccountContainer.add(moveToFindAccountText);
-        this.modalContainer.add(moveToFindAccountContainer);
+                this.btns.push(btnBg);
+                btnContainer.add(btnBg);
+                btnContainer.add(btnText);
+                this.modalContainer.add(btnContainer);
+            }
+        }
     }
 
     show(): void {
         super.show();
-        for(const item of this.buttons){
+        for(const item of this.inputContainers){
+            item.setVisible(true);
+        }
+
+        for(const item of this.btns){
             item.setInteractive();
         }
         
-        this.buttons[0].on("pointerdown",()=>{
-            console.log('tryToLogin');
+        this.btns[0].on("pointerdown",()=>{
             console.log(this.inputs[0].text);
             console.log(this.inputs[1].text);
         });
         
-        this.buttons[1].on("pointerdown",()=>{
-            console.log('moveToRegister');
-            this.modeManager.setMode(MODE.REGISTRATION);
-        });
-
-        this.buttons[2].on("pointerdown",()=>{
-            console.log('moveToFindAccount');
-        });
+        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.REGISTRATION);});
+        this.btns[2].on("pointerdown",()=>{console.log('moveToFindAccount');});
     }
 
     clean():void{
+        super.clean();
+        for(const item of this.inputContainers){
+            item.setVisible(false);
+        }
+    }
 
+    getField(type:string){
+        if(type==="inputs") return [i18next.t("menu:username"),i18next.t("menu:password")];
+        else if(type==="btns") return [i18next.t("menu:loginBtn"),i18next.t("menu:moveToRegisterBtn"),i18next.t("menu:moveToFindBtn")];
     }
 }
