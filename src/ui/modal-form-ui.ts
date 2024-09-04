@@ -30,7 +30,7 @@ export class ModalFormUi extends UiManager{
   
         this.scene.tweens.add({
           targets: this.modalContainer,
-          duration: 1000,
+          duration: 700,
           ease: "Sine.easeInOut",
           y: "-=24",
           alpha: 1

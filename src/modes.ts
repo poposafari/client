@@ -6,17 +6,14 @@ import { RegistrationFormUi } from "./ui/registration-form-ui";
 
 export class LoginMode extends Mode{
     private loginFormUi: LoginFormUi;
-    private modeManager: ModeManager;
 
-    constructor(modeManager: ModeManager, scene:InGameScene){
+    constructor(scene:InGameScene){
         super(scene);
-        this.loginFormUi = new LoginFormUi(modeManager,scene);
-        this.modeManager = modeManager;
+        this.loginFormUi = scene.ui.getManger(LoginFormUi);
     }
 
     enter(): void {
         console.log('Login Mode.');
-        this.loginFormUi.setup();
         this.loginFormUi.show();
     }
 
@@ -27,18 +24,14 @@ export class LoginMode extends Mode{
 
 export class RegistrationMode extends Mode{
     private registrationFormUi: RegistrationFormUi;
-    private modeManager: ModeManager;
 
-    constructor(modeManager:ModeManager, scene:InGameScene){
+    constructor(scene:InGameScene){
         super(scene);
-        this.registrationFormUi = new RegistrationFormUi(modeManager,scene);
-        this.modeManager = modeManager;
+        this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
     }
 
     enter(): void {
         console.log('Registeration Mode');
-        this.registrationFormUi.setup();
-        this.registrationFormUi.show();
     }
 
     exit(): void {
