@@ -32,10 +32,11 @@ export class RegistrationMode extends Mode{
 
     enter(): void {
         console.log('Registeration Mode');
+        this.registrationFormUi.show();
     }
 
     exit(): void {
-        
+        this.registrationFormUi.clean();
     }
 }
 

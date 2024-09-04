@@ -7,11 +7,73 @@ import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
 import i18next from "i18next";
 import { ServiceLocator } from "../utils/service-locator";
+import { MODE } from "../enums/mode";
 
 export class RegistrationFormUi extends ModalFormUi{
+    private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[]=[];
-    private buttons: Phaser.GameObjects.NineSlice[]=[];
+    private btns: Phaser.GameObjects.NineSlice[]=[];
     private modeManager: ModeManager;
+
+    private inputConfig=[
+        {
+            key: i18next.t("menu:username"),
+            containerX: 240,
+            containerY: 75,
+            bgX: -58,
+            bgY: -19,
+            type: 'text',
+            placeholder: i18next.t("menu:inputUsername")
+        },
+        {
+            key: i18next.t("menu:password"),
+            containerX: 240,
+            containerY: 110,
+            bgX: -58,
+            bgY: -19,
+            type: 'password',
+            placeholder: i18next.t("menu:inputPassword")
+        },
+        {
+            key: i18next.t("menu:repassword"),
+            containerX: 240,
+            containerY: 145,
+            bgX: -58,
+            bgY: -19,
+            type: 'password',
+            placeholder: i18next.t("menu:inputRePassword")
+        },
+        {
+            key: i18next.t("menu:email"),
+            containerX: 240,
+            containerY: 180,
+            bgX: -58,
+            bgY: -19,
+            type: 'text',
+            placeholder: i18next.t("menu:inputEmail")
+        }
+    ];
+
+    private btnConfig=[
+        {
+            key: i18next.t("menu:registerBtn"),
+            containerX: 240,
+            containerY: 205,
+            bgX: 0,
+            bgY: 0,
+            bgWidth: 120,
+            bgHeight: 18
+        },
+        {
+            key: i18next.t("menu:loginBtn"),
+            containerX: 240,
+            containerY: 227,
+            bgX: 0,
+            bgY: 0,
+            bgWidth: 120,
+            bgHeight: 18
+        },
+    ];
 
     constructor(scene:InGameScene){
         super(scene);
@@ -20,49 +82,72 @@ export class RegistrationFormUi extends ModalFormUi{
 
     setup(): void {
         super.setup();
-        for(let i=0;i<3;i++){
-            const inputContainer = this.scene.add.container(240,i===0?100:i===1?122:144);
-            const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,120,18);
-            const input = addTextInput(this.scene,0,0,115,18,TEXTSTYLE.ACCOUNT_INPUT,{
-                type:'text',
-                fontSize:'8px',
-                placeholder:i===0
-                            ?i18next.t("menu:inputUsername")
-                            :i===1?i18next.t("menu:inputPassword")
-                            :i18next.t("menu:inputEmail"),
-            });
+        const field1 = this.getField('inputs')!;
+        const field2 = this.getField('btns')!;
 
-            inputContainer.add(inputBg);
-            inputContainer.add(input);
-            this.inputs.push(input);
-            this.modalContainer.add(inputContainer);
+        for(const item of field1){
+            const config = this.inputConfig.find(config => config.key === item);
+            if(config){
+                const inputContainer = this.scene.add.container(240,config.containerY);
+                const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,120,18);
+                const input = addTextInput(this.scene,0,0,115,18,TEXTSTYLE.ACCOUNT_INPUT,{
+                    type:config.type,
+                    fontSize:'8px',
+                    placeholder:config.placeholder
+                });
+                const label = addText(this.scene, config.bgX, config.bgY, item, TEXTSTYLE.ACCOUNT);
+                
+                inputContainer.add(inputBg);
+                inputContainer.add(input);
+                inputContainer.add(label);
+                inputContainer.setVisible(false);
+
+                this.inputs.push(input);
+                this.inputContainers.push(inputContainer);
+                this.modalContainer.add(inputContainer);
+            }
         }
 
-        const moveToLoginContainer = this.scene.add.container(239,180);
-        const moveToLoginBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,-30,0,56,18);
-        moveToLoginContainer.add(moveToLoginBg);
-        this.modalContainer.add(moveToLoginContainer);
-        this.buttons.push(moveToLoginBg);
-        const moveToLoginText = addText(this.scene,-30,0,i18next.t("menu:moveToLogin"),TEXTSTYLE.ACCOUNT);
-        moveToLoginText.setOrigin(0.5,0.5);
-        moveToLoginContainer.add(moveToLoginText);
-        this.modalContainer.add(moveToLoginContainer);
+        for(const item of field2){
+            const config = this.btnConfig.find(config => config.key === item);
+            if(config){
+                const btnContainer = this.scene.add.container(config.containerX, config.containerY);
+                const btnBg = addWindow(this.scene, TEXTURE.ACCOUNT_BUTTON, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
+                const btnText = addText(this.scene, config.bgX, 0, item, TEXTSTYLE.ACCOUNT);
+                btnText.setOrigin(0.5, 0.5);
 
-        const registerButton = this.scene.add.container(239,180);
-        const registerBg = addWindow(this.scene,TEXTURE.ACCOUNT_BUTTON,+30,0,56,18);
-        registerButton.add(registerBg);
-        this.modalContainer.add(registerButton);
-        this.buttons.push(registerBg);
-        const registerText = addText(this.scene,+30,0,i18next.t("menu:moveToRegister"),TEXTSTYLE.ACCOUNT);
-        registerText.setOrigin(0.5,0.5);
-        registerButton.add(registerText);
-        this.modalContainer.add(registerButton);
+                this.btns.push(btnBg);
+                btnContainer.add(btnBg);
+                btnContainer.add(btnText);
+                this.modalContainer.add(btnContainer);
+            }
+        }
     }
 
     show(): void {
         super.show();
+        for(const item of this.inputContainers){
+            item.setVisible(true);
+        }
+
+        for(const item of this.btns){
+            item.setInteractive();
+        }
+
+        this.btns[0].on("pointerdown",()=>{console.log('moveToFindAccount');});
+        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN);});
+
     }
 
-    clean(): void {        
+    clean(): void {  
+        super.clean();
+        for(const item of this.inputContainers){
+            item.setVisible(false);
+        }
+    }
+    
+    getField(type:string){
+        if(type === "inputs") return [i18next.t("menu:username"),i18next.t("menu:password"),i18next.t("menu:repassword"),i18next.t("menu:email")];
+        else if(type === "btns") return [i18next.t("menu:registerBtn"),i18next.t("menu:loginBtn")];
     }
 }

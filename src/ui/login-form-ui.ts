@@ -20,13 +20,13 @@ export class LoginFormUi extends ModalFormUi{
             key: i18next.t("menu:username"),
             containerY: 100,
             type: 'text',
-            placeholder: i18next.t("menu:usernamePlaceholder")
+            placeholder: i18next.t("menu:username")
         },
         {
             key: i18next.t("menu:password"),
             containerY: 122,
             type: 'password',
-            placeholder: i18next.t("menu:passwordPlaceholder")
+            placeholder: i18next.t("menu:password")
         }
     ];
 
@@ -41,7 +41,7 @@ export class LoginFormUi extends ModalFormUi{
             bgHeight: 18
         },
         {
-            key: i18next.t("menu:moveToRegisterBtn"),
+            key: i18next.t("menu:registerBtn"),
             containerX: 239,
             containerY: 182,
             bgX: -30,
@@ -50,7 +50,7 @@ export class LoginFormUi extends ModalFormUi{
             bgHeight: 18
         },
         {
-            key: i18next.t("menu:moveToFindBtn"),
+            key: i18next.t("menu:findAccountBtn"),
             containerX: 241,
             containerY: 182,
             bgX: 30,
@@ -134,6 +134,6 @@ export class LoginFormUi extends ModalFormUi{
 
     getField(type:string){
         if(type==="inputs") return [i18next.t("menu:username"),i18next.t("menu:password")];
-        else if(type==="btns") return [i18next.t("menu:loginBtn"),i18next.t("menu:moveToRegisterBtn"),i18next.t("menu:moveToFindBtn")];
+        else if(type==="btns") return [i18next.t("menu:loginBtn"),i18next.t("menu:registerBtn"),i18next.t("menu:findAccountBtn")];
     }
 }

@@ -4,6 +4,7 @@ export const enum MODE{
     REGISTRATION,
     FINDUSERNAME,
     FINDPASSWORD,
+    SUBMIT,
     MESSAGE,
     SEASON,
     OVERWORLD,
