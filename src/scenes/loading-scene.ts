@@ -14,6 +14,7 @@ export class LoadingScene extends BaseScene{
         this.loadImage(TEXTURE.ACCOUNT_INPUT,"ui","input_0");
         this.loadImage(TEXTURE.ACCOUNT_BUTTON,"ui","button_0");
         this.loadImage(TEXTURE.ACCOUNT_SUBBUTTON,"ui","button_1");
+        this.loadImage(TEXTURE.MESSAGE,"ui","message");
     }
 
     create(){

@@ -2,6 +2,7 @@ import { Mode } from "./mode";
 import { ModeManager } from "./mode-manager";
 import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
+import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
 
 export class LoginMode extends Mode{
@@ -13,7 +14,6 @@ export class LoginMode extends Mode{
     }
 
     enter(): void {
-        console.log('Login Mode.');
         this.loginFormUi.show();
     }
 
@@ -31,7 +31,6 @@ export class RegistrationMode extends Mode{
     }
 
     enter(): void {
-        console.log('Registeration Mode');
         this.registrationFormUi.show();
     }
 
@@ -40,9 +39,37 @@ export class RegistrationMode extends Mode{
     }
 }
 
-export class OverworldMode extends Mode{
+export class MessageMode extends Mode{
+    private messageFormUi: MessageFormUi;
+
+    constructor(scene:InGameScene){
+        super(scene);
+        this.messageFormUi = scene.ui.getManger(MessageFormUi);
+    }
+
     enter(): void {
-        
+        this.messageFormUi.show("Welcome to the poposeop!s\n가나다라마바사아자차카타파하");
+    }
+    exit(): void {
+        this.messageFormUi.clean();
+    }
+    
+}
+
+export class SubmitMode extends Mode{
+    private data:any;
+
+    constructor(scene:InGameScene,data?:any){
+        super(scene);
+        this.data = data;
+    }
+
+    enter(): void {
+        if(this.data[0] === "login"){
+
+        }else if(this.data[0] === "register"){
+
+        }
     }
 
     exit(): void {

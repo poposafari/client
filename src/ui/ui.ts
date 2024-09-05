@@ -1,6 +1,7 @@
 import { ModeManager } from "../mode-manager";
 import { InGameScene } from "../scenes/ingame-scene";
 import { LoginFormUi } from "./login-form-ui";
+import { MessageFormUi } from "./message-form-ui";
 import { RegistrationFormUi } from "./registration-form-ui";
 import { UiManager } from "./ui-manger";
 
@@ -13,6 +14,7 @@ export class UI extends Phaser.GameObjects.Container{
         this.managers = [
             new LoginFormUi(scene),
             new RegistrationFormUi(scene),
+            new MessageFormUi(scene),
         ];
     }
 
