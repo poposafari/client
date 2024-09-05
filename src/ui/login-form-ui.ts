@@ -79,6 +79,8 @@ export class LoginFormUi extends ModalFormUi{
                     type: config.type,
                     fontSize: '8px',
                     placeholder: config.placeholder,
+                    minLength:8,
+                    maxLength:16
                 });
                 
                 inputContainer.add(inputBg);
@@ -117,6 +119,9 @@ export class LoginFormUi extends ModalFormUi{
         }
         
         this.btns[0].on("pointerdown",()=>{
+            if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0)
+                this.modeManager.setMode(MODE.MESSAGE);
+            
             console.log(this.inputs[0].text);
             console.log(this.inputs[1].text);
         });

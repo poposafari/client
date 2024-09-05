@@ -28,8 +28,9 @@ export function addText(scene:InGameScene,x:number,y:number,content:string,style
 
 function getColor(style:TEXTSTYLE):string{
     switch(style){
-        case TEXTSTYLE.ACCOUNT_INPUT: return '#424242'; break;
-        case TEXTSTYLE.ACCOUNT: return '#ffffff'; break;
+        case TEXTSTYLE.ACCOUNT_INPUT: return '#424242';
+        case TEXTSTYLE.ACCOUNT: return '#ffffff';
+        case TEXTSTYLE.MESSAGE: return '#424242';
     }
 }
 
@@ -50,6 +51,9 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
             config.fontSize = '16px';
             break;
         case TEXTSTYLE.ACCOUNT_INPUT:
+            break;
+        case TEXTSTYLE.MESSAGE:
+            config.fontSize = '30px';
             break;
     }
 

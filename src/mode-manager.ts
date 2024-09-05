@@ -1,9 +1,7 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { LoginMode, RegistrationMode } from "./modes";
+import { LoginMode, MessageMode, RegistrationMode, SubmitMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
-import { LoginFormUi } from "./ui/login-form-ui";
-import { UiManager } from "./ui/ui-manger";
 
 export class ModeManager{
     private currentMode: Mode | null = null;
@@ -13,7 +11,7 @@ export class ModeManager{
         this.scene = scene;
     }
 
-    setMode(mode: MODE): void {
+    setMode(mode: MODE, data?: any): void {
         if (this.currentMode) {
             this.currentMode.exit();
         }
@@ -24,6 +22,15 @@ export class ModeManager{
                 break;
             case MODE.REGISTRATION:
                 this.currentMode = new RegistrationMode(this.scene);
+                break;
+            case MODE.SUBMIT:
+                this.currentMode = new SubmitMode(this.scene,data);
+                break;
+            case MODE.MESSAGE:
+                this.currentMode = new MessageMode(this.scene);
+                break;
+            case MODE.OVERWORLD:
+                this.currentMode = new MessageMode(this.scene);
                 break;
         }
 
