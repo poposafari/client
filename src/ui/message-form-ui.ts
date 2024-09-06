@@ -27,8 +27,21 @@ export class MessageFormUi extends UiManager{
         this.messageContainer.setVisible(true);
         
         if(content === undefined) content = "";
-        this.messageText.text = content;
-        console.log(this.messageText.text.length); //max size 52
+
+        let textArray = content.split("");
+        let delay = 20; 
+        let index = 0;
+
+        const addNextChar = () => {
+            if (index < textArray.length) {
+                this.messageText.text += textArray[index];
+                index++;
+
+                this.scene.time.delayedCall(delay, addNextChar, [], this);
+            }
+        };
+
+        addNextChar();
     }
     clean(): void {
         this.messageContainer.setVisible(false);
