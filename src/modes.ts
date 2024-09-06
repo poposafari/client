@@ -48,7 +48,7 @@ export class MessageMode extends Mode{
     }
 
     enter(): void {
-        this.messageFormUi.show("Welcome to the poposeop!s\n가나다라마바사아자차카타파하");
+        this.messageFormUi.show("HelloHelloHelloHelloHelloHelloHello\nHelloHello");
     }
     exit(): void {
         this.messageFormUi.clean();
