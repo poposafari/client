@@ -1,5 +1,5 @@
+import { KEYBOARD } from "./enums/keyboard";
 import { Mode } from "./mode";
-import { ModeManager } from "./mode-manager";
 import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
 import { MessageFormUi } from "./ui/message-form-ui";
@@ -11,14 +11,20 @@ export class LoginMode extends Mode{
     constructor(scene:InGameScene){
         super(scene);
         this.loginFormUi = scene.ui.getManger(LoginFormUi);
+        this.whitelistkeyboard = [];
     }
 
     enter(): void {
         this.loginFormUi.show();
+        this.disableInput();
     }
 
     exit(): void {
         this.loginFormUi.clean();
+    }
+
+    actionInput(): void {
+        console.log('??');
     }
 }
 
@@ -28,15 +34,19 @@ export class RegistrationMode extends Mode{
     constructor(scene:InGameScene){
         super(scene);
         this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
+        this.whitelistkeyboard = [];
     }
 
     enter(): void {
         this.registrationFormUi.show();
+        this.disableInput();
     }
 
     exit(): void {
         this.registrationFormUi.clean();
     }
+
+    actionInput(): void {}
 }
 
 export class MessageMode extends Mode{
@@ -45,15 +55,24 @@ export class MessageMode extends Mode{
     constructor(scene:InGameScene){
         super(scene);
         this.messageFormUi = scene.ui.getManger(MessageFormUi);
+        this.whitelistkeyboard = [
+            KEYBOARD.SELECT,
+            KEYBOARD.CANCEL
+        ];
     }
 
     enter(): void {
         this.messageFormUi.show("HelloHelloHelloHelloHelloHelloHello\nHelloHello");
+        this.enableInput();
     }
+
     exit(): void {
         this.messageFormUi.clean();
     }
-    
+
+    actionInput(key:KEYBOARD): void {
+        console.log(key);
+    }
 }
 
 export class SubmitMode extends Mode{
@@ -62,6 +81,7 @@ export class SubmitMode extends Mode{
     constructor(scene:InGameScene,data?:any){
         super(scene);
         this.data = data;
+        this.whitelistkeyboard = [];
     }
 
     enter(): void {
@@ -75,4 +95,6 @@ export class SubmitMode extends Mode{
     exit(): void {
         
     }
+
+    actionInput(): void {}
 }

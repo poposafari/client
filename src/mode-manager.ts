@@ -11,31 +11,37 @@ export class ModeManager{
         this.scene = scene;
     }
 
-    setMode(mode: MODE, data?: any): void {
-        if (this.currentMode) {
-            this.currentMode.exit();
-        }
+    setMode(mode: MODE,isChain:boolean,data?: any): void {
+        const newMode = this.createMode(mode,data);
 
-        switch (mode) {
-            case MODE.LOGIN:
-                this.currentMode = new LoginMode(this.scene);
-                break;
-            case MODE.REGISTRATION:
-                this.currentMode = new RegistrationMode(this.scene);
-                break;
-            case MODE.SUBMIT:
-                this.currentMode = new SubmitMode(this.scene,data);
-                break;
-            case MODE.MESSAGE:
-                this.currentMode = new MessageMode(this.scene);
-                break;
-            case MODE.OVERWORLD:
-                this.currentMode = new MessageMode(this.scene);
-                break;
+        if(newMode){
+            if(!isChain){
+                this.scene.modeStack.pop()?.exit();
+            }
+
+            this.scene.modeStack.push(newMode);
+            newMode.enter();
         }
 
         if (this.currentMode) {
             this.currentMode.enter();
+        }
+    }
+
+    private createMode(mode:MODE,data?:any):Mode | null{
+        switch (mode) {
+            case MODE.LOGIN:
+                return new LoginMode(this.scene);
+            case MODE.REGISTRATION:
+                return new RegistrationMode(this.scene);
+            case MODE.SUBMIT:
+                return new SubmitMode(this.scene,data);
+            case MODE.MESSAGE:
+                return new MessageMode(this.scene);
+            case MODE.OVERWORLD:
+                return new MessageMode(this.scene);
+            default:
+                return null;
         }
     }
     

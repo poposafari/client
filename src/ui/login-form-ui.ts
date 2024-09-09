@@ -8,12 +8,14 @@ import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { ModeManager } from "../mode-manager";
 import { MODE } from "../enums/mode";
 import { ServiceLocator } from "../utils/service-locator";
+import { InputManager } from "../utils/input-manager";
 
 export class LoginFormUi extends ModalFormUi{
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[] = [];
     private btns: Phaser.GameObjects.NineSlice[] = [];
     private modeManager: ModeManager;
+    private inputManager: InputManager;
 
     private inputConfig = [
         {
@@ -63,6 +65,7 @@ export class LoginFormUi extends ModalFormUi{
     constructor(scene:InGameScene){
         super(scene);
         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+        this.inputManager = ServiceLocator.get<InputManager>('input-manager');
     }
 
     setup(): void {
@@ -120,13 +123,13 @@ export class LoginFormUi extends ModalFormUi{
         
         this.btns[0].on("pointerdown",()=>{
             if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0)
-                this.modeManager.setMode(MODE.MESSAGE);
+                this.modeManager.setMode(MODE.MESSAGE,true);
             
             console.log(this.inputs[0].text);
             console.log(this.inputs[1].text);
         });
         
-        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.REGISTRATION);});
+        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.REGISTRATION,false);});
         this.btns[2].on("pointerdown",()=>{console.log('moveToFindAccount');});
     }
 
