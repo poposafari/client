@@ -135,7 +135,7 @@ export class RegistrationFormUi extends ModalFormUi{
         }
 
         this.btns[0].on("pointerdown",()=>{console.log('moveToFindAccount');});
-        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN);});
+        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN,false);});
 
     }
 

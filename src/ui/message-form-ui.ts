@@ -62,4 +62,8 @@ export class MessageFormUi extends UiManager{
         this.messageEndMarkContainer.setVisible(false);
         this.messageText.text = "";
     }
+
+    getMessageStatus(){
+        return this.messageEndMarkContainer.visible;
+    }
 }

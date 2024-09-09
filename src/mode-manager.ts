@@ -37,9 +37,7 @@ export class ModeManager{
             case MODE.SUBMIT:
                 return new SubmitMode(this.scene,data);
             case MODE.MESSAGE:
-                return new MessageMode(this.scene);
-            case MODE.OVERWORLD:
-                return new MessageMode(this.scene);
+                return new MessageMode(this.scene,data);
             default:
                 return null;
         }
