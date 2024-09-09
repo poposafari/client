@@ -16,7 +16,6 @@ export class LoginMode extends Mode{
 
     enter(): void {
         this.loginFormUi.show();
-        this.disableInput();
     }
 
     exit(): void {
@@ -39,7 +38,6 @@ export class RegistrationMode extends Mode{
 
     enter(): void {
         this.registrationFormUi.show();
-        this.disableInput();
     }
 
     exit(): void {
@@ -51,19 +49,21 @@ export class RegistrationMode extends Mode{
 
 export class MessageMode extends Mode{
     private messageFormUi: MessageFormUi;
-
-    constructor(scene:InGameScene){
+    private loginFormUi: LoginFormUi;
+    private content:string;
+    constructor(scene:InGameScene,data:string){
         super(scene);
+        this.content = data;
         this.messageFormUi = scene.ui.getManger(MessageFormUi);
+        this.loginFormUi = scene.ui.getManger(LoginFormUi);
+        
         this.whitelistkeyboard = [
             KEYBOARD.SELECT,
-            KEYBOARD.CANCEL
         ];
     }
 
     enter(): void {
-        this.messageFormUi.show("HelloHelloHelloHelloHelloHelloHello\nHelloHello");
-        this.enableInput();
+        this.messageFormUi.show(this.content);
     }
 
     exit(): void {
@@ -71,7 +71,10 @@ export class MessageMode extends Mode{
     }
 
     actionInput(key:KEYBOARD): void {
-        console.log(key);
+        if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
+            this.exit();
+            this.loginFormUi.unblockInputs();
+        }
     }
 }
 

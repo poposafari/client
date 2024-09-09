@@ -15,14 +15,14 @@ export class InputManager{
 
     setup(){
         //util
-        this.keyMappings[KEYBOARD.SELECT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-        this.keyMappings[KEYBOARD.CANCEL] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+        this.keyMappings[KEYBOARD.SELECT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.X,false);
+        this.keyMappings[KEYBOARD.CANCEL] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Z,false);
         
         //direction
-        this.keyMappings[KEYBOARD.UP] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-        this.keyMappings[KEYBOARD.DOWN] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-        this.keyMappings[KEYBOARD.LEFT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        this.keyMappings[KEYBOARD.RIGHT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        this.keyMappings[KEYBOARD.UP] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP,false);
+        this.keyMappings[KEYBOARD.DOWN] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN,false);
+        this.keyMappings[KEYBOARD.LEFT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT,false);
+        this.keyMappings[KEYBOARD.RIGHT] = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT,false);
 
         this.scene.input.keyboard?.on('keydown', (event: Phaser.Input.Keyboard.Key) => {
             this.handleKeyInput(event);

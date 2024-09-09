@@ -15,13 +15,4 @@ export abstract class Mode{
     getScene(){
         return this.scene;
     }
-
-    disableInput(): void {
-        this.scene.input.keyboard?.off("keydown");
-        console.log(`${this.constructor.name} has disabled input.`);
-    }
-
-    enableInput(): void {
-        console.log(`${this.constructor.name} has enabled input.`);
-    }
 }

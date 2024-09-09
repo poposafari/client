@@ -37,7 +37,7 @@ function getColor(style:TEXTSTYLE):string{
 
 function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
     let config:Phaser.Types.GameObjects.Text.TextStyle = {
-        fontFamily:'font_1',
+        fontFamily:'font_4',
         fontSize:'96px',
         color: getColor(style),
     }
