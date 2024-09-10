@@ -33,8 +33,8 @@ export class MessageFormUi extends UiManager{
     }
 
     show(content?:string): void {
+        console.log(content);
         this.messageContainer.setVisible(true);
-        
         if(content === undefined) content = "";
 
         let textArray = content.split("");

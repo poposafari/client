@@ -7,12 +7,14 @@ export class ModeManager{
     private currentMode: Mode | null = null;
     private scene: InGameScene;
 
+    private modeCache: Map<MODE, Mode> = new Map();
+
     constructor(scene: InGameScene) {
         this.scene = scene;
     }
 
     setMode(mode: MODE,isChain:boolean,data?: any): void {
-        const newMode = this.createMode(mode,data);
+        const newMode = this.getCacheMode(mode,data);
 
         if(newMode){
             if(!isChain){
@@ -26,6 +28,19 @@ export class ModeManager{
         if (this.currentMode) {
             this.currentMode.enter();
         }
+    }
+
+    private getCacheMode(mode:MODE,data?:any):Mode{
+        if (this.modeCache.has(mode)) {
+            return this.modeCache.get(mode)!;
+        }
+
+        const newMode = this.createMode(mode, data);
+        if (newMode) {
+            this.modeCache.set(mode, newMode);
+        }
+
+        return newMode!;
     }
 
     private createMode(mode:MODE,data?:any):Mode | null{
