@@ -67,6 +67,8 @@ export class MessageMode extends Mode{
     }
 
     exit(): void {
+        const scene = this.getScene();
+        scene.modeStack.pop();
         this.messageFormUi.clean();
     }
 

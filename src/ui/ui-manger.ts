@@ -21,6 +21,7 @@ export function addTextInput(scene:InGameScene,x:number,y:number,width:number,he
 
 export function addText(scene:InGameScene,x:number,y:number,content:string,style:TEXTSTYLE):Phaser.GameObjects.Text{
     const result = scene.add.text(x,y,content,getTextStyle(style));
+    result.setShadow(1,0,'#91919a');
     result.setScale(0.5);
     
     return result;
@@ -30,7 +31,7 @@ function getColor(style:TEXTSTYLE):string{
     switch(style){
         case TEXTSTYLE.ACCOUNT_INPUT: return '#424242';
         case TEXTSTYLE.ACCOUNT: return '#ffffff';
-        case TEXTSTYLE.MESSAGE: return '#424242';
+        case TEXTSTYLE.MESSAGE: return '#4b4b4b';
     }
 }
 
@@ -48,12 +49,12 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
 
     switch(style){
         case TEXTSTYLE.ACCOUNT:
-            config.fontSize = '16px';
+            config.fontSize = '18px';
             break;
         case TEXTSTYLE.ACCOUNT_INPUT:
             break;
         case TEXTSTYLE.MESSAGE:
-            config.fontSize = '30px';
+            config.fontSize = '32px';
             break;
     }
 

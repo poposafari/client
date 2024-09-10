@@ -79,7 +79,7 @@ export class LoginFormUi extends ModalFormUi{
                     type: config.type,
                     fontSize: '8px',
                     placeholder: config.placeholder,
-                    minLength:8,
+                    minLength:6,
                     maxLength:16
                 });
                 
@@ -121,6 +121,7 @@ export class LoginFormUi extends ModalFormUi{
         
         this.btns[0].on("pointerdown",()=>{
             if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
+                console.log('?');
                 this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:loginError1"));
                 this.blockInputs();
             }
@@ -153,6 +154,10 @@ export class LoginFormUi extends ModalFormUi{
         super.clean();
         for(const item of this.inputContainers){
             item.setVisible(false);
+        }
+
+        for(const item of this.btns){
+            item.off('pointerdown')
         }
     }
 
