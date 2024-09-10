@@ -4,7 +4,6 @@ import { LoginMode, MessageMode, RegistrationMode, SubmitMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager{
-    private currentMode: Mode | null = null;
     private scene: InGameScene;
 
     private modeCache: Map<MODE, Mode> = new Map();
@@ -22,11 +21,7 @@ export class ModeManager{
             }
 
             this.scene.modeStack.push(newMode);
-            newMode.enter();
-        }
-
-        if (this.currentMode) {
-            this.currentMode.enter();
+            newMode.enter(data);
         }
     }
 
@@ -52,7 +47,7 @@ export class ModeManager{
             case MODE.SUBMIT:
                 return new SubmitMode(this.scene,data);
             case MODE.MESSAGE:
-                return new MessageMode(this.scene,data);
+                return new MessageMode(this.scene);
             default:
                 return null;
         }

@@ -32,13 +32,12 @@ export class MessageFormUi extends UiManager{
         ui.add(this.messageEndMarkContainer);   
     }
 
-    show(content?:string): void {
-        console.log(content);
+    show(data?:any): void {
         this.messageContainer.setVisible(true);
-        if(content === undefined) content = "";
+        if(data === undefined) data = "";
 
-        let textArray = content.split("");
-        let delay = 10; 
+        let textArray = data.split("");
+        let delay = 10;
         let index = 0;
 
         const addNextChar = () => {

@@ -27,8 +27,6 @@ export class ModalFormUi extends UiManager{
 
         this.modalContainer.y += 24;
         this.modalContainer.setAlpha(0);
-
-        console.log(this.modalContainer.y);
   
         this.scene.tweens.add({
           targets: this.modalContainer,
