@@ -8,7 +8,7 @@ export const menu:TranslationDefault={
     "findAccountBtn":"계정찾기",
     "moveToLogin":"로그인하러가기",
     "repassword":"비밀번호 재입력",
-    "email":"이메일",
+    "email":"이메일(본인 인증용)",
     "inputUsername":"아이디 입력",
     "inputPassword":"비밀번호 입력",
     "inputRePassword":"비밀번호 재입력",

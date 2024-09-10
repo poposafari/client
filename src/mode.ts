@@ -8,11 +8,15 @@ export abstract class Mode{
     constructor(scene:InGameScene){
         this.scene = scene;
     }
-    abstract enter():void;
+    abstract enter(data?:any):void;
     abstract exit(): void;
     abstract actionInput(key:KEYBOARD): void;
 
     getScene(){
         return this.scene;
+    }
+
+    getTopModeStack(){
+        return this.scene.modeStack[this.scene.modeStack.length-1];
     }
 }

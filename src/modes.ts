@@ -50,20 +50,21 @@ export class RegistrationMode extends Mode{
 export class MessageMode extends Mode{
     private messageFormUi: MessageFormUi;
     private loginFormUi: LoginFormUi;
-    private content:string;
-    constructor(scene:InGameScene,data:string){
+    private registrationFormUi: RegistrationFormUi;
+
+    constructor(scene:InGameScene){
         super(scene);
-        this.content = data;
         this.messageFormUi = scene.ui.getManger(MessageFormUi);
         this.loginFormUi = scene.ui.getManger(LoginFormUi);
+        this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
         
         this.whitelistkeyboard = [
             KEYBOARD.SELECT,
         ];
     }
 
-    enter(): void {
-        this.messageFormUi.show(this.content);
+    enter(data?:any): void {
+        this.messageFormUi.show(data);
     }
 
     exit(): void {
@@ -75,7 +76,12 @@ export class MessageMode extends Mode{
     actionInput(key:KEYBOARD): void {
         if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
             this.exit();
-            this.loginFormUi.unblockInputs();
+            console.log(this.getTopModeStack());
+            if(this.getTopModeStack() instanceof LoginMode){
+                this.loginFormUi.unblockInputs();
+            }else if(this.getTopModeStack() instanceof RegistrationMode){
+                this.registrationFormUi.unblockInputs();
+            }
         }
     }
 }
@@ -87,13 +93,16 @@ export class SubmitMode extends Mode{
         super(scene);
         this.data = data;
         this.whitelistkeyboard = [];
+
+        console.log(this.data);
     }
 
     enter(): void {
         if(this.data[0] === "login"){
 
-        }else if(this.data[0] === "register"){
-
+        }else if(this.data[0] === "registration"){
+            const [username,password] = this.data[1];
+            console.log(username.text,password.text);
         }
     }
 

@@ -121,7 +121,6 @@ export class LoginFormUi extends ModalFormUi{
         
         this.btns[0].on("pointerdown",()=>{
             if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
-                console.log('?');
                 this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:loginError1"));
                 this.blockInputs();
             }
