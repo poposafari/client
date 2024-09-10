@@ -144,6 +144,10 @@ export class RegistrationFormUi extends ModalFormUi{
         for(const item of this.inputContainers){
             item.setVisible(false);
         }
+
+        for(const item of this.btns){
+            item.off('pointerdown')
+        }
     }
     
     getField(type:string){
