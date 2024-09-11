@@ -4,6 +4,7 @@ import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
 import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
+import { apiPost, Axios } from "./utils/api";
 
 export class LoginMode extends Mode{
     private loginFormUi: LoginFormUi;
@@ -99,10 +100,12 @@ export class SubmitMode extends Mode{
 
     enter(): void {
         if(this.data[0] === "login"){
+            const [username,password] = this.data[1];
+            console.log(username.text,password.text);
 
         }else if(this.data[0] === "registration"){
             const [username,password] = this.data[1];
-            console.log(username.text,password.text);
+            apiPost("/account/register",{"username":username.text,"password":password.text});
         }
     }
 

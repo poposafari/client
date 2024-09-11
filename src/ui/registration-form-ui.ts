@@ -156,14 +156,12 @@ export class RegistrationFormUi extends ModalFormUi{
                 this.blockInputs();
                 return;
             }
-            
             if(password.text !== repassword.text){
                 retText = i18next.t("message:registrationError3");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
                 this.blockInputs();
                 return;
             }
-
             if(!isValidUsername(username.text)){
                 retText = i18next.t("message:registrationError5");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
