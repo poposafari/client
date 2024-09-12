@@ -1,6 +1,6 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { LoginMode, MessageMode, RegistrationMode, SubmitMode } from "./modes";
+import { LoginMode, MessageMode, RegistrationMode, SubmitMode, TitleMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager{
@@ -48,6 +48,8 @@ export class ModeManager{
                 return new SubmitMode(this.scene,data);
             case MODE.MESSAGE:
                 return new MessageMode(this.scene);
+            case MODE.TITLE:
+                return new TitleMode(this.scene);
             default:
                 return null;
         }

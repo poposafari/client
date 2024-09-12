@@ -10,7 +10,8 @@ export class LoadingScene extends BaseScene{
 
     preload(){
         console.log('LoadingScene preload()');
-        this.loadImage(TEXTURE.ACCOUNT_WINDOW,"ui","window_0");
+        this.loadImage(TEXTURE.ACCOUNT_BG,"ui","account_bg");
+        this.loadImage(TEXTURE.ACCOUNT_WINDOW,"ui","window_1");
         this.loadImage(TEXTURE.ACCOUNT_INPUT,"ui","input_0");
         this.loadImage(TEXTURE.ACCOUNT_BUTTON,"ui","button_0");
         this.loadImage(TEXTURE.ACCOUNT_SUBBUTTON,"ui","button_1");

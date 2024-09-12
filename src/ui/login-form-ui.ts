@@ -18,13 +18,13 @@ export class LoginFormUi extends ModalFormUi{
     private inputConfig = [
         {
             key: i18next.t("menu:username"),
-            containerY: 100,
+            containerY: 220,
             type: 'text',
             placeholder: i18next.t("menu:username")
         },
         {
             key: i18next.t("menu:password"),
-            containerY: 122,
+            containerY: 264,
             type: 'password',
             placeholder: i18next.t("menu:password")
         }
@@ -33,30 +33,30 @@ export class LoginFormUi extends ModalFormUi{
     private btnConfig = [
         {
             key: i18next.t("menu:loginBtn"),
-            containerX: 240,
-            containerY: 160,
+            containerX: 480,
+            containerY: 320,
             bgX: 0,
             bgY: 0,
-            bgWidth: 120,
-            bgHeight: 18
+            bgWidth: 240,
+            bgHeight: 36
         },
         {
             key: i18next.t("menu:registerBtn"),
-            containerX: 239,
-            containerY: 182,
-            bgX: -30,
+            containerX: 478,
+            containerY: 364,
+            bgX: -60,
             bgY: 0,
-            bgWidth: 56,
-            bgHeight: 18
+            bgWidth: 115,
+            bgHeight: 36
         },
         {
             key: i18next.t("menu:findAccountBtn"),
-            containerX: 241,
-            containerY: 182,
-            bgX: 30,
+            containerX: 482,
+            containerY: 364,
+            bgX: 60,
             bgY: 0,
-            bgWidth: 56,
-            bgHeight: 18
+            bgWidth: 115,
+            bgHeight: 36
         }
     ]
 
@@ -69,15 +69,14 @@ export class LoginFormUi extends ModalFormUi{
         super.setup();
         const field1 = this.getField('inputs')!;
         const field2 = this.getField('btns')!;
-
         for (const item of field1) {
             const config = this.inputConfig.find(config => config.key === item);
             if (config) {
-                const inputContainer = this.scene.add.container(240, config.containerY);
-                const inputBg = addWindow(this.scene, TEXTURE.ACCOUNT_INPUT, 0, 0, 120, 18);
-                const input = addTextInput(this.scene, 0, 0, 115, 18, TEXTSTYLE.ACCOUNT_INPUT, {
+                const inputContainer = this.scene.add.container(480, config.containerY);
+                const inputBg = addWindow(this.scene, TEXTURE.ACCOUNT_INPUT, 0, 0, 240, 36);
+                const input = addTextInput(this.scene, 0, 0, 230, 36, TEXTSTYLE.ACCOUNT_INPUT, {
                     type: config.type,
-                    fontSize: '8px',
+                    fontSize: '16px',
                     placeholder: config.placeholder,
                     minLength:6,
                     maxLength:16
@@ -97,7 +96,7 @@ export class LoginFormUi extends ModalFormUi{
             const config = this.btnConfig.find(config => config.key === item);
             if (config) {
                 const btnContainer = this.scene.add.container(config.containerX, config.containerY);
-                const btnBg = addWindow(this.scene, TEXTURE.ACCOUNT_BUTTON, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
+                const btnBg = addWindow(this.scene, TEXTURE.ACCOUNT_WINDOW, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
                 const btnText = addText(this.scene, config.bgX, 0, item, TEXTSTYLE.ACCOUNT);
                 btnText.setOrigin(0.5, 0.5);
 
@@ -111,6 +110,7 @@ export class LoginFormUi extends ModalFormUi{
 
     show(): void {
         super.show();
+
         for(const item of this.inputContainers){
             item.setVisible(true);
         }
@@ -151,6 +151,7 @@ export class LoginFormUi extends ModalFormUi{
 
     clean():void{
         super.clean();
+
         for(const item of this.inputContainers){
             item.setVisible(false);
         }

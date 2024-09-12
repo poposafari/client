@@ -16,8 +16,8 @@ export class MessageFormUi extends UiManager{
         const ui = this.getUi();
 
         this.messageContainer = this.scene.add.container(0,0);
-        const messageBg = addWindow(this.scene,TEXTURE.MESSAGE,this.scene.game.canvas.width/8,this.scene.game.canvas.height/8+105,400,50);
-        this.messageText = addText(this.scene,this.scene.game.canvas.width/8-190,this.scene.game.canvas.height/8+90,"",TEXTSTYLE.MESSAGE);
+        const messageBg = addWindow(this.scene,TEXTURE.MESSAGE,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4+200,800,100);
+        this.messageText = addText(this.scene,this.scene.game.canvas.width/4-380,this.scene.game.canvas.height/4+170,"",TEXTSTYLE.MESSAGE);
         
         this.messageContainer.add(messageBg);
         this.messageContainer.add(this.messageText);
@@ -26,10 +26,10 @@ export class MessageFormUi extends UiManager{
         ui.add(this.messageContainer);
 
         this.messageEndMarkContainer = this.scene.add.container(0,0);
-        const messageEndMark = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/8+188,this.scene.game.canvas.height/8+120,10,10);
+        const messageEndMark = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/4+376,this.scene.game.canvas.height/4+230,20,20);
         this.messageEndMarkContainer.add(messageEndMark);
         this.messageEndMarkContainer.setVisible(false);
-        ui.add(this.messageEndMarkContainer);   
+        ui.add(this.messageEndMarkContainer);
     }
 
     show(data?:any): void {

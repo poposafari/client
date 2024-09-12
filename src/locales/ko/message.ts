@@ -1,6 +1,7 @@
 import { TranslationDefault } from "../../interfaces/locales";
 
 export const message:TranslationDefault={
+    "serverError":"예기치 못한 에러가 발생했습니다\n", 
     "loginError1":"아이디와 비밀번호를 입력해주세요.\n",
     "loginError2":"아이디 또는 비밀번호가 일치하지 않습니다.\n",
     "registrationError1":"아이디,비밀번호,비밀번호 재입력을 입력해주세요.\n",

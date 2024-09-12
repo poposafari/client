@@ -10,6 +10,7 @@ import { ServiceLocator } from "../utils/service-locator";
 import { MODE } from "../enums/mode";
 
 export class RegistrationFormUi extends ModalFormUi{
+    private bgContainer!: Phaser.GameObjects.Container;
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[]=[];
     private btns: Phaser.GameObjects.NineSlice[]=[];
@@ -18,8 +19,8 @@ export class RegistrationFormUi extends ModalFormUi{
     private inputConfig=[
         {
             key: i18next.t("menu:username"),
-            containerX: 240,
-            containerY: 95,
+            containerX: 480,
+            containerY: 190,
             bgX: -58,
             bgY: -19,
             type: 'text',
@@ -27,7 +28,7 @@ export class RegistrationFormUi extends ModalFormUi{
         },
         {
             key: i18next.t("menu:password"),
-            containerX: 240,
+            containerX: 480,
             containerY: 130,
             bgX: -58,
             bgY: -19,
@@ -36,7 +37,7 @@ export class RegistrationFormUi extends ModalFormUi{
         },
         {
             key: i18next.t("menu:repassword"),
-            containerX: 240,
+            containerX: 480,
             containerY: 165,
             bgX: -58,
             bgY: -19,
@@ -45,7 +46,7 @@ export class RegistrationFormUi extends ModalFormUi{
         },
         {
             key: i18next.t("menu:email"),
-            containerX: 240,
+            containerX: 480,
             containerY: 180,
             bgX: -58,
             bgY: -19,
@@ -89,10 +90,10 @@ export class RegistrationFormUi extends ModalFormUi{
             const config = this.inputConfig.find(config => config.key === item);
             if(config){
                 const inputContainer = this.scene.add.container(240,config.containerY);
-                const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,120,18);
-                const input = addTextInput(this.scene,0,0,115,18,TEXTSTYLE.ACCOUNT_INPUT,{
+                const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,240,36);
+                const input = addTextInput(this.scene,0,0,230,36,TEXTSTYLE.ACCOUNT_INPUT,{
                     type:config.type,
-                    fontSize:'8px',
+                    fontSize:'16px',
                     placeholder:config.placeholder
                 });
                 const label = addText(this.scene, config.bgX, config.bgY, item, TEXTSTYLE.ACCOUNT);
@@ -126,6 +127,7 @@ export class RegistrationFormUi extends ModalFormUi{
 
     show(): void {
         super.show();
+
         for(const item of this.inputContainers){
             item.setVisible(true);
         }
@@ -175,7 +177,7 @@ export class RegistrationFormUi extends ModalFormUi{
                 return;
             }
 
-            this.modeManager.setMode(MODE.SUBMIT,false,["registration",this.inputs])
+            this.modeManager.setMode(MODE.SUBMIT,true,["registration",this.inputs])
         });
         this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN,false);});
 
@@ -183,6 +185,7 @@ export class RegistrationFormUi extends ModalFormUi{
 
     clean(): void {  
         super.clean();
+
         for(const item of this.inputContainers){
             item.setVisible(false);
         }
