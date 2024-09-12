@@ -49,12 +49,12 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
 
     switch(style){
         case TEXTSTYLE.ACCOUNT:
-            config.fontSize = '18px';
+            config.fontSize = '36px';
             break;
         case TEXTSTYLE.ACCOUNT_INPUT:
             break;
         case TEXTSTYLE.MESSAGE:
-            config.fontSize = '32px';
+            config.fontSize = '64px';
             break;
     }
 
@@ -66,6 +66,8 @@ export abstract class UiManager{
 
     constructor(scene:InGameScene){
         this.scene = scene;
+        this.scene.add.image(0,0,TEXTURE.ACCOUNT_BG).setOrigin(0,0).setDisplaySize(this.scene.game.canvas.width,this.scene.game.canvas.height);
+
     }
     
     abstract setup(): void;

@@ -15,7 +15,7 @@ export class ModalFormUi extends UiManager{
 
         this.modalContainer = this.scene.add.container(0,0);
 
-        this.modalBg = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/8,this.scene.game.canvas.height/8,180,230);
+        this.modalBg = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4,360,460);
         this.modalContainer.add(this.modalBg);
 
         this.modalContainer.setVisible(false);
@@ -35,6 +35,7 @@ export class ModalFormUi extends UiManager{
           y: "-=24",
           alpha: 1
         });
+        
     }
 
     clean():void{

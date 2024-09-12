@@ -8,4 +8,5 @@ export const enum MODE{
     MESSAGE,
     SEASON,
     OVERWORLD,
+    TITLE,
 }

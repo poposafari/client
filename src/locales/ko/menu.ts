@@ -13,4 +13,6 @@ export const menu:TranslationDefault={
     "inputPassword":"비밀번호 입력",
     "inputRePassword":"비밀번호 재입력",
     "inputEmail":"이메일 입력",
+    "startGame":"모험을 계속한다.",
+    "startNewGame":"새로운 모험을 시작한다.",
 }

@@ -1,10 +1,14 @@
+import i18next from "i18next";
 import { KEYBOARD } from "./enums/keyboard";
+import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
+import { ModeManager } from "./mode-manager";
 import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
 import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
 import { apiPost, Axios } from "./utils/api";
+import { ServiceLocator } from "./utils/service-locator";
 
 export class LoginMode extends Mode{
     private loginFormUi: LoginFormUi;
@@ -89,13 +93,15 @@ export class MessageMode extends Mode{
 
 export class SubmitMode extends Mode{
     private data:any;
+    private modeManager:ModeManager;
+    private registrationFormUi:RegistrationFormUi;
 
     constructor(scene:InGameScene,data?:any){
         super(scene);
         this.data = data;
         this.whitelistkeyboard = [];
-
-        console.log(this.data);
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+        this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
     }
 
     enter(): void {
@@ -105,7 +111,21 @@ export class SubmitMode extends Mode{
 
         }else if(this.data[0] === "registration"){
             const [username,password] = this.data[1];
-            apiPost("/account/register",{"username":username.text,"password":password.text});
+            apiPost("/account/register",{"username":username.text,"password":password.text})
+                .then((value)=>{console.log(value);})
+                .catch((value)=>{
+                    if(value.status === 409){
+                        const scene = this.getScene();
+                        scene.modeStack.pop();
+                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:registrationError2"));
+                        this.registrationFormUi.blockInputs();
+                    }else{
+                        const scene = this.getScene();
+                        scene.modeStack.pop();
+                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:serverError"));
+                        this.registrationFormUi.blockInputs();
+                    }
+                });
         }
     }
 
@@ -114,4 +134,25 @@ export class SubmitMode extends Mode{
     }
 
     actionInput(): void {}
+}
+
+export class TitleMode extends Mode{
+    constructor(scene:InGameScene){
+        super(scene);
+        this.whitelistkeyboard = [
+            KEYBOARD.SELECT,
+            KEYBOARD.UP,
+            KEYBOARD.DOWN
+        ];
+    }
+
+    enter(): void{
+        
+    }
+
+    exit(): void{
+
+    }
+
+    actionInput(key: KEYBOARD): void {}
 }

@@ -25,7 +25,7 @@ export class InGameScene extends BaseScene{
 
         this.ui = new UI(this);
         this.add.existing(this.ui);
-        this.ui.setScale(4);
+        this.ui.setScale(2);
         this.ui.setup();
 
         this.modeManager.setMode(MODE.LOGIN,false);
