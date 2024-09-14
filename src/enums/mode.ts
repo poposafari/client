@@ -1,12 +1,11 @@
 export const enum MODE{
-    NONE,
     LOGIN,
     REGISTRATION,
     FINDUSERNAME,
     FINDPASSWORD,
-    SUBMIT,
     MESSAGE,
     SEASON,
     OVERWORLD,
     TITLE,
+    WAITING,
 }

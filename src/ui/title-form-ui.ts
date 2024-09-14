@@ -5,29 +5,33 @@ import { ServiceLocator } from "../utils/service-locator";
 import { addText, addWindow, UiManager } from "./ui-manger";
 import { TEXTSTYLE } from "../enums/textstyle";
 import { TEXTURE } from "../enums/texture";
+import { MODE } from "../enums/mode";
 
 export class TitleFormUi extends UiManager{
-    private btns: Phaser.GameObjects.NineSlice[]=[];
+    private titleContainer!:Phaser.GameObjects.Container;
+    private gameStartContainer!:Phaser.GameObjects.Container;
+    private btns:Phaser.GameObjects.NineSlice[]=[];
+    private btnContainers:Phaser.GameObjects.Container[]=[];
+    private choiceContainer!:Phaser.GameObjects.Container;
+    private choiceStatus!: number;
     private modeManger: ModeManager;
 
     private menuConfig=[
         {
             key: i18next.t("menu:startGame"),
-            containerX: 240,
-            containerY: 205,
-            bgX: 0,
-            bgY: 0,
-            bgWidth: 120,
-            bgHeight: 18
+            containerY: 245,
         },
         {
             key: i18next.t("menu:startNewGame"),
-            containerX: 240,
-            containerY: 227,
-            bgX: 0,
-            bgY: 0,
-            bgWidth: 120,
-            bgHeight: 18
+            containerY: 300,
+        },
+        {
+            key: i18next.t("menu:setting"),
+            containerY: 355,
+        },
+        {
+            key: i18next.t("menu:logout"),
+            containerY: 410,
         },
     ];
 
@@ -38,35 +42,81 @@ export class TitleFormUi extends UiManager{
 
     setup(): void {
         const ui = this.getUi();
-        const field = this.getField("old")!;
+        const field = this.getField();
+
+        this.choiceStatus = 0;
+
+        this.titleContainer = this.scene.add.container(0,0);
+        const titleBg = addWindow(this.scene,TEXTURE.WINDOW_0,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4-200,200,100);
+        this.titleContainer.add(titleBg);
+        this.titleContainer.setVisible(false);
+        ui.add(this.titleContainer);
 
         for(const item of field){
             const config = this.menuConfig.find(config => config.key === item);
             if(config){
-                const btnContainer = this.scene.add.container(config.containerX,config.containerY);
-                const btnBg = addWindow(this.scene,TEXTURE.MESSAGE,config.bgX, config.bgY, config.bgWidth, config.bgHeight);
-                const btnText = addText(this.scene,config.bgX,0,item,TEXTSTYLE.MESSAGE);
+                const btnContainer = this.scene.add.container(480,config.containerY);
+                const btnBg = addWindow(this.scene,TEXTURE.WINDOW_2,0,0, 280, 50);
+                const btnText = addText(this.scene,0,0,item,TEXTSTYLE.TITLE_MENU);
                 btnText.setOrigin(0.5,0.5);
 
                 this.btns.push(btnBg);
                 btnContainer.add(btnBg);
                 btnContainer.add(btnText);
                 btnContainer.setVisible(false);
-                ui.add(btnContainer);
+                this.btnContainers.push(btnContainer);
             }
         }
-        
+        ui.add(this.btnContainers);
     }
-    show(): void {
-        for(const item of )
+
+    show(data?:any): void {
+        this.titleContainer.setVisible(true);
+
+        if(!data){
+            this.btnContainers.shift();
+        }
+
+        for(const item of this.btnContainers){
+            item.setVisible(true);
+        }
     }
+
     clean(): void {
+        this.titleContainer.setVisible(false);
+        for(const item of this.btnContainers){
+            item.setVisible(false);
+        }
+    }
+
+    updateChoice(direction:boolean){
+        for(const item of this.btnContainers){
+            item.list[0].setTexture(TEXTURE.WINDOW_2);
+        }
+
+        if(direction) this.choiceStatus= (this.choiceStatus - 1 + this.btnContainers.length) % this.btnContainers.length;
+        else this.choiceStatus = (this.choiceStatus + 1) % this.btnContainers.length;
+        
+        this.btnContainers[this.choiceStatus].list[0].setTexture(TEXTURE.WINDOW_2_CLICKED);
+    }
+
+    updateMenu(){
+        switch(this.btnContainers[this.choiceStatus].list[1].text){
+            case i18next.t("menu:logout"):
+                this.modeManger.setMode(MODE.LOGIN,false);
+                break;
+            case i18next.t("menu:startNewGame"):
+                console.log('start new game');
+                break;
+            case i18next.t("menu:startGame"):
+                console.log('start game');
+                break;
+        }
 
     }
 
-    getField(type:string){
-        if(type==="new") return [i18next.t("menu:startGame"),i18next.t("menu:startNewGame")];
-        else if(type==="old") return [i18next.t("menu:startNewGame")];
+    getField(){
+        return [i18next.t("menu:startGame"),i18next.t("menu:startNewGame"),i18next.t("menu:setting"),i18next.t("menu:logout")];
     }
     
 }
