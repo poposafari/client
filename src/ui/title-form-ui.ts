@@ -73,13 +73,13 @@ export class TitleFormUi extends UiManager{
     show(data?:any): void {
         this.titleContainer.setVisible(true);
 
-        if(!data){
-            this.btnContainers.shift();
-        }
-
-        for(const item of this.btnContainers){
+        this.btnContainers = this.btnContainers.filter(item=>{
+            if(!data && item.list[1].text === i18next.t("menu:startGame")){
+                return false;
+            }
             item.setVisible(true);
-        }
+            return true;
+        })
     }
 
     clean(): void {
@@ -112,7 +112,6 @@ export class TitleFormUi extends UiManager{
                 console.log('start game');
                 break;
         }
-
     }
 
     getField(){
