@@ -16,7 +16,8 @@ export abstract class Mode{
         return this.scene;
     }
 
-    getTopModeStack(){
-        return this.scene.modeStack[this.scene.modeStack.length-1];
+    getModeStack(type:string){
+        if(type === "top") return this.scene.modeStack[this.scene.modeStack.length-1];
+        else if(type === "pre") return this.scene.modeStack[this.scene.modeStack.length-2];
     }
 }

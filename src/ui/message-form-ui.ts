@@ -26,7 +26,7 @@ export class MessageFormUi extends UiManager{
         ui.add(this.messageContainer);
 
         this.messageEndMarkContainer = this.scene.add.container(0,0);
-        const messageEndMark = addWindow(this.scene,TEXTURE.ACCOUNT_WINDOW,this.scene.game.canvas.width/4+376,this.scene.game.canvas.height/4+230,20,20);
+        const messageEndMark = addWindow(this.scene,TEXTURE.MESSAGE_MARK,this.scene.game.canvas.width/4+376,this.scene.game.canvas.height/4+230,20,20);
         this.messageEndMarkContainer.add(messageEndMark);
         this.messageEndMarkContainer.setVisible(false);
         ui.add(this.messageEndMarkContainer);

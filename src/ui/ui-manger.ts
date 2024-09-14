@@ -4,7 +4,7 @@ import { InGameScene } from "../scenes/ingame-scene";
 import { TEXTSTYLE } from "../enums/textstyle";
 
 export function addWindow(scene: InGameScene, texture:TEXTURE,x: number, y: number, width: number, height: number): Phaser.GameObjects.NineSlice {  
-    const window = scene.add.nineslice(x, y, texture, undefined, width, height, 6, 6, 6, 6);
+    const window = scene.add.nineslice(x, y, texture, undefined, width, height, 10, 10, 10, 10);
     window.setOrigin(0.5, 0.5);
 
     return window;
@@ -21,6 +21,7 @@ export function addTextInput(scene:InGameScene,x:number,y:number,width:number,he
 
 export function addText(scene:InGameScene,x:number,y:number,content:string,style:TEXTSTYLE):Phaser.GameObjects.Text{
     const result = scene.add.text(x,y,content,getTextStyle(style));
+    
     result.setShadow(1,0,'#91919a');
     result.setScale(0.5);
     
@@ -32,9 +33,9 @@ function getColor(style:TEXTSTYLE):string{
         case TEXTSTYLE.ACCOUNT_INPUT: return '#424242';
         case TEXTSTYLE.ACCOUNT: return '#ffffff';
         case TEXTSTYLE.MESSAGE: return '#4b4b4b';
+        case TEXTSTYLE.TITLE_MENU: return '#ffffff';
     }
 }
-
 
 function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
     let config:Phaser.Types.GameObjects.Text.TextStyle = {
@@ -51,7 +52,8 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
         case TEXTSTYLE.ACCOUNT:
             config.fontSize = '36px';
             break;
-        case TEXTSTYLE.ACCOUNT_INPUT:
+        case TEXTSTYLE.TITLE_MENU:
+            config.fontSize = '52px';
             break;
         case TEXTSTYLE.MESSAGE:
             config.fontSize = '64px';
@@ -63,16 +65,22 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
  
 export abstract class UiManager{
     protected scene:InGameScene;
+    protected bg:Phaser.GameObjects.Image;
 
     constructor(scene:InGameScene){
         this.scene = scene;
-        this.scene.add.image(0,0,TEXTURE.ACCOUNT_BG).setOrigin(0,0).setDisplaySize(this.scene.game.canvas.width,this.scene.game.canvas.height);
-
+        this.bg = this.scene.add.image(0,0,"").setOrigin(0,0).setDisplaySize(this.scene.game.canvas.width/8+2,this.scene.game.canvas.height/6+2);
+        this.bg.setVisible(false);
     }
     
     abstract setup(): void;
     abstract show(): void;
     abstract clean(): void;
+
+    setBackground(texture:TEXTURE){
+        this.bg.setVisible(true);
+        this.bg.setTexture(texture);
+    }
 
     getUi(){
         return this.scene.ui;

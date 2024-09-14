@@ -8,9 +8,9 @@ import { TEXTSTYLE } from "../enums/textstyle";
 import i18next from "i18next";
 import { ServiceLocator } from "../utils/service-locator";
 import { MODE } from "../enums/mode";
+import { apiPost } from "../utils/api";
 
 export class RegistrationFormUi extends ModalFormUi{
-    private bgContainer!: Phaser.GameObjects.Container;
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[]=[];
     private btns: Phaser.GameObjects.NineSlice[]=[];
@@ -21,35 +21,35 @@ export class RegistrationFormUi extends ModalFormUi{
             key: i18next.t("menu:username"),
             containerX: 480,
             containerY: 190,
-            bgX: -58,
-            bgY: -19,
+            bgX: -116,
+            bgY: -38,
             type: 'text',
             placeholder: i18next.t("menu:inputUsername")
         },
         {
             key: i18next.t("menu:password"),
             containerX: 480,
-            containerY: 130,
-            bgX: -58,
-            bgY: -19,
+            containerY: 260,
+            bgX: -116,
+            bgY: -38,
             type: 'password',
             placeholder: i18next.t("menu:inputPassword")
         },
         {
             key: i18next.t("menu:repassword"),
             containerX: 480,
-            containerY: 165,
-            bgX: -58,
-            bgY: -19,
+            containerY: 330,
+            bgX: -116,
+            bgY: -38,
             type: 'password',
             placeholder: i18next.t("menu:inputRePassword")
         },
         {
             key: i18next.t("menu:email"),
             containerX: 480,
-            containerY: 180,
-            bgX: -58,
-            bgY: -19,
+            containerY: 330,
+            bgX: -116,
+            bgY: -38,
             type: 'text',
             placeholder: i18next.t("menu:inputEmail")
         }
@@ -58,21 +58,21 @@ export class RegistrationFormUi extends ModalFormUi{
     private btnConfig=[
         {
             key: i18next.t("menu:registerBtn"),
-            containerX: 240,
-            containerY: 205,
+            containerX: 480,
+            containerY: 380,
             bgX: 0,
             bgY: 0,
-            bgWidth: 120,
-            bgHeight: 18
+            bgWidth: 240,
+            bgHeight: 36
         },
         {
             key: i18next.t("menu:loginBtn"),
-            containerX: 240,
-            containerY: 227,
+            containerX: 480,
+            containerY: 430,
             bgX: 0,
             bgY: 0,
-            bgWidth: 120,
-            bgHeight: 18
+            bgWidth: 240,
+            bgHeight: 36
         },
     ];
 
@@ -89,8 +89,8 @@ export class RegistrationFormUi extends ModalFormUi{
         for(const item of field1){
             const config = this.inputConfig.find(config => config.key === item);
             if(config){
-                const inputContainer = this.scene.add.container(240,config.containerY);
-                const inputBg = addWindow(this.scene,TEXTURE.ACCOUNT_INPUT,0,0,240,36);
+                const inputContainer = this.scene.add.container(480,config.containerY);
+                const inputBg = addWindow(this.scene,TEXTURE.INPUT_0,0,0,240,36);
                 const input = addTextInput(this.scene,0,0,230,36,TEXTSTYLE.ACCOUNT_INPUT,{
                     type:config.type,
                     fontSize:'16px',
@@ -113,7 +113,7 @@ export class RegistrationFormUi extends ModalFormUi{
             const config = this.btnConfig.find(config => config.key === item);
             if(config){
                 const btnContainer = this.scene.add.container(config.containerX, config.containerY);
-                const btnBg = addWindow(this.scene, TEXTURE.ACCOUNT_BUTTON, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
+                const btnBg = addWindow(this.scene, TEXTURE.BTN_0, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
                 const btnText = addText(this.scene, config.bgX, 0, item, TEXTSTYLE.ACCOUNT);
                 btnText.setOrigin(0.5, 0.5);
 
@@ -155,32 +155,42 @@ export class RegistrationFormUi extends ModalFormUi{
             if(username.text.length === 0 || password.text.length === 0 || repassword.text.length === 0){
                 retText = i18next.t("message:registrationError1");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
-                this.blockInputs();
                 return;
             }
             if(password.text !== repassword.text){
                 retText = i18next.t("message:registrationError3");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
-                this.blockInputs();
                 return;
             }
             if(!isValidUsername(username.text)){
                 retText = i18next.t("message:registrationError5");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
-                this.blockInputs();
                 return;
             }
             if(!isValidPassword(password.text)){
                 retText = i18next.t("message:registrationError6");
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
-                this.blockInputs();
                 return;
             }
 
-            this.modeManager.setMode(MODE.SUBMIT,true,["registration",this.inputs])
+            this.modeManager.setMode(MODE.WAITING,false);
+
+            apiPost("/account/register",{"username":username.text,"password":password.text})
+                .then((value)=>{
+                    this.modeManager.setMode(MODE.LOGIN,false);
+                    this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:registrationSuccess"));
+                })
+                .catch((value)=>{
+                    if(value.status === 409){
+                        this.modeManager.setMode(MODE.REGISTRATION,false);
+                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:registrationError2"));
+                    }else{
+                        this.modeManager.setMode(MODE.REGISTRATION,false);
+                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:serverError"));
+                    }
+                });
         });
         this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN,false);});
-
     }
 
     clean(): void {  
@@ -191,7 +201,7 @@ export class RegistrationFormUi extends ModalFormUi{
         }
 
         for(const item of this.btns){
-            item.off('pointerdown')
+            item.off('pointerdown');
         }
     }
     
