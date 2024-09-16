@@ -83,6 +83,7 @@ export class RegistrationFormUi extends ModalFormUi{
 
     setup(): void {
         super.setup();
+        super.adjustSize(MODE.REGISTRATION);
         const field1 = this.getField('inputs')!;
         const field2 = this.getField('btns')!;
 
@@ -150,25 +151,25 @@ export class RegistrationFormUi extends ModalFormUi{
                 return passwordRegex.test(password);
             };
 
-            let retText='';
+            let retText=[];
 
             if(username.text.length === 0 || password.text.length === 0 || repassword.text.length === 0){
-                retText = i18next.t("message:registrationError1");
+                retText = [i18next.t("message:registrationError1")];
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
                 return;
             }
             if(password.text !== repassword.text){
-                retText = i18next.t("message:registrationError3");
+                retText = [i18next.t("message:registrationError3")];
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
                 return;
             }
             if(!isValidUsername(username.text)){
-                retText = i18next.t("message:registrationError5");
+                retText = [i18next.t("message:registrationError5")];
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
                 return;
             }
             if(!isValidPassword(password.text)){
-                retText = i18next.t("message:registrationError6");
+                retText = [i18next.t("message:registrationError6")];
                 this.modeManager.setMode(MODE.MESSAGE,true,retText);
                 return;
             }
@@ -176,17 +177,17 @@ export class RegistrationFormUi extends ModalFormUi{
             this.modeManager.setMode(MODE.WAITING,false);
 
             apiPost("/account/register",{"username":username.text,"password":password.text})
-                .then((value)=>{
+                .then(()=>{
                     this.modeManager.setMode(MODE.LOGIN,false);
-                    this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:registrationSuccess"));
+                    this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:registrationSuccess")]);
                 })
                 .catch((value)=>{
                     if(value.status === 409){
                         this.modeManager.setMode(MODE.REGISTRATION,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:registrationError2"));
+                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:registrationError2")]);
                     }else{
                         this.modeManager.setMode(MODE.REGISTRATION,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:serverError"));
+                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
                     }
                 });
         });

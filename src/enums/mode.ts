@@ -8,4 +8,6 @@ export const enum MODE{
     OVERWORLD,
     TITLE,
     WAITING,
+    CLOSET,
+    TUTORIAL
 }

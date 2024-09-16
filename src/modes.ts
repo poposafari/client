@@ -12,6 +12,7 @@ import { ServiceLocator } from "./utils/service-locator";
 import { TEXTURE } from "./enums/texture";
 import { WaitFormUi } from "./ui/wait-form-ui";
 import { TitleFormUi } from "./ui/title-form-ui";
+import { ClosetFormUi } from "./ui/closet-form-ui";
 
 export class LoginMode extends Mode{
     private loginFormUi: LoginFormUi;
@@ -59,6 +60,8 @@ export class MessageMode extends Mode{
     private messageFormUi: MessageFormUi;
     private loginFormUi: LoginFormUi;
     private registrationFormUi: RegistrationFormUi;
+    private queue=[];
+    private currentIdx!:number;
 
     constructor(scene:InGameScene){
         super(scene);
@@ -71,14 +74,18 @@ export class MessageMode extends Mode{
         ];
     }
 
-    enter(data?:any): void {
-        console.log(this.getModeStack("pre"));
+    enter(data?:[]): void {
+        if(data && Array.isArray(data)){
+            this.queue = data;
+        }
+        this.currentIdx = 0;
+
         if(this.getModeStack("pre") instanceof LoginMode){
             this.loginFormUi.blockInputs();
         }else if(this.getModeStack("pre") instanceof RegistrationMode){
             this.registrationFormUi.blockInputs();
         }
-        this.messageFormUi.show(data);
+        this.showCurrentMessage();
     }
 
     exit(): void {
@@ -89,12 +96,26 @@ export class MessageMode extends Mode{
 
     actionInput(key:KEYBOARD): void {
         if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
-            this.exit();
-            if(this.getModeStack("top") instanceof LoginMode){
-                this.loginFormUi.unblockInputs();
-            }else if(this.getModeStack("top") instanceof RegistrationMode){
-                this.registrationFormUi.unblockInputs();
+            this.currentIdx++;
+
+            if(this.currentIdx < this.queue.length){
+                this.messageFormUi.clean();
+                this.showCurrentMessage();
+            }else{
+                this.exit();
+                if(this.getModeStack("top") instanceof LoginMode){
+                    this.loginFormUi.unblockInputs();
+                }else if(this.getModeStack("top") instanceof RegistrationMode){
+                    this.registrationFormUi.unblockInputs();
+                }
             }
+
+        }
+    }
+
+    private showCurrentMessage(){
+        if(this.currentIdx < this.queue.length){
+            this.messageFormUi.show(this.queue[this.currentIdx]);
         }
     }
 }
@@ -140,15 +161,42 @@ export class WaitMode extends Mode{
         this.waitFormUi = scene.ui.getManger(WaitFormUi);
 
     }
+
     enter(data?: any): void {
         this.waitFormUi.show();
     }
+
     exit(): void {
         this.waitFormUi.clean();
     }
+
     actionInput(key: KEYBOARD): void {
         
     }
+}
 
-    
+export class ClosetMode extends Mode{
+    private messageFormUi: MessageFormUi;
+    private closetFormUi: ClosetFormUi;
+    private modeManager: ModeManager;
+
+    constructor(scene:InGameScene){
+        super(scene);
+        this.whitelistkeyboard=[];
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+        this.messageFormUi = scene.ui.getManger(MessageFormUi);
+        this.closetFormUi = scene.ui.getManger(ClosetFormUi);
+    }
+
+    enter(data?: any): void {
+        this.closetFormUi.show();
+    }
+
+    exit(): void {
+        this.closetFormUi.clean();
+    }
+
+    actionInput(key: KEYBOARD): void {
+        
+    }
 }

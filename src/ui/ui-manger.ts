@@ -4,10 +4,17 @@ import { InGameScene } from "../scenes/ingame-scene";
 import { TEXTSTYLE } from "../enums/textstyle";
 
 export function addWindow(scene: InGameScene, texture:TEXTURE,x: number, y: number, width: number, height: number): Phaser.GameObjects.NineSlice {  
-    const window = scene.add.nineslice(x, y, texture, undefined, width, height, 10, 10, 10, 10);
+    const window = scene.add.nineslice(x, y, texture, undefined, width, height, 8, 8, 8, 8);
     window.setOrigin(0.5, 0.5);
 
     return window;
+}
+
+export function addImage(scene:InGameScene,texture:TEXTURE,x: number, y: number, width: number, height: number){
+    const ret = scene.add.image(x,y,texture);
+    ret.setDisplaySize(width,height);
+
+    return ret;
 }
 
 export function addTextInput(scene:InGameScene,x:number,y:number,width:number,height:number,style:TEXTSTYLE,option:InputText.IConfig):InputText{
