@@ -1,10 +1,10 @@
 import i18next from "i18next";
+import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 import { InGameScene } from "../scenes/ingame-scene";
 import { ModalFormUi } from "./modal-form-ui";
 import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
-import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 import { ModeManager } from "../mode-manager";
 import { MODE } from "../enums/mode";
 import { ServiceLocator } from "../utils/service-locator";
@@ -68,6 +68,8 @@ export class LoginFormUi extends ModalFormUi{
 
     setup(): void {
         super.setup();
+        super.adjustSize(MODE.LOGIN);
+
         const field1 = this.getField('inputs')!;
         const field2 = this.getField('btns')!;
         for (const item of field1) {
@@ -77,7 +79,7 @@ export class LoginFormUi extends ModalFormUi{
                 const inputBg = addWindow(this.scene, TEXTURE.INPUT_0, 0, 0, 240, 36);
                 const input = addTextInput(this.scene, 0, 0, 230, 36, TEXTSTYLE.ACCOUNT_INPUT, {
                     type: config.type,
-                    fontSize: '16px',
+                    fontSize: '18px',
                     placeholder: config.placeholder,
                     minLength:6,
                     maxLength:16
@@ -124,7 +126,7 @@ export class LoginFormUi extends ModalFormUi{
         
         this.btns[0].on("pointerdown",()=>{
             if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
-                this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:loginError1"));
+                this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError1")]);
                 return;
             }
 
@@ -138,10 +140,10 @@ export class LoginFormUi extends ModalFormUi{
                 .catch((value)=>{
                     if(value.status === 401){
                         this.modeManager.setMode(MODE.LOGIN,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:loginError2"));
+                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError2")]);
                     }else{
                         this.modeManager.setMode(MODE.LOGIN,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,i18next.t("message:serverError"));
+                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
                     }
                 })
         });

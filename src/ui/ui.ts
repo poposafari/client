@@ -1,4 +1,5 @@
 import { InGameScene } from "../scenes/ingame-scene";
+import { ClosetFormUi } from "./closet-form-ui";
 import { LoginFormUi } from "./login-form-ui";
 import { MessageFormUi } from "./message-form-ui";
 import { RegistrationFormUi } from "./registration-form-ui";
@@ -18,6 +19,7 @@ export class UI extends Phaser.GameObjects.Container{
             new MessageFormUi(scene),
             new WaitFormUi(scene),
             new TitleFormUi(scene),
+            new ClosetFormUi(scene),
         ];
     }
 

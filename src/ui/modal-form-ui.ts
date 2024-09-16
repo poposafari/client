@@ -1,3 +1,4 @@
+import { MODE } from "../enums/mode";
 import { TEXTURE } from "../enums/texture";
 import { InGameScene } from "../scenes/ingame-scene";
 import { addWindow, UiManager } from "./ui-manger";
@@ -15,7 +16,7 @@ export class ModalFormUi extends UiManager{
 
         this.modalContainer = this.scene.add.container(0,0);
 
-        this.modalBg = addWindow(this.scene,TEXTURE.WINDOW_2_CLICKED,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4,360,460);
+        this.modalBg = addWindow(this.scene,TEXTURE.WINDOW_2_CLICKED,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4,0,0);
         this.modalContainer.add(this.modalBg);
 
         this.modalContainer.setVisible(false);
@@ -41,5 +42,21 @@ export class ModalFormUi extends UiManager{
     clean():void{
         this.modalContainer.setVisible(false);
         this.modalContainer.y = 0;
+    }
+
+    adjustSize(mode:MODE){
+        let width=0,height=0;
+        switch(mode){
+            case MODE.LOGIN:
+            case MODE.REGISTRATION:
+                width = 360;
+                height = 460;
+                break;
+            case MODE.CLOSET:
+                width = 753;
+                height = 460;
+                break;
+        }
+        this.modalBg.setSize(width,height);
     }
 }

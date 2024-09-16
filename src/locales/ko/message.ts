@@ -10,5 +10,6 @@ export const message:TranslationDefault={
     "registrationError3":"비밀번호가 일치하지 않습니다.\n",
     "registrationError4":"이미 사용중인 이메일입니다.\n",
     "registrationError5":"아이디는 5~16자,\n영문 대소문자 또는 숫자로 이루어져야 합니다.\n",
-    "registrationError6":"비밀번호는 5~16자, 영문 대소문자나 숫자와 함께 적어도 하나 이상의\n특수 문자(!, @, #, $, %, ^, &, *, (, ), -, _, =, +)가 포함되어야 합니다.\n"
+    "registrationError6":"비밀번호는 5~16자, 영문 대소문자나 숫자와 함께 적어도 하나 이상의\n특수 문자(!, @, #, $, %, ^, &, *, (, ), -, _, =, +)가 포함되어야 합니다.\n",
+    "welcome1":"포포섭에 오신 것을 환영합니다!\n포포섭은 오픈 월드 요소가 들어간 포켓몬 팬게임입니다.\n"
 }
