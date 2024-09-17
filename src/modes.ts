@@ -7,9 +7,7 @@ import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
 import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
-import { apiPost, Axios } from "./utils/api";
 import { ServiceLocator } from "./utils/service-locator";
-import { TEXTURE } from "./enums/texture";
 import { WaitFormUi } from "./ui/wait-form-ui";
 import { TitleFormUi } from "./ui/title-form-ui";
 import { ClosetFormUi } from "./ui/closet-form-ui";
@@ -62,13 +60,14 @@ export class MessageMode extends Mode{
     private registrationFormUi: RegistrationFormUi;
     private queue=[];
     private currentIdx!:number;
+    private modeManager:ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
         this.messageFormUi = scene.ui.getManger(MessageFormUi);
         this.loginFormUi = scene.ui.getManger(LoginFormUi);
         this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
-        
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
         this.whitelistkeyboard = [
             KEYBOARD.SELECT,
         ];
@@ -107,6 +106,8 @@ export class MessageMode extends Mode{
                     this.loginFormUi.unblockInputs();
                 }else if(this.getModeStack("top") instanceof RegistrationMode){
                     this.registrationFormUi.unblockInputs();
+                }else if(this.getModeStack("top") instanceof TutorialMode){
+                    this.modeManager.setMode(MODE.CLOSET,false);
                 }
             }
 
@@ -196,6 +197,30 @@ export class ClosetMode extends Mode{
         this.closetFormUi.clean();
     }
 
+    actionInput(key: KEYBOARD): void {
+        
+    }
+}
+
+export class TutorialMode extends Mode{
+    private messageFormUi: MessageFormUi;
+    private closetFormUi: ClosetFormUi;
+    private modeManager: ModeManager;
+
+    constructor(scene:InGameScene){
+        super(scene);
+        this.whitelistkeyboard=[];
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+        this.messageFormUi = scene.ui.getManger(MessageFormUi);
+        this.closetFormUi = scene.ui.getManger(ClosetFormUi);
+    }
+
+    enter(data?: any): void {
+        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:welcome1"),i18next.t("message:welcome2"),i18next.t("message:question1")]);
+    }   
+    exit(): void {
+        
+    }
     actionInput(key: KEYBOARD): void {
         
     }

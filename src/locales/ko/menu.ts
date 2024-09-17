@@ -17,5 +17,17 @@ export const menu:TranslationDefault={
     "startGame":"모험을 계속한다",
     "startNewGame":"새로운 모험을 시작한다",
     "logout":"로그아웃",
-    "setting":"시스템 설정"
+    "setting":"시스템 설정",
+    "closetTitle":"당신은 누구인가요?",
+    "closetLabel1":"성별",
+    "closetLabel2":"닉네임",
+    "closetLabel3":"아바타 선택",
+    "man1":"남자1",
+    "man2":"남자2",
+    "man3":"남자3",
+    "man4":"남자4",
+    "woman1":"여자1",
+    "woman2":"여자2",
+    "woman3":"여자3",
+    "woman4":"여자4",
 }

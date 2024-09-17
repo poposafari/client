@@ -53,7 +53,7 @@ export class ModalFormUi extends UiManager{
                 height = 460;
                 break;
             case MODE.CLOSET:
-                width = 753;
+                width = 653;
                 height = 460;
                 break;
         }

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import {LoadingScene} from "./scenes/loading-scene"
 import { InGameScene } from "./scenes/ingame-scene";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const config: Phaser.Types.Core.GameConfig={
   type:Phaser.WEBGL,
@@ -17,6 +18,12 @@ const config: Phaser.Types.Core.GameConfig={
       plugin: InputTextPlugin,
       start: true
     },
+  ],
+  scene:[{
+      key: 'rexUI',
+      plugin: UIPlugin,
+      mapping: 'rexUI'
+    }
   ]
   },
   dom:{

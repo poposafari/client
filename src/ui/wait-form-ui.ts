@@ -21,7 +21,7 @@ export class WaitFormUi extends UiManager{
         const ui = this.getUi();
 
         this.modalContainer = this.scene.add.container(0,0);
-        const modalBg = addWindow(this.scene,TEXTURE.BTN_0,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4,100,50);
+        const modalBg = addWindow(this.scene,TEXTURE.WINDOW_2_CLICKED,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4,100,50);
         const modalText = addText(this.scene,this.scene.game.canvas.width/4-30,this.scene.game.canvas.height/4-10,field[0],TEXTSTYLE.ACCOUNT);
 
         this.modalContainer.add(modalBg);

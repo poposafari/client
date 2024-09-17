@@ -106,7 +106,7 @@ export class TitleFormUi extends UiManager{
                 this.modeManger.setMode(MODE.LOGIN,false);
                 break;
             case i18next.t("menu:startNewGame"):
-                this.modeManger.setMode(MODE.MESSAGE,false,[i18next.t("message:welcome1"),i18next.t("message:welcome1"),i18next.t("message:welcome1")]);
+                this.modeManger.setMode(MODE.TUTORIAL,false);
                 break;
             case i18next.t("menu:startGame"):
                 console.log('start game');
