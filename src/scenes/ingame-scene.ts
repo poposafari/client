@@ -1,3 +1,4 @@
+import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { MODE } from "../enums/mode";
 import { Mode } from "../mode";
 import { ModeManager } from "../mode-manager";
@@ -7,6 +8,7 @@ import { ServiceLocator } from "../utils/service-locator";
 import { BaseScene } from "./base-scene";
 
 export class InGameScene extends BaseScene{
+    public rexUI!: UIPlugin;
     public ui!: UI;
     public modeManager!:ModeManager;
     public modeStack:Mode[] = [];

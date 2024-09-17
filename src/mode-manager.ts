@@ -1,6 +1,6 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { ClosetMode, LoginMode, MessageMode, RegistrationMode, TitleMode, WaitMode } from "./modes";
+import { ClosetMode, LoginMode, MessageMode, RegistrationMode, TitleMode, TutorialMode, WaitMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager{
@@ -52,6 +52,8 @@ export class ModeManager{
                 return new WaitMode(this.scene);
             case MODE.CLOSET:
                 return new ClosetMode(this.scene);
+            case MODE.TUTORIAL:
+                return new TutorialMode(this.scene);
             default:
                 return null;
         }
