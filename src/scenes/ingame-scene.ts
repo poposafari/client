@@ -20,15 +20,15 @@ export class InGameScene extends BaseScene{
 
     create(){
         this.modeManager = new ModeManager(this);
-        ServiceLocator.register('mode-manager',this.modeManager);
-
         this.inputManager = new InputManager(this);
+        
+        ServiceLocator.register('mode-manager',this.modeManager);
         ServiceLocator.register('input-manager',this.inputManager);
-
+        
         this.ui = new UI(this);
         this.add.existing(this.ui);
-        this.ui.setScale(2);
         this.ui.setup();
+        this.ui.setScale(2);
 
         this.modeManager.setMode(MODE.LOGIN,false);
     }

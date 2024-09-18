@@ -1,6 +1,7 @@
 export const enum TEXTSTYLE{
-    ACCOUNT_INPUT,
+    INPUT,
+    MESSAGE_W,
+    MESSAGE_B,
+    TITLE,
     ACCOUNT,
-    MESSAGE,
-    TITLE_MENU,
 }
