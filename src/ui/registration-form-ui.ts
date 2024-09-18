@@ -19,25 +19,18 @@ export class RegistrationFormUi extends ModalFormUi{
     private inputConfig=[
         {
             key: i18next.t("menu:username"),
-            containerX: 480,
             containerY: 190,
-            bgX: -116,
-            bgY: -38,
             type: 'text',
             placeholder: i18next.t("menu:inputUsername")
         },
         {
             key: i18next.t("menu:password"),
-            containerX: 480,
             containerY: 260,
-            bgX: -116,
-            bgY: -38,
             type: 'password',
             placeholder: i18next.t("menu:inputPassword")
         },
         {
             key: i18next.t("menu:repassword"),
-            containerX: 480,
             containerY: 330,
             bgX: -116,
             bgY: -38,
@@ -46,7 +39,6 @@ export class RegistrationFormUi extends ModalFormUi{
         },
         {
             key: i18next.t("menu:email"),
-            containerX: 480,
             containerY: 330,
             bgX: -116,
             bgY: -38,
@@ -87,6 +79,7 @@ export class RegistrationFormUi extends ModalFormUi{
         const field1 = this.getField('inputs')!;
         const field2 = this.getField('btns')!;
 
+        //inputs
         for(const item of field1){
             const config = this.inputConfig.find(config => config.key === item);
             if(config){
@@ -97,7 +90,7 @@ export class RegistrationFormUi extends ModalFormUi{
                     fontSize:'16px',
                     placeholder:config.placeholder
                 });
-                const label = addText(this.scene, config.bgX, config.bgY, item, TEXTSTYLE.ACCOUNT);
+                const label = addText(this.scene, 0,0, item, TEXTSTYLE.ACCOUNT);
                 
                 inputContainer.add(inputBg);
                 inputContainer.add(input);

@@ -5,13 +5,12 @@ import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager{
     private scene: InGameScene;
-
     private modeCache: Map<MODE, Mode> = new Map();
 
     constructor(scene: InGameScene) {
         this.scene = scene;
     }
-
+    
     setMode(mode: MODE,isChain:boolean,data?: any): void {
         const newMode = this.getCacheMode(mode,data);
 
@@ -40,22 +39,14 @@ export class ModeManager{
 
     private createMode(mode:MODE,data?:any):Mode | null{
         switch (mode) {
-            case MODE.LOGIN:
-                return new LoginMode(this.scene);
-            case MODE.REGISTRATION:
-                return new RegistrationMode(this.scene);
-            case MODE.MESSAGE:
-                return new MessageMode(this.scene);
-            case MODE.TITLE:
-                return new TitleMode(this.scene);
-            case MODE.WAITING:
-                return new WaitMode(this.scene);
-            case MODE.CLOSET:
-                return new ClosetMode(this.scene);
-            case MODE.TUTORIAL:
-                return new TutorialMode(this.scene);
-            default:
-                return null;
+            case MODE.LOGIN: return new LoginMode(this.scene);
+            case MODE.REGISTRATION: return new RegistrationMode(this.scene);
+            case MODE.MESSAGE: return new MessageMode(this.scene);
+            case MODE.TITLE: return new TitleMode(this.scene);
+            case MODE.WAITING: return new WaitMode(this.scene);
+            case MODE.CLOSET: return new ClosetMode(this.scene);
+            case MODE.TUTORIAL: return new TutorialMode(this.scene);
+            default: return null;
         }
     }
 }

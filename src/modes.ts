@@ -13,12 +13,12 @@ import { TitleFormUi } from "./ui/title-form-ui";
 import { ClosetFormUi } from "./ui/closet-form-ui";
 
 export class LoginMode extends Mode{
-    private loginFormUi: LoginFormUi;
+    private loginFormUi!: LoginFormUi;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.loginFormUi = scene.ui.getManger(LoginFormUi);
         this.whitelistkeyboard = [];
+        this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
     }
 
     enter(): void {
@@ -35,12 +35,13 @@ export class LoginMode extends Mode{
 }
 
 export class RegistrationMode extends Mode{
-    private registrationFormUi: RegistrationFormUi;
+    private registrationFormUi!: RegistrationFormUi;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
         this.whitelistkeyboard = [];
+        this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
+
     }
 
     enter(): void {
@@ -55,19 +56,21 @@ export class RegistrationMode extends Mode{
 }
 
 export class MessageMode extends Mode{
-    private messageFormUi: MessageFormUi;
-    private loginFormUi: LoginFormUi;
-    private registrationFormUi: RegistrationFormUi;
+    private messageFormUi!: MessageFormUi;
+    private loginFormUi!: LoginFormUi;
+    private registrationFormUi!: RegistrationFormUi;
     private queue=[];
     private currentIdx!:number;
-    private modeManager:ModeManager;
+    private modeManager!:ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.messageFormUi = scene.ui.getManger(MessageFormUi);
-        this.loginFormUi = scene.ui.getManger(LoginFormUi);
-        this.registrationFormUi = scene.ui.getManger(RegistrationFormUi);
+
+        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+        this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
+        this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+
         this.whitelistkeyboard = [
             KEYBOARD.SELECT,
         ];
@@ -122,15 +125,18 @@ export class MessageMode extends Mode{
 }
 
 export class TitleMode extends Mode{
-    private titleFormUi: TitleFormUi;
+    private titleFormUi!: TitleFormUi;
     constructor(scene:InGameScene){
         super(scene);
+
+        this.titleFormUi = this.scene.ui.getManger(TitleFormUi);
+
         this.whitelistkeyboard = [
             KEYBOARD.SELECT,
             KEYBOARD.UP,
             KEYBOARD.DOWN
         ];
-        this.titleFormUi = scene.ui.getManger(TitleFormUi);
+
     }
 
     enter(data:any): void{
@@ -153,14 +159,15 @@ export class TitleMode extends Mode{
 }
 
 export class WaitMode extends Mode{
-    private waitFormUi: WaitFormUi;
-    private modeManager:ModeManager;
+    private waitFormUi!: WaitFormUi;
+    private modeManager!:ModeManager;
     constructor(scene:InGameScene){
         super(scene);
-        this.whitelistkeyboard = [];
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.waitFormUi = scene.ui.getManger(WaitFormUi);
 
+        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+        this.waitFormUi = this.scene.ui.getManger(WaitFormUi);
+
+        this.whitelistkeyboard = [];
     }
 
     enter(data?: any): void {
@@ -177,16 +184,18 @@ export class WaitMode extends Mode{
 }
 
 export class ClosetMode extends Mode{
-    private messageFormUi: MessageFormUi;
-    private closetFormUi: ClosetFormUi;
-    private modeManager: ModeManager;
+    private messageFormUi!: MessageFormUi;
+    private closetFormUi!: ClosetFormUi;
+    private modeManager!: ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.whitelistkeyboard=[];
+
         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.messageFormUi = scene.ui.getManger(MessageFormUi);
-        this.closetFormUi = scene.ui.getManger(ClosetFormUi);
+        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+        this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
+
+        this.whitelistkeyboard=[];
     }
 
     enter(data?: any): void {
@@ -203,24 +212,28 @@ export class ClosetMode extends Mode{
 }
 
 export class TutorialMode extends Mode{
-    private messageFormUi: MessageFormUi;
-    private closetFormUi: ClosetFormUi;
-    private modeManager: ModeManager;
+    private messageFormUi!: MessageFormUi;
+    private closetFormUi!: ClosetFormUi;
+    private modeManager!: ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.whitelistkeyboard=[];
+
         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.messageFormUi = scene.ui.getManger(MessageFormUi);
-        this.closetFormUi = scene.ui.getManger(ClosetFormUi);
+        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+        this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
+        
+        this.whitelistkeyboard=[];
     }
 
     enter(data?: any): void {
         this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:welcome1"),i18next.t("message:welcome2"),i18next.t("message:question1")]);
     }   
+
     exit(): void {
         
     }
+
     actionInput(key: KEYBOARD): void {
         
     }

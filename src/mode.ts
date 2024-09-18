@@ -1,8 +1,10 @@
 import { KEYBOARD } from "./enums/keyboard";
 import { InGameScene } from "./scenes/ingame-scene";
+import { UiManager } from "./ui/ui-manger";
 
 export abstract class Mode{
-    private scene:InGameScene;
+    protected scene:InGameScene;
+    protected ui!:UiManager;
     public whitelistkeyboard:KEYBOARD[]=[];
 
     constructor(scene:InGameScene){
