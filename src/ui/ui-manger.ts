@@ -13,7 +13,7 @@ export function addWindow(scene: InGameScene, texture:TEXTURE,x: number, y: numb
 
 export function addImage(scene:InGameScene,texture:TEXTURE,x: number, y: number, width: number, height: number){
     const ret = scene.add.image(x,y,texture);
-
+    
     ret.setDisplaySize(width,height);
 
     return ret;
@@ -58,6 +58,14 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
             break;
         case TEXTSTYLE.MESSAGE_W: 
             config.fontSize = '64px'; 
+            config.color = '#4b4b4b';
+            break;
+        case TEXTSTYLE.MESSAGE_B:
+            config.fontSize = '64px'; 
+            config.color = '#ffffff';
+            break;
+        case TEXTSTYLE.INPUT:
+            config.fontSize = '18px'; 
             config.color = '#4b4b4b';
             break;
     }

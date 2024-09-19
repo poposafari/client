@@ -32,7 +32,6 @@ export class LoginFormUi extends ModalFormUi{
         console.log(field1);
         //inputs
         for (const item of field1!) {
-            console.log(item);
             const inputContainer = this.scene.add.container(item.x,item.y);
             const inputBg = addWindow(this.scene, TEXTURE.INPUT_0, 0, 0, item.w, item.h);
             const input = addTextInput(this.scene, 0, 0, item.w-10, item.h, TEXTSTYLE.INPUT, {

@@ -1,6 +1,7 @@
 import { TEXTSTYLE } from "../enums/textstyle";
 import { TEXTURE } from "../enums/texture";
 import { InGameScene } from "../scenes/ingame-scene";
+import { messageBoxConfig } from "./config";
 import { addImage, addText, addWindow, UiManager } from "./ui-manger";
 
 export class MessageFormUi extends UiManager{
@@ -14,19 +15,20 @@ export class MessageFormUi extends UiManager{
 
     setup(): void {
         const ui = this.getUi();
+        const field = messageBoxConfig;
 
-        this.messageContainer = this.scene.add.container(0,0);
-        const messageBg = addWindow(this.scene,TEXTURE.MESSAGE,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4+200,800,100);
-        this.messageText = addText(this.scene,this.scene.game.canvas.width/4-380,this.scene.game.canvas.height/4+170,"",TEXTSTYLE.MESSAGE);
-        
+        this.messageContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
+        const messageBg = addWindow(this.scene,TEXTURE.MESSAGE,field.bx,field.by,field.bw,field.bh);
+        this.messageText = addText(this.scene,field.tx,field.ty,"",TEXTSTYLE.MESSAGE_W);
+        this.messageText.setOrigin(0,0);
         this.messageContainer.add(messageBg);
         this.messageContainer.add(this.messageText);
         
         this.messageContainer.setVisible(false);
         ui.add(this.messageContainer);
 
-        this.messageEndMarkContainer = this.scene.add.container(0,0);
-        const messageEndMark = addImage(this.scene,TEXTURE.MESSAGE_MARK,this.scene.game.canvas.width/4+376,this.scene.game.canvas.height/4+230,20,20);
+        this.messageEndMarkContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
+        const messageEndMark = addImage(this.scene,TEXTURE.MESSAGE_MARK,field.ex,field.ey,field.ew,field.eh);
         this.messageEndMarkContainer.add(messageEndMark);
         this.messageEndMarkContainer.setVisible(false);
         ui.add(this.messageEndMarkContainer);
@@ -46,6 +48,7 @@ export class MessageFormUi extends UiManager{
             }
 
             if (index < textArray.length) {
+                console.log(this.messageText);
                 this.messageText.text += textArray[index];
                 index++;
 

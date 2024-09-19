@@ -26,14 +26,14 @@ export class ModalFormUi extends UiManager{
     show(): void {
         this.modalContainer.setVisible(true);
 
-        this.modalContainer.y += 24;
+        this.modalContainer.y += 48;
         this.modalContainer.setAlpha(0);
   
         this.scene.tweens.add({
           targets: this.modalContainer,
           duration: 700,
           ease: "Sine.easeInOut",
-          y: "-=24",
+          y: "-=48",
           alpha: 1
         });
         
