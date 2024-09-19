@@ -41,7 +41,7 @@ export class ModalFormUi extends UiManager{
 
     clean():void{
         this.modalContainer.setVisible(false);
-        this.modalContainer.y = 0;
+        this.modalContainer.y = this.scene.game.canvas.height/4;
     }
 
     adjustSize(mode:MODE){
