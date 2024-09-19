@@ -6,6 +6,7 @@ import { addText, addWindow, UiManager } from "./ui-manger";
 import { TEXTSTYLE } from "../enums/textstyle";
 import { TEXTURE } from "../enums/texture";
 import { MODE } from "../enums/mode";
+import { lobbyMenuConfig, lobbyTitleConfig } from "./config";
 
 export class TitleFormUi extends UiManager{
     private titleContainer!:Phaser.GameObjects.Container;
@@ -16,25 +17,6 @@ export class TitleFormUi extends UiManager{
     private choiceStatus!: number;
     private modeManger: ModeManager;
 
-    private menuConfig=[
-        {
-            key: i18next.t("menu:startGame"),
-            containerY: 245,
-        },
-        {
-            key: i18next.t("menu:startNewGame"),
-            containerY: 300,
-        },
-        {
-            key: i18next.t("menu:setting"),
-            containerY: 355,
-        },
-        {
-            key: i18next.t("menu:logout"),
-            containerY: 410,
-        },
-    ];
-
     constructor(scene:InGameScene){
         super(scene);
         this.modeManger = ServiceLocator.get<ModeManager>('mode-manager');
@@ -42,30 +24,28 @@ export class TitleFormUi extends UiManager{
 
     setup(): void {
         const ui = this.getUi();
-        const field = this.getField();
+        const field1 = lobbyTitleConfig
+        const field2 = lobbyMenuConfig;
 
         this.choiceStatus = 0;
 
-        this.titleContainer = this.scene.add.container(0,0);
-        const titleBg = addWindow(this.scene,TEXTURE.WINDOW_0,this.scene.game.canvas.width/4,this.scene.game.canvas.height/4-200,200,100);
+        this.titleContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
+        const titleBg = addWindow(this.scene,TEXTURE.WINDOW_0,field1.bx,field1.by,field1.bw,field1.bh);
         this.titleContainer.add(titleBg);
         this.titleContainer.setVisible(false);
         ui.add(this.titleContainer);
 
-        for(const item of field){
-            const config = this.menuConfig.find(config => config.key === item);
-            if(config){
-                const btnContainer = this.scene.add.container(480,config.containerY);
-                const btnBg = addWindow(this.scene,TEXTURE.WINDOW_2,0,0, 280, 50);
-                const btnText = addText(this.scene,0,0,item,TEXTSTYLE.TITLE_MENU);
-                btnText.setOrigin(0.5,0.5);
+        for(const item of field2){
+            const btnContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
+            const btnBg = addWindow(this.scene,TEXTURE.WINDOW_2,item.bx,item.by,item.bw,item.bh);
+            const btnText = addText(this.scene,item.tx,item.ty,item.content,TEXTSTYLE.TITLE);
+            btnText.setOrigin(0.5,0.5);
 
-                this.btns.push(btnBg);
-                btnContainer.add(btnBg);
-                btnContainer.add(btnText);
-                btnContainer.setVisible(false);
-                this.btnContainers.push(btnContainer);
-            }
+            this.btns.push(btnBg);
+            btnContainer.add(btnBg);
+            btnContainer.add(btnText);
+            btnContainer.setVisible(false);
+            this.btnContainers.push(btnContainer);
         }
         ui.add(this.btnContainers);
     }

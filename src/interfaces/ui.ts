@@ -30,3 +30,30 @@ export interface UiMessage{
     ew:number,
     eh:number,
 }
+
+export interface UiBox{
+    bx:number,
+    by:number,
+    bw:number,
+    bh:number,
+    tx:number,
+    ty:number,
+    content:string
+}
+
+export interface UiLobbyTitle{
+    bx:number,
+    by:number,
+    bw:number,
+    bh:number,
+}
+
+export interface UiLobbyMenu{
+    bx:number,
+    by:number,
+    bw:number,
+    bh:number,
+    tx:number,
+    ty:number,
+    content:string
+}
