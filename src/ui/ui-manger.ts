@@ -68,6 +68,10 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
             config.fontSize = '18px'; 
             config.color = '#4b4b4b';
             break;
+        case TEXTSTYLE.WAIT:
+            config.fontSize = '52px';
+            config.color = '#ffffff';
+            break;
     }
 
     return config;

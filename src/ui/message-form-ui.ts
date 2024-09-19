@@ -48,7 +48,6 @@ export class MessageFormUi extends UiManager{
             }
 
             if (index < textArray.length) {
-                console.log(this.messageText);
                 this.messageText.text += textArray[index];
                 index++;
 

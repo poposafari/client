@@ -4,4 +4,5 @@ export const enum TEXTSTYLE{
     MESSAGE_B,
     TITLE,
     ACCOUNT,
+    WAIT
 }

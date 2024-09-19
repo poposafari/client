@@ -29,7 +29,6 @@ export class LoginFormUi extends ModalFormUi{
         const field1 = loginInputsConfig;
         const field2 = loginBtnsConfig;
 
-        console.log(field1);
         //inputs
         for (const item of field1!) {
             const inputContainer = this.scene.add.container(item.x,item.y);

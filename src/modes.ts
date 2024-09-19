@@ -9,7 +9,7 @@ import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
 import { ServiceLocator } from "./utils/service-locator";
 import { WaitFormUi } from "./ui/wait-form-ui";
-import { TitleFormUi } from "./ui/title-form-ui";
+import { TitleFormUi } from "./ui/lobby-form-ui";
 import { ClosetFormUi } from "./ui/closet-form-ui";
 
 export class LoginMode extends Mode{

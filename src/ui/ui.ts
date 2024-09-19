@@ -3,7 +3,7 @@ import { ClosetFormUi } from "./closet-form-ui";
 import { LoginFormUi } from "./login-form-ui";
 import { MessageFormUi } from "./message-form-ui";
 import { RegistrationFormUi } from "./registration-form-ui";
-import { TitleFormUi } from "./title-form-ui";
+import { TitleFormUi } from "./lobby-form-ui";
 import { UiManager } from "./ui-manger";
 import { WaitFormUi } from "./wait-form-ui";
 
