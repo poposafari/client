@@ -9,64 +9,13 @@ import i18next from "i18next";
 import { ServiceLocator } from "../utils/service-locator";
 import { MODE } from "../enums/mode";
 import { apiPost } from "../utils/api";
+import { registerBtnsConfig, registerInputsConfig } from "./config";
 
 export class RegistrationFormUi extends ModalFormUi{
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[]=[];
     private btns: Phaser.GameObjects.NineSlice[]=[];
     private modeManager: ModeManager;
-
-    private inputConfig=[
-        {
-            key: i18next.t("menu:username"),
-            containerY: 190,
-            type: 'text',
-            placeholder: i18next.t("menu:inputUsername")
-        },
-        {
-            key: i18next.t("menu:password"),
-            containerY: 260,
-            type: 'password',
-            placeholder: i18next.t("menu:inputPassword")
-        },
-        {
-            key: i18next.t("menu:repassword"),
-            containerY: 330,
-            bgX: -116,
-            bgY: -38,
-            type: 'password',
-            placeholder: i18next.t("menu:inputRePassword")
-        },
-        {
-            key: i18next.t("menu:email"),
-            containerY: 330,
-            bgX: -116,
-            bgY: -38,
-            type: 'text',
-            placeholder: i18next.t("menu:inputEmail")
-        }
-    ];
-
-    private btnConfig=[
-        {
-            key: i18next.t("menu:registerBtn"),
-            containerX: 480,
-            containerY: 380,
-            bgX: 0,
-            bgY: 0,
-            bgWidth: 240,
-            bgHeight: 36
-        },
-        {
-            key: i18next.t("menu:loginBtn"),
-            containerX: 480,
-            containerY: 430,
-            bgX: 0,
-            bgY: 0,
-            bgWidth: 240,
-            bgHeight: 36
-        },
-    ];
 
     constructor(scene:InGameScene){
         super(scene);
@@ -76,46 +25,40 @@ export class RegistrationFormUi extends ModalFormUi{
     setup(): void {
         super.setup();
         super.adjustSize(MODE.REGISTRATION);
-        const field1 = this.getField('inputs')!;
-        const field2 = this.getField('btns')!;
+        const field1 = registerInputsConfig;
+        const field2 = registerBtnsConfig;
 
         //inputs
         for(const item of field1){
-            const config = this.inputConfig.find(config => config.key === item);
-            if(config){
-                const inputContainer = this.scene.add.container(480,config.containerY);
-                const inputBg = addWindow(this.scene,TEXTURE.INPUT_0,0,0,240,36);
-                const input = addTextInput(this.scene,0,0,230,36,TEXTSTYLE.ACCOUNT_INPUT,{
-                    type:config.type,
-                    fontSize:'16px',
-                    placeholder:config.placeholder
-                });
-                const label = addText(this.scene, 0,0, item, TEXTSTYLE.ACCOUNT);
-                
-                inputContainer.add(inputBg);
-                inputContainer.add(input);
-                inputContainer.add(label);
-                inputContainer.setVisible(false);
+            const inputContainer = this.scene.add.container(item.x,item.y);
+            const inputBg = addWindow(this.scene,TEXTURE.INPUT_0,0,0,item.w,item.h);
+            const input = addTextInput(this.scene,0,0,item.w-10,item.h,TEXTSTYLE.INPUT,{
+                type:item.type,
+                fontSize:'16px',
+                placeholder:item.placeholder
+            });
+            const label = addText(this.scene, item.labelX!,item.labelY!,item.label!, TEXTSTYLE.ACCOUNT);
+            
+            inputContainer.add(inputBg);
+            inputContainer.add(input);
+            inputContainer.add(label);
+            inputContainer.setVisible(false);
 
-                this.inputs.push(input);
-                this.inputContainers.push(inputContainer);
-                this.modalContainer.add(inputContainer);
-            }
+            this.inputs.push(input);
+            this.inputContainers.push(inputContainer);
+            this.modalContainer.add(inputContainer);
         }
 
         for(const item of field2){
-            const config = this.btnConfig.find(config => config.key === item);
-            if(config){
-                const btnContainer = this.scene.add.container(config.containerX, config.containerY);
-                const btnBg = addWindow(this.scene, TEXTURE.BTN_0, config.bgX, config.bgY, config.bgWidth, config.bgHeight);
-                const btnText = addText(this.scene, config.bgX, 0, item, TEXTSTYLE.ACCOUNT);
-                btnText.setOrigin(0.5, 0.5);
+            const btnContainer = this.scene.add.container(item.x, item.y);
+            const btnBg = addWindow(this.scene, TEXTURE.BTN_0,0, 0, item.w, item.h);
+            const btnText = addText(this.scene, 0, 0, item.content, TEXTSTYLE.ACCOUNT);
+            btnText.setOrigin(0.5, 0.5);
 
-                this.btns.push(btnBg);
-                btnContainer.add(btnBg);
-                btnContainer.add(btnText);
-                this.modalContainer.add(btnContainer);
-            }
+            this.btns.push(btnBg);
+            btnContainer.add(btnBg);
+            btnContainer.add(btnText);
+            this.modalContainer.add(btnContainer);
         }
     }
 
