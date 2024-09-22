@@ -39,7 +39,7 @@ export async function initI18n():Promise<void> {
         }, 
     });
 
-    initFonts();
+    await initFonts();
 }
 
 export default i18next;

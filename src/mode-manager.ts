@@ -1,52 +1,38 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { ClosetMode, LoginMode, MessageMode, RegistrationMode, TitleMode, TutorialMode, WaitMode } from "./modes";
+import { LoginMode, RegistrationMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
-export class ModeManager{
+export class ModeManager {
     private scene: InGameScene;
     private modeCache: Map<MODE, Mode> = new Map();
 
     constructor(scene: InGameScene) {
         this.scene = scene;
     }
-    
-    setMode(mode: MODE,isChain:boolean,data?: any): void {
-        const newMode = this.getCacheMode(mode,data);
 
-        if(newMode){
-            if(!isChain){
-                this.scene.modeStack.pop()?.exit();
+    setMode(mode: MODE, data?: any): void {
+        let target = this.getCache(mode);
+
+        if (!target) {
+            switch (mode) {
+                case MODE.LOGIN: target = new LoginMode(this.scene); break;
+                case MODE.REGISTRATION: target = new RegistrationMode(this.scene); break;
+                default: throw new Error("Unknown mode");
             }
-
-            this.scene.modeStack.push(newMode);
-            newMode.enter(data);
+            target.setup();
+            this.setCache(mode, target);
         }
+
+        this.scene.currentMode = target;
+        target.enter(data);
     }
 
-    private getCacheMode(mode:MODE,data?:any):Mode{
-        if (this.modeCache.has(mode)) {
-            return this.modeCache.get(mode)!;
-        }
-
-        const newMode = this.createMode(mode, data);
-        if (newMode) {
-            this.modeCache.set(mode, newMode);
-        }
-
-        return newMode!;
+    setCache(key: MODE, value: Mode) {
+        this.modeCache.set(key, value);
     }
 
-    private createMode(mode:MODE,data?:any):Mode | null{
-        switch (mode) {
-            case MODE.LOGIN: return new LoginMode(this.scene);
-            case MODE.REGISTRATION: return new RegistrationMode(this.scene);
-            case MODE.MESSAGE: return new MessageMode(this.scene);
-            case MODE.TITLE: return new TitleMode(this.scene);
-            case MODE.WAITING: return new WaitMode(this.scene);
-            case MODE.CLOSET: return new ClosetMode(this.scene);
-            case MODE.TUTORIAL: return new TutorialMode(this.scene);
-            default: return null;
-        }
+    private getCache(mode: MODE): Mode | null {
+        return this.modeCache.get(mode) || null;
     }
 }

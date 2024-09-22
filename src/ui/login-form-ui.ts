@@ -77,27 +77,27 @@ export class LoginFormUi extends ModalFormUi{
         }
         
         this.btns[0].on("pointerdown",()=>{
-            if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
-                this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError1")]);
-                return;
-            }
+            // if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
+            //     this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError1")]);
+            //     return;
+            // }
 
-            this.modeManager.setMode(MODE.WAITING,false);
+            // this.modeManager.setMode(MODE.WAITING,false);
 
-            apiPost("/account/login",{"username":this.inputs[0].text,"password":this.inputs[1].text})
-                .then((value)=>{
-                    if(value.data){this.modeManager.setMode(MODE.TITLE,false,value.data);}
-                    else{this.modeManager.setMode(MODE.TITLE,false,null);}
-                })
-                .catch((value)=>{
-                    if(value.status === 401){
-                        this.modeManager.setMode(MODE.LOGIN,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError2")]);
-                    }else{
-                        this.modeManager.setMode(MODE.LOGIN,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
-                    }
-                })
+            // apiPost("/account/login",{"username":this.inputs[0].text,"password":this.inputs[1].text})
+            //     .then((value)=>{
+            //         if(value.data){this.modeManager.setMode(MODE.TITLE,false,value.data);}
+            //         else{this.modeManager.setMode(MODE.TITLE,false,null);}
+            //     })
+            //     .catch((value)=>{
+            //         if(value.status === 401){
+            //             this.modeManager.setMode(MODE.LOGIN,false);
+            //             this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError2")]);
+            //         }else{
+            //             this.modeManager.setMode(MODE.LOGIN,false);
+            //             this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
+            //         }
+            //     })
         });
         
         this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.REGISTRATION,false);});

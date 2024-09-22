@@ -51,6 +51,4 @@ export class ClosetFormUi extends ModalFormUi{
     getField(){
         return [i18next.t("menu:closetLabel1"),i18next.t("menu:closetLabel2"),i18next.t("menu:closetLabel3")]
     }
-
-
 }

@@ -1,4 +1,3 @@
-import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { MODE } from "../enums/mode";
 import { Mode } from "../mode";
 import { ModeManager } from "../mode-manager";
@@ -8,10 +7,9 @@ import { ServiceLocator } from "../utils/service-locator";
 import { BaseScene } from "./base-scene";
 
 export class InGameScene extends BaseScene{
-    public rexUI!: UIPlugin;
-    public ui!: UI;
+    public ui!: UI; 
     public modeManager!:ModeManager;
-    public modeStack:Mode[] = [];
+    public currentMode!:Mode;
     public inputManager!:InputManager;
 
     constructor(){
@@ -19,17 +17,16 @@ export class InGameScene extends BaseScene{
     }
 
     create(){
+        this.ui = new UI(this);
+        this.add.existing(this.ui);
+        this.ui.setScale(2);
+
         this.modeManager = new ModeManager(this);
         this.inputManager = new InputManager(this);
         
         ServiceLocator.register('mode-manager',this.modeManager);
         ServiceLocator.register('input-manager',this.inputManager);
         
-        this.ui = new UI(this);
-        this.add.existing(this.ui);
-        this.ui.setup();
-        this.ui.setScale(2);
-
         this.modeManager.setMode(MODE.LOGIN,false);
     }
 }
