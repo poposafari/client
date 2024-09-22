@@ -14,7 +14,6 @@ export let waitBoxConfig:UiBox;
 export let lobbyTitleConfig:UiLobbyTitle;
 export let lobbyMenuConfig:UiLobbyMenu[]=[];
 
-// i18next가 초기화된 후에 설정값을 업데이트
 i18next.on('initialized', () => {
     loginInputsConfig = [
         {x: 0, y: -60, w: 240, h: 36, type: 'text', placeholder: i18next.t("menu:username")},

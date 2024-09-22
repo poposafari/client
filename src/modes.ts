@@ -11,230 +11,240 @@ import { ServiceLocator } from "./utils/service-locator";
 import { WaitFormUi } from "./ui/wait-form-ui";
 import { TitleFormUi } from "./ui/lobby-form-ui";
 import { ClosetFormUi } from "./ui/closet-form-ui";
+import { ORDER } from "./enums/order";
 
 export class LoginMode extends Mode{
-    private loginFormUi!: LoginFormUi;
 
     constructor(scene:InGameScene){
         super(scene);
         this.whitelistkeyboard = [];
-        this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
+    }
+
+    setup(): void {
+        this.ui = new LoginFormUi(this.scene);
+        this.ui.setup();
+        this.manager.setCache(MODE.LOGIN,this);
     }
 
     enter(): void {
-        this.loginFormUi.show();
+        this.ui.show();
     }
 
     exit(): void {
-        this.loginFormUi.clean();
+        this.ui.clean();
     }
 
     actionInput(): void {
         console.log('??');
     }
+
+    order(order: ORDER, data?:any): any {
+        switch(order){
+            case ORDER.SUBMIT: return this.submit();
+        }
+    }
+    
+    private submit(){
+        return 0;
+    }
 }
 
 export class RegistrationMode extends Mode{
-    private registrationFormUi!: RegistrationFormUi;
 
     constructor(scene:InGameScene){
         super(scene);
         this.whitelistkeyboard = [];
-        this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
+    }
 
+    setup(): void {
+        this.ui = new RegistrationFormUi(this.scene);
+        this.ui.setup();
+        this.manager.setCache(MODE.REGISTRATION,this);
     }
 
     enter(): void {
-        this.registrationFormUi.show();
+        this.ui.show();
     }
 
     exit(): void {
-        this.registrationFormUi.clean();
+        this.ui.clean();
     }
 
-    actionInput(): void {}
-}
-
-export class MessageMode extends Mode{
-    private messageFormUi!: MessageFormUi;
-    private loginFormUi!: LoginFormUi;
-    private registrationFormUi!: RegistrationFormUi;
-    private queue=[];
-    private currentIdx!:number;
-    private modeManager!:ModeManager;
-
-    constructor(scene:InGameScene){
-        super(scene);
-
-        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
-        this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
-        this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-
-        this.whitelistkeyboard = [
-            KEYBOARD.SELECT,
-        ];
-    }
-
-    enter(data?:[]): void {
-        if(data && Array.isArray(data)){
-            this.queue = data;
-        }
-        this.currentIdx = 0;
-
-        if(this.getModeStack("pre") instanceof LoginMode){
-            this.loginFormUi.blockInputs();
-        }else if(this.getModeStack("pre") instanceof RegistrationMode){
-            this.registrationFormUi.blockInputs();
-        }
-        this.showCurrentMessage();
-    }
-
-    exit(): void {
-        const scene = this.getScene();
-        scene.modeStack.pop();
-        this.messageFormUi.clean();
-    }
-
-    actionInput(key:KEYBOARD): void {
-        if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
-            this.currentIdx++;
-
-            if(this.currentIdx < this.queue.length){
-                this.messageFormUi.clean();
-                this.showCurrentMessage();
-            }else{
-                this.exit();
-                if(this.getModeStack("top") instanceof LoginMode){
-                    this.loginFormUi.unblockInputs();
-                }else if(this.getModeStack("top") instanceof RegistrationMode){
-                    this.registrationFormUi.unblockInputs();
-                }else if(this.getModeStack("top") instanceof TutorialMode){
-                    this.modeManager.setMode(MODE.CLOSET,false);
-                }
-            }
-
+    order(order: ORDER, data?:any): any {
+        switch(order){
+            case ORDER.SUBMIT: return this.submit();
         }
     }
-
-    private showCurrentMessage(){
-        if(this.currentIdx < this.queue.length){
-            this.messageFormUi.show(this.queue[this.currentIdx]);
-        }
+    
+    private submit(){
+        return 0;
     }
 }
 
-export class TitleMode extends Mode{
-    private titleFormUi!: TitleFormUi;
-    constructor(scene:InGameScene){
-        super(scene);
+// export class MessageMode extends Mode{
+//     private messageFormUi!: MessageFormUi;
+//     private loginFormUi!: LoginFormUi;
+//     private registrationFormUi!: RegistrationFormUi;
+//     private queue=[];
+//     private currentIdx!:number;
+//     private modeManager!:ModeManager;
 
-        this.titleFormUi = this.scene.ui.getManger(TitleFormUi);
+//     constructor(scene:InGameScene){
+//         super(scene);
 
-        this.whitelistkeyboard = [
-            KEYBOARD.SELECT,
-            KEYBOARD.UP,
-            KEYBOARD.DOWN
-        ];
+//         this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+//         this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
+//         this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
+//         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
 
-    }
+//         this.whitelistkeyboard = [
+//             KEYBOARD.SELECT,
+//         ];
+//     }
 
-    enter(data:any): void{
-        this.titleFormUi.show(data);
-    }
+//     enter(data?:[]): void {
+//         if(data && Array.isArray(data)){
+//             this.queue = data;
+//         }
+//         this.currentIdx = 0;
 
-    exit(): void{
-        this.titleFormUi.clean();
-    }
+//         if(this.getModeStack("pre") instanceof LoginMode){
+//             this.loginFormUi.blockInputs();
+//         }else if(this.getModeStack("pre") instanceof RegistrationMode){
+//             this.registrationFormUi.blockInputs();
+//         }
+//         this.showCurrentMessage();
+//     }
 
-    actionInput(key: KEYBOARD): void {
-        if(key === KEYBOARD.SELECT){
-            this.titleFormUi.updateMenu();
-        }else if(key === KEYBOARD.UP){
-            this.titleFormUi.updateChoice(true);
-        }else if(key === KEYBOARD.DOWN){
-            this.titleFormUi.updateChoice(false);
-        }
-    }
-}
+//     exit(): void {
+//         const scene = this.getScene();
+//         scene.modeStack.pop();
+//         this.messageFormUi.clean();
+//     }
 
-export class WaitMode extends Mode{
-    private waitFormUi!: WaitFormUi;
-    private modeManager!:ModeManager;
-    constructor(scene:InGameScene){
-        super(scene);
+//     actionInput(key:KEYBOARD): void {
+//         if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
+//             this.currentIdx++;
 
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.waitFormUi = this.scene.ui.getManger(WaitFormUi);
+//             if(this.currentIdx < this.queue.length){
+//                 this.messageFormUi.clean();
+//                 this.showCurrentMessage();
+//             }else{
+//                 this.exit();
+//                 if(this.getModeStack("top") instanceof LoginMode){
+//                     this.loginFormUi.unblockInputs();
+//                 }else if(this.getModeStack("top") instanceof RegistrationMode){
+//                     this.registrationFormUi.unblockInputs();
+//                 }else if(this.getModeStack("top") instanceof TutorialMode){
+//                     this.modeManager.setMode(MODE.CLOSET,false);
+//                 }
+//             }
 
-        this.whitelistkeyboard = [];
-    }
+//         }
+//     }
 
-    enter(data?: any): void {
-        this.waitFormUi.show();
-    }
+//     private showCurrentMessage(){
+//         if(this.currentIdx < this.queue.length){
+//             this.messageFormUi.show(this.queue[this.currentIdx]);
+//         }
+//     }
+// }
 
-    exit(): void {
-        this.waitFormUi.clean();
-    }
+// export class TitleMode extends Mode{
+//     constructor(scene:InGameScene){
+//         super(scene);
+//     }
 
-    actionInput(key: KEYBOARD): void {
+//     setup(): void {
+//         this.ui = new TitleFormUi(this.scene);
+//         this.ui.setup();
+//     }
+
+//     enter(data:any): void{
+//         this.ui.show();
+//     }
+
+//     exit(): void{
+//         this.ui.clean();
+//     }
+
+//     order(order: ORDER): void {
         
-    }
-}
+//     }
+// }
 
-export class ClosetMode extends Mode{
-    private messageFormUi!: MessageFormUi;
-    private closetFormUi!: ClosetFormUi;
-    private modeManager!: ModeManager;
+// export class WaitMode extends Mode{
+//     constructor(scene:InGameScene){
+//         super(scene);
+//     }
 
-    constructor(scene:InGameScene){
-        super(scene);
+//     setup(): void {
+//         this.ui = new WaitFormUi(this.scene);
+//         this.ui.setup();
+//     }
 
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
-        this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
+//     enter(data?: any): void {
+//         this.ui.show();
+//     }
 
-        this.whitelistkeyboard=[];
-    }
+//     exit(): void {
+//         this.ui.clean();
+//     }
 
-    enter(data?: any): void {
-        this.closetFormUi.show();
-    }
-
-    exit(): void {
-        this.closetFormUi.clean();
-    }
-
-    actionInput(key: KEYBOARD): void {
+//     order(order: ORDER): void {
         
-    }
-}
+//     }
+// }
 
-export class TutorialMode extends Mode{
-    private messageFormUi!: MessageFormUi;
-    private closetFormUi!: ClosetFormUi;
-    private modeManager!: ModeManager;
+// export class ClosetMode extends Mode{
 
-    constructor(scene:InGameScene){
-        super(scene);
+//     constructor(scene:InGameScene){
+//         super(scene);
 
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
-        this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
-        this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
+//         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+//         this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+//         this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
+
+//         this.whitelistkeyboard=[];
+//     }
+
+//     enter(data?: any): void {
+//         this.closetFormUi.show();
+//     }
+
+//     exit(): void {
+//         this.closetFormUi.clean();
+//     }
+
+//     actionInput(key: KEYBOARD): void {
         
-        this.whitelistkeyboard=[];
-    }
+//     }
+// }
 
-    enter(data?: any): void {
-        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:welcome1"),i18next.t("message:welcome2"),i18next.t("message:question1")]);
-    }   
+// export class TutorialMode extends Mode{
+//     private messageFormUi!: MessageFormUi;
+//     private closetFormUi!: ClosetFormUi;
+//     private modeManager!: ModeManager;
 
-    exit(): void {
+//     constructor(scene:InGameScene){
+//         super(scene);
+
+//         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+//         this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
+//         this.closetFormUi = this.scene.ui.getManger(ClosetFormUi);
         
-    }
+//         this.whitelistkeyboard=[];
+//     }
 
-    actionInput(key: KEYBOARD): void {
+//     enter(data?: any): void {
+//         this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:welcome1"),i18next.t("message:welcome2"),i18next.t("message:question1")]);
+//     }
+
+//     exit(): void {
+
+//     }
+
+//     actionInput(key: KEYBOARD): void {
         
-    }
-}
+//     }
+// }

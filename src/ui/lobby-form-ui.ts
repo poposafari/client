@@ -93,9 +93,4 @@ export class TitleFormUi extends UiManager{
                 break;
         }
     }
-
-    getField(){
-        return [i18next.t("menu:startGame"),i18next.t("menu:startNewGame"),i18next.t("menu:setting"),i18next.t("menu:logout")];
-    }
-    
 }
