@@ -57,3 +57,8 @@ export interface UiLobbyMenu{
     ty:number,
     content:string
 }
+
+export interface Message{
+    type:string,
+    content:string[]
+}

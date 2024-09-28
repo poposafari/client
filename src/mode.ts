@@ -7,7 +7,7 @@ import { ServiceLocator } from "./utils/service-locator";
 
 export abstract class Mode{
     protected scene:InGameScene;
-    protected ui!:UiManager;
+    public ui!:UiManager;
     protected manager!:ModeManager;
     public whitelistkeyboard:KEYBOARD[]=[];
 
@@ -18,7 +18,7 @@ export abstract class Mode{
     abstract setup():void;
     abstract enter(data?:any):void;
     abstract exit(): void;
-    abstract order(order:ORDER): void;
+    abstract order(order:ORDER,data?:any): any;
 
     getScene(){
         return this.scene;

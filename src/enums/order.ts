@@ -1,3 +1,6 @@
 export const enum ORDER{
-    SUBMIT,
+    Submit,
+    ChangeMode,
+    Message,
+    Finish,
 }

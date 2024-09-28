@@ -10,6 +10,7 @@ export class InGameScene extends BaseScene{
     public ui!: UI; 
     public modeManager!:ModeManager;
     public currentMode!:Mode;
+    public modeStack:Mode[]=[];
     public inputManager!:InputManager;
 
     constructor(){
@@ -19,6 +20,7 @@ export class InGameScene extends BaseScene{
     create(){
         this.ui = new UI(this);
         this.add.existing(this.ui);
+        this.ui.setup();
         this.ui.setScale(2);
 
         this.modeManager = new ModeManager(this);
@@ -26,7 +28,7 @@ export class InGameScene extends BaseScene{
         
         ServiceLocator.register('mode-manager',this.modeManager);
         ServiceLocator.register('input-manager',this.inputManager);
-        
+    
         this.modeManager.setMode(MODE.LOGIN,false);
     }
 }

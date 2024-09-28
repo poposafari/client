@@ -36,18 +36,18 @@ export class InputManager{
         if(key && this.keyMappings[key]){
             if(this.isDirectionKey(key)){
                 if(this.isDirectionKeyDown() && this.isKeyAllowedByTopMode(key,topMode)){
-                    topMode.actionInput(key);
+                    topMode.ui.actionInput(key);
                 }
             }else{
                 if(this.isKeyJustDown(key) && this.isKeyAllowedByTopMode(key,topMode)){
-                    topMode.actionInput(key);
+                    topMode.ui.actionInput(key);
                 }
             }
         }
     }
 
     private isKeyAllowedByTopMode(key: KEYBOARD, mode: Mode): boolean {
-        return mode.whitelistkeyboard.includes(key);
+        return mode.ui.whitelistKey.includes(key);
     }
 
     private getKeyMapping(keyCode: number): KEYBOARD | undefined {
