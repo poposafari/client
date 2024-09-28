@@ -1,6 +1,6 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { LoginMode, RegistrationMode } from "./modes";
+import { LoginMode, MessageMode, RegistrationMode, WaitMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager {
@@ -11,20 +11,27 @@ export class ModeManager {
         this.scene = scene;
     }
 
-    setMode(mode: MODE, data?: any): void {
+    setMode(mode: MODE, isChain:boolean, data?: any): void {
         let target = this.getCache(mode);
 
         if (!target) {
             switch (mode) {
                 case MODE.LOGIN: target = new LoginMode(this.scene); break;
                 case MODE.REGISTRATION: target = new RegistrationMode(this.scene); break;
+                case MODE.MESSAGE: target = new MessageMode(this.scene); break;
+                case MODE.WAITING: target = new WaitMode(this.scene); break;
                 default: throw new Error("Unknown mode");
             }
             target.setup();
             this.setCache(mode, target);
         }
 
+        if(!isChain){
+            this.scene.modeStack.pop()?.exit();
+        }
+
         this.scene.currentMode = target;
+        this.scene.modeStack.push(target);
         target.enter(data);
     }
 

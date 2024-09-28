@@ -10,6 +10,7 @@ import { ServiceLocator } from "../utils/service-locator";
 import { MODE } from "../enums/mode";
 import { apiPost } from "../utils/api";
 import { registerBtnsConfig, registerInputsConfig } from "./config";
+import { ORDER } from "../enums/order";
 
 export class RegistrationFormUi extends ModalFormUi{
     private inputContainers:Phaser.GameObjects.Container[]=[];
@@ -127,7 +128,7 @@ export class RegistrationFormUi extends ModalFormUi{
                     }
                 });
         });
-        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.LOGIN,false);});
+        this.btns[1].on("pointerdown",()=>{this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});});
     }
 
     clean(): void {  

@@ -1,29 +1,49 @@
-import i18next from "i18next";
-import { KEYBOARD } from "./enums/keyboard";
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { ModeManager } from "./mode-manager";
 import { InGameScene } from "./scenes/ingame-scene";
 import { LoginFormUi } from "./ui/login-form-ui";
+import { ORDER } from "./enums/order";
 import { MessageFormUi } from "./ui/message-form-ui";
 import { RegistrationFormUi } from "./ui/registration-form-ui";
-import { ServiceLocator } from "./utils/service-locator";
+import { ModeSet } from "./interfaces/mode";
+import { apiPost } from "./utils/api";
 import { WaitFormUi } from "./ui/wait-form-ui";
-import { TitleFormUi } from "./ui/lobby-form-ui";
-import { ClosetFormUi } from "./ui/closet-form-ui";
-import { ORDER } from "./enums/order";
+
+export class MessageMode extends Mode{
+    constructor(scene:InGameScene){
+        super(scene);
+    }
+
+    setup(): void {
+        this.ui = this.scene.ui.getManger(MessageFormUi);
+        this.ui.setMode(this);
+    }
+
+    enter(data?: any): void {
+        this.ui.show(data);
+    }
+
+    exit(): void {
+        this.scene.modeStack.pop();
+        this.ui.clean();
+    }
+
+    order(order: ORDER, data?: any): void {
+        switch(order){
+            case ORDER.Finish: this.exit(); break;
+        }
+    }
+}
 
 export class LoginMode extends Mode{
 
     constructor(scene:InGameScene){
         super(scene);
-        this.whitelistkeyboard = [];
     }
 
     setup(): void {
-        this.ui = new LoginFormUi(this.scene);
-        this.ui.setup();
-        this.manager.setCache(MODE.LOGIN,this);
+        this.ui = this.scene.ui.getManger(LoginFormUi);
+        this.ui.setMode(this);
     }
 
     enter(): void {
@@ -31,21 +51,24 @@ export class LoginMode extends Mode{
     }
 
     exit(): void {
+        this.scene.modeStack.pop();
         this.ui.clean();
     }
 
-    actionInput(): void {
-        console.log('??');
-    }
-
-    order(order: ORDER, data?:any): any {
+    async order(order: ORDER, data?:any): Promise<any> {
         switch(order){
-            case ORDER.SUBMIT: return this.submit();
+            case ORDER.Submit: return await this.submit(data);
+            case ORDER.ChangeMode: return this.changeMode(data);
         }
     }
     
-    private submit(){
-        return 0;
+    private async submit(data: any): Promise<any> {
+        try { return await apiPost("account/login", { "username": data[0], "password": data[1] });} 
+        catch (error) { return error;}
+    }
+
+    private changeMode(val:ModeSet){
+        this.manager.setMode(val.mode,val.isChain,val.data);
     }
 }
 
@@ -53,13 +76,11 @@ export class RegistrationMode extends Mode{
 
     constructor(scene:InGameScene){
         super(scene);
-        this.whitelistkeyboard = [];
     }
 
     setup(): void {
-        this.ui = new RegistrationFormUi(this.scene);
-        this.ui.setup();
-        this.manager.setCache(MODE.REGISTRATION,this);
+        this.ui = this.scene.ui.getManger(RegistrationFormUi);
+        this.ui.setMode(this);
     }
 
     enter(): void {
@@ -72,83 +93,43 @@ export class RegistrationMode extends Mode{
 
     order(order: ORDER, data?:any): any {
         switch(order){
-            case ORDER.SUBMIT: return this.submit();
+            case ORDER.Submit: return this.submit();
+            case ORDER.ChangeMode: return this.changeMode(data);
         }
     }
     
     private submit(){
         return 0;
     }
+
+    private changeMode(val:ModeSet){
+        this.manager.setMode(val.mode,val.isChain,val.data);
+    }
 }
 
-// export class MessageMode extends Mode{
-//     private messageFormUi!: MessageFormUi;
-//     private loginFormUi!: LoginFormUi;
-//     private registrationFormUi!: RegistrationFormUi;
-//     private queue=[];
-//     private currentIdx!:number;
-//     private modeManager!:ModeManager;
+export class WaitMode extends Mode{
+    constructor(scene:InGameScene){
+        super(scene);
+    }
 
-//     constructor(scene:InGameScene){
-//         super(scene);
+    setup(): void {
+        this.ui = this.scene.ui.getManger(WaitFormUi);
+        this.ui.setup();
+    }
 
-//         this.messageFormUi = this.scene.ui.getManger(MessageFormUi);
-//         this.loginFormUi = this.scene.ui.getManger(LoginFormUi);
-//         this.registrationFormUi = this.scene.ui.getManger(RegistrationFormUi);
-//         this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
+    enter(data?: any): void {
+        this.ui.show();
+    }
 
-//         this.whitelistkeyboard = [
-//             KEYBOARD.SELECT,
-//         ];
-//     }
+    exit(): void {
+        this.ui.clean();
+    }
 
-//     enter(data?:[]): void {
-//         if(data && Array.isArray(data)){
-//             this.queue = data;
-//         }
-//         this.currentIdx = 0;
+    order(order: ORDER): void {
+        
+    }
+}
 
-//         if(this.getModeStack("pre") instanceof LoginMode){
-//             this.loginFormUi.blockInputs();
-//         }else if(this.getModeStack("pre") instanceof RegistrationMode){
-//             this.registrationFormUi.blockInputs();
-//         }
-//         this.showCurrentMessage();
-//     }
-
-//     exit(): void {
-//         const scene = this.getScene();
-//         scene.modeStack.pop();
-//         this.messageFormUi.clean();
-//     }
-
-//     actionInput(key:KEYBOARD): void {
-//         if(key === KEYBOARD.SELECT && this.messageFormUi.getMessageStatus()){
-//             this.currentIdx++;
-
-//             if(this.currentIdx < this.queue.length){
-//                 this.messageFormUi.clean();
-//                 this.showCurrentMessage();
-//             }else{
-//                 this.exit();
-//                 if(this.getModeStack("top") instanceof LoginMode){
-//                     this.loginFormUi.unblockInputs();
-//                 }else if(this.getModeStack("top") instanceof RegistrationMode){
-//                     this.registrationFormUi.unblockInputs();
-//                 }else if(this.getModeStack("top") instanceof TutorialMode){
-//                     this.modeManager.setMode(MODE.CLOSET,false);
-//                 }
-//             }
-
-//         }
-//     }
-
-//     private showCurrentMessage(){
-//         if(this.currentIdx < this.queue.length){
-//             this.messageFormUi.show(this.queue[this.currentIdx]);
-//         }
-//     }
-// }
 
 // export class TitleMode extends Mode{
 //     constructor(scene:InGameScene){
@@ -173,28 +154,6 @@ export class RegistrationMode extends Mode{
 //     }
 // }
 
-// export class WaitMode extends Mode{
-//     constructor(scene:InGameScene){
-//         super(scene);
-//     }
-
-//     setup(): void {
-//         this.ui = new WaitFormUi(this.scene);
-//         this.ui.setup();
-//     }
-
-//     enter(data?: any): void {
-//         this.ui.show();
-//     }
-
-//     exit(): void {
-//         this.ui.clean();
-//     }
-
-//     order(order: ORDER): void {
-        
-//     }
-// }
 
 // export class ClosetMode extends Mode{
 

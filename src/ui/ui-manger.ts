@@ -3,6 +3,9 @@ import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { TEXTURE } from "../enums/texture";
 import { InGameScene } from "../scenes/ingame-scene";
 import { TEXTSTYLE } from "../enums/textstyle";
+import { Mode } from "../mode";
+import { MessageFormUi } from "./message-form-ui";
+import { KEYBOARD } from "../enums/keyboard";
 
 export function addWindow(scene: InGameScene, texture:TEXTURE,x: number, y: number, width: number, height: number): Phaser.GameObjects.NineSlice {  
     const window = scene.add.nineslice(x, y, texture, undefined, width, height, 8, 8, 8, 8);
@@ -80,6 +83,10 @@ function getTextStyle(style:TEXTSTYLE,option?:InputText.IConfig):any{
 export abstract class UiManager{
     protected scene:InGameScene;
     protected bg:Phaser.GameObjects.Image;
+    protected mode!:Mode;
+    protected message!:MessageFormUi;
+
+    public whitelistKey:KEYBOARD[] = [];
 
     constructor(scene:InGameScene){
         this.scene = scene;
@@ -88,8 +95,9 @@ export abstract class UiManager{
     }
     
     abstract setup(): void;
-    abstract show(): void;
+    abstract show(data?:any): void;
     abstract clean(): void;
+    abstract actionInput(key:KEYBOARD): void;
 
     setBackground(texture:TEXTURE){
         this.bg.setVisible(true);
@@ -98,5 +106,9 @@ export abstract class UiManager{
 
     getUi(){
         return this.scene.ui;
+    }
+
+    setMode(mode:Mode){
+        this.mode = mode;
     }
 }

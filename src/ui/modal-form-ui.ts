@@ -1,9 +1,11 @@
+import { KEYBOARD } from "../enums/keyboard";
 import { MODE } from "../enums/mode";
 import { TEXTURE } from "../enums/texture";
 import { InGameScene } from "../scenes/ingame-scene";
 import { addWindow, UiManager } from "./ui-manger";
 
 export class ModalFormUi extends UiManager{
+
     protected modalContainer!:Phaser.GameObjects.Container;
     protected modalBg!:Phaser.GameObjects.NineSlice;
 
@@ -15,7 +17,7 @@ export class ModalFormUi extends UiManager{
         const ui = this.getUi();
 
         this.modalContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
-
+        
         this.modalBg = addWindow(this.scene,TEXTURE.WINDOW_2_CLICKED,0,0,0,0);
         this.modalContainer.add(this.modalBg);
 
@@ -43,6 +45,8 @@ export class ModalFormUi extends UiManager{
         this.modalContainer.setVisible(false);
         this.modalContainer.y = this.scene.game.canvas.height/4;
     }
+
+    actionInput(key: KEYBOARD): void {}
 
     adjustSize(mode:MODE){
         let width=0,height=0;

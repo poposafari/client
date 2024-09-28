@@ -1,25 +1,20 @@
-import i18next from "i18next";
 import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 import { InGameScene } from "../scenes/ingame-scene";
 import { ModalFormUi } from "./modal-form-ui";
 import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
-import { ModeManager } from "../mode-manager";
 import { MODE } from "../enums/mode";
-import { ServiceLocator } from "../utils/service-locator";
-import { apiPost } from "../utils/api";
-import { loginBtnsConfig,loginInputsConfig } from "./config";
+import { loginBtnsConfig,loginErrorMsg1,loginErrorMsg2,loginInputsConfig } from "./config";
+import { ORDER } from "../enums/order";
 
 export class LoginFormUi extends ModalFormUi{
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[] = [];
     private btns: Phaser.GameObjects.NineSlice[] = [];
-    private modeManager: ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
     }
 
     setup(): void {
@@ -60,7 +55,7 @@ export class LoginFormUi extends ModalFormUi{
             btnContainer.add(btnBg);
             btnContainer.add(btnText);
             this.modalContainer.add(btnContainer);
-        }   
+        }
     }
 
     show(): void {
@@ -76,31 +71,27 @@ export class LoginFormUi extends ModalFormUi{
             item.setInteractive();
         }
         
-        this.btns[0].on("pointerdown",()=>{
-            // if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
-            //     this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError1")]);
-            //     return;
-            // }
+        this.btns[0].on("pointerdown",async ()=>{
+            if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg1});
+                return;
+            }
 
-            // this.modeManager.setMode(MODE.WAITING,false);
-
-            // apiPost("/account/login",{"username":this.inputs[0].text,"password":this.inputs[1].text})
-            //     .then((value)=>{
-            //         if(value.data){this.modeManager.setMode(MODE.TITLE,false,value.data);}
-            //         else{this.modeManager.setMode(MODE.TITLE,false,null);}
-            //     })
-            //     .catch((value)=>{
-            //         if(value.status === 401){
-            //             this.modeManager.setMode(MODE.LOGIN,false);
-            //             this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:loginError2")]);
-            //         }else{
-            //             this.modeManager.setMode(MODE.LOGIN,false);
-            //             this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
-            //         }
-            //     })
+            this.mode.order(ORDER.ChangeMode,{mode:MODE.WAITING,isChain:false})
+            
+            const res = await this.mode.order(ORDER.Submit,[this.inputs[0].text,this.inputs[1].text]);
+            if(res.status === 200){
+                console.log('로그인 성공!');
+            }else if(res.status === 401){
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg2});
+            }else{
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg2});
+            }
         });
         
-        this.btns[1].on("pointerdown",()=>{this.modeManager.setMode(MODE.REGISTRATION,false);});
+        this.btns[1].on("pointerdown",()=>{this.mode.order(ORDER.ChangeMode,{mode:MODE.REGISTRATION,isChain:false})});
         this.btns[2].on("pointerdown",()=>{console.log('moveToFindAccount');});
     }
 
@@ -121,6 +112,10 @@ export class LoginFormUi extends ModalFormUi{
         for (const btn of this.btns) {
             btn.setInteractive();
         }
+    }
+
+    pause(onoff:boolean):void{
+        
     }
 
     clean():void{
