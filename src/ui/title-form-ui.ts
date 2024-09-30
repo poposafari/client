@@ -1,31 +1,34 @@
-import i18next from "i18next";
-import { ModeManager } from "../mode-manager";
 import { InGameScene } from "../scenes/ingame-scene";
-import { ServiceLocator } from "../utils/service-locator";
 import { addText, addWindow, UiManager } from "./ui-manger";
 import { TEXTSTYLE } from "../enums/textstyle";
 import { TEXTURE } from "../enums/texture";
-import { MODE } from "../enums/mode";
 import { lobbyMenuConfig, lobbyTitleConfig } from "./config";
+import { KEYBOARD } from "../enums/keyboard";
+import { ORDER } from "../enums/order";
+import { MODE } from "../enums/mode";
+import { UiLobbyMenu } from "../interfaces/ui";
 
 export class TitleFormUi extends UiManager{
     private titleContainer!:Phaser.GameObjects.Container;
-    private gameStartContainer!:Phaser.GameObjects.Container;
     private btns:Phaser.GameObjects.NineSlice[]=[];
     private btnContainers:Phaser.GameObjects.Container[]=[];
-    private choiceContainer!:Phaser.GameObjects.Container;
     private choiceStatus!: number;
-    private modeManger: ModeManager;
+    private lobbyMenuConfig:UiLobbyMenu[]=[];
 
     constructor(scene:InGameScene){
         super(scene);
-        this.modeManger = ServiceLocator.get<ModeManager>('mode-manager');
+
+        this.whitelistKey=[
+            KEYBOARD.SELECT,
+            KEYBOARD.UP,
+            KEYBOARD.DOWN,
+        ]
     }
 
     setup(): void {
         const ui = this.getUi();
         const field1 = lobbyTitleConfig
-        const field2 = lobbyMenuConfig;
+        this.lobbyMenuConfig = lobbyMenuConfig;
 
         this.choiceStatus = 0;
 
@@ -35,7 +38,7 @@ export class TitleFormUi extends UiManager{
         this.titleContainer.setVisible(false);
         ui.add(this.titleContainer);
 
-        for(const item of field2){
+        for(const item of this.lobbyMenuConfig){
             const btnContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
             const btnBg = addWindow(this.scene,TEXTURE.WINDOW_2,item.bx,item.by,item.bw,item.bh);
             const btnText = addText(this.scene,item.tx,item.ty,item.content,TEXTSTYLE.TITLE);
@@ -51,10 +54,11 @@ export class TitleFormUi extends UiManager{
     }
 
     show(data?:any): void {
+        const userData = data.data;
         this.titleContainer.setVisible(true);
 
         this.btnContainers = this.btnContainers.filter(item=>{
-            if(!data && item.list[1].text === i18next.t("menu:startGame")){
+            if(!userData && item.list[1].text === this.lobbyMenuConfig[0].content){
                 return false;
             }
             item.setVisible(true);
@@ -69,6 +73,18 @@ export class TitleFormUi extends UiManager{
         }
     }
 
+    actionInput(key: KEYBOARD): void {
+        if(key === KEYBOARD.SELECT){
+            this.updateMenu();
+        }else if(key === KEYBOARD.UP){
+            this.updateChoice(true);
+        }else if(key === KEYBOARD.DOWN){
+            this.updateChoice(false);
+        }
+    }
+
+    pause(onoff: boolean): void {}
+
     updateChoice(direction:boolean){
         for(const item of this.btnContainers){
             item.list[0].setTexture(TEXTURE.WINDOW_2);
@@ -76,21 +92,25 @@ export class TitleFormUi extends UiManager{
 
         if(direction) this.choiceStatus= (this.choiceStatus - 1 + this.btnContainers.length) % this.btnContainers.length;
         else this.choiceStatus = (this.choiceStatus + 1) % this.btnContainers.length;
-        
+
         this.btnContainers[this.choiceStatus].list[0].setTexture(TEXTURE.WINDOW_2_CLICKED);
     }
 
     updateMenu(){
         switch(this.btnContainers[this.choiceStatus].list[1].text){
-            case i18next.t("menu:logout"):
-                this.modeManger.setMode(MODE.LOGIN,false);
+            case this.lobbyMenuConfig[0].content:
+                console.log('startGame');
                 break;
-            case i18next.t("menu:startNewGame"):
-                this.modeManger.setMode(MODE.TUTORIAL,false);
+            case this.lobbyMenuConfig[1].content:
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.NEWGAME,isChain:false});
                 break;
-            case i18next.t("menu:startGame"):
-                console.log('start game');
+            case this.lobbyMenuConfig[2].content:
+                console.log('setting');
+                break;
+            case this.lobbyMenuConfig[3].content:
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
                 break;
         }
+
     }
 }

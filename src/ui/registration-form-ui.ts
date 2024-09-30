@@ -1,26 +1,20 @@
 import InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 import { InGameScene } from "../scenes/ingame-scene";
 import { ModalFormUi } from "./modal-form-ui";
-import { ModeManager } from "../mode-manager";
 import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
-import { TEXTSTYLE } from "../enums/textstyle";
-import i18next from "i18next";
-import { ServiceLocator } from "../utils/service-locator";
+import { TEXTSTYLE } from "../enums/textstyle"
 import { MODE } from "../enums/mode";
-import { apiPost } from "../utils/api";
-import { registerBtnsConfig, registerInputsConfig } from "./config";
+import { registerBtnsConfig, registerErrorMsg1, registerErrorMsg2, registerErrorMsg3, registerErrorMsg5, registerErrorMsg6, registerInputsConfig, registerSuccessMsg, serverErrorMsg } from "./config";
 import { ORDER } from "../enums/order";
 
 export class RegistrationFormUi extends ModalFormUi{
     private inputContainers:Phaser.GameObjects.Container[]=[];
     private inputs: InputText[]=[];
     private btns: Phaser.GameObjects.NineSlice[]=[];
-    private modeManager: ModeManager;
 
     constructor(scene:InGameScene){
         super(scene);
-        this.modeManager = ServiceLocator.get<ModeManager>('mode-manager');
     }
 
     setup(): void {
@@ -74,10 +68,13 @@ export class RegistrationFormUi extends ModalFormUi{
             item.setInteractive();
         }
 
-        this.btns[0].on("pointerdown",()=>{
+        this.inputs[0].text = "";
+        this.inputs[1].text = "";
+        this.inputs[2].text = "";
+
+        this.btns[0].on("pointerdown",async ()=>{
             const [username,password,repassword] = this.inputs;
             
-
             const isValidUsername = (username: string): boolean => {
                 const usernameRegex = /^[a-zA-Z0-9]{5,16}$/;
                 return usernameRegex.test(username);
@@ -88,45 +85,37 @@ export class RegistrationFormUi extends ModalFormUi{
                 return passwordRegex.test(password);
             };
 
-            let retText=[];
-
             if(username.text.length === 0 || password.text.length === 0 || repassword.text.length === 0){
-                retText = [i18next.t("message:registrationError1")];
-                this.modeManager.setMode(MODE.MESSAGE,true,retText);
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerErrorMsg1});
                 return;
             }
             if(password.text !== repassword.text){
-                retText = [i18next.t("message:registrationError3")];
-                this.modeManager.setMode(MODE.MESSAGE,true,retText);
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerErrorMsg3});
                 return;
             }
             if(!isValidUsername(username.text)){
-                retText = [i18next.t("message:registrationError5")];
-                this.modeManager.setMode(MODE.MESSAGE,true,retText);
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerErrorMsg5});
                 return;
             }
             if(!isValidPassword(password.text)){
-                retText = [i18next.t("message:registrationError6")];
-                this.modeManager.setMode(MODE.MESSAGE,true,retText);
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerErrorMsg6});
                 return;
             }
 
-            this.modeManager.setMode(MODE.WAITING,false);
+            this.mode.order(ORDER.ChangeMode,{mode:MODE.WAITING,isChain:false})
 
-            apiPost("/account/register",{"username":username.text,"password":password.text})
-                .then(()=>{
-                    this.modeManager.setMode(MODE.LOGIN,false);
-                    this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:registrationSuccess")]);
-                })
-                .catch((value)=>{
-                    if(value.status === 409){
-                        this.modeManager.setMode(MODE.REGISTRATION,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:registrationError2")]);
-                    }else{
-                        this.modeManager.setMode(MODE.REGISTRATION,false);
-                        this.modeManager.setMode(MODE.MESSAGE,true,[i18next.t("message:serverError")]);
-                    }
-                });
+            const res = await this.mode.order(ORDER.Submit,[username.text,password.text]);
+            if(res.status){
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerSuccessMsg});
+
+            }else if(res.status === 409){
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.REGISTRATION,isChain:false});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:registerErrorMsg2});
+            }else{
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.REGISTRATION,isChain:false});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:serverErrorMsg});
+            }
         });
         this.btns[1].on("pointerdown",()=>{this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});});
     }
@@ -142,13 +131,13 @@ export class RegistrationFormUi extends ModalFormUi{
             item.off('pointerdown');
         }
     }
-    
-    getField(type:string){
-        if(type === "inputs") return [i18next.t("menu:username"),i18next.t("menu:password"),i18next.t("menu:repassword")];
-        else if(type === "btns") return [i18next.t("menu:registerBtn"),i18next.t("menu:loginBtn")];
-    }
 
-    blockInputs(): void {
+    pause(onoff: boolean): void {
+        super.pause(onoff);
+        onoff ? this.blockInputs() : this.unblockInputs();
+    }
+    
+    private blockInputs(): void {
         for (const input of this.inputs) {
             input.setBlur();
             input.pointerEvents = 'none';
@@ -158,7 +147,7 @@ export class RegistrationFormUi extends ModalFormUi{
         }
     }
 
-    unblockInputs(): void{
+    private unblockInputs(): void{
         for (const input of this.inputs) {
             input.pointerEvents = 'auto';
         }

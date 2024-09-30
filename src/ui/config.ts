@@ -14,8 +14,20 @@ export let waitBoxConfig:UiBox;
 export let lobbyTitleConfig:UiLobbyTitle;
 export let lobbyMenuConfig:UiLobbyMenu[]=[];
 
+export let serverErrorMsg:Message[]=[];
+
 export let loginErrorMsg1:Message[]=[];
 export let loginErrorMsg2:Message[]=[];
+
+export let registerSuccessMsg:Message[]=[];
+export let registerErrorMsg1:Message[]=[];
+export let registerErrorMsg2:Message[]=[];
+export let registerErrorMsg3:Message[]=[];
+export let registerErrorMsg4:Message[]=[];
+export let registerErrorMsg5:Message[]=[];
+export let registerErrorMsg6:Message[]=[];
+
+export let newGameMsg:Message[]=[];
 
 i18next.on('initialized', () => {
     loginInputsConfig = [
@@ -51,9 +63,31 @@ i18next.on('initialized', () => {
         {bx:0,by:100,bw:300,bh:42,tx:0,ty:100,content:i18next.t("menu:logout")},
     ];
 
-    loginErrorMsg1=[{type:'default',content:[i18next.t("message:loginError1")]}];
+    serverErrorMsg=[{type:'default',format:'dialogue',content:i18next.t("message:serverError")}];
 
-    loginErrorMsg2=[{type:'default',content:[i18next.t("message:loginError2")]}];
+    loginErrorMsg1=[{type:'default',format:'dialogue',content:i18next.t("message:loginError1")}];
+    loginErrorMsg2=[{type:'default',format:'dialogue',content:i18next.t("message:loginError2")}];
 
+    registerSuccessMsg=[{type:'default',format:'dialogue',content:i18next.t("message:registrationSuccess")}];
+    registerErrorMsg1=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError1")}];
+    registerErrorMsg2=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError2")}];
+    registerErrorMsg3=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError3")}];
+    registerErrorMsg4=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError4")}];
+    registerErrorMsg5=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError5")}];
+    registerErrorMsg6=[{type:'default',format:'dialogue',content:i18next.t("message:registrationError6")}];
+
+    newGameMsg=[
+        {type:'default',format:'dialogue',content:i18next.t("message:welcome1")},
+        {type:'default',format:'dialogue',content:i18next.t("message:welcome2")},
+        {type:'default',format:'dialogue',content:i18next.t("message:welcome3")}
+    ];
+
+    newGameTitleConfig = {tx:0,ty:-100,content:i18next.t("menu:newGameTitle")};
+    newGameLabelConfig = [
+        {tx:0,ty:200,content:i18next.t("menu:newGameLabel1")},
+        {tx:0,ty:200,content:i18next.t("menu:newGameLabel2")},
+        {tx:0,ty:200,content:i18next.t("menu:newGameLabel3")},
+        {tx:0,ty:200,content:i18next.t("menu:newGameLabel4")},
+    ]
 
 });

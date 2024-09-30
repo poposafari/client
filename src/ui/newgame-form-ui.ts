@@ -6,7 +6,7 @@ import { ModalFormUi } from "./modal-form-ui";
 import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTSTYLE } from "../enums/textstyle";
 
-export class ClosetFormUi extends ModalFormUi{
+export class NewGameFormUi extends ModalFormUi{
     private titleContainer!:Phaser.GameObjects.Container;
     private labelContainer!:Phaser.GameObjects.Container;
 
@@ -16,10 +16,11 @@ export class ClosetFormUi extends ModalFormUi{
 
     setup(): void {
         super.setup();
-        super.adjustSize(MODE.CLOSET);
+        super.adjustSize(MODE.NEWGAME);
 
-        this.titleContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4-190);
-        const titleText = addText(this.scene,0,0,i18next.t("menu:closetTitle"),TEXTSTYLE.TITLE_MENU);
+        
+        this.titleContainer = this.scene.add.container(this.scene.game.canvas.width/4,this.scene.game.canvas.height/4);
+        const titleText = addText(this.scene,0,0,i18next.t("menu:closetTitle"),TEXTSTYLE.TITLE);
         titleText.setOrigin(0.5,0.5);
         this.titleContainer.add(titleText);
         this.modalContainer.add(this.titleContainer);
@@ -48,7 +49,5 @@ export class ClosetFormUi extends ModalFormUi{
         super.clean();
     }
 
-    getField(){
-        return [i18next.t("menu:closetLabel1"),i18next.t("menu:closetLabel2"),i18next.t("menu:closetLabel3")]
-    }
+    pause(onoff: boolean): void {}
 }

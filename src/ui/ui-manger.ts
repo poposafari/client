@@ -98,6 +98,7 @@ export abstract class UiManager{
     abstract show(data?:any): void;
     abstract clean(): void;
     abstract actionInput(key:KEYBOARD): void;
+    abstract pause(onoff:boolean):void;
 
     setBackground(texture:TEXTURE){
         this.bg.setVisible(true);

@@ -48,6 +48,8 @@ export class ModalFormUi extends UiManager{
 
     actionInput(key: KEYBOARD): void {}
 
+    pause(onoff: boolean): void {}
+
     adjustSize(mode:MODE){
         let width=0,height=0;
         switch(mode){
@@ -56,7 +58,7 @@ export class ModalFormUi extends UiManager{
                 width = 360;
                 height = 460;
                 break;
-            case MODE.CLOSET:
+            case MODE.NEWGAME:
                 width = 653;
                 height = 460;
                 break;

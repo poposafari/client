@@ -5,12 +5,14 @@ import { BaseScene } from "./base-scene";
 export class LoadingScene extends BaseScene{
     constructor(){
         super("LoadingScene");
-        initI18n();
+
     }
 
-    preload(){
+    async preload(){
         console.log('LoadingScene preload()');
 
+        await initI18n();
+        
         this.loadImage(TEXTURE.BG_0,"ui","bg_0");
         this.loadImage(TEXTURE.BTN_0,"ui","btn_0");
         this.loadImage(TEXTURE.BTN_0_CLICKED,"ui","btn_0_clicked");
@@ -21,9 +23,16 @@ export class LoadingScene extends BaseScene{
         this.loadImage(TEXTURE.WINDOW_1,"ui","window_1");
         this.loadImage(TEXTURE.WINDOW_2,"ui","window_2");
         this.loadImage(TEXTURE.WINDOW_2_CLICKED,"ui","window_2_clicked");
+
+
+        this.load.on('complete',()=>{
+            this.startInGameScene();
+        });
+
+        this.load.start();
     }
 
-    create(){
+    private startInGameScene(){
         this.scene.start("InGameScene");
     }
 }

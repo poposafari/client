@@ -60,5 +60,12 @@ export interface UiLobbyMenu{
 
 export interface Message{
     type:string,
-    content:string[]
+    format:string,
+    content:string
+}
+
+export interface UiText{
+    tx:number,
+    ty:number,
+    content:string
 }
