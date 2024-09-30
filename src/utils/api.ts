@@ -20,3 +20,13 @@ export async function apiPost(url:string,data:any){
         throw error;
     }
 }
+
+export async function apiGet(url:string){
+  try{
+      const res = await Axios.get(url);
+      return res.data;
+  }catch(error){
+      console.log('Request Error : ',error);
+      throw error;
+  }
+}

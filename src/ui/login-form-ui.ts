@@ -5,7 +5,7 @@ import { addText, addTextInput, addWindow } from "./ui-manger";
 import { TEXTURE } from "../enums/texture";
 import { TEXTSTYLE } from "../enums/textstyle";
 import { MODE } from "../enums/mode";
-import { loginBtnsConfig,loginErrorMsg1,loginErrorMsg2,loginInputsConfig } from "./config";
+import { loginBtnsConfig,loginErrorMsg1,loginErrorMsg2,loginInputsConfig, serverErrorMsg } from "./config";
 import { ORDER } from "../enums/order";
 
 export class LoginFormUi extends ModalFormUi{
@@ -70,24 +70,29 @@ export class LoginFormUi extends ModalFormUi{
         for(const item of this.btns){
             item.setInteractive();
         }
-        
+
+        this.inputs[0].text = "";
+        this.inputs[1].text = "";
+
         this.btns[0].on("pointerdown",async ()=>{
-            if(this.inputs[0].text.length===0 || this.inputs[1].text.length===0){
+            const [username,password] = this.inputs;
+
+            if(username.text.length===0 || password.text.length===0){
                 this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg1});
                 return;
             }
 
             this.mode.order(ORDER.ChangeMode,{mode:MODE.WAITING,isChain:false})
             
-            const res = await this.mode.order(ORDER.Submit,[this.inputs[0].text,this.inputs[1].text]);
-            if(res.status === 200){
-                console.log('로그인 성공!');
+            const res = await this.mode.order(ORDER.Submit,[username.text,password.text]);
+            if(res.status){
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.TITLE,isChain:false});
             }else if(res.status === 401){
                 this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
                 this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg2});
             }else{
                 this.mode.order(ORDER.ChangeMode,{mode:MODE.LOGIN,isChain:false});
-                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:loginErrorMsg2});
+                this.mode.order(ORDER.ChangeMode,{mode:MODE.MESSAGE,isChain:true,data:serverErrorMsg});
             }
         });
         
@@ -115,7 +120,8 @@ export class LoginFormUi extends ModalFormUi{
     }
 
     pause(onoff:boolean):void{
-        
+        super.pause(onoff);
+        onoff ? this.blockInputs() : this.unblockInputs();
     }
 
     clean():void{

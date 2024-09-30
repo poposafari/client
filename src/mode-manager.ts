@@ -1,6 +1,6 @@
 import { MODE } from "./enums/mode";
 import { Mode } from "./mode";
-import { LoginMode, MessageMode, RegistrationMode, WaitMode } from "./modes";
+import { LoginMode, MessageMode, NewGameMode, RegistrationMode, TitleMode, WaitMode } from "./modes";
 import { InGameScene } from "./scenes/ingame-scene";
 
 export class ModeManager {
@@ -20,6 +20,8 @@ export class ModeManager {
                 case MODE.REGISTRATION: target = new RegistrationMode(this.scene); break;
                 case MODE.MESSAGE: target = new MessageMode(this.scene); break;
                 case MODE.WAITING: target = new WaitMode(this.scene); break;
+                case MODE.TITLE: target = new TitleMode(this.scene); break;
+                case MODE.NEWGAME: target = new NewGameMode(this.scene); break;
                 default: throw new Error("Unknown mode");
             }
             target.setup();

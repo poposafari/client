@@ -28,7 +28,12 @@ export class InGameScene extends BaseScene{
         
         ServiceLocator.register('mode-manager',this.modeManager);
         ServiceLocator.register('input-manager',this.inputManager);
-    
+        
         this.modeManager.setMode(MODE.LOGIN,false);
+    }
+
+    getModeStack(target:string){
+        if(target === "pre") return this.modeStack[this.modeStack.length-2];
+        else if(target === "top") return this.modeStack[this.modeStack.length-1];
     }
 }

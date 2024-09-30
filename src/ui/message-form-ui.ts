@@ -2,6 +2,7 @@ import { KEYBOARD } from "../enums/keyboard";
 import { ORDER } from "../enums/order";
 import { TEXTSTYLE } from "../enums/textstyle";
 import { TEXTURE } from "../enums/texture";
+import { Message } from "../interfaces/ui";
 import { InGameScene } from "../scenes/ingame-scene";
 import { messageBoxConfig } from "./config";
 import { addImage, addText, addWindow, UiManager } from "./ui-manger";
@@ -11,15 +12,15 @@ export class MessageFormUi extends UiManager {
     protected messageEndMarkContainer!: Phaser.GameObjects.Container;
     protected messageText!: Phaser.GameObjects.Text;
 
-    private contentQueue: string[] = [];
+    private contentQueue: Message[] = [];
     private currentIdx: number = 0;
-
-    public whitelistKey=[
-        KEYBOARD.SELECT
-    ];
 
     constructor(scene: InGameScene) {
         super(scene);
+
+        this.whitelistKey = [
+            KEYBOARD.SELECT
+        ];
     }
 
     setup(): void {
@@ -63,9 +64,9 @@ export class MessageFormUi extends UiManager {
         ui.add(this.messageEndMarkContainer);
     }
 
-    show(data?: { type: string; content: string[] }[]): void {
+    show(data?: { type: string,format:string,content: string }[]): void {
         if (data && Array.isArray(data)) {
-            this.contentQueue = data.map(item => item.content.join(" "));
+            this.contentQueue = data;
         }
 
         this.currentIdx = 0;
@@ -77,6 +78,8 @@ export class MessageFormUi extends UiManager {
         this.messageText.text = "";
         this.messageEndMarkContainer.setVisible(false);
     }
+
+    pause(onoff: boolean): void {}
 
     getMessageStatus(): boolean {
         return this.messageEndMarkContainer.visible;
@@ -98,7 +101,7 @@ export class MessageFormUi extends UiManager {
     private showCurrentMessage(): void {
         if (this.currentIdx < this.contentQueue.length) {
             const text = this.contentQueue[this.currentIdx];
-            let textArray = text.split("");
+            let textArray = text.content.split("");
             let delay = 10;
             let index = 0;
 
