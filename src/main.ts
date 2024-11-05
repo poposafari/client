@@ -1,6 +1,4 @@
 import Phaser from "phaser";
-import {LoadingScene} from "./scenes/loading-scene"
-import { InGameScene } from "./scenes/ingame-scene";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
@@ -30,7 +28,7 @@ const config: Phaser.Types.Core.GameConfig={
     createContainer: true
   },
   pixelArt:true,
-  scene:[LoadingScene,InGameScene]
+  scene:[]
 }
 
 let game;
