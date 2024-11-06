@@ -34,7 +34,7 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 const start = () => {
-  let game = new Phaser.Game(config);
+  const game = new Phaser.Game(config);
 };
 
 start();
