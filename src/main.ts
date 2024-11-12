@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
+import { LoadingScene } from './scenes/load-scene';
+import { InGameScene } from './scenes/ingame-scene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
@@ -30,7 +32,7 @@ const config: Phaser.Types.Core.GameConfig = {
     createContainer: true,
   },
   pixelArt: true,
-  scene: [],
+  scene: [LoadingScene, InGameScene],
 };
 
 const start = () => {
