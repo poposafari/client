@@ -1,5 +1,6 @@
 import { MODE } from './enums/mode';
 import { Mode } from './mode';
+import { LoginMode, NoneMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 
 interface Modes {
@@ -28,7 +29,10 @@ export class ModeManager {
   constructor(scene: InGameScene) {
     this.scene = scene;
 
-    this.modes = [];
+    this.modes = [
+      { key: MODE.NONE, value: new NoneMode(scene) },
+      { key: MODE.LOGIN, value: new LoginMode(scene) },
+    ];
   }
 
   registerModes() {
@@ -39,14 +43,16 @@ export class ModeManager {
   }
 
   changeMode(mode: MODE) {
-    this.currentMode.exit();
+    if (this.currentMode) {
+      this.currentMode.exit();
+    }
 
     const targetMode = this.modeCache.get(mode);
     if (targetMode) {
       this.currentMode = targetMode;
       this.currentMode.enter();
     } else {
-      console.error(`Mode ${name} not found`);
+      console.error(`Mode ${mode} not found`);
     }
   }
 }
