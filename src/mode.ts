@@ -1,5 +1,4 @@
-import { MODE } from './enums/mode';
-import { GlobalManager, ModeManager } from './managers';
+import { ModeManager } from './managers';
 import { InGameScene } from './scenes/ingame-scene';
 import { UI } from './ui/ui';
 
