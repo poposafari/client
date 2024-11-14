@@ -16,10 +16,9 @@ export class InGameScene extends BaseScene {
     this.ui.setScale(2);
 
     this.modeManager = new ModeManager(this);
-    this.modeManager.registerModes();
-
     GlobalManager.register('mode', this.modeManager);
 
+    this.modeManager.registerModes();
     this.modeManager.changeMode(MODE.LOGIN);
   }
 }

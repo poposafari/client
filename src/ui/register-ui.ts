@@ -1,26 +1,22 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { loginConfirmBtnConfig, loginFindAccountBtnConfig, loginPasswordConfig, loginRegisterBtnConfig, loginUsernameConfig } from './config';
+import { registerConfirmBtnConfig, registerConfirmPasswordConfig, registerLoginBtnConfig, registerPasswordConfig, registerUsernameConfig } from './config';
 import { ModalUi } from './modal-ui';
 import { addBackground, addText, addTextInput, addWindow } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import i18next from 'i18next';
-import { ModeManager } from '../managers';
-import { MODE } from '../enums/mode';
-import { LoginMode } from '../modes';
+import { RegisterMode } from '../modes';
 
-export class LoginUi extends ModalUi {
-  private mode: LoginMode;
+export class RegisterUi extends ModalUi {
+  private mode: RegisterMode;
   private bg!: Phaser.GameObjects.Image;
-  private inputConfig!: Input[];
   private inputContainers: Phaser.GameObjects.Container[] = [];
   private inputs: InputText[] = [];
-  private btnConfig: Button[] = [];
   private btns: Phaser.GameObjects.NineSlice[] = [];
   private title!: Phaser.GameObjects.Text;
 
-  constructor(scene: InGameScene, mode: LoginMode) {
+  constructor(scene: InGameScene, mode: RegisterMode) {
     super(scene);
     this.mode = mode;
   }
@@ -36,13 +32,13 @@ export class LoginUi extends ModalUi {
 
     super.setup();
 
-    this.inputConfig = [loginUsernameConfig, loginPasswordConfig];
-    this.btnConfig = [loginConfirmBtnConfig, loginRegisterBtnConfig, loginFindAccountBtnConfig];
+    const inputConfig = [registerUsernameConfig, registerPasswordConfig, registerConfirmPasswordConfig];
+    const btnConfig = [registerConfirmBtnConfig, registerLoginBtnConfig];
 
-    this.title = addText(this.scene, 0, -160, i18next.t('lobby:login'), TEXTSTYLE.LOBBY_TITLE);
+    this.title = addText(this.scene, 0, -160, i18next.t('lobby:register'), TEXTSTYLE.LOBBY_TITLE);
     this.modalContainer.add(this.title);
 
-    for (const config of this.inputConfig) {
+    for (const config of inputConfig) {
       const inputContainer = this.scene.add.container(config.x, config.y);
       const inputLabel = addText(this.scene, config.labelX, config.labelY, config.label, TEXTSTYLE.LOBBY_DEFAULT);
       const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h);
@@ -62,7 +58,7 @@ export class LoginUi extends ModalUi {
       this.modalContainer.add(inputContainer);
     }
 
-    for (const config of this.btnConfig) {
+    for (const config of btnConfig) {
       const btnContainer = this.scene.add.container(config.x, config.y);
       const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, config.w, config.h);
       const btnTitle = addText(this.scene, config.contentX, config.contentY, config.content, TEXTSTYLE.LOBBY_DEFAULT);
@@ -78,10 +74,9 @@ export class LoginUi extends ModalUi {
   show(): void {
     super.show();
 
-    this.bg.setVisible(true);
-
     this.inputs[0].text = '';
     this.inputs[1].text = '';
+    this.inputs[2].text = '';
 
     for (const container of this.inputContainers) {
       container.setVisible(true);
@@ -93,7 +88,7 @@ export class LoginUi extends ModalUi {
     }
 
     this.btns[0].on('pointerdown', async () => {
-      console.log('login');
+      console.log('register');
     });
     this.btns[0].on('pointerover', () => {
       this.btns[0].setAlpha(0.7);
@@ -103,23 +98,13 @@ export class LoginUi extends ModalUi {
     });
 
     this.btns[1].on('pointerdown', async () => {
-      this.mode.changeRegisterMode();
+      this.mode.changeLoginMode();
     });
     this.btns[1].on('pointerover', () => {
       this.btns[1].setAlpha(0.7);
     });
     this.btns[1].on('pointerout', () => {
       this.btns[1].setAlpha(1);
-    });
-
-    this.btns[2].on('pointerdown', async () => {
-      console.log('find account');
-    });
-    this.btns[2].on('pointerover', () => {
-      this.btns[2].setAlpha(0.7);
-    });
-    this.btns[2].on('pointerout', () => {
-      this.btns[2].setAlpha(1);
     });
   }
 
@@ -131,6 +116,7 @@ export class LoginUi extends ModalUi {
     }
 
     for (const btn of this.btns) {
+      btn.setVisible(false);
       btn.off('pointerdown');
     }
   }

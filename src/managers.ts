@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Mode } from './mode';
-import { LoginMode, NoneMode } from './modes';
+import { LoginMode, NoneMode, RegisterMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 
 interface Modes {
@@ -30,8 +30,9 @@ export class ModeManager {
     this.scene = scene;
 
     this.modes = [
-      { key: MODE.NONE, value: new NoneMode(scene) },
-      { key: MODE.LOGIN, value: new LoginMode(scene) },
+      { key: MODE.NONE, value: new NoneMode(scene, this) },
+      { key: MODE.LOGIN, value: new LoginMode(scene, this) },
+      { key: MODE.REGISTER, value: new RegisterMode(scene, this) },
     ];
   }
 
