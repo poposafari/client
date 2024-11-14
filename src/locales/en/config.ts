@@ -1,5 +1,5 @@
-import { menu } from "./menu";
+import { lobby } from './lobby';
 
-export const enConfig={
-    menu:menu,
-}
+export const enConfig = {
+  lobby: lobby,
+};
