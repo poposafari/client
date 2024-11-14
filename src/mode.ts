@@ -8,9 +8,9 @@ export abstract class Mode {
   protected manager: ModeManager;
   protected ui!: UI;
 
-  constructor(scene: InGameScene) {
+  constructor(scene: InGameScene, manager: ModeManager) {
     this.scene = scene;
-    this.manager = GlobalManager.get('mode');
+    this.manager = manager;
   }
 
   abstract init(): void;

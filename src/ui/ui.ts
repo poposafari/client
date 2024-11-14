@@ -63,7 +63,7 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
 
   switch (style) {
     case TEXTSTYLE.LOBBY_TITLE:
-      config.fontSize = '60px';
+      config.fontSize = '80px';
       config.color = '#00DF81';
       // config.fontStyle = 'bold';
       break;
