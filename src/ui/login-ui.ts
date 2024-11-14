@@ -6,8 +6,6 @@ import { ModalUi } from './modal-ui';
 import { addBackground, addText, addTextInput, addWindow } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import i18next from 'i18next';
-import { ModeManager } from '../managers';
-import { MODE } from '../enums/mode';
 import { LoginMode } from '../modes';
 
 export class LoginUi extends ModalUi {
