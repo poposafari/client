@@ -1,0 +1,5 @@
+export const enum TEXTSTYLE {
+  LOBBY_TITLE,
+  LOBBY_DEFAULT,
+  LOBBY_INPUT,
+}
