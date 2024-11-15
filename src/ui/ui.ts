@@ -23,7 +23,7 @@ export function addBackground(scene: InGameScene, texture: TEXTURE, width: numbe
 export function addText(scene: InGameScene, x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
   const result = scene.add.text(x, y, content, getTextStyle(style));
 
-  result.setShadow(2, 1, getTextShadow(style));
+  result.setShadow(1, 0, getTextShadow(style));
   result.setScale(0.5);
   result.setOrigin(0.5, 0.5);
 
@@ -43,6 +43,7 @@ function getTextShadow(style: TEXTSTYLE) {
   let ret;
 
   switch (style) {
+    case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
       ret = '#91919a';
       break;
@@ -73,7 +74,15 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       break;
     case TEXTSTYLE.LOBBY_INPUT:
       config.fontSize = '13px';
-      config.color = '#181818';
+      config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.MESSAGE_BLACK:
+      config.fontSize = '54px';
+      config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.MESSAGE_WHITE:
+      config.fontSize = '54px';
+      config.color = '#ffffff';
       break;
   }
 
@@ -90,7 +99,7 @@ export abstract class UI {
   abstract setup(): void;
   abstract show(): void;
   abstract clean(): void;
-  abstract pause(): void;
+  abstract pause(onoff: boolean): void;
 
   getUi() {
     return this.scene.ui;

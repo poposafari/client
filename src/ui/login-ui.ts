@@ -133,5 +133,5 @@ export class LoginUi extends ModalUi {
     }
   }
 
-  pause(): void {}
+  pause(onoff: boolean): void {}
 }

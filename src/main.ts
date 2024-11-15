@@ -12,6 +12,9 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 1080,
     mode: Phaser.Scale.FIT,
   },
+  input: {
+    keyboard: true,
+  },
   plugins: {
     global: [
       {

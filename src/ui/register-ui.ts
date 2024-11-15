@@ -7,6 +7,13 @@ import { addBackground, addText, addTextInput, addWindow } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import i18next from 'i18next';
 import { RegisterMode } from '../modes';
+import { MessageManager } from '../managers';
+
+interface Register {
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export class RegisterUi extends ModalUi {
   private mode: RegisterMode;
@@ -88,7 +95,11 @@ export class RegisterUi extends ModalUi {
     }
 
     this.btns[0].on('pointerdown', async () => {
-      console.log('register');
+      const data: Register = { username: this.inputs[0].text, password: this.inputs[1].text, confirmPassword: this.inputs[2].text };
+
+      if (this.validate(data)) {
+        console.log('모두 다 통과!');
+      }
     });
     this.btns[0].on('pointerover', () => {
       this.btns[0].setAlpha(0.7);
@@ -121,5 +132,66 @@ export class RegisterUi extends ModalUi {
     }
   }
 
-  pause(): void {}
+  pause(onoff: boolean): void {
+    super.pause(onoff);
+    onoff ? this.blockInputs() : this.unblockInputs();
+  }
+
+  private blockInputs(): void {
+    for (const input of this.inputs) {
+      input.setBlur();
+      input.pointerEvents = 'none';
+    }
+    for (const btn of this.btns) {
+      btn.disableInteractive();
+    }
+  }
+
+  private unblockInputs(): void {
+    for (const input of this.inputs) {
+      input.pointerEvents = 'auto';
+    }
+    for (const btn of this.btns) {
+      btn.setInteractive();
+    }
+  }
+
+  validate(data: Register): boolean {
+    const messageUi = MessageManager.getInstance();
+
+    const usernameRegex = /^[A-Za-z\d@!%*#?&]{8,16}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+])[A-Za-z\d!@#$%^&*()\-_=+]{8,16}$/;
+
+    const username = data.username;
+    const password = data.password;
+    const confirmPassword = data.confirmPassword;
+
+    if (username === '') {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError1') }]);
+      return false;
+    }
+    if (password === '') {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError2') }]);
+      return false;
+    }
+    if (password !== confirmPassword) {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError3') }]);
+      return false;
+    }
+    if (!usernameRegex.test(username)) {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError4') }]);
+      return false;
+    }
+    if (!passwordRegex.test(password)) {
+      console.log(password);
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+      return false;
+    }
+    return true;
+  }
 }
