@@ -1,7 +1,10 @@
 import { MODE } from './enums/mode';
+import { Message } from './interface/sys';
 import { Mode } from './mode';
 import { LoginMode, NoneMode, RegisterMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
+import { MessageUi } from './ui/message-ui';
+import { UI } from './ui/ui';
 
 interface Modes {
   key: MODE;
@@ -17,6 +20,33 @@ export class GlobalManager {
 
   static get<T>(name: string): T {
     return this.managers.get(name);
+  }
+}
+
+export class MessageManager {
+  private static instance: MessageManager;
+  private scene!: InGameScene;
+  private messageUi!: MessageUi;
+
+  initialize(scene: InGameScene): void {
+    this.scene = scene;
+    this.messageUi = new MessageUi(scene);
+    this.messageUi.setup();
+  }
+
+  static getInstance(): MessageManager {
+    if (!MessageManager.instance) {
+      MessageManager.instance = new MessageManager();
+    }
+    return MessageManager.instance;
+  }
+
+  async show(currentUi: UI, messages: Message[]): Promise<void> {
+    for (const msg of messages) {
+      await this.messageUi.show(msg);
+    }
+
+    currentUi.pause(false);
   }
 }
 
