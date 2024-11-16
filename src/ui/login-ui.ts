@@ -7,6 +7,8 @@ import { addBackground, addText, addTextInput, addWindow } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import i18next from 'i18next';
 import { LoginMode } from '../modes';
+import { Account } from '../interface/sys';
+import { MessageManager } from '../managers';
 
 export class LoginUi extends ModalUi {
   private mode: LoginMode;
@@ -91,7 +93,11 @@ export class LoginUi extends ModalUi {
     }
 
     this.btns[0].on('pointerdown', async () => {
-      console.log('login');
+      const data: Account = { username: this.inputs[0].text, password: this.inputs[1].text };
+
+      if (this.validate(data)) {
+        this.mode.submit(data);
+      }
     });
     this.btns[0].on('pointerover', () => {
       this.btns[0].setAlpha(0.7);
@@ -133,5 +139,48 @@ export class LoginUi extends ModalUi {
     }
   }
 
-  pause(onoff: boolean): void {}
+  pause(onoff: boolean): void {
+    super.pause(onoff);
+    onoff ? this.blockInputs() : this.unblockInputs();
+  }
+
+  private blockInputs(): void {
+    for (const input of this.inputs) {
+      input.setBlur();
+      input.pointerEvents = 'none';
+    }
+    for (const btn of this.btns) {
+      btn.disableInteractive();
+    }
+  }
+
+  private unblockInputs(): void {
+    for (const input of this.inputs) {
+      input.pointerEvents = 'auto';
+    }
+    for (const btn of this.btns) {
+      btn.setInteractive();
+    }
+  }
+
+  validate(data: Account): boolean {
+    const messageUi = MessageManager.getInstance();
+
+    const username = data.username;
+    const password = data.password;
+
+    if (username === '') {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
+      return false;
+    }
+
+    if (password === '') {
+      this.pause(true);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
+      return false;
+    }
+
+    return true;
+  }
 }
