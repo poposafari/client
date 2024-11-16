@@ -168,28 +168,28 @@ export class RegisterUi extends ModalUi {
 
     if (username === '') {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError1') }]);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
       return false;
     }
     if (password === '') {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError2') }]);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
       return false;
     }
     if (password !== confirmPassword) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError3') }]);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError1') }]);
       return false;
     }
     if (!usernameRegex.test(username)) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError4') }]);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError2') }]);
       return false;
     }
     if (!passwordRegex.test(password)) {
       console.log(password);
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError3') }]);
       return false;
     }
     return true;
