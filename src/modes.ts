@@ -39,6 +39,10 @@ export class LoginMode extends Mode {
   changeRegisterMode() {
     this.manager.changeMode(MODE.REGISTER);
   }
+
+  submit(data: Account): void {
+    console.log('login submit');
+  }
 }
 
 export class RegisterMode extends Mode {
@@ -64,6 +68,6 @@ export class RegisterMode extends Mode {
   }
 
   submit(data: Account): void {
-    console.log('submit');
+    console.log('register submit');
   }
 }
