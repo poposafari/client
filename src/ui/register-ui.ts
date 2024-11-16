@@ -98,7 +98,7 @@ export class RegisterUi extends ModalUi {
       const data: Register = { username: this.inputs[0].text, password: this.inputs[1].text, confirmPassword: this.inputs[2].text };
 
       if (this.validate(data)) {
-        console.log('모두 다 통과!');
+        this.mode.submit({ username: data.username, password: data.password });
       }
     });
     this.btns[0].on('pointerover', () => {

@@ -1,4 +1,5 @@
 import { MODE } from './enums/mode';
+import { Account } from './interface/sys';
 import { ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
@@ -60,5 +61,9 @@ export class RegisterMode extends Mode {
 
   changeLoginMode() {
     this.manager.changeMode(MODE.LOGIN);
+  }
+
+  submit(data: Account): void {
+    console.log('submit');
   }
 }
