@@ -39,6 +39,31 @@ export function addTextInput(scene: InGameScene, x: number, y: number, width: nu
   return result;
 }
 
+export function createSpriteAnimation(scene: InGameScene, key: string) {
+  const frames = scene.anims.generateFrameNames(key, {
+    prefix: key + '-',
+    suffix: '',
+    start: 0,
+    end: 3,
+  });
+
+  scene.anims.create({
+    key: key,
+    frames: frames,
+    frameRate: 6,
+    repeat: -1,
+    delay: 6,
+    yoyo: false,
+  });
+}
+
+export function createSprite(scene: InGameScene, key: string, posX: number, posY: number) {
+  const ret = scene.add.sprite(posX, posY, key);
+  ret.setOrigin(0, 0);
+  ret.setScale(2);
+  return ret;
+}
+
 function getTextShadow(style: TEXTSTYLE) {
   let ret;
 

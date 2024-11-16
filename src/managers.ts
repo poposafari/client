@@ -46,6 +46,7 @@ export class MessageManager {
       await this.messageUi.show(msg);
     }
 
+    this.messageUi.pause(true);
     currentUi.pause(false);
   }
 }

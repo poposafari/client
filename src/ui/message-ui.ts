@@ -2,12 +2,14 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addText, addWindow, UI } from './ui';
+import { addText, addWindow, createSprite, createSpriteAnimation, UI } from './ui';
 
 export class MessageUi {
   private scene: InGameScene;
   private messageContainer!: Phaser.GameObjects.Container;
   private messageText!: Phaser.GameObjects.Text;
+  private messageEndMarkContainer!: Phaser.GameObjects.Container;
+  private endMark!: Phaser.GameObjects.Sprite;
 
   constructor(scene: InGameScene) {
     this.scene = scene;
@@ -27,30 +29,38 @@ export class MessageUi {
     this.messageContainer.add(this.messageText);
     this.messageContainer.setVisible(false);
 
+    this.messageEndMarkContainer = this.scene.add.container(width / 2, height / 2);
+    this.endMark = createSprite(this.scene, TEXTURE.PAUSE_BLACK, 730, 460);
+    this.endMark.anims.stop();
+    createSpriteAnimation(this.scene, TEXTURE.PAUSE_BLACK);
+    this.messageEndMarkContainer.add(this.endMark);
+    this.messageEndMarkContainer.setVisible(false);
+
     ui.add(this.messageContainer);
   }
 
   show(data: Message): Promise<void> {
+    const text = data.content;
+    let textArray = text.split('');
+    let delay = 10;
+    let index = 0;
+
+    this.messageContainer.setVisible(true);
+
     return new Promise((resolve) => {
-      this.messageContainer.setVisible(true);
-
-      const text = data.content;
-      let textArray = text.split('');
-      let delay = 10;
-      let index = 0;
-
       const addNextChar = () => {
-        // if (index === textArray.length) {
-        //     this.messageEndMarkContainer.setVisible(true);
-        // }
         if (index < textArray.length) {
           this.messageText.text += textArray[index];
           index++;
           this.scene.time.delayedCall(delay, addNextChar, [], this);
-        } else {
+        }
+        if (index === textArray.length) {
+          this.messageEndMarkContainer.setVisible(true);
+          this.endMark.anims.play(TEXTURE.PAUSE_BLACK);
           if (this.scene.input.keyboard) {
             this.scene.input.keyboard.on('keydown', () => {
               this.clean();
+              this.endMark.anims.stop();
               resolve();
             });
           }
@@ -64,7 +74,11 @@ export class MessageUi {
   clean(): void {
     this.messageText.text = '';
     this.messageContainer.setVisible(false);
+    this.messageEndMarkContainer.setVisible(false);
   }
 
-  pause(onoff: boolean): void {}
+  pause(onoff: boolean): void {
+    this.messageEndMarkContainer.setVisible(false);
+    this.endMark.anims.stop();
+  }
 }
