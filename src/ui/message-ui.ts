@@ -1,6 +1,8 @@
+import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
+import { KeyboardManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, createSprite, createSpriteAnimation, UI } from './ui';
 
@@ -47,6 +49,10 @@ export class MessageUi {
 
     this.messageContainer.setVisible(true);
 
+    const keyboardMananger = KeyboardManager.getInstance();
+    const keys = [KEY.SELECT];
+    keyboardMananger.setAllowKey(keys);
+
     return new Promise((resolve) => {
       const addNextChar = () => {
         if (index < textArray.length) {
@@ -57,13 +63,13 @@ export class MessageUi {
         if (index === textArray.length) {
           this.messageEndMarkContainer.setVisible(true);
           this.endMark.anims.play(TEXTURE.PAUSE_BLACK);
-          if (this.scene.input.keyboard) {
-            this.scene.input.keyboard.on('keydown', () => {
+          keyboardMananger.setCallback((key) => {
+            if (key === KEY.SELECT) {
               this.clean();
               this.endMark.anims.stop();
               resolve();
-            });
-          }
+            }
+          });
         }
       };
 
