@@ -19,6 +19,9 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK);
     this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE);
 
+    this.loadImage(TEXTURE.BAR, 'ui', TEXTURE.BAR);
+    this.loadImage(TEXTURE.BAR_S, 'ui', TEXTURE.BAR_S);
+
     this.load.on('complete', () => {
       this.startInGameScene();
     });

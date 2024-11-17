@@ -4,4 +4,5 @@ export const enum TEXTSTYLE {
   LOBBY_INPUT,
   MESSAGE_WHITE,
   MESSAGE_BLACK,
+  TITLE_DEFAULT,
 }
