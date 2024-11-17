@@ -5,4 +5,8 @@ export const enum TEXTURE {
   INPUT_LOBBY = 'input_lobby',
   PAUSE_BLACK = 'pause_black',
   PAUSE_WHITE = 'pause_white',
+  BAR = 'bar',
+  BAR_S = 'bar_s',
+  CONTINUE = 'continue',
+  CONTINUE_S = 'continue_s',
 }

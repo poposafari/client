@@ -12,6 +12,12 @@ export let registerConfirmPasswordConfig: Input;
 export let registerConfirmBtnConfig: Button;
 export let registerLoginBtnConfig: Button;
 
+export let titleContinueConfig: Button;
+export let titleNewGameConfig: Button;
+export let titleMysteryGiftConfig: Button;
+export let titleSettingConfig: Button;
+export let titleLogoutConfig: Button;
+
 i18next.on('initialized', () => {
   loginUsernameConfig = {
     x: 0,
@@ -129,6 +135,56 @@ i18next.on('initialized', () => {
     w: 115,
     h: 36,
     content: i18next.t('lobby:backToTheLogin'),
+    contentX: 0,
+    contentY: 0,
+  };
+
+  titleContinueConfig = {
+    x: 200,
+    y: 50,
+    w: 200,
+    h: 300,
+    content: i18next.t('lobby:continue'),
+    contentX: 0,
+    contentY: 0,
+  };
+
+  titleNewGameConfig = {
+    x: 200,
+    y: 100,
+    w: 200,
+    h: 300,
+    content: i18next.t('lobby:newGame'),
+    contentX: 0,
+    contentY: 0,
+  };
+
+  titleMysteryGiftConfig = {
+    x: 200,
+    y: 150,
+    w: 200,
+    h: 300,
+    content: i18next.t('lobby:mysteryGift'),
+    contentX: 0,
+    contentY: 0,
+  };
+
+  titleSettingConfig = {
+    x: 200,
+    y: 200,
+    w: 200,
+    h: 300,
+    content: i18next.t('lobby:settings'),
+    contentX: 0,
+    contentY: 0,
+  };
+
+  titleLogoutConfig = {
+    x: 200,
+    y: 250,
+    w: 200,
+    h: 300,
+    content: i18next.t('lobby:logout'),
     contentX: 0,
     contentY: 0,
   };

@@ -5,6 +5,7 @@ import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
+import { TitleUi } from './ui/title-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -69,5 +70,24 @@ export class RegisterMode extends Mode {
 
   submit(data: Account): void {
     console.log('register submit');
+  }
+}
+
+export class TitleMode extends Mode {
+  constructor(scene: InGameScene, manager: ModeManager) {
+    super(scene, manager);
+  }
+
+  init(): void {
+    this.ui = new TitleUi(this.scene, this);
+    this.ui.setup();
+  }
+
+  enter(): void {
+    this.ui.show();
+  }
+
+  exit(): void {
+    this.ui.clean();
   }
 }

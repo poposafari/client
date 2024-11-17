@@ -5,8 +5,14 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { TEXTSTYLE } from '../enums/textstyle';
 
 export function addWindow(scene: InGameScene, texture: TEXTURE, x: number, y: number, width: number, height: number) {
-  const ret = scene.add.nineslice(x, y, texture, undefined, width, height, 6, 6, 6, 6);
+  const ret = scene.add.nineslice(x, y, texture, undefined, width, height, 8, 8, 8, 8);
   ret.setOrigin(0.5, 0.5);
+
+  return ret;
+}
+
+export function addImage(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
+  const ret = scene.add.image(x, y, texture).setOrigin(0.5, 0.5);
 
   return ret;
 }
@@ -107,6 +113,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       break;
     case TEXTSTYLE.MESSAGE_WHITE:
       config.fontSize = '54px';
+      config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.TITLE_DEFAULT:
+      config.fontSize = '36px';
       config.color = '#ffffff';
       break;
   }

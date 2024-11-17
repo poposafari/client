@@ -1,7 +1,8 @@
+import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
-import { LoginMode, NoneMode, RegisterMode } from './modes';
+import { LoginMode, NoneMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -51,6 +52,46 @@ export class MessageManager {
   }
 }
 
+type KeyCallback = (key: KEY) => void;
+
+export class KeyboardManager {
+  private static instance: KeyboardManager;
+  private scene!: InGameScene;
+  private allowKey: Set<KEY> = new Set();
+  private keyCallback!: KeyCallback;
+
+  static getInstance(): KeyboardManager {
+    if (!KeyboardManager.instance) {
+      KeyboardManager.instance = new KeyboardManager();
+    }
+    return KeyboardManager.instance;
+  }
+
+  initialize(scene: InGameScene): void {
+    this.scene = scene;
+
+    this.scene.input.keyboard?.on('keydown', (event: Phaser.Input.Keyboard.Key) => {
+      const key = event.keyCode as KEY;
+      if (this.allowKey.has(key) && this.keyCallback) {
+        this.keyCallback(key);
+      }
+    });
+  }
+
+  setAllowKey(keys: KEY[]): void {
+    this.allowKey.clear();
+    keys.forEach((key) => this.allowKey.add(key));
+  }
+
+  setCallback(callback: KeyCallback): void {
+    this.keyCallback = callback;
+  }
+
+  clearCallback(): void {
+    this.keyCallback = undefined!;
+  }
+}
+
 export class ModeManager {
   private scene: InGameScene;
   private modes: Modes[];
@@ -64,6 +105,7 @@ export class ModeManager {
       { key: MODE.NONE, value: new NoneMode(scene, this) },
       { key: MODE.LOGIN, value: new LoginMode(scene, this) },
       { key: MODE.REGISTER, value: new RegisterMode(scene, this) },
+      { key: MODE.TITLE, value: new TitleMode(scene, this) },
     ];
   }
 
