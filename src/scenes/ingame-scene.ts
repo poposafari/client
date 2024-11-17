@@ -18,13 +18,14 @@ export class InGameScene extends BaseScene {
     this.modeManager = new ModeManager(this);
     GlobalManager.register('mode', this.modeManager);
 
-    const messageManager = MessageManager.getInstance();
-    messageManager.initialize(this);
-
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.initialize(this);
 
     this.modeManager.registerModes();
-    this.modeManager.changeMode(MODE.TITLE);
+
+    const messageManager = MessageManager.getInstance();
+    messageManager.initialize(this);
+
+    this.modeManager.changeMode(MODE.NONE);
   }
 }

@@ -51,6 +51,8 @@ export class TitleUi extends UI {
   show(): void {
     const keyboardMananger = KeyboardManager.getInstance();
 
+    this.bg.setVisible(true);
+
     let startIndex = this.getUserGameData() ? 0 : 1;
     let endIndex = this.getBtnSize();
     let choice = startIndex;
@@ -64,7 +66,7 @@ export class TitleUi extends UI {
       } else if (key === KEY.DOWN) {
         choice = Math.min(endIndex, choice + 1);
       } else if (key === KEY.SELECT) {
-        console.log(choice);
+        this.choiceMenu(choice);
       }
 
       for (const btn of this.btns) {
@@ -72,8 +74,6 @@ export class TitleUi extends UI {
       }
       this.btns[choice].setTexture(TEXTURE.BAR_S);
     });
-
-    this.bg.setVisible(true);
 
     for (let i = startIndex; i <= endIndex; i++) {
       if (!this.getUserGameData()) {
@@ -84,7 +84,23 @@ export class TitleUi extends UI {
     this.btns[choice].setTexture(TEXTURE.BAR_S);
   }
 
+  choiceMenu(choice: number) {
+    if (choice === 0) {
+    } else if (choice === 1) {
+    } else if (choice === 2) {
+    } else if (choice === 3) {
+    } else if (choice === 4) {
+      this.mode.changeLoginMode();
+    }
+  }
+
   clean(): void {
+    this.bg.setVisible(false);
+
+    for (const container of this.containers) {
+      container.setVisible(false);
+    }
+
     KeyboardManager.getInstance().clearCallback();
   }
 
