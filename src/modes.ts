@@ -15,7 +15,8 @@ export class NoneMode extends Mode {
   init(): void {}
 
   enter(): void {
-    this.manager.changeMode(MODE.LOGIN);
+    //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
+    this.manager.changeMode(MODE.TITLE);
   }
   exit(): void {}
 }
@@ -89,5 +90,9 @@ export class TitleMode extends Mode {
 
   exit(): void {
     this.ui.clean();
+  }
+
+  changeLoginMode() {
+    this.manager.changeMode(MODE.LOGIN);
   }
 }
