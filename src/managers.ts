@@ -2,7 +2,7 @@ import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
-import { LoginMode, NoneMode, RegisterMode, TitleMode } from './modes';
+import { LoginMode, NewGameMode, NoneMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -106,6 +106,7 @@ export class ModeManager {
       { key: MODE.LOGIN, value: new LoginMode(scene, this) },
       { key: MODE.REGISTER, value: new RegisterMode(scene, this) },
       { key: MODE.TITLE, value: new TitleMode(scene, this) },
+      { key: MODE.NEWGAME, value: new NewGameMode(scene, this) },
     ];
   }
 

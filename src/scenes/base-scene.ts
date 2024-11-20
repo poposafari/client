@@ -10,7 +10,7 @@ export class BaseScene extends Phaser.Scene {
     this.load.image(key, `${folder}/${filename}`);
   }
 
-  loadAtlas(key: string, folder: string, filename: string) {
-    this.load.atlas(key, `${folder}/${filename}.png`, `${folder}/${filename}.json`);
+  loadAtlas(key: string, folder: string, filename: string, jsonname: string) {
+    this.load.atlas(key, `${folder}/${filename}.png`, `${folder}/${jsonname}.json`);
   }
 }
