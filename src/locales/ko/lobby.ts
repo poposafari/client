@@ -16,4 +16,9 @@ export const lobby: TranslationDefault = {
   mysteryGift: '이상한 소포',
   settings: '설정',
   logout: '로그아웃',
+  whoAreYou: '당신은 누구인가요?',
+  yourName: '당신의 이름은?',
+  selectBoy1: '남자',
+  selectGirl1: '여자',
+  generate: '생성',
 };

@@ -14,13 +14,31 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.WINDOW_0, 'ui', 'window_0');
     this.loadImage(TEXTURE.WINDOW_1, 'ui', 'window_1');
+    this.loadImage(TEXTURE.WINDOW_2, 'ui', 'window_2');
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
-    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK);
-    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE);
+    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, TEXTURE.PAUSE_BLACK);
+    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE, TEXTURE.PAUSE_WHITE);
 
     this.loadImage(TEXTURE.BAR, 'ui', TEXTURE.BAR);
     this.loadImage(TEXTURE.BAR_S, 'ui', TEXTURE.BAR_S);
+
+    this.loadImage(TEXTURE.GENDER_0, 'ui', TEXTURE.GENDER_0);
+    this.loadImage(TEXTURE.GENDER_1, 'ui', TEXTURE.GENDER_1);
+
+    this.loadImage(TEXTURE.SELECT, 'ui', TEXTURE.SELECT);
+
+    this.loadImage(TEXTURE.BOY_1_STATUE, 'ui/character/statue', 'boy_1');
+    this.loadImage(TEXTURE.BOY_2_STATUE, 'ui/character/statue', 'boy_2');
+    this.loadImage(TEXTURE.BOY_3_STATUE, 'ui/character/statue', 'boy_3');
+    this.loadImage(TEXTURE.BOY_4_STATUE, 'ui/character/statue', 'boy_4');
+
+    this.loadImage(TEXTURE.GIRL_1_STATUE, 'ui/character/statue', 'girl_1');
+    this.loadImage(TEXTURE.GIRL_2_STATUE, 'ui/character/statue', 'girl_2');
+    this.loadImage(TEXTURE.GIRL_3_STATUE, 'ui/character/statue', 'girl_3');
+    this.loadImage(TEXTURE.GIRL_4_STATUE, 'ui/character/statue', 'girl_4');
+
+    this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 
     this.load.on('complete', () => {
       this.startInGameScene();

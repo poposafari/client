@@ -3,4 +3,5 @@ export const enum MODE {
   LOGIN,
   REGISTER,
   TITLE,
+  NEWGAME,
 }
