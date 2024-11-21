@@ -4,4 +4,6 @@ export const enum MODE {
   REGISTER,
   TITLE,
   NEWGAME,
+  OVERWORLD,
+  LAB_OVERWORLD,
 }

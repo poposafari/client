@@ -22,4 +22,9 @@ export const enum TEXTURE {
   GIRL_3_STATUE = 'girl_3_statue',
   GIRL_4_STATUE = 'girl_4_statue',
   ARROW = 'arrow',
+  BLACK = 'black',
+  SEASON_0 = 'season_0',
+  SEASON_1 = 'season_1',
+  SEASON_2 = 'season_2',
+  SEASON_3 = 'season_3',
 }
