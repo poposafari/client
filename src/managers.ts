@@ -2,7 +2,7 @@ import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
-import { LoginMode, NewGameMode, NoneMode, RegisterMode, TitleMode } from './modes';
+import { LabOverworldMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -107,6 +107,8 @@ export class ModeManager {
       { key: MODE.REGISTER, value: new RegisterMode(scene, this) },
       { key: MODE.TITLE, value: new TitleMode(scene, this) },
       { key: MODE.NEWGAME, value: new NewGameMode(scene, this) },
+      { key: MODE.OVERWORLD, value: new OverworldMode(scene, this) },
+      { key: MODE.LAB_OVERWORLD, value: new LabOverworldMode(scene, this) },
     ];
   }
 

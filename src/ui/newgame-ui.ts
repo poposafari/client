@@ -108,11 +108,11 @@ export class NewGameUi extends ModalUi {
 
     this.bg.setVisible(true);
 
-    // await message.show(this, [
-    //   { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome1') },
-    //   { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome2') },
-    //   { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome3') },
-    // ]);
+    await message.show(this, [
+      { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome1') },
+      { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome2') },
+      { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome3') },
+    ]);
 
     super.show();
 

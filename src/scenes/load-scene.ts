@@ -40,6 +40,12 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 
+    this.loadImage(TEXTURE.BLACK, 'ui', TEXTURE.BLACK);
+    this.loadImage(TEXTURE.SEASON_0, 'ui', TEXTURE.SEASON_0);
+    this.loadImage(TEXTURE.SEASON_1, 'ui', TEXTURE.SEASON_1);
+    this.loadImage(TEXTURE.SEASON_2, 'ui', TEXTURE.SEASON_2);
+    this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
+
     this.load.on('complete', () => {
       this.startInGameScene();
     });
