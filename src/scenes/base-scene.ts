@@ -13,4 +13,11 @@ export class BaseScene extends Phaser.Scene {
   loadAtlas(key: string, folder: string, filename: string, jsonname: string) {
     this.load.atlas(key, `${folder}/${filename}.png`, `${folder}/${jsonname}.json`);
   }
+
+  loadMap(key: string, folder: string, filename: string) {
+    if (filename) {
+      filename = `${filename}.json`;
+    }
+    this.load.tilemapTiledJSON(key, `${folder}/${filename}`);
+  }
 }

@@ -45,6 +45,11 @@ export function addTextInput(scene: InGameScene, x: number, y: number, width: nu
   return result;
 }
 
+export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilemap {
+  const result = scene.make.tilemap({ key: key });
+  return result;
+}
+
 export function createSpriteAnimation(scene: InGameScene, key: string) {
   const frames = scene.anims.generateFrameNames(key, {
     prefix: key + '-',
