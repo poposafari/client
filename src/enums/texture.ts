@@ -27,4 +27,6 @@ export const enum TEXTURE {
   SEASON_1 = 'season_1',
   SEASON_2 = 'season_2',
   SEASON_3 = 'season_3',
+  MAP_GROUND = 'ground_0',
+  MAP_TEST = 'test_map',
 }

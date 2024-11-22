@@ -46,6 +46,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_2, 'ui', TEXTURE.SEASON_2);
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
+    this.loadImage(TEXTURE.MAP_GROUND, 'ui/map', TEXTURE.MAP_GROUND);
+    this.loadMap(TEXTURE.MAP_TEST, 'ui/map', TEXTURE.MAP_TEST);
+
     this.load.on('complete', () => {
       this.startInGameScene();
     });
