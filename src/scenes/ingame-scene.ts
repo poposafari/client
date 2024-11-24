@@ -28,4 +28,10 @@ export class InGameScene extends BaseScene {
 
     this.modeManager.changeMode(MODE.NONE);
   }
+
+  update(time: number, delta: number): void {
+    if (this.modeManager.isOverworldMode()) {
+      this.modeManager.getCurrentMode().update(time, delta);
+    }
+  }
 }

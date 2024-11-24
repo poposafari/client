@@ -22,6 +22,8 @@ export class NoneMode extends Mode {
     this.manager.changeMode(MODE.LAB_OVERWORLD);
   }
   exit(): void {}
+
+  update(): void {}
 }
 
 export class LoginMode extends Mode {
@@ -40,6 +42,7 @@ export class LoginMode extends Mode {
   exit(): void {
     this.ui.clean();
   }
+  update(): void {}
 
   changeRegisterMode() {
     this.manager.changeMode(MODE.REGISTER);
@@ -67,6 +70,7 @@ export class RegisterMode extends Mode {
   exit(): void {
     this.ui.clean();
   }
+  update(): void {}
 
   changeLoginMode() {
     this.manager.changeMode(MODE.LOGIN);
@@ -88,12 +92,15 @@ export class TitleMode extends Mode {
   }
 
   enter(): void {
+    //user data load.
+
     this.ui.show();
   }
 
   exit(): void {
     this.ui.clean();
   }
+  update(): void {}
 
   changeLoginMode() {
     this.manager.changeMode(MODE.LOGIN);
@@ -113,6 +120,7 @@ export class NewGameMode extends Mode {
   enter(): void {
     this.ui.show();
   }
+  update(): void {}
 
   exit(): void {}
 }
@@ -132,6 +140,8 @@ export class OverworldMode extends Mode {
   }
 
   exit(): void {}
+
+  update(time: number, delta: number): void {}
 }
 
 export class LabOverworldMode extends Mode {
@@ -149,4 +159,8 @@ export class LabOverworldMode extends Mode {
   }
 
   exit(): void {}
+
+  update(time: number, delta: number): void {
+    this.ui.update(time, delta);
+  }
 }

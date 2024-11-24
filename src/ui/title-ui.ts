@@ -60,7 +60,7 @@ export class TitleUi extends UI {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
 
-    keyboardMananger.setCallback((key) => {
+    keyboardMananger.setKeyDownCallback((key) => {
       if (key === KEY.UP) {
         choice = Math.max(startIndex, choice - 1);
       } else if (key === KEY.DOWN) {
@@ -101,10 +101,12 @@ export class TitleUi extends UI {
       container.setVisible(false);
     }
 
-    KeyboardManager.getInstance().clearCallback();
+    KeyboardManager.getInstance().clearCallbacks();
   }
 
   pause(onoff: boolean): void {}
+
+  update(time: number, delta: number): void {}
 
   private getUserGameData() {
     return false;

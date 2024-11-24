@@ -64,7 +64,7 @@ export class MessageUi {
         if (index === textArray.length) {
           this.messageEndMarkContainer.setVisible(true);
           this.endMark.anims.play(ANIMATION.PAUSE);
-          keyboardMananger.setCallback((key) => {
+          keyboardMananger.setKeyDownCallback((key) => {
             if (key === KEY.SELECT) {
               this.clean();
               this.endMark.anims.stop();

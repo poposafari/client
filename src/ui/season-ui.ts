@@ -52,4 +52,6 @@ export class SeasonUi extends UI {
   }
 
   pause(onoff: boolean): void {}
+
+  update(time: number, delta: number): void {}
 }

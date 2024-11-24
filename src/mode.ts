@@ -15,4 +15,5 @@ export abstract class Mode {
   abstract init(): void;
   abstract enter(): void;
   abstract exit(): void;
+  abstract update(time: number, delta: number): void;
 }
