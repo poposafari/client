@@ -1,6 +1,6 @@
 {
   "frames": {
-    "movement-0": {
+    "player_movement-0": {
       "frame": {
         "x": 0,
         "y": 0,
@@ -20,7 +20,7 @@
         "h": 768
       }
     },
-    "movement-1": {
+    "player_movement-1": {
       "frame": {
         "x": 0,
         "y": 32,
@@ -40,7 +40,7 @@
         "h": 768
       }
     },
-    "movement-2": {
+    "player_movement-2": {
       "frame": {
         "x": 0,
         "y": 64,
@@ -60,7 +60,7 @@
         "h": 768
       }
     },
-    "movement-3": {
+    "player_movement-3": {
       "frame": {
         "x": 0,
         "y": 96,
@@ -80,7 +80,7 @@
         "h": 768
       }
     },
-    "movement-4": {
+    "player_movement-4": {
       "frame": {
         "x": 0,
         "y": 128,
@@ -100,7 +100,7 @@
         "h": 768
       }
     },
-    "movement-5": {
+    "player_movement-5": {
       "frame": {
         "x": 0,
         "y": 160,
@@ -120,7 +120,7 @@
         "h": 768
       }
     },
-    "movement-6": {
+    "player_movement-6": {
       "frame": {
         "x": 0,
         "y": 192,
@@ -140,7 +140,7 @@
         "h": 768
       }
     },
-    "movement-7": {
+    "player_movement-7": {
       "frame": {
         "x": 0,
         "y": 224,
@@ -160,7 +160,7 @@
         "h": 768
       }
     },
-    "movement-8": {
+    "player_movement-8": {
       "frame": {
         "x": 0,
         "y": 256,
@@ -180,7 +180,7 @@
         "h": 768
       }
     },
-    "movement-9": {
+    "player_movement-9": {
       "frame": {
         "x": 0,
         "y": 288,
@@ -200,7 +200,7 @@
         "h": 768
       }
     },
-    "movement-10": {
+    "player_movement-10": {
       "frame": {
         "x": 0,
         "y": 320,
@@ -220,7 +220,7 @@
         "h": 768
       }
     },
-    "movement-11": {
+    "player_movement-11": {
       "frame": {
         "x": 0,
         "y": 352,
@@ -240,7 +240,7 @@
         "h": 768
       }
     },
-    "movement-12": {
+    "player_movement-12": {
       "frame": {
         "x": 0,
         "y": 384,
@@ -260,7 +260,7 @@
         "h": 768
       }
     },
-    "movement-13": {
+    "player_movement-13": {
       "frame": {
         "x": 0,
         "y": 416,
@@ -280,7 +280,7 @@
         "h": 768
       }
     },
-    "movement-14": {
+    "player_movement-14": {
       "frame": {
         "x": 0,
         "y": 448,
@@ -300,7 +300,7 @@
         "h": 768
       }
     },
-    "movement-15": {
+    "player_movement-15": {
       "frame": {
         "x": 0,
         "y": 480,
@@ -320,7 +320,7 @@
         "h": 768
       }
     },
-    "movement-16": {
+    "player_movement-16": {
       "frame": {
         "x": 0,
         "y": 512,
@@ -340,7 +340,7 @@
         "h": 768
       }
     },
-    "movement-17": {
+    "player_movement-17": {
       "frame": {
         "x": 0,
         "y": 544,
@@ -360,7 +360,7 @@
         "h": 768
       }
     },
-    "movement-18": {
+    "player_movement-18": {
       "frame": {
         "x": 0,
         "y": 576,
@@ -380,7 +380,7 @@
         "h": 768
       }
     },
-    "movement-19": {
+    "player_movement-19": {
       "frame": {
         "x": 0,
         "y": 608,
@@ -400,7 +400,7 @@
         "h": 768
       }
     },
-    "movement-20": {
+    "player_movement-20": {
       "frame": {
         "x": 0,
         "y": 640,
@@ -420,7 +420,7 @@
         "h": 768
       }
     },
-    "movement-21": {
+    "player_movement-21": {
       "frame": {
         "x": 0,
         "y": 672,
@@ -440,7 +440,7 @@
         "h": 768
       }
     },
-    "movement-22": {
+    "player_movement-22": {
       "frame": {
         "x": 0,
         "y": 704,
@@ -460,7 +460,7 @@
         "h": 768
       }
     },
-    "movement-23": {
+    "player_movement-23": {
       "frame": {
         "x": 0,
         "y": 736,
