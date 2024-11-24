@@ -1,3 +1,4 @@
+import { ANIMATION } from '../enums/animation';
 import { TEXTURE } from '../enums/texture';
 import { initI18n } from '../i18n';
 import { BaseScene } from './base-scene';
@@ -17,8 +18,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_2, 'ui', 'window_2');
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
-    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, TEXTURE.PAUSE_BLACK);
-    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE, TEXTURE.PAUSE_WHITE);
+    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE);
+    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE);
 
     this.loadImage(TEXTURE.BAR, 'ui', TEXTURE.BAR);
     this.loadImage(TEXTURE.BAR_S, 'ui', TEXTURE.BAR_S);
@@ -37,6 +38,16 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.GIRL_2_STATUE, 'ui/character/statue', 'girl_2');
     this.loadImage(TEXTURE.GIRL_3_STATUE, 'ui/character/statue', 'girl_3');
     this.loadImage(TEXTURE.GIRL_4_STATUE, 'ui/character/statue', 'girl_4');
+
+    this.loadAtlas(TEXTURE.BOY_1_MOVEMENT, 'ui/character/movement', 'boy_1', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.BOY_2_MOVEMENT, 'ui/character/movement', 'boy_2', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.BOY_3_MOVEMENT, 'ui/character/movement', 'boy_3', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.BOY_4_MOVEMENT, 'ui/character/movement', 'boy_4', ANIMATION.PLAYER_MOVEMENT);
+
+    this.loadAtlas(TEXTURE.GIRL_1_MOVEMENT, 'ui/character/movement', 'girl_1', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.GIRL_2_MOVEMENT, 'ui/character/movement', 'girl_2', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.GIRL_3_MOVEMENT, 'ui/character/movement', 'girl_3', ANIMATION.PLAYER_MOVEMENT);
+    this.loadAtlas(TEXTURE.GIRL_4_MOVEMENT, 'ui/character/movement', 'girl_4', ANIMATION.PLAYER_MOVEMENT);
 
     this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 

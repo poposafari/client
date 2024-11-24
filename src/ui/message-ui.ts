@@ -1,3 +1,4 @@
+import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
@@ -34,7 +35,7 @@ export class MessageUi {
     this.messageEndMarkContainer = this.scene.add.container(width / 2, height / 2);
     this.endMark = createSprite(this.scene, TEXTURE.PAUSE_BLACK, 730, 460);
     this.endMark.anims.stop();
-    createSpriteAnimation(this.scene, TEXTURE.PAUSE_BLACK);
+    createSpriteAnimation(this.scene, TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE);
     this.messageEndMarkContainer.add(this.endMark);
     this.messageEndMarkContainer.setVisible(false);
 
@@ -62,7 +63,7 @@ export class MessageUi {
         }
         if (index === textArray.length) {
           this.messageEndMarkContainer.setVisible(true);
-          this.endMark.anims.play(TEXTURE.PAUSE_BLACK);
+          this.endMark.anims.play(ANIMATION.PAUSE);
           keyboardMananger.setCallback((key) => {
             if (key === KEY.SELECT) {
               this.clean();
