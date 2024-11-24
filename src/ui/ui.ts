@@ -3,6 +3,7 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { TEXTSTYLE } from '../enums/textstyle';
+import { ANIMATION } from '../enums/animation';
 
 export function addWindow(scene: InGameScene, texture: TEXTURE, x: number, y: number, width: number, height: number) {
   const ret = scene.add.nineslice(x, y, texture, undefined, width, height, 8, 8, 8, 8);
@@ -47,19 +48,20 @@ export function addTextInput(scene: InGameScene, x: number, y: number, width: nu
 
 export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilemap {
   const result = scene.make.tilemap({ key: key });
+
   return result;
 }
 
-export function createSpriteAnimation(scene: InGameScene, key: string) {
+export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION) {
   const frames = scene.anims.generateFrameNames(key, {
-    prefix: key + '-',
+    prefix: animationKey + '-',
     suffix: '',
     start: 0,
-    end: 3,
+    end: getAnimationSize(animationKey),
   });
 
   scene.anims.create({
-    key: key,
+    key: animationKey,
     frames: frames,
     frameRate: 6,
     repeat: -1,
@@ -68,11 +70,20 @@ export function createSpriteAnimation(scene: InGameScene, key: string) {
   });
 }
 
-export function createSprite(scene: InGameScene, key: string, posX: number, posY: number) {
+export function createSprite(scene: InGameScene, key: TEXTURE, posX: number, posY: number) {
   const ret = scene.add.sprite(posX, posY, key);
   ret.setOrigin(0, 0);
   ret.setScale(2);
   return ret;
+}
+
+function getAnimationSize(key: ANIMATION) {
+  switch (key) {
+    case ANIMATION.PAUSE:
+      return 3;
+    case ANIMATION.PLAYER_MOVEMENT:
+      return 23;
+  }
 }
 
 function getTextShadow(style: TEXTSTYLE) {
