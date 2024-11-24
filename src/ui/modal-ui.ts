@@ -42,4 +42,6 @@ export class ModalUi extends UI {
     this.modalContainer.y = this.scene.game.canvas.height / 4;
   }
   pause(onoff: boolean): void {}
+
+  update(time: number, delta: number): void {}
 }

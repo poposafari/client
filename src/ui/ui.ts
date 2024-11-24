@@ -52,21 +52,23 @@ export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilema
   return result;
 }
 
-export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION) {
-  const frames = scene.anims.generateFrameNames(key, {
-    prefix: animationKey + '-',
-    suffix: '',
-    start: 0,
-    end: getAnimationSize(animationKey),
-  });
-
+export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION, frames?: Phaser.Types.Animations.AnimationFrame[]) {
   scene.anims.create({
     key: animationKey,
-    frames: frames,
+    frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
     frameRate: 6,
     repeat: -1,
     delay: 6,
     yoyo: false,
+  });
+}
+
+export function getSpriteFrames(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION) {
+  return scene.anims.generateFrameNames(key, {
+    prefix: animationKey + '-',
+    suffix: '',
+    start: 0,
+    end: getAnimationSize(animationKey),
   });
 }
 
@@ -151,6 +153,7 @@ export abstract class UI {
   abstract show(): void;
   abstract clean(): void;
   abstract pause(onoff: boolean): void;
+  abstract update(time: number, delta: number): void;
 
   getUi() {
     return this.scene.ui;

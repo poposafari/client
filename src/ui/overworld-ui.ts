@@ -8,4 +8,6 @@ export class OverworldUi extends UI {
   clean(): void {}
 
   pause(onoff: boolean): void {}
+
+  update(time: number, delta: number): void {}
 }

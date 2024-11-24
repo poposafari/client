@@ -3,6 +3,7 @@ import { MODE } from './enums/mode';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
 import { LabOverworldMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
+import { PlayerObject } from './object/player-object';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -58,7 +59,8 @@ export class KeyboardManager {
   private static instance: KeyboardManager;
   private scene!: InGameScene;
   private allowKey: Set<KEY> = new Set();
-  private keyCallback!: KeyCallback;
+  private keyDownCallback!: KeyCallback;
+  private keyUpCallback!: KeyCallback;
 
   static getInstance(): KeyboardManager {
     if (!KeyboardManager.instance) {
@@ -72,8 +74,15 @@ export class KeyboardManager {
 
     this.scene.input.keyboard?.on('keydown', (event: Phaser.Input.Keyboard.Key) => {
       const key = event.keyCode as KEY;
-      if (this.allowKey.has(key) && this.keyCallback) {
-        this.keyCallback(key);
+      if (this.allowKey.has(key) && this.keyDownCallback) {
+        this.keyDownCallback(key);
+      }
+    });
+
+    this.scene.input.keyboard?.on('keyup', (event: Phaser.Input.Keyboard.Key) => {
+      const key = event.keyCode as KEY;
+      if (this.allowKey.has(key) && this.keyUpCallback) {
+        this.keyUpCallback(key);
       }
     });
   }
@@ -83,12 +92,17 @@ export class KeyboardManager {
     keys.forEach((key) => this.allowKey.add(key));
   }
 
-  setCallback(callback: KeyCallback): void {
-    this.keyCallback = callback;
+  setKeyDownCallback(callback: KeyCallback): void {
+    this.keyDownCallback = callback;
   }
 
-  clearCallback(): void {
-    this.keyCallback = undefined!;
+  setKeyUpCallback(callback: KeyCallback): void {
+    this.keyUpCallback = callback;
+  }
+
+  clearCallbacks(): void {
+    this.keyDownCallback = undefined!;
+    this.keyUpCallback = undefined!;
   }
 }
 
@@ -131,5 +145,23 @@ export class ModeManager {
     } else {
       console.error(`Mode ${mode} not found`);
     }
+  }
+
+  isOverworldMode(): boolean {
+    return this.currentMode instanceof OverworldMode || this.currentMode instanceof LabOverworldMode;
+  }
+
+  getCurrentMode() {
+    return this.currentMode;
+  }
+}
+
+export class PlayerManager {
+  private static instance: PlayerManager;
+  private scene!: InGameScene;
+  private player!: PlayerObject;
+
+  constructor(scene: InGameScene) {
+    this.scene = scene;
   }
 }

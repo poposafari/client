@@ -144,6 +144,8 @@ export class LoginUi extends ModalUi {
     onoff ? this.blockInputs() : this.unblockInputs();
   }
 
+  update(time: number, delta: number): void {}
+
   private blockInputs(): void {
     for (const input of this.inputs) {
       input.setBlur();
