@@ -20,6 +20,7 @@ export class MovableObject extends BaseObject {
   private pixelsToWalkThisUpdate: number = 0;
   private smoothFrameNumbers: number[] = [];
   private movementFinish: boolean = true;
+  protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
 
   private movementDirection: {
@@ -35,14 +36,12 @@ export class MovableObject extends BaseObject {
     super(scene, texture, x, y);
   }
 
-  process() {
+  process(direction: DIRECTION, animationKey: ANIMATION) {
     if (this.isMoving()) return;
 
-    const temp = this.movementDirectionQueue.shift();
-
     this.pixelsToWalkThisUpdate = this.stepSpeed;
-    this.currentDirection = temp!.direction;
-    this.startAnmation(temp!.animationKey);
+    this.currentDirection = direction;
+    this.startAnmation(animationKey);
     this.setTilePos(this.getTilePos().add(this.movementDirection[this.currentDirection]!));
   }
 
@@ -60,21 +59,19 @@ export class MovableObject extends BaseObject {
     const currentPos = this.getPosition();
     const newPosition = currentPos.add(movement);
 
-    // 목표 위치와 실제 좌표 정렬
     this.setPosition(newPosition);
     this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
     this.tileSizePixelsWalked %= 32 * MAP_SCALE;
 
-    // 타일 경계에 도달 시 정확히 정렬
     if (this.tileSizePixelsWalked >= TILE_SIZE * MAP_SCALE) {
       const targetTilePos = this.getTilePos();
       this.setPosition(targetTilePos.scale(TILE_SIZE * MAP_SCALE));
-      this.tileSizePixelsWalked = 0; // 경계 조정
+      this.tileSizePixelsWalked = 0;
     }
 
     this.lastDirection = this.currentDirection;
 
-    console.log('Current Tile Pos: ', this.getTilePos());
+    // console.log('Current Tile Pos: ', this.getTilePos());
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION) {
@@ -82,10 +79,38 @@ export class MovableObject extends BaseObject {
   }
 
   update(delta: number) {
+    if (this.movementStop) return;
+
+    if (this.movementFinish && this.movementDirectionQueue.length === 0) {
+      this.standStop(this.lastDirection);
+    }
+
     if (this.movementFinish && this.movementDirectionQueue.length > 0) {
-      this.process();
+      const temp = this.movementDirectionQueue.shift();
+      this.process(temp!.direction, temp!.animationKey);
     }
     if (this.isMoving()) this.moveObject();
+  }
+
+  private standStop(direction: DIRECTION) {
+    let frameNumber = 0;
+
+    switch (direction) {
+      case DIRECTION.UP:
+        frameNumber = 0;
+        break;
+      case DIRECTION.DOWN:
+        frameNumber = 3;
+        break;
+      case DIRECTION.LEFT:
+        frameNumber = 6;
+        break;
+      case DIRECTION.RIGHT:
+        frameNumber = 9;
+        break;
+    }
+
+    this.stopAnmation(frameNumber);
   }
 
   private moveObject() {

@@ -7,14 +7,14 @@ import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import { MovableObject } from './movable-object';
 
 export class PlayerObject extends MovableObject {
-  private isRunning: boolean = true;
+  private isRunning: boolean;
 
   constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
     super(scene, texture, x, y);
 
     this.init(scene, texture);
-    this.isRunning ? this.setSmoothFrames([12, 15, 18, 21]) : this.setSmoothFrames([0, 3, 6, 9]);
-    this.isRunning ? this.setSpeed(3) : this.setSpeed(1.6);
+    this.isRunning = true;
+    this.setRunning();
   }
 
   init(scene: InGameScene, texture: TEXTURE) {
@@ -89,6 +89,8 @@ export class PlayerObject extends MovableObject {
   move(key: KEY) {
     const animationKey = this.getAnimationType(key);
 
+    this.movementStop = false;
+
     switch (key) {
       case KEY.UP:
         this.ready(DIRECTION.UP, animationKey!);
@@ -101,17 +103,6 @@ export class PlayerObject extends MovableObject {
         break;
       case KEY.RIGHT:
         this.ready(DIRECTION.RIGHT, animationKey!);
-        break;
-    }
-  }
-
-  moveStop(key: KEY) {
-    switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
-      case KEY.LEFT:
-      case KEY.RIGHT:
-        this.processStop();
         break;
     }
   }
@@ -163,6 +154,6 @@ export class PlayerObject extends MovableObject {
     this.resetStep();
     this.isRunning = !this.isRunning;
     this.isRunning ? this.setSmoothFrames([12, 15, 18, 21]) : this.setSmoothFrames([0, 3, 6, 9]);
-    this.isRunning ? this.setSpeed(8) : this.setSpeed(2);
+    this.isRunning ? this.setSpeed(4) : this.setSpeed(2);
   }
 }
