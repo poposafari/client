@@ -13,7 +13,6 @@ export class LabOverworld extends OverworldUi {
   public map!: Phaser.Tilemaps.Tilemap;
   private player!: PlayerObject;
   private container!: Phaser.GameObjects.Container;
-  private keyboardMananger!: KeyboardManager;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
@@ -44,7 +43,7 @@ export class LabOverworld extends OverworldUi {
 
     this.container.setVisible(true);
 
-    this.player = new PlayerObject(this.scene, TEXTURE.BOY_4_MOVEMENT, 4, 2);
+    this.player = new PlayerObject(this.scene, TEXTURE.BOY_2_MOVEMENT, 4, 3);
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
@@ -62,18 +61,19 @@ export class LabOverworld extends OverworldUi {
   clean(): void {}
 
   update(time: number, delta: number) {
-    if (this.cursorKey.up.isDown) {
+    this.movement();
+    this.player.update(delta);
+  }
+
+  private movement() {
+    if (this.cursorKey.up.isDown && this.player.isMovementFinish()) {
       this.player.move(KEY.UP);
-    }
-    if (this.cursorKey.down.isDown) {
+    } else if (this.cursorKey.down.isDown && this.player.isMovementFinish()) {
       this.player.move(KEY.DOWN);
-    }
-    if (this.cursorKey.left.isDown) {
+    } else if (this.cursorKey.left.isDown && this.player.isMovementFinish()) {
       this.player.move(KEY.LEFT);
-    }
-    if (this.cursorKey.right.isDown) {
+    } else if (this.cursorKey.right.isDown && this.player.isMovementFinish()) {
       this.player.move(KEY.RIGHT);
     }
-    this.player.update(delta);
   }
 }

@@ -91,16 +91,16 @@ export class PlayerObject extends MovableObject {
 
     switch (key) {
       case KEY.UP:
-        this.process(DIRECTION.UP, animationKey!);
+        this.ready(DIRECTION.UP, animationKey!);
         break;
       case KEY.DOWN:
-        this.process(DIRECTION.DOWN, animationKey!);
+        this.ready(DIRECTION.DOWN, animationKey!);
         break;
       case KEY.LEFT:
-        this.process(DIRECTION.LEFT, animationKey!);
+        this.ready(DIRECTION.LEFT, animationKey!);
         break;
       case KEY.RIGHT:
-        this.process(DIRECTION.RIGHT, animationKey!);
+        this.ready(DIRECTION.RIGHT, animationKey!);
         break;
     }
   }
@@ -154,9 +154,15 @@ export class PlayerObject extends MovableObject {
   }
 
   setRunning() {
+    /*
+    walk = 2
+    run = 4
+    ride = 8 
+    */
+
     this.resetStep();
     this.isRunning = !this.isRunning;
     this.isRunning ? this.setSmoothFrames([12, 15, 18, 21]) : this.setSmoothFrames([0, 3, 6, 9]);
-    this.isRunning ? this.setSpeed(3) : this.setSpeed(1.6);
+    this.isRunning ? this.setSpeed(8) : this.setSpeed(2);
   }
 }

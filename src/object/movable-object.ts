@@ -2,9 +2,14 @@ import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { BaseObject, MAP_SCALE } from './base-object';
+import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 
 const Vector2 = Phaser.Math.Vector2;
+
+interface MovementQueue {
+  direction: DIRECTION;
+  animationKey: ANIMATION;
+}
 
 export class MovableObject extends BaseObject {
   private step: number = 0;
@@ -14,6 +19,8 @@ export class MovableObject extends BaseObject {
   private tileSizePixelsWalked: number = 0;
   private pixelsToWalkThisUpdate: number = 0;
   private smoothFrameNumbers: number[] = [];
+  private movementFinish: boolean = true;
+  private movementDirectionQueue: Array<MovementQueue> = [];
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -28,11 +35,14 @@ export class MovableObject extends BaseObject {
     super(scene, texture, x, y);
   }
 
-  process(direction: DIRECTION, animationKey: ANIMATION) {
+  process() {
     if (this.isMoving()) return;
+
+    const temp = this.movementDirectionQueue.shift();
+
     this.pixelsToWalkThisUpdate = this.stepSpeed;
-    this.currentDirection = direction;
-    this.startAnmation(animationKey);
+    this.currentDirection = temp!.direction;
+    this.startAnmation(temp!.animationKey);
     this.setTilePos(this.getTilePos().add(this.movementDirection[this.currentDirection]!));
   }
 
@@ -41,35 +51,57 @@ export class MovableObject extends BaseObject {
   }
 
   private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number): boolean {
-    return this.tileSizePixelsWalked + pixelsToWalkThisUpdate >= 32 * MAP_SCALE;
+    return this.tileSizePixelsWalked + pixelsToWalkThisUpdate >= TILE_SIZE * MAP_SCALE;
   }
 
   private moveSprite(pixelsToWalkThisUpdate: number) {
-    const playerDirectionVector = this.movementDirection[this.lastDirection]!.clone();
-    const playerMovementDistance = playerDirectionVector.multiply(new Vector2(pixelsToWalkThisUpdate));
-    const newPlayerPos = this.getPosition().add(playerMovementDistance);
-    this.setPosition(newPlayerPos);
+    const directionVector = this.movementDirection[this.currentDirection]!.clone();
+    const movement = directionVector.scale(pixelsToWalkThisUpdate);
+    const currentPos = this.getPosition();
+    const newPosition = currentPos.add(movement);
 
+    // 목표 위치와 실제 좌표 정렬
+    this.setPosition(newPosition);
     this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
     this.tileSizePixelsWalked %= 32 * MAP_SCALE;
 
+    // 타일 경계에 도달 시 정확히 정렬
+    if (this.tileSizePixelsWalked >= TILE_SIZE * MAP_SCALE) {
+      const targetTilePos = this.getTilePos();
+      this.setPosition(targetTilePos.scale(TILE_SIZE * MAP_SCALE));
+      this.tileSizePixelsWalked = 0; // 경계 조정
+    }
+
     this.lastDirection = this.currentDirection;
+
+    console.log('Current Tile Pos: ', this.getTilePos());
+  }
+
+  ready(direction: DIRECTION, animationKey: ANIMATION) {
+    this.movementDirectionQueue.push({ direction: direction, animationKey: animationKey });
   }
 
   update(delta: number) {
-    if (!this.isMoving()) return;
+    if (this.movementFinish && this.movementDirectionQueue.length > 0) {
+      this.process();
+    }
+    if (this.isMoving()) this.moveObject();
+  }
 
+  private moveObject() {
     if (this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate * MAP_SCALE)) {
       this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
       this.processStop();
-      this.step++;
       this.stopAnmation(this.getStopFrameNumber(this.lastDirection)!);
+      this.step++;
+      this.movementFinish = true;
     } else {
       this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
+      this.movementFinish = false;
     }
   }
 
-  private isMoving() {
+  isMoving() {
     return this.currentDirection != DIRECTION.NONE;
   }
 
@@ -89,7 +121,6 @@ export class MovableObject extends BaseObject {
         idx = 3;
         break;
     }
-    console.log(this.smoothFrameNumbers);
     return this.smoothFrameNumbers[idx];
   }
 
@@ -107,5 +138,9 @@ export class MovableObject extends BaseObject {
 
   resetStep() {
     this.step = 0;
+  }
+
+  isMovementFinish() {
+    return this.movementFinish;
   }
 }
