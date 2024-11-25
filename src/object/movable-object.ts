@@ -8,10 +8,12 @@ const Vector2 = Phaser.Math.Vector2;
 
 export class MovableObject extends BaseObject {
   private step: number = 0;
+  private stepSpeed: number = 2;
   private currentDirection: DIRECTION = DIRECTION.NONE;
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private tileSizePixelsWalked: number = 0;
   private pixelsToWalkThisUpdate: number = 0;
+  private smoothFrameNumbers: number[] = [];
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -26,11 +28,11 @@ export class MovableObject extends BaseObject {
     super(scene, texture, x, y);
   }
 
-  process(direction: DIRECTION) {
+  process(direction: DIRECTION, animationKey: ANIMATION) {
     if (this.isMoving()) return;
-    this.pixelsToWalkThisUpdate = this.getMoveSpeed(false);
+    this.pixelsToWalkThisUpdate = this.stepSpeed;
     this.currentDirection = direction;
-    this.startAnmation(this.getMoveType(this.currentDirection)!);
+    this.startAnmation(animationKey);
     this.setTilePos(this.getTilePos().add(this.movementDirection[this.currentDirection]!));
   }
 
@@ -40,29 +42,6 @@ export class MovableObject extends BaseObject {
 
   private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number): boolean {
     return this.tileSizePixelsWalked + pixelsToWalkThisUpdate >= 32 * MAP_SCALE;
-  }
-
-  private getMoveType(direction: DIRECTION) {
-    if (this.step === 2) {
-      this.step = 0;
-    }
-
-    if (direction === DIRECTION.UP) {
-      if (this.step === 0) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_1;
-      if (this.step === 1) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_2;
-    }
-    if (direction === DIRECTION.DOWN) {
-      if (this.step === 0) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_1;
-      if (this.step === 1) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_2;
-    }
-    if (direction === DIRECTION.LEFT) {
-      if (this.step === 0) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_1;
-      if (this.step === 1) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_2;
-    }
-    if (direction === DIRECTION.RIGHT) {
-      if (this.step === 0) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_1;
-      if (this.step === 1) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_2;
-    }
   }
 
   private moveSprite(pixelsToWalkThisUpdate: number) {
@@ -90,24 +69,43 @@ export class MovableObject extends BaseObject {
     }
   }
 
-  private getMoveSpeed(type: boolean) {
-    return type ? 4 : 2;
-  }
-
   private isMoving() {
     return this.currentDirection != DIRECTION.NONE;
   }
 
   private getStopFrameNumber(direction: DIRECTION) {
+    let idx = 0;
     switch (direction) {
       case DIRECTION.UP:
-        return 0;
+        idx = 0;
+        break;
       case DIRECTION.DOWN:
-        return 3;
+        idx = 1;
+        break;
       case DIRECTION.LEFT:
-        return 6;
+        idx = 2;
+        break;
       case DIRECTION.RIGHT:
-        return 9;
+        idx = 3;
+        break;
     }
+    console.log(this.smoothFrameNumbers);
+    return this.smoothFrameNumbers[idx];
+  }
+
+  setSmoothFrames(frames: number[]) {
+    this.smoothFrameNumbers = frames;
+  }
+
+  setSpeed(speed: number) {
+    this.stepSpeed = speed;
+  }
+
+  getStep() {
+    return this.step;
+  }
+
+  resetStep() {
+    this.step = 0;
   }
 }

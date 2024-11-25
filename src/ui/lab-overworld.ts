@@ -38,17 +38,25 @@ export class LabOverworld extends OverworldUi {
   }
 
   show(): void {
-    this.keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT];
-    this.keyboardMananger.setAllowKey(keys);
+    const keyboardMananger = KeyboardManager.getInstance();
+    const keys = [KEY.SELECT, KEY.RUNNING];
+    keyboardMananger.setAllowKey(keys);
 
     this.container.setVisible(true);
 
-    this.player = new PlayerObject(this.scene, TEXTURE.GIRL_3_MOVEMENT, 4, 2);
+    this.player = new PlayerObject(this.scene, TEXTURE.BOY_4_MOVEMENT, 4, 2);
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
     this.scene.cameras.main.startFollow(playerSprite, true, 0.1, 0.1, 0, 0);
+
+    keyboardMananger.setKeyDownCallback((key) => {
+      switch (key) {
+        case KEY.RUNNING:
+          this.player.setRunning();
+          break;
+      }
+    });
   }
 
   clean(): void {}

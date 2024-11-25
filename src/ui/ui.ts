@@ -58,7 +58,7 @@ export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animatio
     frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
     frameRate: 6,
     repeat: -1,
-    delay: 6,
+    delay: 0,
     yoyo: false,
   });
 }
