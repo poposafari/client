@@ -58,7 +58,7 @@ type KeyCallback = (key: KEY) => void;
 export class KeyboardManager {
   private static instance: KeyboardManager;
   private scene!: InGameScene;
-  private allowKey: Set<KEY> = new Set();
+  private allowKey: Map<KEY, Phaser.Input.Keyboard.Key> = new Map();
   private keyDownCallback!: KeyCallback;
   private keyUpCallback!: KeyCallback;
 
@@ -71,25 +71,16 @@ export class KeyboardManager {
 
   initialize(scene: InGameScene): void {
     this.scene = scene;
-
-    this.scene.input.keyboard?.on('keydown', (event: Phaser.Input.Keyboard.Key) => {
-      const key = event.keyCode as KEY;
-      if (this.allowKey.has(key) && this.keyDownCallback) {
-        this.keyDownCallback(key);
-      }
-    });
-
-    this.scene.input.keyboard?.on('keyup', (event: Phaser.Input.Keyboard.Key) => {
-      const key = event.keyCode as KEY;
-      if (this.allowKey.has(key) && this.keyUpCallback) {
-        this.keyUpCallback(key);
-      }
-    });
+    this.scene.events.on('update', this.updateKeys, this);
   }
 
   setAllowKey(keys: KEY[]): void {
     this.allowKey.clear();
-    keys.forEach((key) => this.allowKey.add(key));
+
+    keys.forEach((keyCode) => {
+      const key = this.scene.input.keyboard?.addKey(keyCode);
+      if (key) this.allowKey.set(keyCode, key);
+    });
   }
 
   setKeyDownCallback(callback: KeyCallback): void {
@@ -103,6 +94,16 @@ export class KeyboardManager {
   clearCallbacks(): void {
     this.keyDownCallback = undefined!;
     this.keyUpCallback = undefined!;
+  }
+
+  private updateKeys(): void {
+    this.allowKey.forEach((key, keyCode) => {
+      if (Phaser.Input.Keyboard.JustDown(key) && this.keyDownCallback) {
+        this.keyDownCallback(keyCode);
+      } else if (Phaser.Input.Keyboard.JustUp(key) && this.keyUpCallback) {
+        this.keyUpCallback(keyCode);
+      }
+    });
   }
 }
 
