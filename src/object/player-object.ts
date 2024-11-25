@@ -7,10 +7,14 @@ import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import { MovableObject } from './movable-object';
 
 export class PlayerObject extends MovableObject {
+  private isRunning: boolean = true;
+
   constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
     super(scene, texture, x, y);
 
     this.init(scene, texture);
+    this.isRunning ? this.setSmoothFrames([12, 15, 18, 21]) : this.setSmoothFrames([0, 3, 6, 9]);
+    this.isRunning ? this.setSpeed(3) : this.setSpeed(1.6);
   }
 
   init(scene: InGameScene, texture: TEXTURE) {
@@ -83,18 +87,20 @@ export class PlayerObject extends MovableObject {
   }
 
   move(key: KEY) {
+    const animationKey = this.getAnimationType(key);
+
     switch (key) {
       case KEY.UP:
-        this.process(DIRECTION.UP);
+        this.process(DIRECTION.UP, animationKey!);
         break;
       case KEY.DOWN:
-        this.process(DIRECTION.DOWN);
+        this.process(DIRECTION.DOWN, animationKey!);
         break;
       case KEY.LEFT:
-        this.process(DIRECTION.LEFT);
+        this.process(DIRECTION.LEFT, animationKey!);
         break;
       case KEY.RIGHT:
-        this.process(DIRECTION.RIGHT);
+        this.process(DIRECTION.RIGHT, animationKey!);
         break;
     }
   }
@@ -108,5 +114,49 @@ export class PlayerObject extends MovableObject {
         this.processStop();
         break;
     }
+  }
+
+  private getAnimationType(key: KEY) {
+    if (!this.isRunning && this.getStep() === 2) {
+      this.resetStep();
+    } else if (this.isRunning && this.getStep() === 3) {
+      this.resetStep();
+    }
+
+    const step = this.getStep();
+
+    switch (key) {
+      case KEY.UP:
+        if (!this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_1;
+        if (!this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_2;
+        if (this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_1;
+        if (this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_2;
+        if (this.isRunning && step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_3;
+      case KEY.DOWN:
+        if (!this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_1;
+        if (!this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_2;
+        if (this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_1;
+        if (this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_2;
+        if (this.isRunning && step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_3;
+      case KEY.LEFT:
+        if (!this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_1;
+        if (!this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_2;
+        if (this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_1;
+        if (this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_2;
+        if (this.isRunning && step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_3;
+      case KEY.RIGHT:
+        if (!this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_1;
+        if (!this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_2;
+        if (this.isRunning && step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_1;
+        if (this.isRunning && step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_2;
+        if (this.isRunning && step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_3;
+    }
+  }
+
+  setRunning() {
+    this.resetStep();
+    this.isRunning = !this.isRunning;
+    this.isRunning ? this.setSmoothFrames([12, 15, 18, 21]) : this.setSmoothFrames([0, 3, 6, 9]);
+    this.isRunning ? this.setSpeed(3) : this.setSpeed(1.6);
   }
 }
