@@ -4,7 +4,7 @@ import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { createSprite, createSpriteAnimation } from '../ui/ui';
 
-const TILE_SIZE = 32;
+export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
 export const PLAYER_SCALE = 3;
 
