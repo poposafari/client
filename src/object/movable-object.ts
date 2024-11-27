@@ -71,8 +71,6 @@ export class MovableObject extends BaseObject {
     }
 
     this.lastDirection = this.currentDirection;
-
-    // console.log('Current Tile Pos: ', this.getTilePos());
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION) {
@@ -158,10 +156,9 @@ export class MovableObject extends BaseObject {
   }
 
   private isBlockingDirection(direction: DIRECTION): boolean {
-    const nextTilePos = this.tilePosInDirection(direction); // 다음 타일 위치 계산
-    const isBlocked = this.hasBlockingTile(nextTilePos); // 충돌 여부 확인
-    // console.log(`Checking direction: ${direction}, Next tile pos: ${nextTilePos}, Blocked: ${isBlocked}`);
-    return isBlocked; // 결과 반환
+    const nextTilePos = this.tilePosInDirection(direction);
+    const isBlocked = this.hasBlockingTile(nextTilePos);
+    return isBlocked;
   }
   private tilePosInDirection(direction: DIRECTION): Phaser.Math.Vector2 {
     return this.getTilePos().add(this.movementDirection[direction]!);
