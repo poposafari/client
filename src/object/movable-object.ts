@@ -22,6 +22,7 @@ export class MovableObject extends BaseObject {
   private movementFinish: boolean = true;
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
+  private map: Phaser.Tilemaps.Tilemap;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -32,13 +33,13 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
+  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap) {
     super(scene, texture, x, y);
+    this.map = map;
   }
 
   process(direction: DIRECTION, animationKey: ANIMATION) {
     if (this.isMoving()) return;
-
     this.pixelsToWalkThisUpdate = this.stepSpeed;
     this.currentDirection = direction;
     this.startAnmation(animationKey);
@@ -75,6 +76,13 @@ export class MovableObject extends BaseObject {
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION) {
+    if (this.isBlockingDirection(direction)) {
+      this.startAnmation(animationKey);
+      this.lastDirection = direction;
+      this.movementDirectionQueue.length = 0;
+      return;
+    }
+
     this.movementDirectionQueue.push({ direction: direction, animationKey: animationKey });
   }
 
@@ -147,6 +155,28 @@ export class MovableObject extends BaseObject {
         break;
     }
     return this.smoothFrameNumbers[idx];
+  }
+
+  private isBlockingDirection(direction: DIRECTION): boolean {
+    const nextTilePos = this.tilePosInDirection(direction); // 다음 타일 위치 계산
+    const isBlocked = this.hasBlockingTile(nextTilePos); // 충돌 여부 확인
+    // console.log(`Checking direction: ${direction}, Next tile pos: ${nextTilePos}, Blocked: ${isBlocked}`);
+    return isBlocked; // 결과 반환
+  }
+  private tilePosInDirection(direction: DIRECTION): Phaser.Math.Vector2 {
+    return this.getTilePos().add(this.movementDirection[direction]!);
+  }
+  private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+    if (this.hasNoTile(pos)) return true;
+    return this.map.layers.some((layer) => {
+      const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
+      return tile && tile.properties.collides;
+    });
+  }
+  private hasNoTile(pos: Phaser.Math.Vector2): boolean {
+    return this.map.layers.some((layer) => {
+      this.map.hasTileAt(pos.x, pos.y, layer.name);
+    });
   }
 
   setSmoothFrames(frames: number[]) {
