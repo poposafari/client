@@ -9,8 +9,8 @@ import { MovableObject } from './movable-object';
 export class PlayerObject extends MovableObject {
   private isRunning: boolean;
 
-  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
-    super(scene, texture, x, y);
+  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap) {
+    super(scene, texture, x, y, map);
 
     this.init(scene, texture);
     this.isRunning = true;
