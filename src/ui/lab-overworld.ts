@@ -43,7 +43,7 @@ export class LabOverworld extends OverworldUi {
 
     this.container.setVisible(true);
 
-    this.player = new PlayerObject(this.scene, TEXTURE.GIRL_3_MOVEMENT, 4, 3, this.map);
+    this.player = new PlayerObject(this.scene, TEXTURE.GIRL_1_MOVEMENT, 4, 3, this.map);
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
