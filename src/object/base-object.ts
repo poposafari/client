@@ -1,8 +1,9 @@
 import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
+import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { createSprite, createSpriteAnimation } from '../ui/ui';
+import { addText, addTextBackground, createSprite, createSpriteAnimation } from '../ui/ui';
 
 export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
@@ -12,6 +13,7 @@ export class BaseObject {
   private scene: InGameScene;
   private tilePos!: Phaser.Math.Vector2;
   private sprite: Phaser.GameObjects.Sprite;
+  private nickname!: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
     this.scene = scene;
@@ -24,6 +26,7 @@ export class BaseObject {
     this.tilePos = new Phaser.Math.Vector2(x, y);
 
     this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
+    this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y + 5, 'Seophohoho', TEXTSTYLE.MESSAGE_WHITE);
   }
 
   getSprite() {
@@ -46,6 +49,7 @@ export class BaseObject {
   }
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
+    this.nickname.setPosition(position.x, position.y + 5);
   }
 
   startAnmation(animationKey: ANIMATION) {

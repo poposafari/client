@@ -37,6 +37,17 @@ export function addText(scene: InGameScene, x: number, y: number, content: strin
   return result;
 }
 
+export function addTextBackground(scene: InGameScene, x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
+  const result = scene.add.text(x, y, content, getTextStyle(style));
+
+  result.setShadow(3, 2, getTextShadow(style));
+  result.setScale(0.5);
+  result.setOrigin(0.5, 0.5);
+  result.setBackgroundColor('rgba(0, 0, 0, 0.7)');
+
+  return result;
+}
+
 export function addTextInput(scene: InGameScene, x: number, y: number, width: number, height: number, style: TEXTSTYLE, option: InputText.IConfig): InputText {
   const result = new InputText(scene, x, y, width, height, getTextStyle(style, option));
 

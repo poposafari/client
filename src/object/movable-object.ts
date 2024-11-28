@@ -126,6 +126,7 @@ export class MovableObject extends BaseObject {
       this.stopAnmation(this.getStopFrameNumber(this.lastDirection)!);
       this.step++;
       this.movementFinish = true;
+      this.getSprite().setDepth(this.getTilePos().y);
     } else {
       this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
       this.movementFinish = false;
