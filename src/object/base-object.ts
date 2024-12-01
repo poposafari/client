@@ -62,4 +62,8 @@ export class BaseObject {
     this.sprite.stop();
     this.sprite.setFrame(frameKeys[frameNumber]);
   }
+
+  getDepth() {
+    return this.sprite.depth;
+  }
 }
