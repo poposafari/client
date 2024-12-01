@@ -1,5 +1,5 @@
 import { MODE } from '../enums/mode';
-import { GlobalManager, KeyboardManager, MessageManager, ModeManager } from '../managers';
+import { GlobalManager, KeyboardManager, MessageManager, ModeManager, PlayerManager } from '../managers';
 import { BaseScene } from './base-scene';
 
 export class InGameScene extends BaseScene {
@@ -17,6 +17,9 @@ export class InGameScene extends BaseScene {
 
     this.modeManager = new ModeManager(this);
     GlobalManager.register('mode', this.modeManager);
+
+    const playerManager = PlayerManager.getInstance();
+    playerManager.initialize(true, 1, 'TestMan');
 
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.initialize(this);

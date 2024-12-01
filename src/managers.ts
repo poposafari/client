@@ -1,9 +1,10 @@
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
+import { PLAYER_STATUS } from './enums/player-status';
+import { TEXTURE_PLAYER_MAP } from './enums/texture';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
 import { LabOverworldMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
-import { PlayerObject } from './object/player-object';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -159,10 +160,38 @@ export class ModeManager {
 
 export class PlayerManager {
   private static instance: PlayerManager;
-  private scene!: InGameScene;
-  private player!: PlayerObject;
+  private gender!: string;
+  private avatarType!: number;
+  private nickname!: string;
 
-  constructor(scene: InGameScene) {
-    this.scene = scene;
+  static getInstance(): PlayerManager {
+    if (!PlayerManager.instance) {
+      PlayerManager.instance = new PlayerManager();
+    }
+    return PlayerManager.instance;
+  }
+
+  initialize(gender: boolean, avatarType: number, nickname: string): void {
+    this.gender = gender ? 'BOY' : 'GIRL';
+    this.avatarType = avatarType;
+    this.nickname = nickname;
+  }
+
+  getGender() {
+    return this.gender;
+  }
+
+  getAvatarType() {
+    return this.avatarType;
+  }
+
+  getNickname() {
+    return this.nickname;
+  }
+
+  getType(type: PLAYER_STATUS) {
+    const key = `${this.gender}_${this.avatarType}_${type}`;
+
+    return TEXTURE_PLAYER_MAP[key];
   }
 }
