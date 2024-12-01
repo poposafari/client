@@ -33,8 +33,8 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap) {
-    super(scene, texture, x, y);
+  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
+    super(scene, texture, x, y, nickname);
     this.map = map;
   }
 

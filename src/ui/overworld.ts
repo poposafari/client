@@ -1,7 +1,6 @@
 import { KEY } from '../enums/key';
-import { TEXTURE } from '../enums/texture';
+import { PLAYER_STATUS } from '../enums/player-status';
 import { KeyboardManager, PlayerManager } from '../managers';
-import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -15,6 +14,7 @@ export class Overworld extends UI {
 
   constructor(scene: InGameScene) {
     super(scene);
+    this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
   }
 
   setMap(map: Phaser.Tilemaps.Tilemap) {
@@ -30,7 +30,8 @@ export class Overworld extends UI {
 
     const playerManager = PlayerManager.getInstance();
 
-    this.player = new PlayerObject(this.scene, TEXTURE.GIRL_2_MOVEMENT, 4, 3, this.map);
+    this.player = new PlayerObject(this.scene, playerManager.getType(PLAYER_STATUS.MOVEMENT), 4, 3, this.map, playerManager.getNickname());
+
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
