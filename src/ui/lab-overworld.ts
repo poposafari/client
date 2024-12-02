@@ -31,7 +31,7 @@ export class LabOverworld extends Overworld {
 
     this.test = this.scene.add.container(width / 4, height / 4);
     this.test.add(this.map.createLayer(3, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE));
-    this.test.setDepth(100);
+    this.test.setDepth(9999);
 
     this.container.setVisible(false);
 
