@@ -48,7 +48,7 @@ export class BaseObject {
   }
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
-    this.nickname.setPosition(position.x, position.y + 5);
+    this.nickname.setPosition(position.x, position.y - 100);
   }
 
   startAnmation(animationKey: ANIMATION) {
