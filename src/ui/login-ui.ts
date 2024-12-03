@@ -56,6 +56,7 @@ export class LoginUi extends ModalUi {
       inputContainer.add(inputLabel);
       inputContainer.add(inputWindow);
       inputContainer.add(input);
+      inputContainer.setVisible(false);
 
       this.inputs.push(input);
       this.inputContainers.push(inputContainer);
@@ -69,6 +70,7 @@ export class LoginUi extends ModalUi {
 
       btnContainer.add(btnWindow);
       btnContainer.add(btnTitle);
+      // btnContainer.setVisible(false);
 
       this.btns.push(btnWindow);
       this.modalContainer.add(btnContainer);

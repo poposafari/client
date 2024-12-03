@@ -37,6 +37,13 @@ export const enum TEXTURE {
   SEASON_3 = 'season_3',
   MAP_GROUND = 'ground_0',
   MAP_TEST = 'test_map',
+  MENU_BOX = 'menu_box',
+  MENU_SHOES = 'menu_shoes',
+  MENU_BAG = 'menu_bag',
+  MENU_POKEDEX = 'menu_pokedex',
+  MENU_CARD = 'menu_card',
+  MENU_CHAT = 'menu_chat',
+  MENU_DOLL = 'menu_doll',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

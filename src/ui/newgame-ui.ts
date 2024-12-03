@@ -33,6 +33,7 @@ export class NewGameUi extends ModalUi {
   }
 
   setup(): void {
+    super.setup();
     const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
