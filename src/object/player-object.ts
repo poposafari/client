@@ -2,6 +2,7 @@ import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
+import { PlayerManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import { MovableObject } from './movable-object';
@@ -15,6 +16,9 @@ export class PlayerObject extends MovableObject {
     this.init(scene, texture);
     this.isRunning = true;
     this.setRunning();
+
+    const playerManager = PlayerManager.getInstance();
+    this.stopAnmation(this.getStopFrameNumber(playerManager.getLastDirection()));
   }
 
   init(scene: InGameScene, texture: TEXTURE) {

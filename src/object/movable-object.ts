@@ -143,7 +143,7 @@ export class MovableObject extends BaseObject {
     return this.currentDirection != DIRECTION.NONE;
   }
 
-  private getStopFrameNumber(direction: DIRECTION) {
+  getStopFrameNumber(direction: DIRECTION) {
     let idx = 0;
     switch (direction) {
       case DIRECTION.UP:
