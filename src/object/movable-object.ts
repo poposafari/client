@@ -1,6 +1,7 @@
 import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { TEXTURE } from '../enums/texture';
+import { PlayerManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 
@@ -127,6 +128,11 @@ export class MovableObject extends BaseObject {
       this.step++;
       this.movementFinish = true;
       this.getSprite().setDepth(this.getTilePos().y);
+
+      const playerManager = PlayerManager.getInstance();
+      playerManager.setPosX(this.getTilePos().x);
+      playerManager.setPosY(this.getTilePos().y);
+      playerManager.setLastDirection(this.lastDirection);
     } else {
       this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
       this.movementFinish = false;

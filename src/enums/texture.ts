@@ -44,6 +44,8 @@ export const enum TEXTURE {
   MENU_CARD = 'menu_card',
   MENU_CHAT = 'menu_chat',
   MENU_DOLL = 'menu_doll',
+  BG_BAG = 'bg_bag',
+  XBOX = 'xbox',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
