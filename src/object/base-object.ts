@@ -25,11 +25,15 @@ export class BaseObject {
     this.tilePos = new Phaser.Math.Vector2(x, y);
 
     this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
-    this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y + 5, nickname, TEXTSTYLE.MESSAGE_WHITE);
+    this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y - 100, nickname, TEXTSTYLE.MESSAGE_WHITE);
   }
 
   getSprite() {
     return this.sprite;
+  }
+
+  getNickname() {
+    return this.nickname;
   }
 
   getScene() {

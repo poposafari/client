@@ -2,49 +2,54 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { Overworld } from './overworld';
+import { OverworldUi } from './overworld-ui';
 import { addMap } from './ui';
 
-export class LabOverworld extends Overworld {
-  private mode: OverworldMode;
-  public map!: Phaser.Tilemaps.Tilemap;
-  private container!: Phaser.GameObjects.Container;
-  private test!: Phaser.GameObjects.Container;
+export class LabOverworld extends OverworldUi {
+  private layerContainer!: Phaser.GameObjects.Container;
+  private foregroundContainer!: Phaser.GameObjects.Container;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
-    super(scene);
-    this.mode = mode;
+    super(scene, mode);
   }
 
   setup(): void {
+    this.setMap();
     super.setup();
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    this.container = this.scene.add.container(width / 4, height / 4);
-
-    this.map = addMap(this.scene, TEXTURE.MAP_TEST);
-    this.map.addTilesetImage(TEXTURE.MAP_GROUND, TEXTURE.MAP_GROUND);
-
-    this.container.add(this.map.createLayer(0, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(0));
-    this.container.add(this.map.createLayer(1, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(1));
-    this.container.add(this.map.createLayer(2, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(2));
-
-    this.test = this.scene.add.container(width / 4, height / 4);
-    this.test.add(this.map.createLayer(3, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE));
-    this.test.setDepth(9999);
-
-    this.container.setVisible(false);
-    this.test.setVisible(false);
-
-    this.setMap(this.map);
   }
 
   show(): void {
     super.show();
-    this.container.setVisible(true);
-    this.test.setVisible(true);
+    this.layerContainer.setVisible(true);
+    this.foregroundContainer.setVisible(true);
   }
 
-  clean(): void {}
+  clean(): void {
+    super.clean();
+    this.layerContainer.setVisible(false);
+    this.foregroundContainer.setVisible(false);
+  }
+
+  setMap() {
+    const width = this.getWidth();
+    const height = this.getHeight();
+
+    this.layerContainer = this.scene.add.container(width / 4, height / 4);
+
+    const map = addMap(this.scene, TEXTURE.MAP_TEST);
+    map.addTilesetImage(TEXTURE.MAP_GROUND, TEXTURE.MAP_GROUND);
+
+    this.layerContainer.add(map.createLayer(0, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(0));
+    this.layerContainer.add(map.createLayer(1, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(1));
+    this.layerContainer.add(map.createLayer(2, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE).setDepth(2));
+
+    this.foregroundContainer = this.scene.add.container(width / 4, height / 4);
+    this.foregroundContainer.add(map.createLayer(3, TEXTURE.MAP_GROUND)!.setScale(MAP_SCALE));
+    this.foregroundContainer.setDepth(9999);
+
+    this.layerContainer.setVisible(false);
+    this.foregroundContainer.setVisible(false);
+
+    super.setMap(map);
+  }
 }

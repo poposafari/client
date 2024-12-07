@@ -68,6 +68,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.MENU_DOLL, 'ui', TEXTURE.MENU_DOLL);
     this.loadImage(TEXTURE.MENU_CHAT, 'ui', TEXTURE.MENU_CHAT);
 
+    this.loadImage(TEXTURE.BG_BAG, 'ui', TEXTURE.BG_BAG);
+    this.loadImage(TEXTURE.XBOX, 'ui', TEXTURE.XBOX);
+
     this.load.on('complete', () => {
       this.startInGameScene();
     });

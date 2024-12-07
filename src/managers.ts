@@ -1,10 +1,11 @@
+import { DIRECTION } from './enums/direction';
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { PLAYER_STATUS } from './enums/player-status';
 import { TEXTURE_PLAYER_MAP } from './enums/texture';
 import { Message } from './interface/sys';
 import { Mode } from './mode';
-import { LabOverworldMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
+import { BagMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { UI } from './ui/ui';
@@ -124,7 +125,7 @@ export class ModeManager {
       { key: MODE.TITLE, value: new TitleMode(scene, this) },
       { key: MODE.NEWGAME, value: new NewGameMode(scene, this) },
       { key: MODE.OVERWORLD, value: new OverworldMode(scene, this) },
-      { key: MODE.LAB_OVERWORLD, value: new LabOverworldMode(scene, this) },
+      { key: MODE.BAG, value: new BagMode(scene, this) },
     ];
   }
 
@@ -150,7 +151,7 @@ export class ModeManager {
   }
 
   isOverworldMode(): boolean {
-    return this.currentMode instanceof OverworldMode || this.currentMode instanceof LabOverworldMode;
+    return this.currentMode instanceof OverworldMode;
   }
 
   getCurrentMode() {
@@ -163,6 +164,10 @@ export class PlayerManager {
   private gender!: string;
   private avatarType!: number;
   private nickname!: string;
+  private currentLocation!: MODE;
+  private posX: number = 4;
+  private posY: number = 3;
+  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
 
   static getInstance(): PlayerManager {
     if (!PlayerManager.instance) {
@@ -193,5 +198,37 @@ export class PlayerManager {
     const key = `${this.gender}_${this.avatarType}_${type}`;
 
     return TEXTURE_PLAYER_MAP[key];
+  }
+
+  getPosX() {
+    return this.posX;
+  }
+
+  getPosY() {
+    return this.posY;
+  }
+
+  getCurrentLocation() {
+    return this.currentLocation;
+  }
+
+  getLastDirection() {
+    return this.lastDirectrion;
+  }
+
+  setPosX(value: number) {
+    this.posX = value;
+  }
+
+  setPosY(value: number) {
+    this.posY = value;
+  }
+
+  setCurrentLocation(mode: MODE) {
+    this.currentLocation = mode;
+  }
+
+  setLastDirection(direction: DIRECTION) {
+    this.lastDirectrion = direction;
   }
 }
