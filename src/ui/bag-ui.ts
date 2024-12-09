@@ -82,8 +82,10 @@ export class BagUi extends UI {
     }
 
     let startIndex = 0;
-    let endIndex = playerManager.getItemCount();
+    let endIndex = playerManager.getItemCount() - 1;
     let choice = startIndex;
+
+    console.log(choice);
 
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
@@ -98,26 +100,50 @@ export class BagUi extends UI {
       for (let i = 0; i < this.itemBoxBtn.length; i++) {
         this.itemIcons[i].setVisible(false);
         this.itemTexts[i].setVisible(false);
+        this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
       }
 
-      for (const box of this.itemBoxBtn) {
-        box.setTexture(TEXTURE.ITEM_BOX);
-      }
       this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
+      console.log(this.itemBoxBtn[choice].texture.key);
       this.itemIcons[choice].setVisible(true);
       this.itemTexts[choice].setVisible(true);
     });
 
+    for (let i = 0; i < this.itemBoxBtn.length; i++) {
+      this.itemIcons[i].setVisible(false);
+      this.itemTexts[i].setVisible(false);
+      this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
+    }
+
     this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
     this.itemIcons[choice].setVisible(true);
     this.itemTexts[choice].setVisible(true);
-    console.log(choice);
   }
 
   clean(): void {
     this.bg.setAlpha(1);
     this.bg.setVisible(false);
     this.xboxContainer.setVisible(false);
+
+    this.itemBoxBtn.forEach((btn) => {
+      btn.destroy();
+    });
+    this.itemBoxBtn = [];
+
+    this.itemIcons.forEach((btn) => {
+      btn.destroy();
+    });
+    this.itemIcons = [];
+
+    this.itemStocks.forEach((btn) => {
+      btn.destroy();
+    });
+    this.itemStocks = [];
+
+    this.itemTexts.forEach((btn) => {
+      btn.destroy();
+    });
+    this.itemTexts = [];
 
     this.xboxBtn.off('pointerover');
     this.xboxBtn.off('pointerout');
