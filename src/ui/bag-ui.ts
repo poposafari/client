@@ -1,13 +1,22 @@
+import { getItem, Item, items } from '../data/items';
+import { KEY } from '../enums/key';
+import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
+import { item } from '../locales/ko/item';
+import { KeyboardManager, PlayerManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, UI } from './ui';
+import { addBackground, addImage, addText, UI } from './ui';
 
 export class BagUi extends UI {
   private mode: BagMode;
   private bg!: Phaser.GameObjects.Image;
   private xboxContainer!: Phaser.GameObjects.Container;
   private xboxBtn!: Phaser.GameObjects.Image;
+  private itemBoxBtn: Phaser.GameObjects.Image[] = [];
+  private itemIcons: Phaser.GameObjects.Image[] = [];
+  private itemStocks: Phaser.GameObjects.Text[] = [];
+  private itemTexts: Phaser.GameObjects.Text[] = [];
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -32,6 +41,9 @@ export class BagUi extends UI {
   }
 
   show(): void {
+    const playerManager = PlayerManager.getInstance();
+    const keyboardMananger = KeyboardManager.getInstance();
+
     this.bg.setAlpha(0);
     this.bg.setVisible(true);
     this.xboxContainer.setVisible(true);
@@ -53,6 +65,53 @@ export class BagUi extends UI {
     this.xboxBtn.on('pointerout', () => {
       this.xboxBtn.setAlpha(1);
     });
+
+    let index = 0;
+    const itemSpacing = 50;
+    const startX = 320;
+    const startY = -204;
+
+    for (const key of Object.keys(items)) {
+      const bagItem = playerManager.getBagItem(key);
+      const itemDetail = getItem(key);
+      if (bagItem) {
+        const posY = startY + index * itemSpacing;
+        this.createItemBox(key, bagItem.stock, itemDetail!, startX, posY);
+        index++;
+      }
+    }
+
+    let startIndex = 0;
+    let endIndex = playerManager.getItemCount();
+    let choice = startIndex;
+
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
+    keyboardMananger.setAllowKey(keys);
+
+    keyboardMananger.setKeyDownCallback((key) => {
+      if (key === KEY.UP) {
+        choice = Math.max(startIndex, choice - 1);
+      } else if (key === KEY.DOWN) {
+        choice = Math.min(endIndex, choice + 1);
+      }
+
+      for (let i = 0; i < this.itemBoxBtn.length; i++) {
+        this.itemIcons[i].setVisible(false);
+        this.itemTexts[i].setVisible(false);
+      }
+
+      for (const box of this.itemBoxBtn) {
+        box.setTexture(TEXTURE.ITEM_BOX);
+      }
+      this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
+      this.itemIcons[choice].setVisible(true);
+      this.itemTexts[choice].setVisible(true);
+    });
+
+    this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
+    this.itemIcons[choice].setVisible(true);
+    this.itemTexts[choice].setVisible(true);
+    console.log(choice);
   }
 
   clean(): void {
@@ -75,4 +134,23 @@ export class BagUi extends UI {
   pause(onoff: boolean): void {}
 
   update(time: number, delta: number): void {}
+
+  private createItemBox(key: string, stock: number, itemInfo: Item, x: number, y: number): void {
+    const boxContainer = this.scene.add.container(0, 0);
+    const box = addImage(this.scene, TEXTURE.ITEM_BOX, x, y);
+    const text = addText(this.scene, x - 95, y - 8, itemInfo.name, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0);
+    const icon = addImage(this.scene, `item${key}`, -410, 235).setVisible(false);
+    const iconText = addText(this.scene, -350, 220, itemInfo.description, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0).setVisible(false);
+    const iconStock = addText(this.scene, x + 75, y - 8, 'x' + stock.toString(), TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0);
+    this.itemBoxBtn.push(box);
+    this.itemIcons.push(icon);
+    this.itemTexts.push(iconText);
+    this.itemStocks.push(iconStock);
+    boxContainer.add(box);
+    boxContainer.add(text);
+    boxContainer.add(icon);
+    boxContainer.add(iconText);
+    boxContainer.add(iconStock);
+    this.xboxContainer.add(boxContainer);
+  }
 }

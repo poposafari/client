@@ -10,3 +10,8 @@ export interface Message {
   format: 'talk' | 'question';
   content: string;
 }
+
+export interface BagItem {
+  idx: string;
+  stock: number;
+}

@@ -1,6 +1,8 @@
+import { items } from '../data/items';
 import { ANIMATION } from '../enums/animation';
 import { TEXTURE } from '../enums/texture';
 import { initI18n } from '../i18n';
+import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 
 export class LoadingScene extends BaseScene {
@@ -70,6 +72,15 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.BG_BAG, 'ui', TEXTURE.BG_BAG);
     this.loadImage(TEXTURE.XBOX, 'ui', TEXTURE.XBOX);
+
+    this.loadImage(TEXTURE.ITEM_BOX, 'ui', TEXTURE.ITEM_BOX);
+    this.loadImage(TEXTURE.ITEM_BOX_S, 'ui', TEXTURE.ITEM_BOX_S);
+
+    let itemIdx = 1;
+    for (const key of Object.keys(items)) {
+      this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
+      itemIdx++;
+    }
 
     this.load.on('complete', () => {
       this.startInGameScene();

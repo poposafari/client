@@ -12,7 +12,7 @@ export function addWindow(scene: InGameScene, texture: TEXTURE, x: number, y: nu
   return ret;
 }
 
-export function addImage(scene: InGameScene, texture: TEXTURE, x: number, y: number) {
+export function addImage(scene: InGameScene, texture: TEXTURE | string, x: number, y: number) {
   const ret = scene.add.image(x, y, texture).setOrigin(0.5, 0.5);
 
   return ret;
@@ -103,6 +103,7 @@ function getTextShadow(style: TEXTSTYLE) {
   let ret;
 
   switch (style) {
+    case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
       ret = '#91919a';
@@ -146,6 +147,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       break;
     case TEXTSTYLE.TITLE_DEFAULT:
       config.fontSize = '36px';
+      config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.ITEM_TITLE:
+      config.fontSize = '40px';
       config.color = '#ffffff';
       break;
   }
