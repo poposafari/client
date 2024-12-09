@@ -3,7 +3,7 @@ import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { PLAYER_STATUS } from './enums/player-status';
 import { TEXTURE_PLAYER_MAP } from './enums/texture';
-import { Message } from './interface/sys';
+import { BagItem, Message } from './interface/sys';
 import { Mode } from './mode';
 import { BagMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
@@ -168,6 +168,7 @@ export class PlayerManager {
   private posX: number = 4;
   private posY: number = 3;
   private lastDirectrion: DIRECTION = DIRECTION.DOWN;
+  private items: Record<string, BagItem> = {};
 
   static getInstance(): PlayerManager {
     if (!PlayerManager.instance) {
@@ -180,6 +181,27 @@ export class PlayerManager {
     this.gender = gender ? 'BOY' : 'GIRL';
     this.avatarType = avatarType;
     this.nickname = nickname;
+
+    this.addItem('001', 5);
+    this.addItem('002', 3);
+    this.addItem('003', 2);
+    this.addItem('004', 10);
+  }
+
+  addItem(key: string, quantity: number): void {
+    if (this.items[key]) {
+      this.items[key].stock += quantity;
+    } else {
+      this.items[key] = { idx: key, stock: quantity };
+    }
+  }
+
+  getItemCount(): number {
+    return Object.keys(this.items).length;
+  }
+
+  getBagItem(key: string) {
+    return this.items[key] || null;
   }
 
   getGender() {

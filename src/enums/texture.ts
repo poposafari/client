@@ -46,6 +46,8 @@ export const enum TEXTURE {
   MENU_DOLL = 'menu_doll',
   BG_BAG = 'bg_bag',
   XBOX = 'xbox',
+  ITEM_BOX = 'item_box',
+  ITEM_BOX_S = 'item_box_s',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
