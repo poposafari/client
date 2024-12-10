@@ -2,7 +2,7 @@ import { ANIMATION } from '../enums/animation';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addTextBackground, createSprite } from '../ui/ui';
+import { addText, addTextBackground, createSprite } from '../ui/ui';
 
 export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
@@ -12,7 +12,7 @@ export class BaseObject {
   private scene: InGameScene;
   private tilePos!: Phaser.Math.Vector2;
   private sprite: Phaser.GameObjects.Sprite;
-  private nickname!: Phaser.GameObjects.Text;
+  private nickname: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, nickname: string) {
     this.scene = scene;
@@ -26,6 +26,20 @@ export class BaseObject {
 
     this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
     this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y - 100, nickname, TEXTSTYLE.MESSAGE_WHITE);
+  }
+
+  destroy() {
+    if (this.sprite) {
+      this.scene.children.remove(this.sprite);
+      this.sprite.destroy();
+      this.sprite = null!;
+    }
+
+    if (this.nickname) {
+      this.scene.children.remove(this.nickname);
+      this.nickname.destroy();
+      this.nickname = null!;
+    }
   }
 
   getSprite() {
@@ -43,6 +57,7 @@ export class BaseObject {
   getTilePos(): Phaser.Math.Vector2 {
     return this.tilePos.clone();
   }
+
   setTilePos(tilePosition: Phaser.Math.Vector2): void {
     this.tilePos = tilePosition.clone();
   }
@@ -50,6 +65,7 @@ export class BaseObject {
   getPosition(): Phaser.Math.Vector2 {
     return this.sprite.getBottomCenter();
   }
+
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
     this.nickname.setPosition(position.x, position.y - 100);

@@ -2,7 +2,6 @@ import { getItem, Item, items } from '../data/items';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { item } from '../locales/ko/item';
 import { KeyboardManager, PlayerManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -85,8 +84,6 @@ export class BagUi extends UI {
     let endIndex = playerManager.getItemCount() - 1;
     let choice = startIndex;
 
-    console.log(choice);
-
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
 
@@ -104,7 +101,6 @@ export class BagUi extends UI {
       }
 
       this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
-      console.log(this.itemBoxBtn[choice].texture.key);
       this.itemIcons[choice].setVisible(true);
       this.itemTexts[choice].setVisible(true);
     });

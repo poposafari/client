@@ -19,6 +19,7 @@ export class LabOverworld extends OverworldUi {
   }
 
   show(): void {
+    this.setMap();
     super.show();
     this.layerContainer.setVisible(true);
     this.foregroundContainer.setVisible(true);
