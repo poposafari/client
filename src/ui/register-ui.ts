@@ -73,7 +73,6 @@ export class RegisterUi extends ModalUi {
 
       btnContainer.add(btnWindow);
       btnContainer.add(btnTitle);
-      // btnContainer.setVisible(false);
 
       this.btns.push(btnWindow);
       this.modalContainer.add(btnContainer);

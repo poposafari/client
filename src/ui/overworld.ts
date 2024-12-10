@@ -29,6 +29,25 @@ export class Overworld extends UI {
   }
 
   setup(): void {
+    // const keyboardMananger = KeyboardManager.getInstance();
+    // const keys = [KEY.SELECT, KEY.RUNNING];
+    // keyboardMananger.setAllowKey(keys);
+    // const playerManager = PlayerManager.getInstance();
+    // this.player = new PlayerObject(this.scene, playerManager.getType(PLAYER_STATUS.MOVEMENT), playerManager.getPosX(), playerManager.getPosY(), this.map, playerManager.getNickname());
+    // const playerSprite = this.player.getSprite();
+    // playerSprite.setVisible(false);
+    // playerSprite.setScale(PLAYER_SCALE);
+    // this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5, 0, 0);
+    // keyboardMananger.setKeyDownCallback((key) => {
+    //   switch (key) {
+    //     case KEY.RUNNING:
+    //       this.player.setRunning();
+    //       break;
+    //   }
+    // });
+  }
+
+  show(): void {
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.SELECT, KEY.RUNNING];
     keyboardMananger.setAllowKey(keys);
@@ -38,7 +57,7 @@ export class Overworld extends UI {
     this.player = new PlayerObject(this.scene, playerManager.getType(PLAYER_STATUS.MOVEMENT), playerManager.getPosX(), playerManager.getPosY(), this.map, playerManager.getNickname());
 
     const playerSprite = this.player.getSprite();
-    playerSprite.setVisible(false);
+    playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
     this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5, 0, 0);
 
@@ -51,17 +70,9 @@ export class Overworld extends UI {
     });
   }
 
-  show(): void {
-    const playerSprite = this.player.getSprite();
-    playerSprite.setVisible(true);
-  }
-
   clean(): void {
     this.map.destroy();
-    const playerSprite = this.player.getSprite();
-    const playerNickname = this.player.getNickname();
-    playerSprite.destroy();
-    playerNickname.destroy();
+    this.player.destroy();
     this.scene.cameras.main.stopFollow();
     this.scene.cameras.main.setScroll(0, 0);
   }

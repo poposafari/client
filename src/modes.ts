@@ -140,7 +140,6 @@ export class OverworldMode extends Mode {
   }
 
   enter(): void {
-    this.ui.setup();
     this.ui.show();
   }
 
