@@ -8,7 +8,7 @@ import { Mode } from './mode';
 import { BagMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
-import { UI } from './ui/ui';
+import { Ui } from './ui/ui';
 
 interface Modes {
   key: MODE;

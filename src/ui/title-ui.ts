@@ -6,9 +6,9 @@ import { KeyboardManager } from '../managers';
 import { TitleMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { titleContinueConfig, titleLogoutConfig, titleMysteryGiftConfig, titleNewGameConfig, titleSettingConfig } from './config';
-import { addBackground, addImage, addText, addWindow, UI } from './ui';
+import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 
-export class TitleUi extends UI {
+export class TitleUi extends Ui {
   private mode: TitleMode;
   private bg!: Phaser.GameObjects.Image;
   private btns: Phaser.GameObjects.Image[] = [];

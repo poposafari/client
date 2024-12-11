@@ -5,7 +5,7 @@ import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
 import { KeyboardManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addText, addWindow, createSprite, createSpriteAnimation, UI } from './ui';
+import { addText, addWindow, createSprite, createSpriteAnimation, Ui } from './ui';
 
 export class MessageUi {
   private scene: InGameScene;

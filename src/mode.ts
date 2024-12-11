@@ -1,11 +1,11 @@
 import { ModeManager } from './managers';
 import { InGameScene } from './scenes/ingame-scene';
-import { UI } from './ui/ui';
+import { Ui } from './ui/ui';
 
 export abstract class Mode {
   protected scene: InGameScene;
   protected manager: ModeManager;
-  protected ui!: UI;
+  protected ui!: Ui;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     this.scene = scene;

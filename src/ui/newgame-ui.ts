@@ -3,7 +3,7 @@ import { TEXTURE } from '../enums/texture';
 import { MessageManager } from '../managers';
 import { NewGameMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow, UI } from './ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, Ui } from './ui';
 import { ModalUi } from './modal-ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import InputText from 'phaser3-rex-plugins/plugins/inputtext';
