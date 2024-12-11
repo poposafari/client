@@ -45,7 +45,7 @@ export class MessageManager {
     return MessageManager.instance;
   }
 
-  async show(currentUi: UI, messages: Message[]): Promise<void> {
+  async show(currentUi: Ui, messages: Message[]): Promise<void> {
     for (const msg of messages) {
       await this.messageUi.show(msg);
     }
