@@ -1,8 +1,8 @@
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addWindow, UI } from './ui';
+import { addWindow, Ui } from './ui';
 
-export class ModalUi extends UI {
+export class ModalUi extends Ui {
   protected modalContainer!: Phaser.GameObjects.Container;
   private modalWindow!: Phaser.GameObjects.NineSlice;
 

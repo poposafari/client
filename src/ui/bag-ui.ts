@@ -5,9 +5,9 @@ import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, PlayerManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, UI } from './ui';
+import { addBackground, addImage, addText, Ui } from './ui';
 
-export class BagUi extends UI {
+export class BagUi extends Ui {
   private mode: BagMode;
   private bg!: Phaser.GameObjects.Image;
   private xboxContainer!: Phaser.GameObjects.Container;

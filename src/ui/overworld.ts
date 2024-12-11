@@ -5,9 +5,9 @@ import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { UI } from './ui';
+import { Ui } from './ui';
 
-export class Overworld extends UI {
+export class Overworld extends Ui {
   private mode!: OverworldMode;
   protected map!: Phaser.Tilemaps.Tilemap;
   private players: PlayerObject[] = [];

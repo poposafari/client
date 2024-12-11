@@ -158,7 +158,7 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
   return config;
 }
 
-export abstract class UI {
+export abstract class Ui {
   protected scene: InGameScene;
 
   constructor(scene: InGameScene) {
