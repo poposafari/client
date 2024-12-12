@@ -166,15 +166,13 @@ export class BagMode extends Mode {
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new BagModalUi(this.scene, this));
 
-    this.addUiStack('BagUi');
-
     for (const ui of this.uis) {
       ui.setup();
     }
   }
 
   enter(data?: any): void {
-    this.getUiStackTop().show(data);
+    this.addUiStack('BagUi', data);
   }
 
   exit(): void {
