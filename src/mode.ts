@@ -22,13 +22,20 @@ export abstract class Mode {
     return this.uiStack[this.uiStack.length - 1];
   }
 
-  addUiStack(type: string) {
+  addUiStack(type: string, data?: any) {
     const target = this.findUiByType(type)!;
+
+    if (this.uiStack.length > 0) {
+      this.getUiStackTop().pause(true);
+    }
+
     this.uiStack.push(target);
+    this.getUiStackTop().show(data);
   }
 
   popUiStack() {
     this.uiStack.pop();
+    this.getUiStackTop().pause(false);
   }
 
   abstract init(): void;

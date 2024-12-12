@@ -16,6 +16,8 @@ export class BagUi extends Ui {
   private itemIcons: Phaser.GameObjects.Image[] = [];
   private itemStocks: Phaser.GameObjects.Text[] = [];
   private itemTexts: Phaser.GameObjects.Text[] = [];
+  private playerManager!: PlayerManager;
+  private lastChoice: number = 0;
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -40,8 +42,7 @@ export class BagUi extends Ui {
   }
 
   show(): void {
-    const playerManager = PlayerManager.getInstance();
-    const keyboardMananger = KeyboardManager.getInstance();
+    this.playerManager = PlayerManager.getInstance();
 
     this.bg.setAlpha(0);
     this.bg.setVisible(true);
@@ -71,7 +72,7 @@ export class BagUi extends Ui {
     const startY = -204;
 
     for (const key of Object.keys(items)) {
-      const bagItem = playerManager.getBagItem(key);
+      const bagItem = this.playerManager.getBagItem(key);
       const itemDetail = getItem(key);
       if (bagItem) {
         const posY = startY + index * itemSpacing;
@@ -80,44 +81,7 @@ export class BagUi extends Ui {
       }
     }
 
-    let startIndex = 0;
-    let endIndex = playerManager.getItemCount() - 1;
-    let choice = startIndex;
-
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
-    keyboardMananger.setAllowKey(keys);
-
-    keyboardMananger.setKeyDownCallback((key) => {
-      if (key === KEY.UP) {
-        choice = Math.max(startIndex, choice - 1);
-      } else if (key === KEY.DOWN) {
-        choice = Math.min(endIndex, choice + 1);
-      } else if (key === KEY.SELECT) {
-        const targetItem = this.itemIcons[choice].texture.key;
-        this.mode.addUiStack('BagModalUi');
-        this.mode.enter(targetItem.split('item')[1]);
-      }
-
-      for (let i = 0; i < this.itemBoxBtn.length; i++) {
-        this.itemIcons[i].setVisible(false);
-        this.itemTexts[i].setVisible(false);
-        this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
-      }
-
-      this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
-      this.itemIcons[choice].setVisible(true);
-      this.itemTexts[choice].setVisible(true);
-    });
-
-    for (let i = 0; i < this.itemBoxBtn.length; i++) {
-      this.itemIcons[i].setVisible(false);
-      this.itemTexts[i].setVisible(false);
-      this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
-    }
-
-    this.itemBoxBtn[choice].setTexture(TEXTURE.ITEM_BOX_S);
-    this.itemIcons[choice].setVisible(true);
-    this.itemTexts[choice].setVisible(true);
+    this.pause(false);
   }
 
   clean(): void {
@@ -161,9 +125,52 @@ export class BagUi extends Ui {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {}
+  block() {
+    this.xboxBtn.off('pointerover');
+    this.xboxBtn.off('pointerout');
+    this.xboxBtn.off('pointerdown');
+  }
 
-  unblock() {}
+  unblock() {
+    const keyboardMananger = KeyboardManager.getInstance();
+
+    let startIndex = 0;
+    let endIndex = this.playerManager.getItemCount() - 1;
+
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
+    keyboardMananger.setAllowKey(keys);
+
+    keyboardMananger.setKeyDownCallback((key) => {
+      if (key === KEY.UP) {
+        this.lastChoice = Math.max(startIndex, this.lastChoice - 1);
+      } else if (key === KEY.DOWN) {
+        this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
+      } else if (key === KEY.SELECT) {
+        const targetItem = this.itemIcons[this.lastChoice].texture.key;
+        this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
+      }
+
+      for (let i = 0; i < this.itemBoxBtn.length; i++) {
+        this.itemIcons[i].setVisible(false);
+        this.itemTexts[i].setVisible(false);
+        this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
+      }
+
+      this.itemBoxBtn[this.lastChoice].setTexture(TEXTURE.ITEM_BOX_S);
+      this.itemIcons[this.lastChoice].setVisible(true);
+      this.itemTexts[this.lastChoice].setVisible(true);
+    });
+
+    for (let i = 0; i < this.itemBoxBtn.length; i++) {
+      this.itemIcons[i].setVisible(false);
+      this.itemTexts[i].setVisible(false);
+      this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
+    }
+
+    this.itemBoxBtn[this.lastChoice].setTexture(TEXTURE.ITEM_BOX_S);
+    this.itemIcons[this.lastChoice].setVisible(true);
+    this.itemTexts[this.lastChoice].setVisible(true);
+  }
 
   update(time: number, delta: number): void {}
 

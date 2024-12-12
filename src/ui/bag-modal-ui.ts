@@ -44,12 +44,30 @@ export class BagModalUi extends Ui {
 
     ui.add(this.bg);
     ui.add(this.choiceContainer);
+
+    this.pause(false);
   }
   show(data: any): void {
-    const keyboardMananger = KeyboardManager.getInstance();
-
     this.bg.setVisible(true);
     this.choiceContainer.setVisible(true);
+
+    this.pause(false);
+  }
+  clean(): void {
+    this.bg.setVisible(false);
+    this.choiceContainer.setVisible(false);
+  }
+
+  pause(onoff: boolean): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  block() {
+    this.bg.setVisible(false);
+  }
+
+  unblock() {
+    const keyboardMananger = KeyboardManager.getInstance();
 
     let startIndex = 0;
     let endIndex = 1;
@@ -82,10 +100,6 @@ export class BagModalUi extends Ui {
     }
     this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
   }
-  clean(): void {
-    this.bg.setVisible(false);
-    this.choiceContainer.setVisible(false);
-  }
-  pause(onoff: boolean): void {}
+
   update(time: number, delta: number): void {}
 }
