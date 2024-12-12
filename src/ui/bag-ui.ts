@@ -92,6 +92,10 @@ export class BagUi extends Ui {
         choice = Math.max(startIndex, choice - 1);
       } else if (key === KEY.DOWN) {
         choice = Math.min(endIndex, choice + 1);
+      } else if (key === KEY.SELECT) {
+        const targetItem = this.itemIcons[choice].texture.key;
+        this.mode.addUiStack('BagModalUi');
+        this.mode.enter(targetItem.split('item')[1]);
       }
 
       for (let i = 0; i < this.itemBoxBtn.length; i++) {
@@ -153,7 +157,13 @@ export class BagUi extends Ui {
     });
   }
 
-  pause(onoff: boolean): void {}
+  pause(onoff: boolean): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  block() {}
+
+  unblock() {}
 
   update(time: number, delta: number): void {}
 
