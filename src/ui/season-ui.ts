@@ -2,9 +2,9 @@ import { TEXTURE } from '../enums/texture';
 import { Mode } from '../mode';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, UI } from './ui';
+import { addBackground, addImage, Ui } from './ui';
 
-export class SeasonUi extends UI {
+export class SeasonUi extends Ui {
   private mode: Mode;
   private container!: Phaser.GameObjects.Container;
 

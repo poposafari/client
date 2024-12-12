@@ -76,6 +76,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ITEM_BOX, 'ui', TEXTURE.ITEM_BOX);
     this.loadImage(TEXTURE.ITEM_BOX_S, 'ui', TEXTURE.ITEM_BOX_S);
 
+    this.loadImage(TEXTURE.CHOICE, 'ui', TEXTURE.CHOICE);
+    this.loadImage(TEXTURE.CHOICE_S, 'ui', TEXTURE.CHOICE_S);
+
     let itemIdx = 1;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);

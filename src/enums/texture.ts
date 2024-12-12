@@ -48,6 +48,8 @@ export const enum TEXTURE {
   XBOX = 'xbox',
   ITEM_BOX = 'item_box',
   ITEM_BOX_S = 'item_box_s',
+  CHOICE = 'choice',
+  CHOICE_S = 'choice_s',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

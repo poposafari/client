@@ -6,4 +6,5 @@ export const enum TEXTSTYLE {
   MESSAGE_BLACK,
   TITLE_DEFAULT,
   ITEM_TITLE,
+  CHOICE_DEFAULT,
 }

@@ -10,6 +10,7 @@ import { LabOverworld } from './ui/lab-overworld';
 import { TitleUi } from './ui/title-ui';
 import { BagUi } from './ui/bag-ui';
 import { Overworld } from './ui/overworld';
+import { BagModalUi } from './ui/bag-modal-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -20,7 +21,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.LOGIN);
+    this.manager.changeMode(MODE.OVERWORLD);
   }
   exit(): void {}
 
@@ -162,12 +163,18 @@ export class BagMode extends Mode {
   }
 
   init(): void {
-    this.ui = new BagUi(this.scene, this);
-    this.ui.setup();
+    this.uis.push(new BagUi(this.scene, this));
+    this.uis.push(new BagModalUi(this.scene, this));
+
+    this.addUiStack('BagUi');
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
   }
 
-  enter(): void {
-    this.ui.show();
+  enter(data?: any): void {
+    this.getUiStackTop().show(data);
   }
 
   exit(): void {

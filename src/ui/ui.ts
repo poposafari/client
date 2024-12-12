@@ -103,6 +103,7 @@ function getTextShadow(style: TEXTSTYLE) {
   let ret;
 
   switch (style) {
+    case TEXTSTYLE.CHOICE_DEFAULT:
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
@@ -153,6 +154,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       config.fontSize = '40px';
       config.color = '#ffffff';
       break;
+    case TEXTSTYLE.CHOICE_DEFAULT:
+      config.fontSize = '50px';
+      config.color = '#ffffff';
+      break;
   }
 
   return config;
@@ -166,7 +171,7 @@ export abstract class Ui {
   }
 
   abstract setup(): void;
-  abstract show(): void;
+  abstract show(data?: any): void;
   abstract clean(): void;
   abstract pause(onoff: boolean): void;
   abstract update(time: number, delta: number): void;
