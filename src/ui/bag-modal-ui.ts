@@ -12,6 +12,7 @@ export class BagModalUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
+  private targetItem: string = '000';
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -44,10 +45,9 @@ export class BagModalUi extends Ui {
 
     ui.add(this.bg);
     ui.add(this.choiceContainer);
-
-    this.pause(false);
   }
   show(data: any): void {
+    this.targetItem = data;
     this.bg.setVisible(true);
     this.choiceContainer.setVisible(true);
 
@@ -82,7 +82,9 @@ export class BagModalUi extends Ui {
       } else if (key === KEY.DOWN) {
         choice = Math.min(endIndex, choice + 1);
       } else if (key === KEY.SELECT) {
-        if (choice === 1) {
+        if (choice === 0) {
+          this.mode.addUiStack('BagRegisterUi', this.targetItem);
+        } else if (choice === 1) {
           this.clean();
           this.mode.popUiStack();
         }
@@ -99,6 +101,7 @@ export class BagModalUi extends Ui {
       btn.setTexture(TEXTURE.CHOICE);
     }
     this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
+    this.bg.setVisible(true);
   }
 
   update(time: number, delta: number): void {}
