@@ -134,6 +134,17 @@ export class BagUi extends Ui {
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
 
+    this.xboxBtn.setInteractive({ cursor: 'pointer' });
+    this.xboxBtn.on('pointerdown', () => {
+      this.mode.changeOverworldMode();
+    });
+    this.xboxBtn.on('pointerover', () => {
+      this.xboxBtn.setAlpha(0.7);
+    });
+    this.xboxBtn.on('pointerout', () => {
+      this.xboxBtn.setAlpha(1);
+    });
+
     let startIndex = 0;
     let endIndex = this.playerManager.getItemCount() - 1;
 

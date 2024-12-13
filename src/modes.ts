@@ -11,6 +11,7 @@ import { TitleUi } from './ui/title-ui';
 import { BagUi } from './ui/bag-ui';
 import { Overworld } from './ui/overworld';
 import { BagModalUi } from './ui/bag-modal-ui';
+import { BagRegisterUi } from './ui/bag-register-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -165,6 +166,7 @@ export class BagMode extends Mode {
   init(): void {
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new BagModalUi(this.scene, this));
+    this.uis.push(new BagRegisterUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -176,7 +178,7 @@ export class BagMode extends Mode {
   }
 
   exit(): void {
-    this.ui.clean();
+    this.getUiStackTop().clean();
   }
 
   update(time: number, delta: number): void {}
