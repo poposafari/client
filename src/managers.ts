@@ -169,6 +169,7 @@ export class PlayerManager {
   private posY: number = 3;
   private lastDirectrion: DIRECTION = DIRECTION.DOWN;
   private items: Record<string, BagItem> = {};
+  private itemSlots: Array<BagItem> = [];
 
   static getInstance(): PlayerManager {
     if (!PlayerManager.instance) {
@@ -186,6 +187,15 @@ export class PlayerManager {
     this.addItem('002', 3);
     this.addItem('003', 2);
     this.addItem('004', 10);
+    this.addItem('005', 1);
+
+    for (let i = 0; i < 9; i++) {
+      this.itemSlots.push({ idx: '000', stock: 0 });
+    }
+
+    this.setItemSlot(2, '003');
+    this.setItemSlot(0, '005');
+    this.setItemSlot(0, '011');
   }
 
   addItem(key: string, quantity: number): void {
@@ -194,6 +204,18 @@ export class PlayerManager {
     } else {
       this.items[key] = { idx: key, stock: quantity };
     }
+  }
+
+  setItemSlot(idx: number, item: string) {
+    const ret = this.getBagItem(item);
+
+    if (ret) {
+      this.itemSlots[idx] = ret;
+    }
+  }
+
+  getItemSlot() {
+    return this.itemSlots;
   }
 
   getItemCount(): number {
