@@ -82,7 +82,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.CANCEL, 'ui', TEXTURE.CANCEL);
     this.loadImage(TEXTURE.CANCEL_S, 'ui', TEXTURE.CANCEL_S);
 
-    let itemIdx = 1;
+    let itemIdx = 0;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
       itemIdx++;

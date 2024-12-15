@@ -1,5 +1,6 @@
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
+import { PlayerManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Overworld } from './overworld';
@@ -8,6 +9,7 @@ import { addImage, addText, addWindow } from './ui';
 export class OverworldUi extends Overworld {
   protected itemSlotContainers: Phaser.GameObjects.Container[] = [];
   protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
+  protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
   protected pokemonSlotContainers: Phaser.GameObjects.Container[] = [];
   protected pokemonSloteBtns: Phaser.GameObjects.NineSlice[] = [];
   protected menuSlotContainers: Phaser.GameObjects.Container[] = [];
@@ -50,10 +52,13 @@ export class OverworldUi extends Overworld {
       const xPosition = i * (50 + 5);
       const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50);
       const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
+      const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
+      this.itemSlotIcons.push(itemIcon);
       itemSlotContainer.add(itemSlotWindow);
       itemSlotContainer.add(itemSlotText);
       this.itemSlotBtns.push(itemSlotWindow);
     }
+    itemSlotContainer.add(this.itemSlotIcons);
 
     for (let i = 0; i < 6; i++) {
       const yPosition = i * (50 + 5);
@@ -76,6 +81,9 @@ export class OverworldUi extends Overworld {
   }
 
   show(): void {
+    const playerManager = PlayerManager.getInstance();
+    const itemSlotsInfo = playerManager.getItemSlot();
+
     super.show();
     for (const container of this.menuSlotContainers) {
       container.setVisible(true);
@@ -90,6 +98,14 @@ export class OverworldUi extends Overworld {
     for (const container of this.pokemonSlotContainers) {
       container.setVisible(true);
       container.setDepth(10000);
+    }
+
+    let idx = 0;
+    for (const info of itemSlotsInfo) {
+      if (info.idx !== '000') {
+        this.itemSlotIcons[idx].setTexture(`item${info.idx}`).setVisible(true);
+      }
+      idx++;
     }
 
     for (const btn of this.menuSlotBtns) {

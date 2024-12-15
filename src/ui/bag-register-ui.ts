@@ -2,7 +2,8 @@ import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager } from '../managers';
+import { item } from '../locales/ko/item';
+import { KeyboardManager, PlayerManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, createSprite, createSpriteAnimation, Ui } from './ui';
@@ -12,6 +13,7 @@ export class BagRegisterUi extends Ui {
   private mode: BagMode;
   protected itemSlotContainer!: Phaser.GameObjects.Container;
   protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
+  protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
   protected choiceMark!: Phaser.GameObjects.Sprite;
   private cancelMark!: Phaser.GameObjects.Image;
   private targetItem: string = '000';
@@ -38,9 +40,12 @@ export class BagRegisterUi extends Ui {
       const xPosition = i * (50 + 5);
       const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50);
       const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
+      const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
       this.itemSlotContainer.add(itemSlotWindow);
       this.itemSlotContainer.add(itemSlotText);
+      this.itemSlotContainer.add(itemIcon);
       this.itemSlotBtns.push(itemSlotWindow);
+      this.itemSlotIcons.push(itemIcon);
     }
     this.itemSlotContainer.add(this.cancelMark);
 
@@ -81,6 +86,8 @@ export class BagRegisterUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
+    const playerManager = PlayerManager.getInstance();
+    const itemSlotsInfo = playerManager.getItemSlot();
 
     let startIndex = 0;
     let endIndex = 8 + 1;
@@ -114,6 +121,14 @@ export class BagRegisterUi extends Ui {
         this.cancelMark.setTexture(TEXTURE.CANCEL);
       }
     });
+
+    let idx = 0;
+    for (const info of itemSlotsInfo) {
+      if (info.idx !== '000') {
+        this.itemSlotIcons[idx].setTexture(`item${info.idx}`).setVisible(true);
+      }
+      idx++;
+    }
   }
 
   update(time: number, delta: number): void {}
