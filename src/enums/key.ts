@@ -6,4 +6,13 @@ export const enum KEY {
   UP = 38,
   RIGHT = 39,
   DOWN = 40,
+  USE_1 = 49,
+  USE_2 = 50,
+  USE_3 = 51,
+  USE_4 = 52,
+  USE_5 = 53,
+  USE_6 = 54,
+  USE_7 = 55,
+  USE_8 = 56,
+  USE_9 = 56,
 }
