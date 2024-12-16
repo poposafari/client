@@ -106,6 +106,20 @@ export class BagRegisterUi extends Ui {
         choice = Math.min(endIndex, choice + 1);
       } else if (key === KEY.SELECT) {
         console.log(`${choice} -> ${this.targetItem}`);
+        if (choice >= 0 && choice <= 8) {
+          let idx = 0;
+          for (const currentItem of itemSlotsInfo) {
+            if (currentItem.idx === this.targetItem) {
+              playerManager.setItemSlot(idx, '000');
+              this.itemSlotIcons[idx].setTexture(`item000`).setVisible(false);
+            }
+            idx++;
+          }
+          this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
+          playerManager.setItemSlot(choice, this.targetItem);
+
+          console.log(playerManager.getItemSlot());
+        }
         if (choice === 9) {
           this.clean();
           this.mode.popUiStack();

@@ -74,7 +74,7 @@ export class BagUi extends Ui {
     for (const key of Object.keys(items)) {
       const bagItem = this.playerManager.getBagItem(key);
       const itemDetail = getItem(key);
-      if (bagItem) {
+      if (bagItem && bagItem.idx !== '000') {
         const posY = startY + index * itemSpacing;
         this.createItemBox(key, bagItem.stock, itemDetail!, startX, posY);
         index++;
@@ -146,7 +146,7 @@ export class BagUi extends Ui {
     });
 
     let startIndex = 0;
-    let endIndex = this.playerManager.getItemCount() - 1;
+    let endIndex = this.playerManager.getItemCount() - 2;
 
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);

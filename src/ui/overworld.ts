@@ -49,7 +49,7 @@ export class Overworld extends Ui {
 
   show(): void {
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT, KEY.RUNNING];
+    const keys = [KEY.SELECT, KEY.RUNNING, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
     keyboardMananger.setAllowKey(keys);
 
     const playerManager = PlayerManager.getInstance();
@@ -64,7 +64,34 @@ export class Overworld extends Ui {
     keyboardMananger.setKeyDownCallback((key) => {
       switch (key) {
         case KEY.RUNNING:
-          this.player.setRunning();
+          this.player.setStatus(PLAYER_STATUS.RUNNING);
+          break;
+        case KEY.USE_1:
+          this.player.useItem(1);
+          break;
+        case KEY.USE_2:
+          this.player.useItem(2);
+          break;
+        case KEY.USE_3:
+          this.player.useItem(3);
+          break;
+        case KEY.USE_4:
+          this.player.useItem(4);
+          break;
+        case KEY.USE_5:
+          this.player.useItem(5);
+          break;
+        case KEY.USE_6:
+          this.player.useItem(6);
+          break;
+        case KEY.USE_7:
+          this.player.useItem(7);
+          break;
+        case KEY.USE_8:
+          this.player.useItem(8);
+          break;
+        case KEY.USE_9:
+          this.player.useItem(9);
           break;
       }
     });
