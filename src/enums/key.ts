@@ -14,5 +14,5 @@ export const enum KEY {
   USE_6 = 54,
   USE_7 = 55,
   USE_8 = 56,
-  USE_9 = 56,
+  USE_9 = 57,
 }
