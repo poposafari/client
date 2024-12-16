@@ -1,5 +1,6 @@
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
+import { item } from '../locales/ko/item';
 import { PlayerManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -83,6 +84,7 @@ export class OverworldUi extends Overworld {
   show(): void {
     const playerManager = PlayerManager.getInstance();
     const itemSlotsInfo = playerManager.getItemSlot();
+    console.log(itemSlotsInfo);
 
     super.show();
     for (const container of this.menuSlotContainers) {
@@ -102,6 +104,10 @@ export class OverworldUi extends Overworld {
 
     let idx = 0;
     for (const info of itemSlotsInfo) {
+      if (info.idx === '000') {
+        this.itemSlotIcons[idx].setTexture(`item000`).setVisible(false);
+      }
+
       if (info.idx !== '000') {
         this.itemSlotIcons[idx].setTexture(`item${info.idx}`).setVisible(true);
       }

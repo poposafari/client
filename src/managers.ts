@@ -183,6 +183,7 @@ export class PlayerManager {
     this.avatarType = avatarType;
     this.nickname = nickname;
 
+    this.addItem('000', 1);
     this.addItem('001', 5);
     this.addItem('002', 3);
     this.addItem('003', 2);
@@ -195,7 +196,6 @@ export class PlayerManager {
 
     this.setItemSlot(2, '003');
     this.setItemSlot(0, '005');
-    this.setItemSlot(0, '011');
   }
 
   addItem(key: string, quantity: number): void {
@@ -211,6 +211,10 @@ export class PlayerManager {
 
     if (ret) {
       this.itemSlots[idx] = ret;
+    }
+
+    if (ret.idx === '000') {
+      this.itemSlots;
     }
   }
 
