@@ -21,4 +21,13 @@ export const enum ANIMATION {
   PLAYER_MOVEMENT_RUN_RIGHT_1 = 'player_movement_run_right_1',
   PLAYER_MOVEMENT_RUN_RIGHT_2 = 'player_movement_run_right_2',
   PLAYER_MOVEMENT_RUN_RIGHT_3 = 'player_movement_run_right_3',
+  PLAYER_RIDE = 'player_ride',
+  PLAYER_RIDE_UP_1 = 'player_ride_up_1',
+  PLAYER_RIDE_UP_2 = 'player_ride_up_2',
+  PLAYER_RIDE_DOWN_1 = 'player_ride_down_1',
+  PLAYER_RIDE_DOWN_2 = 'player_ride_down_2',
+  PLAYER_RIDE_LEFT_1 = 'player_ride_left_1',
+  PLAYER_RIDE_LEFT_2 = 'player_ride_left_2',
+  PLAYER_RIDE_RIGHT_1 = 'player_ride_right_1',
+  PLAYER_RIDE_RIGHT_2 = 'player_ride_right_2',
 }

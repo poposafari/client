@@ -51,6 +51,16 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.GIRL_3_MOVEMENT, 'ui/character/movement', 'girl_3', ANIMATION.PLAYER_MOVEMENT);
     this.loadAtlas(TEXTURE.GIRL_4_MOVEMENT, 'ui/character/movement', 'girl_4', ANIMATION.PLAYER_MOVEMENT);
 
+    this.loadAtlas(TEXTURE.BOY_1_RIDE, 'ui/character/ride', 'boy_1', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.BOY_2_RIDE, 'ui/character/ride', 'boy_2', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.BOY_3_RIDE, 'ui/character/ride', 'boy_3', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.BOY_4_RIDE, 'ui/character/ride', 'boy_4', ANIMATION.PLAYER_RIDE);
+
+    this.loadAtlas(TEXTURE.GIRL_1_RIDE, 'ui/character/ride', 'girl_1', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.GIRL_2_RIDE, 'ui/character/ride', 'girl_2', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.GIRL_3_RIDE, 'ui/character/ride', 'girl_3', ANIMATION.PLAYER_RIDE);
+    this.loadAtlas(TEXTURE.GIRL_4_RIDE, 'ui/character/ride', 'girl_4', ANIMATION.PLAYER_RIDE);
+
     this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 
     this.loadImage(TEXTURE.BLACK, 'ui', TEXTURE.BLACK);
@@ -60,6 +70,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
     this.loadImage(TEXTURE.MAP_GROUND, 'ui/map', TEXTURE.MAP_GROUND);
+    this.loadImage(TEXTURE.MAP_GROUND_1, 'ui/map', TEXTURE.MAP_GROUND_1);
     this.loadMap(TEXTURE.MAP_TEST, 'ui/map', TEXTURE.MAP_TEST);
 
     this.loadImage(TEXTURE.MENU_BOX, 'ui', TEXTURE.MENU_BOX);
