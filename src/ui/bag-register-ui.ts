@@ -2,7 +2,6 @@ import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { item } from '../locales/ko/item';
 import { KeyboardManager, PlayerManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -38,7 +37,7 @@ export class BagRegisterUi extends Ui {
 
     for (let i = 0; i < 9; i++) {
       const xPosition = i * (50 + 5);
-      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50);
+      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50, 8, 8, 8, 8);
       const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
       const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
       this.itemSlotContainer.add(itemSlotWindow);

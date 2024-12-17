@@ -19,7 +19,7 @@ export class InGameScene extends BaseScene {
     GlobalManager.register('mode', this.modeManager);
 
     const playerManager = PlayerManager.getInstance();
-    playerManager.initialize(false, 1, 'Seophohoho');
+    playerManager.initialize(true, 3, 'Seophohoho');
 
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.initialize(this);

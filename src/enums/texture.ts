@@ -61,6 +61,12 @@ export const enum TEXTURE {
   CHOICE_S = 'choice_s',
   CANCEL = 'cancel',
   CANCEL_S = 'cancel_s',
+  BAG = 'bag',
+  BG_BOX = 'bg_pokebox',
+  WINDOW_BOX = 'window_box',
+  WINDOW_BOX_STORAGE = 'window_box_storage',
+  BOX_NAME = 'box_name',
+  BOX_DESC = 'box_desc',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
