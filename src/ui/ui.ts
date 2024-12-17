@@ -5,8 +5,19 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { ANIMATION } from '../enums/animation';
 
-export function addWindow(scene: InGameScene, texture: TEXTURE, x: number, y: number, width: number, height: number) {
-  const ret = scene.add.nineslice(x, y, texture, undefined, width, height, 8, 8, 8, 8);
+export function addWindow(
+  scene: InGameScene,
+  texture: TEXTURE,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  leftWidth?: number,
+  rightWidth?: number,
+  topHeight?: number,
+  bottomHeight?: number,
+) {
+  const ret = scene.add.nineslice(x, y, texture, undefined, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
   ret.setOrigin(0.5, 0.5);
 
   return ret;
@@ -67,9 +78,9 @@ export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animatio
   scene.anims.create({
     key: animationKey,
     frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
-    frameRate: 6,
+    frameRate: 8,
     repeat: -1,
-    delay: 0,
+    delay: 8,
     yoyo: false,
   });
 }

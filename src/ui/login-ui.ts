@@ -45,7 +45,7 @@ export class LoginUi extends ModalUi {
     for (const config of this.inputConfig) {
       const inputContainer = this.scene.add.container(config.x, config.y);
       const inputLabel = addText(this.scene, config.labelX, config.labelY, config.label, TEXTSTYLE.LOBBY_DEFAULT);
-      const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h);
+      const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h, 8, 8, 8, 8);
       const input = addTextInput(this.scene, 5, 0, config.w, config.h, TEXTSTYLE.LOBBY_INPUT, {
         type: config.type,
         placeholder: config.placeholder,
@@ -65,7 +65,7 @@ export class LoginUi extends ModalUi {
 
     for (const config of this.btnConfig) {
       const btnContainer = this.scene.add.container(config.x, config.y);
-      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, config.w, config.h);
+      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, config.w, config.h, 8, 8, 8, 8);
       const btnTitle = addText(this.scene, config.contentX, config.contentY, config.content, TEXTSTYLE.LOBBY_DEFAULT);
 
       btnContainer.add(btnWindow);

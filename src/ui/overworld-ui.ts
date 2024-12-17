@@ -1,6 +1,5 @@
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { item } from '../locales/ko/item';
 import { PlayerManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -51,7 +50,7 @@ export class OverworldUi extends Overworld {
 
     for (let i = 0; i < 9; i++) {
       const xPosition = i * (50 + 5);
-      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50);
+      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50, 8, 8, 8, 8);
       const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
       const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
       this.itemSlotIcons.push(itemIcon);
@@ -63,7 +62,7 @@ export class OverworldUi extends Overworld {
 
     for (let i = 0; i < 6; i++) {
       const yPosition = i * (50 + 5);
-      const pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, yPosition, 50, 50);
+      const pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, yPosition, 50, 50, 8, 8, 8, 8);
       pokemonSlotContainer.add(pokemonSlotWindow);
       this.pokemonSloteBtns.push(pokemonSlotWindow);
     }
@@ -132,6 +131,9 @@ export class OverworldUi extends Overworld {
         switch (texture) {
           case TEXTURE.MENU_BAG:
             modeManager.changeBagMode();
+            break;
+          case TEXTURE.MENU_BOX:
+            modeManager.changeBoxMode();
             break;
         }
       });
