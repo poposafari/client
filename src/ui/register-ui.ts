@@ -48,7 +48,7 @@ export class RegisterUi extends ModalUi {
     for (const config of inputConfig) {
       const inputContainer = this.scene.add.container(config.x, config.y);
       const inputLabel = addText(this.scene, config.labelX, config.labelY, config.label, TEXTSTYLE.LOBBY_DEFAULT);
-      const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h);
+      const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h, 8, 8, 8, 8);
       const input = addTextInput(this.scene, 5, 0, config.w, config.h, TEXTSTYLE.LOBBY_INPUT, {
         type: config.type,
         placeholder: config.placeholder,
