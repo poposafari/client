@@ -6,4 +6,5 @@ export const enum MODE {
   NEWGAME,
   OVERWORLD,
   BAG,
+  BOX,
 }

@@ -12,6 +12,8 @@ import { BagUi } from './ui/bag-ui';
 import { Overworld } from './ui/overworld';
 import { BagModalUi } from './ui/bag-modal-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
+import { getPokemon } from './data/pokemon';
+import { BoxUi } from './ui/box-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -22,7 +24,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.OVERWORLD);
+    this.manager.changeMode(MODE.BOX);
   }
   exit(): void {}
 
@@ -156,6 +158,11 @@ export class OverworldMode extends Mode {
   changeBagMode() {
     this.manager.changeMode(MODE.BAG);
   }
+
+  changeBoxMode() {
+    console.log(getPokemon('001'));
+    this.manager.changeMode(MODE.BOX);
+  }
 }
 
 export class BagMode extends Mode {
@@ -175,6 +182,34 @@ export class BagMode extends Mode {
 
   enter(data?: any): void {
     this.addUiStack('BagUi', data);
+  }
+
+  exit(): void {
+    this.getUiStackTop().clean();
+  }
+
+  update(time: number, delta: number): void {}
+
+  changeOverworldMode() {
+    this.manager.changeMode(MODE.OVERWORLD);
+  }
+}
+
+export class BoxMode extends Mode {
+  constructor(scene: InGameScene, manager: ModeManager) {
+    super(scene, manager);
+  }
+
+  init(): void {
+    this.uis.push(new BoxUi(this.scene, this));
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
+  }
+
+  enter(data?: any): void {
+    this.addUiStack('BoxUi', data);
   }
 
   exit(): void {

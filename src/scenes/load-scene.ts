@@ -1,4 +1,5 @@
 import { items } from '../data/items';
+import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { TEXTURE } from '../enums/texture';
 import { initI18n } from '../i18n';
@@ -93,10 +94,28 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.CANCEL, 'ui', TEXTURE.CANCEL);
     this.loadImage(TEXTURE.CANCEL_S, 'ui', TEXTURE.CANCEL_S);
 
+    this.loadImage(TEXTURE.BAG, 'ui', TEXTURE.BAG);
+
+    this.loadImage(TEXTURE.BG_BOX, 'ui', TEXTURE.BG_BOX);
+    this.loadImage(TEXTURE.WINDOW_BOX, 'ui', TEXTURE.WINDOW_BOX);
+    this.loadImage(TEXTURE.WINDOW_BOX_STORAGE, 'ui', TEXTURE.WINDOW_BOX_STORAGE);
+    this.loadImage(TEXTURE.BOX_NAME, 'ui', TEXTURE.BOX_NAME);
+    this.loadImage(TEXTURE.BOX_DESC, 'ui', TEXTURE.BOX_DESC);
+
     let itemIdx = 0;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
       itemIdx++;
+    }
+
+    let pokemonIdx = 0;
+    for (const pokemon of pokemons.keys()) {
+      console.log(pokemon);
+      this.loadImage(`pokemon_sprite${createZeroPad(pokemonIdx)}`, 'ui/pokemon/sprite', `${createZeroPad(pokemonIdx)}`);
+      pokemonIdx++;
+      if (pokemonIdx === 9) {
+        break;
+      }
     }
 
     this.load.on('complete', () => {

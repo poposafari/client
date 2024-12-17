@@ -5,7 +5,7 @@ import { PLAYER_STATUS } from './enums/player-status';
 import { TEXTURE_PLAYER_MAP } from './enums/texture';
 import { BagItem, Message } from './interface/sys';
 import { Mode } from './mode';
-import { BagMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
+import { BagMode, BoxMode, LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { Ui } from './ui/ui';
@@ -126,6 +126,7 @@ export class ModeManager {
       { key: MODE.NEWGAME, value: new NewGameMode(scene, this) },
       { key: MODE.OVERWORLD, value: new OverworldMode(scene, this) },
       { key: MODE.BAG, value: new BagMode(scene, this) },
+      { key: MODE.BOX, value: new BoxMode(scene, this) },
     ];
   }
 
