@@ -102,6 +102,12 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.BOX_NAME, 'ui', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui', TEXTURE.BOX_DESC);
 
+    this.loadImage(TEXTURE.FINGER, 'ui', TEXTURE.FINGER);
+    this.loadImage(TEXTURE.BLANK, 'ui', TEXTURE.BLANK);
+    this.loadImage(TEXTURE.SHINY, 'ui', TEXTURE.SHINY);
+
+    this.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
+
     let itemIdx = 0;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
@@ -110,12 +116,14 @@ export class LoadingScene extends BaseScene {
 
     let pokemonIdx = 0;
     for (const pokemon of pokemons.keys()) {
-      console.log(pokemon);
+      console.log(pokemonIdx);
       this.loadImage(`pokemon_sprite${createZeroPad(pokemonIdx)}`, 'ui/pokemon/sprite', `${createZeroPad(pokemonIdx)}`);
+      this.loadImage(`pokemon_sprite${createZeroPad(pokemonIdx)}s`, 'ui/pokemon/sprite', `${createZeroPad(pokemonIdx)}s`);
+
+      this.loadAtlas(`pokemon_icon${createZeroPad(pokemonIdx)}`, 'ui/pokemon/icon', `icon${createZeroPad(pokemonIdx)}`, 'pokemon_icon');
+      this.loadAtlas(`pokemon_icon${createZeroPad(pokemonIdx)}s`, 'ui/pokemon/icon', `icon${createZeroPad(pokemonIdx)}s`, 'pokemon_icon');
+
       pokemonIdx++;
-      if (pokemonIdx === 9) {
-        break;
-      }
     }
 
     this.load.on('complete', () => {

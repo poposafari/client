@@ -14,6 +14,7 @@ import { BagModalUi } from './ui/bag-modal-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
 import { getPokemon } from './data/pokemon';
 import { BoxUi } from './ui/box-ui';
+import { BoxModalUi } from './ui/box-modal-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -202,6 +203,7 @@ export class BoxMode extends Mode {
 
   init(): void {
     this.uis.push(new BoxUi(this.scene, this));
+    this.uis.push(new BoxModalUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();

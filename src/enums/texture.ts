@@ -67,6 +67,10 @@ export const enum TEXTURE {
   WINDOW_BOX_STORAGE = 'window_box_storage',
   BOX_NAME = 'box_name',
   BOX_DESC = 'box_desc',
+  FINGER = 'finger',
+  BLANK = 'blank',
+  TYPES = 'types',
+  SHINY = 'shiny',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

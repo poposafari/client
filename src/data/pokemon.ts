@@ -15,7 +15,7 @@ export interface Pokemon {
 export const pokemons: Map<string, Pokemon> = new Map();
 
 i18next.on('initialized', () => {
-  for (let i = 1; i <= 9; i++) {
+  for (let i = 0; i <= 9; i++) {
     const key = createZeroPad(i);
     pokemons.set(key, {
       name: i18next.t(`pokemon:${key}.name`),

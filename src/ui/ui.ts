@@ -109,6 +109,8 @@ function getAnimationSize(key: ANIMATION) {
       return 23;
     case ANIMATION.PLAYER_RIDE:
       return 12;
+    case ANIMATION.TYPES:
+      return 17;
   }
 }
 
@@ -116,6 +118,9 @@ function getTextShadow(style: TEXTSTYLE) {
   let ret;
 
   switch (style) {
+    case TEXTSTYLE.BOX_DEFAULT:
+    case TEXTSTYLE.BOX_NAME:
+    case TEXTSTYLE.BOX_POKEDEX:
     case TEXTSTYLE.CHOICE_DEFAULT:
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
@@ -170,6 +175,19 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
     case TEXTSTYLE.CHOICE_DEFAULT:
       config.fontSize = '50px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.BOX_POKEDEX:
+      config.fontSize = '50px';
+      config.color = '#b0b0b0';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.BOX_NAME:
+      config.fontSize = '80px';
+      config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.BOX_DEFAULT:
+      config.fontSize = '50px';
+      config.color = '#4b4b4b';
       break;
   }
 
