@@ -43,6 +43,7 @@ export class BoxUi extends Ui {
   private pokemonType1!: Phaser.GameObjects.Image;
   private pokemonType2!: Phaser.GameObjects.Image;
   private pokemonShinyIcon!: Phaser.GameObjects.Image;
+  private lastChoice: number = 0;
 
   constructor(scene: InGameScene, mode: BoxMode) {
     super(scene);
@@ -232,47 +233,46 @@ export class BoxUi extends Ui {
 
     let startIndex = 0;
     let endIndex = this.pokemonAllSlotDummy.length - 1;
-    let choice = startIndex;
 
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
 
     keyboardMananger.setKeyDownCallback((key) => {
-      const prevChoice = choice;
+      const prevChoice = this.lastChoice;
 
       if (key === KEY.UP) {
-        choice = Math.max(startIndex, choice - targetCnt);
+        this.lastChoice = Math.max(startIndex, this.lastChoice - targetCnt);
       } else if (key === KEY.DOWN) {
-        choice = Math.min(endIndex, choice + targetCnt);
+        this.lastChoice = Math.min(endIndex, this.lastChoice + targetCnt);
       } else if (key === KEY.LEFT) {
-        choice = Math.max(startIndex, choice - 1);
+        this.lastChoice = Math.max(startIndex, this.lastChoice - 1);
       } else if (key === KEY.RIGHT) {
-        choice = Math.min(endIndex, choice + 1);
+        this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
       } else if (key === KEY.SELECT) {
-        this.mode.addUiStack('BoxModalUi', myPokemons[choice]);
+        this.mode.addUiStack('BoxModalUi', myPokemons[this.lastChoice]);
       }
 
-      if (choice !== prevChoice) {
+      if (this.lastChoice !== prevChoice) {
         this.pokemonAllSlotDummy[prevChoice].setTexture(TEXTURE.BLANK);
-        this.pokemonAllSlotDummy[choice].setTexture(TEXTURE.FINGER);
+        this.pokemonAllSlotDummy[this.lastChoice].setTexture(TEXTURE.FINGER);
 
-        this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[choice].idx}`);
+        this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[this.lastChoice].idx}`);
         this.pokemonShinyIcon.setTexture(TEXTURE.BLANK);
-        if (myPokemons[choice].isShiny) {
-          this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[choice].idx}s`);
+        if (myPokemons[this.lastChoice].isShiny) {
+          this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[this.lastChoice].idx}s`);
           this.pokemonShinyIcon.setTexture(TEXTURE.SHINY);
         }
-        this.pokemonInfoTopText2.setText(`${myPokemons[choice].idx}`);
-        this.pokemonInfoTopText3.setText(i18next.t(`pokemon:${myPokemons[choice].idx}.name`));
+        this.pokemonInfoTopText2.setText(`${myPokemons[this.lastChoice].idx}`);
+        this.pokemonInfoTopText3.setText(i18next.t(`pokemon:${myPokemons[this.lastChoice].idx}.name`));
 
-        this.pokemonGender.setTexture(myPokemons[choice].gender === 'b' ? TEXTURE.GENDER_0 : TEXTURE.GENDER_1);
+        this.pokemonGender.setTexture(myPokemons[this.lastChoice].gender === 'b' ? TEXTURE.GENDER_0 : TEXTURE.GENDER_1);
 
-        const type1 = getPokemonType(pokemons.get(myPokemons[choice].idx)?.type1!);
-        const type2 = getPokemonType(pokemons.get(myPokemons[choice].idx)?.type2!);
+        const type1 = getPokemonType(pokemons.get(myPokemons[this.lastChoice].idx)?.type1!);
+        const type2 = getPokemonType(pokemons.get(myPokemons[this.lastChoice].idx)?.type2!);
         this.pokemonType1.setTexture(TEXTURE.TYPES, 'types-' + type1).setVisible(type1 !== 0 ? true : false);
         this.pokemonType2.setTexture(TEXTURE.TYPES, 'types-' + type2).setVisible(type2 !== 0 ? true : false);
 
-        this.pokemonCaptureDate.setText(myPokemons[choice].capturedDate);
+        this.pokemonCaptureDate.setText(myPokemons[this.lastChoice].capturedDate);
       }
     });
   }
