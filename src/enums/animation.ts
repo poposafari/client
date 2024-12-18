@@ -30,4 +30,5 @@ export const enum ANIMATION {
   PLAYER_RIDE_LEFT_2 = 'player_ride_left_2',
   PLAYER_RIDE_RIGHT_1 = 'player_ride_right_1',
   PLAYER_RIDE_RIGHT_2 = 'player_ride_right_2',
+  TYPES = 'types',
 }
