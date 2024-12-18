@@ -28,7 +28,7 @@ export class BoxModalUi extends Ui {
     this.bg.setAlpha(0.5);
     this.bg.setVisible(false);
 
-    this.choiceContainer = this.scene.add.container(width / 4 + 350, height / 4 + 100);
+    this.choiceContainer = this.scene.add.container(width / 4 + 390, height / 4 + 180);
     const registerBtn = addImage(this.scene, TEXTURE.CHOICE, 0, 0);
     const registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
     const cancelBtn = addImage(this.scene, TEXTURE.CHOICE, 0, +50);
