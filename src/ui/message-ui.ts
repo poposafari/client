@@ -25,7 +25,7 @@ export class MessageUi {
 
     this.messageContainer = this.scene.add.container(width / 4, height / 4);
 
-    const messageWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 210, 800, 100);
+    const messageWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 210, 800, 100, 8, 8, 8, 8);
     this.messageText = addText(this.scene, -380, 180, '', TEXTSTYLE.MESSAGE_BLACK);
     this.messageText.setOrigin(0, 0);
     this.messageContainer.add(messageWindow);
