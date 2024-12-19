@@ -51,8 +51,6 @@ export class BoxUi extends Ui {
   }
 
   setup(): void {
-    const playerManager = PlayerManager.getInstance();
-
     const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
@@ -106,6 +104,7 @@ export class BoxUi extends Ui {
     this.pokemonInfoTopContainer.add(this.pokemonInfoTopText3);
     this.pokemonInfoTopContainer.add(this.pokemonGender);
     this.pokemonInfoTopContainer.add(this.pokemonShinyIcon);
+    this.pokemonInfoTopContainer.setVisible(false);
 
     this.pokemonInfoSpriteContainer = this.scene.add.container(width / 4 - 310, height / 4 - 70);
     this.pokemonInfoSprite = addImage(this.scene, 'pokemon_sprite000', 0, 0);
@@ -114,6 +113,7 @@ export class BoxUi extends Ui {
     this.pokemonInfoSpriteContainer.add(this.pokemonInfoSprite);
     this.pokemonInfoSpriteContainer.add(this.pokemonType1);
     this.pokemonInfoSpriteContainer.add(this.pokemonType2);
+    this.pokemonInfoSpriteContainer.setVisible(false);
 
     this.pokemonInfoBottomContainer = this.scene.add.container(width / 4 - 310, height / 4 + 150);
     this.pokemonInfoBottom = addImage(this.scene, TEXTURE.BOX_DESC, 0, 0);
@@ -122,6 +122,7 @@ export class BoxUi extends Ui {
     this.pokemonInfoBottomContainer.add(this.pokemonInfoBottom);
     this.pokemonInfoBottomContainer.add(pokemonCaptureDateTitle);
     this.pokemonInfoBottomContainer.add(this.pokemonCaptureDate);
+    this.pokemonInfoBottomContainer.setVisible(false);
 
     this.container.push(this.bgContainer);
     this.container.push(this.pokemonSlotContainer);
@@ -144,6 +145,7 @@ export class BoxUi extends Ui {
 
     const playerManager = PlayerManager.getInstance();
     const myPokemons = playerManager.getMyPokemon();
+    const myPokemonSlots = playerManager.getMyPokemonSlots();
 
     this.bg.setVisible(true);
     for (const container of this.container) {
@@ -187,6 +189,22 @@ export class BoxUi extends Ui {
         cnt++;
       }
     }
+
+    for (let i = 0; i < 6; i++) {
+      const targetSlotIdx = myPokemonSlots[i];
+      if (targetSlotIdx < 0) {
+        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
+        continue;
+      } else {
+        const targetPokemon = myPokemons[targetSlotIdx];
+        if (targetPokemon.isShiny) {
+          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}s`);
+        } else {
+          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}`);
+        }
+      }
+    }
+
     ui.add(this.pokemonAllSlotIconsContainer);
     ui.bringToTop(this.pokemonAllSlotIconsContainer);
 
@@ -217,6 +235,8 @@ export class BoxUi extends Ui {
   unblock() {
     const playerManager = PlayerManager.getInstance();
     const myPokemons = playerManager.getMyPokemon();
+    const myPokemonSlots = playerManager.getMyPokemonSlots();
+
     const keyboardMananger = KeyboardManager.getInstance();
     const targetCnt = 10;
 
@@ -249,7 +269,7 @@ export class BoxUi extends Ui {
       } else if (key === KEY.RIGHT) {
         this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
       } else if (key === KEY.SELECT) {
-        this.mode.addUiStack('BoxModalUi', myPokemons[this.lastChoice]);
+        this.mode.addUiStack('BoxModalUi', this.lastChoice);
       }
 
       if (this.lastChoice !== prevChoice) {
@@ -275,6 +295,21 @@ export class BoxUi extends Ui {
         this.pokemonCaptureDate.setText(myPokemons[this.lastChoice].capturedDate);
       }
     });
+
+    for (let i = 0; i < 6; i++) {
+      const targetSlotIdx = myPokemonSlots[i];
+      if (targetSlotIdx < 0) {
+        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
+        continue;
+      } else {
+        const targetPokemon = myPokemons[targetSlotIdx];
+        if (targetPokemon.isShiny) {
+          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}s`);
+        } else {
+          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}`);
+        }
+      }
+    }
   }
 
   update(time: number, delta: number): void {}

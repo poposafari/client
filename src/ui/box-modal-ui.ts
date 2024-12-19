@@ -12,7 +12,7 @@ export class BoxModalUi extends Ui {
   private mode: BagMode;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
-  private targetPokemon: string = '000';
+  private targetPokemon!: number;
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -85,7 +85,9 @@ export class BoxModalUi extends Ui {
         choice = Math.min(endIndex, choice + 1);
       } else if (key === KEY.SELECT) {
         if (choice === 0) {
-          this.mode.addUiStack('BagRegisterUi', this.targetPokemon);
+          this.clean();
+          this.mode.popUiStack();
+          this.mode.addUiStack('BoxRegisterUi', this.targetPokemon);
         } else if (choice === 1) {
           this.clean();
           this.mode.popUiStack();

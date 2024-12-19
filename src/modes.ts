@@ -15,6 +15,7 @@ import { BagRegisterUi } from './ui/bag-register-ui';
 import { getPokemon } from './data/pokemon';
 import { BoxUi } from './ui/box-ui';
 import { BoxModalUi } from './ui/box-modal-ui';
+import { BoxRegisterUi } from './ui/box-register-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -161,7 +162,6 @@ export class OverworldMode extends Mode {
   }
 
   changeBoxMode() {
-    console.log(getPokemon('001'));
     this.manager.changeMode(MODE.BOX);
   }
 }
@@ -204,6 +204,7 @@ export class BoxMode extends Mode {
   init(): void {
     this.uis.push(new BoxUi(this.scene, this));
     this.uis.push(new BoxModalUi(this.scene, this));
+    this.uis.push(new BoxRegisterUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();

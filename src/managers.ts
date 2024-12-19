@@ -173,7 +173,7 @@ export class PlayerManager {
   private items: Record<string, BagItem> = {};
   private itemSlots: Array<BagItem> = [];
   private myPokemons: Array<MyPokemon> = [];
-  private myPokemonSlots: Array<string> = [];
+  private myPokemonSlots: Array<number> = [];
 
   static getInstance(): PlayerManager {
     if (!PlayerManager.instance) {
@@ -198,40 +198,49 @@ export class PlayerManager {
       this.itemSlots.push({ idx: '000', stock: 0 });
     }
 
+    for (let i = 0; i < 6; i++) {
+      this.myPokemonSlots.push(-1);
+    }
+
     this.setItemSlot(2, '003');
     this.setItemSlot(0, '005');
 
-    for (let i = 0; i < 6; i++) {
-      this.myPokemonSlots.push('000');
-    }
+    this.addMyPokemon('001', '2024-12-25 09:10', true, 'b', false);
+    this.addMyPokemon('002', '2024-12-17 09:46', true, 'g', false);
+    this.addMyPokemon('003', '2024-12-20 09:10', true, 'b', false);
+    this.addMyPokemon('004', '2024-10-17 09:10', false, 'b', false);
+    this.addMyPokemon('005', '2024-12-17 09:10', false, 'g', false);
+    this.addMyPokemon('006', '2024-11-17 13:15', false, 'b', false);
+    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('008', '2024-09-17 09:10', false, 'g', false);
+    this.addMyPokemon('009', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('002', '2024-12-17 09:10', false, 'g', false);
 
-    this.addMyPokemon('001', '2024-12-25 09:10', true, 'b');
-    this.addMyPokemon('002', '2024-12-17 09:46', true, 'g');
-    this.addMyPokemon('003', '2024-12-20 09:10', true, 'b');
-    this.addMyPokemon('004', '2024-10-17 09:10', false, 'b');
-    this.addMyPokemon('005', '2024-12-17 09:10', false, 'g');
-    this.addMyPokemon('006', '2024-11-17 13:15', false, 'b');
-    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b');
-    this.addMyPokemon('008', '2024-09-17 09:10', false, 'g');
-    this.addMyPokemon('009', '2024-12-17 09:10', false, 'b');
-    this.addMyPokemon('002', '2024-12-17 09:10', false, 'g');
-
-    this.addMyPokemon('002', '2024-04-17 09:10', false, 'g');
-    this.addMyPokemon('006', '2024-12-17 08:32', true, 'g');
-    this.addMyPokemon('001', '2024-06-17 09:10', false, 'g');
-    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b');
-    this.addMyPokemon('005', '2024-02-17 10:30', true, 'b');
-    this.addMyPokemon('008', '2024-12-17 09:10', false, 'b');
-    this.addMyPokemon('003', '2024-12-17 09:10', false, 'b');
-    this.addMyPokemon('004', '2024-12-17 09:10', false, 'b');
+    this.addMyPokemon('002', '2024-04-17 09:10', false, 'g', false);
+    this.addMyPokemon('006', '2024-12-17 08:32', true, 'g', false);
+    this.addMyPokemon('001', '2024-06-17 09:10', false, 'g', false);
+    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('005', '2024-02-17 10:30', true, 'b', false);
+    this.addMyPokemon('008', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('003', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('004', '2024-12-17 09:10', false, 'b', false);
   }
 
-  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string) {
-    this.myPokemons.push({ idx: key, capturedDate: capturedDate, isShiny: isShiny, gender: gender });
+  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, isParty: boolean) {
+    this.myPokemons.push({ idx: key, capturedDate: capturedDate, isShiny: isShiny, gender: gender, isParty: isParty });
   }
 
   getMyPokemon() {
     return this.myPokemons;
+  }
+
+  getMyPokemonSlots() {
+    return this.myPokemonSlots;
+  }
+
+  setMyPokemonSlots(idx: number, myPokedex: number) {
+    this.myPokemonSlots[idx] = myPokedex;
+    this.myPokemons[idx].isParty = true;
   }
 
   addItem(key: string, quantity: number): void {
