@@ -22,6 +22,11 @@ export abstract class Mode {
     return this.uiStack[this.uiStack.length - 1];
   }
 
+  getUiType(type: string) {
+    const target = this.findUiByType(type)!;
+    return target;
+  }
+
   addUiStack(type: string, data?: any) {
     const target = this.findUiByType(type)!;
 
@@ -33,7 +38,7 @@ export abstract class Mode {
     this.getUiStackTop().show(data);
   }
 
-  popUiStack() {
+  popUiStack(data?: any) {
     this.uiStack.pop();
     this.getUiStackTop().pause(false);
   }

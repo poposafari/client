@@ -8,7 +8,6 @@ import { addBackground, addImage, addWindow, Ui } from './ui';
 export class BoxRegisterUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
   private mode: BagMode;
-  private container: Phaser.GameObjects.Container[] = [];
   private targetPokemon!: number;
   private pokemonSlotContainer!: Phaser.GameObjects.Container;
   private pokemonSlotWindow!: Phaser.GameObjects.NineSlice;
@@ -35,11 +34,13 @@ export class BoxRegisterUi extends Ui {
     for (let i = 0; i < 6; i++) {
       const yPosition = i * 50;
       const slotIcon = addImage(this.scene, 'pokemon_icon000', 0, yPosition - 133).setScale(1);
-      const slotDummy = addImage(this.scene, TEXTURE.BLANK, 0, yPosition - 133);
+      const dummy = addImage(this.scene, TEXTURE.BLANK, -50, yPosition - 133).setScale(2);
       this.pokemonSlotIcons.push(slotIcon);
-      this.pokemonSlotDummys.push(slotDummy);
+      this.pokemonSlotDummys.push(dummy);
     }
-    this.cancelMark = addImage(this.scene, TEXTURE.CANCEL, -5, 6 * 50 - 100).setScale(1.5);
+    this.cancelMark = addImage(this.scene, TEXTURE.CANCEL, -5, 6 * 50 - 100)
+      .setScale(1.5)
+      .setVisible(false);
     this.pokemonSlotDummys.push(this.cancelMark);
 
     this.pokemonSlotContainer.add(this.pokemonSlotWindow);
@@ -47,53 +48,33 @@ export class BoxRegisterUi extends Ui {
     this.pokemonSlotContainer.add(this.pokemonSlotDummys);
     this.pokemonSlotContainer.setVisible(false);
 
-    this.container.push(this.pokemonSlotContainer);
-
     ui.add(this.bg);
-    ui.add(this.container);
+    ui.add(this.pokemonSlotContainer);
   }
 
   show(data?: any): void {
-    const ui = this.getUi();
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    const playerManager = PlayerManager.getInstance();
-    const myPokemons = playerManager.getMyPokemon();
-    const myPokemonSlots = playerManager.getMyPokemonSlots();
-
-    console.log(data);
-    this.targetPokemon = data;
-
+    this.pokemonSlotContainer.setVisible(true);
+    this.cancelMark.setVisible(true);
     this.bg.setVisible(true);
-    for (const container of this.container) {
-      container.setVisible(true);
-    }
+    this.targetPokemon = data.choice;
+    if (data.isRemove) {
+      const playerManager = PlayerManager.getInstance();
+      const myPokemons = playerManager.getMyPokemon();
+      this.pokemonSlotIcons[myPokemons[this.targetPokemon].partySlot].setTexture(`pokemon_icon000`);
+      playerManager.resetMyPokemonSlot(myPokemons[this.targetPokemon].partySlot);
+      playerManager.resetMyPokemonParty(this.targetPokemon);
 
-    for (let i = 0; i < 6; i++) {
-      const targetSlotIdx = myPokemonSlots[i];
-      if (targetSlotIdx < 0) {
-        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
-        continue;
-      } else {
-        const targetPokemon = myPokemons[targetSlotIdx];
-        if (targetPokemon.isShiny) {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}s`);
-        } else {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}`);
-        }
-      }
+      this.clean();
+      this.mode.popUiStack();
+      return;
     }
-
     this.pause(false);
   }
 
-  clean(): void {
+  clean(data?: any): void {
+    this.pokemonSlotContainer.setVisible(false);
     this.bg.setVisible(false);
-
-    for (const container of this.container) {
-      container.setVisible(false);
-    }
+    this.cancelMark.setVisible(false);
   }
 
   pause(onoff: boolean): void {
@@ -106,6 +87,7 @@ export class BoxRegisterUi extends Ui {
     const playerManager = PlayerManager.getInstance();
     const myPokemons = playerManager.getMyPokemon();
     const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
 
     const keyboardMananger = KeyboardManager.getInstance();
 
@@ -113,35 +95,48 @@ export class BoxRegisterUi extends Ui {
     let endIndex = this.pokemonSlotDummys.length - 1;
     let choice = startIndex;
 
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
+    for (let i = 0; i < myPokemons.length; i++) {
+      if (myPokemons[i].partySlot > 0) {
+        let texture = `pokemon_icon${myPokemons[i].idx}`;
+        if (myPokemons[i].isShiny) texture += 's';
+        this.pokemonSlotIcons[myPokemons[i].partySlot].setTexture(texture);
+      }
+    }
+
+    this.pokemonSlotDummys[choice].setTexture(TEXTURE.ARROW_W_R);
+
     keyboardMananger.setAllowKey(keys);
 
     keyboardMananger.setKeyDownCallback((key) => {
       const prevChoice = choice;
 
-      if (key === KEY.UP) {
-        choice = Math.max(startIndex, choice - 1);
-      } else if (key === KEY.DOWN) {
-        choice = Math.min(endIndex, choice + 1);
-      } else if (key === KEY.SELECT) {
-        if (choice >= 6) {
-          this.clean();
-          this.mode.popUiStack();
-        } else {
-          for (let i = 0; i < myPokemonSlots.length; i++) {
-            if (myPokemonSlots[i] === this.targetPokemon) {
-              playerManager.setMyPokemonSlots(i, -1);
-              this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
-            }
-          }
-          playerManager.setMyPokemonSlots(choice, this.targetPokemon);
-          console.log(playerManager.getMyPokemonSlots());
-          if (myPokemons[this.targetPokemon].isShiny) {
-            this.pokemonSlotIcons[choice].setTexture(`pokemon_icon${myPokemons[this.targetPokemon].idx}s`);
+      switch (key) {
+        case KEY.UP:
+          choice = Math.max(startIndex, choice - 1);
+          break;
+        case KEY.DOWN:
+          choice = Math.min(endIndex, choice + 1);
+          break;
+        case KEY.SELECT:
+          if (choice === 6) {
+            this.clean();
+            this.mode.popUiStack();
           } else {
-            this.pokemonSlotIcons[choice].setTexture(`pokemon_icon${myPokemons[this.targetPokemon].idx}`);
+            for (let i = 0; i < this.pokemonSlotIcons.length; i++) {
+              if (this.targetPokemon === myPokemonSlots[i]) {
+                this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
+                playerManager.resetMyPokemonSlot(i);
+              }
+            }
+            playerManager.setMyPokemonSlots(choice, this.targetPokemon);
+            const target = myPokemons[this.targetPokemon];
+            let texture = `pokemon_icon${target.idx}`;
+
+            if (target.isShiny) texture += 's';
+            this.pokemonSlotIcons[choice].setTexture(texture);
           }
-        }
+
+          break;
       }
 
       if (choice !== prevChoice) {
@@ -150,7 +145,7 @@ export class BoxRegisterUi extends Ui {
         if (choice >= 6) {
           this.cancelMark.setTexture(TEXTURE.CANCEL_S);
         } else {
-          this.pokemonSlotDummys[choice].setTexture(TEXTURE.FINGER);
+          this.pokemonSlotDummys[choice].setTexture(TEXTURE.ARROW_W_R);
         }
       }
     });

@@ -4,7 +4,7 @@ import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { KeyboardManager } from '../managers';
+import { KeyboardManager, PlayerManager } from '../managers';
 import { KEY } from '../enums/key';
 
 export class BoxModalUi extends Ui {
@@ -12,7 +12,9 @@ export class BoxModalUi extends Ui {
   private mode: BagMode;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
-  private targetPokemon!: number;
+  private choiceDummys: Phaser.GameObjects.Image[] = [];
+  private registerText!: Phaser.GameObjects.Text;
+  private data!: any;
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -30,7 +32,7 @@ export class BoxModalUi extends Ui {
 
     this.choiceContainer = this.scene.add.container(width / 4 + 390, height / 4 + 180);
     const registerBtn = addImage(this.scene, TEXTURE.CHOICE, 0, 0);
-    const registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
+    this.registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
     const cancelBtn = addImage(this.scene, TEXTURE.CHOICE, 0, +50);
     const cancelText = addText(this.scene, -60, +50, i18next.t('sys:cancel'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
 
@@ -38,7 +40,7 @@ export class BoxModalUi extends Ui {
     this.choiceBtn.push(cancelBtn);
 
     this.choiceContainer.add(this.choiceBtn);
-    this.choiceContainer.add(registerText);
+    this.choiceContainer.add(this.registerText);
     this.choiceContainer.add(cancelText);
 
     this.choiceContainer.setVisible(false);
@@ -48,7 +50,7 @@ export class BoxModalUi extends Ui {
   }
 
   show(data?: any): void {
-    this.targetPokemon = data;
+    this.data = data;
     this.bg.setVisible(true);
     this.choiceContainer.setVisible(true);
 
@@ -70,42 +72,51 @@ export class BoxModalUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
+    const playerManager = PlayerManager.getInstance();
+    const myPokemons = playerManager.getMyPokemon();
+    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
 
     let startIndex = 0;
     let endIndex = 1;
     let choice = startIndex;
 
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
-    keyboardMananger.setAllowKey(keys);
-
-    keyboardMananger.setKeyDownCallback((key) => {
-      if (key === KEY.UP) {
-        choice = Math.max(startIndex, choice - 1);
-      } else if (key === KEY.DOWN) {
-        choice = Math.min(endIndex, choice + 1);
-      } else if (key === KEY.SELECT) {
-        if (choice === 0) {
-          this.clean();
-          this.mode.popUiStack();
-          this.mode.addUiStack('BoxRegisterUi', this.targetPokemon);
-        } else if (choice === 1) {
-          this.clean();
-          this.mode.popUiStack();
-        }
-      }
-
-      for (const btn of this.choiceBtn) {
-        btn.setTexture(TEXTURE.CHOICE);
-      }
-
-      this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
-    });
-
-    for (const btn of this.choiceBtn) {
-      btn.setTexture(TEXTURE.CHOICE);
-    }
-    this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
     this.bg.setVisible(true);
+
+    this.choiceBtn[choice].setTexture(TEXTURE.CHOICE);
+
+    if (myPokemons[this.data].partySlot >= 0) {
+      this.registerText.setText(i18next.t('sys:registerCancel'));
+    } else {
+      this.registerText.setText(i18next.t('sys:register'));
+    }
+
+    keyboardMananger.setAllowKey(keys);
+    keyboardMananger.setKeyDownCallback((key) => {
+      const prevChoice = choice;
+
+      switch (key) {
+        case KEY.UP:
+          choice = Math.max(startIndex, choice - 1);
+          break;
+        case KEY.DOWN:
+          choice = Math.min(endIndex, choice + 1);
+          break;
+        case KEY.SELECT:
+          this.clean();
+          this.mode.popUiStack();
+          if (choice === 0) {
+            this.mode.addUiStack('BoxRegisterUi', { choice: this.data, isRemove: myPokemons[this.data].partySlot >= 0 });
+          }
+
+          break;
+      }
+
+      if (choice !== prevChoice) {
+        this.choiceBtn[prevChoice].setTexture(TEXTURE.CHOICE);
+        this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
+      }
+    });
   }
 
   update(time: number, delta: number): void {}

@@ -1,14 +1,13 @@
-import i18next from 'i18next';
+import i18next, { t } from 'i18next';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, PlayerManager } from '../managers';
 import { BoxMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addWindow, getSpriteFrames, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { getPokemonType } from '../data/types';
 import { pokemons } from '../data/pokemon';
-import { ANIMATION } from '../enums/animation';
 
 export class BoxUi extends Ui {
   private mode: BoxMode;
@@ -17,13 +16,11 @@ export class BoxUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
   private xboxContainer!: Phaser.GameObjects.Container;
   private xboxBtn!: Phaser.GameObjects.Image;
+  private filterContainer!: Phaser.GameObjects.Container;
   private pokemonSlotContainer!: Phaser.GameObjects.Container;
   private pokemonSlotWindow!: Phaser.GameObjects.NineSlice;
   private pokemonSlotIcons: Phaser.GameObjects.Image[] = [];
-  private filterContainer!: Phaser.GameObjects.Container;
   private filterWindow!: Phaser.GameObjects.NineSlice;
-  private bottomContainer!: Phaser.GameObjects.Container;
-  private bottomWindow!: Phaser.GameObjects.NineSlice;
   private pokemonAllSlotContainer!: Phaser.GameObjects.Container;
   private pokemonAllSlotWindow!: Phaser.GameObjects.Image;
   private pokemonAllSlotIconsContainer!: Phaser.GameObjects.Container;
@@ -65,31 +62,26 @@ export class BoxUi extends Ui {
     this.xboxContainer.add(this.xboxBtn);
     this.xboxContainer.setVisible(false);
 
-    this.pokemonSlotContainer = this.scene.add.container(width / 4 + 440, height / 4 - 25);
-    this.pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 70, 355, 16, 16, 16, 16);
-    for (let i = 0; i < 6; i++) {
-      const yPosition = i * 50;
-      const slotIcon = addImage(this.scene, 'pokemon_icon000', 0, yPosition - 133).setScale(1);
-      this.pokemonSlotIcons.push(slotIcon);
-    }
-    this.pokemonSlotContainer.add(this.pokemonSlotWindow);
-    this.pokemonSlotContainer.add(this.pokemonSlotIcons);
-    this.pokemonSlotContainer.setVisible(false);
-
     this.filterContainer = this.scene.add.container(width / 4 + 165, height / 4 - 235);
     this.filterWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 620, 60, 16, 16, 16, 16);
     this.filterContainer.add(this.filterWindow);
     this.filterContainer.setVisible(false);
 
-    this.bottomContainer = this.scene.add.container(width / 4 + 440, height / 4 + 210);
-    this.bottomWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 70, 110, 16, 16, 16, 16);
-    this.bottomContainer.add(this.bottomWindow);
-    this.bottomContainer.setVisible(false);
-
     this.pokemonAllSlotContainer = this.scene.add.container(width / 4 + 130, height / 4 + 30);
     this.pokemonAllSlotWindow = addImage(this.scene, TEXTURE.WINDOW_BOX_STORAGE, 0, 0).setScale(1.5);
     this.pokemonAllSlotContainer.add(this.pokemonAllSlotWindow);
     this.pokemonAllSlotContainer.setVisible(false);
+
+    this.pokemonSlotContainer = this.scene.add.container(width / 4 + 440, height / 4 - 25);
+    this.pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 70, 355, 16, 16, 16, 16);
+    for (let i = 0; i < 6; i++) {
+      const yPosition = i * 50;
+      const slotIcon = addImage(this.scene, 'pokemon_icon000', 0, yPosition - 133).setScale(1);
+      const dummy = addImage(this.scene, TEXTURE.BLANK, -50, yPosition - 133).setScale(2);
+      this.pokemonSlotIcons.push(slotIcon);
+    }
+    this.pokemonSlotContainer.add(this.pokemonSlotWindow);
+    this.pokemonSlotContainer.add(this.pokemonSlotIcons);
 
     this.pokemonInfoTopContainer = this.scene.add.container(width / 4 - 310, height / 4 - 215);
     this.pokemonInfoTop = addImage(this.scene, TEXTURE.BOX_NAME, 0, 0);
@@ -125,10 +117,9 @@ export class BoxUi extends Ui {
     this.pokemonInfoBottomContainer.setVisible(false);
 
     this.container.push(this.bgContainer);
-    this.container.push(this.pokemonSlotContainer);
     this.container.push(this.filterContainer);
-    this.container.push(this.bottomContainer);
     this.container.push(this.pokemonAllSlotContainer);
+    this.container.push(this.pokemonSlotContainer);
     this.container.push(this.xboxContainer);
     this.container.push(this.pokemonInfoTopContainer);
     this.container.push(this.pokemonInfoSpriteContainer);
@@ -142,10 +133,9 @@ export class BoxUi extends Ui {
     const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
-
     const playerManager = PlayerManager.getInstance();
-    const myPokemons = playerManager.getMyPokemon();
-    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const myPokemonsSize = playerManager.getMyPokemon().length;
+    const targetCnt = 10;
 
     this.bg.setVisible(true);
     for (const container of this.container) {
@@ -159,54 +149,20 @@ export class BoxUi extends Ui {
       duration: 200,
     });
 
-    this.xboxBtn.setInteractive({ cursor: 'pointer' });
-    this.xboxBtn.on('pointerdown', () => {
-      this.mode.changeOverworldMode();
-    });
-    this.xboxBtn.on('pointerover', () => {
-      this.xboxBtn.setAlpha(0.7);
-    });
-    this.xboxBtn.on('pointerout', () => {
-      this.xboxBtn.setAlpha(1);
-    });
-
-    const targetCnt = 10;
-    let cnt = 0;
     this.pokemonAllSlotIconsContainer = this.scene.add.container(width / 4 - 95, height / 4 - 180);
-    for (let i = 0; i < myPokemons.length; i++) {
+
+    for (let i = 0; i < myPokemonsSize; i++) {
       const xPosition = (i % targetCnt) * 50;
       const yPosition = Math.floor(i / targetCnt) * 50;
-      const icon = addImage(this.scene, `pokemon_icon${myPokemons[i].idx}`, xPosition, yPosition);
-      if (myPokemons[i].isShiny) {
-        icon.setTexture(`pokemon_icon${myPokemons[i].idx}s`);
-      }
+      const icon = addImage(this.scene, `pokemon_icon000`, xPosition, yPosition);
       const blank = addImage(this.scene, TEXTURE.BLANK, xPosition + 12, yPosition + 20).setScale(1.6);
       this.pokemonAllSlotIconsContainer.add(icon);
       this.pokemonAllSlotIconsContainer.add(blank);
       this.pokemonAllSlotIcons.push(icon);
       this.pokemonAllSlotDummy.push(blank);
-      if (this.pokemonAllSlotIcons.length % 10 === 0) {
-        cnt++;
-      }
-    }
-
-    for (let i = 0; i < 6; i++) {
-      const targetSlotIdx = myPokemonSlots[i];
-      if (targetSlotIdx < 0) {
-        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
-        continue;
-      } else {
-        const targetPokemon = myPokemons[targetSlotIdx];
-        if (targetPokemon.isShiny) {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}s`);
-        } else {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}`);
-        }
-      }
     }
 
     ui.add(this.pokemonAllSlotIconsContainer);
-    ui.bringToTop(this.pokemonAllSlotIconsContainer);
 
     this.pause(false);
   }
@@ -236,9 +192,12 @@ export class BoxUi extends Ui {
     const playerManager = PlayerManager.getInstance();
     const myPokemons = playerManager.getMyPokemon();
     const myPokemonSlots = playerManager.getMyPokemonSlots();
-
-    const keyboardMananger = KeyboardManager.getInstance();
     const targetCnt = 10;
+    const keyboardMananger = KeyboardManager.getInstance();
+    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+
+    let startIndex = 0;
+    let endIndex = this.pokemonAllSlotDummy.length - 1;
 
     this.xboxBtn.setInteractive({ cursor: 'pointer' });
     this.xboxBtn.on('pointerdown', () => {
@@ -251,65 +210,77 @@ export class BoxUi extends Ui {
       this.xboxBtn.setAlpha(1);
     });
 
-    let startIndex = 0;
-    let endIndex = this.pokemonAllSlotDummy.length - 1;
+    console.log(myPokemons);
+    for (let i = 0; i < myPokemons.length; i++) {
+      if (myPokemons[i].partySlot >= 0) {
+        let texture = `pokemon_icon${myPokemons[i].idx}`;
+        if (myPokemons[i].isShiny) texture += 's';
+        this.pokemonSlotIcons[myPokemons[i].partySlot].setTexture(texture);
+      }
+    }
 
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    for (let i = 0; i < this.pokemonAllSlotIcons.length; i++) {
+      let texture = `pokemon_icon${myPokemons[i].idx}`;
+      if (myPokemons[i].isShiny) texture += 's';
+      this.pokemonAllSlotIcons[i].setTexture(texture);
+      this.pokemonAllSlotIcons[i].setAlpha(1);
+    }
+
+    for (const slot of myPokemonSlots) {
+      if (slot >= 0) {
+        this.pokemonAllSlotIcons[slot].setAlpha(0.5);
+      }
+    }
+    this.pokemonAllSlotDummy[this.lastChoice].setTexture(TEXTURE.FINGER);
+
     keyboardMananger.setAllowKey(keys);
-
     keyboardMananger.setKeyDownCallback((key) => {
       const prevChoice = this.lastChoice;
 
-      if (key === KEY.UP) {
-        this.lastChoice = Math.max(startIndex, this.lastChoice - targetCnt);
-      } else if (key === KEY.DOWN) {
-        this.lastChoice = Math.min(endIndex, this.lastChoice + targetCnt);
-      } else if (key === KEY.LEFT) {
-        this.lastChoice = Math.max(startIndex, this.lastChoice - 1);
-      } else if (key === KEY.RIGHT) {
-        this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
-      } else if (key === KEY.SELECT) {
-        this.mode.addUiStack('BoxModalUi', this.lastChoice);
+      switch (key) {
+        case KEY.UP:
+          this.lastChoice = Math.max(startIndex, this.lastChoice - targetCnt);
+          break;
+        case KEY.DOWN:
+          this.lastChoice = Math.min(endIndex, this.lastChoice + targetCnt);
+          break;
+        case KEY.LEFT:
+          this.lastChoice = Math.max(startIndex, this.lastChoice - 1);
+          break;
+        case KEY.RIGHT:
+          this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
+          break;
+        case KEY.SELECT:
+          this.mode.addUiStack('BoxModalUi', this.lastChoice);
+          break;
       }
 
       if (this.lastChoice !== prevChoice) {
-        this.pokemonAllSlotDummy[prevChoice].setTexture(TEXTURE.BLANK);
-        this.pokemonAllSlotDummy[this.lastChoice].setTexture(TEXTURE.FINGER);
-
-        this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[this.lastChoice].idx}`);
+        const pokedex = myPokemons[this.lastChoice].idx;
+        let texture = `pokemon_sprite${pokedex}`;
         this.pokemonShinyIcon.setTexture(TEXTURE.BLANK);
         if (myPokemons[this.lastChoice].isShiny) {
-          this.pokemonInfoSprite.setTexture(`pokemon_sprite${myPokemons[this.lastChoice].idx}s`);
+          texture += 's';
           this.pokemonShinyIcon.setTexture(TEXTURE.SHINY);
         }
-        this.pokemonInfoTopText2.setText(`${myPokemons[this.lastChoice].idx}`);
-        this.pokemonInfoTopText3.setText(i18next.t(`pokemon:${myPokemons[this.lastChoice].idx}.name`));
+
+        this.pokemonAllSlotDummy[prevChoice].setTexture(TEXTURE.BLANK);
+        this.pokemonAllSlotDummy[this.lastChoice].setTexture(TEXTURE.FINGER);
+        this.pokemonInfoSprite.setTexture(texture);
+
+        this.pokemonInfoTopText2.setText(pokedex);
+        this.pokemonInfoTopText3.setText(i18next.t(`pokemon:${pokedex}.name`));
 
         this.pokemonGender.setTexture(myPokemons[this.lastChoice].gender === 'b' ? TEXTURE.GENDER_0 : TEXTURE.GENDER_1);
 
-        const type1 = getPokemonType(pokemons.get(myPokemons[this.lastChoice].idx)?.type1!);
-        const type2 = getPokemonType(pokemons.get(myPokemons[this.lastChoice].idx)?.type2!);
+        const type1 = getPokemonType(pokemons.get(pokedex)?.type1!);
+        const type2 = getPokemonType(pokemons.get(pokedex)?.type2!);
         this.pokemonType1.setTexture(TEXTURE.TYPES, 'types-' + type1).setVisible(type1 !== 0 ? true : false);
         this.pokemonType2.setTexture(TEXTURE.TYPES, 'types-' + type2).setVisible(type2 !== 0 ? true : false);
 
         this.pokemonCaptureDate.setText(myPokemons[this.lastChoice].capturedDate);
       }
     });
-
-    for (let i = 0; i < 6; i++) {
-      const targetSlotIdx = myPokemonSlots[i];
-      if (targetSlotIdx < 0) {
-        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
-        continue;
-      } else {
-        const targetPokemon = myPokemons[targetSlotIdx];
-        if (targetPokemon.isShiny) {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}s`);
-        } else {
-          this.pokemonSlotIcons[i].setTexture(`pokemon_icon${targetPokemon.idx}`);
-        }
-      }
-    }
   }
 
   update(time: number, delta: number): void {}
