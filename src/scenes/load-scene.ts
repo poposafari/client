@@ -108,6 +108,9 @@ export class LoadingScene extends BaseScene {
 
     this.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
 
+    this.loadImage(TEXTURE.ARROW_W_R, 'ui', TEXTURE.ARROW_W_R);
+    this.loadImage(TEXTURE.ARROW_B_R, 'ui', TEXTURE.ARROW_B_R);
+
     let itemIdx = 0;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);

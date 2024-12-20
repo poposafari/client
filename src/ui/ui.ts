@@ -7,7 +7,7 @@ import { ANIMATION } from '../enums/animation';
 
 export function addWindow(
   scene: InGameScene,
-  texture: TEXTURE,
+  texture: TEXTURE | string,
   x: number,
   y: number,
   width: number,
@@ -203,8 +203,8 @@ export abstract class Ui {
 
   abstract setup(): void;
   abstract show(data?: any): void;
-  abstract clean(): void;
-  abstract pause(onoff: boolean): void;
+  abstract clean(data?: any): void;
+  abstract pause(onoff: boolean, data?: any): void;
   abstract update(time: number, delta: number): void;
 
   getUi() {

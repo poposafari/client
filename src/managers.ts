@@ -161,6 +161,35 @@ export class ModeManager {
   }
 }
 
+export class PlayerInfoManager {
+  private static instance: PlayerInfoManager;
+
+  private gender!: string;
+  private avatarType!: number;
+  private nickname!: string;
+  private posX: number = 4;
+  private posY: number = 3;
+  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
+  private lastStatus: PLAYER_STATUS = PLAYER_STATUS.MOVEMENT;
+
+  constructor() {
+    this.init();
+  }
+
+  static getInstance(): PlayerInfoManager {
+    if (!PlayerInfoManager.instance) {
+      PlayerInfoManager.instance = new PlayerInfoManager();
+    }
+    return PlayerInfoManager.instance;
+  }
+
+  private init() {}
+}
+
+export class PlayerPokemonManager {}
+
+export class PlayerItemManager {}
+
 export class PlayerManager {
   private static instance: PlayerManager;
   private gender!: string;
@@ -205,29 +234,29 @@ export class PlayerManager {
     this.setItemSlot(2, '003');
     this.setItemSlot(0, '005');
 
-    this.addMyPokemon('001', '2024-12-25 09:10', true, 'b', false);
-    this.addMyPokemon('002', '2024-12-17 09:46', true, 'g', false);
-    this.addMyPokemon('003', '2024-12-20 09:10', true, 'b', false);
-    this.addMyPokemon('004', '2024-10-17 09:10', false, 'b', false);
-    this.addMyPokemon('005', '2024-12-17 09:10', false, 'g', false);
-    this.addMyPokemon('006', '2024-11-17 13:15', false, 'b', false);
-    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', false);
-    this.addMyPokemon('008', '2024-09-17 09:10', false, 'g', false);
-    this.addMyPokemon('009', '2024-12-17 09:10', false, 'b', false);
-    this.addMyPokemon('002', '2024-12-17 09:10', false, 'g', false);
+    this.addMyPokemon('001', '2024-12-25 09:10', true, 'b', -1);
+    this.addMyPokemon('002', '2024-12-17 09:46', true, 'g', -1);
+    this.addMyPokemon('003', '2024-12-20 09:10', true, 'b', -1);
+    this.addMyPokemon('004', '2024-10-17 09:10', false, 'b', -1);
+    this.addMyPokemon('005', '2024-12-17 09:10', false, 'g', -1);
+    this.addMyPokemon('006', '2024-11-17 13:15', false, 'b', -1);
+    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('008', '2024-09-17 09:10', false, 'g', -1);
+    this.addMyPokemon('009', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('002', '2024-12-17 09:10', false, 'g', -1);
 
-    this.addMyPokemon('002', '2024-04-17 09:10', false, 'g', false);
-    this.addMyPokemon('006', '2024-12-17 08:32', true, 'g', false);
-    this.addMyPokemon('001', '2024-06-17 09:10', false, 'g', false);
-    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', false);
-    this.addMyPokemon('005', '2024-02-17 10:30', true, 'b', false);
-    this.addMyPokemon('008', '2024-12-17 09:10', false, 'b', false);
-    this.addMyPokemon('003', '2024-12-17 09:10', false, 'b', false);
-    this.addMyPokemon('004', '2024-12-17 09:10', false, 'b', false);
+    this.addMyPokemon('002', '2024-04-17 09:10', false, 'g', -1);
+    this.addMyPokemon('006', '2024-12-17 08:32', true, 'g', -1);
+    this.addMyPokemon('001', '2024-06-17 09:10', false, 'g', -1);
+    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('005', '2024-02-17 10:30', true, 'b', -1);
+    this.addMyPokemon('008', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('003', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('004', '2024-12-17 09:10', false, 'b', -1);
   }
 
-  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, isParty: boolean) {
-    this.myPokemons.push({ idx: key, capturedDate: capturedDate, isShiny: isShiny, gender: gender, isParty: isParty });
+  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, partySlot: number) {
+    this.myPokemons.push({ idx: key, capturedDate: capturedDate, isShiny: isShiny, gender: gender, partySlot: partySlot });
   }
 
   getMyPokemon() {
@@ -238,9 +267,17 @@ export class PlayerManager {
     return this.myPokemonSlots;
   }
 
+  resetMyPokemonSlot(idx: number) {
+    this.myPokemonSlots[idx] = -1;
+  }
+
+  resetMyPokemonParty(idx: number) {
+    this.myPokemons[idx].partySlot = -1;
+  }
+
   setMyPokemonSlots(idx: number, myPokedex: number) {
     this.myPokemonSlots[idx] = myPokedex;
-    this.myPokemons[idx].isParty = true;
+    this.myPokemons[myPokedex].partySlot = idx;
   }
 
   addItem(key: string, quantity: number): void {

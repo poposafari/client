@@ -12,6 +12,7 @@ export class OverworldUi extends Overworld {
   protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
   protected pokemonSlotContainers: Phaser.GameObjects.Container[] = [];
   protected pokemonSloteBtns: Phaser.GameObjects.NineSlice[] = [];
+  protected pokemonSlotIcons: Phaser.GameObjects.Image[] = [];
   protected menuSlotContainers: Phaser.GameObjects.Container[] = [];
   protected menuSlotBtns: Phaser.GameObjects.Image[] = [];
   protected menuSlotXboxBtns: Phaser.GameObjects.Image[] = [];
@@ -63,7 +64,10 @@ export class OverworldUi extends Overworld {
     for (let i = 0; i < 6; i++) {
       const yPosition = i * (50 + 5);
       const pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, yPosition, 50, 50, 8, 8, 8, 8);
+      const icon = addImage(this.scene, `pokemon_icon000`, 0, yPosition);
       pokemonSlotContainer.add(pokemonSlotWindow);
+      pokemonSlotContainer.add(icon);
+      this.pokemonSlotIcons.push(icon);
       this.pokemonSloteBtns.push(pokemonSlotWindow);
     }
 
@@ -83,7 +87,8 @@ export class OverworldUi extends Overworld {
   show(): void {
     const playerManager = PlayerManager.getInstance();
     const itemSlotsInfo = playerManager.getItemSlot();
-    console.log(itemSlotsInfo);
+    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const myPokemons = playerManager.getMyPokemon();
 
     super.show();
     for (const container of this.menuSlotContainers) {
@@ -111,6 +116,15 @@ export class OverworldUi extends Overworld {
         this.itemSlotIcons[idx].setTexture(`item${info.idx}`).setVisible(true);
       }
       idx++;
+    }
+
+    for (let i = 0; i < myPokemonSlots.length; i++) {
+      if (myPokemonSlots[i] >= 0) {
+        const target = myPokemons[myPokemonSlots[i]];
+        let texture = `pokemon_icon${target.idx}`;
+        if (myPokemons[myPokemonSlots[i]].isShiny) texture += 's';
+        this.pokemonSlotIcons[i].setTexture(texture);
+      }
     }
 
     for (const btn of this.menuSlotBtns) {
@@ -151,10 +165,17 @@ export class OverworldUi extends Overworld {
       });
     }
 
-    for (const btn of this.pokemonSloteBtns) {
+    for (let i = 0; i < this.pokemonSloteBtns.length; i++) {
+      const btn = this.pokemonSloteBtns[i];
       btn.setScrollFactor(0);
       btn.setInteractive({ cursor: 'pointer' });
-      btn.on('pointerdown', () => {});
+
+      btn.setData('index', i);
+
+      btn.on('pointerdown', () => {
+        const idx = myPokemonSlots[btn.getData('index')];
+        console.log('나와라~~~' + myPokemons[idx].idx);
+      });
       btn.on('pointerover', () => {
         btn.setAlpha(0.7);
       });

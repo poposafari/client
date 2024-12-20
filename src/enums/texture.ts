@@ -71,6 +71,8 @@ export const enum TEXTURE {
   BLANK = 'blank',
   TYPES = 'types',
   SHINY = 'shiny',
+  ARROW_W_R = 'arrow_w_r',
+  ARROW_B_R = 'arrow_b_r',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

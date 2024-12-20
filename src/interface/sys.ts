@@ -21,5 +21,5 @@ export interface MyPokemon {
   capturedDate: string;
   isShiny: boolean;
   gender: string;
-  isParty: boolean;
+  partySlot: number;
 }
