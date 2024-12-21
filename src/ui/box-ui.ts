@@ -82,6 +82,7 @@ export class BoxUi extends Ui {
     }
     this.pokemonSlotContainer.add(this.pokemonSlotWindow);
     this.pokemonSlotContainer.add(this.pokemonSlotIcons);
+    this.pokemonSlotContainer.setVisible(false);
 
     this.pokemonInfoTopContainer = this.scene.add.container(width / 4 - 310, height / 4 - 215);
     this.pokemonInfoTop = addImage(this.scene, TEXTURE.BOX_NAME, 0, 0);
@@ -216,6 +217,12 @@ export class BoxUi extends Ui {
         let texture = `pokemon_icon${myPokemons[i].idx}`;
         if (myPokemons[i].isShiny) texture += 's';
         this.pokemonSlotIcons[myPokemons[i].partySlot].setTexture(texture);
+      }
+    }
+
+    for (let i = 0; i < myPokemonSlots.length; i++) {
+      if (myPokemonSlots[i] < 0) {
+        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
       }
     }
 

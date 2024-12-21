@@ -124,6 +124,8 @@ export class OverworldUi extends Overworld {
         let texture = `pokemon_icon${target.idx}`;
         if (myPokemons[myPokemonSlots[i]].isShiny) texture += 's';
         this.pokemonSlotIcons[i].setTexture(texture);
+      } else {
+        this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
       }
     }
 
