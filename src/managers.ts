@@ -16,18 +16,6 @@ interface Modes {
   value: Mode;
 }
 
-export class GlobalManager {
-  private static managers: Map<string, any> = new Map();
-
-  static register<T>(name: string, manager: T): void {
-    this.managers.set(name, manager);
-  }
-
-  static get<T>(name: string): T {
-    return this.managers.get(name);
-  }
-}
-
 export class MessageManager {
   private static instance: MessageManager;
   private scene!: InGameScene;
@@ -161,78 +149,25 @@ export class ModeManager {
   }
 }
 
-export class PlayerInfoManager {
-  private static instance: PlayerInfoManager;
+export const MAX_PARTY_SLOT = 6;
 
-  private gender!: string;
-  private avatarType!: number;
-  private nickname!: string;
-  private posX: number = 4;
-  private posY: number = 3;
-  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
-  private lastStatus: PLAYER_STATUS = PLAYER_STATUS.MOVEMENT;
-
-  constructor() {
-    this.init();
-  }
-
-  static getInstance(): PlayerInfoManager {
-    if (!PlayerInfoManager.instance) {
-      PlayerInfoManager.instance = new PlayerInfoManager();
-    }
-    return PlayerInfoManager.instance;
-  }
-
-  private init() {}
-}
-
-export class PlayerPokemonManager {}
-
-export class PlayerItemManager {}
-
-export class PlayerManager {
-  private static instance: PlayerManager;
-  private gender!: string;
-  private avatarType!: number;
-  private nickname!: string;
-  private currentLocation!: MODE;
-  private posX: number = 4;
-  private posY: number = 3;
-  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
-  private items: Record<string, BagItem> = {};
-  private itemSlots: Array<BagItem> = [];
+export class PlayerPokemonManager {
+  private static instance: PlayerPokemonManager;
   private myPokemons: Array<MyPokemon> = [];
   private myPokemonSlots: Array<number> = [];
+  private followPokemon: string = '000';
 
-  static getInstance(): PlayerManager {
-    if (!PlayerManager.instance) {
-      PlayerManager.instance = new PlayerManager();
+  static getInstance(): PlayerPokemonManager {
+    if (!PlayerPokemonManager.instance) {
+      PlayerPokemonManager.instance = new PlayerPokemonManager();
     }
-    return PlayerManager.instance;
+    return PlayerPokemonManager.instance;
   }
 
-  initialize(gender: boolean, avatarType: number, nickname: string): void {
-    this.gender = gender ? 'BOY' : 'GIRL';
-    this.avatarType = avatarType;
-    this.nickname = nickname;
-
-    this.addItem('000', 1);
-    this.addItem('001', 5);
-    this.addItem('002', 3);
-    this.addItem('003', 2);
-    this.addItem('004', 10);
-    this.addItem('005', 1);
-
-    for (let i = 0; i < 9; i++) {
-      this.itemSlots.push({ idx: '000', stock: 0 });
-    }
-
-    for (let i = 0; i < 6; i++) {
+  init() {
+    for (let i = 0; i < MAX_PARTY_SLOT; i++) {
       this.myPokemonSlots.push(-1);
     }
-
-    this.setItemSlot(2, '003');
-    this.setItemSlot(0, '005');
 
     this.addMyPokemon('001', '2024-12-25 09:10', true, 'b', -1);
     this.addMyPokemon('002', '2024-12-17 09:46', true, 'g', -1);
@@ -248,80 +183,163 @@ export class PlayerManager {
     this.addMyPokemon('002', '2024-04-17 09:10', false, 'g', -1);
     this.addMyPokemon('006', '2024-12-17 08:32', true, 'g', -1);
     this.addMyPokemon('001', '2024-06-17 09:10', false, 'g', -1);
-    this.addMyPokemon('007', '2024-12-17 09:10', false, 'b', -1);
+    this.addMyPokemon('007', '2024-12-17 09:10', true, 'b', -1);
     this.addMyPokemon('005', '2024-02-17 10:30', true, 'b', -1);
     this.addMyPokemon('008', '2024-12-17 09:10', false, 'b', -1);
     this.addMyPokemon('003', '2024-12-17 09:10', false, 'b', -1);
     this.addMyPokemon('004', '2024-12-17 09:10', false, 'b', -1);
   }
 
-  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, partySlot: number) {
-    this.myPokemons.push({ idx: key, capturedDate: capturedDate, isShiny: isShiny, gender: gender, partySlot: partySlot });
+  getMyPokemons() {
+    if (this.myPokemons) return this.myPokemons;
+
+    return [];
   }
 
-  getMyPokemon() {
-    return this.myPokemons;
+  getMyPokemon(idx: number): MyPokemon {
+    if (this.myPokemons[idx]) return this.myPokemons[idx];
+
+    throw new Error('가지고 있지 않은 포켓몬인데요^^');
   }
 
   getMyPokemonSlots() {
-    return this.myPokemonSlots;
+    if (this.myPokemonSlots) return this.myPokemonSlots;
+
+    return [];
   }
 
-  resetMyPokemonSlot(idx: number) {
-    this.myPokemonSlots[idx] = -1;
+  getMyFollowPokemon() {
+    if (this.followPokemon) return this.followPokemon;
+
+    return '000';
   }
 
-  resetMyPokemonParty(idx: number) {
-    this.myPokemons[idx].partySlot = -1;
+  setMyPokemonSlot(idx: number, pokeIdx: number) {
+    if (idx < 0) throw new Error('잘못된 인덱스임.^^');
+    if (this.myPokemons[pokeIdx]) {
+      this.myPokemons[pokeIdx].partySlot = idx;
+      this.myPokemonSlots[idx] = pokeIdx;
+    }
   }
 
-  setMyPokemonSlots(idx: number, myPokedex: number) {
-    this.myPokemonSlots[idx] = myPokedex;
-    this.myPokemons[myPokedex].partySlot = idx;
+  resetMyPokemonSlot(idx: number, pokeIdx: number) {
+    if (idx < 0) throw new Error('잘못된 인덱스임.^^');
+    if (this.myPokemons[pokeIdx]) {
+      this.myPokemons[pokeIdx].partySlot = -1;
+      this.myPokemonSlots[idx] = -1;
+    }
+  }
+
+  setMyFollowPokemon(pokedex: string) {
+    this.followPokemon = pokedex;
+  }
+
+  addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, partySlot: number) {
+    this.myPokemons.push({
+      idx: key,
+      capturedDate: capturedDate,
+      isShiny: isShiny,
+      gender: gender,
+      partySlot: partySlot,
+    });
+  }
+}
+
+export const MAX_ITEM_SLOT = 9;
+
+export class PlayerItemManager {
+  private static instance: PlayerItemManager;
+  private myItems: Record<string, BagItem> = {};
+  private myItemSlots: Array<BagItem> = [];
+
+  static getInstance(): PlayerItemManager {
+    if (!PlayerItemManager.instance) {
+      PlayerItemManager.instance = new PlayerItemManager();
+    }
+    return PlayerItemManager.instance;
+  }
+
+  init() {
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+      this.myItemSlots.push({ idx: '000', stock: 0 });
+    }
+  }
+
+  getMyItems() {
+    return this.myItems;
+  }
+
+  getMyItemsSize() {
+    return Object.keys(this.myItems).length;
+  }
+
+  getMyItemSlots() {
+    return this.myItemSlots;
+  }
+
+  getMyItem(itemIdx: string): BagItem | '000' {
+    if (this.myItems[itemIdx]) return this.myItems[itemIdx];
+
+    return '000';
   }
 
   addItem(key: string, quantity: number): void {
-    if (this.items[key]) {
-      this.items[key].stock += quantity;
+    if (this.myItems[key]) {
+      this.myItems[key].stock += quantity;
     } else {
-      this.items[key] = { idx: key, stock: quantity };
+      this.myItems[key] = { idx: key, stock: quantity };
     }
   }
 
-  setItemSlot(idx: number, item: string) {
-    const ret = this.getBagItem(item);
+  setMyItemSlot(idx: number, itemIdx: string) {
+    const ret = this.getMyItem(itemIdx);
 
-    if (ret) {
-      this.itemSlots[idx] = ret;
+    if (idx < 0) throw new Error('잘못된 인덱스임.^^');
+    if (ret) this.myItemSlots[idx] = ret;
+
+    throw new Error('예기치 못한 에러임.');
+  }
+
+  hasMyItemStock(itemIdx: string) {
+    const ret = this.getMyItem(itemIdx);
+
+    if (ret) return ret.stock <= 0 ? false : true;
+
+    throw new Error('예기치 못한 오류');
+  }
+}
+
+export class PlayerInfoManager {
+  private static instance: PlayerInfoManager;
+  private gender: 'boy' | 'girl' = 'boy';
+  private avatarType: 1 | 2 | 3 | 4 = 1;
+  private nickname!: string;
+  private posX: number = 2;
+  private posY: number = 2;
+  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
+  private lastStatus: PLAYER_STATUS = PLAYER_STATUS.WALK;
+
+  static getInstance(): PlayerInfoManager {
+    if (!PlayerInfoManager.instance) {
+      PlayerInfoManager.instance = new PlayerInfoManager();
     }
-
-    if (ret.idx === '000') {
-      this.itemSlots;
-    }
+    return PlayerInfoManager.instance;
   }
 
-  getItemSlot() {
-    return this.itemSlots;
-  }
+  init() {}
 
-  getItemCount(): number {
-    return Object.keys(this.items).length;
-  }
-
-  getBagItem(key: string) {
-    return this.items[key] || null;
-  }
-
-  getGender() {
-    return this.gender;
-  }
-
-  getAvatarType() {
-    return this.avatarType;
-  }
-
-  getNickname() {
-    return this.nickname;
+  getInfo() {
+    return {
+      gender: this.gender,
+      avatarType: this.avatarType,
+      nickname: this.nickname,
+      pos: {
+        x: this.posX,
+        y: this.posY,
+      },
+      lastDirection: this.lastDirectrion,
+      lastStatus: this.lastStatus,
+    };
   }
 
   getType(type: PLAYER_STATUS) {
@@ -330,32 +348,12 @@ export class PlayerManager {
     return TEXTURE_PLAYER_MAP[key];
   }
 
-  getPosX() {
-    return this.posX;
+  setPosX(x: number) {
+    this.posX = x;
   }
 
-  getPosY() {
-    return this.posY;
-  }
-
-  getCurrentLocation() {
-    return this.currentLocation;
-  }
-
-  getLastDirection() {
-    return this.lastDirectrion;
-  }
-
-  setPosX(value: number) {
-    this.posX = value;
-  }
-
-  setPosY(value: number) {
-    this.posY = value;
-  }
-
-  setCurrentLocation(mode: MODE) {
-    this.currentLocation = mode;
+  setPosY(y: number) {
+    this.posX = y;
   }
 
   setLastDirection(direction: DIRECTION) {
