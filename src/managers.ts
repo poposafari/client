@@ -250,7 +250,7 @@ export const MAX_ITEM_SLOT = 9;
 export class PlayerItemManager {
   private static instance: PlayerItemManager;
   private myItems: Record<string, BagItem> = {};
-  private myItemSlots: Array<BagItem> = [];
+  private myItemSlots: Array<string> = [];
 
   static getInstance(): PlayerItemManager {
     if (!PlayerItemManager.instance) {
@@ -261,8 +261,13 @@ export class PlayerItemManager {
 
   init() {
     for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-      this.myItemSlots.push({ idx: '000', stock: 0 });
+      this.myItemSlots.push('000');
     }
+
+    this.addItem('001', 2);
+    this.addItem('004', 2);
+    this.addItem('002', 2);
+    this.addItem('003', 2);
   }
 
   getMyItems() {
@@ -277,10 +282,10 @@ export class PlayerItemManager {
     return this.myItemSlots;
   }
 
-  getMyItem(itemIdx: string): BagItem | '000' {
+  getMyItem(itemIdx: string): BagItem {
     if (this.myItems[itemIdx]) return this.myItems[itemIdx];
 
-    return '000';
+    return { idx: '000', stock: 0 };
   }
 
   addItem(key: string, quantity: number): void {
@@ -291,11 +296,18 @@ export class PlayerItemManager {
     }
   }
 
+  restMyItemSlot(idx: number) {
+    this.myItemSlots[idx] = '000';
+  }
+
   setMyItemSlot(idx: number, itemIdx: string) {
     const ret = this.getMyItem(itemIdx);
-
+    console.log('getMyItem:', ret);
     if (idx < 0) throw new Error('잘못된 인덱스임.^^');
-    if (ret) this.myItemSlots[idx] = ret;
+    if (ret.idx !== '000') {
+      this.myItemSlots[idx] = ret.idx;
+      return;
+    }
 
     throw new Error('예기치 못한 에러임.');
   }
@@ -303,7 +315,9 @@ export class PlayerItemManager {
   hasMyItemStock(itemIdx: string) {
     const ret = this.getMyItem(itemIdx);
 
-    if (ret) return ret.stock <= 0 ? false : true;
+    if (ret.idx !== '000') {
+      return ret.stock <= 0 ? false : true;
+    }
 
     throw new Error('예기치 못한 오류');
   }
