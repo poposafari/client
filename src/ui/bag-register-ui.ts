@@ -1,11 +1,10 @@
-import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, PlayerManager } from '../managers';
+import { KeyboardManager, MAX_ITEM_SLOT } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addWindow, createSprite, createSpriteAnimation, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 
 export class BagRegisterUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
@@ -13,7 +12,7 @@ export class BagRegisterUi extends Ui {
   protected itemSlotContainer!: Phaser.GameObjects.Container;
   protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
   protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
-  protected choiceMark!: Phaser.GameObjects.Sprite;
+  protected itemSlotDummys: Phaser.GameObjects.Image[] = [];
   private cancelMark!: Phaser.GameObjects.Image;
   private targetItem: string = '000';
 
@@ -33,38 +32,36 @@ export class BagRegisterUi extends Ui {
 
     this.itemSlotContainer = this.scene.add.container(width / 8, height / 8 + 370);
 
-    this.cancelMark = addImage(this.scene, TEXTURE.CANCEL, 9 * (50 + 5), 0);
-
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
       const xPosition = i * (50 + 5);
       const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50, 8, 8, 8, 8);
       const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
       const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
+      const dummy = addImage(this.scene, TEXTURE.BLANK, xPosition, -50).setScale(2);
       this.itemSlotContainer.add(itemSlotWindow);
       this.itemSlotContainer.add(itemSlotText);
       this.itemSlotContainer.add(itemIcon);
+      this.itemSlotContainer.add(dummy);
       this.itemSlotBtns.push(itemSlotWindow);
       this.itemSlotIcons.push(itemIcon);
+      this.itemSlotDummys.push(dummy);
     }
+
+    this.cancelMark = addImage(this.scene, TEXTURE.CANCEL, 9 * (50 + 5), 0);
+    this.itemSlotDummys.push(this.cancelMark);
     this.itemSlotContainer.add(this.cancelMark);
 
     this.itemSlotContainer.setVisible(false);
 
-    this.choiceMark = createSprite(this.scene, TEXTURE.PAUSE_WHITE, width / 8 - 14, height / 8 + 290);
-    this.choiceMark.setVisible(false);
-    createSpriteAnimation(this.scene, TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE);
-    this.choiceMark.anims.startAnimation(ANIMATION.PAUSE);
-
     ui.add(this.bg);
     ui.add(this.itemSlotContainer);
-    ui.add(this.choiceMark);
   }
 
   show(data?: any): void {
     this.targetItem = data;
     this.bg.setVisible(true);
     this.itemSlotContainer.setVisible(true);
-    this.choiceMark.setVisible(true);
+    this.cancelMark.setVisible(true);
 
     this.pause(false);
   }
@@ -72,7 +69,6 @@ export class BagRegisterUi extends Ui {
   clean(): void {
     this.bg.setVisible(false);
     this.itemSlotContainer.setVisible(false);
-    this.choiceMark.setVisible(false);
   }
 
   pause(onoff: boolean): void {
@@ -85,63 +81,54 @@ export class BagRegisterUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const playerManager = PlayerManager.getInstance();
-    const itemSlotsInfo = playerManager.getItemSlot();
+    const playerItemManager = this.mode.getPlayerItemManager();
+    const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
 
     let startIndex = 0;
-    let endIndex = 8 + 1;
+    let endIndex = MAX_ITEM_SLOT;
     let choice = startIndex;
 
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
-
     keyboardMananger.setKeyDownCallback((key) => {
-      if (key === KEY.LEFT) {
-        choice = Math.max(startIndex, choice - 1);
-      } else if (key === KEY.RIGHT) {
-        choice = Math.min(endIndex, choice + 1);
-      } else if (key === KEY.SELECT) {
-        console.log(`${choice} -> ${this.targetItem}`);
-        if (choice >= 0 && choice <= 8) {
-          let idx = 0;
-          for (const currentItem of itemSlotsInfo) {
-            if (currentItem.idx === this.targetItem) {
-              playerManager.setItemSlot(idx, '000');
-              this.itemSlotIcons[idx].setTexture(`item000`).setVisible(false);
+      const prevChoice = choice;
+
+      switch (key) {
+        case KEY.LEFT:
+          choice = Math.max(startIndex, choice - 1);
+          break;
+        case KEY.RIGHT:
+          choice = Math.min(endIndex, choice + 1);
+          break;
+        case KEY.SELECT:
+          if (choice === 9) {
+            this.clean();
+            this.mode.popUiStack();
+          } else {
+            for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+              if (playerItemManager.getMyItemSlots()[i] === this.targetItem) {
+                this.itemSlotIcons[i].setTexture(`item000`).setVisible(false);
+                playerItemManager.restMyItemSlot(i);
+                break;
+              }
             }
-            idx++;
+            console.log(`${choice} -> ${this.targetItem}`);
+            this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
+            playerItemManager.setMyItemSlot(choice, this.targetItem);
           }
-          this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
-          playerManager.setItemSlot(choice, this.targetItem);
-
-          console.log(playerManager.getItemSlot());
-        }
-        if (choice === 9) {
-          this.clean();
-          this.mode.popUiStack();
-        }
+          break;
       }
-      this.choiceMark.setPosition(width / 8 - 14 + choice * (50 + 5), height / 8 + 290);
 
-      if (choice > 8) {
-        this.choiceMark.setVisible(false);
-        this.cancelMark.setTexture(TEXTURE.CANCEL_S);
-      } else {
-        this.choiceMark.setVisible(true);
+      if (choice !== prevChoice) {
+        this.itemSlotDummys[prevChoice].setTexture(TEXTURE.BLANK);
         this.cancelMark.setTexture(TEXTURE.CANCEL);
+        if (choice === 9) {
+          this.cancelMark.setTexture(TEXTURE.CANCEL_S);
+        } else {
+          this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
+        }
       }
     });
-
-    let idx = 0;
-    for (const info of itemSlotsInfo) {
-      if (info.idx !== '000') {
-        this.itemSlotIcons[idx].setTexture(`item${info.idx}`).setVisible(true);
-      }
-      idx++;
-    }
+    this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
   }
 
   update(time: number, delta: number): void {}

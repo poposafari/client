@@ -2,7 +2,7 @@ import { getItem, Item, items } from '../data/items';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, PlayerManager } from '../managers';
+import { KeyboardManager } from '../managers';
 import { BagMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, Ui } from './ui';
@@ -16,7 +16,6 @@ export class BagUi extends Ui {
   private itemIcons: Phaser.GameObjects.Image[] = [];
   private itemStocks: Phaser.GameObjects.Text[] = [];
   private itemTexts: Phaser.GameObjects.Text[] = [];
-  private playerManager!: PlayerManager;
   private lastChoice: number = 0;
 
   constructor(scene: InGameScene, mode: BagMode) {
@@ -42,7 +41,7 @@ export class BagUi extends Ui {
   }
 
   show(): void {
-    this.playerManager = PlayerManager.getInstance();
+    const playerItemManager = this.mode.getPlayerItemManager();
 
     this.bg.setAlpha(0);
     this.bg.setVisible(true);
@@ -72,9 +71,10 @@ export class BagUi extends Ui {
     const startY = -204;
 
     for (const key of Object.keys(items)) {
-      const bagItem = this.playerManager.getBagItem(key);
+      const bagItem = playerItemManager.getMyItem(key)!;
+      console.log(bagItem);
       const itemDetail = getItem(key);
-      if (bagItem && bagItem.idx !== '000') {
+      if (bagItem.idx !== '000') {
         const posY = startY + index * itemSpacing;
         this.createItemBox(key, bagItem.stock, itemDetail!, startX, posY);
         index++;
@@ -133,6 +133,10 @@ export class BagUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
+    const playerItemManager = this.mode.getPlayerItemManager();
+    const playerItemSize = playerItemManager.getMyItemsSize();
+
+    if (playerItemSize <= 0) return;
 
     this.xboxBtn.setInteractive({ cursor: 'pointer' });
     this.xboxBtn.on('pointerdown', () => {
@@ -146,12 +150,14 @@ export class BagUi extends Ui {
     });
 
     let startIndex = 0;
-    let endIndex = this.playerManager.getItemCount() - 2;
+    let endIndex = playerItemSize - 1;
 
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
 
     keyboardMananger.setKeyDownCallback((key) => {
+      const prevChoice = this.lastChoice;
+
       if (key === KEY.UP) {
         this.lastChoice = Math.max(startIndex, this.lastChoice - 1);
       } else if (key === KEY.DOWN) {
@@ -161,22 +167,16 @@ export class BagUi extends Ui {
         this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
       }
 
-      for (let i = 0; i < this.itemBoxBtn.length; i++) {
-        this.itemIcons[i].setVisible(false);
-        this.itemTexts[i].setVisible(false);
-        this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
+      if (this.lastChoice !== prevChoice) {
+        this.itemIcons[prevChoice].setVisible(false);
+        this.itemTexts[prevChoice].setVisible(false);
+        this.itemBoxBtn[prevChoice].setTexture(TEXTURE.ITEM_BOX);
+
+        this.itemBoxBtn[this.lastChoice].setTexture(TEXTURE.ITEM_BOX_S);
+        this.itemIcons[this.lastChoice].setVisible(true);
+        this.itemTexts[this.lastChoice].setVisible(true);
       }
-
-      this.itemBoxBtn[this.lastChoice].setTexture(TEXTURE.ITEM_BOX_S);
-      this.itemIcons[this.lastChoice].setVisible(true);
-      this.itemTexts[this.lastChoice].setVisible(true);
     });
-
-    for (let i = 0; i < this.itemBoxBtn.length; i++) {
-      this.itemIcons[i].setVisible(false);
-      this.itemTexts[i].setVisible(false);
-      this.itemBoxBtn[i].setTexture(TEXTURE.ITEM_BOX);
-    }
 
     this.itemBoxBtn[this.lastChoice].setTexture(TEXTURE.ITEM_BOX_S);
     this.itemIcons[this.lastChoice].setVisible(true);
