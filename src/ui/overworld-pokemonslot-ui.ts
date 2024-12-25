@@ -1,6 +1,6 @@
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { MAX_PARTY_SLOT } from '../managers';
+import { MAX_PARTY_SLOT, PlayerInfoManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
@@ -17,7 +17,6 @@ export class OverworldPokemonSlotUi extends Ui {
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
@@ -32,7 +31,7 @@ export class OverworldPokemonSlotUi extends Ui {
       const yPosition = i * (slotSize + slotSpacing);
 
       const pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, yPosition, slotSize, slotSize, 8, 8, 8, 8);
-      const pokemonIcon = addImage(this.scene, 'pokemon_icon000', xPosition, yPosition).setVisible(true);
+      const pokemonIcon = addImage(this.scene, 'pokemon_icon000', xPosition, yPosition).setVisible(false);
 
       this.container.add(pokemonSlotWindow);
       this.container.add(pokemonIcon);
@@ -50,19 +49,36 @@ export class OverworldPokemonSlotUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
 
-    for (const icon of this.pokemonSlotIcons) {
+    const playerInfoManager = this.mode.getPlayerInfoManager();
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
+
+    pokemonSlots.forEach((slot, i) => {
+      this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
+    });
+
+    this.pokemonSlotBtns.forEach((icon, i) => {
       icon.setScrollFactor(0);
       icon.setInteractive({ cursor: 'pointer' });
+
       icon.on('pointerover', () => {
         icon.setAlpha(0.7);
       });
+
       icon.on('pointerout', () => {
         icon.setAlpha(1);
       });
-      icon.on('pointerdown', () => {
-        console.log('나와라~~~' + icon);
+
+      icon.on('pointerup', () => {
+        if (playerInfoManager.getMyFollowPokemon() !== pokemonSlots[i]) {
+          PlayerInfoManager.getInstance().setMyFollowPokemon(pokemonSlots[i]);
+
+          const pokedex = playerPokemonManager.getMyPokemonKey(pokemonSlots[i]);
+          console.log(pokedex);
+          this.mode.changeFollowPokemon(pokedex);
+        }
       });
-    }
+    });
   }
 
   clean(data?: any): void {

@@ -33,7 +33,7 @@ export class SeasonUi extends Ui {
 
   show(): void {
     this.container.setVisible(true);
-
+    console.log('??');
     this.scene.tweens.add({
       targets: this.container,
       alpha: { from: 0, to: 1 },
@@ -42,7 +42,7 @@ export class SeasonUi extends Ui {
       repeat: 0,
       yoyo: true,
       onComplete: () => {
-        this.clean();
+        this.pause(false);
       },
     });
   }
@@ -51,7 +51,9 @@ export class SeasonUi extends Ui {
     this.container.setVisible(false);
   }
 
-  pause(onoff: boolean): void {}
+  pause(onoff: boolean): void {
+    this.clean();
+  }
 
   update(time: number, delta: number): void {}
 }

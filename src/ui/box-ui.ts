@@ -2,7 +2,7 @@ import i18next, { t } from 'i18next';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, PlayerManager } from '../managers';
+import { KeyboardManager } from '../managers';
 import { BoxMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
@@ -134,8 +134,8 @@ export class BoxUi extends Ui {
     const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
-    const playerManager = PlayerManager.getInstance();
-    const myPokemonsSize = playerManager.getMyPokemon().length;
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const myPokemonsSize = playerPokemonManager.getMyPokemons().length;
     const targetCnt = 10;
 
     this.bg.setVisible(true);
@@ -190,9 +190,9 @@ export class BoxUi extends Ui {
   }
 
   unblock() {
-    const playerManager = PlayerManager.getInstance();
-    const myPokemons = playerManager.getMyPokemon();
-    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const myPokemons = playerPokemonManager.getMyPokemons();
+    const myPokemonSlots = playerPokemonManager.getMyPokemonSlots();
     const targetCnt = 10;
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
@@ -211,7 +211,6 @@ export class BoxUi extends Ui {
       this.xboxBtn.setAlpha(1);
     });
 
-    console.log(myPokemons);
     for (let i = 0; i < myPokemons.length; i++) {
       if (myPokemons[i].partySlot >= 0) {
         let texture = `pokemon_icon${myPokemons[i].idx}`;

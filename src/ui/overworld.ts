@@ -1,6 +1,8 @@
+import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
+import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
-import { KeyboardManager, PlayerManager } from '../managers';
+import { KeyboardManager, PlayerInfoManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
@@ -10,9 +12,8 @@ import { Ui } from './ui';
 export class Overworld extends Ui {
   private mode!: OverworldMode;
   protected map!: Phaser.Tilemaps.Tilemap;
-  private players: PlayerObject[] = [];
+  protected player!: PlayerObject;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
-  private player!: PlayerObject;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -20,47 +21,25 @@ export class Overworld extends Ui {
     this.mode = mode;
   }
 
-  setMap(map: Phaser.Tilemaps.Tilemap) {
-    this.map = map;
-  }
-
   getMode() {
     return this.mode;
   }
 
-  setup(): void {
-    // const keyboardMananger = KeyboardManager.getInstance();
-    // const keys = [KEY.SELECT, KEY.RUNNING];
-    // keyboardMananger.setAllowKey(keys);
-    // const playerManager = PlayerManager.getInstance();
-    // this.player = new PlayerObject(this.scene, playerManager.getType(PLAYER_STATUS.MOVEMENT), playerManager.getPosX(), playerManager.getPosY(), this.map, playerManager.getNickname());
-    // const playerSprite = this.player.getSprite();
-    // playerSprite.setVisible(false);
-    // playerSprite.setScale(PLAYER_SCALE);
-    // this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5, 0, 0);
-    // keyboardMananger.setKeyDownCallback((key) => {
-    //   switch (key) {
-    //     case KEY.RUNNING:
-    //       this.player.setRunning();
-    //       break;
-    //   }
-    // });
-  }
+  setup(): void {}
 
   show(): void {
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.SELECT, KEY.RUNNING, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
-    keyboardMananger.setAllowKey(keys);
+    const playerInfo = PlayerInfoManager.getInstance().getInfo();
 
-    const playerManager = PlayerManager.getInstance();
-
-    this.player = new PlayerObject(this.scene, playerManager.getType(PLAYER_STATUS.MOVEMENT), playerManager.getPosX(), playerManager.getPosY(), this.map, playerManager.getNickname());
+    this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerInfo.pos.x, playerInfo.pos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
 
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
     playerSprite.setScale(PLAYER_SCALE);
     this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5, 0, 0);
 
+    keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback((key) => {
       switch (key) {
         case KEY.RUNNING:
@@ -100,6 +79,7 @@ export class Overworld extends Ui {
   clean(): void {
     this.map.destroy();
     this.player.destroy();
+    this.player.getPet().destroy();
     this.scene.cameras.main.stopFollow();
     this.scene.cameras.main.setScroll(0, 0);
   }
@@ -109,6 +89,25 @@ export class Overworld extends Ui {
   update(time: number, delta: number) {
     this.movement();
     this.player.update(delta);
+    this.player.getPet().update();
+  }
+
+  changeFollowPokemon(pokedex: string) {
+    const pet = this.player.getPet();
+
+    // pet.startAnmation(ANIMATION.POKEMON_CALL);
+    // const animDuration = (this.scene.anims.get(ANIMATION.POKEMON_CALL).frames.length / this.scene.anims.get(ANIMATION.POKEMON_CALL).frameRate) * 1000;
+
+    // this.scene.time.delayedCall(animDuration, () => {
+    //   pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
+    // });
+
+    pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
+    this.player
+      .getPet()
+      .getSprite()
+      .setTexture(`pokemon_overworld${pokedex}`)
+      .setVisible(pokedex !== '000' ? true : false);
   }
 
   private movement() {
