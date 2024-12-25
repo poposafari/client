@@ -129,7 +129,15 @@ export class BoxRegisterUi extends Ui {
                 playerPokemonManager.resetMyPokemonSlot(i, this.targetPokemon);
               }
             }
+
+            if (myPokemonSlots[choice] !== -1) {
+              playerPokemonManager.resetMyPokemonSlot(choice, myPokemonSlots[choice]);
+            }
+
             playerPokemonManager.setMyPokemonSlot(choice, this.targetPokemon);
+            console.log(playerPokemonManager.getMyPokemonSlots());
+            console.log(playerPokemonManager.getMyPokemons());
+
             const target = myPokemons[this.targetPokemon];
             let texture = `pokemon_icon${target.idx}`;
 
