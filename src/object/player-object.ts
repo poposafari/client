@@ -1,130 +1,38 @@
 import { getItemType } from '../data/items';
-import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
+import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { TEXTURE } from '../enums/texture';
-import { PlayerManager } from '../managers';
+import { PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
-import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import { MovableObject } from './movable-object';
+import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
+  private pet!: PetObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
-    const playerManager = PlayerManager.getInstance();
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, type: OBJECT) {
+    const playerPokemonManager = PlayerPokemonManager.getInstance();
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const playerInfo = playerInfoManager.getInfo();
 
     super(scene, texture, x, y, map, nickname);
 
-    this.init(scene, texture);
     this.setStatus(PLAYER_STATUS.WALK);
+    this.setType(type);
+    this.standStop(playerInfoManager.getInfo().lastDirection);
 
-    this.stopAnmation(this.getStopFrameNumber(playerManager.getLastDirection()));
+    const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
+    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.fpPos.x, playerInfo.fpPos.y, map, '');
+    const petSprite = this.pet.getSprite();
+    petSprite.setVisible(followPokedex !== '000' ? true : false);
+    petSprite.setScale(1.5);
   }
 
-  init(scene: InGameScene, texture: TEXTURE) {
-    const playerManager = PlayerManager.getInstance();
-
-    const movementTexture = texture;
-    const rideTexture = playerManager.getType(PLAYER_STATUS.RIDE);
-
-    const movementFrames = getSpriteFrames(this.getScene(), movementTexture, ANIMATION.PLAYER_MOVEMENT);
-    const rideFrames = getSpriteFrames(this.getScene(), rideTexture, ANIMATION.PLAYER_RIDE);
-
-    const walkUp = [
-      [movementFrames[1], movementFrames[0]],
-      [movementFrames[2], movementFrames[0]],
-    ];
-
-    const walkDown = [
-      [movementFrames[4], movementFrames[3]],
-      [movementFrames[5], movementFrames[3]],
-    ];
-
-    const walkLeft = [
-      [movementFrames[7], movementFrames[6]],
-      [movementFrames[8], movementFrames[6]],
-    ];
-
-    const walkRight = [
-      [movementFrames[10], movementFrames[9]],
-      [movementFrames[11], movementFrames[9]],
-    ];
-
-    const runUp = [
-      [movementFrames[14], movementFrames[12]],
-      [movementFrames[13], movementFrames[12]],
-      [movementFrames[12], movementFrames[12]],
-    ];
-
-    const runDown = [
-      [movementFrames[16], movementFrames[15]],
-      [movementFrames[17], movementFrames[15]],
-      [movementFrames[15], movementFrames[15]],
-    ];
-
-    const runLeft = [
-      [movementFrames[19], movementFrames[18]],
-      [movementFrames[20], movementFrames[18]],
-      [movementFrames[18], movementFrames[18]],
-    ];
-
-    const runRight = [
-      [movementFrames[22], movementFrames[21]],
-      [movementFrames[23], movementFrames[21]],
-      [movementFrames[21], movementFrames[21]],
-    ];
-
-    const rideUp = [
-      [rideFrames[1], rideFrames[0]],
-      [rideFrames[2], rideFrames[0]],
-    ];
-
-    const rideDown = [
-      [rideFrames[4], rideFrames[3]],
-      [rideFrames[5], rideFrames[3]],
-    ];
-
-    const rideLeft = [
-      [rideFrames[7], rideFrames[6]],
-      [rideFrames[8], rideFrames[6]],
-    ];
-
-    const rideRight = [
-      [rideFrames[10], rideFrames[9]],
-      [rideFrames[11], rideFrames[9]],
-    ];
-
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_UP_1, walkUp[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_UP_2, walkUp[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_1, walkDown[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_2, walkDown[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_1, walkLeft[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_2, walkLeft[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_1, walkRight[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_2, walkRight[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_UP_1, runUp[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_UP_2, runUp[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_UP_3, runUp[2]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_1, runDown[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_2, runDown[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_3, runDown[2]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_1, runLeft[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_2, runLeft[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_3, runLeft[2]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_1, runRight[0]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_2, runRight[1]);
-    createSpriteAnimation(scene, movementTexture, ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_3, runRight[2]);
-
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_UP_1, rideUp[0]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_UP_2, rideUp[1]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_DOWN_1, rideDown[0]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_DOWN_2, rideDown[1]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_LEFT_1, rideLeft[0]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_LEFT_2, rideLeft[1]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_RIGHT_1, rideRight[0]);
-    createSpriteAnimation(scene, rideTexture, ANIMATION.PLAYER_RIDE_RIGHT_2, rideRight[1]);
+  getPet() {
+    return this.pet;
   }
 
   move(key: KEY) {
@@ -134,17 +42,25 @@ export class PlayerObject extends MovableObject {
     switch (key) {
       case KEY.UP:
         this.ready(DIRECTION.UP, animationKey!);
+        this.pet.move(this);
         break;
       case KEY.DOWN:
         this.ready(DIRECTION.DOWN, animationKey!);
+        this.pet.move(this);
         break;
       case KEY.LEFT:
         this.ready(DIRECTION.LEFT, animationKey!);
+        this.pet.move(this);
         break;
       case KEY.RIGHT:
         this.ready(DIRECTION.RIGHT, animationKey!);
+        this.pet.move(this);
         break;
     }
+  }
+
+  isPlayerStop() {
+    return this.getMovementDirectionQueue().length === 0 ? true : false;
   }
 
   private getAnimation(key: KEY) {
@@ -162,20 +78,23 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 2) this.resetStep();
 
     const step = this.getStep();
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const pleyrInfo = playerInfoManager.getInfo();
+    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_walk_`;
 
     switch (key) {
       case KEY.UP:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_UP_2;
+        if (step == 0) return animationKey + 'up_1';
+        if (step == 1) return animationKey + 'up_2';
       case KEY.DOWN:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_DOWN_2;
+        if (step == 0) return animationKey + 'down_1';
+        if (step == 1) return animationKey + 'down_2';
       case KEY.LEFT:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_LEFT_2;
+        if (step == 0) return animationKey + 'left_1';
+        if (step == 1) return animationKey + 'left_2';
       case KEY.RIGHT:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_WALK_RIGHT_2;
+        if (step == 0) return animationKey + 'right_1';
+        if (step == 1) return animationKey + 'right_2';
     }
   }
 
@@ -183,24 +102,27 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 3) this.resetStep();
 
     const step = this.getStep();
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const pleyrInfo = playerInfoManager.getInfo();
+    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_run_`;
 
     switch (key) {
       case KEY.UP:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_2;
-        if (step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_UP_3;
+        if (step == 0) return animationKey + 'up_1';
+        if (step == 1) return animationKey + 'up_2';
+        if (step == 2) return animationKey + 'up_3';
       case KEY.DOWN:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_2;
-        if (step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_DOWN_3;
+        if (step == 0) return animationKey + 'down_1';
+        if (step == 1) return animationKey + 'down_2';
+        if (step == 2) return animationKey + 'down_3';
       case KEY.LEFT:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_2;
-        if (step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_LEFT_3;
+        if (step == 0) return animationKey + 'left_1';
+        if (step == 1) return animationKey + 'left_2';
+        if (step == 2) return animationKey + 'left_3';
       case KEY.RIGHT:
-        if (step == 0) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_1;
-        if (step == 1) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_2;
-        if (step == 2) return ANIMATION.PLAYER_MOVEMENT_RUN_RIGHT_3;
+        if (step == 0) return animationKey + 'right_1';
+        if (step == 1) return animationKey + 'right_2';
+        if (step == 2) return animationKey + 'right_3';
     }
   }
 
@@ -208,20 +130,23 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 2) this.resetStep();
 
     const step = this.getStep();
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const pleyrInfo = playerInfoManager.getInfo();
+    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_ride_`;
 
     switch (key) {
       case KEY.UP:
-        if (step == 0) return ANIMATION.PLAYER_RIDE_UP_1;
-        if (step == 1) return ANIMATION.PLAYER_RIDE_UP_2;
+        if (step == 0) return animationKey + 'up_1';
+        if (step == 1) return animationKey + 'up_2';
       case KEY.DOWN:
-        if (step == 0) return ANIMATION.PLAYER_RIDE_DOWN_1;
-        if (step == 1) return ANIMATION.PLAYER_RIDE_DOWN_2;
+        if (step == 0) return animationKey + 'down_1';
+        if (step == 1) return animationKey + 'down_2';
       case KEY.LEFT:
-        if (step == 0) return ANIMATION.PLAYER_RIDE_LEFT_1;
-        if (step == 1) return ANIMATION.PLAYER_RIDE_LEFT_2;
+        if (step == 0) return animationKey + 'left_1';
+        if (step == 1) return animationKey + 'left_2';
       case KEY.RIGHT:
-        if (step == 0) return ANIMATION.PLAYER_RIDE_RIGHT_1;
-        if (step == 1) return ANIMATION.PLAYER_RIDE_RIGHT_2;
+        if (step == 0) return animationKey + 'right_1';
+        if (step == 1) return animationKey + 'right_2';
     }
   }
 
@@ -239,6 +164,10 @@ export class PlayerObject extends MovableObject {
         break;
     }
     this.setMovement();
+  }
+
+  getStatus() {
+    return this.currentStatus;
   }
 
   setMovement() {
@@ -272,14 +201,14 @@ export class PlayerObject extends MovableObject {
   }
 
   useItem(target: number) {
-    const playerManager = PlayerManager.getInstance();
-    const itemSlotsInfo = playerManager.getItemSlot();
+    const playerItemManager = PlayerItemManager.getInstance();
+    const itemSlotsInfo = playerItemManager.getMyItemSlots();
     const targetIdx = target - 1;
     let idx = 0;
 
     for (const item of itemSlotsInfo) {
       if (idx === targetIdx) {
-        const itemType = getItemType(item.idx);
+        const itemType = getItemType(item);
         this.useItemDetail(itemType);
       }
       idx++;

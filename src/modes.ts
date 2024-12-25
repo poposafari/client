@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Account } from './interface/sys';
-import { ModeManager } from './managers';
+import { ModeManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -9,13 +9,17 @@ import { RegisterUi } from './ui/register-ui';
 import { LabOverworld } from './ui/lab-overworld';
 import { TitleUi } from './ui/title-ui';
 import { BagUi } from './ui/bag-ui';
-import { Overworld } from './ui/overworld';
 import { BagModalUi } from './ui/bag-modal-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
-import { getPokemon } from './data/pokemon';
 import { BoxUi } from './ui/box-ui';
 import { BoxModalUi } from './ui/box-modal-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
+import { SeasonUi } from './ui/season-ui';
+import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
+import { OverworldPokemonSlotUi } from './ui/overworld-pokemonslot-ui';
+import { OverworldMenuUi } from './ui/overworld-menu-ui';
+import { Overworld } from './ui/overworld';
+import { PlayerObject } from './object/player-object';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -26,7 +30,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.BOX);
+    this.manager.changeMode(MODE.OVERWORLD);
   }
   exit(): void {}
 
@@ -133,28 +137,58 @@ export class NewGameMode extends Mode {
 }
 
 export class OverworldMode extends Mode {
-  private currentOverworld!: Overworld;
+  private playerInfoManager!: PlayerInfoManager;
+  private playerItemManager!: PlayerItemManager;
+  private playerPokemonManager!: PlayerPokemonManager;
+  private player!: PlayerObject;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
   }
 
   init(): void {
-    this.ui = new LabOverworld(this.scene, this);
-    // this.ui = new SeasonUi(this.scene, this);
-    this.ui.setup();
+    this.uis.push(new LabOverworld(this.scene, this));
+    this.uis.push(new SeasonUi(this.scene, this));
+    this.uis.push(new OverworldItemSlotUi(this.scene, this));
+    this.uis.push(new OverworldPokemonSlotUi(this.scene, this));
+    this.uis.push(new OverworldMenuUi(this.scene, this));
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
   }
 
-  enter(): void {
-    this.ui.show();
+  enter(data?: any): void {
+    this.playerInfoManager = PlayerInfoManager.getInstance();
+    this.playerItemManager = PlayerItemManager.getInstance();
+    this.playerPokemonManager = PlayerPokemonManager.getInstance();
+
+    this.addUiStack('LabOverworld', data);
+    this.addUiStack('OverworldItemSlotUi', data);
+    this.addUiStack('OverworldPokemonSlotUi');
+    this.addUiStack('OverworldMenuUi');
   }
 
   exit(): void {
-    this.ui.clean();
+    for (const ui of this.uiStack) {
+      ui.clean();
+    }
+    this.cleanUiStack();
   }
 
   update(time: number, delta: number): void {
-    this.ui.update(time, delta);
+    this.getUiStackBottom().update(time, delta);
+  }
+
+  getPlayer() {
+    if (this.player) return this.player;
+  }
+
+  changeFollowPokemon(pokedex: string) {
+    const firstUi = this.getUiStackBottom();
+    if (firstUi instanceof Overworld) {
+      firstUi.changeFollowPokemon(pokedex);
+    }
   }
 
   changeBagMode() {
@@ -164,9 +198,29 @@ export class OverworldMode extends Mode {
   changeBoxMode() {
     this.manager.changeMode(MODE.BOX);
   }
+
+  getPlayerInfoManager() {
+    if (this.playerInfoManager) return this.playerInfoManager;
+
+    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
+
+  getPlayerItemManager() {
+    if (this.playerItemManager) return this.playerItemManager;
+
+    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
+
+  getPlayerPokemonManager() {
+    if (this.playerPokemonManager) return this.playerPokemonManager;
+
+    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
 }
 
 export class BagMode extends Mode {
+  private playerItemManager!: PlayerItemManager;
+
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
   }
@@ -182,6 +236,8 @@ export class BagMode extends Mode {
   }
 
   enter(data?: any): void {
+    this.playerItemManager = PlayerItemManager.getInstance();
+
     this.addUiStack('BagUi', data);
   }
 
@@ -191,12 +247,20 @@ export class BagMode extends Mode {
 
   update(time: number, delta: number): void {}
 
+  getPlayerItemManager() {
+    if (this.playerItemManager) return this.playerItemManager;
+
+    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
+
   changeOverworldMode() {
     this.manager.changeMode(MODE.OVERWORLD);
   }
 }
 
 export class BoxMode extends Mode {
+  private playerPokemonManager!: PlayerPokemonManager;
+
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
   }
@@ -212,6 +276,8 @@ export class BoxMode extends Mode {
   }
 
   enter(data?: any): void {
+    this.playerPokemonManager = PlayerPokemonManager.getInstance();
+
     this.addUiStack('BoxUi', data);
   }
 
@@ -220,6 +286,12 @@ export class BoxMode extends Mode {
   }
 
   update(time: number, delta: number): void {}
+
+  getPlayerPokemonManager() {
+    if (this.playerPokemonManager) return this.playerPokemonManager;
+
+    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
 
   changeOverworldMode() {
     this.manager.changeMode(MODE.OVERWORLD);

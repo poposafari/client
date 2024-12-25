@@ -73,6 +73,9 @@ export const enum TEXTURE {
   SHINY = 'shiny',
   ARROW_W_R = 'arrow_w_r',
   ARROW_B_R = 'arrow_b_r',
+  POKEMON_CALL = 'pokemon_call',
+  POKEMON_RECALL = 'pokemon_recall',
+  POKEMON_OVERWORLD = 'pokemon_overworld',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
