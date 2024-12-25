@@ -62,6 +62,12 @@ export class OverworldItemSlotUi extends Ui {
         btn.setAlpha(1);
       });
     }
+
+    const playerItemManager = this.mode.getPlayerItemManager();
+    const itemSlots = playerItemManager.getMyItemSlots();
+    itemSlots.forEach((slot, i) => {
+      this.itemSlotIcons[i].setTexture(`item${slot !== '000' ? slot : '000'}`).setVisible(slot !== '000');
+    });
   }
 
   clean(data?: any): void {

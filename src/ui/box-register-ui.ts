@@ -1,13 +1,13 @@
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, PlayerManager } from '../managers';
-import { BagMode } from '../modes';
+import { KeyboardManager } from '../managers';
+import { BagMode, BoxMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addWindow, Ui } from './ui';
 
 export class BoxRegisterUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
-  private mode: BagMode;
+  private mode: BoxMode;
   private targetPokemon!: number;
   private pokemonSlotContainer!: Phaser.GameObjects.Container;
   private pokemonSlotWindow!: Phaser.GameObjects.NineSlice;
@@ -15,7 +15,7 @@ export class BoxRegisterUi extends Ui {
   private pokemonSlotDummys: Phaser.GameObjects.Image[] = [];
   private cancelMark!: Phaser.GameObjects.Image;
 
-  constructor(scene: InGameScene, mode: BagMode) {
+  constructor(scene: InGameScene, mode: BoxMode) {
     super(scene);
     this.mode = mode;
   }
@@ -58,11 +58,12 @@ export class BoxRegisterUi extends Ui {
     this.bg.setVisible(true);
     this.targetPokemon = data.choice;
     if (data.isRemove) {
-      const playerManager = PlayerManager.getInstance();
-      const myPokemons = playerManager.getMyPokemon();
-      this.pokemonSlotIcons[myPokemons[this.targetPokemon].partySlot].setTexture(`pokemon_icon000`);
-      playerManager.resetMyPokemonSlot(myPokemons[this.targetPokemon].partySlot);
-      playerManager.resetMyPokemonParty(this.targetPokemon);
+      const playerPokemonManager = this.mode.getPlayerPokemonManager();
+      const myPokemons = playerPokemonManager.getMyPokemons();
+
+      this.pokemonSlotIcons[playerPokemonManager.getMyPokemon(this.targetPokemon).partySlot].setTexture(`pokemon_icon000`);
+
+      playerPokemonManager.resetMyPokemonSlot(playerPokemonManager.getMyPokemon(this.targetPokemon).partySlot, this.targetPokemon);
 
       this.clean();
       this.mode.popUiStack();
@@ -84,9 +85,9 @@ export class BoxRegisterUi extends Ui {
   block() {}
 
   unblock() {
-    const playerManager = PlayerManager.getInstance();
-    const myPokemons = playerManager.getMyPokemon();
-    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const myPokemons = playerPokemonManager.getMyPokemons();
+    const myPokemonSlots = playerPokemonManager.getMyPokemonSlots();
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
 
     const keyboardMananger = KeyboardManager.getInstance();
@@ -125,10 +126,10 @@ export class BoxRegisterUi extends Ui {
             for (let i = 0; i < this.pokemonSlotIcons.length; i++) {
               if (this.targetPokemon === myPokemonSlots[i]) {
                 this.pokemonSlotIcons[i].setTexture(`pokemon_icon000`);
-                playerManager.resetMyPokemonSlot(i);
+                playerPokemonManager.resetMyPokemonSlot(i, this.targetPokemon);
               }
             }
-            playerManager.setMyPokemonSlots(choice, this.targetPokemon);
+            playerPokemonManager.setMyPokemonSlot(choice, this.targetPokemon);
             const target = myPokemons[this.targetPokemon];
             let texture = `pokemon_icon${target.idx}`;
 

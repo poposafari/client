@@ -1,22 +1,22 @@
 import i18next from 'i18next';
 import { TEXTURE } from '../enums/texture';
-import { BagMode } from '../modes';
+import { BagMode, BoxMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { KeyboardManager, PlayerManager } from '../managers';
+import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 
 export class BoxModalUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
-  private mode: BagMode;
+  private mode: BoxMode;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
   private choiceDummys: Phaser.GameObjects.Image[] = [];
   private registerText!: Phaser.GameObjects.Text;
   private data!: any;
 
-  constructor(scene: InGameScene, mode: BagMode) {
+  constructor(scene: InGameScene, mode: BoxMode) {
     super(scene);
     this.mode = mode;
   }
@@ -72,9 +72,8 @@ export class BoxModalUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const playerManager = PlayerManager.getInstance();
-    const myPokemons = playerManager.getMyPokemon();
-    const myPokemonSlots = playerManager.getMyPokemonSlots();
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const myPokemons = playerPokemonManager.getMyPokemons();
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
 
     let startIndex = 0;
