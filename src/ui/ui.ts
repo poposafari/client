@@ -74,7 +74,7 @@ export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilema
   return result;
 }
 
-export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION, frames?: Phaser.Types.Animations.AnimationFrame[]) {
+export function createSpriteAnimation(scene: InGameScene, key: TEXTURE | string, animationKey: ANIMATION | string, frames?: Phaser.Types.Animations.AnimationFrame[]) {
   scene.anims.create({
     key: animationKey,
     frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
@@ -85,7 +85,7 @@ export function createSpriteAnimation(scene: InGameScene, key: TEXTURE, animatio
   });
 }
 
-export function getSpriteFrames(scene: InGameScene, key: TEXTURE, animationKey: ANIMATION) {
+export function getSpriteFrames(scene: InGameScene, key: TEXTURE | string, animationKey: ANIMATION | string) {
   return scene.anims.generateFrameNames(key, {
     prefix: animationKey + '-',
     suffix: '',
@@ -94,14 +94,23 @@ export function getSpriteFrames(scene: InGameScene, key: TEXTURE, animationKey: 
   });
 }
 
-export function createSprite(scene: InGameScene, key: TEXTURE, posX: number, posY: number) {
+export function createSprite(scene: InGameScene, key: TEXTURE | string, posX: number, posY: number) {
   const ret = scene.add.sprite(posX, posY, key);
   ret.setOrigin(0, 0);
   ret.setScale(2);
   return ret;
 }
 
-function getAnimationSize(key: ANIMATION) {
+function isNagativeNumber(targetNumber: number) {
+  const calc = targetNumber - 3;
+  let ret = -1;
+
+  calc <= 0 ? (ret = 0) : (ret = calc);
+  console.log(targetNumber, ret);
+  return ret;
+}
+
+function getAnimationSize(key: ANIMATION | string) {
   switch (key) {
     case ANIMATION.PAUSE:
       return 3;
@@ -111,6 +120,11 @@ function getAnimationSize(key: ANIMATION) {
       return 12;
     case ANIMATION.TYPES:
       return 17;
+    case ANIMATION.POKEMON_CALL:
+    case ANIMATION.POKEMON_RECALL:
+      return 5;
+    case ANIMATION.POKEMON_OVERWORLD:
+      return 15;
   }
 }
 

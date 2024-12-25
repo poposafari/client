@@ -1,7 +1,8 @@
 import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
+import { OBJECT } from '../enums/object-type';
 import { TEXTURE } from '../enums/texture';
-import { PlayerManager } from '../managers';
+import { PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 
@@ -9,13 +10,13 @@ const Vector2 = Phaser.Math.Vector2;
 
 interface MovementQueue {
   direction: DIRECTION;
-  animationKey: ANIMATION;
+  animationKey: ANIMATION | string;
 }
 
 export class MovableObject extends BaseObject {
   private step: number = 0;
   private stepSpeed: number = 2;
-  private currentDirection: DIRECTION = DIRECTION.NONE;
+  protected currentDirection: DIRECTION = DIRECTION.NONE;
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private tileSizePixelsWalked: number = 0;
   private pixelsToWalkThisUpdate: number = 0;
@@ -34,12 +35,17 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const playerInfo = playerInfoManager.getInfo();
+
     super(scene, texture, x, y, nickname);
     this.map = map;
+
+    this.stopAnmation(3);
   }
 
-  process(direction: DIRECTION, animationKey: ANIMATION) {
+  process(direction: DIRECTION, animationKey: ANIMATION | string) {
     if (this.isMoving()) return;
     this.pixelsToWalkThisUpdate = this.stepSpeed;
     this.currentDirection = direction;
@@ -49,6 +55,10 @@ export class MovableObject extends BaseObject {
 
   processStop() {
     this.currentDirection = DIRECTION.NONE;
+  }
+
+  getMovementDirectionQueue() {
+    return this.movementDirectionQueue;
   }
 
   private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number): boolean {
@@ -74,7 +84,7 @@ export class MovableObject extends BaseObject {
     this.lastDirection = this.currentDirection;
   }
 
-  ready(direction: DIRECTION, animationKey: ANIMATION) {
+  ready(direction: DIRECTION, animationKey: ANIMATION | string) {
     if (this.isBlockingDirection(direction)) {
       this.startAnmation(animationKey);
       this.lastDirection = direction;
@@ -85,7 +95,7 @@ export class MovableObject extends BaseObject {
     this.movementDirectionQueue.push({ direction: direction, animationKey: animationKey });
   }
 
-  update(delta: number) {
+  update(delta?: number) {
     if (this.movementStop) return;
 
     if (this.movementFinish && this.movementDirectionQueue.length === 0) {
@@ -99,7 +109,7 @@ export class MovableObject extends BaseObject {
     if (this.isMoving()) this.moveObject();
   }
 
-  private standStop(direction: DIRECTION) {
+  protected standStop(direction: DIRECTION) {
     let frameNumber = 0;
 
     switch (direction) {
@@ -128,11 +138,7 @@ export class MovableObject extends BaseObject {
       this.step++;
       this.movementFinish = true;
       this.getSprite().setDepth(this.getTilePos().y);
-
-      const playerManager = PlayerManager.getInstance();
-      playerManager.setPosX(this.getTilePos().x);
-      playerManager.setPosY(this.getTilePos().y);
-      playerManager.setLastDirection(this.lastDirection);
+      this.updateObjectData();
     } else {
       this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
       this.movementFinish = false;
@@ -160,6 +166,10 @@ export class MovableObject extends BaseObject {
         break;
     }
     return this.smoothFrameNumbers[idx];
+  }
+
+  getLastDirection() {
+    return this.lastDirection;
   }
 
   private isBlockingDirection(direction: DIRECTION): boolean {
@@ -201,5 +211,21 @@ export class MovableObject extends BaseObject {
 
   isMovementFinish() {
     return this.movementFinish;
+  }
+
+  updateObjectData() {
+    const objType = this.getType();
+
+    if (objType === OBJECT.PLAYER) {
+      const playerInfoManager = PlayerInfoManager.getInstance();
+      playerInfoManager.setPosX(this.getTilePos().x);
+      playerInfoManager.setPosY(this.getTilePos().y);
+      playerInfoManager.setLastDirection(this.lastDirection);
+    } else if (objType === OBJECT.PET) {
+      const playerInfoManager = PlayerInfoManager.getInstance();
+      playerInfoManager.setFollowPokemonPosX(this.getTilePos().x);
+      playerInfoManager.setFollowPokemonPosY(this.getTilePos().y);
+      playerInfoManager.setFollowPokemonLastDirection(this.lastDirection);
+    }
   }
 }

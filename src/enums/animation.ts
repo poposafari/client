@@ -1,5 +1,7 @@
 export const enum ANIMATION {
   PAUSE = 'pause',
+  PAUSE_WHITE = 'pause_white',
+  PAUSE_BLACK = 'pause_black',
   PLAYER_MOVEMENT = 'player_movement',
   PLAYER_MOVEMENT_WALK_UP_1 = 'player_movement_walk_up_1',
   PLAYER_MOVEMENT_WALK_UP_2 = 'player_movement_walk_up_2',
@@ -31,4 +33,15 @@ export const enum ANIMATION {
   PLAYER_RIDE_RIGHT_1 = 'player_ride_right_1',
   PLAYER_RIDE_RIGHT_2 = 'player_ride_right_2',
   TYPES = 'types',
+  POKEMON_CALL = 'pokemon_call',
+  POKEMON_RECALL = 'pokemon_recall',
+  POKEMON_OVERWORLD = `pokemon_overworld_0`,
+  POKEMON_OVERWORLD_UP = `pokemon_overworld_up`,
+  POKEMON_OVERWORLD_DOWN = `pokemon_overworld_down`,
+  POKEMON_OVERWORLD_LEFT = `pokemon_overworld_left`,
+  POKEMON_OVERWORLD_RIGHT = `pokemon_overworld_right`,
+  POKEMON_OVERWORLD_UP_S = `pokemon_overworld_up_s`,
+  POKEMON_OVERWORLD_DOWN_S = `pokemon_overworld_down_s`,
+  POKEMON_OVERWORLD_LEFT_S = `pokemon_overworld_left_s`,
+  POKEMON_OVERWORLD_RIGHT_S = `pokemon_overworld_right_s`,
 }

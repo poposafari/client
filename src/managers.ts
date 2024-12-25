@@ -155,7 +155,6 @@ export class PlayerPokemonManager {
   private static instance: PlayerPokemonManager;
   private myPokemons: Array<MyPokemon> = [];
   private myPokemonSlots: Array<number> = [];
-  private followPokemon: string = '000';
 
   static getInstance(): PlayerPokemonManager {
     if (!PlayerPokemonManager.instance) {
@@ -202,16 +201,21 @@ export class PlayerPokemonManager {
     throw new Error('가지고 있지 않은 포켓몬인데요^^');
   }
 
+  getMyPokemonKey(idx: number): string | '000' {
+    if (idx < 0) return '000';
+    const myPokemon = this.getMyPokemon(idx);
+    let pokedex = myPokemon.idx;
+
+    if (!myPokemon || !pokedex) return '000';
+    if (myPokemon.isShiny) pokedex += 's';
+
+    return pokedex;
+  }
+
   getMyPokemonSlots() {
     if (this.myPokemonSlots) return this.myPokemonSlots;
 
     return [];
-  }
-
-  getMyFollowPokemon() {
-    if (this.followPokemon) return this.followPokemon;
-
-    return '000';
   }
 
   setMyPokemonSlot(idx: number, pokeIdx: number) {
@@ -228,10 +232,6 @@ export class PlayerPokemonManager {
       this.myPokemons[pokeIdx].partySlot = -1;
       this.myPokemonSlots[idx] = -1;
     }
-  }
-
-  setMyFollowPokemon(pokedex: string) {
-    this.followPokemon = pokedex;
   }
 
   addMyPokemon(key: string, capturedDate: string, isShiny: boolean, gender: string, partySlot: number) {
@@ -325,13 +325,17 @@ export class PlayerItemManager {
 
 export class PlayerInfoManager {
   private static instance: PlayerInfoManager;
-  private gender: 'boy' | 'girl' = 'boy';
-  private avatarType: 1 | 2 | 3 | 4 = 1;
+  private gender!: 'boy' | 'girl';
+  private avatarType!: 1 | 2 | 3 | 4;
   private nickname!: string;
-  private posX: number = 2;
-  private posY: number = 2;
-  private lastDirectrion: DIRECTION = DIRECTION.DOWN;
-  private lastStatus: PLAYER_STATUS = PLAYER_STATUS.WALK;
+  private posX!: number;
+  private posY!: number;
+  private lastDirectrion!: DIRECTION;
+  private lastFollowPokemonDirectrion!: DIRECTION;
+  private lastStatus!: PLAYER_STATUS;
+  private followPokemon!: number;
+  private fpPosX!: number;
+  private fpPosY!: number;
 
   static getInstance(): PlayerInfoManager {
     if (!PlayerInfoManager.instance) {
@@ -340,7 +344,18 @@ export class PlayerInfoManager {
     return PlayerInfoManager.instance;
   }
 
-  init() {}
+  init() {
+    this.gender = 'girl';
+    this.avatarType = 4;
+    this.posX = 4;
+    this.posY = 4;
+    this.lastDirectrion = DIRECTION.DOWN;
+    this.lastFollowPokemonDirectrion = DIRECTION.DOWN;
+    this.lastStatus = PLAYER_STATUS.WALK;
+    this.followPokemon = -1;
+    this.fpPosX = 4;
+    this.fpPosY = 3;
+  }
 
   getInfo() {
     return {
@@ -351,9 +366,28 @@ export class PlayerInfoManager {
         x: this.posX,
         y: this.posY,
       },
+      fpPos: {
+        x: this.fpPosX,
+        y: this.fpPosY,
+      },
       lastDirection: this.lastDirectrion,
+      lastFollowPokemonDirectrion: this.lastFollowPokemonDirectrion,
       lastStatus: this.lastStatus,
     };
+  }
+
+  getMyFollowPokemon() {
+    if (this.followPokemon > 0 && this.followPokemon) return this.followPokemon;
+
+    return -1;
+  }
+
+  setMyFollowPokemon(pokeIdx: number) {
+    if (pokeIdx < 0) throw new Error('잘못된 인덱스임.^^');
+
+    if (pokeIdx > 0) return (this.followPokemon = pokeIdx);
+
+    this.followPokemon = -1;
   }
 
   getType(type: PLAYER_STATUS) {
@@ -367,10 +401,22 @@ export class PlayerInfoManager {
   }
 
   setPosY(y: number) {
-    this.posX = y;
+    this.posY = y;
+  }
+
+  setFollowPokemonPosX(x: number) {
+    this.fpPosX = x;
+  }
+
+  setFollowPokemonPosY(y: number) {
+    this.fpPosY = y;
   }
 
   setLastDirection(direction: DIRECTION) {
     this.lastDirectrion = direction;
+  }
+
+  setFollowPokemonLastDirection(direction: DIRECTION) {
+    this.lastFollowPokemonDirectrion = direction;
   }
 }

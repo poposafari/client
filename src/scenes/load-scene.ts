@@ -111,6 +111,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ARROW_W_R, 'ui', TEXTURE.ARROW_W_R);
     this.loadImage(TEXTURE.ARROW_B_R, 'ui', TEXTURE.ARROW_B_R);
 
+    this.loadAtlas(TEXTURE.POKEMON_CALL, 'ui', TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
+    this.loadAtlas(TEXTURE.POKEMON_RECALL, 'ui', TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);
+
     let itemIdx = 0;
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
@@ -119,12 +122,15 @@ export class LoadingScene extends BaseScene {
 
     let pokemonIdx = 0;
     for (const pokemon of pokemons.keys()) {
-      console.log(pokemonIdx);
-      this.loadImage(`pokemon_sprite${createZeroPad(pokemonIdx)}`, 'ui/pokemon/sprite', `${createZeroPad(pokemonIdx)}`);
-      this.loadImage(`pokemon_sprite${createZeroPad(pokemonIdx)}s`, 'ui/pokemon/sprite', `${createZeroPad(pokemonIdx)}s`);
+      console.log(pokemon);
+      this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemon}`);
+      this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite', `${pokemon}s`);
 
-      this.loadAtlas(`pokemon_icon${createZeroPad(pokemonIdx)}`, 'ui/pokemon/icon', `icon${createZeroPad(pokemonIdx)}`, 'pokemon_icon');
-      this.loadAtlas(`pokemon_icon${createZeroPad(pokemonIdx)}s`, 'ui/pokemon/icon', `icon${createZeroPad(pokemonIdx)}s`, 'pokemon_icon');
+      this.loadAtlas(`pokemon_icon${pokemon}`, 'ui/pokemon/icon', `icon${pokemon}`, 'pokemon_icon');
+      this.loadAtlas(`pokemon_icon${pokemon}s`, 'ui/pokemon/icon', `icon${pokemon}s`, 'pokemon_icon');
+
+      this.loadAtlas(`pokemon_overworld${pokemon}`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_0`);
+      this.loadAtlas(`pokemon_overworld${pokemon}s`, 'ui/pokemon/overworld', `${pokemon}s`, `pokemon_overworld_0`);
 
       pokemonIdx++;
     }
