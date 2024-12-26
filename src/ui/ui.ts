@@ -117,19 +117,19 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.PLAYER_MOVEMENT:
       return 23;
     case ANIMATION.PLAYER_RIDE:
-      return 12;
+      return 11;
     case ANIMATION.TYPES:
       return 17;
     case ANIMATION.POKEMON_CALL:
     case ANIMATION.POKEMON_RECALL:
-      return 5;
+      return 4;
     case ANIMATION.POKEMON_OVERWORLD:
       return 15;
     case ANIMATION.BAG1:
     case ANIMATION.BAG2:
     case ANIMATION.BAG3:
     case ANIMATION.BAG4:
-      return 3;
+      return 2;
   }
 }
 
