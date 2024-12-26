@@ -1,4 +1,4 @@
-import { getItemType } from '../data/items';
+import { getItemUsageType, getItemType } from '../data/items';
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
@@ -200,18 +200,27 @@ export class PlayerObject extends MovableObject {
     this.setSpeed(speed!);
   }
 
-  useItem(target: number) {
-    const playerItemManager = PlayerItemManager.getInstance();
-    const itemSlotsInfo = playerItemManager.getMyItemSlots();
-    const targetIdx = target - 1;
-    let idx = 0;
+  readyItem(target: number) {
+    if (!this.isMovementFinish()) return;
 
-    for (const item of itemSlotsInfo) {
-      if (idx === targetIdx) {
-        const itemType = getItemType(item);
-        this.useItemDetail(itemType);
-      }
-      idx++;
+    const playerItemManager = PlayerItemManager.getInstance();
+    const item = playerItemManager.getMyItemSlots()[target];
+
+    return playerItemManager.validateItemForUse(item) ? this.useItem(item) : false;
+  }
+
+  useItem(item: string) {
+    const playerItemManager = PlayerItemManager.getInstance();
+
+    const ret = playerItemManager.reduceItemStock(item);
+
+    if (ret) return;
+
+    switch (item) {
+      case '005':
+        return this.setStatus(PLAYER_STATUS.RIDE);
+      case '006':
+        return this.setStatus(PLAYER_STATUS.RUNNING);
     }
   }
 

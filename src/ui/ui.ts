@@ -137,6 +137,7 @@ function getTextShadow(style: TEXTSTYLE) {
   let ret;
 
   switch (style) {
+    case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
     case TEXTSTYLE.BOX_POKEDEX:
@@ -208,6 +209,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       config.fontSize = '50px';
       config.color = '#4b4b4b';
       break;
+    case TEXTSTYLE.ITEM_STOCK:
+      config.fontSize = '50px';
+      config.color = '#ffffff';
+      config.fontStyle = 'bold';
   }
 
   return config;

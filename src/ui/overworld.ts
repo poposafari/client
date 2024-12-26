@@ -29,7 +29,7 @@ export class Overworld extends Ui {
 
   show(): void {
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT, KEY.RUNNING, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
+    const keys = [KEY.SELECT, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
     const playerInfo = PlayerInfoManager.getInstance().getInfo();
 
     this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerInfo.pos.x, playerInfo.pos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
@@ -42,35 +42,32 @@ export class Overworld extends Ui {
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback((key) => {
       switch (key) {
-        case KEY.RUNNING:
-          this.player.setStatus(PLAYER_STATUS.RUNNING);
-          break;
         case KEY.USE_1:
-          this.player.useItem(1);
+          this.player.readyItem(0);
           break;
         case KEY.USE_2:
-          this.player.useItem(2);
+          this.player.readyItem(1);
           break;
         case KEY.USE_3:
-          this.player.useItem(3);
+          this.player.readyItem(2);
           break;
         case KEY.USE_4:
-          this.player.useItem(4);
+          this.player.readyItem(3);
           break;
         case KEY.USE_5:
-          this.player.useItem(5);
+          this.player.readyItem(4);
           break;
         case KEY.USE_6:
-          this.player.useItem(6);
+          this.player.readyItem(5);
           break;
         case KEY.USE_7:
-          this.player.useItem(7);
+          this.player.readyItem(6);
           break;
         case KEY.USE_8:
-          this.player.useItem(8);
+          this.player.readyItem(7);
           break;
         case KEY.USE_9:
-          this.player.useItem(9);
+          this.player.readyItem(8);
           break;
       }
     });
@@ -94,13 +91,6 @@ export class Overworld extends Ui {
 
   changeFollowPokemon(pokedex: string) {
     const pet = this.player.getPet();
-
-    // pet.startAnmation(ANIMATION.POKEMON_CALL);
-    // const animDuration = (this.scene.anims.get(ANIMATION.POKEMON_CALL).frames.length / this.scene.anims.get(ANIMATION.POKEMON_CALL).frameRate) * 1000;
-
-    // this.scene.time.delayedCall(animDuration, () => {
-    //   pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
-    // });
 
     pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
     this.player
