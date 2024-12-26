@@ -132,11 +132,10 @@ export class BagRegisterUi extends Ui {
               }
             }
 
-            if (playerItemManager.getMyItem(this.targetItem).itemSlot !== -1) {
+            if (myItemSlots[choice] !== '000') {
               playerItemManager.restMyItemSlot(choice, playerItemManager.getMyItemSlots()[choice]);
             }
 
-            console.log(`${choice} -> ${this.targetItem}`);
             this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
             playerItemManager.setMyItemSlot(choice, this.targetItem);
           }

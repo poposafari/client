@@ -192,7 +192,6 @@ export class BagUi extends Ui {
       }
 
       if (key === KEY.UP || key === KEY.DOWN) {
-        console.log(verticalPrevChoice, verticalChoice);
         if (verticalChoice !== verticalPrevChoice) {
           this.itemIcons[verticalPrevChoice]?.setVisible(false);
           this.itemTexts[verticalPrevChoice]?.setVisible(false);
@@ -278,8 +277,6 @@ export class BagUi extends Ui {
       index++;
     });
 
-    console.log(filteredItems);
-
     return filteredItems;
   }
 
@@ -298,7 +295,6 @@ export class BagUi extends Ui {
 
   private itemRegisterCheck(filterResult: [string, Item][]) {
     const playerItemManager = this.mode.getPlayerItemManager();
-
     let idx = 0;
     for (const target of filterResult) {
       const myItem = playerItemManager.getMyItem(target[0]);
