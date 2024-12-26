@@ -74,7 +74,6 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.MAP_TEST, 'ui/map', TEXTURE.MAP_TEST);
 
     this.loadImage(TEXTURE.MENU_BOX, 'ui', TEXTURE.MENU_BOX);
-    this.loadImage(TEXTURE.MENU_SHOES, 'ui', TEXTURE.MENU_SHOES);
     this.loadImage(TEXTURE.MENU_BAG, 'ui', TEXTURE.MENU_BAG);
     this.loadImage(TEXTURE.MENU_POKEDEX, 'ui', TEXTURE.MENU_POKEDEX);
     this.loadImage(TEXTURE.MENU_CARD, 'ui', TEXTURE.MENU_CARD);

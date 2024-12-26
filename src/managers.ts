@@ -1,5 +1,7 @@
+import { getItemType, getItemUsageType } from './data/items';
 import { Pokemon } from './data/pokemon';
 import { DIRECTION } from './enums/direction';
+import { ITEM, ITEM_USAGE_TYPE } from './enums/item';
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { PLAYER_STATUS } from './enums/player-status';
@@ -269,6 +271,7 @@ export class PlayerItemManager {
     this.addItem('002', 2);
     this.addItem('003', 2);
     this.addItem('005', 1);
+    this.addItem('006', 1);
   }
 
   getMyItems() {
@@ -315,11 +318,27 @@ export class PlayerItemManager {
     throw new Error('예기치 못한 에러임.');
   }
 
-  hasMyItemStock(itemIdx: string) {
-    const ret = this.getMyItem(itemIdx);
+  validateItemForUse(itemIdx: string) {
+    if (!this.hasMyItemStock(itemIdx)) return false;
+    //TODO: 현재 플레이어의 MAP 위치에 따라서 true, false를 나눌 수 있음.
 
-    if (ret.idx !== '000') {
-      return ret.stock <= 0 ? false : true;
+    return true;
+  }
+
+  reduceItemStock(itemIdx: string) {
+    const itemType = getItemUsageType(itemIdx);
+
+    if (itemType === ITEM_USAGE_TYPE.NON_CONSUMABLE) return false;
+
+    this.getMyItem(itemIdx).stock -= 1;
+    return true;
+  }
+
+  private hasMyItemStock(itemIdx: string) {
+    const myItem = this.getMyItem(itemIdx);
+
+    if (myItem && myItem.idx !== '000') {
+      return myItem.stock <= 0 ? false : true;
     }
 
     throw new Error('예기치 못한 오류');

@@ -19,9 +19,9 @@ export class OverworldMenuUi extends Ui {
 
     const slotSize = 20;
     const slotSpacing = 3;
-    const menuList = [TEXTURE.MENU_SHOES, TEXTURE.MENU_CHAT, TEXTURE.MENU_CARD, TEXTURE.MENU_DOLL, TEXTURE.MENU_POKEDEX, TEXTURE.MENU_BAG, TEXTURE.MENU_BOX];
+    const menuList = [TEXTURE.MENU_CHAT, TEXTURE.MENU_CARD, TEXTURE.MENU_DOLL, TEXTURE.MENU_POKEDEX, TEXTURE.MENU_BAG, TEXTURE.MENU_BOX];
 
-    this.container = this.scene.add.container(width / 2 + 660, height / 2 + 510);
+    this.container = this.scene.add.container(width / 2 + 700, height / 2 + 510);
 
     for (let i = 0; i < menuList.length; i++) {
       const xPosition = i * (slotSize + slotSpacing);
