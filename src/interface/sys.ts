@@ -14,6 +14,7 @@ export interface Message {
 export interface BagItem {
   idx: string;
   stock: number;
+  itemSlot: number;
 }
 
 export interface MyPokemon {

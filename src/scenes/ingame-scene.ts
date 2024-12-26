@@ -52,6 +52,11 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
     createSpriteAnimation(this, TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);
 
+    createSpriteAnimation(this, TEXTURE.BAG1, ANIMATION.BAG1);
+    createSpriteAnimation(this, TEXTURE.BAG2, ANIMATION.BAG2);
+    createSpriteAnimation(this, TEXTURE.BAG3, ANIMATION.BAG3);
+    createSpriteAnimation(this, TEXTURE.BAG4, ANIMATION.BAG4);
+
     this.initPlayerAnimation();
     this.initPokemonAnimation();
   }

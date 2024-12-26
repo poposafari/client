@@ -58,10 +58,19 @@ export class BagRegisterUi extends Ui {
   }
 
   show(data?: any): void {
-    this.targetItem = data;
+    this.targetItem = data.choice;
     this.bg.setVisible(true);
     this.itemSlotContainer.setVisible(true);
     this.cancelMark.setVisible(true);
+
+    if (data.isRemove) {
+      const playerItemManager = this.mode.getPlayerItemManager();
+      playerItemManager.restMyItemSlot(playerItemManager.getMyItem(data.choice).itemSlot, data.choice);
+
+      this.clean();
+      this.mode.popUiStack();
+      return;
+    }
 
     this.pause(false);
   }
@@ -82,11 +91,22 @@ export class BagRegisterUi extends Ui {
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
     const playerItemManager = this.mode.getPlayerItemManager();
+    const myItemSlots = playerItemManager.getMyItemSlots();
     const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
 
     let startIndex = 0;
     let endIndex = MAX_ITEM_SLOT;
     let choice = startIndex;
+
+    let idx = 0;
+    for (const slot of myItemSlots) {
+      if (slot !== '000') {
+        this.itemSlotIcons[idx].setTexture(`item${slot}`);
+      } else {
+        this.itemSlotIcons[idx].setTexture(`item000`).setVisible(false);
+      }
+      idx++;
+    }
 
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback((key) => {
@@ -105,12 +125,17 @@ export class BagRegisterUi extends Ui {
             this.mode.popUiStack();
           } else {
             for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-              if (playerItemManager.getMyItemSlots()[i] === this.targetItem) {
+              if (myItemSlots[i] === this.targetItem) {
                 this.itemSlotIcons[i].setTexture(`item000`).setVisible(false);
-                playerItemManager.restMyItemSlot(i);
+                playerItemManager.restMyItemSlot(i, this.targetItem);
                 break;
               }
             }
+
+            if (playerItemManager.getMyItem(this.targetItem).itemSlot !== -1) {
+              playerItemManager.restMyItemSlot(choice, playerItemManager.getMyItemSlots()[choice]);
+            }
+
             console.log(`${choice} -> ${this.targetItem}`);
             this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
             playerItemManager.setMyItemSlot(choice, this.targetItem);

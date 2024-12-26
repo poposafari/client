@@ -95,6 +95,11 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.CANCEL_S, 'ui', TEXTURE.CANCEL_S);
 
     this.loadImage(TEXTURE.BAG, 'ui', TEXTURE.BAG);
+    this.loadImage(TEXTURE.BAG_REG, 'ui', TEXTURE.BAG_REG);
+    this.loadAtlas(TEXTURE.BAG1, 'ui', TEXTURE.BAG1, ANIMATION.BAG1);
+    this.loadAtlas(TEXTURE.BAG2, 'ui', TEXTURE.BAG2, ANIMATION.BAG2);
+    this.loadAtlas(TEXTURE.BAG3, 'ui', TEXTURE.BAG3, ANIMATION.BAG3);
+    this.loadAtlas(TEXTURE.BAG4, 'ui', TEXTURE.BAG4, ANIMATION.BAG4);
 
     this.loadImage(TEXTURE.BG_BOX, 'ui', TEXTURE.BG_BOX);
     this.loadImage(TEXTURE.WINDOW_BOX, 'ui', TEXTURE.WINDOW_BOX);

@@ -125,6 +125,11 @@ function getAnimationSize(key: ANIMATION | string) {
       return 5;
     case ANIMATION.POKEMON_OVERWORLD:
       return 15;
+    case ANIMATION.BAG1:
+    case ANIMATION.BAG2:
+    case ANIMATION.BAG3:
+    case ANIMATION.BAG4:
+      return 3;
   }
 }
 

@@ -13,6 +13,7 @@ export class BagModalUi extends Ui {
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
   private targetItem: string = '000';
+  private registerText!: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
@@ -30,7 +31,7 @@ export class BagModalUi extends Ui {
 
     this.choiceContainer = this.scene.add.container(width / 4 + 350, height / 4 + 100);
     const registerBtn = addImage(this.scene, TEXTURE.CHOICE, 0, 0);
-    const registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
+    this.registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
     const cancelBtn = addImage(this.scene, TEXTURE.CHOICE, 0, +50);
     const cancelText = addText(this.scene, -60, +50, i18next.t('sys:cancel'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
 
@@ -38,7 +39,7 @@ export class BagModalUi extends Ui {
     this.choiceBtn.push(cancelBtn);
 
     this.choiceContainer.add(this.choiceBtn);
-    this.choiceContainer.add(registerText);
+    this.choiceContainer.add(this.registerText);
     this.choiceContainer.add(cancelText);
 
     this.choiceContainer.setVisible(false);
@@ -50,7 +51,6 @@ export class BagModalUi extends Ui {
     this.targetItem = data;
     this.bg.setVisible(true);
     this.choiceContainer.setVisible(true);
-
     this.pause(false);
   }
   clean(): void {
@@ -68,10 +68,17 @@ export class BagModalUi extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
+    const playerItemManager = this.mode.getPlayerItemManager();
 
     let startIndex = 0;
     let endIndex = 1;
     let choice = startIndex;
+
+    if (playerItemManager.getMyItem(this.targetItem).itemSlot >= 0) {
+      this.registerText.setText(i18next.t('sys:registerCancel'));
+    } else {
+      this.registerText.setText(i18next.t('sys:register'));
+    }
 
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
@@ -82,11 +89,10 @@ export class BagModalUi extends Ui {
       } else if (key === KEY.DOWN) {
         choice = Math.min(endIndex, choice + 1);
       } else if (key === KEY.SELECT) {
+        this.clean();
+        this.mode.popUiStack();
         if (choice === 0) {
-          this.mode.addUiStack('BagRegisterUi', this.targetItem);
-        } else if (choice === 1) {
-          this.clean();
-          this.mode.popUiStack();
+          this.mode.addUiStack('BagRegisterUi', { choice: this.targetItem, isRemove: playerItemManager.getMyItem(this.targetItem).itemSlot >= 0 });
         }
       }
 

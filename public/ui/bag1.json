@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "bag1-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 120,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 120,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 378
+      }
+    },
+    "bag1-1": {
+      "frame": {
+        "x": 0,
+        "y": 126,
+        "w": 120,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 126,
+        "w": 120,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 378
+      }
+    },
+    "bag1-2": {
+      "frame": {
+        "x": 0,
+        "y": 252,
+        "w": 120,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 252,
+        "w": 120,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 378
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "bag1.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 120,
+      "h": 378
+    },
+    "scale": "1"
+  }
+}

@@ -44,4 +44,8 @@ export const enum ANIMATION {
   POKEMON_OVERWORLD_DOWN_S = `pokemon_overworld_down_s`,
   POKEMON_OVERWORLD_LEFT_S = `pokemon_overworld_left_s`,
   POKEMON_OVERWORLD_RIGHT_S = `pokemon_overworld_right_s`,
+  BAG1 = 'bag1',
+  BAG2 = 'bag2',
+  BAG3 = 'bag3',
+  BAG4 = 'bag4',
 }
