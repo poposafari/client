@@ -268,6 +268,7 @@ export class PlayerItemManager {
     this.addItem('004', 2);
     this.addItem('002', 2);
     this.addItem('003', 2);
+    this.addItem('005', 1);
   }
 
   getMyItems() {
@@ -285,19 +286,24 @@ export class PlayerItemManager {
   getMyItem(itemIdx: string): BagItem {
     if (this.myItems[itemIdx]) return this.myItems[itemIdx];
 
-    return { idx: '000', stock: 0 };
+    return { idx: '000', stock: 0, itemSlot: -1 };
   }
 
   addItem(key: string, quantity: number): void {
     if (this.myItems[key]) {
       this.myItems[key].stock += quantity;
     } else {
-      this.myItems[key] = { idx: key, stock: quantity };
+      this.myItems[key] = { idx: key, stock: quantity, itemSlot: -1 };
     }
   }
 
-  restMyItemSlot(idx: number) {
+  restMyItemSlot(idx: number, itemIdx: string) {
+    const item = this.getMyItem(itemIdx);
     this.myItemSlots[idx] = '000';
+    item.itemSlot = -1;
+
+    console.log(this.getMyItemSlots());
+    console.log(this.getMyItems());
   }
 
   setMyItemSlot(idx: number, itemIdx: string) {
@@ -306,6 +312,7 @@ export class PlayerItemManager {
     if (idx < 0) throw new Error('잘못된 인덱스임.^^');
     if (ret.idx !== '000') {
       this.myItemSlots[idx] = ret.idx;
+      ret.itemSlot = idx;
       return;
     }
 

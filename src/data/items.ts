@@ -1,9 +1,10 @@
+import { ITEM } from '../enums/item';
 import i18next from '../i18n';
 
 export interface Item {
   name: string;
   description: string;
-  type: 'pokeball' | 'berry' | 'key' | 'use';
+  type: ITEM.POKEBALL | ITEM.KEY | ITEM.BERRY | ITEM.ETC;
   detail: string;
 }
 
@@ -14,37 +15,37 @@ i18next.on('initialized', () => {
     '000': {
       name: '',
       description: '',
-      type: 'use',
+      type: ITEM.ETC,
       detail: '',
     },
     '001': {
       name: i18next.t('item:masterball.name'),
       description: i18next.t('item:masterball.description'),
-      type: 'pokeball',
+      type: ITEM.POKEBALL,
       detail: '',
     },
     '002': {
       name: i18next.t('item:pokeball.name'),
       description: i18next.t('item:pokeball.description'),
-      type: 'pokeball',
+      type: ITEM.POKEBALL,
       detail: '',
     },
     '003': {
       name: i18next.t('item:greatball.name'),
       description: i18next.t('item:greatball.description'),
-      type: 'pokeball',
+      type: ITEM.POKEBALL,
       detail: '',
     },
     '004': {
       name: i18next.t('item:ultraball.name'),
       description: i18next.t('item:ultraball.description'),
-      type: 'pokeball',
+      type: ITEM.POKEBALL,
       detail: '',
     },
     '005': {
       name: i18next.t('item:bicycle.name'),
       description: i18next.t('item:bicycle.description'),
-      type: 'key',
+      type: ITEM.KEY,
       detail: 'ride',
     },
   };
@@ -59,7 +60,7 @@ export function getItemType(key: string): string | null {
   const type = targetItemInfo?.type;
 
   switch (type) {
-    case 'key':
+    case ITEM.KEY:
       if (targetItemInfo?.detail) return targetItemInfo.detail;
       break;
   }
