@@ -132,7 +132,7 @@ export class PlayerObject extends MovableObject {
     const step = this.getStep();
     const playerInfoManager = PlayerInfoManager.getInstance();
     const pleyrInfo = playerInfoManager.getInfo();
-    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_ride_`;
+    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_ride_`;
 
     switch (key) {
       case KEY.UP:
