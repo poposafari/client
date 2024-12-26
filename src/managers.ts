@@ -301,9 +301,6 @@ export class PlayerItemManager {
     const item = this.getMyItem(itemIdx);
     this.myItemSlots[idx] = '000';
     item.itemSlot = -1;
-
-    console.log(this.getMyItemSlots());
-    console.log(this.getMyItems());
   }
 
   setMyItemSlot(idx: number, itemIdx: string) {
