@@ -127,7 +127,6 @@ export class LoadingScene extends BaseScene {
 
     let pokemonIdx = 0;
     for (const pokemon of pokemons.keys()) {
-      console.log(pokemon);
       this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemon}`);
       this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite', `${pokemon}s`);
 

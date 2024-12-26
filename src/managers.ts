@@ -305,7 +305,6 @@ export class PlayerItemManager {
 
   setMyItemSlot(idx: number, itemIdx: string) {
     const ret = this.getMyItem(itemIdx);
-    console.log('getMyItem:', ret);
     if (idx < 0) throw new Error('잘못된 인덱스임.^^');
     if (ret.idx !== '000') {
       this.myItemSlots[idx] = ret.idx;

@@ -28,8 +28,6 @@ i18next.on('initialized', () => {
       size: 1,
     });
   }
-
-  console.log(pokemons);
 });
 
 export function getPokemon(key: string) {
