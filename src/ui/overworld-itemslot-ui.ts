@@ -67,12 +67,7 @@ export class OverworldItemSlotUi extends Ui {
       });
     }
 
-    const playerItemManager = this.mode.getPlayerItemManager();
-    const itemSlots = playerItemManager.getMyItemSlots();
-    itemSlots.forEach((slot, i) => {
-      this.itemSlotIcons[i].setTexture(`item${slot !== '000' ? slot : '000'}`).setVisible(slot !== '000');
-      this.itmeSlotStocks[i].setText(slot !== '000' ? `x${playerItemManager.getMyItem(slot).stock}` : '');
-    });
+    this.updateItemSlotUi();
   }
 
   clean(data?: any): void {
@@ -82,4 +77,13 @@ export class OverworldItemSlotUi extends Ui {
   pause(onoff: boolean, data?: any): void {}
 
   update(time: number, delta: number): void {}
+
+  updateItemSlotUi() {
+    const playerItemManager = this.mode.getPlayerItemManager();
+    const itemSlots = playerItemManager.getMyItemSlots();
+    itemSlots.forEach((slot, i) => {
+      this.itemSlotIcons[i].setTexture(`item${slot !== '000' ? slot : '000'}`).setVisible(slot !== '000');
+      this.itmeSlotStocks[i].setText(slot !== '000' ? `x${playerItemManager.getMyItem(slot).stock}` : '');
+    });
+  }
 }

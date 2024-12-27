@@ -41,35 +41,38 @@ export class Overworld extends Ui {
 
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback((key) => {
+      let slotIdx = 0;
       switch (key) {
         case KEY.USE_1:
-          this.player.readyItem(0);
+          slotIdx = 0;
           break;
         case KEY.USE_2:
-          this.player.readyItem(1);
+          slotIdx = 1;
           break;
         case KEY.USE_3:
-          this.player.readyItem(2);
+          slotIdx = 2;
           break;
         case KEY.USE_4:
-          this.player.readyItem(3);
+          slotIdx = 3;
           break;
         case KEY.USE_5:
-          this.player.readyItem(4);
+          slotIdx = 4;
           break;
         case KEY.USE_6:
-          this.player.readyItem(5);
+          slotIdx = 5;
           break;
         case KEY.USE_7:
-          this.player.readyItem(6);
+          slotIdx = 6;
           break;
         case KEY.USE_8:
-          this.player.readyItem(7);
+          slotIdx = 7;
           break;
         case KEY.USE_9:
-          this.player.readyItem(8);
+          slotIdx = 8;
           break;
       }
+      this.player.readyItem(slotIdx);
+      this.mode.chnageItemSlot();
     });
   }
 
