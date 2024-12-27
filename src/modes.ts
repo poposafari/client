@@ -191,6 +191,13 @@ export class OverworldMode extends Mode {
     }
   }
 
+  chnageItemSlot() {
+    const ui = this.getUiType('OverworldItemSlotUi');
+    if (ui instanceof OverworldItemSlotUi) {
+      ui.updateItemSlotUi();
+    }
+  }
+
   changeBagMode() {
     this.manager.changeMode(MODE.BAG);
   }

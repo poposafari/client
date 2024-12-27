@@ -331,6 +331,15 @@ export class PlayerItemManager {
     if (itemType === ITEM_USAGE_TYPE.NON_CONSUMABLE) return false;
 
     this.getMyItem(itemIdx).stock -= 1;
+
+    if (this.getMyItem(itemIdx).stock === 0) {
+      const slotIndex = this.myItemSlots.findIndex((slot) => slot === itemIdx);
+
+      if (slotIndex !== -1) {
+        this.restMyItemSlot(slotIndex, itemIdx);
+        delete this.myItems[itemIdx];
+      }
+    }
     return true;
   }
 
