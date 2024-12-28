@@ -171,7 +171,6 @@ export class BagUi extends Ui {
         case KEY.SELECT:
           if (this.itemIcons.length <= 0) return;
           const targetItem = this.itemIcons[verticalChoice].texture.key;
-          console.log(targetItem);
           this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
           this.lastHorisontalChoice = horisontalChoice;
           this.lastVerticalChoice = verticalChoice;
