@@ -346,6 +346,8 @@ export class PlayerItemManager {
   private hasMyItemStock(itemIdx: string) {
     const myItem = this.getMyItem(itemIdx);
 
+    if (myItem.idx === '000') return false;
+
     if (myItem && myItem.idx !== '000') {
       return myItem.stock <= 0 ? false : true;
     }
