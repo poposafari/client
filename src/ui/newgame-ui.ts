@@ -118,7 +118,7 @@ export class NewGameUi extends ModalUi {
     super.show();
 
     this.genderBoy.setInteractive({ cursor: 'pointer' });
-    this.genderBoy.on('pointerdown', () => {
+    this.genderBoy.on('pointerup', () => {
       this.selectGender.setPosition(-20, -40);
       this.avartar.setTexture(TEXTURE.BOY_1_STATUE);
       this.btnLabelStr.setText(i18next.t('lobby:selectBoy1'));
@@ -134,7 +134,7 @@ export class NewGameUi extends ModalUi {
     });
 
     this.genderGirl.setInteractive({ cursor: 'pointer' });
-    this.genderGirl.on('pointerdown', () => {
+    this.genderGirl.on('pointerup', () => {
       this.selectGender.setPosition(20, -40);
       this.avartar.setTexture(TEXTURE.GIRL_1_STATUE);
       this.btnLabelStr.setText(i18next.t('lobby:selectGirl1'));
@@ -152,7 +152,7 @@ export class NewGameUi extends ModalUi {
     const boyStatues = [TEXTURE.BOY_1_STATUE, TEXTURE.BOY_2_STATUE, TEXTURE.BOY_3_STATUE, TEXTURE.BOY_4_STATUE];
     const girlStatues = [TEXTURE.GIRL_1_STATUE, TEXTURE.GIRL_2_STATUE, TEXTURE.GIRL_3_STATUE, TEXTURE.GIRL_4_STATUE];
     this.selects[0].setInteractive({ cursor: 'pointer' });
-    this.selects[0].on('pointerdown', async () => {
+    this.selects[0].on('pointerup', async () => {
       choice = Math.max(1, choice - 1);
       this.btnLabelNumber.setText(choice.toString());
 
@@ -166,7 +166,7 @@ export class NewGameUi extends ModalUi {
     });
 
     this.selects[1].setInteractive({ cursor: 'pointer' });
-    this.selects[1].on('pointerdown', async () => {
+    this.selects[1].on('pointerup', async () => {
       choice = Math.min(4, choice + 1);
       this.btnLabelNumber.setText(choice.toString());
 
