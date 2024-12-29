@@ -109,6 +109,10 @@ export class BagUi extends Ui {
     }
 
     this.cleanObj();
+
+    this.xboxBtn.off('pointerover');
+    this.xboxBtn.off('pointerout');
+    this.xboxBtn.off('pointerup');
   }
 
   pause(onoff: boolean): void {
@@ -118,7 +122,7 @@ export class BagUi extends Ui {
   block() {
     this.xboxBtn.off('pointerover');
     this.xboxBtn.off('pointerout');
-    this.xboxBtn.off('pointerdown');
+    this.xboxBtn.off('pointerup');
   }
 
   unblock() {
@@ -298,7 +302,7 @@ export class BagUi extends Ui {
   }
 
   private itemRegisterCheck(filterResult: [string, Item][]) {
-    const playerItemManager = this.mode.getPlayerItemManager();
+    const playerItemManager = PlayerItemManager.getInstance();
     let idx = 0;
     for (const target of filterResult) {
       const myItem = playerItemManager.getMyItem(target[0]);

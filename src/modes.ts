@@ -240,12 +240,13 @@ export class BagMode extends Mode {
     for (const ui of this.uis) {
       ui.setup();
     }
+
+    this.addUiStack('BagUi');
   }
 
   enter(data?: any): void {
     this.playerItemManager = PlayerItemManager.getInstance();
-
-    this.addUiStack('BagUi', data);
+    this.getUiType('BagUi').show();
   }
 
   exit(): void {

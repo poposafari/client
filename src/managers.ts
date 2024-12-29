@@ -129,6 +129,7 @@ export class ModeManager {
   }
 
   changeMode(mode: MODE) {
+    console.log('개 망한거 같은데?');
     if (this.currentMode) {
       this.currentMode.exit();
     }

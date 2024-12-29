@@ -54,7 +54,7 @@ export class OverworldMenuUi extends Ui {
         btn.setTint(0x808080);
       });
 
-      btn.on('pointerdown', () => {
+      btn.on('pointerup', () => {
         const texture = btn.texture.key;
         switch (texture) {
           case TEXTURE.MENU_BAG:
@@ -70,6 +70,12 @@ export class OverworldMenuUi extends Ui {
 
   clean(data?: any): void {
     this.container.setVisible(false);
+
+    for (const btn of this.menuSlotBtns) {
+      btn.off('pointerup');
+      btn.off('pointerover');
+      btn.off('pointerout');
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}

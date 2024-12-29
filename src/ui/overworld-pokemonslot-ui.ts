@@ -83,6 +83,11 @@ export class OverworldPokemonSlotUi extends Ui {
 
   clean(data?: any): void {
     this.container.setVisible(false);
+    this.pokemonSlotBtns.forEach((icon) => {
+      icon.off('pointerover');
+      icon.off('pointerout');
+      icon.off('pointerup');
+    });
   }
   pause(onoff: boolean, data?: any): void {}
   update(time: number, delta: number): void {}

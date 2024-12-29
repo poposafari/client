@@ -72,6 +72,11 @@ export class OverworldItemSlotUi extends Ui {
 
   clean(data?: any): void {
     this.container.setVisible(false);
+    for (const btn of this.itemSlotBtns) {
+      btn.off('pointerdown');
+      btn.off('pointerover');
+      btn.off('pointerout');
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}
