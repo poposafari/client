@@ -30,14 +30,19 @@ export class BagUi extends Ui {
   private itemStocks: Phaser.GameObjects.Text[] = [];
   private itemTexts: Phaser.GameObjects.Text[] = [];
   private itemNames: Phaser.GameObjects.Text[] = [];
+  private horisontalStartIndex: 0 | 1 | 2 | 3 = 0;
+  private horisontalEndIndex: 0 | 1 | 2 | 3 = (this.menus.length - 1) as 0 | 1 | 2 | 3;
   private verticalEndIndex!: number;
-  private lastHorisontalChoice: 0 | 1 | 2 | 3 = 0;
-  private lastVerticalChoice: number = 0;
+  private lastHorisontalChoice: 0 | 1 | 2 | 3;
+  private lastVerticalChoice: number;
   private itemFilterResult!: [string, Item][];
 
   constructor(scene: InGameScene, mode: BagMode) {
     super(scene);
     this.mode = mode;
+
+    this.lastHorisontalChoice = 0;
+    this.lastVerticalChoice = 0;
   }
 
   setup(): void {
@@ -93,9 +98,7 @@ export class BagUi extends Ui {
       duration: 200,
     });
 
-    this.itemFilterResult = this.filterItem(1, 0);
-    this.verticalEndIndex = this.itemFilterResult.length;
-
+    this.openAnimations(0, 0);
     this.pause(false);
   }
 
@@ -113,6 +116,9 @@ export class BagUi extends Ui {
     this.xboxBtn.off('pointerover');
     this.xboxBtn.off('pointerout');
     this.xboxBtn.off('pointerup');
+
+    this.lastHorisontalChoice = 0;
+    this.lastVerticalChoice = 0;
   }
 
   pause(onoff: boolean): void {
@@ -126,10 +132,62 @@ export class BagUi extends Ui {
   }
 
   unblock() {
-    this.itemRegisterCheck(this.itemFilterResult);
-
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+
+    let horisontalChoice = this.lastHorisontalChoice;
+    let verticalChoice = this.lastVerticalChoice;
+
+    this.itemFilterResult = this.filterItem(horisontalChoice);
+    this.verticalEndIndex = this.itemFilterResult.length;
+
+    this.itemRegisterCheck(this.itemFilterResult);
+
+    this.updateVerticalTexture(0, verticalChoice);
+
+    keyboardMananger.setAllowKey(keys);
+    keyboardMananger.setKeyDownCallback((key) => {
+      const prevVerticalChoice = verticalChoice;
+      const prevHorizontalChoice = horisontalChoice;
+
+      switch (key) {
+        case KEY.UP:
+          verticalChoice = Math.max(0, verticalChoice - 1);
+          break;
+        case KEY.DOWN:
+          verticalChoice = Math.min(this.verticalEndIndex - 1, verticalChoice + 1);
+          break;
+        case KEY.LEFT:
+          horisontalChoice = Math.max(0, horisontalChoice - 1) as 0 | 1 | 2 | 3;
+          break;
+        case KEY.RIGHT:
+          horisontalChoice = Math.min(this.menus.length - 1, horisontalChoice + 1) as 0 | 1 | 2 | 3;
+          break;
+        case KEY.SELECT:
+          this.lastHorisontalChoice = horisontalChoice;
+          this.lastVerticalChoice = verticalChoice;
+          const targetItem = this.itemIcons[verticalChoice]?.texture.key;
+          if (targetItem) {
+            this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
+          }
+          return;
+      }
+
+      if (verticalChoice !== prevVerticalChoice) {
+        this.updateVerticalTexture(prevVerticalChoice, verticalChoice);
+        this.lastVerticalChoice = verticalChoice;
+      }
+
+      if (horisontalChoice !== prevHorizontalChoice) {
+        this.cleanObj();
+        this.openAnimations(prevHorizontalChoice, horisontalChoice);
+        this.itemFilterResult = this.filterItem(horisontalChoice);
+        this.verticalEndIndex = this.itemFilterResult.length;
+        this.itemRegisterCheck(this.itemFilterResult);
+        this.updateVerticalTexture(0, 0);
+        this.lastHorisontalChoice = horisontalChoice;
+      }
+    });
 
     this.xboxBtn.setInteractive({ cursor: 'pointer' });
     this.xboxBtn.on('pointerup', () => {
@@ -141,79 +199,28 @@ export class BagUi extends Ui {
     this.xboxBtn.on('pointerout', () => {
       this.xboxBtn.setAlpha(1);
     });
-
-    let horisontalStartIndex: 0 | 1 | 2 | 3 = 0;
-    let horisontalEndIndex: 0 | 1 | 2 | 3 = (this.menus.length - 1) as 0 | 1 | 2 | 3;
-    let horisontalChoice: 0 | 1 | 2 | 3 = this.lastHorisontalChoice;
-
-    let verticalStartIndex: number = 0;
-    let verticalEndIndex: number = this.verticalEndIndex;
-    let verticalChoice: number = this.lastVerticalChoice;
-
-    this.itemBoxBtn[verticalChoice]?.setTexture(TEXTURE.ITEM_BOX_S);
-    this.itemIcons[verticalChoice]?.setVisible(true);
-    this.itemTexts[verticalChoice]?.setVisible(true);
-
-    keyboardMananger.setAllowKey(keys);
-    keyboardMananger.setKeyDownCallback((key) => {
-      const horisontalPrevChoice = horisontalChoice;
-      const verticalPrevChoice = verticalChoice;
-
-      switch (key) {
-        case KEY.LEFT:
-          horisontalChoice = Math.max(horisontalStartIndex, horisontalChoice - 1) as 0 | 1 | 2 | 3;
-          break;
-        case KEY.RIGHT:
-          horisontalChoice = Math.min(horisontalEndIndex, horisontalChoice + 1) as 0 | 1 | 2 | 3;
-          break;
-        case KEY.UP:
-          verticalChoice = Math.max(verticalStartIndex, verticalChoice - 1);
-          break;
-        case KEY.DOWN:
-          verticalChoice = Math.min(verticalEndIndex - 1, verticalChoice + 1);
-          break;
-        case KEY.SELECT:
-          if (this.itemIcons.length <= 0) return;
-          const targetItem = this.itemIcons[verticalChoice].texture.key;
-          this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
-          this.lastHorisontalChoice = horisontalChoice;
-          this.lastVerticalChoice = verticalChoice;
-          break;
-      }
-
-      if (key === KEY.LEFT || key === KEY.RIGHT) {
-        verticalStartIndex = 0;
-        verticalChoice = verticalStartIndex;
-
-        if (horisontalChoice !== horisontalPrevChoice) {
-          this.cleanObj();
-          this.itemFilterResult = this.filterItem(horisontalPrevChoice, horisontalChoice);
-          verticalEndIndex = this.itemFilterResult.length;
-          this.itemRegisterCheck(this.itemFilterResult);
-        }
-
-        if (verticalEndIndex > 0) {
-          this.itemBoxBtn[verticalChoice]?.setTexture(TEXTURE.ITEM_BOX_S);
-          this.itemIcons[verticalChoice]?.setVisible(true);
-          this.itemTexts[verticalChoice]?.setVisible(true);
-        }
-      }
-
-      if (key === KEY.UP || key === KEY.DOWN) {
-        if (verticalChoice !== verticalPrevChoice) {
-          this.itemIcons[verticalPrevChoice]?.setVisible(false);
-          this.itemTexts[verticalPrevChoice]?.setVisible(false);
-          this.itemBoxBtn[verticalPrevChoice]?.setTexture(TEXTURE.ITEM_BOX);
-
-          this.itemIcons[verticalChoice]?.setVisible(true);
-          this.itemTexts[verticalChoice]?.setVisible(true);
-          this.itemBoxBtn[verticalChoice]?.setTexture(TEXTURE.ITEM_BOX_S);
-        }
-      }
-    });
   }
 
   update(time: number, delta: number): void {}
+
+  restoreLastState(): void {
+    this.itemFilterResult = this.filterItem(this.lastHorisontalChoice);
+    this.verticalEndIndex = this.itemFilterResult.length;
+    this.itemRegisterCheck(this.itemFilterResult);
+    this.updateVerticalTexture(0, this.lastVerticalChoice);
+  }
+
+  private updateVerticalTexture(verticalPrevChoice: number, verticalChoice: number) {
+    this.itemIcons[verticalPrevChoice]?.setVisible(false);
+    this.itemTexts[verticalPrevChoice]?.setVisible(false);
+    this.itemBoxBtn[verticalPrevChoice]?.setTexture(TEXTURE.ITEM_BOX);
+
+    this.itemIcons[verticalChoice]?.setVisible(true);
+    this.itemTexts[verticalChoice]?.setVisible(true);
+    this.itemBoxBtn[verticalChoice]?.setTexture(TEXTURE.ITEM_BOX_S);
+
+    this.lastVerticalChoice = verticalChoice;
+  }
 
   private cleanObj() {
     this.itemBoxBtn.forEach((obj) => obj.destroy());
@@ -258,15 +265,20 @@ export class BagUi extends Ui {
     this.boxContainer.add(boxContainer);
   }
 
-  private filterItem(prevChoice: 0 | 1 | 2 | 3, choice: 0 | 1 | 2 | 3) {
+  private openAnimations(prevChoice: 0 | 1 | 2 | 3, choice: 0 | 1 | 2 | 3) {
     const playerItemManager = PlayerItemManager.getInstance();
     const prevAnimationType = this.menuAnimations[prevChoice];
     const animationType = this.menuAnimations[choice];
 
     this.menus[prevChoice].setTexture(prevAnimationType).stop();
     this.menus[choice].play(animationType).stopAfterRepeat(0);
+  }
+
+  private filterItem(choice: 0 | 1 | 2 | 3) {
+    const playerItemManager = PlayerItemManager.getInstance();
 
     this.boxContainer.removeAll();
+    this.cleanObj();
 
     const selectedItemType = this.getItemType(choice);
     const filteredItems = Object.entries(items).filter(([key, item]) => {
