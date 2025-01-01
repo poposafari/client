@@ -1,3 +1,4 @@
+import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { MAX_ITEM_SLOT } from '../managers';
@@ -48,7 +49,7 @@ export class OverworldItemSlotUi extends Ui {
     this.container.setScale(1);
 
     this.container.setVisible(false);
-    this.container.setDepth(10000);
+    this.container.setDepth(DEPTH.OVERWORLD_UI);
     this.container.setScrollFactor(0);
   }
 
