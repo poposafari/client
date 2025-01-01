@@ -1,3 +1,4 @@
+import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -35,7 +36,7 @@ export class OverworldMenuUi extends Ui {
     this.container.setScale(2);
 
     this.container.setVisible(false);
-    this.container.setDepth(10000);
+    this.container.setDepth(DEPTH.OVERWORLD_UI);
     this.container.setScrollFactor(0);
   }
 

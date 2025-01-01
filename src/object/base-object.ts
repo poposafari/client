@@ -1,4 +1,5 @@
 import { ANIMATION } from '../enums/animation';
+import { DEPTH } from '../enums/depth';
 import { OBJECT } from '../enums/object-type';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
@@ -28,9 +29,11 @@ export class BaseObject {
 
     this.tilePos = new Phaser.Math.Vector2(x, y);
 
-    this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y - 100, nickname, TEXTSTYLE.MESSAGE_WHITE);
-    this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
+    this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y, nickname, TEXTSTYLE.MESSAGE_WHITE);
 
+    this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
+    this.nickname.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE - 100);
+    this.nickname.setDepth(DEPTH.NICKNAME);
     this.setDepth(this.tilePos.y);
   }
 

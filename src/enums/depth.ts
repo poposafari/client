@@ -1,0 +1,6 @@
+export const enum DEPTH {
+  GROUND = 0,
+  NICKNAME = 10001,
+  FOREGROND = 10000,
+  OVERWORLD_UI = 10002,
+}
