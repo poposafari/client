@@ -5,4 +5,5 @@ export const enum PLAYER_STATUS {
   RIDE = 'RIDE',
   SURF = 'SURF',
   FISHING = 'FISHING',
+  TALK = 'talk',
 }

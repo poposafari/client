@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
-import { Account } from './interface/sys';
-import { ModeManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
+import { Account, Message } from './interface/sys';
+import { MessageManager, ModeManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -15,11 +15,9 @@ import { BoxUi } from './ui/box-ui';
 import { BoxModalUi } from './ui/box-modal-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
 import { SeasonUi } from './ui/season-ui';
-import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
-import { OverworldPokemonSlotUi } from './ui/overworld-pokemonslot-ui';
-import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld } from './ui/overworld';
 import { PlayerObject } from './object/player-object';
+import { OverworldUi } from './ui/overworld-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -149,9 +147,7 @@ export class OverworldMode extends Mode {
   init(): void {
     this.uis.push(new LabOverworld(this.scene, this));
     this.uis.push(new SeasonUi(this.scene, this));
-    this.uis.push(new OverworldItemSlotUi(this.scene, this));
-    this.uis.push(new OverworldPokemonSlotUi(this.scene, this));
-    this.uis.push(new OverworldMenuUi(this.scene, this));
+    this.uis.push(new OverworldUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -163,10 +159,8 @@ export class OverworldMode extends Mode {
     this.playerItemManager = PlayerItemManager.getInstance();
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
 
-    this.addUiStack('LabOverworld', data);
-    this.addUiStack('OverworldItemSlotUi', data);
-    this.addUiStack('OverworldPokemonSlotUi');
-    this.addUiStack('OverworldMenuUi');
+    this.addUiStackOverlap('OverworldUi', data);
+    this.addUiStackOverlap('LabOverworld', data);
   }
 
   exit(): void {
@@ -177,7 +171,7 @@ export class OverworldMode extends Mode {
   }
 
   update(time: number, delta: number): void {
-    this.getUiStackBottom().update(time, delta);
+    this.getUiStackTop().update(time, delta);
   }
 
   getPlayer() {
@@ -185,15 +179,15 @@ export class OverworldMode extends Mode {
   }
 
   changeFollowPokemon(pokedex: string) {
-    const firstUi = this.getUiStackBottom();
+    const firstUi = this.getUiStackTop();
     if (firstUi instanceof Overworld) {
       firstUi.changeFollowPokemon(pokedex);
     }
   }
 
   chnageItemSlot() {
-    const ui = this.getUiType('OverworldItemSlotUi');
-    if (ui instanceof OverworldItemSlotUi) {
+    const ui = this.getUiType('OverworldUi');
+    if (ui instanceof OverworldUi) {
       ui.updateItemSlotUi();
     }
   }
@@ -222,6 +216,24 @@ export class OverworldMode extends Mode {
     if (this.playerPokemonManager) return this.playerPokemonManager;
 
     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
+
+  async startMessage(data: Message[]) {
+    const overworldUi = this.getUiType('OverworldUi');
+    const overworld = this.getUiStackTop();
+
+    if (overworldUi && overworld) {
+      overworldUi.pause(true);
+      overworld.pause(true);
+    }
+
+    const message = MessageManager.getInstance();
+    await message.show(overworld, data);
+
+    if (overworldUi && overworld) {
+      overworldUi.pause(false);
+      overworld.pause(false);
+    }
   }
 }
 

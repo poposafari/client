@@ -42,6 +42,31 @@ export class OverworldMenuUi extends Ui {
 
   show(data?: any): void {
     this.container.setVisible(true);
+    this.pause(false);
+  }
+
+  clean(data?: any): void {
+    this.container.setVisible(false);
+    this.pause(true);
+  }
+
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.blocking() : this.unblocking();
+  }
+
+  update(time: number, delta: number): void {}
+
+  private blocking() {
+    console.log('menu blocking');
+    for (const btn of this.menuSlotBtns) {
+      btn.off('pointerup');
+      btn.off('pointerover');
+      btn.off('pointerout');
+    }
+  }
+
+  private unblocking() {
+    console.log('menu unblocking');
 
     for (const btn of this.menuSlotBtns) {
       btn.setScrollFactor(0);
@@ -68,17 +93,4 @@ export class OverworldMenuUi extends Ui {
       });
     }
   }
-
-  clean(data?: any): void {
-    this.container.setVisible(false);
-
-    for (const btn of this.menuSlotBtns) {
-      btn.off('pointerup');
-      btn.off('pointerover');
-      btn.off('pointerout');
-    }
-  }
-
-  pause(onoff: boolean, data?: any): void {}
-  update(time: number, delta: number): void {}
 }

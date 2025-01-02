@@ -5,6 +5,7 @@ import { TEXTURE } from '../enums/texture';
 import { PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
+import { npcs } from './npc-object';
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -172,13 +173,32 @@ export class MovableObject extends BaseObject {
     return this.lastDirection;
   }
 
-  private isBlockingDirection(direction: DIRECTION): boolean {
+  getObjectInFront(direction: DIRECTION) {
     const nextTilePos = this.tilePosInDirection(direction);
-    const isBlocked = this.hasBlockingTile(nextTilePos);
+    for (const [, npc] of npcs) {
+      const npcTilePos = npc.getTilePos();
+      if (npcTilePos.x === nextTilePos.x && npcTilePos.y === nextTilePos.y) {
+        return npc;
+      }
+    }
+  }
+
+  isBlockingDirection(direction: DIRECTION): boolean {
+    const nextTilePos = this.tilePosInDirection(direction);
+    const isBlocked = this.hasBlockingTile(nextTilePos) || this.hasBlockingObject(nextTilePos);
     return isBlocked;
   }
   private tilePosInDirection(direction: DIRECTION): Phaser.Math.Vector2 {
     return this.getTilePos().add(this.movementDirection[direction]!);
+  }
+  private hasBlockingObject(pos: Phaser.Math.Vector2): boolean {
+    for (const [, npc] of npcs) {
+      const npcTilePos = npc.getTilePos();
+      if (npcTilePos.x === pos.x && npcTilePos.y === pos.y) {
+        return true;
+      }
+    }
+    return false;
   }
   private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
     if (this.hasNoTile(pos)) return true;

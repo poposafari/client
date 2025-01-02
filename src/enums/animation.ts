@@ -2,6 +2,7 @@ export const enum ANIMATION {
   PAUSE = 'pause',
   PAUSE_WHITE = 'pause_white',
   PAUSE_BLACK = 'pause_black',
+  NPC_MOVEMENT = 'npc_movement',
   PLAYER_MOVEMENT = 'player_movement',
   PLAYER_MOVEMENT_WALK_UP_1 = 'player_movement_walk_up_1',
   PLAYER_MOVEMENT_WALK_UP_2 = 'player_movement_walk_up_2',

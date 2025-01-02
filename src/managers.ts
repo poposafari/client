@@ -379,6 +379,7 @@ export class PlayerInfoManager {
 
   init() {
     this.gender = 'girl';
+    this.nickname = '운영자';
     this.avatarType = 4;
     this.posX = 4;
     this.posY = 4;

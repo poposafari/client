@@ -55,6 +55,21 @@ export class OverworldItemSlotUi extends Ui {
 
   show(data?: any): void {
     this.container.setVisible(true);
+    this.pause(false);
+    this.updateItemSlotUi();
+  }
+
+  clean(data?: any): void {
+    this.container.setVisible(false);
+    this.pause(true);
+  }
+
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.blocking() : this.unblocking();
+  }
+
+  unblocking() {
+    console.log('itemslot unblocking');
 
     for (const btn of this.itemSlotBtns) {
       btn.setScrollFactor(0);
@@ -67,20 +82,15 @@ export class OverworldItemSlotUi extends Ui {
         btn.setAlpha(1);
       });
     }
-
-    this.updateItemSlotUi();
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
+  blocking() {
     for (const btn of this.itemSlotBtns) {
       btn.off('pointerdown');
       btn.off('pointerover');
       btn.off('pointerout');
     }
   }
-
-  pause(onoff: boolean, data?: any): void {}
 
   update(time: number, delta: number): void {}
 

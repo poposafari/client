@@ -42,6 +42,12 @@ export abstract class Mode {
     this.getUiStackTop().show(data);
   }
 
+  addUiStackOverlap(type: string, data?: any) {
+    const target = this.findUiByType(type)!;
+    this.uiStack.push(target);
+    this.getUiStackTop().show(data);
+  }
+
   cleanUiStack() {
     this.uiStack = [];
   }

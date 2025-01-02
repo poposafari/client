@@ -113,6 +113,8 @@ function isNagativeNumber(targetNumber: number) {
 function getAnimationSize(key: ANIMATION | string) {
   switch (key) {
     case ANIMATION.PAUSE:
+    case ANIMATION.PAUSE_BLACK:
+    case ANIMATION.PAUSE_WHITE:
       return 3;
     case ANIMATION.PLAYER_MOVEMENT:
       return 23;
@@ -123,6 +125,7 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.POKEMON_CALL:
     case ANIMATION.POKEMON_RECALL:
       return 4;
+    case ANIMATION.NPC_MOVEMENT:
     case ANIMATION.POKEMON_OVERWORLD:
       return 15;
     case ANIMATION.BAG1:
