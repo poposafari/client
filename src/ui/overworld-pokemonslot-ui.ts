@@ -58,6 +58,35 @@ export class OverworldPokemonSlotUi extends Ui {
       this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
     });
 
+    this.pause(false);
+  }
+
+  clean(data?: any): void {
+    this.container.setVisible(false);
+    this.pause(true);
+  }
+
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.blocking() : this.unblocking();
+  }
+
+  update(time: number, delta: number): void {}
+
+  private blocking() {
+    this.pokemonSlotBtns.forEach((icon) => {
+      icon.off('pointerover');
+      icon.off('pointerout');
+      icon.off('pointerup');
+    });
+  }
+
+  private unblocking() {
+    console.log('pokemonslot unblocking');
+
+    const playerInfoManager = this.mode.getPlayerInfoManager();
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
+
     this.pokemonSlotBtns.forEach((icon, i) => {
       icon.setScrollFactor(0);
       icon.setInteractive({ cursor: 'pointer' });
@@ -81,15 +110,4 @@ export class OverworldPokemonSlotUi extends Ui {
       });
     });
   }
-
-  clean(data?: any): void {
-    this.container.setVisible(false);
-    this.pokemonSlotBtns.forEach((icon) => {
-      icon.off('pointerover');
-      icon.off('pointerout');
-      icon.off('pointerup');
-    });
-  }
-  pause(onoff: boolean, data?: any): void {}
-  update(time: number, delta: number): void {}
 }

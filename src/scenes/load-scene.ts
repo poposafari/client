@@ -1,4 +1,5 @@
 import { items } from '../data/items';
+import { npcs } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { TEXTURE } from '../enums/texture';
@@ -121,6 +122,10 @@ export class LoadingScene extends BaseScene {
     for (const key of Object.keys(items)) {
       this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
       itemIdx++;
+    }
+
+    for (const key of Object.keys(npcs)) {
+      this.loadAtlas(`npc${key}`, 'ui/character/npc', `npc${key}`, `npc`);
     }
 
     let pokemonIdx = 0;

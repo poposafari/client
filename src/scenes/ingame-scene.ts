@@ -1,3 +1,4 @@
+import { npcs } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
@@ -57,8 +58,27 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.BAG3, ANIMATION.BAG3);
     createSpriteAnimation(this, TEXTURE.BAG4, ANIMATION.BAG4);
 
+    createSpriteAnimation(this, TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE);
+    // createSpriteAnimation(this, TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE);
+
     this.initPlayerAnimation();
     this.initPokemonAnimation();
+  }
+
+  private initNpcAnimation() {
+    for (const key of Object.keys(npcs)) {
+      const movementFrames = getSpriteFrames(this, `npc${key}`, ANIMATION.NPC_MOVEMENT);
+
+      const up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
+      const down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
+      const left = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
+      const right = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
+
+      createSpriteAnimation(this, `npc${key}`, `npc${key}_up`, up);
+      createSpriteAnimation(this, `npc${key}`, `npc${key}_down`, down);
+      createSpriteAnimation(this, `npc${key}`, `npc${key}_left`, left);
+      createSpriteAnimation(this, `npc${key}`, `npc${key}_right`, right);
+    }
   }
 
   private initPokemonAnimation() {

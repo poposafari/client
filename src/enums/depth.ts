@@ -3,4 +3,5 @@ export const enum DEPTH {
   NICKNAME = 10001,
   FOREGROND = 10000,
   OVERWORLD_UI = 10002,
+  MESSAGE = 10003,
 }

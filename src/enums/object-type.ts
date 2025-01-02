@@ -3,4 +3,6 @@ export const enum OBJECT {
   POKEMON = 'pokemon',
   PLAYER = 'player',
   OTHER_PLAYER = 'other-player',
+  PORTAL = 'portal',
+  NPC = 'npc',
 }
