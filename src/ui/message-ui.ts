@@ -54,13 +54,14 @@ export class MessageUi extends Ui {
     let textArray = text.split('');
     let delay = 10;
     let index = 0;
+    let isFinish = false;
 
     this.endMark.setVisible(false);
     this.messageContainer.setVisible(true);
+    this.messageText.text = '';
 
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT];
-    keyboardMananger.setAllowKey(keys);
+    keyboardMananger.clearCallbacks();
 
     return new Promise((resolve) => {
       const addNextChar = () => {
@@ -68,10 +69,11 @@ export class MessageUi extends Ui {
           this.messageText.text += textArray[index];
           index++;
           this.scene.time.delayedCall(delay, addNextChar, [], this);
-        }
-        if (index === textArray.length) {
+        } else if (!isFinish) {
+          isFinish = true;
           this.endMark.setVisible(true);
           this.endMark.anims.play(ANIMATION.PAUSE);
+
           keyboardMananger.setKeyDownCallback((key) => {
             if (key === KEY.SELECT) {
               this.clean();

@@ -22,6 +22,7 @@ export class MessageManager {
   private static instance: MessageManager;
   private scene!: InGameScene;
   private messageUi!: MessageUi;
+  private isMessageAcive: boolean = false;
 
   initialize(scene: InGameScene): void {
     this.scene = scene;
@@ -37,12 +38,18 @@ export class MessageManager {
   }
 
   async show(currentUi: Ui, messages: Message[]): Promise<void> {
-    for (const msg of messages) {
-      await this.messageUi.show(msg);
-    }
+    if (this.isMessageAcive) return;
+    this.isMessageAcive = true;
 
-    this.messageUi.pause(true);
-    currentUi.pause(false);
+    try {
+      for (const msg of messages) {
+        await this.messageUi.show(msg);
+      }
+    } finally {
+      this.isMessageAcive = false;
+      this.messageUi.pause(true);
+      currentUi.pause(false);
+    }
   }
 }
 
