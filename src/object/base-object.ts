@@ -90,6 +90,12 @@ export class BaseObject {
     this.nickname.setPosition(position.x, position.y - 100);
   }
 
+  setSpriteFrame(frame: number) {
+    const textureKey = this.sprite.texture.key;
+    const frameKeys = this.sprite.scene.textures.get(textureKey).getFrameNames();
+    this.sprite.setFrame(frameKeys[frame]);
+  }
+
   startAnmation(animationKey: ANIMATION | string) {
     if (this.sprite.anims.isPlaying && this.sprite.anims.currentAnim?.key === animationKey) {
       return;
