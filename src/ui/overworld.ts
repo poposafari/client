@@ -72,7 +72,9 @@ export class Overworld extends Ui {
       switch (key) {
         case KEY.SELECT:
           console.log(this.player.getStatus());
-          if (this.player.getObjectInFront(this.player.getLastDirection()) && this.player.isMovementFinish() && !this.isMessageActive) {
+          const obj = this.player.getObjectInFront(this.player.getLastDirection());
+          if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
+            obj.reaction(this.player.getLastDirection());
             this.isMessageActive = true;
             await this.mode.startMessage([
               { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome1') },
