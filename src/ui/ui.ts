@@ -216,6 +216,11 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       config.fontSize = '50px';
       config.color = '#ffffff';
       config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.OVERWORLD_LIST:
+      config.fontSize = '80px';
+      config.color = '#ffffff';
+      break;
   }
 
   return config;

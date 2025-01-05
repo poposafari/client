@@ -11,4 +11,5 @@ export const enum TEXTSTYLE {
   BOX_POKEDEX,
   BOX_NAME,
   BOX_DEFAULT,
+  OVERWORLD_LIST,
 }
