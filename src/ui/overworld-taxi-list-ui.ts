@@ -1,5 +1,4 @@
-import Space from 'phaser3-rex-plugins/templates/ui/space/Space';
-import { getOverworldInfo, getOverworlds, overworlds } from '../data/overworld';
+import { getOverworldInfo, getOverworlds } from '../data/overworld';
 import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
@@ -17,9 +16,11 @@ export class OverworldTaxiListUi extends Ui {
   private dummys: Phaser.GameObjects.Image[] = [];
   private spawnTypesText: Phaser.GameObjects.Text[] = [];
   private windowSpawnType!: Phaser.GameObjects.NineSlice;
-  private containerSpawnType!: Phaser.GameObjects.Container;
   private fixedTopY: number = -400;
   private overworldList!: string[];
+  private overworldPageText!: Phaser.GameObjects.Text;
+  private windowList!: Phaser.GameObjects.NineSlice;
+  private readonly LIST_PER_PAGE: number = 14;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -37,7 +38,7 @@ export class OverworldTaxiListUi extends Ui {
     const windowListWidth = 400;
     const windowListHeight = Math.max(totalContentsHeight, minWindowListHeight);
 
-    const windowList = addWindow(this.scene, TEXTURE.WINDOW_5, 0, this.fixedTopY + windowListHeight / 2, windowListWidth / 2, windowListHeight / 2, 16, 16, 16, 16).setScale(2);
+    this.windowList = addWindow(this.scene, TEXTURE.WINDOW_5, 0, this.fixedTopY + windowListHeight / 2, windowListWidth / 2, windowListHeight / 2, 16, 16, 16, 16).setScale(2);
     const windowPage = addWindow(this.scene, TEXTURE.WINDOW_5, +140, this.fixedTopY - contentHeight + 10, 60, contentHeight / 2 + 5, 16, 16, 16, 16).setScale(2);
     this.windowSpawnType = addWindow(this.scene, TEXTURE.WINDOW_5, +310, this.fixedTopY + contentHeight / 2, 100, contentHeight / 2, 16, 16, 16, 16).setScale(2);
 
@@ -58,15 +59,20 @@ export class OverworldTaxiListUi extends Ui {
       }
     });
 
-    this.container.add(windowList);
+    this.overworldPageText = addText(this.scene, +140, this.fixedTopY - contentHeight + 10, ``, TEXTSTYLE.OVERWORLD_LIST);
+
+    this.container.add(this.windowList);
     this.container.add(windowPage);
     this.container.add(this.windowSpawnType);
     this.container.add(this.overworldsText);
+    this.container.add(this.overworldPageText);
     this.container.add(this.dummys);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI + 1);
     this.container.setScrollFactor(0);
+
+    this.renderPage(1);
   }
 
   show(data?: any): void {
@@ -87,33 +93,82 @@ export class OverworldTaxiListUi extends Ui {
   private block() {}
 
   private unblock() {
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
-    const keyboardMananger = KeyboardManager.getInstance();
+    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    const keyboardManager = KeyboardManager.getInstance();
 
     let startIndex = 0;
-    let endIndex = this.overworldsText.length - 1;
+    let endIndex = this.LIST_PER_PAGE - 1;
     let choice = startIndex;
+    let currentPage = 1;
+    const totalPages = Math.ceil(this.overworldList.length / this.LIST_PER_PAGE);
 
     this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
     this.showSpawnTypes(this.overworldList[choice]);
 
-    keyboardMananger.setAllowKey(keys);
-    keyboardMananger.setKeyDownCallback((key) => {
+    keyboardManager.setAllowKey(keys);
+    keyboardManager.setKeyDownCallback((key) => {
       const prevChoice = choice;
+      const prevPage = currentPage;
 
-      switch (key) {
-        case KEY.UP:
-          choice = Math.max(startIndex, choice - 1);
-          break;
-        case KEY.DOWN:
-          choice = Math.min(endIndex, choice + 1);
-          break;
-      }
+      try {
+        switch (key) {
+          case KEY.UP:
+            if (choice > startIndex) {
+              choice--;
+            }
+            break;
 
-      if (choice !== prevChoice) {
-        this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-        this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
-        this.showSpawnTypes(this.overworldList[choice]);
+          case KEY.DOWN:
+            if (choice < endIndex && choice < this.overworldList.length - 1 - (currentPage - 1) * this.LIST_PER_PAGE) {
+              choice++;
+            }
+            break;
+
+          case KEY.LEFT:
+            if (currentPage > 1) {
+              currentPage--;
+              this.renderPage(currentPage);
+              choice = 0;
+              this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
+            }
+            break;
+
+          case KEY.RIGHT:
+            if (currentPage < totalPages) {
+              currentPage++;
+              this.renderPage(currentPage);
+              choice = 0;
+              this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
+            }
+            break;
+
+          case KEY.SELECT:
+            console.log(`Selected: ${this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice]}`);
+            break;
+
+          default:
+            console.error(`Unhandled key: ${key}`);
+            break;
+        }
+
+        if (key === KEY.UP || key === KEY.DOWN) {
+          if (choice !== prevChoice) {
+            this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+            this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
+            const globalChoice = (currentPage - 1) * this.LIST_PER_PAGE + choice;
+            this.showSpawnTypes(this.overworldList[globalChoice]);
+          }
+        }
+
+        if (key === KEY.LEFT || key === KEY.RIGHT) {
+          if (currentPage !== prevPage) {
+            this.updatePageText(currentPage);
+            const globalChoice = (currentPage - 1) * this.LIST_PER_PAGE + choice;
+            this.showSpawnTypes(this.overworldList[globalChoice]);
+          }
+        }
+      } catch (error) {
+        console.error(`Error handling key input: ${error}`);
       }
     });
   }
@@ -146,5 +201,49 @@ export class OverworldTaxiListUi extends Ui {
       this.spawnTypesText.push(text);
     });
     this.container.add(this.spawnTypesText);
+  }
+
+  private renderPage(page: number): void {
+    const startIdx = (page - 1) * this.LIST_PER_PAGE;
+    const endIdx = Math.min(startIdx + this.LIST_PER_PAGE, this.overworldList.length);
+
+    this.overworldsText.forEach((text) => text.destroy());
+    this.dummys.forEach((dummy) => dummy.destroy());
+
+    this.overworldsText = [];
+    this.dummys = [];
+
+    const contentHeight = 50;
+    const spacing = 5;
+    const totalItems = endIdx - startIdx;
+    const minWindowHeight = 50 + spacing + spacing + spacing;
+    const calculatedHeight = totalItems * (contentHeight + spacing) - spacing + spacing;
+
+    const windowListHeight = Math.max(calculatedHeight, minWindowHeight);
+    this.windowList.setSize(400 / 2, windowListHeight / 2);
+    this.windowList.setPosition(0, this.fixedTopY + windowListHeight / 2);
+
+    for (let i = startIdx; i < endIdx; i++) {
+      const overworldInfo = getOverworldInfo(this.overworldList[i]);
+      if (overworldInfo) {
+        const yPosition = this.fixedTopY + contentHeight / 2 + (i - startIdx) * (contentHeight + spacing);
+        const text = addText(this.scene, -160, yPosition + spacing, overworldInfo.name, TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
+        const dummy = addImage(this.scene, TEXTURE.BLANK, -180, yPosition).setScale(1.5);
+
+        this.overworldsText.push(text);
+        this.dummys.push(dummy);
+      }
+    }
+
+    this.container.add(this.overworldsText);
+    this.container.add(this.dummys);
+
+    const totalPages = Math.ceil(this.overworldList.length / this.LIST_PER_PAGE);
+    this.overworldPageText.setText(`${page}/${totalPages}`);
+  }
+
+  private updatePageText(currentPage: number): void {
+    const totalPages = Math.ceil(this.overworldList.length / this.LIST_PER_PAGE);
+    this.overworldPageText.setText(`${currentPage}/${totalPages}`);
   }
 }
