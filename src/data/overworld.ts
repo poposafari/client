@@ -96,6 +96,96 @@ i18next.on('initialized', () => {
       consume: 1,
       spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
     },
+    '014': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '015': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '016': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '017': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '018': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '019': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '020': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '021': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '022': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '023': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '024': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '025': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '026': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '027': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
+    '028': {
+      name: i18next.t('menu:overworld_003'),
+      description: 'TestRoom',
+      consume: 1,
+      spawnTypes: [TYPE.FIRE, TYPE.FLYING, TYPE.BUG, TYPE.WATER],
+    },
   };
 });
 
