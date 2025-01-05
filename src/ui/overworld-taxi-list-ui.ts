@@ -74,6 +74,8 @@ export class OverworldTaxiListUi extends Ui {
       }
     });
 
+    const cancelText = addText(this.scene, -120, this.fixedTopY - contentHeight + 30, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE);
+
     this.overworldPageText = addText(this.scene, +140, this.fixedTopY - contentHeight + 15, ``, TEXTSTYLE.OVERWORLD_LIST);
 
     this.container.add(this.windowList);
@@ -83,6 +85,7 @@ export class OverworldTaxiListUi extends Ui {
     this.container.add(this.overworldPageText);
     this.container.add(this.stockTicketContainer);
     this.container.add(this.dummys);
+    this.container.add(cancelText);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI + 1);
@@ -98,6 +101,7 @@ export class OverworldTaxiListUi extends Ui {
 
   clean(data?: any): void {
     this.container.setVisible(false);
+    this.pause(true);
   }
 
   pause(onoff: boolean): void {
@@ -110,7 +114,7 @@ export class OverworldTaxiListUi extends Ui {
 
   private unblock() {
     const playerItemManager = this.mode.getPlayerItemManager();
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
     const keyboardManager = KeyboardManager.getInstance();
 
     let startIndex = 0;
@@ -160,6 +164,11 @@ export class OverworldTaxiListUi extends Ui {
           case KEY.SELECT:
             console.log(`Selected: ${this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice]}`);
             break;
+          case KEY.CANCEL:
+            this.clean();
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
+            this.mode.pauseSystem(false);
+            this.mode.popUiStack();
           default:
             console.error(`Unhandled key: ${key}`);
             break;

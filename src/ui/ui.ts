@@ -221,6 +221,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
       config.fontSize = '80px';
       config.color = '#ffffff';
       break;
+    case TEXTSTYLE.INPUT_GUIDE:
+      config.fontSize = '50px';
+      config.color = '#ffffff';
+      break;
   }
 
   return config;
