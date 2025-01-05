@@ -25,4 +25,8 @@ export const item: TranslationItem = {
     name: '러닝슈즈',
     description: '관리자가 뜨끈하게 신고 다니던 러닝슈즈이다.',
   },
+  ticket: {
+    name: '티켓',
+    description: '야생 포켓몬이 등장하는 월드에 입장할 수 있는 입장권이다.',
+  },
 };

@@ -20,7 +20,6 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_0, 'ui', 'window_0');
     this.loadImage(TEXTURE.WINDOW_1, 'ui', 'window_1');
     this.loadImage(TEXTURE.WINDOW_2, 'ui', 'window_2');
-    this.loadImage(TEXTURE.WINDOW_3, 'ui', 'window_3');
     this.loadImage(TEXTURE.WINDOW_4, 'ui', 'window_4');
     this.loadImage(TEXTURE.WINDOW_5, 'ui', 'window_5');
 
@@ -122,10 +121,8 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.POKEMON_CALL, 'ui', TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
     this.loadAtlas(TEXTURE.POKEMON_RECALL, 'ui', TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);
 
-    let itemIdx = 0;
     for (const key of Object.keys(items)) {
-      this.loadImage(`item${createZeroPad(itemIdx)}`, 'ui/item', `item${createZeroPad(itemIdx)}`);
-      itemIdx++;
+      this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }
 
     for (const key of Object.keys(npcs)) {

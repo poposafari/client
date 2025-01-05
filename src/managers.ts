@@ -279,6 +279,7 @@ export class PlayerItemManager {
     this.addItem('003', 2);
     this.addItem('005', 1);
     this.addItem('006', 1);
+    this.addItem('007', 3);
   }
 
   getMyItems() {

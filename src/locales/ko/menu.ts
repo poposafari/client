@@ -34,4 +34,5 @@ export const menu: TranslationDefault = {
   overworld_010: '오버월드001',
   overworld_011: '오버월드002',
   overworld_012: '오버월드003',
+  stockTicket: '보유 티켓',
 };
