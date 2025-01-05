@@ -9,6 +9,7 @@ import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Ui } from './ui';
+import { Message } from '../interface/sys';
 
 export class Overworld extends Ui {
   private mode!: OverworldMode;
@@ -74,13 +75,11 @@ export class Overworld extends Ui {
           console.log(this.player.getStatus());
           const obj = this.player.getObjectInFront(this.player.getLastDirection());
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
+            const objTextureKey = obj.getSprite().texture.key;
             obj.reaction(this.player.getLastDirection());
             this.isMessageActive = true;
-            await this.mode.startMessage([
-              { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome1') },
-              { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome2') },
-              { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome3') },
-            ]);
+            await this.mode.startMessage(this.getNpcScripts(objTextureKey, 0));
+            this.handleNpcPostScriptAction(objTextureKey);
             this.isMessageActive = false;
           }
           break;
@@ -147,6 +146,28 @@ export class Overworld extends Ui {
       this.player.move(KEY.LEFT);
     } else if (this.cursorKey.right.isDown && this.player.isMovementFinish()) {
       this.player.move(KEY.RIGHT);
+    }
+  }
+
+  private getNpcScripts(npcKey: string, type: 0 | 1 | 2): Message[] {
+    let typeStr = 'welcome';
+    if (type === 1) typeStr = 'agree';
+    if (type === 2) typeStr = 'reject';
+
+    switch (npcKey) {
+      case 'npc000':
+        return [{ type: 'default', format: 'talk', content: i18next.t(`message:${npcKey}_${typeStr}`) }];
+      default:
+        return [];
+    }
+  }
+
+  private handleNpcPostScriptAction(npcKey: string) {
+    switch (npcKey) {
+      case 'npc000':
+        this.mode.pauseSystem(true);
+        this.mode.addUiStackOverlap('OverworldTaxiListUi');
+        return;
     }
   }
 }

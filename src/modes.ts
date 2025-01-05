@@ -18,6 +18,7 @@ import { SeasonUi } from './ui/season-ui';
 import { Overworld } from './ui/overworld';
 import { PlayerObject } from './object/player-object';
 import { OverworldUi } from './ui/overworld-ui';
+import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -148,6 +149,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new LabOverworld(this.scene, this));
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldUi(this.scene, this));
+    this.uis.push(new OverworldTaxiListUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -219,20 +221,23 @@ export class OverworldMode extends Mode {
   }
 
   async startMessage(data: Message[]) {
-    const overworldUi = this.getUiType('OverworldUi');
     const overworld = this.getUiStackTop();
 
-    if (overworldUi && overworld) {
-      overworldUi.pause(true);
-      overworld.pause(true);
-    }
+    this.pauseSystem(true);
 
     const message = MessageManager.getInstance();
     await message.show(overworld, data);
 
+    this.pauseSystem(false);
+  }
+
+  pauseSystem(onoff: boolean) {
+    const overworldUi = this.getUiType('OverworldUi');
+    const overworld = this.getUiStackTop();
+
     if (overworldUi && overworld) {
-      overworldUi.pause(false);
-      overworld.pause(false);
+      overworldUi.pause(onoff ? true : false);
+      overworld.pause(onoff ? true : false);
     }
   }
 }
