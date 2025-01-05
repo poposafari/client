@@ -13,6 +13,8 @@ export class OverworldTaxiListUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
   private overworldsText: Phaser.GameObjects.Text[] = [];
+  private overworldsConsumeText: Phaser.GameObjects.Text[] = [];
+  private overworldsConsumeTickets: Phaser.GameObjects.Image[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
   private spawnTypesText: Phaser.GameObjects.Text[] = [];
   private windowSpawnType!: Phaser.GameObjects.NineSlice;
@@ -20,7 +22,10 @@ export class OverworldTaxiListUi extends Ui {
   private overworldList!: string[];
   private overworldPageText!: Phaser.GameObjects.Text;
   private windowList!: Phaser.GameObjects.NineSlice;
-  private readonly LIST_PER_PAGE: number = 14;
+  private windowStockTicket!: Phaser.GameObjects.NineSlice;
+  private stockTicketContainer!: Phaser.GameObjects.Container;
+  private stockTicketCount!: Phaser.GameObjects.Text;
+  private readonly LIST_PER_PAGE: number = 13;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -39,10 +44,20 @@ export class OverworldTaxiListUi extends Ui {
     const windowListHeight = Math.max(totalContentsHeight, minWindowListHeight);
 
     this.windowList = addWindow(this.scene, TEXTURE.WINDOW_5, 0, this.fixedTopY + windowListHeight / 2, windowListWidth / 2, windowListHeight / 2, 16, 16, 16, 16).setScale(2);
-    const windowPage = addWindow(this.scene, TEXTURE.WINDOW_5, +140, this.fixedTopY - contentHeight + 10, 60, contentHeight / 2 + 5, 16, 16, 16, 16).setScale(2);
+    const windowPage = addWindow(this.scene, TEXTURE.WINDOW_5, +140, this.fixedTopY - contentHeight + 15, 60, contentHeight / 2 + 5, 16, 16, 16, 16).setScale(2);
     this.windowSpawnType = addWindow(this.scene, TEXTURE.WINDOW_5, +310, this.fixedTopY + contentHeight / 2, 100, contentHeight / 2, 16, 16, 16, 16).setScale(2);
 
-    this.container = this.scene.add.container(width / 2, height / 2);
+    this.stockTicketContainer = this.scene.add.container(0, this.fixedTopY + windowListHeight + spacing);
+    this.windowStockTicket = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, windowListWidth / 2, 70, 16, 16, 16, 16).setScale(2);
+    const stockTicketText = addText(this.scene, 0, -30, i18next.t('menu:stockTicket'), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0.5, 0.5);
+    const stockTicketIcon = addImage(this.scene, `item007`, -40, 20).setScale(1.5);
+    this.stockTicketCount = addText(this.scene, 20, 20, 'x0', TEXTSTYLE.OVERWORLD_LIST).setOrigin(0.5, 0.5);
+    this.stockTicketContainer.add(this.windowStockTicket);
+    this.stockTicketContainer.add(stockTicketText);
+    this.stockTicketContainer.add(stockTicketIcon);
+    this.stockTicketContainer.add(this.stockTicketCount);
+
+    this.container = this.scene.add.container(width / 2 + 320, height / 2);
 
     this.overworldsText = [];
     this.dummys = [];
@@ -59,13 +74,14 @@ export class OverworldTaxiListUi extends Ui {
       }
     });
 
-    this.overworldPageText = addText(this.scene, +140, this.fixedTopY - contentHeight + 10, ``, TEXTSTYLE.OVERWORLD_LIST);
+    this.overworldPageText = addText(this.scene, +140, this.fixedTopY - contentHeight + 15, ``, TEXTSTYLE.OVERWORLD_LIST);
 
     this.container.add(this.windowList);
     this.container.add(windowPage);
     this.container.add(this.windowSpawnType);
     this.container.add(this.overworldsText);
     this.container.add(this.overworldPageText);
+    this.container.add(this.stockTicketContainer);
     this.container.add(this.dummys);
 
     this.container.setVisible(false);
@@ -93,6 +109,7 @@ export class OverworldTaxiListUi extends Ui {
   private block() {}
 
   private unblock() {
+    const playerItemManager = this.mode.getPlayerItemManager();
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     const keyboardManager = KeyboardManager.getInstance();
 
@@ -104,6 +121,8 @@ export class OverworldTaxiListUi extends Ui {
 
     this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
     this.showSpawnTypes(this.overworldList[choice]);
+
+    this.stockTicketCount.setText(`x${playerItemManager.getMyItem('007').stock}`);
 
     keyboardManager.setAllowKey(keys);
     keyboardManager.setKeyDownCallback((key) => {
@@ -117,13 +136,11 @@ export class OverworldTaxiListUi extends Ui {
               choice--;
             }
             break;
-
           case KEY.DOWN:
             if (choice < endIndex && choice < this.overworldList.length - 1 - (currentPage - 1) * this.LIST_PER_PAGE) {
               choice++;
             }
             break;
-
           case KEY.LEFT:
             if (currentPage > 1) {
               currentPage--;
@@ -132,7 +149,6 @@ export class OverworldTaxiListUi extends Ui {
               this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
             }
             break;
-
           case KEY.RIGHT:
             if (currentPage < totalPages) {
               currentPage++;
@@ -141,11 +157,9 @@ export class OverworldTaxiListUi extends Ui {
               this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
             }
             break;
-
           case KEY.SELECT:
             console.log(`Selected: ${this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice]}`);
             break;
-
           default:
             console.error(`Unhandled key: ${key}`);
             break;
@@ -188,7 +202,7 @@ export class OverworldTaxiListUi extends Ui {
     const windowHeight = Math.max(totalContentsHeight, minWindowHeight);
 
     this.windowSpawnType.setSize(100, windowHeight / 2);
-    this.windowSpawnType.setPosition(+310, windowHeight / 2 - this.fixedTopY - 800);
+    this.windowSpawnType.setPosition(+305, windowHeight / 2 - this.fixedTopY - 800);
 
     const startY = this.fixedTopY + spacing + contentHeight / 2;
 
@@ -207,9 +221,13 @@ export class OverworldTaxiListUi extends Ui {
     const startIdx = (page - 1) * this.LIST_PER_PAGE;
     const endIdx = Math.min(startIdx + this.LIST_PER_PAGE, this.overworldList.length);
 
+    this.overworldsConsumeTickets.forEach((icon) => icon.destroy());
+    this.overworldsConsumeText.forEach((text) => text.destroy());
     this.overworldsText.forEach((text) => text.destroy());
     this.dummys.forEach((dummy) => dummy.destroy());
 
+    this.overworldsConsumeTickets = [];
+    this.overworldsConsumeText = [];
     this.overworldsText = [];
     this.dummys = [];
 
@@ -223,23 +241,31 @@ export class OverworldTaxiListUi extends Ui {
     this.windowList.setSize(400 / 2, windowListHeight / 2);
     this.windowList.setPosition(0, this.fixedTopY + windowListHeight / 2);
 
+    const stockTicketY = this.fixedTopY + windowListHeight + spacing + 70;
+    this.stockTicketContainer.setPosition(0, stockTicketY);
+
     for (let i = startIdx; i < endIdx; i++) {
       const overworldInfo = getOverworldInfo(this.overworldList[i]);
       if (overworldInfo) {
         const yPosition = this.fixedTopY + contentHeight / 2 + (i - startIdx) * (contentHeight + spacing);
         const text = addText(this.scene, -160, yPosition + spacing, overworldInfo.name, TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
+        const consumeText = addText(this.scene, +155, yPosition + spacing, `x${overworldInfo.consume.toString()}`, TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
+        const icons = addImage(this.scene, `item007`, +130, yPosition + 3).setScale(0.7);
         const dummy = addImage(this.scene, TEXTURE.BLANK, -180, yPosition).setScale(1.5);
 
+        this.overworldsConsumeTickets.push(icons);
+        this.overworldsConsumeText.push(consumeText);
         this.overworldsText.push(text);
         this.dummys.push(dummy);
       }
     }
 
+    this.container.add(this.overworldsConsumeTickets);
+    this.container.add(this.overworldsConsumeText);
     this.container.add(this.overworldsText);
     this.container.add(this.dummys);
 
-    const totalPages = Math.ceil(this.overworldList.length / this.LIST_PER_PAGE);
-    this.overworldPageText.setText(`${page}/${totalPages}`);
+    this.updatePageText(page);
   }
 
   private updatePageText(currentPage: number): void {

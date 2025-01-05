@@ -54,6 +54,12 @@ i18next.on('initialized', () => {
       type: ITEM.KEY,
       usageType: ITEM_USAGE_TYPE.NON_CONSUMABLE,
     },
+    '007': {
+      name: i18next.t('item:ticket.name'),
+      description: i18next.t('item:ticket.description'),
+      type: ITEM.KEY,
+      usageType: ITEM_USAGE_TYPE.NON_CONSUMABLE,
+    },
   };
 });
 
