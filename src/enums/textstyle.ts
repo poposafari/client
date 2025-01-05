@@ -12,4 +12,5 @@ export const enum TEXTSTYLE {
   BOX_NAME,
   BOX_DEFAULT,
   OVERWORLD_LIST,
+  INPUT_GUIDE,
 }
