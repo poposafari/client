@@ -40,8 +40,9 @@ export function addBackground(scene: InGameScene, texture: TEXTURE, width: numbe
 
 export function addText(scene: InGameScene, x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
   const result = scene.add.text(x, y, content, getTextStyle(style));
+  const shadow = getTextShadow(style);
 
-  result.setShadow(3, 2, getTextShadow(style));
+  result.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
   result.setScale(0.5);
   result.setOrigin(0.5, 0.5);
 
@@ -50,8 +51,9 @@ export function addText(scene: InGameScene, x: number, y: number, content: strin
 
 export function addTextBackground(scene: InGameScene, x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
   const result = scene.add.text(x, y, content, getTextStyle(style));
+  const shadow = getTextShadow(style);
 
-  result.setShadow(3, 2, getTextShadow(style));
+  result.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
   result.setScale(0.5);
   result.setOrigin(0.5, 0.5);
   result.setBackgroundColor('rgba(0, 0, 0, 0.7)');
@@ -137,8 +139,6 @@ function getAnimationSize(key: ANIMATION | string) {
 }
 
 function getTextShadow(style: TEXTSTYLE) {
-  let ret;
-
   switch (style) {
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
@@ -148,14 +148,14 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
-      ret = '#91919a';
-      break;
+      return [3, 2, '#91919a'];
+    case TEXTSTYLE.MENU:
+      return [2, 1, '#91919a'];
     case TEXTSTYLE.LOBBY_TITLE:
-      ret = '#2CC295';
-      break;
+      return [3, 2, '#2CC295'];
   }
 
-  return ret;
+  return [0, 0, 0];
 }
 
 function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
@@ -169,7 +169,6 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
     case TEXTSTYLE.LOBBY_TITLE:
       config.fontSize = '80px';
       config.color = '#00DF81';
-      // config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.LOBBY_DEFAULT:
       config.fontSize = '30px';
@@ -224,6 +223,10 @@ function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
     case TEXTSTYLE.INPUT_GUIDE:
       config.fontSize = '50px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.MENU:
+      config.fontSize = '30px';
+      config.color = '#4b4b4b';
       break;
   }
 

@@ -19,6 +19,7 @@ import { Overworld } from './ui/overworld';
 import { PlayerObject } from './object/player-object';
 import { OverworldUi } from './ui/overworld-ui';
 import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
+import { OverworldMenuUi } from './ui/overworld-menu-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -149,7 +150,11 @@ export class OverworldMode extends Mode {
     this.uis.push(new LabOverworld(this.scene, this));
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldUi(this.scene, this));
+    this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new OverworldTaxiListUi(this.scene, this));
+    this.uis.push(new BagUi(this.scene, this));
+    this.uis.push(new BagModalUi(this.scene, this));
+    this.uis.push(new BagRegisterUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -223,15 +228,15 @@ export class OverworldMode extends Mode {
   async startMessage(data: Message[]) {
     const overworld = this.getUiStackTop();
 
-    this.pauseSystem(true);
+    this.pauseOverworldSystem(true);
 
     const message = MessageManager.getInstance();
     await message.show(overworld, data);
 
-    this.pauseSystem(false);
+    this.pauseOverworldSystem(false);
   }
 
-  pauseSystem(onoff: boolean) {
+  pauseOverworldSystem(onoff: boolean) {
     const overworldUi = this.getUiType('OverworldUi');
     const overworld = this.getUiStackTop();
 
@@ -242,44 +247,44 @@ export class OverworldMode extends Mode {
   }
 }
 
-export class BagMode extends Mode {
-  private playerItemManager!: PlayerItemManager;
+// export class BagMode extends Mode {
+//   private playerItemManager!: PlayerItemManager;
 
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
-  }
+//   constructor(scene: InGameScene, manager: ModeManager) {
+//     super(scene, manager);
+//   }
 
-  init(): void {
-    this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new BagModalUi(this.scene, this));
-    this.uis.push(new BagRegisterUi(this.scene, this));
+//   init(): void {
+//     this.uis.push(new BagUi(this.scene, this));
+//     this.uis.push(new BagModalUi(this.scene, this));
+//     this.uis.push(new BagRegisterUi(this.scene, this));
 
-    for (const ui of this.uis) {
-      ui.setup();
-    }
-  }
+//     for (const ui of this.uis) {
+//       ui.setup();
+//     }
+//   }
 
-  enter(data?: any): void {
-    this.playerItemManager = PlayerItemManager.getInstance();
-    this.addUiStack('BagUi');
-  }
+//   enter(data?: any): void {
+//     this.playerItemManager = PlayerItemManager.getInstance();
+//     this.addUiStack('BagUi');
+//   }
 
-  exit(): void {
-    this.getUiStackTop().clean();
-  }
+//   exit(): void {
+//     this.getUiStackTop().clean();
+//   }
 
-  update(time: number, delta: number): void {}
+//   update(time: number, delta: number): void {}
 
-  getPlayerItemManager() {
-    if (this.playerItemManager) return this.playerItemManager;
+//   getPlayerItemManager() {
+//     if (this.playerItemManager) return this.playerItemManager;
 
-    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-  }
+//     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+//   }
 
-  changeOverworldMode() {
-    this.manager.changeMode(MODE.OVERWORLD);
-  }
-}
+//   changeOverworldMode() {
+//     this.manager.changeMode(MODE.OVERWORLD);
+//   }
+// }
 
 export class BoxMode extends Mode {
   private playerPokemonManager!: PlayerPokemonManager;
