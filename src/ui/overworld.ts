@@ -62,7 +62,7 @@ export class Overworld extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
+    const keys = [KEY.SELECT, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
 
     this.sysBlock = false;
 
@@ -81,6 +81,12 @@ export class Overworld extends Ui {
             await this.mode.startMessage(this.getNpcScripts(objTextureKey, 0));
             this.handleNpcPostScriptAction(objTextureKey);
             this.isMessageActive = false;
+          }
+          break;
+        case KEY.MENU:
+          if (this.player.isMovementFinish()) {
+            this.mode.pauseOverworldSystem(true);
+            this.mode.addUiStackOverlap('OverworldMenuUi');
           }
           break;
         case KEY.USE_1:
@@ -165,7 +171,7 @@ export class Overworld extends Ui {
   private handleNpcPostScriptAction(npcKey: string) {
     switch (npcKey) {
       case 'npc000':
-        this.mode.pauseSystem(true);
+        this.mode.pauseOverworldSystem(true);
         this.mode.addUiStackOverlap('OverworldTaxiListUi');
         return;
     }

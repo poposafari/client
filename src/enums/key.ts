@@ -1,4 +1,5 @@
 export const enum KEY {
+  MENU = 83,
   SELECT = 88,
   CANCEL = 90,
   RUNNING = 82,
