@@ -167,7 +167,7 @@ export class OverworldTaxiListUi extends Ui {
           case KEY.CANCEL:
             this.clean();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
-            this.mode.pauseSystem(false);
+            this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
           default:
             console.error(`Unhandled key: ${key}`);

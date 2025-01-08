@@ -116,6 +116,7 @@ export class OverworldMenuUi extends Ui {
             console.log(texture);
             if (texture === 'box') {
             } else if (texture === 'bag') {
+              this.dummys[choice].setTexture(TEXTURE.BLANK);
               this.mode.addUiStackOverlap('BagUi');
             }
             break;
