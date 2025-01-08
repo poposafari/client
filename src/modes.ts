@@ -217,6 +217,10 @@ export class OverworldMode extends Mode {
     this.manager.changeMode(MODE.BOX);
   }
 
+  changeTitleMode() {
+    this.manager.changeMode(MODE.TITLE);
+  }
+
   getPlayerInfoManager() {
     if (this.playerInfoManager) return this.playerInfoManager;
 

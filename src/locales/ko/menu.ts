@@ -41,4 +41,5 @@ export const menu: TranslationDefault = {
   menuTrainerCard: '프로필',
   menuCloset: '옷장',
   menuCancel: '닫는다',
+  menuTitle: '타이틀로 이동',
 };

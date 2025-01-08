@@ -17,8 +17,15 @@ export class OverworldMenuUi extends Ui {
   private window!: Phaser.GameObjects.NineSlice;
   private guideText!: Phaser.GameObjects.Text;
   private selectedIndex: number = 0;
-  private readonly MENU_LIST_ICON = [TEXTURE.MENU_POKEDEX, TEXTURE.MENU_BOX, TEXTURE.MENU_BAG, TEXTURE.MENU_CARD, TEXTURE.MENU_DOLL];
-  private readonly MENU_LIST_TEXT = [i18next.t('menu:menuPokedex'), i18next.t('menu:menuPokemon'), i18next.t('menu:menuBag'), i18next.t('menu:menuTrainerCard'), i18next.t('menu:menuCloset')];
+  private readonly MENU_LIST_ICON = [TEXTURE.MENU_POKEDEX, TEXTURE.MENU_BOX, TEXTURE.MENU_BAG, TEXTURE.MENU_CARD, TEXTURE.MENU_DOLL, TEXTURE.MENU_TITLE];
+  private readonly MENU_LIST_TEXT = [
+    i18next.t('menu:menuPokedex'),
+    i18next.t('menu:menuPokemon'),
+    i18next.t('menu:menuBag'),
+    i18next.t('menu:menuTrainerCard'),
+    i18next.t('menu:menuCloset'),
+    i18next.t('menu:menuTitle'),
+  ];
   private readonly FIXED_TOP_Y: number = -150;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
@@ -38,7 +45,7 @@ export class OverworldMenuUi extends Ui {
 
     this.container = this.scene.add.container(width / 2 + 750, height / 2);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_4, 0, this.FIXED_TOP_Y + windowHeight / 2, 110, windowHeight, 16, 16, 16, 16);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_4, 0, this.FIXED_TOP_Y + windowHeight / 2, 250, windowHeight, 16, 16, 16, 16);
 
     this.guideText = addText(this.scene, width / 2 + 655, 40, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE).setOrigin(0.5, 0.5);
 
@@ -119,6 +126,9 @@ export class OverworldMenuUi extends Ui {
               this.mode.addUiStackOverlap('BoxUi');
             } else if (texture === 'bag') {
               this.mode.addUiStackOverlap('BagUi');
+            } else if (texture === 'title') {
+              this.clean();
+              this.mode.changeTitleMode();
             }
             break;
           case KEY.CANCEL:
