@@ -50,7 +50,6 @@ export class OverworldPokemonSlotUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
 
-    const playerInfoManager = this.mode.getPlayerInfoManager();
     const playerPokemonManager = this.mode.getPlayerPokemonManager();
     const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
 
@@ -70,7 +69,14 @@ export class OverworldPokemonSlotUi extends Ui {
     onoff ? this.blocking() : this.unblocking();
   }
 
-  update(time: number, delta: number): void {}
+  update(time?: number, delta?: number): void {
+    const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
+
+    pokemonSlots.forEach((slot, i) => {
+      this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
+    });
+  }
 
   private blocking() {
     this.pokemonSlotBtns.forEach((icon) => {

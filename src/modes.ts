@@ -155,6 +155,9 @@ export class OverworldMode extends Mode {
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new BagModalUi(this.scene, this));
     this.uis.push(new BagRegisterUi(this.scene, this));
+    this.uis.push(new BoxUi(this.scene, this));
+    this.uis.push(new BoxModalUi(this.scene, this));
+    this.uis.push(new BoxRegisterUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -196,6 +199,13 @@ export class OverworldMode extends Mode {
     const ui = this.getUiType('OverworldUi');
     if (ui instanceof OverworldUi) {
       ui.updateItemSlotUi();
+    }
+  }
+
+  chnagePokemonSlot() {
+    const ui = this.getUiType('OverworldUi');
+    if (ui instanceof OverworldUi) {
+      ui.updatePokemonSlotUi();
     }
   }
 
@@ -294,10 +304,6 @@ export class BoxMode extends Mode {
   }
 
   init(): void {
-    this.uis.push(new BoxUi(this.scene, this));
-    this.uis.push(new BoxModalUi(this.scene, this));
-    this.uis.push(new BoxRegisterUi(this.scene, this));
-
     for (const ui of this.uis) {
       ui.setup();
     }

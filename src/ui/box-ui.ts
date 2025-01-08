@@ -3,19 +3,18 @@ import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
-import { BoxMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { getPokemonType } from '../data/types';
 import { pokemons } from '../data/pokemon';
+import { OverworldMode } from '../modes';
+import { DEPTH } from '../enums/depth';
 
 export class BoxUi extends Ui {
-  private mode: BoxMode;
+  private mode: OverworldMode;
   private container: Phaser.GameObjects.Container[] = [];
   private bgContainer!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private xboxContainer!: Phaser.GameObjects.Container;
-  private xboxBtn!: Phaser.GameObjects.Image;
   private filterContainer!: Phaser.GameObjects.Container;
   private pokemonSlotContainer!: Phaser.GameObjects.Container;
   private pokemonSlotWindow!: Phaser.GameObjects.NineSlice;
@@ -42,49 +41,54 @@ export class BoxUi extends Ui {
   private pokemonShinyIcon!: Phaser.GameObjects.Image;
   private lastChoice: number = 0;
 
-  constructor(scene: InGameScene, mode: BoxMode) {
+  constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bgContainer = this.scene.add.container(width / 4, height / 4);
+    this.bgContainer = this.scene.add.container(0, 0);
     this.bg = addBackground(this.scene, TEXTURE.BG_BOX, width, height);
     this.bgContainer.add(this.bg);
-    this.bg.setVisible(false);
+    this.bgContainer.setScale(2);
+    this.bgContainer.setVisible(false);
+    this.bgContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.bgContainer.setScrollFactor(0);
 
-    this.xboxContainer = this.scene.add.container(width / 4, height / 4);
-    this.xboxBtn = addImage(this.scene, TEXTURE.XBOX, 458, -250);
-    this.xboxContainer.add(this.xboxBtn);
-    this.xboxContainer.setVisible(false);
-
-    this.filterContainer = this.scene.add.container(width / 4 + 165, height / 4 - 235);
+    this.filterContainer = this.scene.add.container(width / 2 + 330, height / 2 - 480);
     this.filterWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 620, 60, 16, 16, 16, 16);
     this.filterContainer.add(this.filterWindow);
+    this.filterContainer.setScale(2);
     this.filterContainer.setVisible(false);
+    this.filterContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.filterContainer.setScrollFactor(0);
 
-    this.pokemonAllSlotContainer = this.scene.add.container(width / 4 + 130, height / 4 + 30);
+    this.pokemonAllSlotContainer = this.scene.add.container(width / 2 + 260, height / 2 + 50);
     this.pokemonAllSlotWindow = addImage(this.scene, TEXTURE.WINDOW_BOX_STORAGE, 0, 0).setScale(1.5);
     this.pokemonAllSlotContainer.add(this.pokemonAllSlotWindow);
+    this.pokemonAllSlotContainer.setScale(2);
     this.pokemonAllSlotContainer.setVisible(false);
+    this.pokemonAllSlotContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonAllSlotContainer.setScrollFactor(0);
 
-    this.pokemonSlotContainer = this.scene.add.container(width / 4 + 440, height / 4 - 25);
+    this.pokemonSlotContainer = this.scene.add.container(width / 2 + 880, height / 2 - 60);
     this.pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_BOX, 0, 0, 70, 355, 16, 16, 16, 16);
     for (let i = 0; i < 6; i++) {
       const yPosition = i * 50;
       const slotIcon = addImage(this.scene, 'pokemon_icon000', 0, yPosition - 133).setScale(1);
-      const dummy = addImage(this.scene, TEXTURE.BLANK, -50, yPosition - 133).setScale(2);
       this.pokemonSlotIcons.push(slotIcon);
     }
     this.pokemonSlotContainer.add(this.pokemonSlotWindow);
     this.pokemonSlotContainer.add(this.pokemonSlotIcons);
+    this.pokemonSlotContainer.setScale(2);
     this.pokemonSlotContainer.setVisible(false);
+    this.pokemonSlotContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonSlotContainer.setScrollFactor(0);
 
-    this.pokemonInfoTopContainer = this.scene.add.container(width / 4 - 310, height / 4 - 215);
+    this.pokemonInfoTopContainer = this.scene.add.container(width / 2 - 630, height / 2 - 430);
     this.pokemonInfoTop = addImage(this.scene, TEXTURE.BOX_NAME, 0, 0);
     this.pokemonGender = addImage(this.scene, TEXTURE.BLANK, +115, +15).setScale(2.5);
     this.pokemonInfoTopText1 = addText(this.scene, -120, -15, 'No.', TEXTSTYLE.BOX_POKEDEX).setOrigin(0, 0.5);
@@ -97,41 +101,45 @@ export class BoxUi extends Ui {
     this.pokemonInfoTopContainer.add(this.pokemonInfoTopText3);
     this.pokemonInfoTopContainer.add(this.pokemonGender);
     this.pokemonInfoTopContainer.add(this.pokemonShinyIcon);
+    this.pokemonInfoTopContainer.setScale(2);
     this.pokemonInfoTopContainer.setVisible(false);
+    this.pokemonInfoTopContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonInfoTopContainer.setScrollFactor(0);
 
-    this.pokemonInfoSpriteContainer = this.scene.add.container(width / 4 - 310, height / 4 - 70);
+    this.pokemonInfoSpriteContainer = this.scene.add.container(width / 2 - 630, height / 2 - 140);
     this.pokemonInfoSprite = addImage(this.scene, 'pokemon_sprite000', 0, 0);
     this.pokemonType1 = addImage(this.scene, TEXTURE.TYPES, -100, +85);
     this.pokemonType2 = addImage(this.scene, TEXTURE.TYPES, -30, +85);
     this.pokemonInfoSpriteContainer.add(this.pokemonInfoSprite);
     this.pokemonInfoSpriteContainer.add(this.pokemonType1);
     this.pokemonInfoSpriteContainer.add(this.pokemonType2);
+    this.pokemonInfoSpriteContainer.setScale(2);
     this.pokemonInfoSpriteContainer.setVisible(false);
+    this.pokemonInfoSpriteContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonInfoSpriteContainer.setScrollFactor(0);
 
-    this.pokemonInfoBottomContainer = this.scene.add.container(width / 4 - 310, height / 4 + 150);
+    this.pokemonInfoBottomContainer = this.scene.add.container(width / 2 - 630, height / 2 + 300);
     this.pokemonInfoBottom = addImage(this.scene, TEXTURE.BOX_DESC, 0, 0);
     const pokemonCaptureDateTitle = addText(this.scene, -125, -90, i18next.t('menu:captureDate'), TEXTSTYLE.BOX_DEFAULT).setOrigin(0, 0.5);
     this.pokemonCaptureDate = addText(this.scene, -120, -58, '0000-00-00', TEXTSTYLE.BOX_DEFAULT).setOrigin(0, 0.5);
     this.pokemonInfoBottomContainer.add(this.pokemonInfoBottom);
     this.pokemonInfoBottomContainer.add(pokemonCaptureDateTitle);
     this.pokemonInfoBottomContainer.add(this.pokemonCaptureDate);
+    this.pokemonInfoBottomContainer.setScale(2);
     this.pokemonInfoBottomContainer.setVisible(false);
+    this.pokemonInfoBottomContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonInfoBottomContainer.setScrollFactor(0);
 
     this.container.push(this.bgContainer);
     this.container.push(this.filterContainer);
     this.container.push(this.pokemonAllSlotContainer);
     this.container.push(this.pokemonSlotContainer);
-    this.container.push(this.xboxContainer);
     this.container.push(this.pokemonInfoTopContainer);
     this.container.push(this.pokemonInfoSpriteContainer);
     this.container.push(this.pokemonInfoBottomContainer);
-
-    ui.add(this.bg);
-    ui.add(this.container);
   }
 
   show(data?: any): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
     const playerPokemonManager = this.mode.getPlayerPokemonManager();
@@ -150,7 +158,7 @@ export class BoxUi extends Ui {
       duration: 200,
     });
 
-    this.pokemonAllSlotIconsContainer = this.scene.add.container(width / 4 - 95, height / 4 - 180);
+    this.pokemonAllSlotIconsContainer = this.scene.add.container(width / 2 - 190, height / 2 - 360);
 
     for (let i = 0; i < myPokemonsSize; i++) {
       const xPosition = (i % targetCnt) * 50;
@@ -163,14 +171,16 @@ export class BoxUi extends Ui {
       this.pokemonAllSlotDummy.push(blank);
     }
 
-    ui.add(this.pokemonAllSlotIconsContainer);
+    this.pokemonAllSlotIconsContainer.setScale(2);
+    this.pokemonAllSlotIconsContainer.setDepth(DEPTH.OVERWORLD_UI + 2);
+    this.pokemonAllSlotIconsContainer.setScrollFactor(0);
 
     this.pause(false);
   }
 
   clean(): void {
-    this.bg.setAlpha(1);
-    this.bg.setVisible(false);
+    this.bgContainer.setAlpha(1);
+    this.bgContainer.setVisible(false);
     for (const container of this.container) {
       container.setVisible(false);
     }
@@ -183,11 +193,7 @@ export class BoxUi extends Ui {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {
-    this.xboxBtn.off('pointerover');
-    this.xboxBtn.off('pointerout');
-    this.xboxBtn.off('pointerdown');
-  }
+  block() {}
 
   unblock() {
     const playerPokemonManager = this.mode.getPlayerPokemonManager();
@@ -195,21 +201,10 @@ export class BoxUi extends Ui {
     const myPokemonSlots = playerPokemonManager.getMyPokemonSlots();
     const targetCnt = 10;
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
     let startIndex = 0;
     let endIndex = this.pokemonAllSlotDummy.length - 1;
-
-    this.xboxBtn.setInteractive({ cursor: 'pointer' });
-    this.xboxBtn.on('pointerdown', () => {
-      this.mode.changeOverworldMode();
-    });
-    this.xboxBtn.on('pointerover', () => {
-      this.xboxBtn.setAlpha(0.7);
-    });
-    this.xboxBtn.on('pointerout', () => {
-      this.xboxBtn.setAlpha(1);
-    });
 
     for (let i = 0; i < myPokemons.length; i++) {
       if (myPokemons[i].partySlot >= 0) {
@@ -255,6 +250,11 @@ export class BoxUi extends Ui {
           break;
         case KEY.RIGHT:
           this.lastChoice = Math.min(endIndex, this.lastChoice + 1);
+          break;
+        case KEY.CANCEL:
+          this.mode.chnagePokemonSlot();
+          this.clean();
+          this.mode.popUiStack();
           break;
         case KEY.SELECT:
           this.mode.addUiStack('BoxModalUi', this.lastChoice);
