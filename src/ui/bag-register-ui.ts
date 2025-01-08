@@ -1,36 +1,40 @@
+import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, MAX_ITEM_SLOT } from '../managers';
-import { BagMode } from '../modes';
+import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 
 export class BagRegisterUi extends Ui {
+  private mode: OverworldMode;
   private bg!: Phaser.GameObjects.Image;
-  private mode: BagMode;
+  private bgContainer!: Phaser.GameObjects.Container;
   protected itemSlotContainer!: Phaser.GameObjects.Container;
   protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
   protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
   protected itemSlotDummys: Phaser.GameObjects.Image[] = [];
-  private cancelMark!: Phaser.GameObjects.Image;
   private targetItem: string = '000';
 
-  constructor(scene: InGameScene, mode: BagMode) {
+  constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
+    this.bgContainer = this.scene.add.container(0, 0);
     this.bg = addBackground(this.scene, TEXTURE.BLACK, width, height);
-    this.bg.setAlpha(0.5);
-    this.bg.setVisible(false);
+    this.bgContainer.add(this.bg);
+    this.bgContainer.setDepth(DEPTH.OVERWORLD_UI + 3);
+    this.bgContainer.setScrollFactor(0);
+    this.bgContainer.setAlpha(0.5);
+    this.bgContainer.setScale(2);
 
-    this.itemSlotContainer = this.scene.add.container(width / 8, height / 8 + 370);
+    this.itemSlotContainer = this.scene.add.container(width / 4, height / 4 + 710);
 
     for (let i = 0; i < MAX_ITEM_SLOT; i++) {
       const xPosition = i * (50 + 5);
@@ -47,21 +51,18 @@ export class BagRegisterUi extends Ui {
       this.itemSlotDummys.push(dummy);
     }
 
-    this.cancelMark = addImage(this.scene, TEXTURE.CANCEL, 9 * (50 + 5), 0);
-    this.itemSlotDummys.push(this.cancelMark);
-    this.itemSlotContainer.add(this.cancelMark);
+    this.itemSlotContainer.setDepth(DEPTH.OVERWORLD_UI + 4);
+    this.itemSlotContainer.setScrollFactor(0);
+    this.itemSlotContainer.setScale(2);
 
     this.itemSlotContainer.setVisible(false);
-
-    ui.add(this.bg);
-    ui.add(this.itemSlotContainer);
+    this.bgContainer.setVisible(false);
   }
 
   show(data?: any): void {
     this.targetItem = data.choice;
-    this.bg.setVisible(true);
     this.itemSlotContainer.setVisible(true);
-    this.cancelMark.setVisible(true);
+    this.bgContainer.setVisible(true);
 
     if (data.isRemove) {
       const playerItemManager = this.mode.getPlayerItemManager();
@@ -76,8 +77,8 @@ export class BagRegisterUi extends Ui {
   }
 
   clean(): void {
-    this.bg.setVisible(false);
     this.itemSlotContainer.setVisible(false);
+    this.bgContainer.setVisible(false);
   }
 
   pause(onoff: boolean): void {
@@ -92,10 +93,10 @@ export class BagRegisterUi extends Ui {
     const keyboardMananger = KeyboardManager.getInstance();
     const playerItemManager = this.mode.getPlayerItemManager();
     const myItemSlots = playerItemManager.getMyItemSlots();
-    const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
     let startIndex = 0;
-    let endIndex = MAX_ITEM_SLOT;
+    let endIndex = MAX_ITEM_SLOT - 1;
     let choice = startIndex;
 
     let idx = 0;
@@ -119,37 +120,33 @@ export class BagRegisterUi extends Ui {
         case KEY.RIGHT:
           choice = Math.min(endIndex, choice + 1);
           break;
+        case KEY.CANCEL:
+          this.itemSlotDummys[choice].setTexture(TEXTURE.BLANK);
+          choice = 0;
+          this.clean();
+          this.mode.popUiStack();
+          break;
         case KEY.SELECT:
-          if (choice === 9) {
-            this.clean();
-            this.mode.popUiStack();
-          } else {
-            for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-              if (myItemSlots[i] === this.targetItem) {
-                this.itemSlotIcons[i].setTexture(`item000`).setVisible(false);
-                playerItemManager.restMyItemSlot(i, this.targetItem);
-                break;
-              }
+          for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+            if (myItemSlots[i] === this.targetItem) {
+              this.itemSlotIcons[i].setTexture(`item000`).setVisible(false);
+              playerItemManager.restMyItemSlot(i, this.targetItem);
+              break;
             }
-
-            if (myItemSlots[choice] !== '000') {
-              playerItemManager.restMyItemSlot(choice, playerItemManager.getMyItemSlots()[choice]);
-            }
-
-            this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
-            playerItemManager.setMyItemSlot(choice, this.targetItem);
           }
+
+          if (myItemSlots[choice] !== '000') {
+            playerItemManager.restMyItemSlot(choice, playerItemManager.getMyItemSlots()[choice]);
+          }
+
+          this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
+          playerItemManager.setMyItemSlot(choice, this.targetItem);
           break;
       }
 
       if (choice !== prevChoice) {
         this.itemSlotDummys[prevChoice].setTexture(TEXTURE.BLANK);
-        this.cancelMark.setTexture(TEXTURE.CANCEL);
-        if (choice === 9) {
-          this.cancelMark.setTexture(TEXTURE.CANCEL_S);
-        } else {
-          this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
-        }
+        this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
       }
     });
     this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);

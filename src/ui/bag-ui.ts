@@ -1,21 +1,20 @@
 import { Item, items } from '../data/items';
 import { ANIMATION } from '../enums/animation';
+import { DEPTH } from '../enums/depth';
 import { ITEM } from '../enums/item';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, PlayerItemManager } from '../managers';
-import { BagMode } from '../modes';
+import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, createSprite, Ui } from './ui';
 
 export class BagUi extends Ui {
-  private mode: BagMode;
+  private mode: OverworldMode;
   private container: Phaser.GameObjects.Container[] = [];
   private bgContainer!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private xboxContainer!: Phaser.GameObjects.Container;
-  private xboxBtn!: Phaser.GameObjects.Image;
   private menuContainer!: Phaser.GameObjects.Container;
   private menu1Btn!: Phaser.GameObjects.Sprite;
   private menu2Btn!: Phaser.GameObjects.Sprite;
@@ -37,7 +36,7 @@ export class BagUi extends Ui {
   private lastVerticalChoice: number;
   private itemFilterResult!: [string, Item][];
 
-  constructor(scene: InGameScene, mode: BagMode) {
+  constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
 
@@ -46,7 +45,6 @@ export class BagUi extends Ui {
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
@@ -55,12 +53,7 @@ export class BagUi extends Ui {
     this.bgContainer.add(this.bg);
     this.bgContainer.setVisible(false);
 
-    this.xboxContainer = this.scene.add.container(width / 4, height / 4);
-    this.xboxBtn = addImage(this.scene, TEXTURE.XBOX, 453, -245);
-    this.xboxContainer.add(this.xboxBtn);
-    this.xboxContainer.setVisible(false);
-
-    this.menuContainer = this.scene.add.container(width / 4, height / 4);
+    this.menuContainer = this.scene.add.container(width / 2, height / 2);
     this.menu1Btn = createSprite(this.scene, TEXTURE.BAG1, -475, -180).setScale(1.5);
     this.menu2Btn = createSprite(this.scene, TEXTURE.BAG2, -475, +20).setScale(1.5);
     this.menu3Btn = createSprite(this.scene, TEXTURE.BAG3, -345, 0).setScale(1.5);
@@ -75,20 +68,20 @@ export class BagUi extends Ui {
     this.menuContainer.add(this.menu4Btn);
     this.menuContainer.setVisible(false);
 
-    this.boxContainer = this.scene.add.container(width / 4, height / 4);
+    this.boxContainer = this.scene.add.container(width / 2, height / 2);
     this.boxContainer.setVisible(false);
 
     this.container.push(this.bgContainer);
-    this.container.push(this.xboxContainer);
     this.container.push(this.menuContainer);
     this.container.push(this.boxContainer);
-
-    ui.add(this.container);
   }
 
   show(): void {
     for (const container of this.container) {
       container.setVisible(true);
+      container.setDepth(DEPTH.OVERWORLD_UI + 2);
+      container.setScale(2);
+      container.setScrollFactor(0);
     }
 
     this.scene.tweens.add({
@@ -113,10 +106,6 @@ export class BagUi extends Ui {
 
     this.cleanObj();
 
-    this.xboxBtn.off('pointerover');
-    this.xboxBtn.off('pointerout');
-    this.xboxBtn.off('pointerup');
-
     this.lastHorisontalChoice = 0;
     this.lastVerticalChoice = 0;
   }
@@ -125,82 +114,84 @@ export class BagUi extends Ui {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {
-    this.xboxBtn.off('pointerover');
-    this.xboxBtn.off('pointerout');
-    this.xboxBtn.off('pointerup');
-  }
+  block() {}
 
   unblock() {
-    const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+    const keyboardManager = KeyboardManager.getInstance();
+    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
     let horisontalChoice = this.lastHorisontalChoice;
     let verticalChoice = this.lastVerticalChoice;
 
+    // 필터된 아이템과 관련된 데이터 초기화
     this.itemFilterResult = this.filterItem(horisontalChoice);
     this.verticalEndIndex = this.itemFilterResult.length;
 
+    // 아이템 슬롯 상태 업데이트
     this.itemRegisterCheck(this.itemFilterResult);
 
+    // 초기 선택 텍스처 업데이트
     this.updateVerticalTexture(0, verticalChoice);
 
-    keyboardMananger.setAllowKey(keys);
-    keyboardMananger.setKeyDownCallback((key) => {
+    keyboardManager.setAllowKey(keys);
+
+    keyboardManager.setKeyDownCallback((key) => {
       const prevVerticalChoice = verticalChoice;
       const prevHorizontalChoice = horisontalChoice;
 
-      switch (key) {
-        case KEY.UP:
-          verticalChoice = Math.max(0, verticalChoice - 1);
-          break;
-        case KEY.DOWN:
-          verticalChoice = Math.min(this.verticalEndIndex - 1, verticalChoice + 1);
-          break;
-        case KEY.LEFT:
-          horisontalChoice = Math.max(0, horisontalChoice - 1) as 0 | 1 | 2 | 3;
-          break;
-        case KEY.RIGHT:
-          horisontalChoice = Math.min(this.menus.length - 1, horisontalChoice + 1) as 0 | 1 | 2 | 3;
-          break;
-        case KEY.SELECT:
-          this.lastHorisontalChoice = horisontalChoice;
+      try {
+        // 키 입력에 따른 선택 업데이트
+        switch (key) {
+          case KEY.UP:
+            verticalChoice = Math.max(0, verticalChoice - 1);
+            break;
+          case KEY.DOWN:
+            verticalChoice = Math.min(this.verticalEndIndex - 1, verticalChoice + 1);
+            break;
+          case KEY.LEFT:
+            horisontalChoice = Math.max(0, horisontalChoice - 1) as 0 | 1 | 2 | 3;
+            break;
+          case KEY.RIGHT:
+            horisontalChoice = Math.min(this.menus.length - 1, horisontalChoice + 1) as 0 | 1 | 2 | 3;
+            break;
+          case KEY.SELECT:
+            this.lastHorisontalChoice = horisontalChoice;
+            this.lastVerticalChoice = verticalChoice;
+
+            const targetItem = this.itemIcons[verticalChoice]?.texture.key;
+            if (targetItem) {
+              this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
+            }
+            break;
+          case KEY.CANCEL:
+            this.clean();
+            this.mode.popUiStack();
+            this.mode.chnageItemSlot();
+            break;
+        }
+
+        // 세로 선택 변경 시 텍스처 업데이트
+        if (verticalChoice !== prevVerticalChoice) {
+          this.updateVerticalTexture(prevVerticalChoice, verticalChoice);
           this.lastVerticalChoice = verticalChoice;
-          const targetItem = this.itemIcons[verticalChoice]?.texture.key;
-          if (targetItem) {
-            this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
-          }
-          return;
-      }
+        }
 
-      if (verticalChoice !== prevVerticalChoice) {
-        this.updateVerticalTexture(prevVerticalChoice, verticalChoice);
-        this.lastVerticalChoice = verticalChoice;
+        // 가로 선택 변경 시 텍스처 및 데이터 업데이트
+        if (horisontalChoice !== prevHorizontalChoice) {
+          verticalChoice = 0;
+          this.cleanObj();
+          this.openAnimations(prevHorizontalChoice, horisontalChoice);
+          this.itemFilterResult = this.filterItem(horisontalChoice);
+          this.verticalEndIndex = this.itemFilterResult.length;
+          this.itemRegisterCheck(this.itemFilterResult);
+          this.updateVerticalTexture(0, 0);
+          this.lastHorisontalChoice = horisontalChoice;
+        }
+      } catch (error) {
+        console.error(`Error handling key input: ${error}`);
       }
-
-      if (horisontalChoice !== prevHorizontalChoice) {
-        this.cleanObj();
-        this.openAnimations(prevHorizontalChoice, horisontalChoice);
-        this.itemFilterResult = this.filterItem(horisontalChoice);
-        this.verticalEndIndex = this.itemFilterResult.length;
-        this.itemRegisterCheck(this.itemFilterResult);
-        this.updateVerticalTexture(0, 0);
-        this.lastHorisontalChoice = horisontalChoice;
-      }
-    });
-
-    this.xboxBtn.setInteractive({ cursor: 'pointer' });
-    this.xboxBtn.on('pointerup', () => {
-      this.mode.changeOverworldMode();
-    });
-    this.xboxBtn.on('pointerover', () => {
-      this.xboxBtn.setAlpha(0.7);
-    });
-    this.xboxBtn.on('pointerout', () => {
-      this.xboxBtn.setAlpha(1);
     });
   }
-
   update(time: number, delta: number): void {}
 
   restoreLastState(): void {

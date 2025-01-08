@@ -9,7 +9,6 @@ export class OverworldUi extends Ui {
   private mode: OverworldMode;
   private overworldItemSlotUi: OverworldItemSlotUi;
   private overworldPokemonSlotUi: OverworldPokemonSlotUi;
-  private overworldMenuUi: OverworldMenuUi;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -17,25 +16,21 @@ export class OverworldUi extends Ui {
 
     this.overworldItemSlotUi = new OverworldItemSlotUi(scene, mode);
     this.overworldPokemonSlotUi = new OverworldPokemonSlotUi(scene, mode);
-    this.overworldMenuUi = new OverworldMenuUi(scene, mode);
   }
 
   setup(): void {
     this.overworldItemSlotUi.setup();
     this.overworldPokemonSlotUi.setup();
-    this.overworldMenuUi.setup();
   }
 
   show(data?: any): void {
     this.overworldItemSlotUi.show(data);
     this.overworldPokemonSlotUi.show();
-    this.overworldMenuUi.show();
   }
 
   clean(data?: any): void {
     this.overworldItemSlotUi.clean();
     this.overworldPokemonSlotUi.clean();
-    this.overworldMenuUi.clean();
   }
 
   pause(onoff: boolean, data?: any): void {
@@ -51,12 +46,10 @@ export class OverworldUi extends Ui {
   private blockInputs() {
     this.overworldItemSlotUi.pause(true);
     this.overworldPokemonSlotUi.pause(true);
-    this.overworldMenuUi.pause(true);
   }
 
   private unblockInputs() {
     this.overworldItemSlotUi.pause(false);
     this.overworldPokemonSlotUi.pause(false);
-    this.overworldMenuUi.pause(false);
   }
 }
