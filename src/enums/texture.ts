@@ -56,6 +56,7 @@ export const enum TEXTURE {
   MENU_CARD = 'menu_card',
   MENU_CHAT = 'menu_chat',
   MENU_DOLL = 'menu_doll',
+  MENU_TITLE = 'menu_title',
   BG_BAG = 'bg_bag',
   XBOX = 'xbox',
   ITEM_BOX = 'item_box',
