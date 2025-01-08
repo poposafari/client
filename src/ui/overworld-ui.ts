@@ -43,6 +43,10 @@ export class OverworldUi extends Ui {
     this.overworldItemSlotUi.updateItemSlotUi();
   }
 
+  updatePokemonSlotUi() {
+    this.overworldPokemonSlotUi.update();
+  }
+
   private blockInputs() {
     this.overworldItemSlotUi.pause(true);
     this.overworldPokemonSlotUi.pause(true);

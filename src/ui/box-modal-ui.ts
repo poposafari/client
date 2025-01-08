@@ -1,58 +1,61 @@
 import i18next from 'i18next';
 import { TEXTURE } from '../enums/texture';
-import { BagMode, BoxMode } from '../modes';
+import { BoxMode, OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
+import { DEPTH } from '../enums/depth';
 
 export class BoxModalUi extends Ui {
+  private bgContainer!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private mode: BoxMode;
+  private mode: OverworldMode;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
   private choiceDummys: Phaser.GameObjects.Image[] = [];
   private registerText!: Phaser.GameObjects.Text;
   private data!: any;
 
-  constructor(scene: InGameScene, mode: BoxMode) {
+  constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
+    this.bgContainer = this.scene.add.container(0, 0);
     this.bg = addBackground(this.scene, TEXTURE.BLACK, width, height);
-    this.bg.setAlpha(0.5);
-    this.bg.setVisible(false);
+    this.bgContainer.add(this.bg);
+    this.bgContainer.setDepth(DEPTH.OVERWORLD_UI + 3);
+    this.bgContainer.setScrollFactor(0);
+    this.bgContainer.setAlpha(0.5);
+    this.bgContainer.setScale(2);
+    this.bgContainer.setVisible(false);
 
-    this.choiceContainer = this.scene.add.container(width / 4 + 390, height / 4 + 180);
+    this.choiceContainer = this.scene.add.container(width / 2 + 780, height / 2 + 360);
     const registerBtn = addImage(this.scene, TEXTURE.CHOICE, 0, 0);
     this.registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
     const cancelBtn = addImage(this.scene, TEXTURE.CHOICE, 0, +50);
     const cancelText = addText(this.scene, -60, +50, i18next.t('sys:cancel'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
-
     this.choiceBtn.push(registerBtn);
     this.choiceBtn.push(cancelBtn);
-
     this.choiceContainer.add(this.choiceBtn);
     this.choiceContainer.add(this.registerText);
     this.choiceContainer.add(cancelText);
-
+    this.choiceContainer.setDepth(DEPTH.OVERWORLD_UI + 4);
+    this.choiceContainer.setScrollFactor(0);
+    this.choiceContainer.setScale(2);
     this.choiceContainer.setVisible(false);
-
-    ui.add(this.bg);
-    ui.add(this.choiceContainer);
   }
 
   show(data?: any): void {
     this.data = data;
-    this.bg.setVisible(true);
     this.choiceContainer.setVisible(true);
+    this.bg.setVisible(true);
 
     this.pause(false);
   }
@@ -74,13 +77,13 @@ export class BoxModalUi extends Ui {
     const keyboardMananger = KeyboardManager.getInstance();
     const playerPokemonManager = this.mode.getPlayerPokemonManager();
     const myPokemons = playerPokemonManager.getMyPokemons();
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
 
     let startIndex = 0;
     let endIndex = 1;
     let choice = startIndex;
 
-    this.bg.setVisible(true);
+    this.bgContainer.setVisible(true);
 
     this.choiceBtn[choice].setTexture(TEXTURE.CHOICE);
 

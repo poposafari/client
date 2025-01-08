@@ -113,10 +113,11 @@ export class OverworldMenuUi extends Ui {
             break;
           case KEY.SELECT:
             const texture = this.MENU_LIST_ICON[choice].split('_')[1];
-            console.log(texture);
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
+            // console.log(texture);
             if (texture === 'box') {
+              this.mode.addUiStackOverlap('BoxUi');
             } else if (texture === 'bag') {
-              this.dummys[choice].setTexture(TEXTURE.BLANK);
               this.mode.addUiStackOverlap('BagUi');
             }
             break;
