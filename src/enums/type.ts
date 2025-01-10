@@ -4,6 +4,7 @@ export const enum TYPE {
   WATER,
   ELECTRIC,
   GRASS,
+  ICE,
   FIGHT,
   POISON,
   GROUND,
