@@ -371,9 +371,7 @@ export class PlayerInfoManager {
   private nickname!: string;
   private posX!: number;
   private posY!: number;
-  private lastDirectrion!: DIRECTION;
-  private lastFollowPokemonDirectrion!: DIRECTION;
-  private lastStatus!: PLAYER_STATUS;
+  private lastOverworld!: string;
   private followPokemon!: number;
   private fpPosX!: number;
   private fpPosY!: number;
@@ -391,9 +389,7 @@ export class PlayerInfoManager {
     this.avatarType = 4;
     this.posX = 4;
     this.posY = 4;
-    this.lastDirectrion = DIRECTION.DOWN;
-    this.lastFollowPokemonDirectrion = DIRECTION.DOWN;
-    this.lastStatus = PLAYER_STATUS.WALK;
+    this.lastOverworld = '000';
     this.followPokemon = -1;
     this.fpPosX = 4;
     this.fpPosY = 3;
@@ -412,9 +408,6 @@ export class PlayerInfoManager {
         x: this.fpPosX,
         y: this.fpPosY,
       },
-      lastDirection: this.lastDirectrion,
-      lastFollowPokemonDirectrion: this.lastFollowPokemonDirectrion,
-      lastStatus: this.lastStatus,
     };
   }
 
@@ -452,13 +445,5 @@ export class PlayerInfoManager {
 
   setFollowPokemonPosY(y: number) {
     this.fpPosY = y;
-  }
-
-  setLastDirection(direction: DIRECTION) {
-    this.lastDirectrion = direction;
-  }
-
-  setFollowPokemonLastDirection(direction: DIRECTION) {
-    this.lastFollowPokemonDirectrion = direction;
   }
 }
