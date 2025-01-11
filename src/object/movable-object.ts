@@ -240,12 +240,10 @@ export class MovableObject extends BaseObject {
       const playerInfoManager = PlayerInfoManager.getInstance();
       playerInfoManager.setPosX(this.getTilePos().x);
       playerInfoManager.setPosY(this.getTilePos().y);
-      playerInfoManager.setLastDirection(this.lastDirection);
     } else if (objType === OBJECT.PET) {
       const playerInfoManager = PlayerInfoManager.getInstance();
       playerInfoManager.setFollowPokemonPosX(this.getTilePos().x);
       playerInfoManager.setFollowPokemonPosY(this.getTilePos().y);
-      playerInfoManager.setFollowPokemonLastDirection(this.lastDirection);
     }
   }
 }
