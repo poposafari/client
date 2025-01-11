@@ -15,7 +15,6 @@ export class PetObject extends MovableObject {
 
     const playerInfoManager = PlayerInfoManager.getInstance();
     const playerPokemonManager = PlayerPokemonManager.getInstance();
-    this.startAnmation(`pokemon_overworld${playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon())}_${playerInfoManager.getInfo().lastFollowPokemonDirectrion}`);
   }
 
   move(player: PlayerObject) {
