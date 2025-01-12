@@ -173,6 +173,7 @@ export class PlayerPokemonManager {
   }
 
   init() {
+    //TODO: axios로 데이터를 받아와야 한다.
     for (let i = 0; i < MAX_PARTY_SLOT; i++) {
       this.myPokemonSlots.push(-1);
     }
@@ -269,6 +270,8 @@ export class PlayerItemManager {
   }
 
   init() {
+    //TODO: axios로 데이터를 받아와야 한다.
+
     for (let i = 0; i < MAX_ITEM_SLOT; i++) {
       this.myItemSlots.push('000');
     }
@@ -371,7 +374,7 @@ export class PlayerInfoManager {
   private nickname!: string;
   private posX!: number;
   private posY!: number;
-  private lastOverworld!: string;
+  private currentOverworld!: string;
   private followPokemon!: number;
   private fpPosX!: number;
   private fpPosY!: number;
@@ -384,12 +387,14 @@ export class PlayerInfoManager {
   }
 
   init() {
+    //TODO: axios로 데이터를 받아와야 한다.
+
     this.gender = 'girl';
     this.nickname = '운영자';
     this.avatarType = 4;
     this.posX = 4;
     this.posY = 4;
-    this.lastOverworld = '000';
+    this.currentOverworld = '000';
     this.followPokemon = -1;
     this.fpPosX = 4;
     this.fpPosY = 3;
@@ -408,6 +413,7 @@ export class PlayerInfoManager {
         x: this.fpPosX,
         y: this.fpPosY,
       },
+      currentOverworld: this.currentOverworld,
     };
   }
 
@@ -445,5 +451,9 @@ export class PlayerInfoManager {
 
   setFollowPokemonPosY(y: number) {
     this.fpPosY = y;
+  }
+
+  setCurrentOverworld(overworld: string) {
+    this.currentOverworld = overworld;
   }
 }
