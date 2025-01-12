@@ -6,7 +6,6 @@ import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { RegisterUi } from './ui/register-ui';
-import { LabOverworld } from './ui/lab-overworld';
 import { TitleUi } from './ui/title-ui';
 import { BagUi } from './ui/bag-ui';
 import { BagModalUi } from './ui/bag-modal-ui';
@@ -20,6 +19,8 @@ import { PlayerObject } from './object/player-object';
 import { OverworldUi } from './ui/overworld-ui';
 import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
+import { Overworld000 } from './ui/overworld-000';
+import { OVERWORLD_TYPE } from './enums/overworld-type';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -147,7 +148,7 @@ export class OverworldMode extends Mode {
   }
 
   init(): void {
-    this.uis.push(new LabOverworld(this.scene, this));
+    this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
@@ -170,7 +171,7 @@ export class OverworldMode extends Mode {
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
 
     this.addUiStackOverlap('OverworldUi', data);
-    this.addUiStackOverlap('LabOverworld', data);
+    this.addUiStackOverlap('Overworld000', data);
   }
 
   exit(): void {

@@ -8,25 +8,25 @@ import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { Ui } from './ui';
+import { addMap, Ui } from './ui';
 import { Message } from '../interface/sys';
+import { OVERWORLD_TYPE } from '../enums/overworld-type';
+import { TEXTURE } from '../enums/texture';
 
 export class Overworld extends Ui {
   private mode!: OverworldMode;
+  private type!: OVERWORLD_TYPE;
   protected map!: Phaser.Tilemaps.Tilemap;
   protected player!: PlayerObject;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
   private sysBlock!: boolean;
   private isMessageActive: boolean = false;
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
     super(scene);
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.mode = mode;
-  }
-
-  getMode() {
-    return this.mode;
+    this.type = type;
   }
 
   setup(): void {}
@@ -136,6 +136,18 @@ export class Overworld extends Ui {
       .getSprite()
       .setTexture(`pokemon_overworld${pokedex}`)
       .setVisible(pokedex !== '000' ? true : false);
+  }
+
+  getType() {
+    return this.type;
+  }
+
+  setMap(mapTexture: TEXTURE) {
+    this.map = addMap(this.scene, mapTexture);
+  }
+
+  getMap() {
+    return this.map;
   }
 
   private useItem(slotIdx: number) {
