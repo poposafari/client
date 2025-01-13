@@ -13,6 +13,11 @@ import { Message } from '../interface/sys';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 
+export interface InitPos {
+  x: number;
+  y: number;
+}
+
 export class Overworld extends Ui {
   private mode!: OverworldMode;
   private type!: OVERWORLD_TYPE;
@@ -31,10 +36,10 @@ export class Overworld extends Ui {
 
   setup(): void {}
 
-  show(): void {
+  show(data: InitPos): void {
+    const playerPos = data;
     const playerInfo = PlayerInfoManager.getInstance().getInfo();
-
-    this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerInfo.pos.x, playerInfo.pos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
+    this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerPos.x, playerPos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
 
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
@@ -72,7 +77,6 @@ export class Overworld extends Ui {
 
       switch (key) {
         case KEY.SELECT:
-          console.log(this.player.getStatus());
           const obj = this.player.getObjectInFront(this.player.getLastDirection());
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
             const objTextureKey = obj.getSprite().texture.key;
@@ -136,6 +140,10 @@ export class Overworld extends Ui {
       .getSprite()
       .setTexture(`pokemon_overworld${pokedex}`)
       .setVisible(pokedex !== '000' ? true : false);
+  }
+
+  getMode() {
+    return this.mode;
   }
 
   getType() {

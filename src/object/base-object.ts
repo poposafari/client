@@ -17,6 +17,8 @@ export class BaseObject {
   private sprite: Phaser.GameObjects.Sprite;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
+  private readonly offsetX = TILE_SIZE / 2;
+  private readonly offsetY = TILE_SIZE;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string) {
     this.scene = scene;
@@ -24,17 +26,21 @@ export class BaseObject {
 
     this.sprite.setOrigin(0.5, 1);
 
-    const offsetX = TILE_SIZE / 2;
-    const offsetY = TILE_SIZE;
-
     this.tilePos = new Phaser.Math.Vector2(x, y);
 
     this.nickname = addTextBackground(scene, this.getPosition().x, this.getPosition().y, nickname, TEXTSTYLE.MESSAGE_WHITE);
 
-    this.sprite.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE);
-    this.nickname.setPosition(this.tilePos.x * TILE_SIZE * MAP_SCALE + offsetX * MAP_SCALE, this.tilePos.y * TILE_SIZE * MAP_SCALE + offsetY * MAP_SCALE - 100);
+    this.initSetPosition(this.tilePos.x, this.tilePos.y);
     this.nickname.setDepth(DEPTH.NICKNAME);
     this.setDepth(this.tilePos.y);
+  }
+
+  initSetPosition(posX: number, posY: number) {
+    const retX = posX * TILE_SIZE * MAP_SCALE + this.offsetX * MAP_SCALE;
+    const retY = posY * TILE_SIZE * MAP_SCALE + this.offsetY * MAP_SCALE;
+
+    this.sprite.setPosition(retX, retY);
+    this.nickname.setPosition(retX, retY - 100);
   }
 
   setType(type: OBJECT) {
@@ -59,6 +65,10 @@ export class BaseObject {
       this.nickname.destroy();
       this.nickname = null!;
     }
+  }
+
+  setVisible(onoff: boolean) {
+    this.sprite.setVisible(onoff ? true : false);
   }
 
   getSprite() {

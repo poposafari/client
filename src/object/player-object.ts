@@ -13,18 +13,18 @@ export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, type: OBJECT) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
     const playerPokemonManager = PlayerPokemonManager.getInstance();
     const playerInfoManager = PlayerInfoManager.getInstance();
     const playerInfo = playerInfoManager.getInfo();
 
-    super(scene, texture, x, y, map, nickname);
+    super(scene, texture, x, y, map!, nickname);
 
     this.setStatus(PLAYER_STATUS.WALK);
     this.setType(type);
 
     const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
-    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.fpPos.x, playerInfo.fpPos.y, map, '');
+    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.fpPos.x, playerInfo.fpPos.y, map!, '');
     const petSprite = this.pet.getSprite();
     petSprite.setVisible(followPokedex !== '000' ? true : false);
     petSprite.setScale(1.5);
