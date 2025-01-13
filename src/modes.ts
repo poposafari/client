@@ -15,7 +15,6 @@ import { BoxModalUi } from './ui/box-modal-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
 import { SeasonUi } from './ui/season-ui';
 import { Overworld } from './ui/overworld';
-import { PlayerObject } from './object/player-object';
 import { OverworldUi } from './ui/overworld-ui';
 import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
@@ -141,7 +140,6 @@ export class OverworldMode extends Mode {
   private playerInfoManager!: PlayerInfoManager;
   private playerItemManager!: PlayerItemManager;
   private playerPokemonManager!: PlayerPokemonManager;
-  private player!: PlayerObject;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
@@ -183,10 +181,6 @@ export class OverworldMode extends Mode {
 
   update(time: number, delta: number): void {
     this.getUiStackTop().update(time, delta);
-  }
-
-  getPlayer() {
-    if (this.player) return this.player;
   }
 
   changeFollowPokemon(pokedex: string) {
@@ -259,80 +253,5 @@ export class OverworldMode extends Mode {
       overworldUi.pause(onoff ? true : false);
       overworld.pause(onoff ? true : false);
     }
-  }
-}
-
-// export class BagMode extends Mode {
-//   private playerItemManager!: PlayerItemManager;
-
-//   constructor(scene: InGameScene, manager: ModeManager) {
-//     super(scene, manager);
-//   }
-
-//   init(): void {
-//     this.uis.push(new BagUi(this.scene, this));
-//     this.uis.push(new BagModalUi(this.scene, this));
-//     this.uis.push(new BagRegisterUi(this.scene, this));
-
-//     for (const ui of this.uis) {
-//       ui.setup();
-//     }
-//   }
-
-//   enter(data?: any): void {
-//     this.playerItemManager = PlayerItemManager.getInstance();
-//     this.addUiStack('BagUi');
-//   }
-
-//   exit(): void {
-//     this.getUiStackTop().clean();
-//   }
-
-//   update(time: number, delta: number): void {}
-
-//   getPlayerItemManager() {
-//     if (this.playerItemManager) return this.playerItemManager;
-
-//     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-//   }
-
-//   changeOverworldMode() {
-//     this.manager.changeMode(MODE.OVERWORLD);
-//   }
-// }
-
-export class BoxMode extends Mode {
-  private playerPokemonManager!: PlayerPokemonManager;
-
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
-  }
-
-  init(): void {
-    for (const ui of this.uis) {
-      ui.setup();
-    }
-  }
-
-  enter(data?: any): void {
-    this.playerPokemonManager = PlayerPokemonManager.getInstance();
-
-    this.addUiStack('BoxUi', data);
-  }
-
-  exit(): void {
-    this.getUiStackTop().clean();
-  }
-
-  update(time: number, delta: number): void {}
-
-  getPlayerPokemonManager() {
-    if (this.playerPokemonManager) return this.playerPokemonManager;
-
-    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-  }
-
-  changeOverworldMode() {
-    this.manager.changeMode(MODE.OVERWORLD);
   }
 }
