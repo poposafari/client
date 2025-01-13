@@ -5,6 +5,7 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
+import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Plaza } from './plaza';
 
@@ -25,8 +26,11 @@ export class Overworld000 extends Plaza {
   }
 
   show(): void {
+    const mode = this.getMode();
+    const playerInfo = mode.getPlayerInfoManager().getInfo();
+
     this.initMap();
-    super.show();
+    super.show({ x: playerInfo.pos.x, y: playerInfo.pos.y });
 
     for (const container of this.container) {
       container.setVisible(true);
@@ -34,8 +38,6 @@ export class Overworld000 extends Plaza {
 
     const npc_TaxiDriver = new NpcObject(this.scene, `npc000`, 8, 8, this.map, '택시 드라이버', OBJECT.NPC);
     this.npcs.push(npc_TaxiDriver);
-
-    super.show();
   }
 
   clean(): void {

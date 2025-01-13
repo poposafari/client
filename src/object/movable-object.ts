@@ -36,12 +36,9 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const playerInfo = playerInfoManager.getInfo();
-
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string) {
     super(scene, texture, x, y, nickname);
-    this.map = map;
+    this.map = map!;
 
     this.stopAnmation(3);
   }
@@ -245,5 +242,10 @@ export class MovableObject extends BaseObject {
       playerInfoManager.setFollowPokemonPosX(this.getTilePos().x);
       playerInfoManager.setFollowPokemonPosY(this.getTilePos().y);
     }
+  }
+
+  setMap(map: Phaser.Tilemaps.Tilemap) {
+    if (!map) return;
+    this.map = map;
   }
 }

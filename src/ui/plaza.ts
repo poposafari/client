@@ -1,7 +1,7 @@
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { Overworld } from './overworld';
+import { InitPos, Overworld } from './overworld';
 
 export class Plaza extends Overworld {
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
@@ -12,8 +12,8 @@ export class Plaza extends Overworld {
     super.setup();
   }
 
-  show(): void {
-    super.show();
+  show(data: InitPos): void {
+    super.show(data);
   }
 
   clean(): void {
