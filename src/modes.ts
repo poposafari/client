@@ -20,6 +20,7 @@ import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
+import { Overworld006 } from './ui/overworld-006';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -147,6 +148,7 @@ export class OverworldMode extends Mode {
 
   init(): void {
     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
+    this.uis.push(new Overworld006(this.scene, this, OVERWORLD_TYPE.SAFARI));
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
@@ -202,14 +204,6 @@ export class OverworldMode extends Mode {
     if (ui instanceof OverworldUi) {
       ui.updatePokemonSlotUi();
     }
-  }
-
-  changeBagMode() {
-    this.manager.changeMode(MODE.BAG);
-  }
-
-  changeBoxMode() {
-    this.manager.changeMode(MODE.BOX);
   }
 
   changeTitleMode() {
