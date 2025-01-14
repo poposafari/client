@@ -81,8 +81,8 @@ export class Overworld extends Ui {
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
             const objKey = obj.getSprite().texture.key;
             this.isMessageActive = true;
-            await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'question'));
-            this.handleNpcPostScriptAction(objKey, obj.getLocation());
+            const messageResult = await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'question'));
+            this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
             this.isMessageActive = false;
           }
           break;
@@ -174,12 +174,16 @@ export class Overworld extends Ui {
     }
   }
 
-  private handleNpcPostScriptAction(npcKey: string, location: OVERWORLD_TYPE) {
+  private handleNpcPostScriptAction(npcKey: string, location: OVERWORLD_TYPE, msgResult: boolean) {
     switch (npcKey) {
       case 'npc000':
-        if (location === OVERWORLD_TYPE.PLAZA) {
+        console.log(msgResult);
+        if (location === OVERWORLD_TYPE.PLAZA && !msgResult) {
           this.mode.pauseOverworldSystem(true);
           this.mode.addUiStackOverlap('OverworldTaxiListUi');
+        }
+        if (msgResult) {
+          this.mode.changeOverworld('000');
         }
         return;
     }

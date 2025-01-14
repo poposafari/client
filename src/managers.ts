@@ -41,15 +41,16 @@ export class MessageManager {
     return MessageManager.instance;
   }
 
-  async show(currentUi: Ui, messages: Message[]): Promise<void> {
-    if (this.isMessageAcive) return;
+  async show(currentUi: Ui, messages: Message[]): Promise<boolean> {
+    let ret = false;
+    if (this.isMessageAcive) return ret;
     this.isMessageAcive = true;
 
     try {
       for (const msg of messages) {
         const result = await this.messageUi.show(msg);
-        if (msg.format === 'question') {
-          console.log(`User selected: ${result}`);
+        if (msg.format === 'question' && result) {
+          ret = result;
         }
       }
     } finally {
@@ -57,6 +58,8 @@ export class MessageManager {
       this.messageUi.pause(true);
       currentUi.pause(false);
     }
+
+    return ret;
   }
 }
 

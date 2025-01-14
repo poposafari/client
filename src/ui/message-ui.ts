@@ -70,7 +70,7 @@ export class MessageUi extends Ui {
     this.messageContainer.setScrollFactor(0);
   }
 
-  async show(data: Message): Promise<string | void> {
+  async show(data: Message): Promise<boolean | void> {
     const text = data.content;
     let textArray = text.split('');
     let index = 0;
@@ -113,7 +113,7 @@ export class MessageUi extends Ui {
     });
   }
 
-  private showQuestion(resolve: (value: string) => void): void {
+  private showQuestion(resolve: (value: boolean) => void): void {
     this.questionContainer.setVisible(true);
 
     this.questionDummys[this.selectedIndex].setTexture(TEXTURE.ARROW_B_R);
@@ -134,8 +134,8 @@ export class MessageUi extends Ui {
           break;
         case KEY.SELECT:
           this.clean();
+          resolve(this.selectedIndex === 0 ? true : false);
           this.selectedIndex = 0;
-          resolve(this.selectedIndex === 0 ? 'accept' : 'reject');
           break;
       }
 
