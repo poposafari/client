@@ -11,6 +11,7 @@ import { Mode } from './mode';
 import { LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
+import { QuestionUi } from './ui/question-ui';
 import { Ui } from './ui/ui';
 
 interface Modes {
@@ -22,12 +23,15 @@ export class MessageManager {
   private static instance: MessageManager;
   private scene!: InGameScene;
   private messageUi!: MessageUi;
+  private questionUi!: QuestionUi;
   private isMessageAcive: boolean = false;
 
   initialize(scene: InGameScene): void {
     this.scene = scene;
     this.messageUi = new MessageUi(scene);
     this.messageUi.setup();
+    this.questionUi = new QuestionUi(scene);
+    this.questionUi.setup();
   }
 
   static getInstance(): MessageManager {
@@ -43,7 +47,10 @@ export class MessageManager {
 
     try {
       for (const msg of messages) {
-        await this.messageUi.show(msg);
+        const result = await this.messageUi.show(msg);
+        if (msg.format === 'question') {
+          console.log(`User selected: ${result}`);
+        }
       }
     } finally {
       this.isMessageAcive = false;
@@ -387,11 +394,11 @@ export class PlayerInfoManager {
   init() {
     //TODO: axios로 데이터를 받아와야 한다.
 
-    this.gender = 'girl';
+    this.gender = 'boy';
     this.nickname = '운영자';
-    this.avatarType = 4;
-    this.posX = 4;
-    this.posY = 4;
+    this.avatarType = 2;
+    this.posX = 10;
+    this.posY = 10;
     this.currentOverworld = '000';
     this.followPokemon = -1;
     this.fpPosX = 4;

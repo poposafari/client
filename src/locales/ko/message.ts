@@ -12,4 +12,5 @@ export const message: TranslationDefault = {
   newgameNicknameEmpty: '닉네임을 입력해주세요.\n',
   npc000_welcome: '안녕하십니까! 택시 드라이버입니다.\n어디로 모실까요?\n',
   npc000_reject: '티켓이 부족하시는데요.',
+  npc000_question: '다시 돌아가실래요?',
 };

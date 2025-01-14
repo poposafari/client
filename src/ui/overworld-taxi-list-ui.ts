@@ -162,7 +162,11 @@ export class OverworldTaxiListUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            console.log(`Selected: ${this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice]}`);
+            const overworld = this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice];
+            this.clean();
+            this.mode.pauseOverworldSystem(true);
+            this.mode.popUiStack();
+            this.mode.changeOverworld(overworld);
             break;
           case KEY.CANCEL:
             this.clean();
