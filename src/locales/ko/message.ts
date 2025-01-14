@@ -10,7 +10,7 @@ export const message: TranslationDefault = {
   newgameWelcome2: '이 게임은 수익을 창출하지 않으며 Pokémon 및 사용된\n리소스에 대한 소유권을 주장하지 않습니다.\n',
   newgameWelcome3: '당신은 누구인가요?\n',
   newgameNicknameEmpty: '닉네임을 입력해주세요.\n',
-  npc000_welcome: '안녕하십니까! 택시 드라이버입니다.\n어디로 모실까요?\n',
-  npc000_reject: '티켓이 부족하시는데요.',
-  npc000_question: '다시 돌아가실래요?',
+  npc000_welcome: '택시 드라이버: 안녕하십니까! 택시 드라이버입니다.\n어디로 모실까요?\n',
+  npc000_reject: '택시 드라이버: 티켓이 부족하시는데요.',
+  npc000_question: '택시 드라이버: 마을로 돌아가시겠습니까?',
 };
