@@ -27,7 +27,7 @@ export const menu: TranslationDefault = {
   overworld_003: '오버월드003',
   overworld_004: '오버월드001',
   overworld_005: '오버월드002',
-  overworld_006: '오버월드003',
+  overworld_006: '테스트 숲',
   overworld_007: '오버월드001',
   overworld_008: '오버월드002',
   overworld_009: '오버월드003',
@@ -42,4 +42,6 @@ export const menu: TranslationDefault = {
   menuCloset: '옷장',
   menuCancel: '닫는다',
   menuTitle: '타이틀로 이동',
+  accept: '예',
+  reject: '아니오',
 };

@@ -21,6 +21,7 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
+import { QuestionUi } from './ui/question-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -204,6 +205,13 @@ export class OverworldMode extends Mode {
     if (ui instanceof OverworldUi) {
       ui.updatePokemonSlotUi();
     }
+  }
+
+  changeOverworld(overworldKey: string) {
+    this.getUiStackTop().clean();
+    this.popUiStack();
+
+    this.addUiStackOverlap(`Overworld${overworldKey}`);
   }
 
   changeTitleMode() {

@@ -79,11 +79,10 @@ export class Overworld extends Ui {
         case KEY.SELECT:
           const obj = this.player.getObjectInFront(this.player.getLastDirection());
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
-            const objTextureKey = obj.getSprite().texture.key;
-            obj.reaction(this.player.getLastDirection());
+            const objKey = obj.getSprite().texture.key;
             this.isMessageActive = true;
-            await this.mode.startMessage(this.getNpcScripts(objTextureKey, 0));
-            this.handleNpcPostScriptAction(objTextureKey);
+            await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'question'));
+            this.handleNpcPostScriptAction(objKey, obj.getLocation());
             this.isMessageActive = false;
           }
           break;
@@ -175,24 +174,13 @@ export class Overworld extends Ui {
     }
   }
 
-  private getNpcScripts(npcKey: string, type: 0 | 1 | 2): Message[] {
-    let typeStr = 'welcome';
-    if (type === 1) typeStr = 'agree';
-    if (type === 2) typeStr = 'reject';
-
+  private handleNpcPostScriptAction(npcKey: string, location: OVERWORLD_TYPE) {
     switch (npcKey) {
       case 'npc000':
-        return [{ type: 'default', format: 'talk', content: i18next.t(`message:${npcKey}_${typeStr}`) }];
-      default:
-        return [];
-    }
-  }
-
-  private handleNpcPostScriptAction(npcKey: string) {
-    switch (npcKey) {
-      case 'npc000':
-        this.mode.pauseOverworldSystem(true);
-        this.mode.addUiStackOverlap('OverworldTaxiListUi');
+        if (location === OVERWORLD_TYPE.PLAZA) {
+          this.mode.pauseOverworldSystem(true);
+          this.mode.addUiStackOverlap('OverworldTaxiListUi');
+        }
         return;
     }
   }

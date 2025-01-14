@@ -5,11 +5,10 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
-import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { Plaza } from './plaza';
+import { Safari } from './safari';
 
-export class Overworld000 extends Plaza {
+export class Overworld006 extends Safari {
   private layerContainer!: Phaser.GameObjects.Container;
   private foregroundContainer!: Phaser.GameObjects.Container;
   private container: Phaser.GameObjects.Container[] = [];
@@ -21,7 +20,7 @@ export class Overworld000 extends Plaza {
   }
 
   setup(): void {
-    this.setMap(TEXTURE.MAP_000);
+    this.setMap(TEXTURE.MAP_006);
     super.setup();
   }
 
@@ -30,22 +29,18 @@ export class Overworld000 extends Plaza {
     const playerInfo = mode.getPlayerInfoManager().getInfo();
 
     this.initMap();
-    super.show({ x: playerInfo.pos.x, y: playerInfo.pos.y });
+    super.show({ x: 15, y: 10 });
 
     for (const container of this.container) {
       container.setVisible(true);
     }
 
-    const npc_TaxiDriver = new NpcObject(this.scene, `npc000`, 8, 8, this.map, '택시 드라이버', OBJECT.NPC, this.getType());
+    const npc_TaxiDriver = new NpcObject(this.scene, `npc000`, 20, 10, this.map, '택시 드라이버', OBJECT.NPC, this.getType());
     this.npcs.push(npc_TaxiDriver);
   }
 
   clean(): void {
     super.clean();
-
-    for (const npc of this.npcs) {
-      npc.destroy();
-    }
   }
 
   private initMap() {
