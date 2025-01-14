@@ -20,7 +20,6 @@ export class Overworld006 extends Safari {
   }
 
   setup(): void {
-    this.setMap(TEXTURE.MAP_006);
     super.setup();
   }
 
@@ -41,9 +40,49 @@ export class Overworld006 extends Safari {
 
   clean(): void {
     super.clean();
+
+    // Remove and destroy all objects in the layerContainer
+    if (this.layerContainer) {
+      this.layerContainer.removeAll(true);
+      this.layerContainer.destroy();
+    }
+    this.layerContainer = null!; // Reset the reference
+
+    // Remove and destroy all objects in the foregroundContainer
+    if (this.foregroundContainer) {
+      this.foregroundContainer.removeAll(true);
+      this.foregroundContainer.destroy();
+    }
+    this.foregroundContainer = null!; // Reset the reference
+
+    // Destroy all layers and reset the array
+    if (this.layers) {
+      for (const layer of this.layers) {
+        if (layer) {
+          layer.destroy();
+        }
+      }
+    }
+    this.layers = []; // Reset the layers array
+
+    // Destroy all NPCs and clear the array
+    for (const npc of this.npcs) {
+      npc.destroy();
+    }
+    this.npcs = []; // Reset the NPCs array
+
+    // Clear the container array
+    this.container.forEach((cont) => {
+      if (cont) {
+        cont.removeAll(true);
+        cont.destroy();
+      }
+    });
+    this.container = []; // Reset the container array
   }
 
   private initMap() {
+    this.setMap(TEXTURE.MAP_006);
     const width = this.getWidth();
     const height = this.getHeight();
     const map = this.getMap();

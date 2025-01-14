@@ -242,9 +242,11 @@ export class OverworldMode extends Mode {
     this.pauseOverworldSystem(true);
 
     const message = MessageManager.getInstance();
-    await message.show(overworld, data);
+    const ret = await message.show(overworld, data);
 
     this.pauseOverworldSystem(false);
+
+    return ret;
   }
 
   pauseOverworldSystem(onoff: boolean) {
