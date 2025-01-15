@@ -12,6 +12,7 @@ import { addMap, Ui } from './ui';
 import { Message } from '../interface/sys';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
+import { NpcObject } from '../object/npc-object';
 
 export interface InitPos {
   x: number;
@@ -22,6 +23,11 @@ export class Overworld extends Ui {
   private mode!: OverworldMode;
   private type!: OVERWORLD_TYPE;
   protected map!: Phaser.Tilemaps.Tilemap;
+  protected layerContainer!: Phaser.GameObjects.Container;
+  protected foregroundContainer!: Phaser.GameObjects.Container;
+  protected container: Phaser.GameObjects.Container[] = [];
+  protected layers: Phaser.Tilemaps.TilemapLayer[] | null = [];
+  protected npcs: NpcObject[] = [];
   protected player!: PlayerObject;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
   private sysBlock!: boolean;
@@ -55,6 +61,40 @@ export class Overworld extends Ui {
     this.player.getPet().destroy();
     this.scene.cameras.main.stopFollow();
     this.scene.cameras.main.setScroll(0, 0);
+
+    if (this.layerContainer) {
+      this.layerContainer.removeAll(true);
+      this.layerContainer.destroy();
+    }
+    this.layerContainer = null!;
+
+    if (this.foregroundContainer) {
+      this.foregroundContainer.removeAll(true);
+      this.foregroundContainer.destroy();
+    }
+    this.foregroundContainer = null!;
+
+    if (this.layers) {
+      for (const layer of this.layers) {
+        if (layer) {
+          layer.destroy();
+        }
+      }
+    }
+    this.layers = [];
+
+    for (const npc of this.npcs) {
+      npc.destroy();
+    }
+    this.npcs = [];
+
+    this.container.forEach((cont) => {
+      if (cont) {
+        cont.removeAll(true);
+        cont.destroy();
+      }
+    });
+    this.container = [];
   }
 
   pause(onoff: boolean): void {
@@ -183,7 +223,7 @@ export class Overworld extends Ui {
           this.mode.addUiStackOverlap('OverworldTaxiListUi');
         }
         if (msgResult) {
-          this.mode.changeOverworld('000');
+          this.mode.moveToVillage();
         }
         return;
     }

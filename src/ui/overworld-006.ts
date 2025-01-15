@@ -6,15 +6,10 @@ import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
 import { InGameScene } from '../scenes/ingame-scene';
+import { InitPos } from './overworld';
 import { Safari } from './safari';
 
 export class Overworld006 extends Safari {
-  private layerContainer!: Phaser.GameObjects.Container;
-  private foregroundContainer!: Phaser.GameObjects.Container;
-  private container: Phaser.GameObjects.Container[] = [];
-  private layers: Phaser.Tilemaps.TilemapLayer[] | null = [];
-  private npcs: NpcObject[] = [];
-
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
     super(scene, mode, type);
   }
@@ -23,12 +18,15 @@ export class Overworld006 extends Safari {
     super.setup();
   }
 
-  show(): void {
+  show(pos: InitPos): void {
+    if (!pos) return;
+
     const mode = this.getMode();
     const playerInfo = mode.getPlayerInfoManager().getInfo();
 
     this.initMap();
-    super.show({ x: 15, y: 10 });
+
+    super.show({ x: pos.x, y: pos.y });
 
     for (const container of this.container) {
       container.setVisible(true);
@@ -40,45 +38,6 @@ export class Overworld006 extends Safari {
 
   clean(): void {
     super.clean();
-
-    // Remove and destroy all objects in the layerContainer
-    if (this.layerContainer) {
-      this.layerContainer.removeAll(true);
-      this.layerContainer.destroy();
-    }
-    this.layerContainer = null!; // Reset the reference
-
-    // Remove and destroy all objects in the foregroundContainer
-    if (this.foregroundContainer) {
-      this.foregroundContainer.removeAll(true);
-      this.foregroundContainer.destroy();
-    }
-    this.foregroundContainer = null!; // Reset the reference
-
-    // Destroy all layers and reset the array
-    if (this.layers) {
-      for (const layer of this.layers) {
-        if (layer) {
-          layer.destroy();
-        }
-      }
-    }
-    this.layers = []; // Reset the layers array
-
-    // Destroy all NPCs and clear the array
-    for (const npc of this.npcs) {
-      npc.destroy();
-    }
-    this.npcs = []; // Reset the NPCs array
-
-    // Clear the container array
-    this.container.forEach((cont) => {
-      if (cont) {
-        cont.removeAll(true);
-        cont.destroy();
-      }
-    });
-    this.container = []; // Reset the container array
   }
 
   private initMap() {
