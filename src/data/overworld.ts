@@ -6,6 +6,10 @@ export interface Overworld {
   description: string;
   consume: number;
   spawnTypes: TYPE[];
+  entryPos: {
+    x: number;
+    y: number;
+  };
 }
 
 export let overworlds: Record<string, Overworld> = {};
@@ -17,6 +21,10 @@ i18next.on('initialized', () => {
       description: 'TestRoom',
       consume: 1,
       spawnTypes: [TYPE.GRASS],
+      entryPos: {
+        x: 19,
+        y: 10,
+      },
     },
   };
 });

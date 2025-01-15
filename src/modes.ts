@@ -22,6 +22,7 @@ import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
 import { QuestionUi } from './ui/question-ui';
+import { getOverworldInfo } from './data/overworld';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -208,14 +209,24 @@ export class OverworldMode extends Mode {
   }
 
   changeOverworld(overworldKey: string) {
+    const overworld = getOverworldInfo(overworldKey);
+
+    if (!overworld) return;
+
     this.getUiStackTop().clean();
     this.popUiStack();
 
-    this.addUiStackOverlap(`Overworld${overworldKey}`);
+    this.addUiStackOverlap(`Overworld${overworldKey}`, { x: overworld.entryPos.x, y: overworld.entryPos.y });
   }
 
   changeTitleMode() {
     this.manager.changeMode(MODE.TITLE);
+  }
+
+  moveToVillage() {
+    this.getUiStackTop().clean();
+    this.popUiStack();
+    this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
   }
 
   getPlayerInfoManager() {
