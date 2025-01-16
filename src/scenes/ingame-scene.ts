@@ -169,22 +169,38 @@ export class InGameScene extends BaseScene {
 
       const rideUpB = [
         [rideFramesB[1], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0]],
         [rideFramesB[2], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0]],
       ];
 
       const rideDownB = [
         [rideFramesB[4], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3]],
         [rideFramesB[5], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3]],
       ];
 
       const rideLeftB = [
         [rideFramesB[7], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6]],
         [rideFramesB[8], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6]],
       ];
 
       const rideRightB = [
         [rideFramesB[10], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9]],
         [rideFramesB[11], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9]],
       ];
 
       createSpriteAnimation(this, boyMovementTexture, `${boyMovementTexture}_walk_up_1`, walkUpB[0]);
@@ -210,12 +226,28 @@ export class InGameScene extends BaseScene {
 
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_1`, rideUpB[0]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_2`, rideUpB[1]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_3`, rideUpB[2]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_4`, rideUpB[3]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_5`, rideUpB[4]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_up_6`, rideUpB[5]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_1`, rideDownB[0]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_2`, rideDownB[1]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_3`, rideDownB[2]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_4`, rideDownB[3]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_5`, rideDownB[4]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_down_6`, rideDownB[5]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_1`, rideLeftB[0]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_2`, rideLeftB[1]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_3`, rideLeftB[2]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_4`, rideLeftB[3]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_5`, rideLeftB[4]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_left_6`, rideLeftB[5]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_1`, rideRightB[0]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_2`, rideRightB[1]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_3`, rideRightB[2]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_4`, rideRightB[3]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_5`, rideRightB[4]);
+      createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_6`, rideRightB[5]);
 
       //girl
       const walkUpG = [
@@ -264,21 +296,25 @@ export class InGameScene extends BaseScene {
 
       const rideUpG = [
         [rideFramesG[1], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0]],
         [rideFramesG[2], rideFramesG[0]],
       ];
 
       const rideDownG = [
         [rideFramesG[4], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3]],
         [rideFramesG[5], rideFramesG[3]],
       ];
 
       const rideLeftG = [
         [rideFramesG[7], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6]],
         [rideFramesG[8], rideFramesG[6]],
       ];
 
       const rideRightG = [
         [rideFramesG[10], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9]],
         [rideFramesG[11], rideFramesG[9]],
       ];
 
@@ -305,12 +341,16 @@ export class InGameScene extends BaseScene {
 
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_1`, rideUpG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_2`, rideUpG[1]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_3`, rideUpG[2]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_1`, rideDownG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_2`, rideDownG[1]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_3`, rideDownG[2]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_1`, rideLeftG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_2`, rideLeftG[1]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_3`, rideLeftG[2]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_1`, rideRightG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_2`, rideRightG[1]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_3`, rideRightG[2]);
     }
   }
 }
