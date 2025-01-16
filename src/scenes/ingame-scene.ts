@@ -297,25 +297,37 @@ export class InGameScene extends BaseScene {
       const rideUpG = [
         [rideFramesG[1], rideFramesG[0]],
         [rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0]],
         [rideFramesG[2], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0]],
       ];
 
       const rideDownG = [
         [rideFramesG[4], rideFramesG[3]],
         [rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3]],
         [rideFramesG[5], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3]],
       ];
 
       const rideLeftG = [
         [rideFramesG[7], rideFramesG[6]],
         [rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6]],
         [rideFramesG[8], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6]],
       ];
 
       const rideRightG = [
         [rideFramesG[10], rideFramesG[9]],
         [rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9]],
         [rideFramesG[11], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9]],
       ];
 
       createSpriteAnimation(this, girlMovementTexture, `${girlMovementTexture}_walk_up_1`, walkUpG[0]);
@@ -342,15 +354,27 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_1`, rideUpG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_2`, rideUpG[1]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_3`, rideUpG[2]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_4`, rideUpG[3]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_5`, rideUpG[4]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_up_6`, rideUpG[5]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_1`, rideDownG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_2`, rideDownG[1]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_3`, rideDownG[2]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_4`, rideDownG[3]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_5`, rideDownG[4]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_down_6`, rideDownG[5]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_1`, rideLeftG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_2`, rideLeftG[1]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_3`, rideLeftG[2]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_4`, rideLeftG[3]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_5`, rideLeftG[4]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_left_6`, rideLeftG[5]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_1`, rideRightG[0]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_2`, rideRightG[1]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_3`, rideRightG[2]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_4`, rideRightG[3]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_5`, rideRightG[4]);
+      createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_6`, rideRightG[5]);
     }
   }
 }
