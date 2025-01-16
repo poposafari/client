@@ -80,9 +80,9 @@ export function createSpriteAnimation(scene: InGameScene, key: TEXTURE | string,
   scene.anims.create({
     key: animationKey,
     frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
-    frameRate: 8,
+    frameRate: getSpriteAnimationFrameRate(animationKey),
     repeat: -1,
-    delay: 8,
+    delay: getSpriteAnimationDelay(animationKey),
     yoyo: false,
   });
 }
@@ -100,6 +100,34 @@ export function createSprite(scene: InGameScene, key: TEXTURE | string, posX: nu
   const ret = scene.add.sprite(posX, posY, key);
   ret.setOrigin(0, 0);
   ret.setScale(2);
+  return ret;
+}
+
+function isRideAnimation(animationKey: string): boolean {
+  const genders = ['boy', 'girl'];
+  const directions = ['up', 'down', 'left', 'right'];
+  const indices = [1, 2, 3, 4];
+  const stages = [1, 2];
+
+  return genders.some((gender) => indices.some((index) => directions.some((direction) => stages.some((stage) => animationKey === `${gender}_${index}_ride_${direction}_${stage}`))));
+}
+function getSpriteAnimationFrameRate(animationKey: ANIMATION | string): number {
+  let ret = 8;
+
+  if (isRideAnimation(animationKey)) {
+    ret = 20;
+  }
+
+  return ret;
+}
+
+function getSpriteAnimationDelay(animationKey: ANIMATION | string): number {
+  let ret = 8;
+
+  if (isRideAnimation(animationKey)) {
+    ret = 1;
+  }
+
   return ret;
 }
 

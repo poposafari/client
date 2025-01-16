@@ -126,7 +126,7 @@ export class PlayerObject extends MovableObject {
   }
 
   private getRideAnimationType(key: KEY) {
-    if (this.getStep() >= 2) this.resetStep();
+    if (this.getStep() >= 5) this.resetStep();
 
     const step = this.getStep();
     const playerInfoManager = PlayerInfoManager.getInstance();
@@ -137,15 +137,31 @@ export class PlayerObject extends MovableObject {
       case KEY.UP:
         if (step == 0) return animationKey + 'up_1';
         if (step == 1) return animationKey + 'up_2';
+        if (step == 2) return animationKey + 'up_3';
+        if (step == 3) return animationKey + 'up_4';
+        if (step == 4) return animationKey + 'up_5';
+        if (step == 5) return animationKey + 'up_6';
       case KEY.DOWN:
         if (step == 0) return animationKey + 'down_1';
         if (step == 1) return animationKey + 'down_2';
+        if (step == 2) return animationKey + 'down_3';
+        if (step == 3) return animationKey + 'down_4';
+        if (step == 4) return animationKey + 'down_5';
+        if (step == 5) return animationKey + 'down_6';
       case KEY.LEFT:
         if (step == 0) return animationKey + 'left_1';
         if (step == 1) return animationKey + 'left_2';
+        if (step == 2) return animationKey + 'left_3';
+        if (step == 3) return animationKey + 'left_4';
+        if (step == 4) return animationKey + 'left_5';
+        if (step == 5) return animationKey + 'left_6';
       case KEY.RIGHT:
         if (step == 0) return animationKey + 'right_1';
         if (step == 1) return animationKey + 'right_2';
+        if (step == 2) return animationKey + 'right_3';
+        if (step == 3) return animationKey + 'right_4';
+        if (step == 4) return animationKey + 'right_5';
+        if (step == 5) return animationKey + 'right_6';
     }
   }
 
