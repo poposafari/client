@@ -344,6 +344,30 @@ export class PlayerItemManager {
     return true;
   }
 
+  setItemStock(itemIdx: string, value: number): void {
+    if (value < 0) {
+      throw new Error('value는 0보다 커야 한다.');
+    }
+
+    const item = this.getMyItem(itemIdx);
+
+    if (item.idx !== '000') {
+      item.stock = value;
+
+      if (item.stock === 0) {
+        const slotIndex = this.myItemSlots.findIndex((slot) => slot === itemIdx);
+        if (slotIndex !== -1) {
+          this.restMyItemSlot(slotIndex, itemIdx);
+        }
+        delete this.myItems[itemIdx];
+      }
+    } else {
+      if (value > 0) {
+        this.addItem(itemIdx, value);
+      }
+    }
+  }
+
   reduceItemStock(itemIdx: string) {
     const itemType = getItemUsageType(itemIdx);
 

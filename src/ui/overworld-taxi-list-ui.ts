@@ -129,7 +129,7 @@ export class OverworldTaxiListUi extends Ui {
     this.stockTicketCount.setText(`x${playerItemManager.getMyItem('007').stock}`);
 
     keyboardManager.setAllowKey(keys);
-    keyboardManager.setKeyDownCallback((key) => {
+    keyboardManager.setKeyDownCallback(async (key) => {
       const prevChoice = choice;
       const prevPage = currentPage;
 
@@ -163,10 +163,22 @@ export class OverworldTaxiListUi extends Ui {
             break;
           case KEY.SELECT:
             const overworld = this.overworldList[(currentPage - 1) * this.LIST_PER_PAGE + choice];
-            this.clean();
-            this.mode.pauseOverworldSystem(true);
-            this.mode.popUiStack();
-            this.mode.changeOverworld(overworld);
+            const overworldInfo = getOverworldInfo(overworld);
+            if (overworldInfo) {
+              const ret = this.validateTickets(overworldInfo?.consume);
+              if (ret >= 0) {
+                this.useTickets(ret);
+                this.clean();
+                this.mode.chnageItemSlot();
+                this.mode.pauseOverworldSystem(true);
+                this.mode.popUiStack();
+                this.mode.changeOverworld(overworld);
+              } else {
+                this.clean();
+                const messageResult = await this.mode.startMessage([{ type: 'default', format: 'talk', content: i18next.t(`message:npc000_reject`) }]);
+                this.show();
+              }
+            }
             break;
           case KEY.CANCEL:
             this.clean();
@@ -284,5 +296,22 @@ export class OverworldTaxiListUi extends Ui {
   private updatePageText(currentPage: number): void {
     const totalPages = Math.ceil(this.overworldList.length / this.LIST_PER_PAGE);
     this.overworldPageText.setText(`${currentPage}/${totalPages}`);
+  }
+
+  private validateTickets(requiredTickets: number): number {
+    const playerItem = this.mode.getPlayerItemManager();
+    const stock = playerItem.getMyItem('007').stock ?? 0;
+
+    if (stock < requiredTickets) {
+      return -1;
+    }
+
+    return stock - requiredTickets;
+  }
+
+  private useTickets(value: number) {
+    const playerItem = this.mode.getPlayerItemManager();
+    playerItem.setItemStock('007', value);
+    return true;
   }
 }
