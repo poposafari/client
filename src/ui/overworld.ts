@@ -13,6 +13,7 @@ import { Message } from '../interface/sys';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
+import { getItem } from '../data/items';
 
 export interface InitPos {
   x: number;
@@ -217,13 +218,12 @@ export class Overworld extends Ui {
   private handleNpcPostScriptAction(npcKey: string, location: OVERWORLD_TYPE, msgResult: boolean) {
     switch (npcKey) {
       case 'npc000':
-        console.log(msgResult);
         if (location === OVERWORLD_TYPE.PLAZA && !msgResult) {
           this.mode.pauseOverworldSystem(true);
           this.mode.addUiStackOverlap('OverworldTaxiListUi');
         }
         if (msgResult) {
-          this.mode.moveToVillage();
+          if (msgResult) this.mode.moveToVillage();
         }
         return;
     }

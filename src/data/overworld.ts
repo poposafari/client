@@ -19,7 +19,7 @@ i18next.on('initialized', () => {
     '006': {
       name: i18next.t('menu:overworld_006'),
       description: 'TestRoom',
-      consume: 1,
+      consume: 3,
       spawnTypes: [TYPE.GRASS],
       entryPos: {
         x: 19,
