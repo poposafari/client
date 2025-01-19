@@ -69,8 +69,6 @@ export class OverworldItemSlotUi extends Ui {
   }
 
   unblocking() {
-    console.log('itemslot unblocking');
-
     for (const btn of this.itemSlotBtns) {
       btn.setScrollFactor(0);
       btn.setInteractive({ cursor: 'pointer' });
