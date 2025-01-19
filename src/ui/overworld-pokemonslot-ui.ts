@@ -87,8 +87,6 @@ export class OverworldPokemonSlotUi extends Ui {
   }
 
   private unblocking() {
-    console.log('pokemonslot unblocking');
-
     const playerInfoManager = this.mode.getPlayerInfoManager();
     const playerPokemonManager = this.mode.getPlayerPokemonManager();
     const pokemonSlots = playerPokemonManager.getMyPokemonSlots();

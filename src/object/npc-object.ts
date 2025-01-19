@@ -50,7 +50,6 @@ export class NpcObject extends BaseObject {
 
   private reactionScript(key: string, type: 'welcome' | 'accept' | 'reject' | 'question'): Message[] {
     const config = this.detailSetting(key);
-    console.log(config);
     return [{ type: 'default', format: config, content: i18next.t(`message:${key}_${this.location === OVERWORLD_TYPE.PLAZA ? 'welcome' : 'question'}`) }];
   }
 
