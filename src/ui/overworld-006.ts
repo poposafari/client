@@ -40,6 +40,10 @@ export class Overworld006 extends Safari {
     super.clean();
   }
 
+  update(time: number, delta: number): void {
+    super.update(time, delta);
+  }
+
   private initMap() {
     this.setMap(TEXTURE.MAP_006);
     const width = this.getWidth();

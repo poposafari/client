@@ -43,6 +43,10 @@ export class BaseObject {
     this.nickname.setPosition(retX, retY - 100);
   }
 
+  setScale(value: number) {
+    this.sprite.setScale(1.5);
+  }
+
   setType(type: OBJECT) {
     if (type) {
       this.type = type;
@@ -115,6 +119,7 @@ export class BaseObject {
 
   stopAnmation(frameNumber: number) {
     if (this.type === OBJECT.PET) return;
+    if (this.type === OBJECT.POKEMON) return;
     const textureKey = this.sprite.texture.key;
     const frameKeys = this.sprite.scene.textures.get(textureKey).getFrameNames();
     this.sprite.stop();

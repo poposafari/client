@@ -80,7 +80,6 @@ export class Overworld000 extends Plaza {
     );
 
     for (const layer of this.layers!) {
-      console.log(layer);
       this.layerContainer.add(layer);
     }
 
