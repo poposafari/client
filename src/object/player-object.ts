@@ -24,7 +24,7 @@ export class PlayerObject extends MovableObject {
     this.setType(type);
 
     const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
-    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.fpPos.x, playerInfo.fpPos.y, map!, '');
+    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.pos.x, playerInfo.pos.y - 1, map!, '');
     const petSprite = this.pet.getSprite();
     petSprite.setVisible(followPokedex !== '000' ? true : false);
     petSprite.setScale(1.5);

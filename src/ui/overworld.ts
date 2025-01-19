@@ -45,6 +45,9 @@ export class Overworld extends Ui {
 
   show(data: InitPos): void {
     const playerPos = data;
+    PlayerInfoManager.getInstance().setPosX(playerPos.x);
+    PlayerInfoManager.getInstance().setPosY(playerPos.y);
+
     const playerInfo = PlayerInfoManager.getInstance().getInfo();
     this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerPos.x, playerPos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
 
