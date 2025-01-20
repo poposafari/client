@@ -512,4 +512,12 @@ export class OverworldManager {
 
     return this.pokemons;
   }
+
+  resetOverworldPokemons() {
+    for (const pokemon of this.pokemons) {
+      pokemon.destroy();
+    }
+
+    this.pokemons = [];
+  }
 }
