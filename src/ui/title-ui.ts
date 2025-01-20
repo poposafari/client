@@ -1,4 +1,3 @@
-import { all } from 'axios';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
@@ -6,7 +5,7 @@ import { KeyboardManager } from '../managers';
 import { TitleMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { titleContinueConfig, titleLogoutConfig, titleMysteryGiftConfig, titleNewGameConfig, titleSettingConfig } from './config';
-import { addBackground, addImage, addText, addWindow, Ui } from './ui';
+import { addBackground, addImage, addText, Ui } from './ui';
 
 export class TitleUi extends Ui {
   private mode: TitleMode;

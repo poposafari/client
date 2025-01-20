@@ -5,7 +5,6 @@ import { OverworldMode } from '../modes';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { InitPos, Overworld } from './overworld';
-import { OverworldManager } from '../managers';
 
 export class Safari extends Overworld {
   private pokemons: PokemonObject[] = [];

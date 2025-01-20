@@ -4,7 +4,6 @@ import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { TEXTURE } from '../enums/texture';
 import { initI18n } from '../i18n';
-import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 
 export class LoadingScene extends BaseScene {

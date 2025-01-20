@@ -5,7 +5,6 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
-import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { InitPos } from './overworld';
 import { Plaza } from './plaza';

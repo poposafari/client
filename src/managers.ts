@@ -1,7 +1,5 @@
-import { getItemType, getItemUsageType } from './data/items';
-import { Pokemon } from './data/pokemon';
-import { DIRECTION } from './enums/direction';
-import { ITEM, ITEM_USAGE_TYPE } from './enums/item';
+import { getItemUsageType } from './data/items';
+import { ITEM_USAGE_TYPE } from './enums/item';
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { PLAYER_STATUS } from './enums/player-status';

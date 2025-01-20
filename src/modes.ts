@@ -21,7 +21,6 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
-import { QuestionUi } from './ui/question-ui';
 import { getOverworldInfo } from './data/overworld';
 
 export class NoneMode extends Mode {

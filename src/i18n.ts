@@ -2,6 +2,7 @@ import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { enConfig } from './locales/en/config';
 import { koConfig } from './locales/ko/config';
+
 const fonts = [
   new FontFace('font_0', 'url(./font/PokePT_Wansung.ttf)'),
   new FontFace('font_1', 'url(./font/unifont-15.1.05.otf'),
