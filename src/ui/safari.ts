@@ -5,6 +5,7 @@ import { OverworldMode } from '../modes';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { InitPos, Overworld } from './overworld';
+import { OverworldManager } from '../managers';
 
 export class Safari extends Overworld {
   private pokemons: PokemonObject[] = [];
@@ -18,10 +19,16 @@ export class Safari extends Overworld {
   }
 
   show(data: InitPos): void {
+    const overworldManager = this.getMode().getOverworldManager();
+
     super.show(data);
 
-    const test = new PokemonObject(this.scene, `pokemon_overworld002`, '002', 10, 20, this.getMap(), 'test');
-    this.pokemons.push(test);
+    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld002`, '002', 10, 20, this.getMap(), 'test'));
+    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld001s`, '001s', 13, 20, this.getMap(), 'test'));
+    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld006s`, '006s', 13, 20, this.getMap(), 'test'));
+    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld004`, '004', 13, 20, this.getMap(), 'test'));
+
+    overworldManager.addOverworldPokemons(this.pokemons);
   }
 
   clean(): void {

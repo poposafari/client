@@ -9,6 +9,7 @@ import { TEXTURE_PLAYER_MAP } from './enums/texture';
 import { BagItem, Message, MyPokemon } from './interface/sys';
 import { Mode } from './mode';
 import { LoginMode, NewGameMode, NoneMode, OverworldMode, RegisterMode, TitleMode } from './modes';
+import { PokemonObject } from './object/pokemon-object';
 import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { QuestionUi } from './ui/question-ui';
@@ -487,5 +488,30 @@ export class PlayerInfoManager {
 
   setCurrentOverworld(overworld: string) {
     this.currentOverworld = overworld;
+  }
+}
+
+export class OverworldManager {
+  private static instance: OverworldManager;
+  private pokemons: PokemonObject[] = [];
+
+  init() {}
+
+  static getInstance(): OverworldManager {
+    if (!OverworldManager.instance) {
+      OverworldManager.instance = new OverworldManager();
+    }
+    return OverworldManager.instance;
+  }
+
+  addOverworldPokemons(pokemons: PokemonObject[]) {
+    this.pokemons = [];
+    this.pokemons = pokemons;
+  }
+
+  getOverworldPokemons() {
+    if (!this.pokemons) return [];
+
+    return this.pokemons;
   }
 }
