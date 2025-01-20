@@ -31,13 +31,16 @@ export class Safari extends Overworld {
   }
 
   clean(): void {
+    const overworldManager = this.getMode().getOverworldManager();
+
     super.clean();
 
     for (const pokemon of this.pokemons) {
       pokemon.destroy();
     }
-
     this.pokemons = [];
+
+    overworldManager.resetOverworldPokemons();
   }
 
   update(time: number, delta: number): void {
