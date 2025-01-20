@@ -3,7 +3,6 @@ import { DEPTH } from '../enums/depth';
 import { OBJECT } from '../enums/object-type';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addTextBackground, createSprite } from '../ui/ui';
 

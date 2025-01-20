@@ -1,19 +1,14 @@
-import i18next from 'i18next';
-import { ANIMATION } from '../enums/animation';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
-import { PLAYER_STATUS } from '../enums/player-status';
-import { KeyboardManager, MessageManager, PlayerInfoManager } from '../managers';
+import { KeyboardManager, PlayerInfoManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addMap, Ui } from './ui';
-import { Message } from '../interface/sys';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
-import { getItem } from '../data/items';
 
 export interface InitPos {
   x: number;

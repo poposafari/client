@@ -1,4 +1,3 @@
-import { getItemUsageType, getItemType } from '../data/items';
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';

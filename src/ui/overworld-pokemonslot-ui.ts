@@ -1,10 +1,9 @@
 import { DEPTH } from '../enums/depth';
-import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { MAX_PARTY_SLOT, PlayerInfoManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, Ui } from './ui';
+import { addImage, addWindow, Ui } from './ui';
 
 export class OverworldPokemonSlotUi extends Ui {
   private mode: OverworldMode;

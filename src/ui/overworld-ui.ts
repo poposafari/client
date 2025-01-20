@@ -1,7 +1,6 @@
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldItemSlotUi } from './overworld-itemslot-ui';
-import { OverworldMenuUi } from './overworld-menu-ui';
 import { OverworldPokemonSlotUi } from './overworld-pokemonslot-ui';
 import { Ui } from './ui';
 
