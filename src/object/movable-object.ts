@@ -2,7 +2,7 @@ import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
 import { TEXTURE } from '../enums/texture';
-import { PlayerInfoManager } from '../managers';
+import { OverworldManager, PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 import { npcs } from './npc-object';
@@ -182,13 +182,39 @@ export class MovableObject extends BaseObject {
 
   isBlockingDirection(direction: DIRECTION): boolean {
     const nextTilePos = this.tilePosInDirection(direction);
-    const isBlocked = this.hasBlockingTile(nextTilePos) || this.hasBlockingObject(nextTilePos);
+    const isBlocked =
+      this.hasBlockingTile(nextTilePos) || this.hasBlockingNpc(nextTilePos) || this.hasPokemonObject(nextTilePos) || (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos));
     return isBlocked;
   }
+
   private tilePosInDirection(direction: DIRECTION): Phaser.Math.Vector2 {
     return this.getTilePos().add(this.movementDirection[direction]!);
   }
-  private hasBlockingObject(pos: Phaser.Math.Vector2): boolean {
+
+  private hasPlayerObject(pos: Phaser.Math.Vector2): boolean {
+    const playerInfoManager = PlayerInfoManager.getInstance();
+    const playerInfo = playerInfoManager.getInfo();
+    if (playerInfo.pos.x === pos.x && playerInfo.pos.y === pos.y) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
+    const overworldManager = OverworldManager.getInstance();
+    const pokemons = overworldManager.getOverworldPokemons();
+
+    for (const pokemon of pokemons) {
+      const pokemonTilePos = pokemon.getTilePos();
+      if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private hasBlockingNpc(pos: Phaser.Math.Vector2): boolean {
     for (const [, npc] of npcs) {
       const npcTilePos = npc.getTilePos();
       if (npcTilePos.x === pos.x && npcTilePos.y === pos.y) {

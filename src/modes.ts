@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Account, Message } from './interface/sys';
-import { MessageManager, ModeManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
+import { MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -143,6 +143,7 @@ export class OverworldMode extends Mode {
   private playerInfoManager!: PlayerInfoManager;
   private playerItemManager!: PlayerItemManager;
   private playerPokemonManager!: PlayerPokemonManager;
+  private overworldManger!: OverworldManager;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
@@ -171,6 +172,7 @@ export class OverworldMode extends Mode {
     this.playerInfoManager = PlayerInfoManager.getInstance();
     this.playerItemManager = PlayerItemManager.getInstance();
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
+    this.overworldManger = OverworldManager.getInstance();
 
     this.addUiStackOverlap('OverworldUi', data);
     this.addUiStackOverlap('Overworld000', data);
@@ -227,6 +229,12 @@ export class OverworldMode extends Mode {
     this.getUiStackTop().clean();
     this.popUiStack();
     this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
+  }
+
+  getOverworldManager() {
+    if (this.overworldManger) return this.overworldManger;
+
+    throw new Error('OverworldManager 인스턴스가 존재하지 않습니다.');
   }
 
   getPlayerInfoManager() {

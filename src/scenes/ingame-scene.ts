@@ -3,7 +3,7 @@ import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, MessageManager, ModeManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
+import { KeyboardManager, MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import { BaseScene } from './base-scene';
 
@@ -38,6 +38,9 @@ export class InGameScene extends BaseScene {
 
     const playerItemManager = PlayerItemManager.getInstance();
     playerItemManager.init();
+
+    const overworldManager = OverworldManager.getInstance();
+    overworldManager.init();
 
     this.modeManager.registerModes();
     this.modeManager.changeMode(MODE.NONE);
