@@ -9,6 +9,7 @@ export class PokemonObject extends MovableObject {
   private pokedex: string;
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
+  private timer?: Phaser.Time.TimerEvent;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
     super(scene, texture, x, y, map, nickname);
@@ -40,7 +41,7 @@ export class PokemonObject extends MovableObject {
   private scheduleRandomMovement() {
     const randomDelay = Phaser.Math.Between(1000, 6000);
 
-    this.getScene().time.delayedCall(randomDelay, () => {
+    this.timer = this.getScene().time.delayedCall(randomDelay, () => {
       const value = this.getRandomDirection();
       this.ready(this.directions[value], this.getAnimation(this.keys[value])!);
 
@@ -50,7 +51,11 @@ export class PokemonObject extends MovableObject {
 
   stopMovement() {
     this.movementStop = true;
-    this.scheduleRandomMovement();
+
+    if (this.timer) {
+      this.timer.remove(false);
+      this.timer = undefined;
+    }
   }
 
   private getRandomDirection() {
