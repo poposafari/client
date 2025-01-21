@@ -22,35 +22,18 @@ export class Safari extends Overworld {
 
     super.show(data);
 
-    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld002`, '002', 10, 20, this.getMap(), 'test'));
-    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld001s`, '001s', 13, 20, this.getMap(), 'test'));
-    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld006s`, '006s', 13, 20, this.getMap(), 'test'));
-    this.pokemons.push(new PokemonObject(this.scene, `pokemon_overworld004`, '004', 13, 20, this.getMap(), 'test'));
-
-    overworldManager.addOverworldPokemons(this.pokemons);
+    overworldManager.addOverworldPokemons(this.scene, ['001', '001s', '003s', '006s', '006', '005', '004s'], this.getMap());
   }
 
   clean(): void {
     const overworldManager = this.getMode().getOverworldManager();
-
     super.clean();
-
-    for (const pokemon of this.pokemons) {
-      pokemon.destroy();
-    }
-    this.pokemons = [];
-
     overworldManager.resetOverworldPokemons();
   }
 
   update(time: number, delta: number): void {
     super.update(time, delta);
 
-    for (const pokemon of this.pokemons) {
-      if (pokemon.isMovementFinish()) {
-        pokemon.move();
-      }
-      pokemon.update();
-    }
+    this.getMode().getOverworldManager().update();
   }
 }
