@@ -42,7 +42,6 @@ export class PokemonObject extends MovableObject {
 
     this.getScene().time.delayedCall(randomDelay, () => {
       const value = this.getRandomDirection();
-
       this.ready(this.directions[value], this.getAnimation(this.keys[value])!);
 
       this.scheduleRandomMovement();

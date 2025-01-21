@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { getItemUsageType } from './data/items';
 import { ITEM_USAGE_TYPE } from './enums/item';
 import { KEY } from './enums/key';
@@ -502,9 +503,15 @@ export class OverworldManager {
     return OverworldManager.instance;
   }
 
-  addOverworldPokemons(pokemons: PokemonObject[]) {
-    this.pokemons = [];
-    this.pokemons = pokemons;
+  addOverworldPokemons(scene: InGameScene, pokemons: string[], map: Phaser.Tilemaps.Tilemap) {
+    this.resetOverworldPokemons();
+    const validPosition = this.doMapScan(map);
+
+    for (const pokemon of pokemons) {
+      const pos = this.getRandomTilePosition(validPosition);
+      const originPokedex = pokemon.endsWith('s') ? pokemon.slice(0, -1) : pokemon;
+      this.pokemons.push(new PokemonObject(scene, `pokemon_overworld${pokemon}`, `${pokemon}`, pos[0], pos[1], map, i18next.t(`pokemon:${originPokedex}.name`)));
+    }
   }
 
   getOverworldPokemons() {
@@ -519,5 +526,50 @@ export class OverworldManager {
     }
 
     this.pokemons = [];
+  }
+
+  update() {
+    for (const pokemon of this.pokemons) {
+      if (pokemon.isMovementFinish()) {
+        pokemon.move();
+      }
+      pokemon.update();
+    }
+  }
+
+  private getRandomTilePosition(validPositions: [number, number][]) {
+    return Phaser.Utils.Array.GetRandom(validPositions);
+  }
+
+  private doMapScan(map: Phaser.Tilemaps.Tilemap): [number, number][] {
+    const validPositions: [number, number][] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (!this.hasBlockingTile(map, new Phaser.Math.Vector2(x, y))) {
+          validPositions.push([x, y]);
+        }
+      }
+    }
+
+    if (validPositions.length === 0) {
+      throw new Error('No valid positions found in the map.');
+    }
+
+    return validPositions;
+  }
+
+  private hasNoTile(map: Phaser.Tilemaps.Tilemap, pos: Phaser.Math.Vector2): boolean {
+    return map.layers.some((layer) => {
+      map.hasTileAt(pos.x, pos.y, layer.name);
+    });
+  }
+
+  private hasBlockingTile(map: Phaser.Tilemaps.Tilemap, pos: Phaser.Math.Vector2): boolean {
+    if (this.hasNoTile(map, pos)) return true;
+    return map.layers.some((layer) => {
+      const tile = map.getTileAt(pos.x, pos.y, false, layer.name);
+      return tile && tile.properties.collides;
+    });
   }
 }
