@@ -27,8 +27,8 @@ export class Safari extends Overworld {
 
   clean(): void {
     const overworldManager = this.getMode().getOverworldManager();
-    super.clean();
     overworldManager.resetOverworldPokemons();
+    super.clean();
   }
 
   update(time: number, delta: number): void {

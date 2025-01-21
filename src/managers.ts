@@ -423,7 +423,7 @@ export class PlayerInfoManager {
 
     this.gender = 'boy';
     this.nickname = '운영자';
-    this.avatarType = 2;
+    this.avatarType = 3;
     this.posX = 10;
     this.posY = 10;
     this.currentOverworld = '000';
@@ -523,9 +523,11 @@ export class OverworldManager {
   resetOverworldPokemons() {
     for (const pokemon of this.pokemons) {
       pokemon.destroy();
+      pokemon.stopMovement();
     }
 
     this.pokemons = [];
+    console.log(this.pokemons);
   }
 
   update() {
