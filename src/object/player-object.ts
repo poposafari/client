@@ -17,10 +17,9 @@ export class PlayerObject extends MovableObject {
     const playerInfoManager = PlayerInfoManager.getInstance();
     const playerInfo = playerInfoManager.getInfo();
 
-    super(scene, texture, x, y, map!, nickname);
+    super(scene, texture, x, y, map!, nickname, type);
 
     this.setStatus(PLAYER_STATUS.WALK);
-    this.setType(type);
 
     const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
     this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.pos.x, playerInfo.pos.y - 1, map!, '');

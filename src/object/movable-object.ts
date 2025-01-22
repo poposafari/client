@@ -36,11 +36,15 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string) {
-    super(scene, texture, x, y, nickname);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT) {
+    super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
 
     this.stopAnmation(3);
+
+    if (this.getType() === OBJECT.POKEMON) {
+      this.startAnmation(`${texture}_down`);
+    }
   }
 
   process(direction: DIRECTION, animationKey: ANIMATION | string) {
