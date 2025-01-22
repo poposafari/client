@@ -123,14 +123,11 @@ export class BagUi extends Ui {
     let horisontalChoice = this.lastHorisontalChoice;
     let verticalChoice = this.lastVerticalChoice;
 
-    // 필터된 아이템과 관련된 데이터 초기화
     this.itemFilterResult = this.filterItem(horisontalChoice);
     this.verticalEndIndex = this.itemFilterResult.length;
 
-    // 아이템 슬롯 상태 업데이트
     this.itemRegisterCheck(this.itemFilterResult);
 
-    // 초기 선택 텍스처 업데이트
     this.updateVerticalTexture(0, verticalChoice);
 
     keyboardManager.setAllowKey(keys);
@@ -140,7 +137,6 @@ export class BagUi extends Ui {
       const prevHorizontalChoice = horisontalChoice;
 
       try {
-        // 키 입력에 따른 선택 업데이트
         switch (key) {
           case KEY.UP:
             verticalChoice = Math.max(0, verticalChoice - 1);
@@ -170,13 +166,11 @@ export class BagUi extends Ui {
             break;
         }
 
-        // 세로 선택 변경 시 텍스처 업데이트
         if (verticalChoice !== prevVerticalChoice) {
           this.updateVerticalTexture(prevVerticalChoice, verticalChoice);
           this.lastVerticalChoice = verticalChoice;
         }
 
-        // 가로 선택 변경 시 텍스처 및 데이터 업데이트
         if (horisontalChoice !== prevHorizontalChoice) {
           verticalChoice = 0;
           this.cleanObj();

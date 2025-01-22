@@ -33,7 +33,6 @@ export class MessageUi extends Ui {
     const width = this.scene.game.canvas.width;
     const height = this.scene.game.canvas.height;
 
-    // Message Container
     this.messageContainer = this.scene.add.container(width / 2, height / 2);
     const messageWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 210, 800, 100, 8, 8, 8, 8);
     this.messageText = addText(this.scene, -380, 180, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0);
@@ -41,12 +40,10 @@ export class MessageUi extends Ui {
     this.messageContainer.add(this.messageText);
     this.messageContainer.setVisible(false);
 
-    // End Mark
     this.endMark = createSprite(this.scene, TEXTURE.PAUSE_BLACK, +350, 220);
     this.endMark.setDepth(DEPTH.MESSAGE).setScale(1.5).setVisible(false);
     this.messageContainer.add(this.endMark);
 
-    // Question Container
     this.questionContainer = this.scene.add.container(width / 2 + 685, height / 2 + 230);
     const questionWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 150, 100, 8, 8, 8, 8);
     this.questionContainer.add(questionWindow);
