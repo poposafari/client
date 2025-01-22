@@ -13,10 +13,9 @@ export class NpcObject extends BaseObject {
   private location: OVERWORLD_TYPE;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, type: OBJECT, location: OVERWORLD_TYPE) {
-    super(scene, texture, x, y, nickname);
+    super(scene, texture, x, y, nickname, type);
 
     this.getSprite().setScale(1.6);
-    this.setType(type);
     this.location = location;
     npcs.set(texture, this);
   }

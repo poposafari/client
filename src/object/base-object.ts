@@ -19,11 +19,13 @@ export class BaseObject {
   private readonly offsetX = TILE_SIZE / 2;
   private readonly offsetY = TILE_SIZE;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string, objectType: OBJECT) {
     this.scene = scene;
     this.sprite = createSprite(scene, texture, 0, 0);
 
     this.sprite.setOrigin(0.5, 1);
+
+    this.type = objectType;
 
     this.tilePos = new Phaser.Math.Vector2(x, y);
 
@@ -44,12 +46,6 @@ export class BaseObject {
 
   setScale(value: number) {
     this.sprite.setScale(1.5);
-  }
-
-  setType(type: OBJECT) {
-    if (type) {
-      this.type = type;
-    }
   }
 
   getType() {

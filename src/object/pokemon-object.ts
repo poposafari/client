@@ -10,11 +10,11 @@ export class PokemonObject extends MovableObject {
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
+  private againTimer?: Phaser.Time.TimerEvent;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
-    super(scene, texture, x, y, map, nickname);
+    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON);
     this.pokedex = pokedex;
-    this.setType(OBJECT.POKEMON);
     this.setScale(1.5);
     this.setSpeed(2);
     this.setSmoothFrames([12, 0, 4, 8]);
@@ -40,12 +40,24 @@ export class PokemonObject extends MovableObject {
 
   private scheduleRandomMovement() {
     const randomDelay = Phaser.Math.Between(1000, 6000);
+    const directionIndex = this.getRandomDirection();
+    const stepCount = this.getRandomStep();
 
     this.timer = this.getScene().time.delayedCall(randomDelay, () => {
-      const value = this.getRandomDirection();
-      this.ready(this.directions[value], this.getAnimation(this.keys[value])!);
+      this.moveInSteps(directionIndex, stepCount);
+    });
+  }
 
+  private moveInSteps(directionIndex: number, steps: number) {
+    if (steps <= 0) {
       this.scheduleRandomMovement();
+      return;
+    }
+
+    this.ready(this.directions[directionIndex], this.getAnimation(this.keys[directionIndex])!);
+
+    this.againTimer = this.getScene().time.delayedCall(200, () => {
+      this.moveInSteps(directionIndex, steps - 1);
     });
   }
 
@@ -55,6 +67,11 @@ export class PokemonObject extends MovableObject {
     if (this.timer) {
       this.timer.remove(false);
       this.timer = undefined;
+    }
+
+    if (this.againTimer) {
+      this.againTimer.remove(false);
+      this.againTimer = undefined;
     }
   }
 
