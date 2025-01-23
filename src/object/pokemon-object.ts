@@ -32,21 +32,22 @@ export class PokemonObject extends MovableObject {
     this.movementStop = false;
   }
 
-  capture() {
+  capture(pokeball: number) {
     if (this.status === POKEMON_STATUS.ROAMING) {
       this.status = POKEMON_STATUS.CAPTURED;
     }
 
-    this.checkStatus();
+    this.checkStatus(pokeball);
   }
 
-  checkStatus() {
+  checkStatus(pokeball: number) {
     switch (this.status) {
       case POKEMON_STATUS.ROAMING:
         this.setTexture(`pokemon_overworld${this.pokedex}`);
         break;
       case POKEMON_STATUS.CAPTURED:
-        this.setTexture(TEXTURE.POKEBALL_THROW);
+        this.setTexture(TEXTURE.POKEBALL_GROUND);
+        this.setSpriteFrame(pokeball);
         this.getSprite().stop();
         break;
     }
