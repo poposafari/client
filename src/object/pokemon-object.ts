@@ -1,6 +1,7 @@
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
+import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { MovableObject } from './movable-object';
@@ -11,18 +12,44 @@ export class PokemonObject extends MovableObject {
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
   private againTimer?: Phaser.Time.TimerEvent;
+  private status: POKEMON_STATUS;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
     super(scene, texture, x, y, map, nickname, OBJECT.POKEMON);
     this.pokedex = pokedex;
+    this.status = POKEMON_STATUS.ROAMING;
     this.setScale(1.5);
     this.setSpeed(2);
     this.setSmoothFrames([12, 0, 4, 8]);
     this.scheduleRandomMovement();
   }
 
+  getStatus() {
+    return this.status;
+  }
+
   move() {
     this.movementStop = false;
+  }
+
+  capture() {
+    if (this.status === POKEMON_STATUS.ROAMING) {
+      this.status = POKEMON_STATUS.CAPTURED;
+    }
+
+    this.checkStatus();
+  }
+
+  checkStatus() {
+    switch (this.status) {
+      case POKEMON_STATUS.ROAMING:
+        this.setTexture(`pokemon_overworld${this.pokedex}`);
+        break;
+      case POKEMON_STATUS.CAPTURED:
+        this.setTexture(TEXTURE.POKEBALL_THROW);
+        this.getSprite().stop();
+        break;
+    }
   }
 
   private getAnimation(key: KEY) {

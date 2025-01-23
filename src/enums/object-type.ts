@@ -5,4 +5,5 @@ export const enum OBJECT {
   OTHER_PLAYER = 'other-player',
   PORTAL = 'portal',
   NPC = 'npc',
+  ITEM_THROW = 'item-throw',
 }

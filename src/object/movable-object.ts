@@ -25,7 +25,7 @@ export class MovableObject extends BaseObject {
   private movementFinish: boolean = true;
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
-  private map: Phaser.Tilemaps.Tilemap;
+  protected map: Phaser.Tilemaps.Tilemap;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
