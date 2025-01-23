@@ -13,6 +13,7 @@ import { InGameScene } from './scenes/ingame-scene';
 import { MessageUi } from './ui/message-ui';
 import { QuestionUi } from './ui/question-ui';
 import { Ui } from './ui/ui';
+import { POKEMON_STATUS } from './enums/pokemon-status';
 
 interface Modes {
   key: MODE;
@@ -287,7 +288,7 @@ export class PlayerItemManager {
     this.addItem('001', 2);
     this.addItem('004', 2);
     this.addItem('002', 2);
-    this.addItem('003', 2);
+    this.addItem('003', 999);
     this.addItem('005', 1);
     this.addItem('006', 1);
     this.addItem('007', 3);
@@ -531,9 +532,10 @@ export class OverworldManager {
 
   update() {
     for (const pokemon of this.pokemons) {
-      if (pokemon.isMovementFinish()) {
+      if (pokemon.isMovementFinish() && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
         pokemon.move();
       }
+
       pokemon.update();
     }
   }

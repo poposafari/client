@@ -5,6 +5,7 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { TEXTURE } from '../enums/texture';
 import { PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
+import { ItemThrowObject } from './item-throw-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
@@ -224,24 +225,22 @@ export class PlayerObject extends MovableObject {
 
   useItem(item: string) {
     const playerItemManager = PlayerItemManager.getInstance();
-
+    const playerInfo = PlayerInfoManager.getInstance().getInfo();
     const ret = playerItemManager.reduceItemStock(item);
 
-    if (ret) return;
-
     switch (item) {
+      case '001':
+        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 3);
+      case '002':
+        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 0);
+      case '003':
+        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 1);
+      case '004':
+        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 2);
       case '005':
         return this.setStatus(PLAYER_STATUS.RIDE);
       case '006':
         return this.setStatus(PLAYER_STATUS.RUNNING);
-    }
-  }
-
-  useItemDetail(type: string | null) {
-    switch (type) {
-      case 'ride':
-        this.setStatus(PLAYER_STATUS.RIDE);
-        break;
     }
   }
 }

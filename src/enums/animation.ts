@@ -49,4 +49,6 @@ export const enum ANIMATION {
   BAG2 = 'bag2',
   BAG3 = 'bag3',
   BAG4 = 'bag4',
+  POKEBALL_THROW = 'pokeball_throw',
+  POKEBALL_GROUND = 'pokeball_ground',
 }

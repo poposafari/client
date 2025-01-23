@@ -112,6 +112,10 @@ export class BaseObject {
     this.sprite.play(animationKey);
   }
 
+  setTexture(texture: TEXTURE | string) {
+    this.sprite.setTexture(texture);
+  }
+
   stopAnmation(frameNumber: number) {
     if (this.type === OBJECT.PET) return;
     if (this.type === OBJECT.POKEMON) return;

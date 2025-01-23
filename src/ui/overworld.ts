@@ -9,6 +9,7 @@ import { addMap, Ui } from './ui';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
+import { ItemThrowObject } from '../object/item-throw-object';
 
 export interface InitPos {
   x: number;
