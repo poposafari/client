@@ -12,11 +12,13 @@ export class ItemThrowObject extends BaseObject {
   private direction: DIRECTION;
   private currentDistance: number = 0;
   private speed: number = 20; //20ms당 1 tile임.
+  private pokeball!: number;
 
   constructor(scene: InGameScene, direction: DIRECTION, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, pokeball: number) {
     super(scene, texture, x, y, '', OBJECT.ITEM_THROW);
     this.map = map;
     this.direction = direction;
+    this.pokeball = pokeball;
 
     this.move();
 
@@ -84,7 +86,7 @@ export class ItemThrowObject extends BaseObject {
 
     for (const pokemon of pokemons) {
       if (pokemon.getPosition().x === this.getPosition().x && pokemon.getPosition().y === this.getPosition().y) {
-        pokemon.capture();
+        pokemon.capture(this.pokeball);
         pokemon.stopMovement();
         return true;
       }
