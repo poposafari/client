@@ -122,8 +122,8 @@ i18next.on('initialized', () => {
   registerConfirmBtnConfig = {
     x: -63,
     y: 135,
-    w: 115,
-    h: 36,
+    w: 76,
+    h: 24,
     content: i18next.t('lobby:register'),
     contentX: 0,
     contentY: 0,
@@ -132,8 +132,8 @@ i18next.on('initialized', () => {
   registerLoginBtnConfig = {
     x: 63,
     y: 135,
-    w: 115,
-    h: 36,
+    w: 76,
+    h: 24,
     content: i18next.t('lobby:backToTheLogin'),
     contentX: 0,
     contentY: 0,

@@ -68,7 +68,7 @@ export class RegisterUi extends ModalUi {
 
     for (const config of btnConfig) {
       const btnContainer = this.scene.add.container(config.x, config.y);
-      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, config.w, config.h);
+      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, config.w, config.h, 8, 8, 8, 8).setScale(1.5);
       const btnTitle = addText(this.scene, config.contentX, config.contentY, config.content, TEXTSTYLE.LOBBY_DEFAULT);
 
       btnContainer.add(btnWindow);
