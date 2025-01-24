@@ -7,19 +7,19 @@ import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, createSprite, Ui } from './ui';
+import { addImage, addText, addWindow, createSprite, getTextStyle, Ui } from './ui';
 import { Message } from '../interface/sys';
 
 export class MessageUi extends Ui {
   private mode!: OverworldMode;
   private messageContainer!: Phaser.GameObjects.Container;
   private messageText!: Phaser.GameObjects.Text;
+  private messageWindow!: Phaser.GameObjects.NineSlice;
   private endMark!: Phaser.GameObjects.Sprite;
   private questionContainer!: Phaser.GameObjects.Container;
   private questionTexts: Phaser.GameObjects.Text[] = [];
   private questionDummys: Phaser.GameObjects.Image[] = [];
   private selectedIndex: number = 0;
-  scene: any;
 
   constructor(scene: InGameScene, mode?: OverworldMode) {
     super(scene);
@@ -34,9 +34,9 @@ export class MessageUi extends Ui {
     const height = this.scene.game.canvas.height;
 
     this.messageContainer = this.scene.add.container(width / 2, height / 2);
-    const messageWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 210, 800, 100, 8, 8, 8, 8);
+    this.messageWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 210, 800, 100, 8, 8, 8, 8);
     this.messageText = addText(this.scene, -380, 180, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0);
-    this.messageContainer.add(messageWindow);
+    this.messageContainer.add(this.messageWindow);
     this.messageContainer.add(this.messageText);
     this.messageContainer.setVisible(false);
 
@@ -72,12 +72,23 @@ export class MessageUi extends Ui {
     let textArray = text.split('');
     let index = 0;
     let isQuestion = data.format === 'question';
+    let type = data.type;
     let isFinish = false;
 
     this.endMark.setVisible(false);
     this.messageContainer.setVisible(true);
     this.messageText.text = '';
     this.questionContainer.setVisible(false);
+
+    if (type === 'sys') {
+      this.messageWindow.setTexture(TEXTURE.WINDOW_0);
+      this.endMark.setTexture(TEXTURE.PAUSE_WHITE);
+      this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
+    } else {
+      this.messageWindow.setTexture(TEXTURE.WINDOW_1);
+      this.endMark.setTexture(TEXTURE.PAUSE_BLACK);
+      this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+    }
 
     const keyboardManager = KeyboardManager.getInstance();
     keyboardManager.setAllowKey([KEY.SELECT]);
@@ -93,7 +104,7 @@ export class MessageUi extends Ui {
           isFinish = true;
           this.endMark.setVisible(!isQuestion);
           if (!isQuestion) {
-            this.endMark.anims.play(ANIMATION.PAUSE);
+            this.endMark.anims.play(type === 'sys' ? ANIMATION.PAUSE_WHITE : ANIMATION.PAUSE_BLACK);
             keyboardManager.setKeyDownCallback((key) => {
               if (key === KEY.SELECT) {
                 this.clean();

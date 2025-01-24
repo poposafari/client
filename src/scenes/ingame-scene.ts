@@ -61,8 +61,8 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.BAG3, ANIMATION.BAG3);
     createSpriteAnimation(this, TEXTURE.BAG4, ANIMATION.BAG4);
 
-    createSpriteAnimation(this, TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE);
-    // createSpriteAnimation(this, TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE);
+    createSpriteAnimation(this, TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE_BLACK);
+    createSpriteAnimation(this, TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE_WHITE);
 
     this.initPlayerAnimation();
     this.initPokemonAnimation();
