@@ -80,6 +80,7 @@ export class MessageUi extends Ui {
     this.questionContainer.setVisible(false);
 
     const keyboardManager = KeyboardManager.getInstance();
+    keyboardManager.setAllowKey([KEY.SELECT]);
     keyboardManager.clearCallbacks();
 
     return new Promise((resolve) => {
@@ -93,7 +94,6 @@ export class MessageUi extends Ui {
           this.endMark.setVisible(!isQuestion);
           if (!isQuestion) {
             this.endMark.anims.play(ANIMATION.PAUSE);
-
             keyboardManager.setKeyDownCallback((key) => {
               if (key === KEY.SELECT) {
                 this.clean();
