@@ -50,8 +50,8 @@ i18next.on('initialized', () => {
   loginConfirmBtnConfig = {
     x: 0,
     y: 65,
-    w: 240,
-    h: 36,
+    w: 160,
+    h: 24,
     content: i18next.t('lobby:login'),
     contentX: 0,
     contentY: 0,
@@ -60,8 +60,8 @@ i18next.on('initialized', () => {
   loginRegisterBtnConfig = {
     x: -63,
     y: 115,
-    w: 115,
-    h: 36,
+    w: 76,
+    h: 24,
     content: i18next.t('lobby:register'),
     contentX: 0,
     contentY: 0,
@@ -70,8 +70,8 @@ i18next.on('initialized', () => {
   loginFindAccountBtnConfig = {
     x: 63,
     y: 115,
-    w: 115,
-    h: 36,
+    w: 76,
+    h: 24,
     content: i18next.t('lobby:findAccount'),
     contentX: 0,
     contentY: 0,

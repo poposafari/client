@@ -65,7 +65,7 @@ export class LoginUi extends ModalUi {
 
     for (const config of this.btnConfig) {
       const btnContainer = this.scene.add.container(config.x, config.y);
-      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, config.w, config.h, 8, 8, 8, 8);
+      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, config.w, config.h, 8, 8, 8, 8).setScale(1.5);
       const btnTitle = addText(this.scene, config.contentX, config.contentY, config.content, TEXTSTYLE.LOBBY_DEFAULT);
 
       btnContainer.add(btnWindow);
@@ -96,7 +96,7 @@ export class LoginUi extends ModalUi {
     this.btns[0].on('pointerdown', async () => {
       const data: Account = { username: this.inputs[0].text, password: this.inputs[1].text };
 
-      if (this.validate(data)) {
+      if (await this.validate(data)) {
         this.mode.submit(data);
       }
     });
@@ -166,21 +166,21 @@ export class LoginUi extends ModalUi {
     }
   }
 
-  validate(data: Account): boolean {
-    const messageUi = MessageManager.getInstance();
+  async validate(data: Account): Promise<boolean> {
+    const message = MessageManager.getInstance();
 
     const username = data.username;
     const password = data.password;
 
     if (username === '') {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
+      await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
       return false;
     }
 
     if (password === '') {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
+      await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
       return false;
     }
 
