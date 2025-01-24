@@ -1,6 +1,7 @@
 import { DEPTH } from '../enums/depth';
 import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
+import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { OverworldManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -35,7 +36,7 @@ export class ItemThrowObject extends BaseObject {
     }
 
     const moveStep = () => {
-      if (this.currentDistance >= this.maxDistance || this.hasBlockingTile(this.getNextPosition(directionVector)) || this.hasPokemon(this.getNextPosition(directionVector))) {
+      if (this.currentDistance >= this.maxDistance || this.hasPokemon(this.getNextPosition(directionVector))) {
         this.destroy();
         return;
       }
@@ -73,12 +74,12 @@ export class ItemThrowObject extends BaseObject {
     return new Phaser.Math.Vector2(this.getTilePos().x * TILE_SIZE * MAP_SCALE + (TILE_SIZE / 2) * MAP_SCALE, this.getTilePos().y * TILE_SIZE * MAP_SCALE + TILE_SIZE * MAP_SCALE);
   }
 
-  private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
-    return this.map.layers.some((layer) => {
-      const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
-      return tile && tile.properties.collides;
-    });
-  }
+  // private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+  //   return this.map.layers.some((layer) => {
+  //     const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
+  //     return tile && tile.properties.collides;
+  //   });
+  // }
 
   private hasPokemon(pos: Phaser.Math.Vector2): boolean {
     const overworldManager = OverworldManager.getInstance();
@@ -86,8 +87,10 @@ export class ItemThrowObject extends BaseObject {
 
     for (const pokemon of pokemons) {
       if (pokemon.getPosition().x === this.getPosition().x && pokemon.getPosition().y === this.getPosition().y) {
+        if (pokemon.getStatus() === POKEMON_STATUS.CAPTURED) return false;
         pokemon.capture(this.pokeball);
         pokemon.stopMovement();
+
         return true;
       }
     }

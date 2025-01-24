@@ -143,6 +143,7 @@ export class OverworldMode extends Mode {
   private playerItemManager!: PlayerItemManager;
   private playerPokemonManager!: PlayerPokemonManager;
   private overworldManger!: OverworldManager;
+  private currentOverworldUisIndex!: number;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
@@ -175,6 +176,8 @@ export class OverworldMode extends Mode {
 
     this.addUiStackOverlap('OverworldUi', data);
     this.addUiStackOverlap('Overworld000', data);
+
+    this.currentOverworldUisIndex = 1;
   }
 
   exit(): void {
@@ -185,7 +188,8 @@ export class OverworldMode extends Mode {
   }
 
   update(time: number, delta: number): void {
-    this.getUiStackTop().update(time, delta);
+    const overworld = this.uiStack[this.currentOverworldUisIndex];
+    overworld.update(time, delta);
   }
 
   changeFollowPokemon(pokedex: string) {
