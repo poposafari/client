@@ -25,8 +25,8 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
-    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE);
-    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE);
+    this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE_BLACK);
+    this.loadAtlas(TEXTURE.PAUSE_WHITE, 'ui', TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE_WHITE);
 
     this.loadImage(TEXTURE.BAR, 'ui', TEXTURE.BAR);
     this.loadImage(TEXTURE.BAR_S, 'ui', TEXTURE.BAR_S);

@@ -186,7 +186,7 @@ function getTextShadow(style: TEXTSTYLE) {
   return [0, 0, 0];
 }
 
-function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
+export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
   let config: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: 'font_4',
   };

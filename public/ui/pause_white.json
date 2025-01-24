@@ -1,6 +1,6 @@
 {
   "frames": {
-    "pause-0": {
+    "pause_white-0": {
       "frame": {
         "x": 0,
         "y": 0,
@@ -20,7 +20,7 @@
         "h": 20
       }
     },
-    "pause-1": {
+    "pause_white-1": {
       "frame": {
         "x": 16,
         "y": 0,
@@ -40,7 +40,7 @@
         "h": 20
       }
     },
-    "pause-2": {
+    "pause_white-2": {
       "frame": {
         "x": 32,
         "y": 0,
@@ -60,7 +60,7 @@
         "h": 20
       }
     },
-    "pause-3": {
+    "pause_white-3": {
       "frame": {
         "x": 48,
         "y": 0,
