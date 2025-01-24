@@ -16,7 +16,7 @@ export class ModalUi extends Ui {
     const height = this.getHeight();
 
     this.modalContainer = this.scene.add.container(width / 4, height / 4);
-    this.modalWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 340, 440, 8, 8, 8, 8);
+    this.modalWindow = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, 170, 220, 16, 16, 16, 16).setScale(2);
 
     this.modalContainer.add(this.modalWindow);
     this.modalContainer.setVisible(false);
