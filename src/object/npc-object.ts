@@ -6,6 +6,7 @@ import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject } from './base-object';
+import { npcsInfo } from '../data/npc';
 
 export let npcs: Map<string, NpcObject> = new Map();
 
@@ -24,7 +25,7 @@ export class NpcObject extends BaseObject {
     return this.location;
   }
 
-  reaction(playerDirection: DIRECTION, key: string, type: 'welcome' | 'accept' | 'reject' | 'question'): Message[] {
+  reaction(playerDirection: DIRECTION, key: string, type: string): Message[] {
     this.reactionDirection(playerDirection);
 
     return this.reactionScript(key, type);
@@ -47,9 +48,14 @@ export class NpcObject extends BaseObject {
     }
   }
 
-  private reactionScript(key: string, type: 'welcome' | 'accept' | 'reject' | 'question'): Message[] {
-    const config = this.detailSetting(key);
-    return [{ type: 'default', format: config, content: i18next.t(`message:${key}_${this.location === OVERWORLD_TYPE.PLAZA ? 'welcome' : 'question'}`) }];
+  private reactionScript(key: string, type: string): Message[] {
+    type = this.detailSetting(key);
+
+    if (npcsInfo[key] && npcsInfo[key].scripts[type]) {
+      return npcsInfo[key].scripts[type];
+    }
+
+    return [{ type: 'default', format: 'talk', content: i18next.t(`message:${key}_${this.location === OVERWORLD_TYPE.PLAZA ? 'talk' : 'question'}`) }];
   }
 
   private detailSetting(key: string) {

@@ -121,7 +121,7 @@ export class Overworld extends Ui {
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
             const objKey = obj.getSprite().texture.key;
             this.isMessageActive = true;
-            const messageResult = await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'question'));
+            const messageResult = await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'talk'));
             this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
             this.isMessageActive = false;
           }

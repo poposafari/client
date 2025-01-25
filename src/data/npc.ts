@@ -3,16 +3,19 @@ import { Message } from '../interface/sys';
 
 export interface Npc {
   movable: boolean;
-  scripts: Message[];
+  scripts: Record<string, Message[]>;
 }
 
-export let npcs: Record<string, Npc> = {};
+export let npcsInfo: Record<string, Npc> = {};
 
 i18next.on('initialized', () => {
-  npcs = {
-    '000': {
+  npcsInfo = {
+    npc000: {
       movable: false,
-      scripts: [],
+      scripts: {
+        talk: [{ type: 'default', format: 'talk', content: i18next.t('message:npc000_welcome') }],
+        question: [{ type: 'default', format: 'question', content: i18next.t('message:npc000_question') }],
+      },
     },
   };
 });
