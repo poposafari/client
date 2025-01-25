@@ -1,4 +1,4 @@
-import { npcs } from '../data/npc';
+import { npcsInfo } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
@@ -69,8 +69,8 @@ export class InGameScene extends BaseScene {
   }
 
   private initNpcAnimation() {
-    for (const key of Object.keys(npcs)) {
-      const movementFrames = getSpriteFrames(this, `npc${key}`, ANIMATION.NPC_MOVEMENT);
+    for (const key of Object.keys(npcsInfo)) {
+      const movementFrames = getSpriteFrames(this, `${key}`, ANIMATION.NPC_MOVEMENT);
 
       const up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
       const down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];

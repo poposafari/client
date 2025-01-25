@@ -32,7 +32,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.LOGIN);
+    this.manager.changeMode(MODE.OVERWORLD);
   }
   exit(): void {}
 
