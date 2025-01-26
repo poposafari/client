@@ -35,7 +35,9 @@ export class Overworld000 extends Plaza {
     }
 
     const npc_TaxiDriver = new NpcObject(this.scene, `npc000`, 8, 8, this.map, '택시 드라이버', OBJECT.NPC, this.getType());
+    const npc_shopkeeper = new NpcObject(this.scene, `npc001`, 18, 8, this.map, '점원', OBJECT.NPC, this.getType());
     this.npcs.push(npc_TaxiDriver);
+    this.npcs.push(npc_shopkeeper);
   }
 
   clean(): void {

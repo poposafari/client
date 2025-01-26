@@ -225,6 +225,10 @@ export class Overworld extends Ui {
           if (msgResult) this.mode.moveToVillage();
         }
         return;
+      case 'npc001':
+        this.mode.pauseOverworldSystem(true);
+        this.mode.addUiStackOverlap('OverworldShopListUi');
+        return;
     }
   }
 }
