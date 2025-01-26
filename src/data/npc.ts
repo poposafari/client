@@ -15,6 +15,13 @@ i18next.on('initialized', () => {
       scripts: {
         talk: [{ type: 'default', format: 'talk', content: i18next.t('message:npc000_welcome') }],
         question: [{ type: 'default', format: 'question', content: i18next.t('message:npc000_question') }],
+        reject: [{ type: 'default', format: 'talk', content: i18next.t('message:npc000_reject') }],
+      },
+    },
+    npc001: {
+      movable: false,
+      scripts: {
+        talk: [{ type: 'default', format: 'talk', content: i18next.t('message:npc001_welcome') }],
       },
     },
   };
