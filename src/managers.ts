@@ -422,9 +422,9 @@ export class PlayerInfoManager {
   init() {
     //TODO: axios로 데이터를 받아와야 한다.
 
-    this.gender = 'girl';
+    this.gender = 'boy';
     this.nickname = '운영자';
-    this.avatarType = 1;
+    this.avatarType = 3;
     this.posX = 10;
     this.posY = 10;
     this.currentOverworld = '000';

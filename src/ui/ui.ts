@@ -176,6 +176,7 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
+    case TEXTSTYLE.OVERWORLD_DESC:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
