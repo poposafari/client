@@ -14,4 +14,5 @@ export const enum TEXTSTYLE {
   OVERWORLD_LIST,
   INPUT_GUIDE,
   MENU,
+  OVERWORLD_DESC,
 }

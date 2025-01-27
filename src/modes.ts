@@ -22,6 +22,7 @@ import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
 import { getOverworldInfo } from './data/overworld';
+import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -162,6 +163,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new BoxUi(this.scene, this));
     this.uis.push(new BoxModalUi(this.scene, this));
     this.uis.push(new BoxRegisterUi(this.scene, this));
+    this.uis.push(new OverworldShopListUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
