@@ -44,4 +44,5 @@ export const menu: TranslationDefault = {
   menuTitle: '타이틀로 이동',
   accept: '예',
   reject: '아니오',
+  inBag: '보유 개수 : ',
 };
