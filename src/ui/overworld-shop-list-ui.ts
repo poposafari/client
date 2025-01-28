@@ -20,6 +20,8 @@ export class OverworldShopListUi extends Ui {
   private desc!: Phaser.GameObjects.Text;
   private icon!: Phaser.GameObjects.Image;
   private page!: Phaser.GameObjects.Text;
+  private lastPage!: number;
+  private lastChoice!: number;
   private readonly scale: number = 2;
   private readonly contentHeight: number = 50;
   private readonly contentSpacing: number = 2;
@@ -93,6 +95,7 @@ export class OverworldShopListUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
     this.containerBottom.setVisible(true);
+    this.lastPage = 1;
     this.pause(false);
   }
 
@@ -115,10 +118,9 @@ export class OverworldShopListUi extends Ui {
     const keyboardManager = KeyboardManager.getInstance();
 
     let start = 0;
-    // let start = this.lastChoice;
     let end = this.LIST_PER_PAGE - 1;
     let choice = start;
-    let currentPage = 1;
+    let currentPage = this.lastPage;
     const totalPages = Math.ceil(this.getShopItems().length / this.LIST_PER_PAGE);
 
     this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
@@ -160,13 +162,16 @@ export class OverworldShopListUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            const target = this.getShopItems()[(currentPage - 1) * this.LIST_PER_PAGE + choice];
+            const targetIndex = (currentPage - 1) * this.LIST_PER_PAGE + choice;
+            const target = this.getShopItems()[targetIndex];
+            this.lastPage = currentPage;
             const item = getItem(target);
-            this.dummys[(currentPage - 1) * this.LIST_PER_PAGE + choice].setTexture(TEXTURE.BLANK);
-            this.mode.addUiStackOverlap('OverworldShopChoiceUi', item);
-            console.log((currentPage - 1) * this.LIST_PER_PAGE + choice);
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
+            this.updateTexture();
+            this.mode.addUiStackOverlap('OverworldShopChoiceUi', target);
             break;
           case KEY.CANCEL:
+            this.lastChoice = 1;
             this.clean();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.mode.pauseOverworldSystem(false);
@@ -183,6 +188,12 @@ export class OverworldShopListUi extends Ui {
       } catch (error) {
         console.error(`Error handling key input: ${error}`);
       }
+    });
+  }
+
+  private updateTexture() {
+    this.dummys.forEach((key, index) => {
+      key.setTexture(TEXTURE.BLANK);
     });
   }
 
