@@ -115,6 +115,7 @@ export class OverworldShopListUi extends Ui {
     const keyboardManager = KeyboardManager.getInstance();
 
     let start = 0;
+    // let start = this.lastChoice;
     let end = this.LIST_PER_PAGE - 1;
     let choice = start;
     let currentPage = 1;
@@ -161,13 +162,16 @@ export class OverworldShopListUi extends Ui {
           case KEY.SELECT:
             const target = this.getShopItems()[(currentPage - 1) * this.LIST_PER_PAGE + choice];
             const item = getItem(target);
-
+            this.dummys[(currentPage - 1) * this.LIST_PER_PAGE + choice].setTexture(TEXTURE.BLANK);
+            this.mode.addUiStackOverlap('OverworldShopChoiceUi', item);
+            console.log((currentPage - 1) * this.LIST_PER_PAGE + choice);
             break;
           case KEY.CANCEL:
             this.clean();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
+            break;
         }
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
