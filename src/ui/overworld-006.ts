@@ -21,9 +21,6 @@ export class Overworld006 extends Safari {
   show(pos: InitPos): void {
     if (!pos) return;
 
-    const mode = this.getMode();
-    const playerInfo = mode.getPlayerInfoManager().getInfo();
-
     this.initMap();
 
     super.show({ x: pos.x, y: pos.y });

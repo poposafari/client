@@ -21,7 +21,7 @@ export const menu: TranslationDefault = {
   type15: '악',
   type16: '강철',
   type17: '페어리',
-  overworld_000: '오버월드000',
+  overworld_000: '테스트 라운지',
   overworld_001: '오버월드001',
   overworld_002: '오버월드002',
   overworld_003: '오버월드003',
@@ -45,4 +45,6 @@ export const menu: TranslationDefault = {
   accept: '예',
   reject: '아니오',
   inBag: '보유 개수 : ',
+  location: '현재 위치 : ',
+  myMoney: '소지금 : ',
 };

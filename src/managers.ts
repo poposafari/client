@@ -411,6 +411,7 @@ export class PlayerInfoManager {
   private followPokemon!: number;
   private fpPosX!: number;
   private fpPosY!: number;
+  private money!: number;
 
   static getInstance(): PlayerInfoManager {
     if (!PlayerInfoManager.instance) {
@@ -431,6 +432,7 @@ export class PlayerInfoManager {
     this.followPokemon = -1;
     this.fpPosX = 4;
     this.fpPosY = 3;
+    this.money = 500;
   }
 
   getInfo() {
@@ -447,6 +449,7 @@ export class PlayerInfoManager {
         y: this.fpPosY,
       },
       currentOverworld: this.currentOverworld,
+      money: this.money,
     };
   }
 
