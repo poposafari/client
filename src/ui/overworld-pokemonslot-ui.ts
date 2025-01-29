@@ -107,7 +107,6 @@ export class OverworldPokemonSlotUi extends Ui {
           PlayerInfoManager.getInstance().setMyFollowPokemon(pokemonSlots[i]);
 
           const pokedex = playerPokemonManager.getMyPokemonKey(pokemonSlots[i]);
-          console.log(pokedex);
           this.mode.changeFollowPokemon(pokedex);
         }
       });

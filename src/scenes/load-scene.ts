@@ -131,6 +131,8 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.POKEBALL_THROW, 'ui', TEXTURE.POKEBALL_THROW, ANIMATION.POKEBALL_THROW);
     this.loadAtlas(TEXTURE.POKEBALL_GROUND, 'ui', TEXTURE.POKEBALL_GROUND, ANIMATION.POKEBALL_GROUND);
 
+    this.loadImage(TEXTURE.SHADOW, 'ui', TEXTURE.SHADOW);
+
     for (const key of Object.keys(items)) {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }

@@ -92,6 +92,7 @@ export const enum TEXTURE {
   POKEMON_OVERWORLD = 'pokemon_overworld',
   POKEBALL_THROW = 'pokeball_throw',
   POKEBALL_GROUND = 'pokeball_ground',
+  SHADOW = 'shadow',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

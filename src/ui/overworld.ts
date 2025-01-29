@@ -9,7 +9,6 @@ import { addMap, Ui } from './ui';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
-import { ItemThrowObject } from '../object/item-throw-object';
 
 export interface InitPos {
   x: number;
@@ -174,11 +173,8 @@ export class Overworld extends Ui {
     const pet = this.player.getPet();
 
     pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
-    this.player
-      .getPet()
-      .getSprite()
-      .setTexture(`pokemon_overworld${pokedex}`)
-      .setVisible(pokedex !== '000' ? true : false);
+    pet.setVisible(pokedex !== '000' ? true : false);
+    this.player.getPet().getSprite().setTexture(`pokemon_overworld${pokedex}`);
   }
 
   getMode() {

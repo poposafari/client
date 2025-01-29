@@ -4,7 +4,7 @@ import { OBJECT } from '../enums/object-type';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addTextBackground, createSprite } from '../ui/ui';
+import { addImage, addTextBackground, createSprite } from '../ui/ui';
 
 export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
@@ -14,6 +14,7 @@ export class BaseObject {
   private scene: InGameScene;
   private tilePos!: Phaser.Math.Vector2;
   private sprite: Phaser.GameObjects.Sprite;
+  private spriteShadow: Phaser.GameObjects.Image;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
   private readonly offsetX = TILE_SIZE / 2;
@@ -21,9 +22,11 @@ export class BaseObject {
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string, objectType: OBJECT) {
     this.scene = scene;
+    this.spriteShadow = addImage(scene, TEXTURE.SHADOW, 0, 0).setScale(2.8);
     this.sprite = createSprite(scene, texture, 0, 0);
 
     this.sprite.setOrigin(0.5, 1);
+    this.spriteShadow.setOrigin(0.5, 1);
 
     this.type = objectType;
 
@@ -41,6 +44,7 @@ export class BaseObject {
     const retY = posY * TILE_SIZE * MAP_SCALE + this.offsetY * MAP_SCALE;
 
     this.sprite.setPosition(retX, retY);
+    this.spriteShadow.setPosition(retX, retY);
     this.nickname.setPosition(retX, retY - 100);
   }
 
@@ -56,6 +60,7 @@ export class BaseObject {
     if (this.sprite) {
       this.scene.children.remove(this.sprite);
       this.sprite.destroy();
+      this.spriteShadow.destroy();
       this.sprite = null!;
     }
 
@@ -68,6 +73,7 @@ export class BaseObject {
 
   setVisible(onoff: boolean) {
     this.sprite.setVisible(onoff ? true : false);
+    this.spriteShadow.setVisible(onoff ? true : false);
   }
 
   getSprite() {
@@ -96,6 +102,7 @@ export class BaseObject {
 
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
+    this.spriteShadow.setPosition(position.x, position.y);
     this.nickname.setPosition(position.x, position.y - 100);
   }
 
