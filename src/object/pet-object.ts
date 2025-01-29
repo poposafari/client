@@ -11,9 +11,6 @@ import { PlayerInfoManager, PlayerPokemonManager } from '../managers';
 export class PetObject extends MovableObject {
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
     super(scene, texture, x, y, map, nickname, OBJECT.PET);
-
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const playerPokemonManager = PlayerPokemonManager.getInstance();
   }
 
   move(player: PlayerObject) {

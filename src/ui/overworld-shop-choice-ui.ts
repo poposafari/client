@@ -7,7 +7,8 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { getItem } from '../data/items';
+import { getItem, Item } from '../data/items';
+import { BagItem } from '../interface/sys';
 
 export class OverworldShopChoiceUi extends Ui {
   private mode: OverworldMode;
@@ -17,6 +18,7 @@ export class OverworldShopChoiceUi extends Ui {
   private textCost!: Phaser.GameObjects.Text;
   private choice: number = 1;
   private cost!: number;
+  private targetItem!: string;
   private readonly minChoice: number = 1;
   private readonly maxChoice: number = 99;
 
@@ -28,6 +30,8 @@ export class OverworldShopChoiceUi extends Ui {
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
+
+    this.targetItem = '000';
 
     this.container = this.scene.add.container(width / 2, height / 2);
 
@@ -59,6 +63,7 @@ export class OverworldShopChoiceUi extends Ui {
 
   show(data?: any): void {
     const playerItemManager = this.mode.getPlayerItemManager();
+    this.targetItem = data;
     const item = playerItemManager.getMyItem(data);
     const itemInfo = getItem(data);
 
@@ -100,10 +105,23 @@ export class OverworldShopChoiceUi extends Ui {
             this.changeChoice(10);
             break;
           case KEY.SELECT:
-            console.log(`선택한 개수: ${this.choice}, 총 가격: ${this.choice * this.cost}`);
+            this.clean();
+            const messageResult = await this.mode.startMessage([{ type: 'default', format: 'question', content: i18next.t(`message:npc001_question`) }]);
+            if (messageResult) {
+              if (this.validateCalculate(this.targetItem, this.choice, this.cost) > 0) {
+                const messageResult = await this.mode.startMessage([{ type: 'default', format: 'talk', content: i18next.t(`message:npc001_accept`) }]);
+                this.mode.changeOverworldInfo(this.mode.getPlayerInfoManager().getInfo().currentOverworld);
+                this.mode.chnageItemSlot();
+              } else {
+                const messageResult = await this.mode.startMessage([{ type: 'default', format: 'talk', content: i18next.t(`message:npc001_reject`) }]);
+              }
+            }
+            this.targetItem = '000';
+            this.mode.popUiStack();
             break;
           case KEY.CANCEL:
             this.clean();
+            this.targetItem = '000';
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
             break;
@@ -130,5 +148,20 @@ export class OverworldShopChoiceUi extends Ui {
       this.textCount.setText(this.choice.toString());
       this.textCost.setText(`${this.choice * this.cost}`);
     }
+  }
+
+  private validateCalculate(targetItem: string, count: number, price: number) {
+    const playerInfoManager = this.mode.getPlayerInfoManager();
+    const playerItemManager = this.mode.getPlayerItemManager();
+
+    const totalCost = count * price;
+
+    if (playerInfoManager.getInfo().money < totalCost) {
+      return -1;
+    }
+
+    playerInfoManager.setMoney(playerInfoManager.getInfo().money - totalCost);
+    playerItemManager.increaseItemStock(targetItem, count);
+    return 1;
   }
 }
