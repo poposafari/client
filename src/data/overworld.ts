@@ -16,6 +16,16 @@ export let overworlds: Record<string, Overworld> = {};
 
 i18next.on('initialized', () => {
   overworlds = {
+    '000': {
+      name: i18next.t('menu:overworld_000'),
+      description: 'TestRoom',
+      consume: 0,
+      spawnTypes: [],
+      entryPos: {
+        x: 0,
+        y: 0,
+      },
+    },
     '006': {
       name: i18next.t('menu:overworld_006'),
       description: 'TestRoom',

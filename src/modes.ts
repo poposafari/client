@@ -217,7 +217,16 @@ export class OverworldMode extends Mode {
     }
   }
 
+  changeOverworldInfo(overworld: string) {
+    this.getPlayerInfoManager().setCurrentOverworld(overworld);
+    const ui = this.getUiType('OverworldUi');
+    if (ui instanceof OverworldUi) {
+      ui.updateOverworldInfoUi();
+    }
+  }
+
   changeOverworld(overworldKey: string) {
+    this.changeOverworldInfo(overworldKey);
     const overworld = getOverworldInfo(overworldKey);
 
     if (!overworld) return;
@@ -235,6 +244,7 @@ export class OverworldMode extends Mode {
   moveToVillage() {
     this.getUiStackTop().clean();
     this.popUiStack();
+    this.changeOverworldInfo('000');
     this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
   }
 
