@@ -14,5 +14,7 @@ export const message: TranslationDefault = {
   npc000_reject: '택시 드라이버: 티켓이 부족하시는데요.',
   npc000_question: '택시 드라이버: 마을로 돌아가시겠습니까?',
   npc001_welcome: '점원: 안녕하세요! 무엇을 도와드릴까요?',
+  npc001_question: '점원: 선택하신 상품을 구매하시겠습니까?',
+  npc001_accept: '점원: 구매해 주셔서 감사합니다! 좋은 하루 되세요.',
   npc001_reject: '점원: 돈이 부족하시네요.',
 };

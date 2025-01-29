@@ -387,6 +387,18 @@ export class PlayerItemManager {
     return true;
   }
 
+  increaseItemStock(itemIdx: string, value: number) {
+    if (value <= 0) return;
+
+    const item = this.getMyItem(itemIdx);
+
+    if (item && item.idx !== '000') {
+      item.stock += value;
+    } else {
+      this.addItem(itemIdx, value);
+    }
+  }
+
   private hasMyItemStock(itemIdx: string) {
     const myItem = this.getMyItem(itemIdx);
 
@@ -432,7 +444,7 @@ export class PlayerInfoManager {
     this.followPokemon = -1;
     this.fpPosX = 4;
     this.fpPosY = 3;
-    this.money = 500;
+    this.money = 50000;
   }
 
   getInfo() {
@@ -491,6 +503,10 @@ export class PlayerInfoManager {
 
   setCurrentOverworld(overworld: string) {
     this.currentOverworld = overworld;
+  }
+
+  setMoney(value: number) {
+    this.money = value;
   }
 }
 
