@@ -96,6 +96,7 @@ export class OverworldShopListUi extends Ui {
     this.container.setVisible(true);
     this.containerBottom.setVisible(true);
     this.lastPage = 1;
+    this.renderPage(this.lastPage);
     this.pause(false);
   }
 
