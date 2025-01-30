@@ -50,7 +50,7 @@ export class OverworldTaxiListUi extends Ui {
     this.stockTicketContainer = this.scene.add.container(0, this.fixedTopY + windowListHeight + spacing);
     this.windowStockTicket = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, windowListWidth / 2, 70, 16, 16, 16, 16).setScale(2);
     const stockTicketText = addText(this.scene, 0, -30, i18next.t('menu:stockTicket'), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0.5, 0.5);
-    const stockTicketIcon = addImage(this.scene, `item007`, -40, 20).setScale(1.5);
+    const stockTicketIcon = addImage(this.scene, `item006`, -40, 20).setScale(1.5);
     this.stockTicketCount = addText(this.scene, 20, 20, 'x0', TEXTSTYLE.OVERWORLD_LIST).setOrigin(0.5, 0.5);
     this.stockTicketContainer.add(this.windowStockTicket);
     this.stockTicketContainer.add(stockTicketText);
@@ -126,7 +126,7 @@ export class OverworldTaxiListUi extends Ui {
     this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
     this.showSpawnTypes(this.overworldList[choice]);
 
-    this.stockTicketCount.setText(`x${playerItemManager.getMyItem('007').stock}`);
+    this.stockTicketCount.setText(`x${playerItemManager.getMyItem('006').stock}`);
 
     keyboardManager.setAllowKey(keys);
     keyboardManager.setKeyDownCallback(async (key) => {
@@ -275,7 +275,7 @@ export class OverworldTaxiListUi extends Ui {
         const yPosition = this.fixedTopY + contentHeight / 2 + (i - startIdx) * (contentHeight + spacing);
         const text = addText(this.scene, -160, yPosition + spacing, overworldInfo.name, TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
         const consumeText = addText(this.scene, +155, yPosition + spacing, `x${overworldInfo.consume.toString()}`, TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
-        const icons = addImage(this.scene, `item007`, +130, yPosition + 3).setScale(0.7);
+        const icons = addImage(this.scene, `item006`, +130, yPosition + 3).setScale(0.7);
         const dummy = addImage(this.scene, TEXTURE.BLANK, -180, yPosition).setScale(1.5);
 
         this.overworldsConsumeTickets.push(icons);
@@ -300,7 +300,7 @@ export class OverworldTaxiListUi extends Ui {
 
   private validateTickets(requiredTickets: number): number {
     const playerItem = this.mode.getPlayerItemManager();
-    const stock = playerItem.getMyItem('007').stock ?? 0;
+    const stock = playerItem.getMyItem('006').stock ?? 0;
 
     if (stock < requiredTickets) {
       return -1;
@@ -311,7 +311,7 @@ export class OverworldTaxiListUi extends Ui {
 
   private useTickets(value: number) {
     const playerItem = this.mode.getPlayerItemManager();
-    playerItem.setItemStock('007', value);
+    playerItem.setItemStock('006', value);
     return true;
   }
 }
