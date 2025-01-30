@@ -66,7 +66,7 @@ export class OverworldShopListUi extends Ui {
     this.desc = addText(this.scene, -400, -30, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5);
     this.icon = addImage(this.scene, TEXTURE.BLANK, -450, 0).setScale(1.5);
 
-    const cancelText = addText(this.scene, -120, this.fixedTopY - this.contentHeight + 30, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE);
+    const cancelText = addText(this.scene, -120, this.fixedTopY - this.contentHeight + 30, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE_WHITE);
     this.page = addText(this.scene, +140, this.fixedTopY - this.contentHeight + 15, ``, TEXTSTYLE.MESSAGE_BLACK);
 
     this.container.add(this.window);
@@ -255,7 +255,7 @@ export class OverworldShopListUi extends Ui {
   }
 
   private getShopItems() {
-    let ret = ['002', '003', '004', '002', '003', '004', '002', '003', '004', '002', '003', '004', '002', '003', '001'];
+    let ret = ['002', '003', '004', '005', '006'];
     return ret;
   }
 }

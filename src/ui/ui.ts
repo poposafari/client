@@ -163,6 +163,8 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.BAG3:
     case ANIMATION.BAG4:
       return 2;
+    case ANIMATION.EMOTION_0:
+      return 2;
   }
 }
 

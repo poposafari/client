@@ -14,6 +14,8 @@ export class BaseObject {
   private scene: InGameScene;
   private tilePos!: Phaser.Math.Vector2;
   private sprite: Phaser.GameObjects.Sprite;
+  protected dummy1!: Phaser.GameObjects.Sprite;
+  protected dummy2!: Phaser.GameObjects.Sprite;
   private spriteShadow: Phaser.GameObjects.Image;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
@@ -24,8 +26,12 @@ export class BaseObject {
     this.scene = scene;
     this.spriteShadow = addImage(scene, TEXTURE.SHADOW, 0, 0).setScale(2.8);
     this.sprite = createSprite(scene, texture, 0, 0);
+    this.dummy1 = createSprite(scene, TEXTURE.BLANK, 0, 0);
+    this.dummy2 = createSprite(scene, TEXTURE.BLANK, 0, 0);
 
     this.sprite.setOrigin(0.5, 1);
+    this.dummy1.setOrigin(0.5, 1);
+    this.dummy2.setOrigin(0.5, 1);
     this.spriteShadow.setOrigin(0.5, 1);
 
     this.type = objectType;
@@ -36,6 +42,7 @@ export class BaseObject {
 
     this.initSetPosition(this.tilePos.x, this.tilePos.y);
     this.nickname.setDepth(DEPTH.NICKNAME);
+    this.dummy1.setDepth(DEPTH.NICKNAME + 1);
     this.setDepth(this.tilePos.y);
   }
 
@@ -44,6 +51,8 @@ export class BaseObject {
     const retY = posY * TILE_SIZE * MAP_SCALE + this.offsetY * MAP_SCALE;
 
     this.sprite.setPosition(retX, retY);
+    this.dummy1.setPosition(retX, retY - 80);
+    this.dummy2.setPosition(retX, retY);
     this.spriteShadow.setPosition(retX, retY);
     this.nickname.setPosition(retX, retY - 100);
   }
@@ -61,7 +70,12 @@ export class BaseObject {
       this.scene.children.remove(this.sprite);
       this.sprite.destroy();
       this.spriteShadow.destroy();
+      this.dummy1.destroy();
+      this.dummy2.destroy();
       this.sprite = null!;
+      this.spriteShadow = null!;
+      this.dummy1 = null!;
+      this.dummy2 = null!;
     }
 
     if (this.nickname) {
@@ -74,6 +88,8 @@ export class BaseObject {
   setVisible(onoff: boolean) {
     this.sprite.setVisible(onoff ? true : false);
     this.spriteShadow.setVisible(onoff ? true : false);
+    this.dummy1.setVisible(onoff ? true : false);
+    this.dummy2.setVisible(onoff ? true : false);
   }
 
   getSprite() {
@@ -103,6 +119,8 @@ export class BaseObject {
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
     this.spriteShadow.setPosition(position.x, position.y);
+    this.dummy1.setPosition(position.x, position.y - 80);
+    this.dummy2.setPosition(position.x, position.y);
     this.nickname.setPosition(position.x, position.y - 100);
   }
 

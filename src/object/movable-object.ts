@@ -175,11 +175,21 @@ export class MovableObject extends BaseObject {
   }
 
   getObjectInFront(direction: DIRECTION) {
+    const overworldManager = OverworldManager.getInstance();
+    const pokemons = overworldManager.getOverworldPokemons();
+
     const nextTilePos = this.tilePosInDirection(direction);
     for (const [, npc] of npcs) {
       const npcTilePos = npc.getTilePos();
       if (npcTilePos.x === nextTilePos.x && npcTilePos.y === nextTilePos.y) {
         return npc;
+      }
+    }
+
+    for (const pokemon of pokemons) {
+      const pokemonTilePos = pokemon.getTilePos();
+      if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
+        return pokemon;
       }
     }
   }
