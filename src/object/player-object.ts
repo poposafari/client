@@ -239,8 +239,6 @@ export class PlayerObject extends MovableObject {
         return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 2);
       case '005':
         return this.setStatus(PLAYER_STATUS.RIDE);
-      case '006':
-        return this.setStatus(PLAYER_STATUS.RUNNING);
     }
   }
 }
