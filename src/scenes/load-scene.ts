@@ -90,6 +90,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.MENU_LOCATION, 'ui', TEXTURE.MENU_LOCATION);
     this.loadImage(TEXTURE.MENU_MONEY, 'ui', TEXTURE.MENU_MONEY);
     this.loadImage(TEXTURE.MENU_TITLE, 'ui', TEXTURE.MENU_TITLE);
+    this.loadImage(TEXTURE.MENU_ICON, 'ui', TEXTURE.MENU_ICON);
+    this.loadImage(TEXTURE.MENU_SHOES, 'ui', TEXTURE.MENU_SHOES);
 
     this.loadImage(TEXTURE.BG_BAG, 'ui', TEXTURE.BG_BAG);
     this.loadImage(TEXTURE.XBOX, 'ui', TEXTURE.XBOX);
@@ -132,6 +134,9 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.POKEBALL_GROUND, 'ui', TEXTURE.POKEBALL_GROUND, ANIMATION.POKEBALL_GROUND);
 
     this.loadImage(TEXTURE.SHADOW, 'ui', TEXTURE.SHADOW);
+
+    this.loadImage(TEXTURE.KEY_S, 'ui', TEXTURE.KEY_S);
+    this.loadImage(TEXTURE.KEY_R, 'ui', TEXTURE.KEY_R);
 
     for (const key of Object.keys(items)) {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);

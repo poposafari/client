@@ -9,6 +9,7 @@ import { addMap, Ui } from './ui';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
+import { PLAYER_STATUS } from '../enums/player-status';
 
 export interface InitPos {
   x: number;
@@ -106,7 +107,7 @@ export class Overworld extends Ui {
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
+    const keys = [KEY.SELECT, KEY.RUNNING, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
 
     this.sysBlock = false;
 
@@ -129,6 +130,11 @@ export class Overworld extends Ui {
           if (this.player.isMovementFinish()) {
             this.mode.pauseOverworldSystem(true);
             this.mode.addUiStackOverlap('OverworldMenuUi');
+          }
+          break;
+        case KEY.RUNNING:
+          if (this.player.isMovementFinish()) {
+            this.player.setStatus(PLAYER_STATUS.RUNNING);
           }
           break;
         case KEY.USE_1:

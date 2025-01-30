@@ -74,7 +74,7 @@ export class OverworldTaxiListUi extends Ui {
       }
     });
 
-    const cancelText = addText(this.scene, -120, this.fixedTopY - contentHeight + 30, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE);
+    const cancelText = addText(this.scene, -120, this.fixedTopY - contentHeight + 30, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE_WHITE);
 
     this.overworldPageText = addText(this.scene, +140, this.fixedTopY - contentHeight + 15, ``, TEXTSTYLE.OVERWORLD_LIST);
 

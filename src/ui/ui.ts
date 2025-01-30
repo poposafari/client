@@ -249,9 +249,13 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.fontSize = '80px';
       config.color = '#ffffff';
       break;
-    case TEXTSTYLE.INPUT_GUIDE:
+    case TEXTSTYLE.INPUT_GUIDE_WHITE:
       config.fontSize = '50px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.INPUT_GUIDE_BLACK:
+      config.fontSize = '50px';
+      config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.MENU:
       config.fontSize = '30px';
