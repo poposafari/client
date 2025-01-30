@@ -10,6 +10,7 @@ import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
 import { PLAYER_STATUS } from '../enums/player-status';
+import { PokemonObject } from '../object/pokemon-object';
 
 export interface InitPos {
   x: number;
@@ -120,10 +121,15 @@ export class Overworld extends Ui {
           const obj = this.player.getObjectInFront(this.player.getLastDirection());
           if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
             const objKey = obj.getSprite().texture.key;
-            this.isMessageActive = true;
-            const messageResult = await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'talk'));
-            this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
-            this.isMessageActive = false;
+            if (obj instanceof NpcObject) {
+              this.isMessageActive = true;
+              const messageResult = await this.mode.startMessage(obj.reaction(this.player.getLastDirection(), objKey, 'talk'));
+              this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
+              this.isMessageActive = false;
+            } else if (obj instanceof PokemonObject) {
+              console.log(obj);
+              obj.reaction(this.player.getLastDirection());
+            }
           }
           break;
         case KEY.MENU:

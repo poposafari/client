@@ -1,3 +1,4 @@
+import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
@@ -101,6 +102,35 @@ export class PokemonObject extends MovableObject {
       this.againTimer.remove(false);
       this.againTimer = undefined;
     }
+  }
+
+  reaction(playerDirection: DIRECTION) {
+    this.stopMovement();
+
+    switch (playerDirection) {
+      case DIRECTION.DOWN:
+        this.startAnmation(`pokemon_overworld${this.pokedex}_up`);
+        break;
+      case DIRECTION.LEFT:
+        this.startAnmation(`pokemon_overworld${this.pokedex}_right`);
+        break;
+      case DIRECTION.RIGHT:
+        this.startAnmation(`pokemon_overworld${this.pokedex}_left`);
+        break;
+      case DIRECTION.UP:
+        this.startAnmation(`pokemon_overworld${this.pokedex}_down`);
+        break;
+    }
+
+    this.dummy1.setTexture(TEXTURE.EMOTION_0);
+    this.dummy1.anims.play(ANIMATION.EMOTION_0, true);
+
+    const duration = this.dummy1.anims.currentAnim!.frames.length * (1000 / this.dummy1.anims.currentAnim!.frameRate);
+
+    this.getScene().time.delayedCall(duration, () => {
+      this.dummy1.stop();
+      this.dummy1.setFrame(`emotion_0-2`);
+    });
   }
 
   private getRandomDirection() {

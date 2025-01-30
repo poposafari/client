@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "emotion_0-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 28
+      }
+    },
+    "emotion_0-1": {
+      "frame": {
+        "x": 28,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 28,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 28
+      }
+    },
+    "emotion_0-2": {
+      "frame": {
+        "x": 56,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 56,
+        "y": 0,
+        "w": 28,
+        "h": 28
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 28
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "emotion_0.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 84,
+      "h": 28
+    },
+    "scale": "1"
+  }
+}
