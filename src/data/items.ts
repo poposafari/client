@@ -56,13 +56,6 @@ i18next.on('initialized', () => {
       price: 0,
     },
     '006': {
-      name: i18next.t('item:runningshoes.name'),
-      description: i18next.t('item:runningshoes.description'),
-      type: ITEM.KEY,
-      usageType: ITEM_USAGE_TYPE.NON_CONSUMABLE,
-      price: 0,
-    },
-    '007': {
       name: i18next.t('item:ticket.name'),
       description: i18next.t('item:ticket.description'),
       type: ITEM.KEY,
