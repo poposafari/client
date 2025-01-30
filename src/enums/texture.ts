@@ -62,6 +62,7 @@ export const enum TEXTURE {
   MENU_LOCATION = 'menu_location',
   MENU_MONEY = 'menu_money',
   MENU_TITLE = 'menu_title',
+  MENU_ICON = 'menu_icon',
   BG_BAG = 'bg_bag',
   XBOX = 'xbox',
   ITEM_BOX = 'item_box',
@@ -93,6 +94,8 @@ export const enum TEXTURE {
   POKEBALL_THROW = 'pokeball_throw',
   POKEBALL_GROUND = 'pokeball_ground',
   SHADOW = 'shadow',
+  KEY_R = 'key_r',
+  KEY_S = 'key_s',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
