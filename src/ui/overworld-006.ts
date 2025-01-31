@@ -11,7 +11,7 @@ import { Safari } from './safari';
 
 export class Overworld006 extends Safari {
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
-    super(scene, mode, type);
+    super(scene, mode, type, '006');
   }
 
   setup(): void {

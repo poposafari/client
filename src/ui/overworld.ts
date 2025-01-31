@@ -20,6 +20,7 @@ export interface InitPos {
 export class Overworld extends Ui {
   private mode!: OverworldMode;
   private type!: OVERWORLD_TYPE;
+  private key: string;
   protected map!: Phaser.Tilemaps.Tilemap;
   protected layerContainer!: Phaser.GameObjects.Container;
   protected foregroundContainer!: Phaser.GameObjects.Container;
@@ -31,11 +32,12 @@ export class Overworld extends Ui {
   private sysBlock!: boolean;
   private isMessageActive: boolean = false;
 
-  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
+  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE, key: string) {
     super(scene);
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.mode = mode;
     this.type = type;
+    this.key = key;
   }
 
   setup(): void {}
@@ -129,6 +131,8 @@ export class Overworld extends Ui {
             } else if (obj instanceof PokemonObject) {
               console.log(obj);
               obj.reaction(this.player.getLastDirection());
+              this.mode.pauseOverworldSystem(true);
+              this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.key, pokedex: obj.getPokedex() });
             }
           }
           break;
