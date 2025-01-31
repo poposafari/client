@@ -29,7 +29,7 @@ export function addImage(scene: InGameScene, texture: TEXTURE | string, x: numbe
   return ret;
 }
 
-export function addBackground(scene: InGameScene, texture: TEXTURE, width: number, height: number) {
+export function addBackground(scene: InGameScene, texture: TEXTURE | string, width: number, height: number) {
   const ret = scene.add
     .image(0, 0, texture)
     .setOrigin(0, 0)
@@ -165,6 +165,15 @@ function getAnimationSize(key: ANIMATION | string) {
       return 2;
     case ANIMATION.EMOTION_0:
       return 2;
+    case ANIMATION.BOY_1_BACK:
+    case ANIMATION.BOY_2_BACK:
+    case ANIMATION.BOY_3_BACK:
+    case ANIMATION.BOY_4_BACK:
+    case ANIMATION.GIRL_1_BACK:
+    case ANIMATION.GIRL_2_BACK:
+    case ANIMATION.GIRL_3_BACK:
+    case ANIMATION.GIRL_4_BACK:
+      return 4;
   }
 }
 
@@ -267,6 +276,52 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
 
   return config;
 }
+
+export function getRealBounds(image: Phaser.GameObjects.Image, scene: InGameScene): { x: number; y: number; width: number; height: number } {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const textureKey = image.texture.key;
+
+  if (!ctx) return { x: 0, y: 0, width: image.width, height: image.height };
+
+  const texture = scene.textures.get(textureKey);
+  const source = texture.getSourceImage() as HTMLImageElement;
+
+  canvas.width = source.width;
+  canvas.height = source.height;
+  ctx.drawImage(source, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  let minX = canvas.width,
+    minY = canvas.height,
+    maxX = 0,
+    maxY = 0;
+
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const index = (y * canvas.width + x) * 4;
+      const alpha = data[index + 3];
+
+      if (alpha > 0) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1,
+  };
+}
+
+export function showAnimation() {}
 
 export abstract class Ui {
   protected scene: InGameScene;
