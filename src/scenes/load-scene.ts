@@ -2,7 +2,9 @@ import { items } from '../data/items';
 import { npcsInfo } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
+import { AREA } from '../enums/area';
 import { TEXTURE } from '../enums/texture';
+import { TIME } from '../enums/time';
 import { initI18n } from '../i18n';
 import { BaseScene } from './base-scene';
 
@@ -67,6 +69,16 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.GIRL_2_RIDE, 'ui/character/ride', 'girl_2', ANIMATION.PLAYER_RIDE);
     this.loadAtlas(TEXTURE.GIRL_3_RIDE, 'ui/character/ride', 'girl_3', ANIMATION.PLAYER_RIDE);
     this.loadAtlas(TEXTURE.GIRL_4_RIDE, 'ui/character/ride', 'girl_4', ANIMATION.PLAYER_RIDE);
+
+    this.loadAtlas(TEXTURE.BOY_1_BACK, 'ui/character/back', 'boy_1', ANIMATION.BOY_1_BACK);
+    this.loadAtlas(TEXTURE.BOY_2_BACK, 'ui/character/back', 'boy_2', ANIMATION.BOY_2_BACK);
+    this.loadAtlas(TEXTURE.BOY_3_BACK, 'ui/character/back', 'boy_3', ANIMATION.BOY_3_BACK);
+    this.loadAtlas(TEXTURE.BOY_4_BACK, 'ui/character/back', 'boy_4', ANIMATION.BOY_4_BACK);
+
+    this.loadAtlas(TEXTURE.GIRL_1_BACK, 'ui/character/back', 'girl_1', ANIMATION.GIRL_1_BACK);
+    this.loadAtlas(TEXTURE.GIRL_2_BACK, 'ui/character/back', 'girl_2', ANIMATION.GIRL_2_BACK);
+    this.loadAtlas(TEXTURE.GIRL_3_BACK, 'ui/character/back', 'girl_3', ANIMATION.GIRL_3_BACK);
+    this.loadAtlas(TEXTURE.GIRL_4_BACK, 'ui/character/back', 'girl_4', ANIMATION.GIRL_4_BACK);
 
     this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 
@@ -161,6 +173,14 @@ export class LoadingScene extends BaseScene {
 
       pokemonIdx++;
     }
+
+    Object.values(AREA).forEach((area) => {
+      Object.values(TIME).forEach((time) => {
+        this.loadImage(`bg_${area}_${time}`, 'ui/battle', `bg_${area}_${time}`);
+        this.loadImage(`eb_${area}_${time}`, 'ui/battle', `eb_${area}_${time}`);
+        this.loadImage(`pb_${area}_${time}`, 'ui/battle', `pb_${area}_${time}`);
+      });
+    });
 
     this.load.on('complete', () => {
       this.startInGameScene();

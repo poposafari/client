@@ -10,6 +10,7 @@ export interface Overworld {
     x: number;
     y: number;
   };
+  area: string;
 }
 
 export let overworlds: Record<string, Overworld> = {};
@@ -19,12 +20,13 @@ i18next.on('initialized', () => {
     '006': {
       name: i18next.t('menu:overworld_006'),
       description: 'TestRoom',
-      consume: 1,
+      consume: 0,
       spawnTypes: [TYPE.GRASS],
       entryPos: {
         x: 19,
         y: 10,
       },
+      area: 'field',
     },
   };
 });

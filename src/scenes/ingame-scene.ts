@@ -66,6 +66,16 @@ export class InGameScene extends BaseScene {
 
     createSpriteAnimation(this, TEXTURE.EMOTION_0, ANIMATION.EMOTION_0);
 
+    createSpriteAnimation(this, TEXTURE.BOY_1_BACK, ANIMATION.BOY_1_BACK);
+    createSpriteAnimation(this, TEXTURE.BOY_2_BACK, ANIMATION.BOY_2_BACK);
+    createSpriteAnimation(this, TEXTURE.BOY_3_BACK, ANIMATION.BOY_3_BACK);
+    createSpriteAnimation(this, TEXTURE.BOY_4_BACK, ANIMATION.BOY_4_BACK);
+
+    createSpriteAnimation(this, TEXTURE.GIRL_1_BACK, ANIMATION.GIRL_1_BACK);
+    createSpriteAnimation(this, TEXTURE.GIRL_2_BACK, ANIMATION.GIRL_2_BACK);
+    createSpriteAnimation(this, TEXTURE.GIRL_3_BACK, ANIMATION.GIRL_3_BACK);
+    createSpriteAnimation(this, TEXTURE.GIRL_4_BACK, ANIMATION.GIRL_4_BACK);
+
     this.initPlayerAnimation();
     this.initPokemonAnimation();
   }
