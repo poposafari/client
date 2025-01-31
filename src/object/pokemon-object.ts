@@ -25,6 +25,10 @@ export class PokemonObject extends MovableObject {
     this.scheduleRandomMovement();
   }
 
+  getPokedex() {
+    return this.pokedex;
+  }
+
   getStatus() {
     return this.status;
   }
