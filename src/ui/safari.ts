@@ -9,8 +9,8 @@ import { InitPos, Overworld } from './overworld';
 export class Safari extends Overworld {
   private pokemons: PokemonObject[] = [];
 
-  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
-    super(scene, mode, type);
+  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE, key: string) {
+    super(scene, mode, type, key);
   }
 
   setup(): void {

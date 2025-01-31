@@ -4,8 +4,8 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { InitPos, Overworld } from './overworld';
 
 export class Plaza extends Overworld {
-  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
-    super(scene, mode, type);
+  constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE, key: string) {
+    super(scene, mode, type, key);
   }
 
   setup(): void {
