@@ -6,7 +6,7 @@ export interface Account {
 }
 
 export interface Message {
-  type: 'sys' | 'default';
+  type: 'sys' | 'default' | 'battle';
   format: 'talk' | 'question';
   content: string;
 }

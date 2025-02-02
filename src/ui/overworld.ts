@@ -129,10 +129,11 @@ export class Overworld extends Ui {
               this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
               this.isMessageActive = false;
             } else if (obj instanceof PokemonObject) {
-              console.log(obj);
               obj.reaction(this.player.getLastDirection());
-              this.mode.pauseOverworldSystem(true);
-              this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.key, pokedex: obj.getPokedex() });
+              this.scene.time.delayedCall(500, () => {
+                this.mode.pauseOverworldSystem(true);
+                this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.key, pokedex: obj.getPokedex(), pokemon: obj });
+              });
             }
           }
           break;

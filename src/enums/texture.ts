@@ -7,6 +7,7 @@ export const enum TEXTURE {
   WINDOW_5 = 'window_5',
   WINDOW_6 = 'window_6',
   WINDOW_7 = 'window_7',
+  WINDOW_8 = 'window_8',
   BG_LOBBY = 'bg_lobby',
   INPUT_LOBBY = 'input_lobby',
   PAUSE_BLACK = 'pause_black',

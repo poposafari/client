@@ -71,7 +71,7 @@ export class PokemonObject extends MovableObject {
     }
   }
 
-  private scheduleRandomMovement() {
+  scheduleRandomMovement() {
     const randomDelay = Phaser.Math.Between(1000, 6000);
     const directionIndex = this.getRandomDirection();
     const stepCount = this.getRandomStep();
@@ -134,6 +134,10 @@ export class PokemonObject extends MovableObject {
     this.getScene().time.delayedCall(duration, () => {
       this.dummy1.stop();
       this.dummy1.setFrame(`emotion_0-2`);
+    });
+
+    this.getScene().time.delayedCall(2000, () => {
+      this.dummy1.setTexture(TEXTURE.BLANK);
     });
   }
 

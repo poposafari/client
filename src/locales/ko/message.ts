@@ -17,4 +17,10 @@ export const message: TranslationDefault = {
   npc001_question: '점원: 선택하신 상품을 구매하시겠습니까?',
   npc001_accept: '점원: 구매해 주셔서 감사합니다! 좋은 하루 되세요.',
   npc001_reject: '점원: 돈이 부족하시네요.',
+  battle_welcome1: '앗! 야생 ',
+  battle_welcome2: '(이/가)\n',
+  battle_welcome3: '나타났다!',
+  battle_thinking1: '(은/는)',
+  battle_thinking2: '\n무엇을 할까?',
+  battle_run: '\n도망쳤다.',
 };

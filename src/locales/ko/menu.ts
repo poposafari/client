@@ -47,4 +47,8 @@ export const menu: TranslationDefault = {
   inBag: '보유 개수 : ',
   location: '현재 위치 : ',
   myMoney: '소지금 : ',
+  battleSelect0: '몬스터볼',
+  battleSelect1: '열매',
+  battleSelect2: '아이템',
+  battleSelect3: '도망간다',
 };
