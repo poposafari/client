@@ -1,9 +1,10 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
-
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { ANIMATION } from '../enums/animation';
+import { EASE } from '../enums/ease';
+import { PIPELINES } from '../enums/pipelines';
 
 export function addWindow(
   scene: InGameScene,
@@ -187,6 +188,8 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.LOBBY_DEFAULT:
+    case TEXTSTYLE.BATTLE_MENU:
+    case TEXTSTYLE.BATTLE_MESSAGE:
     case TEXTSTYLE.OVERWORLD_DESC:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
@@ -223,7 +226,7 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.MESSAGE_WHITE:
-      config.fontSize = '54px';
+      config.fontSize = '68px';
       config.color = '#ffffff';
       break;
     case TEXTSTYLE.TITLE_DEFAULT:
@@ -271,6 +274,14 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.MENU:
       config.fontSize = '30px';
       config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.BATTLE_MESSAGE:
+      config.fontSize = '68px';
+      config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.BATTLE_MENU:
+      config.fontSize = '90px';
+      config.color = '#ffffff';
       break;
   }
 
@@ -321,7 +332,74 @@ export function getRealBounds(image: Phaser.GameObjects.Image, scene: InGameScen
   };
 }
 
-export function showAnimation() {}
+export function runFlashEffect(scene: InGameScene, delay: number): Promise<void> {
+  return new Promise((resolve) => {
+    scene.cameras.main.flash(delay, 255, 255, 255);
+    scene.cameras.main.once('cameraflashcomplete', () => {
+      resolve();
+    });
+  });
+}
+
+export function runZoomEffect(scene: InGameScene, value: number, delay: number, ease: EASE): Promise<void> {
+  return new Promise((resolve) => {
+    scene.tweens.add({
+      targets: scene.cameras.main,
+      zoom: value,
+      duration: delay,
+      ease: ease,
+      onComplete: () => {
+        resolve();
+      },
+    });
+  });
+}
+
+export function runFadeEffect(scene: InGameScene, delay: number, status: 'in' | 'out'): Promise<void> {
+  return new Promise((resolve) => {
+    const camera = scene.cameras.main;
+
+    if (status === 'in') {
+      camera.fadeIn(delay, 0, 0, 0);
+      camera.once('camerafadeincomplete', () => resolve());
+    } else {
+      camera.fadeOut(delay, 0, 0, 0);
+      camera.once('camerafadeoutcomplete', () => resolve());
+    }
+  });
+}
+
+export function runWipeRifghtToLeftEffect(scene: InGameScene) {
+  startPostPipeline(scene, PIPELINES.WIPE_SHADER);
+}
+
+export function moveToCamera(scene: InGameScene, x: number, y: number, delay: number, ease: EASE): Promise<void> {
+  return new Promise((resolve) => {
+    const camera = scene.cameras.main;
+    camera.pan(x, y, delay, ease);
+    camera.once('camerapancomplete', () => {
+      console.log('move to finish?');
+      resolve();
+    });
+  });
+}
+
+export function stopPostPipeline(scene: InGameScene): Promise<void> {
+  return new Promise((resolve) => {
+    scene.cameras.main.resetPostPipeline();
+    resolve();
+  });
+}
+
+export function startPostPipeline(scene: InGameScene, pipelineKey: PIPELINES) {
+  scene.cameras.main.setPostPipeline(pipelineKey);
+}
+
+export function delay(scene: InGameScene, time: number): Promise<void> {
+  return new Promise((resolve) => {
+    scene.time.delayedCall(time, resolve);
+  });
+}
 
 export abstract class Ui {
   protected scene: InGameScene;

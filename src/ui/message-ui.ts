@@ -84,10 +84,17 @@ export class MessageUi extends Ui {
       this.messageWindow.setTexture(TEXTURE.WINDOW_0);
       this.endMark.setTexture(TEXTURE.PAUSE_WHITE);
       this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
+      this.messageText.setPosition(-380, 180);
+    } else if (type === 'battle') {
+      this.messageWindow.setTexture(TEXTURE.BLANK);
+      this.endMark.setTexture(TEXTURE.PAUSE_WHITE);
+      this.messageText.setStyle(getTextStyle(TEXTSTYLE.BATTLE_MESSAGE));
+      this.messageText.setPosition(-460, 190);
     } else {
       this.messageWindow.setTexture(TEXTURE.WINDOW_1);
       this.endMark.setTexture(TEXTURE.PAUSE_BLACK);
       this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+      this.messageText.setPosition(-380, 180);
     }
 
     const keyboardManager = KeyboardManager.getInstance();
@@ -102,9 +109,9 @@ export class MessageUi extends Ui {
           this.scene.time.delayedCall(10, addNextChar, [], this);
         } else if (!isFinish) {
           isFinish = true;
-          this.endMark.setVisible(!isQuestion);
+          if (type !== 'battle') this.endMark.setVisible(!isQuestion);
           if (!isQuestion) {
-            this.endMark.anims.play(type === 'sys' ? ANIMATION.PAUSE_WHITE : ANIMATION.PAUSE_BLACK);
+            this.endMark.anims.play(type === 'sys' || type === 'battle' ? ANIMATION.PAUSE_WHITE : ANIMATION.PAUSE_BLACK);
             keyboardManager.setKeyDownCallback((key) => {
               if (key === KEY.SELECT) {
                 this.clean();
