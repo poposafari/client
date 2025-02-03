@@ -10,6 +10,7 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, createSprite, delay, getRealBounds, getTextStyle, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
 import { PokemonObject } from '../object/pokemon-object';
+import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 
 export interface Battle {
   overworld: string;
@@ -23,11 +24,17 @@ export class OverworldBattleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private blackContainer!: Phaser.GameObjects.Container;
   private behaviorContainer!: Phaser.GameObjects.Container;
-  private behaviorTextContainer!: Phaser.GameObjects.Container;
+  private enemyInfoContainer!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
   private bgBlack!: Phaser.GameObjects.Image;
   private enemy!: Phaser.GameObjects.Image;
   private enemyBase!: Phaser.GameObjects.Image;
+  private enemyInfoWindow!: Phaser.GameObjects.Image;
+  private enemyInfoName!: Phaser.GameObjects.Text;
+  private enemyInfoGender!: Phaser.GameObjects.Image;
+  private enemyInfoShiny!: Phaser.GameObjects.Image;
+  private enemyInfoType1!: Phaser.GameObjects.Image;
+  private enemyInfoType2!: Phaser.GameObjects.Image;
   private player!: Phaser.GameObjects.Sprite;
   private playerBase!: Phaser.GameObjects.Image;
   private systemWindow!: Phaser.GameObjects.NineSlice;
@@ -54,16 +61,28 @@ export class OverworldBattleUi extends Ui {
     this.blackContainer.setScrollFactor(0);
 
     this.container = this.scene.add.container(width / 2, height / 2);
+
     this.bg = addBackground(this.scene, '', width, height).setOrigin(0.5, 0.5);
     this.bg.setScale(2);
     this.enemy = addImage(this.scene, '', +500, -160).setScale(2).setOrigin(0.5, 0.5);
     this.enemyBase = addImage(this.scene, '', +500, -100).setScale(2);
-    this.player = createSprite(this.scene, '', -450, +100).setScale(4).setOrigin(0.5, 0.5);
-    this.playerBase = addImage(this.scene, '', -450, +275).setScale(2);
+    this.player = createSprite(this.scene, '', -400, +100).setScale(4).setOrigin(0.5, 0.5);
+    this.playerBase = addImage(this.scene, '', -400, +290).setScale(1.6);
     this.systemWindow = addWindow(this.scene, TEXTURE.WINDOW_8, 0, 440, 490 * 2, 50 * 2, 16, 16, 16, 16).setScale(2);
     this.systemText = addText(this.scene, -460 * 2, +190 * 2, '', TEXTSTYLE.BATTLE_MESSAGE).setOrigin(0, 0);
     this.systemText.setStyle(getTextStyle(TEXTSTYLE.BATTLE_MESSAGE));
     this.systemText.setScale(1);
+
+    this.enemyInfoContainer = this.scene.add.container(-400, -250);
+    this.enemyInfoWindow = addImage(this.scene, TEXTURE.ENEMY_INFO, 0, 0).setOrigin(0.5, 0.5).setScale(2);
+    this.enemyInfoName = addText(this.scene, -220, -65, '리자몽', TEXTSTYLE.BATTLE_MESSAGE).setOrigin(0, 0).setScale(0.8);
+    this.enemyInfoShiny = addImage(this.scene, TEXTURE.SHINY, -240, -40).setOrigin(0.5, 0.5).setScale(2);
+    this.enemyInfoGender = addImage(this.scene, TEXTURE.GENDER_0, +210, -35).setOrigin(0.5, 0.5).setScale(4);
+    this.enemyInfoContainer.add(this.enemyInfoWindow);
+    this.enemyInfoContainer.add(this.enemyInfoName);
+    this.enemyInfoContainer.add(this.enemyInfoShiny);
+    this.enemyInfoContainer.add(this.enemyInfoGender);
+
     this.container.add(this.bg);
     this.container.add(this.enemyBase);
     this.container.add(this.playerBase);
@@ -71,6 +90,7 @@ export class OverworldBattleUi extends Ui {
     this.container.add(this.systemText);
     this.container.add(this.enemy);
     this.container.add(this.player);
+    this.container.add(this.enemyInfoContainer);
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.BATTLE_UI);
     this.container.setScrollFactor(0);
@@ -116,6 +136,9 @@ export class OverworldBattleUi extends Ui {
     this.playerBase.setTexture(`pb_${overworld?.area}_${time}`);
     this.player.setTexture(playerBack);
     this.enemy.setTexture(`pokemon_sprite${pokedex}`);
+    this.enemyInfoName.setText(`${getPokemon(isPokedexShiny(pokedex) ? trimLastChar(pokedex) : pokedex)?.name}`);
+    // this.enemyInfoGender.setTexture(`${getPokemon(pokedex)?.name}`);
+    this.enemyInfoShiny.setVisible(isPokedexShiny(pokedex));
     this.adjustPokemonSpritePos();
 
     this.encounterEffect(pokedex);
@@ -148,19 +171,15 @@ export class OverworldBattleUi extends Ui {
           case KEY.UP:
             if (choice - cols >= 0) choice -= cols;
             break;
-
           case KEY.DOWN:
             if (choice + cols <= maxChoice) choice += cols;
             break;
-
           case KEY.LEFT:
             if (choice % cols !== 0) choice--;
             break;
-
           case KEY.RIGHT:
             if ((choice + 1) % cols !== 0) choice++;
             break;
-
           case KEY.SELECT:
             const target = this.behaviorMenus[choice];
             this.behaviorDummys[choice].setTexture(TEXTURE.BLANK);
@@ -230,7 +249,7 @@ export class OverworldBattleUi extends Ui {
   }
 
   private async showWelcomeMessage(pokedex: string) {
-    if (pokedex.endsWith('s')) {
+    if (isPokedexShiny(pokedex)) {
       pokedex = pokedex.slice(0, -1);
     }
 
