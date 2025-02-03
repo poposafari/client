@@ -33,6 +33,7 @@ export class OverworldBattleUi extends Ui {
   private enemyInfoName!: Phaser.GameObjects.Text;
   private enemyInfoGender!: Phaser.GameObjects.Image;
   private enemyInfoShiny!: Phaser.GameObjects.Image;
+  private enemyInfoCaptured!: Phaser.GameObjects.Image;
   private enemyInfoType1!: Phaser.GameObjects.Image;
   private enemyInfoType2!: Phaser.GameObjects.Image;
   private player!: Phaser.GameObjects.Sprite;
@@ -42,7 +43,7 @@ export class OverworldBattleUi extends Ui {
   private systemText!: Phaser.GameObjects.Text;
   private behaviorTexts: Phaser.GameObjects.Text[] = [];
   private behaviorDummys: Phaser.GameObjects.Image[] = [];
-  private readonly behaviorMenus: string[] = [i18next.t('menu:battleSelect0'), i18next.t('menu:battleSelect1'), i18next.t('menu:battleSelect2'), i18next.t('menu:battleSelect3')];
+  private readonly behaviorMenus: string[] = [i18next.t('menu:battleSelect0'), i18next.t('menu:battleSelect1'), i18next.t('menu:battleSelect3')];
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -102,11 +103,11 @@ export class OverworldBattleUi extends Ui {
     this.behaviorTexts.push(addText(this.scene, 0 + offsetX, 0 + offsetY, this.behaviorMenus[0], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5));
     this.behaviorTexts.push(addText(this.scene, +200 + offsetX, 0 + offsetY, this.behaviorMenus[1], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5));
     this.behaviorTexts.push(addText(this.scene, 0 + offsetX, +60 + offsetY, this.behaviorMenus[2], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5));
-    this.behaviorTexts.push(addText(this.scene, +200 + offsetX, +60 + offsetY, this.behaviorMenus[3], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5));
+    // this.behaviorTexts.push(addText(this.scene, +200 + offsetX, +60 + offsetY, this.behaviorMenus[3], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5));
     this.behaviorDummys.push(addImage(this.scene, TEXTURE.BLANK, -10 + offsetX, 0 + offsetY).setScale(1.5));
     this.behaviorDummys.push(addImage(this.scene, TEXTURE.BLANK, +180 + offsetX, 0 + offsetY).setScale(1.5));
     this.behaviorDummys.push(addImage(this.scene, TEXTURE.BLANK, -10 + offsetX, +60 + offsetY).setScale(1.5));
-    this.behaviorDummys.push(addImage(this.scene, TEXTURE.BLANK, +180 + offsetX, +60 + offsetY).setScale(1.5));
+    // this.behaviorDummys.push(addImage(this.scene, TEXTURE.BLANK, +180 + offsetX, +60 + offsetY).setScale(1.5));
 
     this.behaviorContainer.add(this.behaviorWindow);
     this.behaviorContainer.add(this.behaviorTexts);
@@ -157,7 +158,7 @@ export class OverworldBattleUi extends Ui {
     const keyboardManager = KeyboardManager.getInstance();
 
     let choice = 0;
-    const maxChoice = 3;
+    const maxChoice = 2;
     const cols = 2;
 
     this.behaviorDummys[choice].setTexture(TEXTURE.ARROW_W_R);
@@ -178,7 +179,7 @@ export class OverworldBattleUi extends Ui {
             if (choice % cols !== 0) choice--;
             break;
           case KEY.RIGHT:
-            if ((choice + 1) % cols !== 0) choice++;
+            if ((choice + 1) % cols !== 0 && choice + 1 <= maxChoice) choice++;
             break;
           case KEY.SELECT:
             const target = this.behaviorMenus[choice];

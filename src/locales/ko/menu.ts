@@ -49,6 +49,5 @@ export const menu: TranslationDefault = {
   myMoney: '소지금 : ',
   battleSelect0: '몬스터볼',
   battleSelect1: '열매',
-  battleSelect2: '아이템',
   battleSelect3: '도망간다',
 };
