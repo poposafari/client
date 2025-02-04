@@ -154,6 +154,14 @@ export class OverworldBattleUi extends Ui {
   }
 
   pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  update(time: number, delta: number): void {}
+
+  private block() {}
+
+  private unblock() {
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     const keyboardManager = KeyboardManager.getInstance();
 
@@ -184,7 +192,9 @@ export class OverworldBattleUi extends Ui {
           case KEY.SELECT:
             const target = this.behaviorMenus[choice];
             this.behaviorDummys[choice].setTexture(TEXTURE.BLANK);
-            if (target === i18next.t('menu:battleSelect3')) {
+            if (target === i18next.t('menu:battleSelect0')) {
+              this.mode.addUiStackOverlap('OverworldBattlePokeballUi');
+            } else if (target === i18next.t('menu:battleSelect3')) {
               const playerInfo = this.mode.getPlayerInfoManager().getInfo();
               const runText = playerInfo.nickname + i18next.t('message:battle_thinking1') + i18next.t('message:battle_run');
               this.resetSystemText();
@@ -207,8 +217,6 @@ export class OverworldBattleUi extends Ui {
       }
     });
   }
-
-  update(time: number, delta: number): void {}
 
   private adjustPokemonSpritePos() {
     const bounds = getRealBounds(this.enemy, this.scene);
