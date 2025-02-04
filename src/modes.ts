@@ -25,6 +25,7 @@ import { getOverworldInfo } from './data/overworld';
 import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
+import { OverworldBattlePokeballUi } from './ui/overworld-battle-pokeball-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -168,6 +169,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldShopListUi(this.scene, this));
     this.uis.push(new OverworldShopChoiceUi(this.scene, this));
     this.uis.push(new OverworldBattleUi(this.scene, this));
+    this.uis.push(new OverworldBattlePokeballUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
