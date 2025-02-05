@@ -437,7 +437,7 @@ export class PlayerInfoManager {
 
     this.gender = 'boy';
     this.nickname = '운영자';
-    this.avatarType = 3;
+    this.avatarType = 2;
     this.posX = 10;
     this.posY = 10;
     this.currentOverworld = '000';

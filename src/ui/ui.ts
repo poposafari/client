@@ -175,6 +175,8 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.GIRL_3_BACK:
     case ANIMATION.GIRL_4_BACK:
       return 4;
+    case ANIMATION.POKEBALL:
+      return 67;
   }
 }
 

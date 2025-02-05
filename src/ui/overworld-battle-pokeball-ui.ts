@@ -8,6 +8,11 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
 
+export interface Behavior {
+  key: 'pokeball' | 'berry';
+  item: string;
+}
+
 export class OverworldBattlePokeballUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
@@ -15,6 +20,7 @@ export class OverworldBattlePokeballUi extends Ui {
   private itemNames: Phaser.GameObjects.Text[] = [];
   private itemStocks: Phaser.GameObjects.Text[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
+  private itemKeys: string[] = [];
   private lastChoice!: number;
   private readonly scale: number = 3;
   private readonly fixedBottomY: number = +300;
@@ -64,6 +70,7 @@ export class OverworldBattlePokeballUi extends Ui {
     this.itemNames = [];
     this.itemStocks = [];
     this.dummys = [];
+    this.itemKeys = [];
 
     const matchedItems = Object.entries(playerItem)
       .filter(([key, _]) => this.targetPokeballs.includes(key))
@@ -90,6 +97,7 @@ export class OverworldBattlePokeballUi extends Ui {
       this.itemNames.push(nameText);
       this.itemStocks.push(stockText);
       this.dummys.push(dummy);
+      this.itemKeys.push(item.key);
 
       currentY += this.contentHeight + this.contentSpacing;
     }
@@ -109,6 +117,7 @@ export class OverworldBattlePokeballUi extends Ui {
     this.itemNames = [];
     this.itemStocks = [];
     this.dummys = [];
+    this.itemKeys = [];
     this.pause(true);
   }
 
@@ -145,6 +154,12 @@ export class OverworldBattlePokeballUi extends Ui {
             if (choice < end && choice < this.itemNames.length - 1) {
               choice++;
             }
+            break;
+          case KEY.SELECT:
+            const target = this.itemKeys[choice];
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
+            this.clean();
+            this.mode.popUiStack({ behavior: 'pokeball', item: target });
             break;
           case KEY.CANCEL:
             this.dummys[choice].setTexture(TEXTURE.BLANK);

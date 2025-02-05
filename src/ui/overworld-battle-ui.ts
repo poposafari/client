@@ -11,6 +11,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, createSprite, delay, getRealBounds, getTextStyle, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
 import { PokemonObject } from '../object/pokemon-object';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
+import { EASE } from '../enums/ease';
 
 export interface Battle {
   overworld: string;
@@ -18,8 +19,14 @@ export interface Battle {
   pokemon: PokemonObject;
 }
 
+export interface Behavior {
+  key: 'pokeball' | 'berry';
+  item: string;
+}
+
 export class OverworldBattleUi extends Ui {
   private mode: OverworldMode;
+  private pokeball!: Phaser.GameObjects.Sprite;
   private targetPokemon!: PokemonObject;
   private container!: Phaser.GameObjects.Container;
   private blackContainer!: Phaser.GameObjects.Container;
@@ -69,6 +76,7 @@ export class OverworldBattleUi extends Ui {
     this.enemyBase = addImage(this.scene, '', +500, -100).setScale(2);
     this.player = createSprite(this.scene, '', -400, +100).setScale(4).setOrigin(0.5, 0.5);
     this.playerBase = addImage(this.scene, '', -400, +290).setScale(1.6);
+    this.pokeball = createSprite(this.scene, '', -350, +180).setVisible(false);
     this.systemWindow = addWindow(this.scene, TEXTURE.WINDOW_8, 0, 440, 490 * 2, 50 * 2, 16, 16, 16, 16).setScale(2);
     this.systemText = addText(this.scene, -460 * 2, +190 * 2, '', TEXTSTYLE.BATTLE_MESSAGE).setOrigin(0, 0);
     this.systemText.setStyle(getTextStyle(TEXTSTYLE.BATTLE_MESSAGE));
@@ -92,6 +100,7 @@ export class OverworldBattleUi extends Ui {
     this.container.add(this.enemy);
     this.container.add(this.player);
     this.container.add(this.enemyInfoContainer);
+    this.container.add(this.pokeball);
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.BATTLE_UI);
     this.container.setScrollFactor(0);
@@ -153,15 +162,23 @@ export class OverworldBattleUi extends Ui {
     this.pause(true);
   }
 
-  pause(onoff: boolean, data?: any): void {
-    onoff ? this.block() : this.unblock();
+  async pause(onoff: boolean, data?: any): Promise<void> {
+    if (data) {
+      const behavior = data.behavior;
+      const item = data.item;
+      if (behavior === 'pokeball') {
+        await this.throwPokeball(item);
+      }
+    }
+
+    onoff ? this.block() : this.unblock(data);
   }
 
   update(time: number, delta: number): void {}
 
   private block() {}
 
-  private unblock() {
+  private unblock(data: Behavior) {
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     const keyboardManager = KeyboardManager.getInstance();
 
@@ -291,5 +308,120 @@ export class OverworldBattleUi extends Ui {
 
   private resetSystemText() {
     this.systemText.setText('');
+  }
+  private async throwPokeball(pokeball: string) {
+    const playerInfoManager = this.mode.getPlayerInfoManager();
+    const playerInfo = playerInfoManager.getInfo();
+    const playerBack = `${playerInfo.gender}_${playerInfo.avatarType}_back`;
+
+    this.pokeball.setPosition(this.player.x + 50, this.player.y - 20);
+    this.pokeball.setTexture(`${pokeball}_launch`);
+    this.pokeball.play(`${pokeball}_launch`);
+    this.pokeball.setVisible(true);
+    this.pokeball.stopAfterRepeat(0);
+
+    const startX = this.pokeball.x;
+    const startY = this.pokeball.y;
+    const endX = this.enemyBase.x;
+    const endY = this.enemyBase.y - 150;
+
+    const peakHeight = -200; // 포물선의 최고점 값. (더 작은 값일수록 높이 날아간다.)
+    const duration = 600; // 총 이동 시간 설정 값.
+
+    this.player.play(playerBack);
+    this.player.stopAfterRepeat(0);
+
+    this.scene.tweens.add({
+      targets: this.pokeball,
+      x: endX - 50,
+      duration: duration,
+      ease: 'Linear',
+      onUpdate: (tween) => {
+        const progress = tween.progress;
+        const currentX = Phaser.Math.Linear(startX, endX, progress);
+
+        // 포물선 방정식: -4a(x - 0.5)^2 + 1 공식으로 y 값 계산.
+        const parabola = -4 * peakHeight * (progress - 0.5) ** 2 + peakHeight;
+
+        this.pokeball.y = startY + (endY - startY) * progress + parabola;
+      },
+      onComplete: async () => {
+        this.pokeball.setVisible(false);
+
+        const textureKey = this.player.texture.key;
+        const frameKeys = this.player.scene.textures.get(textureKey).getFrameNames();
+        this.player.setFrame(frameKeys[0]);
+
+        await this.enterPokeball(pokeball);
+        await delay(this.scene, 500);
+        await this.dropPokeball();
+        await delay(this.scene, 1000);
+        //TODO: `const ret` 포획 성공 여부에 대해서는 axios로 받도록 하자 :)
+        await this.shakePokeball(pokeball, 3);
+      },
+    });
+  }
+
+  private async enterPokeball(pokeball: string) {
+    this.pokeball.setTexture(`${pokeball}_enter`);
+    this.pokeball.play(`${pokeball}_enter`);
+    this.pokeball.stopAfterRepeat(0);
+    this.enterEffect();
+    this.pokeball.setVisible(true);
+  }
+
+  private enterEffect() {
+    this.enemy.setTintFill(0xffffff);
+
+    this.scene.tweens.add({
+      targets: this.enemy,
+      duration: 300,
+      ease: EASE.QUAD_EASEIN,
+      onComplete: () => {
+        this.scene.tweens.add({
+          targets: this.enemy,
+          scaleX: 0.1,
+          scaleY: 0.1,
+          alpha: 0,
+          duration: 500,
+          ease: 'Cubic.easeIn',
+          onComplete: () => {
+            this.enemy.setVisible(false);
+            this.enemy.setTint(0xffffff);
+            this.enemy.setScale(1);
+            this.enemy.setAlpha(1);
+          },
+        });
+      },
+    });
+  }
+
+  private async dropPokeball() {
+    this.scene.tweens.add({
+      targets: this.pokeball,
+      y: this.pokeball.y + 100,
+      duration: 500,
+      ease: EASE.BOUNCE_EASEOUT,
+      onComplete: () => {},
+    });
+  }
+
+  private async shakePokeball(pokeball: string, count: number): Promise<void> {
+    for (let i = 1; i <= count; i++) {
+      await new Promise<void>((resolve) => {
+        const leftOrRight = i % 2 ? '_right' : '_left';
+        const animationKey = `${pokeball}_shake${leftOrRight}`;
+
+        this.pokeball.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
+        this.pokeball.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+          resolve();
+        });
+
+        this.pokeball.anims.play({
+          key: animationKey,
+          repeat: 0,
+        });
+      });
+    }
   }
 }
