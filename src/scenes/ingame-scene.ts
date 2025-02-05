@@ -137,6 +137,7 @@ export class InGameScene extends BaseScene {
       const pokeballEnterTexture = `00${i}_enter`;
       const pokeballDropTexture = `00${i}_drop`;
       const pokeballExitTexture = `00${i}_exit`;
+      const pokeballShake = `00${i}_shake`;
       const pokeballShakeLeftTexture = `00${i}_shake_left`;
       const pokeballShakeRightTexture = `00${i}_shake_right`;
 
@@ -155,7 +156,7 @@ export class InGameScene extends BaseScene {
           texture[line * (i - 1) + 0],
         ],
       ];
-      const enter = [[texture[line * (i - 1) + 10], texture[line * (i - 1) + 0]]];
+      const enter = [[texture[line * (i - 1) + 10], texture[line * (i - 1) + 10], texture[line * (i - 1) + 10]]];
       const drop = [
         [
           texture[line * (i - 1) + 0],
@@ -172,6 +173,18 @@ export class InGameScene extends BaseScene {
         ],
       ];
       const exit = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 10]]];
+      const shake = [
+        [
+          texture[line * (i - 1) + 0],
+          texture[line * (i - 1) + 11],
+          texture[line * (i - 1) + 12],
+          texture[line * (i - 1) + 13],
+          texture[line * (i - 1) + 14],
+          texture[line * (i - 1) + 15],
+          texture[line * (i - 1) + 16],
+          texture[line * (i - 1) + 0],
+        ],
+      ];
       const shakeLeft = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 11], texture[line * (i - 1) + 12], texture[line * (i - 1) + 13], texture[line * (i - 1) + 0]]];
       const shakeRight = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 14], texture[line * (i - 1) + 15], texture[line * (i - 1) + 16], texture[line * (i - 1) + 0]]];
 
@@ -181,6 +194,7 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, pokeballExitTexture, pokeballExitTexture, exit[0]);
       createSpriteAnimation(this, pokeballShakeLeftTexture, pokeballShakeLeftTexture, shakeLeft[0]);
       createSpriteAnimation(this, pokeballShakeRightTexture, pokeballShakeRightTexture, shakeRight[0]);
+      createSpriteAnimation(this, pokeballShake, pokeballShake, shake[0]);
     }
   }
 
