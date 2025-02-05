@@ -54,7 +54,7 @@ export abstract class Mode {
 
   popUiStack(data?: any) {
     this.uiStack.pop();
-    this.getUiStackTop().pause(false);
+    this.getUiStackTop().pause(false, data);
   }
 
   abstract init(): void;

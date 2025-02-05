@@ -1,0 +1,1375 @@
+{
+  "frames": {
+    "pokeball-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-1": {
+      "frame": {
+        "x": 40,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-2": {
+      "frame": {
+        "x": 80,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 80,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-3": {
+      "frame": {
+        "x": 120,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 120,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-4": {
+      "frame": {
+        "x": 160,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 160,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-5": {
+      "frame": {
+        "x": 200,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 200,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-6": {
+      "frame": {
+        "x": 240,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 240,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-7": {
+      "frame": {
+        "x": 280,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 280,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-8": {
+      "frame": {
+        "x": 320,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 320,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-9": {
+      "frame": {
+        "x": 360,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 360,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-10": {
+      "frame": {
+        "x": 400,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 400,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-11": {
+      "frame": {
+        "x": 440,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 440,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-12": {
+      "frame": {
+        "x": 480,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 480,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-13": {
+      "frame": {
+        "x": 520,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 520,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-14": {
+      "frame": {
+        "x": 560,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 560,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-15": {
+      "frame": {
+        "x": 600,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 600,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-16": {
+      "frame": {
+        "x": 640,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 640,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-17": {
+      "frame": {
+        "x": 0,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-18": {
+      "frame": {
+        "x": 40,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-19": {
+      "frame": {
+        "x": 80,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 80,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-20": {
+      "frame": {
+        "x": 120,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 120,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-21": {
+      "frame": {
+        "x": 160,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 160,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-22": {
+      "frame": {
+        "x": 200,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 200,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-23": {
+      "frame": {
+        "x": 240,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 240,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-24": {
+      "frame": {
+        "x": 280,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 280,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-25": {
+      "frame": {
+        "x": 320,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 320,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-26": {
+      "frame": {
+        "x": 360,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 360,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-27": {
+      "frame": {
+        "x": 400,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 400,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-28": {
+      "frame": {
+        "x": 440,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 440,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-29": {
+      "frame": {
+        "x": 480,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 480,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-30": {
+      "frame": {
+        "x": 520,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 520,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-31": {
+      "frame": {
+        "x": 560,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 560,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-32": {
+      "frame": {
+        "x": 600,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 600,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-33": {
+      "frame": {
+        "x": 640,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 640,
+        "y": 40,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-34": {
+      "frame": {
+        "x": 0,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-35": {
+      "frame": {
+        "x": 40,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-36": {
+      "frame": {
+        "x": 80,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 80,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-37": {
+      "frame": {
+        "x": 120,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 120,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-38": {
+      "frame": {
+        "x": 160,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 160,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-39": {
+      "frame": {
+        "x": 200,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 200,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-40": {
+      "frame": {
+        "x": 240,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 240,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-41": {
+      "frame": {
+        "x": 280,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 280,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-42": {
+      "frame": {
+        "x": 320,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 320,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-43": {
+      "frame": {
+        "x": 360,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 360,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-44": {
+      "frame": {
+        "x": 400,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 400,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-45": {
+      "frame": {
+        "x": 440,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 440,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-46": {
+      "frame": {
+        "x": 480,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 480,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-47": {
+      "frame": {
+        "x": 520,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 520,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-48": {
+      "frame": {
+        "x": 560,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 560,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-49": {
+      "frame": {
+        "x": 600,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 600,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-50": {
+      "frame": {
+        "x": 640,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 640,
+        "y": 80,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-51": {
+      "frame": {
+        "x": 0,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-52": {
+      "frame": {
+        "x": 40,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-53": {
+      "frame": {
+        "x": 80,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 80,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-54": {
+      "frame": {
+        "x": 120,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 120,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-55": {
+      "frame": {
+        "x": 160,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 160,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-56": {
+      "frame": {
+        "x": 200,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 200,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-57": {
+      "frame": {
+        "x": 240,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 240,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-58": {
+      "frame": {
+        "x": 280,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 280,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-59": {
+      "frame": {
+        "x": 320,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 320,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-60": {
+      "frame": {
+        "x": 360,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 360,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-61": {
+      "frame": {
+        "x": 400,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 400,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-62": {
+      "frame": {
+        "x": 440,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 440,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-63": {
+      "frame": {
+        "x": 480,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 480,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-64": {
+      "frame": {
+        "x": 520,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 520,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-65": {
+      "frame": {
+        "x": 560,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 560,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-66": {
+      "frame": {
+        "x": 600,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 600,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    },
+    "pokeball-67": {
+      "frame": {
+        "x": 640,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 640,
+        "y": 120,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 680,
+        "h": 160
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "pokeball.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 680,
+      "h": 160
+    },
+    "scale": "1"
+  }
+}

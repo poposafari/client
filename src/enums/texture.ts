@@ -102,6 +102,7 @@ export const enum TEXTURE {
   POKEMON_OVERWORLD = 'pokemon_overworld',
   POKEBALL_THROW = 'pokeball_throw',
   POKEBALL_GROUND = 'pokeball_ground',
+  POKEBALL = 'pokeball',
   SHADOW = 'shadow',
   KEY_R = 'key_r',
   KEY_S = 'key_s',
