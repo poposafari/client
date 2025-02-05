@@ -51,6 +51,8 @@ export class OverworldBattleUi extends Ui {
   private behaviorTexts: Phaser.GameObjects.Text[] = [];
   private behaviorDummys: Phaser.GameObjects.Image[] = [];
   private readonly behaviorMenus: string[] = [i18next.t('menu:battleSelect0'), i18next.t('menu:battleSelect1'), i18next.t('menu:battleSelect3')];
+  private readonly fixedBallPositionX: number = 500;
+  private readonly fixedBallPositionY: number = -260;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -315,21 +317,27 @@ export class OverworldBattleUi extends Ui {
     const playerBack = `${playerInfo.gender}_${playerInfo.avatarType}_back`;
 
     this.pokeball.setPosition(this.player.x + 50, this.player.y - 20);
-    this.pokeball.setTexture(`${pokeball}_launch`);
-    this.pokeball.play(`${pokeball}_launch`);
+    this.pokeball.anims.play({
+      key: `${pokeball}_launch`,
+      repeat: 0,
+    });
     this.pokeball.setVisible(true);
-    this.pokeball.stopAfterRepeat(0);
 
     const startX = this.pokeball.x;
     const startY = this.pokeball.y;
-    const endX = this.enemyBase.x;
-    const endY = this.enemyBase.y - 150;
+    // const endX = this.enemyBase.x;
+    // const endY = this.enemyBase.y;
+    const endX = this.fixedBallPositionX;
+    const endY = this.fixedBallPositionY;
 
-    const peakHeight = -200; // 포물선의 최고점 값. (더 작은 값일수록 높이 날아간다.)
-    const duration = 600; // 총 이동 시간 설정 값.
+    const peakHeight = -300; // 포물선의 최고점 값. (더 작은 값일수록 높이 날아간다.)
+    const duration = 500; // 총 이동 시간 설정 값.
 
-    this.player.play(playerBack);
-    this.player.stopAfterRepeat(0);
+    this.player.anims.play({
+      key: playerBack,
+      repeat: 0,
+      frameRate: 10,
+    });
 
     this.scene.tweens.add({
       targets: this.pokeball,
@@ -354,7 +362,7 @@ export class OverworldBattleUi extends Ui {
 
         await this.enterPokeball(pokeball);
         await delay(this.scene, 500);
-        await this.dropPokeball();
+        await this.dropPokeball(pokeball);
         await delay(this.scene, 1000);
         //TODO: `const ret` 포획 성공 여부에 대해서는 axios로 받도록 하자 :)
         await this.shakePokeball(pokeball, 3);
@@ -363,9 +371,11 @@ export class OverworldBattleUi extends Ui {
   }
 
   private async enterPokeball(pokeball: string) {
-    this.pokeball.setTexture(`${pokeball}_enter`);
-    this.pokeball.play(`${pokeball}_enter`);
-    this.pokeball.stopAfterRepeat(0);
+    this.pokeball.anims.play({
+      key: `${pokeball}_enter`,
+      repeat: 0,
+      frameRate: 10,
+    });
     this.enterEffect();
     this.pokeball.setVisible(true);
   }
@@ -383,7 +393,7 @@ export class OverworldBattleUi extends Ui {
           scaleX: 0.1,
           scaleY: 0.1,
           alpha: 0,
-          duration: 500,
+          duration: 800,
           ease: 'Cubic.easeIn',
           onComplete: () => {
             this.enemy.setVisible(false);
@@ -396,21 +406,28 @@ export class OverworldBattleUi extends Ui {
     });
   }
 
-  private async dropPokeball() {
+  private async dropPokeball(pokeball: string) {
     this.scene.tweens.add({
       targets: this.pokeball,
-      y: this.pokeball.y + 100,
+      y: this.pokeball.y + 130,
       duration: 500,
       ease: EASE.BOUNCE_EASEOUT,
+      onStart: () => {
+        this.pokeball.anims.play({
+          key: `${pokeball}_drop`,
+          repeat: 0,
+          frameRate: 30,
+        });
+      },
       onComplete: () => {},
     });
   }
 
   private async shakePokeball(pokeball: string, count: number): Promise<void> {
     for (let i = 1; i <= count; i++) {
+      await delay(this.scene, 500);
       await new Promise<void>((resolve) => {
-        const leftOrRight = i % 2 ? '_right' : '_left';
-        const animationKey = `${pokeball}_shake${leftOrRight}`;
+        const animationKey = `${pokeball}_shake`;
 
         this.pokeball.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
         this.pokeball.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
