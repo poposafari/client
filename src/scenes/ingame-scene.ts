@@ -5,7 +5,7 @@ import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
-import WipeShader from '../utils/WipeShader';
+import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
 
 export class InGameScene extends BaseScene {
@@ -20,7 +20,7 @@ export class InGameScene extends BaseScene {
     this.initAnimation();
 
     if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
-      this.game.renderer.pipelines.addPostPipeline('WipeShader', WipeShader);
+      this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
     }
 
     this.ui = this.add.container(0, 0);

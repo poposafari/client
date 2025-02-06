@@ -372,7 +372,7 @@ export function runFadeEffect(scene: InGameScene, delay: number, status: 'in' | 
 }
 
 export function runWipeRifghtToLeftEffect(scene: InGameScene) {
-  startPostPipeline(scene, PIPELINES.WIPE_SHADER);
+  startPostPipeline(scene, PIPELINES.WIPE_RIGHTLEFT_SHADER);
 }
 
 export function moveToCamera(scene: InGameScene, x: number, y: number, delay: number, ease: EASE): Promise<void> {

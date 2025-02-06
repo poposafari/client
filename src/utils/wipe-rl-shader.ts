@@ -24,7 +24,7 @@ void main(void) {
 }
 `;
 
-export default class WipeShaderr extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
+export default class WipeRightToLeftShader extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
   private _time: number = 0;
   private _duration: number = 1.0;
 
