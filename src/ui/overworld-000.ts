@@ -11,7 +11,7 @@ import { Plaza } from './plaza';
 
 export class Overworld000 extends Plaza {
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE) {
-    super(scene, mode, type);
+    super(scene, mode, type, '000');
   }
 
   setup(): void {
