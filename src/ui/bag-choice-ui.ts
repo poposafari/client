@@ -4,19 +4,18 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
+import { KeyboardManager } from '../managers';
 import { DEPTH } from '../enums/depth';
 
-export class BoxModalUi extends Ui {
-  private bgContainer!: Phaser.GameObjects.Container;
-  private bg!: Phaser.GameObjects.Image;
+export class BagChoiceUi extends Ui {
   private mode: OverworldMode;
+  private bg!: Phaser.GameObjects.Image;
+  private bgContainer!: Phaser.GameObjects.Container;
   private choiceContainer!: Phaser.GameObjects.Container;
   private choiceBtn: Phaser.GameObjects.Image[] = [];
-  private choiceDummys: Phaser.GameObjects.Image[] = [];
+  private targetItem: string = '000';
   private registerText!: Phaser.GameObjects.Text;
-  private data!: any;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -34,32 +33,33 @@ export class BoxModalUi extends Ui {
     this.bgContainer.setScrollFactor(0);
     this.bgContainer.setAlpha(0.5);
     this.bgContainer.setScale(2);
-    this.bgContainer.setVisible(false);
 
-    this.choiceContainer = this.scene.add.container(width / 2 + 780, height / 2 + 360);
+    this.choiceContainer = this.scene.add.container(width / 2 + 700, height / 2 + 350);
     const registerBtn = addImage(this.scene, TEXTURE.CHOICE, 0, 0);
     this.registerText = addText(this.scene, -60, 0, i18next.t('sys:register'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
     const cancelBtn = addImage(this.scene, TEXTURE.CHOICE, 0, +50);
     const cancelText = addText(this.scene, -60, +50, i18next.t('sys:cancel'), TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
-    this.choiceBtn.push(registerBtn);
-    this.choiceBtn.push(cancelBtn);
-    this.choiceContainer.add(this.choiceBtn);
+
+    this.choiceContainer.add(registerBtn);
     this.choiceContainer.add(this.registerText);
+    this.choiceContainer.add(cancelBtn);
     this.choiceContainer.add(cancelText);
     this.choiceContainer.setDepth(DEPTH.OVERWORLD_UI + 4);
     this.choiceContainer.setScrollFactor(0);
     this.choiceContainer.setScale(2);
+
+    this.choiceBtn.push(registerBtn);
+    this.choiceBtn.push(cancelBtn);
+
+    this.bg.setVisible(false);
     this.choiceContainer.setVisible(false);
   }
-
-  show(data?: any): void {
-    this.data = data;
-    this.choiceContainer.setVisible(true);
+  show(data: any): void {
+    this.targetItem = data;
     this.bg.setVisible(true);
-
+    this.choiceContainer.setVisible(true);
     this.pause(false);
   }
-
   clean(): void {
     this.bg.setVisible(false);
     this.choiceContainer.setVisible(false);
@@ -69,56 +69,50 @@ export class BoxModalUi extends Ui {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {
-    this.bg.setVisible(false);
-  }
+  block() {}
 
   unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    const myPokemons = playerPokemonManager.getMyPokemons();
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
+    const playerItemManager = this.mode.getPlayerItemManager();
 
     let startIndex = 0;
     let endIndex = 1;
     let choice = startIndex;
 
-    this.bgContainer.setVisible(true);
-
-    this.choiceBtn[choice].setTexture(TEXTURE.CHOICE);
-
-    if (myPokemons[this.data].partySlot >= 0) {
+    if (playerItemManager.getMyItem(this.targetItem).itemSlot >= 0) {
       this.registerText.setText(i18next.t('sys:registerCancel'));
     } else {
       this.registerText.setText(i18next.t('sys:register'));
     }
 
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     keyboardMananger.setAllowKey(keys);
+
     keyboardMananger.setKeyDownCallback((key) => {
-      const prevChoice = choice;
-
-      switch (key) {
-        case KEY.UP:
-          choice = Math.max(startIndex, choice - 1);
-          break;
-        case KEY.DOWN:
-          choice = Math.min(endIndex, choice + 1);
-          break;
-        case KEY.SELECT:
-          this.clean();
-          this.mode.popUiStack();
-          if (choice === 0) {
-            this.mode.addUiStack('BoxRegisterUi', { choice: this.data, isRemove: myPokemons[this.data].partySlot >= 0 });
-          }
-
-          break;
+      if (key === KEY.UP) {
+        choice = Math.max(startIndex, choice - 1);
+      } else if (key === KEY.DOWN) {
+        choice = Math.min(endIndex, choice + 1);
+      } else if (key === KEY.SELECT) {
+        this.clean();
+        this.mode.popUiStack();
+        if (choice === 0) {
+          this.mode.addUiStack('BagRegisterUi', { choice: this.targetItem, isRemove: playerItemManager.getMyItem(this.targetItem).itemSlot >= 0 });
+        }
       }
 
-      if (choice !== prevChoice) {
-        this.choiceBtn[prevChoice].setTexture(TEXTURE.CHOICE);
-        this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
+      for (const btn of this.choiceBtn) {
+        btn.setTexture(TEXTURE.CHOICE);
       }
+
+      this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
     });
+
+    for (const btn of this.choiceBtn) {
+      btn.setTexture(TEXTURE.CHOICE);
+    }
+    this.choiceBtn[choice].setTexture(TEXTURE.CHOICE_S);
+    this.bg.setVisible(true);
   }
 
   update(time: number, delta: number): void {}
