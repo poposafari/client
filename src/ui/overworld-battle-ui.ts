@@ -365,9 +365,11 @@ export class OverworldBattleUi extends Ui {
         await this.dropPokeball(pokeball);
         await delay(this.scene, 1000);
         //TODO: `const ret` 포획 성공 여부에 대해서는 axios로 받도록 하자 :)
-        const testCnt = 2;
+        const testCnt = 3;
         await this.shakePokeball(pokeball, testCnt);
         await this.exitPokeball(pokeball, testCnt);
+        await delay(this.scene, 500);
+        await this.catchPokeball(testCnt);
       },
     });
   }
@@ -471,5 +473,11 @@ export class OverworldBattleUi extends Ui {
         this.pokeball.setVisible(false);
       },
     });
+  }
+
+  private async catchPokeball(count: number) {
+    if (count < 3) return;
+
+    this.pokeball.setTint(0x5a5a5a);
   }
 }
