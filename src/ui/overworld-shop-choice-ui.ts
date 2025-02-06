@@ -8,7 +8,6 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { getItem, Item } from '../data/items';
-import { BagItem } from '../interface/sys';
 
 export class OverworldShopChoiceUi extends Ui {
   private mode: OverworldMode;

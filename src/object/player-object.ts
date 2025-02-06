@@ -229,14 +229,6 @@ export class PlayerObject extends MovableObject {
     const ret = playerItemManager.reduceItemStock(item);
 
     switch (item) {
-      case '001':
-        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 3);
-      case '002':
-        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 0);
-      case '003':
-        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 1);
-      case '004':
-        return new ItemThrowObject(this.getScene(), this.getLastDirection(), TEXTURE.POKEBALL_THROW, playerInfo.pos.x, playerInfo.pos.y, this.map, 2);
       case '005':
         return this.setStatus(PLAYER_STATUS.RIDE);
     }

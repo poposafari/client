@@ -74,13 +74,6 @@ export class ItemThrowObject extends BaseObject {
     return new Phaser.Math.Vector2(this.getTilePos().x * TILE_SIZE * MAP_SCALE + (TILE_SIZE / 2) * MAP_SCALE, this.getTilePos().y * TILE_SIZE * MAP_SCALE + TILE_SIZE * MAP_SCALE);
   }
 
-  // private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
-  //   return this.map.layers.some((layer) => {
-  //     const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
-  //     return tile && tile.properties.collides;
-  //   });
-  // }
-
   private hasPokemon(pos: Phaser.Math.Vector2): boolean {
     const overworldManager = OverworldManager.getInstance();
     const pokemons = overworldManager.getOverworldPokemons();
