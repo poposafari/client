@@ -1,3 +1,3 @@
 export const enum PIPELINES {
-  WIPE_SHADER = 'WipeShader',
+  WIPE_RIGHTLEFT_SHADER = 'WipeRightToLeftShader',
 }
