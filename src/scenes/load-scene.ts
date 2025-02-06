@@ -18,15 +18,15 @@ export class LoadingScene extends BaseScene {
 
     await initI18n();
 
-    this.loadImage(TEXTURE.WINDOW_0, 'ui', 'window_0');
-    this.loadImage(TEXTURE.WINDOW_1, 'ui', 'window_1');
-    this.loadImage(TEXTURE.WINDOW_2, 'ui', 'window_2');
-    this.loadImage(TEXTURE.WINDOW_3, 'ui', 'window_3');
-    this.loadImage(TEXTURE.WINDOW_4, 'ui', 'window_4');
-    this.loadImage(TEXTURE.WINDOW_5, 'ui', 'window_5');
-    this.loadImage(TEXTURE.WINDOW_6, 'ui', 'window_6');
-    this.loadImage(TEXTURE.WINDOW_7, 'ui', 'window_7');
-    this.loadImage(TEXTURE.WINDOW_8, 'ui', 'window_8');
+    this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
+    this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
+    this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
+    this.loadImage(TEXTURE.WINDOW_3, 'ui/windows', TEXTURE.WINDOW_3);
+    this.loadImage(TEXTURE.WINDOW_4, 'ui/windows', TEXTURE.WINDOW_4);
+    this.loadImage(TEXTURE.WINDOW_5, 'ui/windows', TEXTURE.WINDOW_5);
+    this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
+    this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
+    this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
 
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
