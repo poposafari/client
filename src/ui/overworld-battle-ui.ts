@@ -223,6 +223,7 @@ export class OverworldBattleUi extends Ui {
               await runFadeEffect(this.scene, 1000, 'in');
               this.mode.pauseOverworldSystem(false);
               this.mode.popUiStack();
+              this.mode.finishBattle();
             }
             break;
         }

@@ -298,4 +298,9 @@ export class OverworldMode extends Mode {
       overworld.pause(onoff ? true : false);
     }
   }
+
+  finishBattle() {
+    const overworld = this.getUiStackTop() as Overworld;
+    overworld.finishBattle();
+  }
 }
