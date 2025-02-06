@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import { getItemUsageType } from './data/items';
-import { ITEM_USAGE_TYPE } from './enums/item';
+import { getItemType, getItemUsageType } from './data/items';
+import { ITEM, ITEM_USAGE_TYPE } from './enums/item';
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { PLAYER_STATUS } from './enums/player-status';
@@ -370,9 +370,11 @@ export class PlayerItemManager {
   }
 
   reduceItemStock(itemIdx: string) {
-    const itemType = getItemUsageType(itemIdx);
+    const itemUsageType = getItemUsageType(itemIdx);
+    const itemType = getItemType(itemIdx);
 
-    if (itemType === ITEM_USAGE_TYPE.NON_CONSUMABLE) return false;
+    if (itemUsageType === ITEM_USAGE_TYPE.NON_CONSUMABLE) return false;
+    if (itemType === ITEM.POKEBALL) return false;
 
     this.getMyItem(itemIdx).stock -= 1;
 
