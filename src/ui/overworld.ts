@@ -5,7 +5,7 @@ import { OverworldMode } from '../modes';
 import { PLAYER_SCALE } from '../object/base-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addMap, Ui } from './ui';
+import { addMap, delay, Ui } from './ui';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
@@ -31,6 +31,7 @@ export class Overworld extends Ui {
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
   private sysBlock!: boolean;
   private isMessageActive: boolean = false;
+  private isBattle: boolean = false;
 
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE, key: string) {
     super(scene);
@@ -100,19 +101,21 @@ export class Overworld extends Ui {
     this.container = [];
   }
 
-  pause(onoff: boolean): void {
-    onoff ? this.block() : this.unblock();
+  pause(onoff: boolean, isBattleFinish?: boolean): void {
+    onoff ? this.block() : this.unblock(isBattleFinish!);
   }
 
   block() {
     this.sysBlock = true;
   }
 
-  unblock() {
+  unblock(isBattleFinish: boolean) {
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.SELECT, KEY.RUNNING, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
 
     this.sysBlock = false;
+
+    if (isBattleFinish) this.isBattle = false;
 
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback(async (key) => {
@@ -121,7 +124,7 @@ export class Overworld extends Ui {
       switch (key) {
         case KEY.SELECT:
           const obj = this.player.getObjectInFront(this.player.getLastDirection());
-          if (obj && this.player.isMovementFinish() && !this.isMessageActive) {
+          if (obj && this.player.isMovementFinish() && !this.isMessageActive && !this.isBattle) {
             const objKey = obj.getSprite().texture.key;
             if (obj instanceof NpcObject) {
               this.isMessageActive = true;
@@ -129,11 +132,11 @@ export class Overworld extends Ui {
               this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
               this.isMessageActive = false;
             } else if (obj instanceof PokemonObject) {
+              this.isBattle = true;
               obj.reaction(this.player.getLastDirection());
-              this.scene.time.delayedCall(500, () => {
-                this.mode.pauseOverworldSystem(true);
-                this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.key, pokedex: obj.getPokedex(), pokemon: obj });
-              });
+              await delay(this.scene, 500);
+              this.mode.pauseOverworldSystem(true);
+              this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.key, pokedex: obj.getPokedex(), pokemon: obj });
             }
           }
           break;
@@ -208,6 +211,10 @@ export class Overworld extends Ui {
 
   getMap() {
     return this.map;
+  }
+
+  finishBattle() {
+    this.isBattle = false;
   }
 
   private useItem(slotIdx: number) {
