@@ -1,4 +1,4 @@
-import { items } from '../data/items';
+import { itemData } from '../data/items';
 import { npcsInfo } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
@@ -156,7 +156,7 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.ENEMY_INFO, 'ui', TEXTURE.ENEMY_INFO);
 
-    for (const key of Object.keys(items)) {
+    for (const key of Object.keys(itemData)) {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }
 
