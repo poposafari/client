@@ -1,6 +1,6 @@
 import { itemData } from '../data/items';
 import { ITEM } from '../enums/item';
-import { PlayerItem, Register } from './player-item';
+import { PlayerItem, Register } from '../object/player-item';
 
 export class Bag {
   private pokeballs: Record<string, PlayerItem> = {};
@@ -11,12 +11,12 @@ export class Bag {
   constructor() {}
 
   setup() {
-    this.addItems('001', 4);
-    this.addItems('002', 999);
-    this.addItems('003', 4);
-    this.addItems('004', 4);
-    this.addItems('005', 4);
-    this.addItems('006', 7);
+    this.addItems('001');
+    this.addItems('002');
+    this.addItems('003');
+    this.addItems('004');
+    this.addItems('005');
+    this.addItems('006');
   }
 
   addItems(key: string, stock: number = 1, register: Register = null) {
