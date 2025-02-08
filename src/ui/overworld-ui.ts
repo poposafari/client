@@ -51,7 +51,7 @@ export class OverworldUi extends Ui {
   update(time: number, delta: number): void {}
 
   updateItemSlotUi() {
-    this.overworldItemSlotUi.updateItemSlotUi();
+    this.overworldItemSlotUi.updateSlot();
   }
 
   updatePokemonSlotUi() {

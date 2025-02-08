@@ -1,7 +1,6 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { MAX_ITEM_SLOT } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
@@ -9,9 +8,13 @@ import { addImage, addText, addWindow, Ui } from './ui';
 export class OverworldItemSlotUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
-  protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
-  protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
-  protected itmeSlotStocks: Phaser.GameObjects.Text[] = [];
+
+  protected slotWindows: Phaser.GameObjects.NineSlice[] = [];
+  protected slotIcons: Phaser.GameObjects.Image[] = [];
+  protected slotNumbers: Phaser.GameObjects.Text[] = [];
+  protected slotStock: Phaser.GameObjects.Text[] = [];
+
+  private readonly MaxSlot: number = 9;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -21,32 +24,31 @@ export class OverworldItemSlotUi extends Ui {
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
+    const contentHeight = 55;
+    const spacing = 8;
 
-    const slotSize = 55;
-    const slotSpacing = 5;
-    const totalSlots = MAX_ITEM_SLOT;
+    let currentX = 0;
 
     this.container = this.scene.add.container(width / 2 - 195, height / 2 + 507);
 
-    for (let i = 0; i < totalSlots; i++) {
-      const xPosition = i * (slotSize + slotSpacing);
-      const yPosition = 0;
+    for (let i = 1; i <= this.MaxSlot; i++) {
+      const window = addWindow(this.scene, TEXTURE.WINDOW_0, currentX, 0, 60, 60, 8, 8, 8, 8);
+      const icon = addImage(this.scene, '', currentX, 0);
+      const num = addText(this.scene, currentX - 20, 0 - 12, i.toString(), TEXTSTYLE.CHOICE_DEFAULT);
+      const stock = addText(this.scene, currentX + 10, +15, '', TEXTSTYLE.CHOICE_DEFAULT);
 
-      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, yPosition, slotSize, slotSize, 8, 8, 8, 8);
-      const itemSlotText = addText(this.scene, xPosition - 18, yPosition - 12, (i + 1).toString(), TEXTSTYLE.CHOICE_DEFAULT);
-      const itemIcon = addImage(this.scene, 'item000', xPosition, yPosition).setVisible(false);
-      const itemStock = addText(this.scene, xPosition + 12, yPosition + 12, '', TEXTSTYLE.ITEM_STOCK).setOrigin(0.5, 0.5);
+      this.container.add(window);
+      this.container.add(icon);
+      this.container.add(num);
+      this.container.add(stock);
 
-      this.container.add(itemSlotWindow);
-      this.container.add(itemIcon);
-      this.container.add(itemSlotText);
-      this.container.add(itemStock);
+      this.slotWindows.push(window);
+      this.slotIcons.push(icon);
+      this.slotNumbers.push(num);
+      this.slotStock.push(stock);
 
-      this.itemSlotBtns.push(itemSlotWindow);
-      this.itemSlotIcons.push(itemIcon);
-      this.itmeSlotStocks.push(itemStock);
+      currentX += contentHeight + spacing;
     }
-    this.container.setScale(1);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI);
@@ -56,7 +58,6 @@ export class OverworldItemSlotUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
     this.pause(false);
-    this.updateItemSlotUi();
   }
 
   clean(data?: any): void {
@@ -65,39 +66,29 @@ export class OverworldItemSlotUi extends Ui {
   }
 
   pause(onoff: boolean, data?: any): void {
-    onoff ? this.blocking() : this.unblocking();
+    onoff ? this.block() : this.unblock();
   }
 
-  unblocking() {
-    for (const btn of this.itemSlotBtns) {
-      btn.setScrollFactor(0);
-      btn.setInteractive({ cursor: 'pointer' });
-      btn.on('pointerdown', () => {});
-      btn.on('pointerover', () => {
-        btn.setAlpha(0.7);
-      });
-      btn.on('pointerout', () => {
-        btn.setAlpha(1);
-      });
-    }
-  }
+  private block() {}
 
-  blocking() {
-    for (const btn of this.itemSlotBtns) {
-      btn.off('pointerdown');
-      btn.off('pointerover');
-      btn.off('pointerout');
-    }
+  private unblock() {
+    this.updateSlot();
   }
 
   update(time: number, delta: number): void {}
 
-  updateItemSlotUi() {
-    const playerItemManager = this.mode.getPlayerItemManager();
-    const itemSlots = playerItemManager.getMyItemSlots();
-    itemSlots.forEach((slot, i) => {
-      this.itemSlotIcons[i].setTexture(`item${slot !== '000' ? slot : '000'}`).setVisible(slot !== '000');
-      this.itmeSlotStocks[i].setText(slot !== '000' ? `x${playerItemManager.getMyItem(slot).stock}` : '');
-    });
+  updateSlot() {
+    const bag = this.mode.getBag();
+
+    for (let i = 1; i <= this.MaxSlot; i++) {
+      const item = bag?.findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+      if (item) {
+        this.slotIcons[i - 1].setTexture(`item${item.getKey()}`);
+        this.slotStock[i - 1].setText(`x${item.getStock()}`);
+      } else {
+        this.slotIcons[i - 1].setTexture(TEXTURE.BLANK);
+        this.slotStock[i - 1].setText(``);
+      }
+    }
   }
 }
