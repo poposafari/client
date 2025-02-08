@@ -50,4 +50,12 @@ export const menu: TranslationDefault = {
   battleSelect0: '몬스터볼',
   battleSelect1: '열매',
   battleSelect3: '도망간다',
+  bag1: '몬스터볼',
+  bag2: '기타 도구',
+  bag3: '열매',
+  bag4: '중요한 도구',
+  itemEmpty: '아이템이 없습니다.',
+  register: '등록',
+  cancel: '취소',
+  registerCancel: '등록 해제',
 };

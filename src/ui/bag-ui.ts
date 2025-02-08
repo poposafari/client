@@ -1,311 +1,302 @@
-import { Item, items } from '../data/items';
-import { ANIMATION } from '../enums/animation';
+import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { ITEM } from '../enums/item';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, PlayerItemManager } from '../managers';
+import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, createSprite, Ui } from './ui';
+import { addBackground, addImage, addText, createSprite, runFadeEffect, Ui } from './ui';
 
 export class BagUi extends Ui {
   private mode: OverworldMode;
-  private container: Phaser.GameObjects.Container[] = [];
-  private bgContainer!: Phaser.GameObjects.Container;
+  private container!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private menuContainer!: Phaser.GameObjects.Container;
-  private menu1Btn!: Phaser.GameObjects.Sprite;
-  private menu2Btn!: Phaser.GameObjects.Sprite;
-  private menu3Btn!: Phaser.GameObjects.Sprite;
-  private menu4Btn!: Phaser.GameObjects.Sprite;
-  private menuAnimations: ANIMATION[] = [ANIMATION.BAG1, ANIMATION.BAG2, ANIMATION.BAG3, ANIMATION.BAG4];
-  private menus: Phaser.GameObjects.Sprite[] = [];
-  private boxContainer!: Phaser.GameObjects.Container;
-  private itemBoxBtn: Phaser.GameObjects.Image[] = [];
-  private itemBoxReg: Phaser.GameObjects.Image[] = [];
-  private itemIcons: Phaser.GameObjects.Image[] = [];
-  private itemStocks: Phaser.GameObjects.Text[] = [];
-  private itemTexts: Phaser.GameObjects.Text[] = [];
-  private itemNames: Phaser.GameObjects.Text[] = [];
-  private horisontalStartIndex: 0 | 1 | 2 | 3 = 0;
-  private horisontalEndIndex: 0 | 1 | 2 | 3 = (this.menus.length - 1) as 0 | 1 | 2 | 3;
-  private verticalEndIndex!: number;
-  private lastHorisontalChoice: 0 | 1 | 2 | 3;
-  private lastVerticalChoice: number;
-  private itemFilterResult!: [string, Item][];
+  private lastCurrentPage!: number;
+  private lastChoice!: number;
+
+  //pocket
+  private pocketContainer!: Phaser.GameObjects.Container;
+  private pocketTitles: string[] = [i18next.t('menu:bag1'), i18next.t('menu:bag2'), i18next.t('menu:bag3'), i18next.t('menu:bag4')];
+  private pocketTitleWindow!: Phaser.GameObjects.Image;
+  private pocketTitleText!: Phaser.GameObjects.Text;
+  private pocketSprites: Phaser.GameObjects.Sprite[] = [];
+  private pokeballPocket!: Phaser.GameObjects.Sprite;
+  private berryPocket!: Phaser.GameObjects.Sprite;
+  private etcPocket!: Phaser.GameObjects.Sprite;
+  private keyPocket!: Phaser.GameObjects.Sprite;
+
+  //item list
+  private listContainer!: Phaser.GameObjects.Container;
+  private listWindows: Phaser.GameObjects.Image[] = [];
+  private listRegs: Phaser.GameObjects.Image[] = [];
+  private listNames: Phaser.GameObjects.Text[] = [];
+  private listStocks: Phaser.GameObjects.Text[] = [];
+  private listEmptyText!: Phaser.GameObjects.Text;
+
+  //item description
+  private descContainer!: Phaser.GameObjects.Container;
+  private descIcons: string[] = [];
+  private descTexts: string[] = [];
+  private descIcon!: Phaser.GameObjects.Image;
+  private descText!: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
-
-    this.lastHorisontalChoice = 0;
-    this.lastVerticalChoice = 0;
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bgContainer = this.scene.add.container(0, 0);
-    this.bg = addBackground(this.scene, TEXTURE.BG_BAG, width, height);
-    this.bgContainer.add(this.bg);
-    this.bgContainer.setVisible(false);
+    this.lastCurrentPage = 0;
+    this.lastChoice = 0;
+    this.container = this.scene.add.container(width / 2, height / 2);
+    this.bg = addBackground(this.scene, TEXTURE.BG_BAG).setOrigin(0.5, 0.5);
 
-    this.menuContainer = this.scene.add.container(width / 2, height / 2);
-    this.menu1Btn = createSprite(this.scene, TEXTURE.BAG1, -475, -180).setScale(1.5);
-    this.menu2Btn = createSprite(this.scene, TEXTURE.BAG2, -475, +20).setScale(1.5);
-    this.menu3Btn = createSprite(this.scene, TEXTURE.BAG3, -345, 0).setScale(1.5);
-    this.menu4Btn = createSprite(this.scene, TEXTURE.BAG4, -280, -170).setScale(1.5);
-    this.menus.push(this.menu1Btn);
-    this.menus.push(this.menu2Btn);
-    this.menus.push(this.menu3Btn);
-    this.menus.push(this.menu4Btn);
-    this.menuContainer.add(this.menu1Btn);
-    this.menuContainer.add(this.menu2Btn);
-    this.menuContainer.add(this.menu3Btn);
-    this.menuContainer.add(this.menu4Btn);
-    this.menuContainer.setVisible(false);
+    //pockets
+    this.pocketContainer = this.scene.add.container(-953, 0);
+    this.pocketTitleWindow = addImage(this.scene, TEXTURE.INFO_BOX, +320, -450).setScale(2);
+    this.pocketTitleText = addText(this.scene, +70, -450, '', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5);
+    this.pokeballPocket = createSprite(this.scene, TEXTURE.BAG1, 0, -350).setScale(2.8);
+    this.etcPocket = createSprite(this.scene, TEXTURE.BAG2, 0, +50).setScale(2.8);
+    this.berryPocket = createSprite(this.scene, TEXTURE.BAG3, +250, 0).setScale(2.8);
+    this.keyPocket = createSprite(this.scene, TEXTURE.BAG4, +380, -350).setScale(2.8);
+    this.pocketSprites.push(this.pokeballPocket);
+    this.pocketSprites.push(this.etcPocket);
+    this.pocketSprites.push(this.berryPocket);
+    this.pocketSprites.push(this.keyPocket);
+    this.pocketContainer.add(this.pocketTitleWindow);
+    this.pocketContainer.add(this.pocketTitleText);
+    this.pocketContainer.add(this.pokeballPocket);
+    this.pocketContainer.add(this.etcPocket);
+    this.pocketContainer.add(this.berryPocket);
+    this.pocketContainer.add(this.keyPocket);
 
-    this.boxContainer = this.scene.add.container(width / 2, height / 2);
-    this.boxContainer.setVisible(false);
+    this.listContainer = this.scene.add.container(405, -405);
+    this.listContainer.setScale(2);
 
-    this.container.push(this.bgContainer);
-    this.container.push(this.menuContainer);
-    this.container.push(this.boxContainer);
+    this.descContainer = this.scene.add.container(0, 0);
+    this.descIcon = addImage(this.scene, '', -410, +235);
+    this.descText = addText(this.scene, -350, +225, '', TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0.5);
+    this.descContainer.add(this.descIcon);
+    this.descContainer.add(this.descText);
+    this.descContainer.setScale(2);
+
+    this.listEmptyText = addText(this.scene, +650, 0, i18next.t('menu:itemEmpty'), TEXTSTYLE.ITEM_NOTICE);
+
+    this.container.add(this.bg);
+    this.container.add(this.listEmptyText);
+    this.container.add(this.pocketContainer);
+    this.container.add(this.listContainer);
+    this.container.add(this.descContainer);
+
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE);
+    this.container.setScrollFactor(0);
   }
 
   show(): void {
-    for (const container of this.container) {
-      container.setVisible(true);
-      container.setDepth(DEPTH.OVERWORLD_UI + 2);
-      container.setScale(2);
-      container.setScrollFactor(0);
-    }
-
-    this.scene.tweens.add({
-      targets: this.container,
-      alpha: { from: 0, to: 1 },
-      ease: 'Sine.Linear',
-      duration: 200,
-    });
-
-    this.openAnimations(0, 0);
+    this.container.setVisible(true);
     this.pause(false);
+
+    runFadeEffect(this.scene, 500, 'in');
   }
 
   clean(): void {
-    for (const container of this.container) {
-      container.setVisible(false);
-    }
-
-    for (let i = 0; i < this.menus.length; i++) {
-      this.menus[i].setTexture(this.menuAnimations[i]).stop();
-    }
-
-    this.cleanObj();
-
-    this.lastHorisontalChoice = 0;
-    this.lastVerticalChoice = 0;
+    this.container.setVisible(false);
+    this.clearList();
+    this.pause(true);
   }
 
   pause(onoff: boolean): void {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {}
+  update(time: number, delta: number): void {}
 
-  unblock() {
+  private block() {}
+
+  private unblock() {
     const keyboardManager = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
-    let horisontalChoice = this.lastHorisontalChoice;
-    let verticalChoice = this.lastVerticalChoice;
+    let start = 0;
+    let end = this.pocketTitles.length - 1;
+    let choice = this.lastChoice;
+    let currentPage = this.lastCurrentPage;
+    let totalPage = 3;
 
-    this.itemFilterResult = this.filterItem(horisontalChoice);
-    this.verticalEndIndex = this.itemFilterResult.length;
+    this.pocketTitleText.setText(this.pocketTitles[0]);
+    this.renderPage(currentPage);
+    this.renderChoice(1, this.lastChoice);
 
-    this.itemRegisterCheck(this.itemFilterResult);
-
-    this.updateVerticalTexture(0, verticalChoice);
+    this.pocketSprites[currentPage].anims.play({
+      key: `bag${currentPage + 1}`,
+      repeat: 0,
+    });
 
     keyboardManager.setAllowKey(keys);
-
     keyboardManager.setKeyDownCallback((key) => {
-      const prevVerticalChoice = verticalChoice;
-      const prevHorizontalChoice = horisontalChoice;
-
+      const prevChoice = choice;
+      const prevPage = currentPage;
       try {
         switch (key) {
           case KEY.UP:
-            verticalChoice = Math.max(0, verticalChoice - 1);
+            if (choice > start) {
+              choice--;
+            }
             break;
           case KEY.DOWN:
-            verticalChoice = Math.min(this.verticalEndIndex - 1, verticalChoice + 1);
+            if (choice < end && choice < this.listWindows.length - 1) {
+              choice++;
+            }
             break;
           case KEY.LEFT:
-            horisontalChoice = Math.max(0, horisontalChoice - 1) as 0 | 1 | 2 | 3;
+            if (currentPage > 0) {
+              currentPage--;
+              choice = 0;
+            }
             break;
           case KEY.RIGHT:
-            horisontalChoice = Math.min(this.menus.length - 1, horisontalChoice + 1) as 0 | 1 | 2 | 3;
+            if (currentPage < totalPage) {
+              currentPage++;
+              choice = 0;
+            }
             break;
           case KEY.SELECT:
-            this.lastHorisontalChoice = horisontalChoice;
-            this.lastVerticalChoice = verticalChoice;
-
-            const targetItem = this.itemIcons[verticalChoice]?.texture.key;
-            if (targetItem) {
-              this.mode.addUiStack('BagModalUi', targetItem.split('item')[1]);
+            if (this.listWindows.length > 0) {
+              this.lastCurrentPage = currentPage;
+              this.lastChoice = choice;
+              this.mode.addUiStackOverlap('BagChoiceUi', this.descIcons[choice]);
             }
             break;
           case KEY.CANCEL:
             this.clean();
+            this.lastCurrentPage = 0;
+            this.runPocketAnimation(prevPage, 0);
+            this.renderPage(0);
+            this.renderChoice(prevChoice, 0);
             this.mode.popUiStack();
-            this.mode.chnageItemSlot();
             break;
         }
 
-        if (verticalChoice !== prevVerticalChoice) {
-          this.updateVerticalTexture(prevVerticalChoice, verticalChoice);
-          this.lastVerticalChoice = verticalChoice;
+        if (key === KEY.LEFT || key === KEY.RIGHT) {
+          if (currentPage !== prevPage) {
+            this.runPocketAnimation(prevPage, currentPage);
+            this.renderPage(currentPage);
+            this.renderChoice(1, 0);
+          }
         }
-
-        if (horisontalChoice !== prevHorizontalChoice) {
-          verticalChoice = 0;
-          this.cleanObj();
-          this.openAnimations(prevHorizontalChoice, horisontalChoice);
-          this.itemFilterResult = this.filterItem(horisontalChoice);
-          this.verticalEndIndex = this.itemFilterResult.length;
-          this.itemRegisterCheck(this.itemFilterResult);
-          this.updateVerticalTexture(0, 0);
-          this.lastHorisontalChoice = horisontalChoice;
+        if (key === KEY.UP || key === KEY.DOWN) {
+          if (choice !== prevChoice) {
+            this.renderChoice(prevChoice, choice);
+            this.lastChoice = choice;
+          }
         }
       } catch (error) {
         console.error(`Error handling key input: ${error}`);
       }
     });
   }
-  update(time: number, delta: number): void {}
 
-  restoreLastState(): void {
-    this.itemFilterResult = this.filterItem(this.lastHorisontalChoice);
-    this.verticalEndIndex = this.itemFilterResult.length;
-    this.itemRegisterCheck(this.itemFilterResult);
-    this.updateVerticalTexture(0, this.lastVerticalChoice);
-  }
-
-  private updateVerticalTexture(verticalPrevChoice: number, verticalChoice: number) {
-    this.itemIcons[verticalPrevChoice]?.setVisible(false);
-    this.itemTexts[verticalPrevChoice]?.setVisible(false);
-    this.itemBoxBtn[verticalPrevChoice]?.setTexture(TEXTURE.ITEM_BOX);
-
-    this.itemIcons[verticalChoice]?.setVisible(true);
-    this.itemTexts[verticalChoice]?.setVisible(true);
-    this.itemBoxBtn[verticalChoice]?.setTexture(TEXTURE.ITEM_BOX_S);
-
-    this.lastVerticalChoice = verticalChoice;
-  }
-
-  private cleanObj() {
-    this.itemBoxBtn.forEach((obj) => obj.destroy());
-    this.itemBoxBtn = [];
-
-    this.itemBoxReg.forEach((obj) => obj.destroy());
-    this.itemBoxReg = [];
-
-    this.itemIcons.forEach((obj) => obj.destroy());
-    this.itemIcons = [];
-
-    this.itemStocks.forEach((obj) => obj.destroy());
-    this.itemStocks = [];
-
-    this.itemTexts.forEach((obj) => obj.destroy());
-    this.itemTexts = [];
-
-    this.itemNames.forEach((obj) => obj.destroy());
-    this.itemNames = [];
-  }
-
-  private createItemBox(key: string, stock: number, itemInfo: Item, x: number, y: number): void {
-    const boxContainer = this.scene.add.container(0, 0);
-    const box = addImage(this.scene, TEXTURE.ITEM_BOX, x, y);
-    const reg = addImage(this.scene, TEXTURE.BLANK, x - 130, y);
-    const text = addText(this.scene, x - 95, y - 8, itemInfo.name, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0);
-    const icon = addImage(this.scene, `item${key}`, -410, 235).setVisible(false);
-    const iconText = addText(this.scene, -350, 220, itemInfo.description, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0).setVisible(false);
-    const iconStock = addText(this.scene, x + 75, y - 8, 'x' + stock.toString(), TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0);
-    this.itemBoxBtn.push(box);
-    this.itemBoxReg.push(reg);
-    this.itemIcons.push(icon);
-    this.itemTexts.push(iconText);
-    this.itemNames.push(text);
-    this.itemStocks.push(iconStock);
-    boxContainer.add(box);
-    boxContainer.add(reg);
-    boxContainer.add(text);
-    boxContainer.add(icon);
-    boxContainer.add(iconText);
-    boxContainer.add(iconStock);
-    this.boxContainer.add(boxContainer);
-  }
-
-  private openAnimations(prevChoice: 0 | 1 | 2 | 3, choice: 0 | 1 | 2 | 3) {
-    const playerItemManager = PlayerItemManager.getInstance();
-    const prevAnimationType = this.menuAnimations[prevChoice];
-    const animationType = this.menuAnimations[choice];
-
-    this.menus[prevChoice].setTexture(prevAnimationType).stop();
-    this.menus[choice].play(animationType).stopAfterRepeat(0);
-  }
-
-  private filterItem(choice: 0 | 1 | 2 | 3) {
-    const playerItemManager = PlayerItemManager.getInstance();
-
-    this.boxContainer.removeAll();
-    this.cleanObj();
-
-    const selectedItemType = this.getItemType(choice);
-    const filteredItems = Object.entries(items).filter(([key, item]) => {
-      return item.type === selectedItemType && playerItemManager.getMyItems().hasOwnProperty(key);
+  private runPocketAnimation(prev: number, current: number) {
+    this.pocketTitleText.setText(this.pocketTitles[current]);
+    this.pocketSprites[prev].anims.playReverse({ key: `bag${prev + 1}`, repeat: 0 });
+    this.pocketSprites[current].anims.play({
+      key: `bag${current + 1}`,
+      repeat: 0,
     });
-
-    let index = 0;
-    const itemSpacing = 50;
-    const startX = 320;
-    const startY = -204;
-
-    filteredItems.forEach(([key, item]) => {
-      const myItem = playerItemManager.getMyItem(key);
-      const posY = startY + index * itemSpacing;
-      this.createItemBox(key, myItem.stock, item!, startX, posY);
-      index++;
-    });
-
-    return filteredItems;
   }
 
-  private getItemType(choice: 0 | 1 | 2 | 3): ITEM {
-    switch (choice) {
+  private renderChoice(prev: number, current: number) {
+    if (this.listWindows.length === 0) {
+      this.listEmptyText.setVisible(true);
+      return;
+    }
+
+    this.listEmptyText.setVisible(false);
+    this.listWindows[prev].setTexture(TEXTURE.ITEM_BOX);
+    this.listWindows[current].setTexture(TEXTURE.ITEM_BOX_S);
+    this.descIcon.setTexture('item' + this.descIcons[current]);
+    this.descText.setText(i18next.t(this.descTexts[current]));
+  }
+
+  private renderPage(current: number) {
+    const spacing = 1;
+    const contentHeight = 50;
+    let currentY = 0;
+
+    this.clearList();
+
+    const bag = this.mode.getBag();
+    let playerItems;
+    switch (current) {
       case 0:
-        return ITEM.POKEBALL;
+        playerItems = bag?.getPockets(ITEM.POKEBALL);
+        break;
       case 1:
-        return ITEM.ETC;
+        playerItems = bag?.getPockets(ITEM.ETC);
+        break;
       case 2:
-        return ITEM.BERRY;
+        playerItems = bag?.getPockets(ITEM.BERRY);
+        break;
       case 3:
-        return ITEM.KEY;
+        playerItems = bag?.getPockets(ITEM.KEY);
+        break;
+    }
+
+    if (!playerItems) {
+      console.error('Player Item does not exist.');
+      return;
+    }
+
+    for (const key of Object.keys(playerItems)) {
+      if (key) {
+        const window = addImage(this.scene, TEXTURE.ITEM_BOX, 0, currentY).setOrigin(0, 0.5);
+        const name = addText(this.scene, 15, currentY + contentHeight / 2 - 25, i18next.t(`item:${key}.name`), TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0.5);
+        const stock = addText(this.scene, 170, currentY + contentHeight / 2 - 25, `x${playerItems[key].getStock()}`, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0.5);
+        const reg = addImage(this.scene, playerItems[key].getRegister() !== null ? TEXTURE.BAG_REG : TEXTURE.BLANK, -20, currentY);
+
+        this.listWindows.push(window);
+        this.listNames.push(name);
+        this.listStocks.push(stock);
+        this.listRegs.push(reg);
+        this.listContainer.add(window);
+        this.listContainer.add(name);
+        this.listContainer.add(stock);
+        this.listContainer.add(reg);
+
+        this.descIcons.push(`${key}`);
+        this.descTexts.push(i18next.t(`item:${key}.description`));
+
+        currentY += contentHeight + spacing;
+      }
     }
   }
 
-  private itemRegisterCheck(filterResult: [string, Item][]) {
-    const playerItemManager = PlayerItemManager.getInstance();
-    let idx = 0;
-    for (const target of filterResult) {
-      const myItem = playerItemManager.getMyItem(target[0]);
-      if (myItem.itemSlot >= 0) this.itemBoxReg[idx].setTexture(TEXTURE.BAG_REG);
-      else this.itemBoxReg[idx].setTexture(TEXTURE.BLANK);
-      idx++;
+  private clearList() {
+    //item lists
+    if (this.listContainer) {
+      this.listContainer.removeAll(true);
     }
+
+    this.listWindows.forEach((window) => window.destroy());
+    this.listRegs.forEach((reg) => reg.destroy());
+    this.listNames.forEach((name) => name.destroy());
+    this.listStocks.forEach((stock) => stock.destroy());
+
+    this.listWindows = [];
+    this.listRegs = [];
+    this.listNames = [];
+    this.listStocks = [];
+
+    this.descIcons = [];
+    this.descTexts = [];
+
+    this.descIcon.setTexture(TEXTURE.BLANK);
+    this.descText.setText('');
   }
 }

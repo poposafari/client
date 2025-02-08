@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Account, Message } from './interface/sys';
-import { MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from './managers';
+import { MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerPokemonManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -8,8 +8,6 @@ import { NewGameUi } from './ui/newgame-ui';
 import { RegisterUi } from './ui/register-ui';
 import { TitleUi } from './ui/title-ui';
 import { BagUi } from './ui/bag-ui';
-import { BagChoiceUi } from './ui/bag-choice-ui';
-import { BagRegisterUi } from './ui/bag-register-ui';
 import { BoxUi } from './ui/box-ui';
 import { BoxChoiceUi } from './ui/box-choice-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
@@ -25,7 +23,10 @@ import { getOverworldInfo } from './data/overworld';
 import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
-import { OverworldBattlePokeballUi } from './ui/overworld-battle-pokeball-ui';
+import { Bag } from './object/bag';
+import { BagChoiceUi } from './ui/bag-choice-ui';
+import { BagRegisterUi } from './ui/bag-register-ui';
+import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -143,14 +144,16 @@ export class NewGameMode extends Mode {
 }
 
 export class OverworldMode extends Mode {
+  private bag: Bag;
   private playerInfoManager!: PlayerInfoManager;
-  private playerItemManager!: PlayerItemManager;
   private playerPokemonManager!: PlayerPokemonManager;
   private overworldManger!: OverworldManager;
   private currentOverworldUisIndex!: number;
 
   constructor(scene: InGameScene, manager: ModeManager) {
     super(scene, manager);
+
+    this.bag = new Bag();
   }
 
   init(): void {
@@ -159,6 +162,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
+    this.uis.push(new OverworldItemSlotUi(this.scene, this));
     this.uis.push(new OverworldTaxiListUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new BagChoiceUi(this.scene, this));
@@ -169,16 +173,16 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldShopListUi(this.scene, this));
     this.uis.push(new OverworldShopChoiceUi(this.scene, this));
     this.uis.push(new OverworldBattleUi(this.scene, this));
-    this.uis.push(new OverworldBattlePokeballUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
     }
+
+    this.bag.setup();
   }
 
   enter(data?: any): void {
     this.playerInfoManager = PlayerInfoManager.getInstance();
-    this.playerItemManager = PlayerItemManager.getInstance();
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
     this.overworldManger = OverworldManager.getInstance();
 
@@ -264,16 +268,19 @@ export class OverworldMode extends Mode {
     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
   }
 
-  getPlayerItemManager() {
-    if (this.playerItemManager) return this.playerItemManager;
-
-    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-  }
-
   getPlayerPokemonManager() {
     if (this.playerPokemonManager) return this.playerPokemonManager;
 
     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
+  }
+
+  getBag() {
+    if (!this.bag) {
+      console.error('Bag object does not exist.');
+      return;
+    }
+
+    return this.bag;
   }
 
   async startMessage(data: Message[]) {

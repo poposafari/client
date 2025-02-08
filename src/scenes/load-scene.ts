@@ -18,6 +18,8 @@ export class LoadingScene extends BaseScene {
 
     await initI18n();
 
+    this.loadImage(TEXTURE.INFO_BOX, 'ui', TEXTURE.INFO_BOX);
+
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
     this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
