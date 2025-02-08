@@ -12,8 +12,11 @@ export class Bag {
 
   setup() {
     this.addItems('001', 4);
-    this.addItems('002', 4);
+    this.addItems('002', 999);
     this.addItems('003', 4);
+    this.addItems('004', 4);
+    this.addItems('005', 4);
+    this.addItems('006', 7);
   }
 
   addItems(key: string, stock: number = 1, register: Register = null) {
@@ -73,6 +76,25 @@ export class Bag {
     }
 
     return true;
+  }
+
+  registerItem(key: string, slot: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9): void {
+    const existingItem = this.findItemByRegister(slot);
+
+    if (existingItem) {
+      existingItem.registerSlot(null);
+    }
+
+    const item = this.getItem(key);
+    if (item) {
+      item.registerSlot(slot);
+    }
+  }
+
+  findItemByRegister(slot: Register): PlayerItem | null {
+    const allItems = [...Object.values(this.pokeballs), ...Object.values(this.berries), ...Object.values(this.keys), ...Object.values(this.etc)];
+
+    return allItems.find((item) => item.getRegister() === slot) || null;
   }
 
   private removeItem(key: string) {
