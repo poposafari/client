@@ -108,6 +108,7 @@ export const enum TEXTURE {
   KEY_S = 'key_s',
   EMOTION_0 = 'emotion_0',
   ENEMY_INFO = 'enemy_info',
+  INFO_BOX = 'info_box',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

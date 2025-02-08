@@ -33,12 +33,12 @@ const initial: Record<string, Item> = {
   },
   //bicycle
   '005': {
-    type: ITEM.ETC,
+    type: ITEM.KEY,
     price: 0,
   },
   //ticket
   '006': {
-    type: ITEM.ETC,
+    type: ITEM.KEY,
     price: 0,
   },
 };
