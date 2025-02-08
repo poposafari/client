@@ -30,13 +30,11 @@ export function addImage(scene: InGameScene, texture: TEXTURE | string, x: numbe
   return ret;
 }
 
-export function addBackground(scene: InGameScene, texture: TEXTURE | string, width: number, height: number) {
-  const ret = scene.add
-    .image(0, 0, texture)
-    .setOrigin(0, 0)
-    .setDisplaySize(width / 2, height / 2);
-
-  return ret;
+export function addBackground(scene: InGameScene, texture: TEXTURE | string) {
+  const { width, height } = scene.scale;
+  const bg = scene.add.image(0, 0, texture).setOrigin(0);
+  bg.setDisplaySize(width, height);
+  return bg;
 }
 
 export function addText(scene: InGameScene, x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
@@ -193,6 +191,7 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.BATTLE_MENU:
     case TEXTSTYLE.BATTLE_MESSAGE:
     case TEXTSTYLE.OVERWORLD_DESC:
+    case TEXTSTYLE.ITEM_NOTICE:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
@@ -237,6 +236,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       break;
     case TEXTSTYLE.ITEM_TITLE:
       config.fontSize = '40px';
+      config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.ITEM_NOTICE:
+      config.fontSize = '100px';
       config.color = '#ffffff';
       break;
     case TEXTSTYLE.CHOICE_DEFAULT:

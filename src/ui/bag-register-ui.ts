@@ -2,20 +2,25 @@ import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, MAX_ITEM_SLOT } from '../managers';
+import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 
 export class BagRegisterUi extends Ui {
   private mode: OverworldMode;
+  private container!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private bgContainer!: Phaser.GameObjects.Container;
-  protected itemSlotContainer!: Phaser.GameObjects.Container;
-  protected itemSlotBtns: Phaser.GameObjects.NineSlice[] = [];
-  protected itemSlotIcons: Phaser.GameObjects.Image[] = [];
-  protected itemSlotDummys: Phaser.GameObjects.Image[] = [];
-  private targetItem: string = '000';
+  private targetItem!: string;
+
+  //slots
+  private slotContainer!: Phaser.GameObjects.Container;
+  private slotWindows: Phaser.GameObjects.NineSlice[] = [];
+  private slotNumbers: Phaser.GameObjects.Text[] = [];
+  private slotIcons: Phaser.GameObjects.Image[] = [];
+  private dummys: Phaser.GameObjects.Image[] = [];
+
+  private readonly MaxSlot: number = 9;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -25,132 +30,138 @@ export class BagRegisterUi extends Ui {
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
+    const spacing = 5;
+    const contentHeight = 100;
 
-    this.bgContainer = this.scene.add.container(0, 0);
-    this.bg = addBackground(this.scene, TEXTURE.BLACK, width, height);
-    this.bgContainer.add(this.bg);
-    this.bgContainer.setDepth(DEPTH.OVERWORLD_UI + 3);
-    this.bgContainer.setScrollFactor(0);
-    this.bgContainer.setAlpha(0.5);
-    this.bgContainer.setScale(2);
+    let currentX = 0;
 
-    this.itemSlotContainer = this.scene.add.container(width / 4, height / 4 + 710);
+    this.container = this.scene.add.container(width / 2, height / 2);
+    this.bg = addBackground(this.scene, TEXTURE.BLACK).setOrigin(0.5, 0.5);
+    this.bg.setAlpha(0.5);
 
-    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-      const xPosition = i * (50 + 5);
-      const itemSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, 0, 50, 50, 8, 8, 8, 8);
-      const itemSlotText = addText(this.scene, xPosition - 16, -12, (i + 1).toString(), TEXTSTYLE.LOBBY_DEFAULT);
-      const itemIcon = addImage(this.scene, 'item000', xPosition, 0).setVisible(false);
-      const dummy = addImage(this.scene, TEXTURE.BLANK, xPosition, -50).setScale(2);
-      this.itemSlotContainer.add(itemSlotWindow);
-      this.itemSlotContainer.add(itemSlotText);
-      this.itemSlotContainer.add(itemIcon);
-      this.itemSlotContainer.add(dummy);
-      this.itemSlotBtns.push(itemSlotWindow);
-      this.itemSlotIcons.push(itemIcon);
-      this.itemSlotDummys.push(dummy);
+    this.slotContainer = this.scene.add.container(-400, +455);
+    for (let i = 1; i <= this.MaxSlot; i++) {
+      const window = addWindow(this.scene, TEXTURE.WINDOW_0, currentX, 0, 100, 100, 16, 16, 16, 16);
+      const dummy = addImage(this.scene, TEXTURE.BLANK, currentX, -90).setScale(4);
+      const num = addText(this.scene, currentX - 40, -20, i.toString(), TEXTSTYLE.ITEM_NOTICE).setOrigin(0, 0.5);
+      const icon = addImage(this.scene, TEXTURE.BLANK, currentX, 0).setScale(2);
+
+      this.slotWindows.push(window);
+      this.dummys.push(dummy);
+      this.slotNumbers.push(num);
+      this.slotIcons.push(icon);
+
+      this.slotContainer.add(window);
+      this.slotContainer.add(dummy);
+      this.slotContainer.add(icon);
+      this.slotContainer.add(num);
+
+      currentX += contentHeight + spacing;
     }
 
-    this.itemSlotContainer.setDepth(DEPTH.OVERWORLD_UI + 4);
-    this.itemSlotContainer.setScrollFactor(0);
-    this.itemSlotContainer.setScale(2);
+    this.container.add(this.bg);
+    this.container.add(this.slotContainer);
 
-    this.itemSlotContainer.setVisible(false);
-    this.bgContainer.setVisible(false);
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
+    this.container.setScrollFactor(0);
   }
 
   show(data?: any): void {
-    this.targetItem = data.choice;
-    this.itemSlotContainer.setVisible(true);
-    this.bgContainer.setVisible(true);
-
-    if (data.isRemove) {
-      const playerItemManager = this.mode.getPlayerItemManager();
-      playerItemManager.restMyItemSlot(playerItemManager.getMyItem(data.choice).itemSlot, data.choice);
-
-      this.clean();
-      this.mode.popUiStack();
-      return;
-    }
-
+    this.targetItem = data;
+    this.container.setVisible(true);
     this.pause(false);
   }
 
   clean(): void {
-    this.itemSlotContainer.setVisible(false);
-    this.bgContainer.setVisible(false);
+    this.container.setVisible(false);
+    this.pause(true);
   }
 
   pause(onoff: boolean): void {
     onoff ? this.block() : this.unblock();
   }
 
-  block() {
-    this.bg.setVisible(false);
-  }
+  private block() {}
 
-  unblock() {
+  private unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
-    const playerItemManager = this.mode.getPlayerItemManager();
-    const myItemSlots = playerItemManager.getMyItemSlots();
     const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
-    let startIndex = 0;
-    let endIndex = MAX_ITEM_SLOT - 1;
-    let choice = startIndex;
+    let start = 0;
+    let end = this.MaxSlot - 1;
+    let choice = start;
 
-    let idx = 0;
-    for (const slot of myItemSlots) {
-      if (slot !== '000') {
-        this.itemSlotIcons[idx].setTexture(`item${slot}`);
-      } else {
-        this.itemSlotIcons[idx].setTexture(`item000`).setVisible(false);
-      }
-      idx++;
-    }
+    this.renderSlot();
+    this.renderChoice(1, 0);
 
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback((key) => {
       const prevChoice = choice;
 
-      switch (key) {
-        case KEY.LEFT:
-          choice = Math.max(startIndex, choice - 1);
-          break;
-        case KEY.RIGHT:
-          choice = Math.min(endIndex, choice + 1);
-          break;
-        case KEY.CANCEL:
-          this.itemSlotDummys[choice].setTexture(TEXTURE.BLANK);
-          choice = 0;
-          this.clean();
-          this.mode.popUiStack();
-          break;
-        case KEY.SELECT:
-          for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-            if (myItemSlots[i] === this.targetItem) {
-              this.itemSlotIcons[i].setTexture(`item000`).setVisible(false);
-              playerItemManager.restMyItemSlot(i, this.targetItem);
-              break;
+      try {
+        switch (key) {
+          case KEY.LEFT:
+            if (choice > start) {
+              choice--;
             }
+            break;
+          case KEY.RIGHT:
+            if (choice < end && choice < this.MaxSlot - 1) {
+              choice++;
+            }
+            break;
+          case KEY.SELECT:
+            this.registerItem((choice + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+            this.renderSlot();
+            break;
+          case KEY.CANCEL:
+            this.renderChoice(choice, 0);
+            this.clean();
+            this.mode.popUiStack();
+            break;
+        }
+        if (key === KEY.LEFT || key === KEY.RIGHT) {
+          if (choice !== prevChoice) {
+            this.renderChoice(prevChoice, choice);
           }
-
-          if (myItemSlots[choice] !== '000') {
-            playerItemManager.restMyItemSlot(choice, playerItemManager.getMyItemSlots()[choice]);
-          }
-
-          this.itemSlotIcons[choice].setTexture(`item${this.targetItem}`).setVisible(true);
-          playerItemManager.setMyItemSlot(choice, this.targetItem);
-          break;
-      }
-
-      if (choice !== prevChoice) {
-        this.itemSlotDummys[prevChoice].setTexture(TEXTURE.BLANK);
-        this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
+        }
+      } catch (error) {
+        console.error(`Error handling key input: ${error}`);
       }
     });
-    this.itemSlotDummys[choice].setTexture(TEXTURE.PAUSE_WHITE);
   }
 
   update(time: number, delta: number): void {}
+
+  private renderChoice(prev: number, current: number) {
+    this.dummys[prev].setTexture(TEXTURE.BLANK);
+    this.dummys[current].setTexture(TEXTURE.PAUSE_WHITE);
+  }
+
+  private renderSlot() {
+    const bag = this.mode.getBag();
+
+    for (let i = 1; i <= this.MaxSlot; i++) {
+      const item = bag?.findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+      if (item) {
+        this.slotIcons[i - 1].setTexture(`item${item.getKey()}`);
+      } else {
+        this.slotIcons[i - 1].setTexture(TEXTURE.BLANK);
+      }
+    }
+  }
+
+  registerItem(choice: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
+    const bag = this.mode.getBag();
+
+    if (!bag) {
+      console.error('Bag object does not exist.');
+      return;
+    }
+
+    bag.registerItem(this.targetItem, choice);
+  }
+
+  updateSlotTexture() {}
 }
