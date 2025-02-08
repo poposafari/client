@@ -33,9 +33,16 @@ describe('Bag Tests', () => {
   });
 
   test('아이템 등록 테스트.', () => {
-    bag.getItem('001')?.registerSlot(1);
-    bag.getItem('001')?.registerSlot(2);
+    bag.registerItem('001', 1);
+    expect(bag.getItem('001')?.getRegister()).toBe(1);
 
-    expect(bag.getItem('001')?.getRegister()).toBe(2);
+    bag.registerItem('002', 1);
+    expect(bag.getItem('002')?.getRegister()).toBe(1);
+    expect(bag.getItem('001')?.getRegister()).toBeNull();
+
+    bag.registerItem('003', 1);
+    expect(bag.getItem('003')?.getRegister()).toBe(1);
+    bag.registerItem('003', 2);
+    expect(bag.getItem('003')?.getRegister()).toBe(2);
   });
 });
