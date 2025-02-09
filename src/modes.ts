@@ -23,10 +23,12 @@ import { getOverworldInfo } from './data/overworld';
 import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
-import { Bag } from './object/bag';
+import { Bag } from './storage/bag';
 import { BagChoiceUi } from './ui/bag-choice-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
+import { PlayerInfo } from './storage/player-info';
+import { OverworldHUDUi } from './ui/overworld-hud-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -145,6 +147,7 @@ export class NewGameMode extends Mode {
 
 export class OverworldMode extends Mode {
   private bag: Bag;
+  private playerInfo: PlayerInfo;
   private playerInfoManager!: PlayerInfoManager;
   private playerPokemonManager!: PlayerPokemonManager;
   private overworldManger!: OverworldManager;
@@ -154,13 +157,14 @@ export class OverworldMode extends Mode {
     super(scene, manager);
 
     this.bag = new Bag();
+    this.playerInfo = new PlayerInfo();
   }
 
   init(): void {
     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
     this.uis.push(new Overworld006(this.scene, this, OVERWORLD_TYPE.SAFARI));
     this.uis.push(new SeasonUi(this.scene, this));
-    this.uis.push(new OverworldUi(this.scene, this));
+    this.uis.push(new OverworldHUDUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new OverworldItemSlotUi(this.scene, this));
     this.uis.push(new OverworldTaxiListUi(this.scene, this));
@@ -179,6 +183,7 @@ export class OverworldMode extends Mode {
     }
 
     this.bag.setup();
+    this.playerInfo.setup();
   }
 
   enter(data?: any): void {
@@ -186,7 +191,7 @@ export class OverworldMode extends Mode {
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
     this.overworldManger = OverworldManager.getInstance();
 
-    this.addUiStackOverlap('OverworldUi', data);
+    this.addUiStackOverlap('OverworldHUDUi', data);
     this.addUiStackOverlap('Overworld000', data);
 
     this.currentOverworldUisIndex = 1;
@@ -206,29 +211,29 @@ export class OverworldMode extends Mode {
 
   changeFollowPokemon(pokedex: string) {
     const firstUi = this.getUiStackTop();
-    if (firstUi instanceof Overworld) {
+    if (firstUi instanceof OverworldUi) {
       firstUi.changeFollowPokemon(pokedex);
     }
   }
 
   chnageItemSlot() {
-    const ui = this.getUiType('OverworldUi');
-    if (ui instanceof OverworldUi) {
+    const ui = this.getUiType('OverworldHUDUi');
+    if (ui instanceof OverworldHUDUi) {
       ui.updateItemSlotUi();
     }
   }
 
   chnagePokemonSlot() {
-    const ui = this.getUiType('OverworldUi');
-    if (ui instanceof OverworldUi) {
+    const ui = this.getUiType('OverworldHUDUi');
+    if (ui instanceof OverworldHUDUi) {
       ui.updatePokemonSlotUi();
     }
   }
 
   changeOverworldInfo(overworld: string) {
     this.getPlayerInfoManager().setCurrentOverworld(overworld);
-    const ui = this.getUiType('OverworldUi');
-    if (ui instanceof OverworldUi) {
+    const ui = this.getUiType('OverworldHUDUi');
+    if (ui instanceof OverworldHUDUi) {
       ui.updateOverworldInfoUi();
     }
   }
@@ -283,6 +288,15 @@ export class OverworldMode extends Mode {
     return this.bag;
   }
 
+  getPlayerInfo() {
+    if (!this.playerInfo) {
+      console.error('Player does not exist.');
+      return;
+    }
+
+    return this.playerInfo;
+  }
+
   async startMessage(data: Message[]) {
     const overworld = this.getUiStackTop();
 
@@ -297,11 +311,11 @@ export class OverworldMode extends Mode {
   }
 
   pauseOverworldSystem(onoff: boolean) {
-    const overworldUi = this.getUiType('OverworldUi');
+    const overworldHUDUi = this.getUiType('OverworldHUDUi');
     const overworld = this.getUiStackTop();
 
-    if (overworldUi && overworld) {
-      overworldUi.pause(onoff ? true : false);
+    if (overworldHUDUi && overworld) {
+      overworldHUDUi.pause(onoff ? true : false);
       overworld.pause(onoff ? true : false);
     }
   }

@@ -3,29 +3,32 @@ import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { TEXTURE } from '../enums/texture';
-import { PlayerInfoManager, PlayerItemManager, PlayerPokemonManager } from '../managers';
+import { PlayerInfoManager, PlayerPokemonManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
+import { Bag } from '../storage/bag';
+import { PlayerInfo } from '../storage/player-info';
 import { ItemThrowObject } from './item-throw-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
+  private bag: Bag;
+  private playerInfo: PlayerInfo;
+
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
-    const playerPokemonManager = PlayerPokemonManager.getInstance();
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const playerInfo = playerInfoManager.getInfo();
-
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT, bag: Bag, playerInfo: PlayerInfo) {
     super(scene, texture, x, y, map!, nickname, type);
-
     this.setStatus(PLAYER_STATUS.WALK);
 
-    const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
-    this.pet = new PetObject(scene, `pokemon_overworld${followPokedex}`, playerInfo.pos.x, playerInfo.pos.y - 1, map!, '');
+    this.bag = bag;
+    this.playerInfo = playerInfo;
+
+    // const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
+    this.pet = new PetObject(scene, `pokemon_overworld${this.playerInfo.getPet()}`, playerInfo.getLocation().x, playerInfo.getLocation().y - 1, map!, '');
     const petSprite = this.pet.getSprite();
-    this.pet.setVisible(followPokedex !== '000' ? true : false);
+    this.pet.setVisible(this.playerInfo.getPet() !== '000' ? true : false);
     petSprite.setScale(1.5);
   }
 
@@ -76,9 +79,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 2) this.resetStep();
 
     const step = this.getStep();
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const pleyrInfo = playerInfoManager.getInfo();
-    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_walk_`;
+    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_movement_walk_`;
 
     switch (key) {
       case KEY.UP:
@@ -100,9 +101,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 3) this.resetStep();
 
     const step = this.getStep();
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const pleyrInfo = playerInfoManager.getInfo();
-    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_movement_run_`;
+    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_movement_run_`;
 
     switch (key) {
       case KEY.UP:
@@ -128,9 +127,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 5) this.resetStep();
 
     const step = this.getStep();
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const pleyrInfo = playerInfoManager.getInfo();
-    const animationKey = `${pleyrInfo.gender}_${pleyrInfo.avatarType}_ride_`;
+    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_ride_`;
 
     switch (key) {
       case KEY.UP:
@@ -216,17 +213,10 @@ export class PlayerObject extends MovableObject {
 
   readyItem(target: number) {
     if (!this.isMovementFinish()) return;
-
-    const playerItemManager = PlayerItemManager.getInstance();
-    const item = playerItemManager.getMyItemSlots()[target];
-
-    return playerItemManager.validateItemForUse(item) ? this.useItem(item) : false;
   }
 
   useItem(item: string) {
-    const playerItemManager = PlayerItemManager.getInstance();
-    const playerInfo = PlayerInfoManager.getInstance().getInfo();
-    const ret = playerItemManager.reduceItemStock(item);
+    // const targetItem = this.bag.getItem();
 
     switch (item) {
       case '005':
