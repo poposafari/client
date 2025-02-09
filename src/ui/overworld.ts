@@ -11,11 +11,7 @@ import { TEXTURE } from '../enums/texture';
 import { NpcObject } from '../object/npc-object';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { PokemonObject } from '../object/pokemon-object';
-
-export interface InitPos {
-  x: number;
-  y: number;
-}
+import { InitPos } from './overworld-ui';
 
 export class Overworld extends Ui {
   private mode!: OverworldMode;
@@ -49,7 +45,17 @@ export class Overworld extends Ui {
     PlayerInfoManager.getInstance().setPosY(playerPos.y);
 
     const playerInfo = PlayerInfoManager.getInstance().getInfo();
-    this.player = new PlayerObject(this.scene, `${playerInfo.gender}_${playerInfo.avatarType}_movement`, playerPos.x, playerPos.y, this.map, playerInfo.nickname, OBJECT.PLAYER);
+    this.player = new PlayerObject(
+      this.scene,
+      `${playerInfo.gender}_${playerInfo.avatarType}_movement`,
+      playerPos.x,
+      playerPos.y,
+      this.map,
+      playerInfo.nickname,
+      OBJECT.PLAYER,
+      this.mode.getBag()!,
+      this.mode.getPlayerInfo()!,
+    );
 
     const playerSprite = this.player.getSprite();
     playerSprite.setVisible(true);
