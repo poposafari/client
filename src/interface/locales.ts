@@ -7,8 +7,18 @@ export interface TranslationItemInfo {
   description: string;
 }
 
+export interface TranslationNpcInfo {
+  name: string;
+  scripts: string[];
+  postAction: string;
+}
+
 export interface TranslationItem {
   [key: string]: TranslationItemInfo;
+}
+
+export interface TranslationNpc {
+  [key: string]: TranslationNpcInfo;
 }
 
 export interface TranslationPokemonInfo {

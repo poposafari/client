@@ -4,8 +4,8 @@ import { OBJECT } from '../enums/object-type';
 import { TEXTURE } from '../enums/texture';
 import { OverworldManager, PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
+import { OverworldInfo } from '../storage/overworld-info';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
-import { npcs } from './npc-object';
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -26,6 +26,7 @@ export class MovableObject extends BaseObject {
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
   protected map: Phaser.Tilemaps.Tilemap;
+  private overworldInfo: OverworldInfo;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -36,9 +37,10 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT, overworldInfo: OverworldInfo) {
     super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
+    this.overworldInfo = overworldInfo;
 
     this.stopAnmation(3);
 
@@ -87,7 +89,7 @@ export class MovableObject extends BaseObject {
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION | string) {
-    if (this.isBlockingDirection(direction)) {
+    if (this.overworldInfo && this.isBlockingDirection(direction)) {
       this.startAnmation(animationKey);
       this.lastDirection = direction;
       this.movementDirectionQueue.length = 0;
@@ -175,23 +177,22 @@ export class MovableObject extends BaseObject {
   }
 
   getObjectInFront(direction: DIRECTION) {
-    const overworldManager = OverworldManager.getInstance();
-    const pokemons = overworldManager.getOverworldPokemons();
-
     const nextTilePos = this.tilePosInDirection(direction);
-    for (const [, npc] of npcs) {
+    const npcs = this.overworldInfo.getNpcs();
+
+    for (const npc of npcs) {
       const npcTilePos = npc.getTilePos();
       if (npcTilePos.x === nextTilePos.x && npcTilePos.y === nextTilePos.y) {
         return npc;
       }
     }
 
-    for (const pokemon of pokemons) {
-      const pokemonTilePos = pokemon.getTilePos();
-      if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
-        return pokemon;
-      }
-    }
+    // for (const pokemon of pokemons) {
+    //   const pokemonTilePos = pokemon.getTilePos();
+    //   if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
+    //     return pokemon;
+    //   }
+    // }
   }
 
   isBlockingDirection(direction: DIRECTION): boolean {
@@ -229,7 +230,9 @@ export class MovableObject extends BaseObject {
   }
 
   private hasBlockingNpc(pos: Phaser.Math.Vector2): boolean {
-    for (const [, npc] of npcs) {
+    const npcs = this.overworldInfo.getNpcs();
+
+    for (const npc of npcs) {
       const npcTilePos = npc.getTilePos();
       if (npcTilePos.x === pos.x && npcTilePos.y === pos.y) {
         return true;
