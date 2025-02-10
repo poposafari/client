@@ -12,14 +12,11 @@ import { BoxUi } from './ui/box-ui';
 import { BoxChoiceUi } from './ui/box-choice-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
 import { SeasonUi } from './ui/season-ui';
-import { Overworld } from './ui/overworld';
 import { OverworldUi } from './ui/overworld-ui';
-import { OverworldTaxiListUi } from './ui/overworld-taxi-list-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
-import { getOverworldInfo } from './data/overworld';
 import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
@@ -29,6 +26,7 @@ import { BagRegisterUi } from './ui/bag-register-ui';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
+import { SafariListUi } from './ui/safari-list-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -167,7 +165,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldHUDUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new OverworldItemSlotUi(this.scene, this));
-    this.uis.push(new OverworldTaxiListUi(this.scene, this));
+    this.uis.push(new SafariListUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new BagChoiceUi(this.scene, this));
     this.uis.push(new BagRegisterUi(this.scene, this));
@@ -238,17 +236,17 @@ export class OverworldMode extends Mode {
     }
   }
 
-  changeOverworld(overworldKey: string) {
-    this.changeOverworldInfo(overworldKey);
-    const overworld = getOverworldInfo(overworldKey);
+  // changeOverworld(overworldKey: string) {
+  //   this.changeOverworldInfo(overworldKey);
+  //   const overworld = getOverworldInfo(overworldKey);
 
-    if (!overworld) return;
+  //   if (!overworld) return;
 
-    this.getUiStackTop().clean();
-    this.popUiStack();
+  //   this.getUiStackTop().clean();
+  //   this.popUiStack();
 
-    this.addUiStackOverlap(`Overworld${overworldKey}`, { x: overworld.entryPos.x, y: overworld.entryPos.y });
-  }
+  //   this.addUiStackOverlap(`Overworld${overworldKey}`, { x: overworld.entryPos.x, y: overworld.entryPos.y });
+  // }
 
   changeTitleMode() {
     this.manager.changeMode(MODE.TITLE);
@@ -321,7 +319,7 @@ export class OverworldMode extends Mode {
   }
 
   finishBattle() {
-    const overworld = this.getUiStackTop() as Overworld;
-    overworld.finishBattle();
+    const overworld = this.getUiStackTop() as OverworldUi;
+    // overworld.finishBattle();
   }
 }

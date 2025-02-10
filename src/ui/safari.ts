@@ -4,36 +4,26 @@ import { TYPE } from '../enums/type';
 import { OverworldMode } from '../modes';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { InitPos, Overworld } from './overworld';
+import { OverworldUi } from './overworld-ui';
 
-export class Safari extends Overworld {
+export class Safari extends OverworldUi {
   private pokemons: PokemonObject[] = [];
 
   constructor(scene: InGameScene, mode: OverworldMode, type: OVERWORLD_TYPE, key: string) {
-    super(scene, mode, type, key);
+    super(scene, mode, key);
   }
 
   setup(): void {
     super.setup();
   }
 
-  show(data: InitPos): void {
-    const overworldManager = this.getMode().getOverworldManager();
+  show(): void {}
 
-    super.show(data);
-
-    overworldManager.addOverworldPokemons(this.scene, ['001', '001s', '003s', '006s', '006', '005', '004s'], this.getMap());
-  }
-
-  clean(): void {
-    const overworldManager = this.getMode().getOverworldManager();
-    overworldManager.resetOverworldPokemons();
-    super.clean();
-  }
+  clean(): void {}
 
   update(time: number, delta: number): void {
     super.update(time, delta);
 
-    this.getMode().getOverworldManager().update();
+    // this.getMode().getOverworldManager().update();
   }
 }
