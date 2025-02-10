@@ -1,5 +1,5 @@
 import { itemData } from '../data/items';
-import { npcsInfo } from '../data/npc';
+import { npcData } from '../data/npc';
 import { pokemons } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { AREA } from '../enums/area';
@@ -162,7 +162,7 @@ export class LoadingScene extends BaseScene {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }
 
-    for (const key of Object.keys(npcsInfo)) {
+    for (const key of Object.keys(npcData)) {
       this.loadAtlas(`${key}`, 'ui/character/npc', `${key}`, `npc`);
     }
 

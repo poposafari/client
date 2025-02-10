@@ -6,30 +6,30 @@ import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject } from './base-object';
-import { npcsInfo } from '../data/npc';
-
-export let npcs: Map<string, NpcObject> = new Map();
 
 export class NpcObject extends BaseObject {
   private location: OVERWORLD_TYPE;
+  private key: string;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, type: OBJECT, location: OVERWORLD_TYPE) {
     super(scene, texture, x, y, nickname, type);
 
+    this.key = texture;
     this.getSprite().setScale(1.6);
     this.location = location;
-    npcs.set(texture, this);
   }
 
   getLocation() {
     return this.location;
   }
 
-  reaction(playerDirection: DIRECTION, key: string, type: string): Message[] {
+  reaction(playerDirection: DIRECTION, key: string, messageType: 'talk' | 'question', talkType: string): Message[] {
     this.reactionDirection(playerDirection);
 
-    return this.reactionScript(key, type);
+    return this.reactionScript(key, messageType, talkType);
   }
+
+  afterReaction(key: string) {}
 
   private reactionDirection(playerDirection: DIRECTION) {
     switch (playerDirection) {
@@ -48,22 +48,37 @@ export class NpcObject extends BaseObject {
     }
   }
 
-  private reactionScript(key: string, type: string): Message[] {
-    type = this.detailSetting(key);
+  reactionScript(key: string, messageType: 'talk' | 'question', talkType: string, etc?: string): Message[] {
+    let ret: Message[] = [];
 
-    if (npcsInfo[key] && npcsInfo[key].scripts[type]) {
-      return npcsInfo[key].scripts[type];
+    const scripts = i18next.t(`npc:${key}.scripts`, { returnObjects: true });
+    const filteredScripts = this.filterScripts(scripts as string[], messageType, talkType);
+
+    for (const script of filteredScripts) {
+      ret.push({
+        type: 'default',
+        format: messageType,
+        content: etc ? etc + script : script,
+      });
     }
 
-    return [{ type: 'default', format: 'talk', content: i18next.t(`message:${key}_${this.location === OVERWORLD_TYPE.PLAZA ? 'talk' : 'question'}`) }];
+    if (ret.length === 0) {
+      ret.push({
+        type: 'sys',
+        format: 'talk',
+        content: 'Error!',
+      });
+    }
+
+    return ret;
   }
 
-  private detailSetting(key: string) {
-    switch (key) {
-      case 'npc000':
-        return this.location === OVERWORLD_TYPE.PLAZA ? 'talk' : 'question';
-    }
-
-    return 'talk';
+  private filterScripts(scripts: string[], messageType: string, talkType: string): string[] {
+    return scripts
+      .filter((script) => {
+        const [type, talk] = script.split('_');
+        return type === messageType && talk === talkType;
+      })
+      .map((script) => script.split('_')[2]);
   }
 }
