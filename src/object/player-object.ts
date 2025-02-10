@@ -6,6 +6,7 @@ import { TEXTURE } from '../enums/texture';
 import { PlayerInfoManager, PlayerPokemonManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
+import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
 import { ItemThrowObject } from './item-throw-object';
 import { MovableObject } from './movable-object';
@@ -18,8 +19,19 @@ export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT, bag: Bag, playerInfo: PlayerInfo) {
-    super(scene, texture, x, y, map!, nickname, type);
+  constructor(
+    scene: InGameScene,
+    texture: TEXTURE | string,
+    x: number,
+    y: number,
+    map: Phaser.Tilemaps.Tilemap | null,
+    nickname: string,
+    type: OBJECT,
+    bag: Bag,
+    playerInfo: PlayerInfo,
+    overworldInfo: OverworldInfo,
+  ) {
+    super(scene, texture, x, y, map!, nickname, type, overworldInfo);
     this.setStatus(PLAYER_STATUS.WALK);
 
     this.bag = bag;

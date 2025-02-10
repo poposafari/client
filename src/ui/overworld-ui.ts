@@ -11,10 +11,34 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addMap, delay, Ui } from './ui';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
-import { PokemonObject } from '../object/pokemon-object';
 import { PLAYER_STATUS } from '../enums/player-status';
+import { OverworldInfo } from '../storage/overworld-info';
 
-export interface InitPos {
+export interface Layer {
+  idx: number;
+  texture: TEXTURE;
+  depth: DEPTH;
+}
+
+export interface ForegroundLayer {
+  idx: number;
+  texture: TEXTURE[];
+  depth: DEPTH;
+}
+
+export interface MapInfo {
+  texture: TEXTURE;
+  tilesets: TEXTURE[];
+}
+
+export interface NpcInfo {
+  key: string;
+  x: number;
+  y: number;
+  overworldType: OVERWORLD_TYPE;
+}
+
+export interface PlayerInitPos {
   x: number;
   y: number;
 }
@@ -26,6 +50,13 @@ export class OverworldUi extends Ui {
   private sysBlock!: boolean;
   private isMessageActive: boolean = false;
   private isBattle: boolean = false;
+  private overworldInfo: OverworldInfo;
+
+  //overworld creative info.
+  private npcsInfo: NpcInfo[] = [];
+  private mapInfo: MapInfo = { texture: TEXTURE.BLANK, tilesets: [] };
+  private mapLayerInfo: Layer[] = [];
+  private mapForegroundLayerInfo: ForegroundLayer = { idx: 0, texture: [], depth: 0 };
 
   //map
   private map!: Phaser.Tilemaps.Tilemap;
@@ -33,10 +64,8 @@ export class OverworldUi extends Ui {
   private foregroundContainer!: Phaser.GameObjects.Container;
   private layers: Phaser.Tilemaps.TilemapLayer[] = [];
 
-  //npc
-  private npcs: NpcObject[] = [];
-
   //player
+  private playerInitPos: PlayerInitPos = { x: 0, y: 0 };
   private playerObj!: PlayerObject;
 
   private readonly MapScale: number = 1.5;
@@ -46,18 +75,147 @@ export class OverworldUi extends Ui {
     this.mode = mode;
     this.overworldKey = key;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
+    this.overworldInfo = new OverworldInfo();
   }
 
   setup(): void {}
 
-  //show player-object, map
-  show(data?: InitPos): void {
-    if (data) this.showPlayerObj(data);
+  setupMap(texture: TEXTURE, tilesets: TEXTURE[]) {
+    const width = this.getWidth();
+    const height = this.getHeight();
 
-    this.showMap();
+    this.layerContainer = this.scene.add.container(width / 4, height / 4);
+    this.foregroundContainer = this.scene.add.container(width / 4, height / 4);
+
+    this.layerContainer.setVisible(false);
+    this.foregroundContainer.setVisible(false);
+
+    this.foregroundContainer.setDepth(DEPTH.FOREGROND);
+
+    this.mapInfo.texture = texture;
+    for (const tileset of tilesets) {
+      this.mapInfo.tilesets.push(tileset);
+    }
   }
 
-  clean(data?: any): void {}
+  setupMapLayer(idx: number, texture: TEXTURE, depth: DEPTH) {
+    this.mapLayerInfo.push({ idx: idx, texture: texture, depth: depth });
+  }
+
+  setupMapForegroundLayer(idx: number, texture: TEXTURE[], depth: DEPTH) {
+    this.mapForegroundLayerInfo.idx = idx;
+    this.mapForegroundLayerInfo.texture = texture;
+    this.mapForegroundLayerInfo.depth = depth;
+  }
+
+  setupNpc(npcKey: string, x: number, y: number, overworldType: OVERWORLD_TYPE) {
+    this.npcsInfo.push({
+      key: npcKey,
+      x: x,
+      y: y,
+      overworldType: overworldType,
+    });
+  }
+
+  setupPlayerInitPos(x: number, y: number) {
+    this.playerInitPos.x = x;
+    this.playerInitPos.y = y;
+  }
+
+  show(): void {
+    this.showMap();
+    this.showNpc();
+    // this.showWild();
+    this.showPlayer();
+
+    this.pause(false);
+  }
+
+  private showMap() {
+    this.map = addMap(this.scene, this.mapInfo.texture);
+
+    for (const tileset of this.mapInfo.tilesets) {
+      this.addTileset(tileset);
+    }
+
+    for (const layer of this.mapLayerInfo) {
+      this.addLayers(layer.idx, layer.texture, layer.depth);
+    }
+
+    this.addForegroundLayer(this.mapForegroundLayerInfo.idx, this.mapForegroundLayerInfo.texture, this.mapForegroundLayerInfo.depth);
+
+    this.layerContainer.setVisible(true);
+    this.foregroundContainer.setVisible(true);
+  }
+
+  private showNpc() {
+    for (const info of this.npcsInfo) {
+      const npc = new NpcObject(this.scene, info.key, info.x, info.y, this.map, i18next.t(`npc:${info.key}.name`), OBJECT.NPC, info.overworldType);
+      this.overworldInfo.addNpc(npc);
+    }
+  }
+
+  private showPlayer() {
+    const playerData = this.mode.getPlayerInfo();
+
+    if (!playerData) {
+      console.error('Player does not exist.');
+      return;
+    }
+
+    this.playerObj = new PlayerObject(
+      this.scene,
+      `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`,
+      this.playerInitPos.x,
+      this.playerInitPos.y,
+      this.map,
+      playerData?.getNickname(),
+      OBJECT.PLAYER,
+      this.mode.getBag()!,
+      this.mode.getPlayerInfo()!,
+      this.overworldInfo,
+    );
+
+    this.playerObj.getSprite().setVisible(true).setScale(PLAYER_SCALE);
+    this.scene.cameras.main.startFollow(this.playerObj.getSprite(), true, 0.5, 0.5, 0, 0);
+  }
+
+  clean(data?: any): void {
+    this.cleanPlayer();
+    this.cleanNpc();
+    //this.cleanWild();
+    this.cleanMap();
+  }
+
+  private cleanPlayer() {
+    this.playerObj.destroy();
+    this.playerObj.getPet().destroy();
+    this.scene.cameras.main.stopFollow();
+    this.scene.cameras.main.setScroll(0, 0);
+  }
+
+  private cleanNpc() {
+    for (const npc of this.overworldInfo.getNpcs()) {
+      npc.destroy();
+    }
+    this.overworldInfo.resetNpcs();
+  }
+
+  private cleanMap() {
+    this.map.destroy();
+
+    if (this.layerContainer) {
+      this.layerContainer.removeAll(true);
+      this.layerContainer.destroy();
+    }
+    this.layerContainer = null!;
+
+    if (this.foregroundContainer) {
+      this.foregroundContainer.removeAll(true);
+      this.foregroundContainer.destroy();
+    }
+    this.foregroundContainer = null!;
+  }
 
   pause(onoff: boolean, data?: any): void {
     onoff ? this.block() : this.unblock();
@@ -74,19 +232,6 @@ export class OverworldUi extends Ui {
     return this.mode as OverworldMode;
   }
 
-  createLayerContainer() {
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    this.layerContainer = this.scene.add.container(width / 4, height / 4);
-    this.foregroundContainer = this.scene.add.container(width / 4, height / 4);
-
-    this.layerContainer.setVisible(false);
-    this.foregroundContainer.setVisible(false);
-
-    this.foregroundContainer.setDepth(DEPTH.FOREGROND);
-  }
-
   addLayers(idx: number, texture: TEXTURE, depth: DEPTH) {
     const layer = this.map.createLayer(idx, texture)?.setScale(this.MapScale).setDepth(depth);
     this.layers.push(layer!);
@@ -100,10 +245,6 @@ export class OverworldUi extends Ui {
 
   addTileset(tilesetTexture: TEXTURE) {
     this.map.addTilesetImage(tilesetTexture, tilesetTexture);
-  }
-
-  setMap(texture: TEXTURE) {
-    this.map = addMap(this.scene, texture);
   }
 
   private block() {
@@ -125,20 +266,20 @@ export class OverworldUi extends Ui {
           case KEY.SELECT:
             const obj = this.playerObj.getObjectInFront(this.playerObj.getLastDirection());
             if (obj && this.playerObj.isMovementFinish() && !this.isMessageActive && !this.isBattle) {
-              const objKey = obj.getSprite().texture.key;
+              const key = obj.getKey();
               if (obj instanceof NpcObject) {
-                this.isMessageActive = true;
-                const messageResult = await this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), objKey, 'talk'));
-                this.handleNpcPostScriptAction(objKey, obj.getLocation(), messageResult);
-                this.isMessageActive = false;
-              } else if (obj instanceof PokemonObject) {
-                this.isBattle = true;
-                obj.reaction(this.playerObj.getLastDirection());
-                await delay(this.scene, 500);
-                this.mode.pauseOverworldSystem(true);
-                this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
+                await this.talkToNpc(obj, key);
+                this.handleNpcPostScriptAction(obj, key);
               }
+              // } else if (obj instanceof PokemonObject) {
+              //   this.isBattle = true;
+              //   obj.reaction(this.playerObj.getLastDirection());
+              //   await delay(this.scene, 500);
+              //   this.mode.pauseOverworldSystem(true);
+              //   this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
+              // }
             }
+
             break;
           case KEY.MENU:
             if (this.playerObj.isMovementFinish()) {
@@ -198,38 +339,6 @@ export class OverworldUi extends Ui {
     this.mode.chnageItemSlot();
   }
 
-  private showPlayerObj(pos: InitPos) {
-    const playerData = this.mode.getPlayerInfo();
-    const playerInitPos = pos;
-
-    if (!playerData || !playerInitPos) {
-      console.error('Player or InitPos does not exist.');
-      return;
-    }
-
-    this.playerObj = new PlayerObject(
-      this.scene,
-      `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`,
-      playerInitPos.x,
-      playerInitPos.y,
-      this.map,
-      playerData?.getNickname(),
-      OBJECT.PLAYER,
-      this.mode.getBag()!,
-      this.mode.getPlayerInfo()!,
-    );
-
-    this.playerObj.getSprite().setVisible(true).setScale(PLAYER_SCALE);
-    this.scene.cameras.main.startFollow(this.playerObj.getSprite(), true, 0.5, 0.5, 0, 0);
-
-    this.pause(false);
-  }
-
-  private showMap() {
-    this.layerContainer.setVisible(true);
-    this.foregroundContainer.setVisible(true);
-  }
-
   private movement() {
     if (this.cursorKey.up.isDown && this.playerObj.isMovementFinish()) {
       this.playerObj.move(KEY.UP);
@@ -242,26 +351,21 @@ export class OverworldUi extends Ui {
     }
   }
 
-  private handleNpcPostScriptAction(npcKey: string, location: OVERWORLD_TYPE, msgResult: boolean) {
+  private handleNpcPostScriptAction(npcObj: NpcObject, npcKey: string) {
     switch (npcKey) {
       case 'npc000':
-        if (location === OVERWORLD_TYPE.PLAZA && !msgResult) {
-          this.mode.pauseOverworldSystem(true);
-          this.mode.addUiStackOverlap('OverworldTaxiListUi');
-        }
-        if (msgResult) {
-          if (msgResult) this.mode.moveToVillage();
-        }
+        this.mode.pauseOverworldSystem(true);
+        this.mode.addUiStackOverlap('SafariListUi', npcObj);
         return;
       case 'npc001':
-        this.mode.pauseOverworldSystem(true);
-        this.mode.addUiStackOverlap('OverworldShopListUi');
+        this.mode.moveToVillage();
         return;
     }
   }
 
-  showNpc(npcTexture: TEXTURE | string, x: number, y: number, overworldType: OVERWORLD_TYPE) {
-    const npc = new NpcObject(this.scene, npcTexture, x, y, this.map, i18next.t(`npc:${npcTexture}.name`), OBJECT.NPC, overworldType);
-    this.npcs.push(npc);
+  private async talkToNpc(obj: NpcObject, key: string) {
+    this.isMessageActive = true;
+    const messageResult = await this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'talk', 'welcome'));
+    this.isMessageActive = false;
   }
 }
