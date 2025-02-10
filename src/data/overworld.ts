@@ -41,7 +41,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '012': {
     key: '012',
-    cost: 1,
+    cost: 3,
     spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
