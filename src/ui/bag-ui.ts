@@ -176,6 +176,7 @@ export class BagUi extends Ui {
           case KEY.CANCEL:
             this.clean();
             this.lastCurrentPage = 0;
+            this.lastChoice = 0;
             this.runPocketAnimation(prevPage, 0);
             this.renderPage(0);
             this.renderChoice(prevChoice, 0);
@@ -218,8 +219,8 @@ export class BagUi extends Ui {
     }
 
     this.listEmptyText.setVisible(false);
-    this.listWindows[prev].setTexture(TEXTURE.ITEM_BOX);
-    this.listWindows[current].setTexture(TEXTURE.ITEM_BOX_S);
+    if (this.listWindows[prev]) this.listWindows[prev].setTexture(TEXTURE.ITEM_BOX);
+    if (this.listWindows[current]) this.listWindows[current].setTexture(TEXTURE.ITEM_BOX_S);
     this.descIcon.setTexture('item' + this.descIcons[current]);
     this.descText.setText(i18next.t(this.descTexts[current]));
   }
