@@ -16,7 +16,7 @@ export class Bag {
     this.addItems('003');
     this.addItems('004');
     this.addItems('005');
-    this.addItems('006');
+    this.addItems('006', 3);
   }
 
   addItems(key: string, stock: number = 1, register: Register = null) {
