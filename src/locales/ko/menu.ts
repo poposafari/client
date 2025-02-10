@@ -34,7 +34,7 @@ export const menu: TranslationDefault = {
   overworld_010: '오버월드001',
   overworld_011: '오버월드002',
   overworld_012: '오버월드003',
-  stockTicket: '보유 티켓',
+  yourTickets: '보유 티켓 : ',
   menuPokedex: '도감',
   menuPokemon: '포켓몬',
   menuBag: '가방',
