@@ -163,15 +163,16 @@ export class SafariListUi extends Ui {
               this.safariDummys[choice].setTexture(TEXTURE.BLANK);
               this.renderPage(1);
             } else {
-              if (this.validateTicket(targetSafari.cost) < 0) {
+              if (!this.validateTicket(targetSafari.cost)) {
                 const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'talk', 'reject'));
                 this.show(this.taxiNpc);
-              }
-              if (messageResult) {
+              } else {
                 console.log('결제 완!');
+                this.useTicket(targetSafari.cost);
+                this.mode.pauseOverworldSystem(false);
+                this.mode.popUiStack();
               }
             }
-
             break;
           case KEY.CANCEL:
             this.clean();
@@ -296,7 +297,26 @@ export class SafariListUi extends Ui {
     this.yourStockText.setText(i18next.t('menu:yourTickets') + ticket?.getStock());
   }
 
-  private validateTicket(cost: number): number {
+  private validateTicket(cost: number): boolean {
+    const bag = this.mode.getBag();
+
+    if (!bag) {
+      console.error('Bag does not exist');
+      return false;
+    }
+
+    const myTicket = bag.getItem('006');
+
+    if (!myTicket) return false;
+
+    if (myTicket?.getStock() < cost) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private useTicket(cost: number) {
     const bag = this.mode.getBag();
 
     if (!bag) {
@@ -304,15 +324,6 @@ export class SafariListUi extends Ui {
       return 0;
     }
 
-    const myTicket = bag.getItem('006');
-
-    if (!myTicket) return 0;
-
-    if (myTicket?.getStock() < cost) {
-      return -1;
-    }
-
     bag.useItem('006', cost);
-    return 1;
   }
 }
