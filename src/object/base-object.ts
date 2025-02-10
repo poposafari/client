@@ -157,4 +157,8 @@ export class BaseObject {
   setDepth(depth: number) {
     this.sprite.setDepth(depth);
   }
+
+  getKey() {
+    return this.sprite.texture.key;
+  }
 }

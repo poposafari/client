@@ -6,7 +6,6 @@ import { OverworldMode } from '../modes';
 import { MAP_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { InitPos } from './overworld-ui';
 import { Plaza } from './plaza';
 
 export class Overworld000 extends Plaza {
@@ -16,46 +15,26 @@ export class Overworld000 extends Plaza {
 
   setup(): void {
     super.setup();
+
+    this.setupMap(TEXTURE.MAP_000, [TEXTURE.MAP_L0, TEXTURE.MAP_L1_0]);
+    this.setupMapLayer(0, TEXTURE.MAP_L0, DEPTH.GROUND);
+    this.setupMapLayer(1, TEXTURE.MAP_L0, DEPTH.GROUND + 1);
+    this.setupMapLayer(2, TEXTURE.MAP_L0, DEPTH.GROUND + 2);
+    this.setupMapLayer(3, TEXTURE.MAP_L0, DEPTH.GROUND + 3);
+    this.setupMapLayer(4, TEXTURE.MAP_L1_0, DEPTH.GROUND + 4);
+    this.setupMapForegroundLayer(5, [TEXTURE.MAP_L1_0, TEXTURE.MAP_L0], DEPTH.FOREGROND);
+
+    this.setupNpc(`npc000`, 8, 8, OVERWORLD_TYPE.PLAZA);
+    this.setupNpc(`npc002`, 11, 8, OVERWORLD_TYPE.PLAZA);
+
+    this.setupPlayerInitPos(10, 10);
   }
 
-  show(pos: InitPos): void {
-    const mode = this.getOverworldMode();
-    const location = mode.getPlayerInfo()?.getLocation();
-
-    //map
-    this.createMap();
-
-    //overworld-ui show
-    if (location) super.show({ x: location?.x, y: location?.y });
-
-    //npc
-    this.createNpc();
+  show(): void {
+    super.show();
   }
 
   clean(): void {
     super.clean();
-  }
-
-  private createMap() {
-    this.setMap(TEXTURE.MAP_000);
-
-    this.addTileset(TEXTURE.MAP_L0);
-    this.addTileset(TEXTURE.MAP_L1_0);
-
-    this.createLayerContainer();
-
-    this.addLayers(0, TEXTURE.MAP_L0, DEPTH.GROUND);
-    this.addLayers(1, TEXTURE.MAP_L0, DEPTH.GROUND + 1);
-    this.addLayers(2, TEXTURE.MAP_L0, DEPTH.GROUND + 2);
-    this.addLayers(3, TEXTURE.MAP_L0, DEPTH.GROUND + 3);
-    this.addLayers(4, TEXTURE.MAP_L1_0, DEPTH.GROUND + 4);
-
-    this.addForegroundLayer(5, [TEXTURE.MAP_L1_0, TEXTURE.MAP_L0], DEPTH.FOREGROND);
-  }
-
-  private createNpc() {
-    this.showNpc(`npc000`, 8, 8, OVERWORLD_TYPE.PLAZA);
-    this.showNpc(`npc001`, 10, 8, OVERWORLD_TYPE.PLAZA);
-    this.showNpc(`npc002`, 14, 8, OVERWORLD_TYPE.PLAZA);
   }
 }
