@@ -17,7 +17,6 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
-import { OverworldShopListUi } from './ui/overworld-shop-list-ui';
 import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
 import { Bag } from './storage/bag';
@@ -28,6 +27,7 @@ import { PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
+import { ShopChoiceUi } from './ui/shop-choice-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -173,9 +173,8 @@ export class OverworldMode extends Mode {
     this.uis.push(new BoxUi(this.scene, this));
     this.uis.push(new BoxChoiceUi(this.scene, this));
     this.uis.push(new BoxRegisterUi(this.scene, this));
-    this.uis.push(new OverworldShopListUi(this.scene, this));
     this.uis.push(new ShopListUi(this.scene, this));
-    this.uis.push(new OverworldShopChoiceUi(this.scene, this));
+    this.uis.push(new ShopChoiceUi(this.scene, this));
     this.uis.push(new OverworldBattleUi(this.scene, this));
 
     for (const ui of this.uis) {
