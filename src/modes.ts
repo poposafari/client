@@ -27,6 +27,7 @@ import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
+import { ShopListUi } from './ui/shop-list-ui.ts';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -173,6 +174,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new BoxChoiceUi(this.scene, this));
     this.uis.push(new BoxRegisterUi(this.scene, this));
     this.uis.push(new OverworldShopListUi(this.scene, this));
+    this.uis.push(new ShopListUi(this.scene, this));
     this.uis.push(new OverworldShopChoiceUi(this.scene, this));
     this.uis.push(new OverworldBattleUi(this.scene, this));
 
