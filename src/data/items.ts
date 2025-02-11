@@ -19,7 +19,7 @@ const initial: Record<string, Item> = {
   '001': {
     key: '001',
     type: ITEM.POKEBALL,
-    price: 0,
+    price: 100,
     purchasable: true,
   },
   //Great Ball

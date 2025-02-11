@@ -8,12 +8,16 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
+import { NpcObject } from '../object/npc-object';
 
 export class ShopListUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
   private descContainer!: Phaser.GameObjects.Container;
   private purchasableItems: Item[] = [];
+  private npc!: NpcObject;
+  private lastChoice!: number | null;
+  private lastPage!: number | null;
 
   private listWindow!: Phaser.GameObjects.NineSlice;
   private listWindowHeight!: number;
@@ -43,6 +47,9 @@ export class ShopListUi extends Ui {
     const height = this.getHeight();
     const contentHeight = 50;
     const spacing = 5;
+
+    this.lastChoice = null;
+    this.lastPage = null;
 
     this.container = this.scene.add.container(width / 2 + 400, height / 2);
 
@@ -87,7 +94,10 @@ export class ShopListUi extends Ui {
     this.renderPage(1);
   }
 
-  show(data?: any): void {
+  show(data?: NpcObject): void {
+    if (data) {
+      this.npc = data;
+    }
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -111,14 +121,17 @@ export class ShopListUi extends Ui {
 
     let start = 0;
     let end = this.ListPerPage - 1;
-    let choice = start;
-    let currentPage = 1;
+    let choice = this.lastChoice ? this.lastChoice : start;
+    let currentPage = this.lastPage ? this.lastPage : 1;
+    // console.log('lastChoice:' + this.lastChoice, 'lastPage:' + this.lastPage);
+    // console.log('choice:' + choice, 'currentPage:' + currentPage);
     const totalPages = Math.ceil(this.purchasableItems.length / this.ListPerPage);
+    const globalChoice = (currentPage - 1) * this.ListPerPage + choice;
 
-    this.listDummys[choice].setTexture(TEXTURE.ARROW_W_R);
+    this.listDummys[globalChoice].setTexture(TEXTURE.ARROW_W_R);
 
-    this.descIcon.setTexture(`item${this.purchasableItems[0].key}`);
-    this.descText.setText(i18next.t(`item:${this.purchasableItems[0].key}.description`));
+    this.descIcon.setTexture(`item${this.purchasableItems[globalChoice].key}`);
+    this.descText.setText(i18next.t(`item:${this.purchasableItems[globalChoice].key}.description`));
 
     this.updatePageText(currentPage);
 
@@ -150,9 +163,11 @@ export class ShopListUi extends Ui {
             if (this.purchasableItems.length <= 0) return;
             const globalChoice = (currentPage - 1) * this.ListPerPage + choice;
             const targetItem = this.purchasableItems[globalChoice];
-            console.log(targetItem);
+            this.mode.addUiStackOverlap('ShopChoiceUi', { npc: this.npc, item: targetItem.key, cost: targetItem.price });
             break;
           case KEY.CANCEL:
+            this.lastChoice = null;
+            this.lastPage = null;
             this.clean();
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
@@ -164,6 +179,7 @@ export class ShopListUi extends Ui {
         }
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
+            this.lastChoice = choice;
             this.listDummys[prevChoice].setTexture(TEXTURE.BLANK);
             this.listDummys[choice].setTexture(TEXTURE.ARROW_W_R);
             this.renderDesc(this.purchasableItems[(currentPage - 1) * this.ListPerPage + choice].key);
@@ -171,6 +187,7 @@ export class ShopListUi extends Ui {
         }
         if (key === KEY.LEFT || key === KEY.RIGHT) {
           if (currentPage !== prevPage) {
+            this.lastPage = currentPage;
             this.renderPage(currentPage);
             choice = 0;
             this.renderDesc(this.purchasableItems[(currentPage - 1) * this.ListPerPage + choice].key);
