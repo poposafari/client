@@ -12,6 +12,9 @@ describe('Bag Tests', () => {
     bag.addItems('001', 3);
     expect(Object.keys(bag.getPockets(ITEM.POKEBALL))).toContain('001');
     expect(bag.getItem('001')?.getStock()).toBe(3);
+
+    bag.addItems('001', 4);
+    expect(bag.getItem('001')?.getStock()).toBe(7);
   });
 
   test('아이템 사용 후 stock 감소 테스트1.', () => {
