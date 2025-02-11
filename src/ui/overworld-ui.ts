@@ -357,8 +357,9 @@ export class OverworldUi extends Ui {
         this.mode.pauseOverworldSystem(true);
         this.mode.addUiStackOverlap('SafariListUi', npcObj);
         return;
-      case 'npc001':
-        this.mode.moveToVillage();
+      case 'npc002':
+        this.mode.pauseOverworldSystem(true);
+        this.mode.addUiStackOverlap('ShopListUi', npcObj);
         return;
     }
   }

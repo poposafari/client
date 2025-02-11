@@ -29,6 +29,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
     this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
     this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
+    this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
 
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 

@@ -192,6 +192,8 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.BATTLE_MESSAGE:
     case TEXTSTYLE.OVERWORLD_DESC:
     case TEXTSTYLE.ITEM_NOTICE:
+    case TEXTSTYLE.ITEM_LIST:
+    case TEXTSTYLE.OVERWORLD_LIST:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
@@ -267,6 +269,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.OVERWORLD_LIST:
       config.fontSize = '80px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.ITEM_LIST:
+      config.fontSize = '80px';
+      config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.INPUT_GUIDE_WHITE:
       config.fontSize = '50px';
