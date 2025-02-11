@@ -19,7 +19,7 @@ export const npc: TranslationNpc = {
   },
   npc002: {
     name: '상점 주인',
-    scripts: ['talk_welcome_안녕하세요! 무엇을 도와드릴까요?'],
+    scripts: ['talk_welcome_안녕하세요! 무엇을 도와드릴까요?', 'question_welcome_구매하시겠습니까?'],
     postAction: '',
   },
 };
