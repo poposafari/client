@@ -82,4 +82,13 @@ export class PlayerInfo {
   setMoney(money: number) {
     this.money = money;
   }
+
+  useMoney(cost: number) {
+    if (cost && this.money < cost) {
+      return false;
+    }
+
+    this.setMoney(this.money - cost);
+    return true;
+  }
 }
