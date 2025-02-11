@@ -73,7 +73,7 @@ export class OverworldInfoUi extends Ui {
     const playerLocation = playerInfo.getLocation();
     const playerMoney = playerInfo.getMoney();
 
-    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`) + ` (X:${playerLocation.x},Y:${playerLocation.y})`);
+    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`));
     this.textMyMoney.setText(`$ ${playerMoney.toString()}`);
   }
 }

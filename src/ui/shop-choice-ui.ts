@@ -118,10 +118,11 @@ export class ShopChoiceUi extends Ui {
             break;
           case KEY.SELECT:
             this.clean();
+            const bag = this.mode.getBag();
             const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'question', 'welcome', i18next.t(`item:${this.item}.name`) + `x${this.choice}\n`));
             if (messageResult) {
-              //TODO: validate `use money`
               if (this.useMoney(this.resultCost)) {
+                bag?.addItems(this.item, this.choice);
                 const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'success'));
               } else {
                 const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'reject'));
