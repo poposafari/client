@@ -66,10 +66,12 @@ export class OverworldHUDUi extends Ui {
   private block() {
     this.overworldItemSlotUi.pause(true);
     this.overworldPokemonSlotUi.pause(true);
+    this.overworldInfoUi.pause(true);
   }
 
   private unblock() {
     this.overworldItemSlotUi.pause(false);
     this.overworldPokemonSlotUi.pause(false);
+    this.overworldInfoUi.pause(false);
   }
 }
