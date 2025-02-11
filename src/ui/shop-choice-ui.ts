@@ -1,5 +1,5 @@
-import i18next from 'i18next';
 import { TEXTURE } from '../enums/texture';
+import i18next from 'i18next';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
@@ -75,6 +75,10 @@ export class ShopChoiceUi extends Ui {
       this.item = data.item;
     }
 
+    this.choice = 0;
+    this.resultCost = 0;
+    this.renderText();
+
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -117,13 +121,18 @@ export class ShopChoiceUi extends Ui {
             const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'question', 'welcome', i18next.t(`item:${this.item}.name`) + `x${this.choice}\n`));
             if (messageResult) {
               //TODO: validate `use money`
-            } else {
-              this.mode.popUiStack();
+              if (this.useMoney(this.resultCost)) {
+                const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'success'));
+              } else {
+                const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'reject'));
+              }
             }
+            this.mode.popUiStack();
             break;
           case KEY.CANCEL:
             this.clean();
             this.mode.popUiStack();
+
             break;
         }
       } catch (error) {
@@ -151,5 +160,15 @@ export class ShopChoiceUi extends Ui {
     this.resultCost = this.choice * this.cost;
     this.countText.setText(this.choice.toString());
     this.costText.setText(this.resultCost.toString());
+  }
+
+  private useMoney(cost: number) {
+    const playerInfo = this.mode.getPlayerInfo();
+
+    if (!playerInfo) {
+      throw Error('PlayerInfo does not exist.');
+    }
+
+    return playerInfo.useMoney(cost);
   }
 }
