@@ -293,8 +293,11 @@ export class SafariListUi extends Ui {
   private renderYourTickets() {
     const bag = this.mode.getBag();
     const ticket = bag?.getItem('006');
+    let stock = 0;
 
-    this.yourStockText.setText(i18next.t('menu:yourTickets') + ticket?.getStock());
+    if (ticket) stock = ticket.getStock();
+
+    this.yourStockText.setText(i18next.t('menu:yourTickets') + stock);
   }
 
   private validateTicket(cost: number): boolean {
