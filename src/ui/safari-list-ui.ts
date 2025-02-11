@@ -15,6 +15,8 @@ export class SafariListUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private safaris!: SafariData[];
   private taxiNpc!: NpcObject;
+  private lastChoice!: number | null;
+  private lastPage!: number | null;
 
   private safariWindow!: Phaser.GameObjects.NineSlice;
   private safariWindowHeight!: number;
@@ -49,6 +51,9 @@ export class SafariListUi extends Ui {
     const contentHeight = 50;
     const spacing = 5;
     const bag = this.mode.getBag();
+
+    this.lastChoice = null;
+    this.lastPage = null;
 
     this.container = this.scene.add.container(width / 2 + 280, height / 2);
 
@@ -118,12 +123,13 @@ export class SafariListUi extends Ui {
 
     let start = 0;
     let end = this.ListPerPage - 1;
-    let choice = start;
-    let currentPage = 1;
+    let choice = this.lastChoice ? this.lastChoice : start;
+    let currentPage = this.lastPage ? this.lastPage : 1;
     const totalPages = Math.ceil(this.safaris.length / this.ListPerPage);
+    const globalChoice = (currentPage - 1) * this.ListPerPage + choice;
 
-    this.safariDummys[choice].setTexture(TEXTURE.ARROW_W_R);
-    this.renderSpawnTypes(choice, 1);
+    this.safariDummys[globalChoice].setTexture(TEXTURE.ARROW_W_R);
+    this.renderSpawnTypes(globalChoice, currentPage);
     this.renderYourTickets();
 
     keyboardManager.setAllowKey(keys);
