@@ -51,16 +51,29 @@ export class OverworldInfoUi extends Ui {
     this.pause(true);
   }
 
-  pause(onoff: boolean, data?: any): void {}
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
 
   update(time: number, delta: number): void {}
 
-  updateData() {
-    const playerInfoManager = this.mode.getPlayerInfoManager();
-    const playerLocation = playerInfoManager.getInfo().currentOverworld;
-    const playerMoney = playerInfoManager.getInfo().money;
+  private block() {}
 
-    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation}`));
+  private unblock() {
+    this.updateData();
+  }
+
+  updateData() {
+    const playerInfo = this.mode.getPlayerInfo();
+
+    if (!playerInfo) {
+      throw Error('Player Info does not exist.');
+    }
+
+    const playerLocation = playerInfo.getLocation();
+    const playerMoney = playerInfo.getMoney();
+
+    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`) + ` (X:${playerLocation.x},Y:${playerLocation.y})`);
     this.textMyMoney.setText(`$ ${playerMoney.toString()}`);
   }
 }
