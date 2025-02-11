@@ -8,6 +8,7 @@ export const enum TEXTURE {
   WINDOW_6 = 'window_6',
   WINDOW_7 = 'window_7',
   WINDOW_8 = 'window_8',
+  WINDOW_9 = 'window_9',
   BG_LOBBY = 'bg_lobby',
   INPUT_LOBBY = 'input_lobby',
   PAUSE_BLACK = 'pause_black',
