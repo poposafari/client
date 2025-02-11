@@ -168,11 +168,12 @@ export class ShopListUi extends Ui {
           case KEY.CANCEL:
             this.lastChoice = null;
             this.lastPage = null;
+            this.listDummys[(currentPage - 1) * this.ListPerPage + choice].setTexture(TEXTURE.BLANK);
+            this.renderPage(1);
             this.clean();
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
-            this.listDummys[choice].setTexture(TEXTURE.BLANK);
-            this.renderPage(1);
+            break;
           default:
             console.error(`Unhandled key: ${key}`);
             break;
