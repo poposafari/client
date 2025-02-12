@@ -3,6 +3,7 @@ import { PokemonObject } from '../object/pokemon-object';
 
 export class OverworldInfo {
   private npcs: NpcObject[] = [];
+  private pokemons: PokemonObject[] = [];
 
   constructor() {}
 
@@ -16,5 +17,17 @@ export class OverworldInfo {
 
   resetNpcs() {
     this.npcs = [];
+  }
+
+  addPokemon(obj: PokemonObject) {
+    this.pokemons.push(obj);
+  }
+
+  getPokemons() {
+    return this.pokemons;
+  }
+
+  resetPokemons() {
+    this.pokemons = [];
   }
 }

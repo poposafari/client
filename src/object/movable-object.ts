@@ -187,12 +187,12 @@ export class MovableObject extends BaseObject {
       }
     }
 
-    // for (const pokemon of pokemons) {
-    //   const pokemonTilePos = pokemon.getTilePos();
-    //   if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
-    //     return pokemon;
-    //   }
-    // }
+    for (const pokemon of this.overworldInfo.getPokemons()) {
+      const pokemonTilePos = pokemon.getTilePos();
+      if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
+        return pokemon;
+      }
+    }
   }
 
   isBlockingDirection(direction: DIRECTION): boolean {
@@ -217,10 +217,7 @@ export class MovableObject extends BaseObject {
   }
 
   private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
-    const overworldManager = OverworldManager.getInstance();
-    const pokemons = overworldManager.getOverworldPokemons();
-
-    for (const pokemon of pokemons) {
+    for (const pokemon of this.overworldInfo.getPokemons()) {
       const pokemonTilePos = pokemon.getTilePos();
       if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y) {
         return true;
@@ -240,7 +237,8 @@ export class MovableObject extends BaseObject {
     }
     return false;
   }
-  private hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+
+  hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
     if (this.hasNoTile(pos)) return true;
     return this.map.layers.some((layer) => {
       const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
