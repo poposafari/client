@@ -61,7 +61,7 @@ export const enum TEXTURE {
   MAP_L0 = 'layer0',
   MAP_L1_0 = 'layer1_tree',
   MAP_000 = 'overworld-000',
-  MAP_006 = 'overworld-006',
+  MAP_011 = 'overworld-011',
   MENU_BOX = 'menu_box',
   MENU_SHOES = 'menu_shoes',
   MENU_BAG = 'menu_bag',

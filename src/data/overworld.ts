@@ -31,7 +31,7 @@ const initialPlaza: Record<string, PlazaData> = {
 const initialSafari: Record<string, SafariData> = {
   '011': {
     key: '011',
-    cost: 12,
+    cost: 0,
     spawnTypes: [TYPE.WATER, TYPE.GRASS],
     entryPos: {
       x: 10,
@@ -41,7 +41,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '012': {
     key: '012',
-    cost: 3,
+    cost: 4,
     spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
@@ -68,4 +68,8 @@ export const safariData = new Proxy(initialSafari, {
 
 export function getAllSafaris(): SafariData[] {
   return Object.values(initialSafari);
+}
+
+export function getSafari(key: string) {
+  return initialSafari[key];
 }
