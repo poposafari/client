@@ -10,13 +10,30 @@ import { BaseObject } from './base-object';
 export class NpcObject extends BaseObject {
   private location: OVERWORLD_TYPE;
   private key: string;
+  private startMessageType: 'talk' | 'question';
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, type: OBJECT, location: OVERWORLD_TYPE) {
+  constructor(
+    scene: InGameScene,
+    texture: TEXTURE | string,
+    x: number,
+    y: number,
+    map: Phaser.Tilemaps.Tilemap,
+    nickname: string,
+    type: OBJECT,
+    location: OVERWORLD_TYPE,
+    startMessageType: 'talk' | 'question',
+  ) {
     super(scene, texture, x, y, nickname, type);
 
     this.key = texture;
     this.getSprite().setScale(1.6);
     this.location = location;
+
+    this.startMessageType = startMessageType;
+  }
+
+  getStartMessageType(): 'talk' | 'question' {
+    return this.startMessageType;
   }
 
   getLocation() {
