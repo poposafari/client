@@ -5,6 +5,7 @@ import { addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
+import { Location } from '../storage/player-info';
 
 export class OverworldInfoUi extends Ui {
   private mode: OverworldMode;
@@ -64,16 +65,33 @@ export class OverworldInfoUi extends Ui {
   }
 
   updateData() {
+    this.updateLocation();
+    this.updateMyMoney();
+  }
+
+  updateLocation(location?: Location) {
     const playerInfo = this.mode.getPlayerInfo();
 
     if (!playerInfo) {
       throw Error('Player Info does not exist.');
     }
 
-    const playerLocation = playerInfo.getLocation();
-    const playerMoney = playerInfo.getMoney();
+    if (location) {
+      playerInfo.setLocation({ overworld: location.overworld, x: location.x, y: location.y });
+    }
 
-    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`));
+    const playerLocation = playerInfo.getLocation();
+    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`) + ` (X:${location?.x} / Y:${location?.y})`);
+  }
+
+  private updateMyMoney() {
+    const playerInfo = this.mode.getPlayerInfo();
+
+    if (!playerInfo) {
+      throw Error('Player Info does not exist.');
+    }
+
+    const playerMoney = playerInfo.getMoney();
     this.textMyMoney.setText(`$ ${playerMoney.toString()}`);
   }
 }
