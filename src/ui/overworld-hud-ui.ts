@@ -1,5 +1,6 @@
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
+import { Location } from '../storage/player-info';
 import { OverworldIconUi } from './overworld-icon-ui';
 import { OverworldInfoUi } from './overworld-info-ui';
 import { OverworldItemSlotUi } from './overworld-itemslot-ui';
@@ -61,6 +62,10 @@ export class OverworldHUDUi extends Ui {
 
   updateOverworldInfoUi() {
     this.overworldInfoUi.updateData();
+  }
+
+  updateOverworldLocationUi(location: Location) {
+    this.overworldInfoUi.updateLocation(location);
   }
 
   private block() {
