@@ -166,17 +166,20 @@ export class SafariListUi extends Ui {
             if (!messageResult) {
               const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'talk', 'sorry'));
               this.mode.popUiStack();
-              this.safariDummys[choice].setTexture(TEXTURE.BLANK);
+              this.safariDummys[(currentPage - 1) * this.ListPerPage + choice].setTexture(TEXTURE.BLANK);
               this.renderPage(1);
             } else {
               if (!this.validateTicket(targetSafari.cost)) {
                 const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'talk', 'reject'));
                 this.show(this.taxiNpc);
               } else {
-                console.log('결제 완!');
+                // console.log('결제 완!');
+                // console.log(targetSafari.key);
                 this.useTicket(targetSafari.cost);
                 this.mode.pauseOverworldSystem(false);
+                this.clean();
                 this.mode.popUiStack();
+                this.mode.updateOverworld(targetSafari.key);
               }
             }
             break;
