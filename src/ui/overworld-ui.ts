@@ -226,6 +226,7 @@ export class OverworldUi extends Ui {
     this.movement();
     this.playerObj.update(delta);
     this.playerObj.getPet().update();
+    this.mode.updateOverworldLocationUi({ overworld: '000', x: this.playerObj.getTilePos().x, y: this.playerObj.getTilePos().y });
   }
 
   getOverworldMode() {

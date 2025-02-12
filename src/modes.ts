@@ -22,7 +22,7 @@ import { Bag } from './storage/bag';
 import { BagChoiceUi } from './ui/bag-choice-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
-import { PlayerInfo } from './storage/player-info';
+import { Location, PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
@@ -207,6 +207,38 @@ export class OverworldMode extends Mode {
     overworld.update(time, delta);
   }
 
+  getBag() {
+    if (!this.bag) {
+      console.error('Bag object does not exist.');
+      return;
+    }
+
+    return this.bag;
+  }
+
+  getPlayerInfo() {
+    if (!this.playerInfo) {
+      console.error('Player does not exist.');
+      return;
+    }
+
+    return this.playerInfo;
+  }
+
+  updateOverworldInfoUi() {
+    const ui = this.getUiType('OverworldHUDUi');
+    if (ui instanceof OverworldHUDUi) {
+      ui.updateOverworldInfoUi();
+    }
+  }
+
+  updateOverworldLocationUi(location: Location) {
+    const ui = this.getUiType('OverworldHUDUi');
+    if (ui instanceof OverworldHUDUi) {
+      ui.updateOverworldLocationUi(location);
+    }
+  }
+
   changeFollowPokemon(pokedex: string) {
     const firstUi = this.getUiStackTop();
     if (firstUi instanceof OverworldUi) {
@@ -268,24 +300,6 @@ export class OverworldMode extends Mode {
     if (this.playerPokemonManager) return this.playerPokemonManager;
 
     throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-  }
-
-  getBag() {
-    if (!this.bag) {
-      console.error('Bag object does not exist.');
-      return;
-    }
-
-    return this.bag;
-  }
-
-  getPlayerInfo() {
-    if (!this.playerInfo) {
-      console.error('Player does not exist.');
-      return;
-    }
-
-    return this.playerInfo;
   }
 
   async startMessage(data: Message[]) {
