@@ -5,6 +5,7 @@ import { OBJECT } from '../enums/object-type';
 import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
+import { OverworldInfo } from '../storage/overworld-info';
 import { MovableObject } from './movable-object';
 
 export class PokemonObject extends MovableObject {
@@ -15,8 +16,8 @@ export class PokemonObject extends MovableObject {
   private againTimer?: Phaser.Time.TimerEvent;
   private status: POKEMON_STATUS;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
-    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON);
+  constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
+    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON, overworldInfo);
     this.pokedex = pokedex;
     this.status = POKEMON_STATUS.ROAMING;
     this.setScale(1.5);
@@ -49,11 +50,6 @@ export class PokemonObject extends MovableObject {
     switch (this.status) {
       case POKEMON_STATUS.ROAMING:
         this.setTexture(`pokemon_overworld${this.pokedex}`);
-        break;
-      case POKEMON_STATUS.CAPTURED:
-        this.setTexture(TEXTURE.POKEBALL_GROUND);
-        this.setSpriteFrame(pokeball);
-        this.getSprite().stop();
         break;
     }
   }
