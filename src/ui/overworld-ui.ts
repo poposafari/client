@@ -8,7 +8,7 @@ import { PLAYER_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addMap, delay, Ui } from './ui';
+import { addMap, Ui } from './ui';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PLAYER_STATUS } from '../enums/player-status';
@@ -293,31 +293,31 @@ export class OverworldUi extends Ui {
             }
             break;
           case KEY.USE_1:
-            this.useItem(0);
-            break;
-          case KEY.USE_2:
             this.useItem(1);
             break;
-          case KEY.USE_3:
+          case KEY.USE_2:
             this.useItem(2);
             break;
-          case KEY.USE_4:
+          case KEY.USE_3:
             this.useItem(3);
             break;
-          case KEY.USE_5:
+          case KEY.USE_4:
             this.useItem(4);
             break;
-          case KEY.USE_6:
+          case KEY.USE_5:
             this.useItem(5);
             break;
-          case KEY.USE_7:
+          case KEY.USE_6:
             this.useItem(6);
             break;
-          case KEY.USE_8:
+          case KEY.USE_7:
             this.useItem(7);
             break;
-          case KEY.USE_9:
+          case KEY.USE_8:
             this.useItem(8);
+            break;
+          case KEY.USE_9:
+            this.useItem(9);
             break;
         }
       } catch (error) {
@@ -334,9 +334,8 @@ export class OverworldUi extends Ui {
     this.playerObj.getPet().getSprite().setTexture(`pokemon_overworld${pokedex}`);
   }
 
-  private useItem(slotIdx: number) {
+  private useItem(slotIdx: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
     this.playerObj.readyItem(slotIdx);
-    this.mode.chnageItemSlot();
   }
 
   private movement() {

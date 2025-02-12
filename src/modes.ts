@@ -17,7 +17,6 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld006 } from './ui/overworld-006';
-import { OverworldShopChoiceUi } from './ui/overworld-shop-choice-ui';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
 import { Bag } from './storage/bag';
 import { BagChoiceUi } from './ui/bag-choice-ui';
@@ -212,13 +211,6 @@ export class OverworldMode extends Mode {
     const firstUi = this.getUiStackTop();
     if (firstUi instanceof OverworldUi) {
       firstUi.changeFollowPokemon(pokedex);
-    }
-  }
-
-  chnageItemSlot() {
-    const ui = this.getUiType('OverworldHUDUi');
-    if (ui instanceof OverworldHUDUi) {
-      ui.updateItemSlotUi();
     }
   }
 

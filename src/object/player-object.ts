@@ -3,12 +3,10 @@ import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { TEXTURE } from '../enums/texture';
-import { PlayerInfoManager, PlayerPokemonManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
-import { ItemThrowObject } from './item-throw-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
@@ -223,13 +221,12 @@ export class PlayerObject extends MovableObject {
     this.setSpeed(speed!);
   }
 
-  readyItem(target: number) {
+  readyItem(target: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
     if (!this.isMovementFinish()) return;
+    this.useItem(this.bag.findItemByRegister(target)?.getKey()!);
   }
 
   useItem(item: string) {
-    // const targetItem = this.bag.getItem();
-
     switch (item) {
       case '005':
         return this.setStatus(PLAYER_STATUS.RIDE);
