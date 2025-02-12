@@ -8,11 +8,12 @@ import { PLAYER_SCALE } from '../object/base-object';
 import { NpcObject } from '../object/npc-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addMap, Ui } from './ui';
+import { addMap, runFadeEffect, Ui } from './ui';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { OverworldInfo } from '../storage/overworld-info';
+import { PokemonObject } from '../object/pokemon-object';
 
 export interface Layer {
   idx: number;
@@ -76,7 +77,7 @@ export class OverworldUi extends Ui {
     this.mode = mode;
     this.overworldKey = key;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
-    this.overworldInfo = new OverworldInfo();
+    this.overworldInfo = this.mode.getOverworldInfo()!;
   }
 
   setup(): void {}
@@ -125,6 +126,8 @@ export class OverworldUi extends Ui {
   }
 
   show(): void {
+    runFadeEffect(this.scene, 1200, 'in');
+
     this.showMap();
     this.showNpc();
     // this.showWild();
@@ -193,7 +196,7 @@ export class OverworldUi extends Ui {
   clean(data?: any): void {
     this.cleanPlayer();
     this.cleanNpc();
-    //this.cleanWild();
+    this.cleanWild();
     this.cleanMap();
   }
 
@@ -209,6 +212,13 @@ export class OverworldUi extends Ui {
       npc.destroy();
     }
     this.overworldInfo.resetNpcs();
+  }
+
+  private cleanWild() {
+    for (const target of this.overworldInfo.getPokemons()) {
+      target.destroy();
+    }
+    this.overworldInfo.resetPokemons();
   }
 
   private cleanMap() {
@@ -243,6 +253,18 @@ export class OverworldUi extends Ui {
 
   getOverworldMode() {
     return this.mode as OverworldMode;
+  }
+
+  getOverworldKey() {
+    return this.overworldKey;
+  }
+
+  getOverworldInfo() {
+    return this.overworldInfo;
+  }
+
+  getMap() {
+    return this.map;
   }
 
   addLayers(idx: number, texture: TEXTURE, depth: DEPTH) {

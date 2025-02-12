@@ -28,6 +28,7 @@ import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
 import { ShopChoiceUi } from './ui/shop-choice-ui';
 import { delay, runFadeEffect } from './ui/ui';
+import { OverworldInfo } from './storage/overworld-info';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -147,6 +148,7 @@ export class NewGameMode extends Mode {
 export class OverworldMode extends Mode {
   private bag: Bag;
   private playerInfo: PlayerInfo;
+  private overworldInfo: OverworldInfo;
   private playerInfoManager!: PlayerInfoManager;
   private playerPokemonManager!: PlayerPokemonManager;
   private overworldManger!: OverworldManager;
@@ -157,6 +159,7 @@ export class OverworldMode extends Mode {
 
     this.bag = new Bag();
     this.playerInfo = new PlayerInfo();
+    this.overworldInfo = new OverworldInfo();
   }
 
   init(): void {
@@ -228,6 +231,15 @@ export class OverworldMode extends Mode {
     return this.playerInfo;
   }
 
+  getOverworldInfo() {
+    if (!this.overworldInfo) {
+      console.error('Overworld Info does not exist.');
+      return;
+    }
+
+    return this.overworldInfo;
+  }
+
   updateOverworldInfoUi() {
     const ui = this.getUiType('OverworldHUDUi');
     if (ui instanceof OverworldHUDUi) {
@@ -244,8 +256,6 @@ export class OverworldMode extends Mode {
 
   updateOverworld(key: string) {
     const overworld = this.getUiStackTop() as OverworldUi;
-
-    runFadeEffect(this.scene, 1200, 'in');
 
     overworld.clean();
     this.popUiStack();
