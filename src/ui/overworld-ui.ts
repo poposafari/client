@@ -216,6 +216,7 @@ export class OverworldUi extends Ui {
 
   private cleanWild() {
     for (const target of this.overworldInfo.getPokemons()) {
+      target.stopMovement();
       target.destroy();
     }
     this.overworldInfo.resetPokemons();
