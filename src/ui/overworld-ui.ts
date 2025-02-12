@@ -36,6 +36,7 @@ export interface NpcInfo {
   x: number;
   y: number;
   overworldType: OVERWORLD_TYPE;
+  startMessageType: 'talk' | 'question';
 }
 
 export interface PlayerInitPos {
@@ -108,12 +109,13 @@ export class OverworldUi extends Ui {
     this.mapForegroundLayerInfo.depth = depth;
   }
 
-  setupNpc(npcKey: string, x: number, y: number, overworldType: OVERWORLD_TYPE) {
+  setupNpc(npcKey: string, x: number, y: number, overworldType: OVERWORLD_TYPE, startMessageType: 'talk' | 'question') {
     this.npcsInfo.push({
       key: npcKey,
       x: x,
       y: y,
       overworldType: overworldType,
+      startMessageType: startMessageType,
     });
   }
 
@@ -132,7 +134,15 @@ export class OverworldUi extends Ui {
   }
 
   private showMap() {
+    const width = this.getWidth();
+    const height = this.getHeight();
+
     this.map = addMap(this.scene, this.mapInfo.texture);
+
+    this.layerContainer = this.scene.add.container(width / 4, height / 4);
+    this.foregroundContainer = this.scene.add.container(width / 4, height / 4);
+
+    this.foregroundContainer.setDepth(DEPTH.FOREGROND);
 
     for (const tileset of this.mapInfo.tilesets) {
       this.addTileset(tileset);
@@ -150,7 +160,7 @@ export class OverworldUi extends Ui {
 
   private showNpc() {
     for (const info of this.npcsInfo) {
-      const npc = new NpcObject(this.scene, info.key, info.x, info.y, this.map, i18next.t(`npc:${info.key}.name`), OBJECT.NPC, info.overworldType);
+      const npc = new NpcObject(this.scene, info.key, info.x, info.y, this.map, i18next.t(`npc:${info.key}.name`), OBJECT.NPC, info.overworldType, info.startMessageType);
       this.overworldInfo.addNpc(npc);
     }
   }
@@ -202,19 +212,21 @@ export class OverworldUi extends Ui {
   }
 
   private cleanMap() {
-    this.map.destroy();
+    if (this.map) {
+      this.map.destroy();
+    }
 
     if (this.layerContainer) {
       this.layerContainer.removeAll(true);
       this.layerContainer.destroy();
+      this.layerContainer = null!;
     }
-    this.layerContainer = null!;
 
     if (this.foregroundContainer) {
       this.foregroundContainer.removeAll(true);
       this.foregroundContainer.destroy();
+      this.foregroundContainer = null!;
     }
-    this.foregroundContainer = null!;
   }
 
   pause(onoff: boolean, data?: any): void {
@@ -222,11 +234,11 @@ export class OverworldUi extends Ui {
   }
 
   update(time: number, delta: number): void {
+    this.mode.updateOverworldLocationUi({ overworld: '000', x: this.playerObj.getTilePos().x, y: this.playerObj.getTilePos().y });
     if (this.sysBlock) return;
     this.movement();
     this.playerObj.update(delta);
     this.playerObj.getPet().update();
-    this.mode.updateOverworldLocationUi({ overworld: '000', x: this.playerObj.getTilePos().x, y: this.playerObj.getTilePos().y });
   }
 
   getOverworldMode() {
@@ -269,8 +281,10 @@ export class OverworldUi extends Ui {
             if (obj && this.playerObj.isMovementFinish() && !this.isMessageActive && !this.isBattle) {
               const key = obj.getKey();
               if (obj instanceof NpcObject) {
-                await this.talkToNpc(obj, key);
-                this.handleNpcPostScriptAction(obj, key);
+                const talkResult = await this.talkToNpc(obj, key);
+                if (talkResult) {
+                  this.handleNpcPostScriptAction(obj, key);
+                }
               }
               // } else if (obj instanceof PokemonObject) {
               //   this.isBattle = true;
@@ -280,7 +294,6 @@ export class OverworldUi extends Ui {
               //   this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
               // }
             }
-
             break;
           case KEY.MENU:
             if (this.playerObj.isMovementFinish()) {
@@ -357,6 +370,10 @@ export class OverworldUi extends Ui {
         this.mode.pauseOverworldSystem(true);
         this.mode.addUiStackOverlap('SafariListUi', npcObj);
         return;
+      case 'npc001':
+        this.mode.pauseOverworldSystem(true);
+        this.mode.updateOverworld('000');
+        return;
       case 'npc002':
         this.mode.pauseOverworldSystem(true);
         this.mode.addUiStackOverlap('ShopListUi', npcObj);
@@ -365,8 +382,17 @@ export class OverworldUi extends Ui {
   }
 
   private async talkToNpc(obj: NpcObject, key: string) {
+    let ret: Promise<boolean> = Promise.resolve(true);
+
     this.isMessageActive = true;
-    const messageResult = await this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'talk', 'welcome'));
+
+    if (obj.getStartMessageType() === 'talk') {
+      await this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'talk', 'welcome'));
+    } else {
+      ret = this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'question', 'welcome'));
+    }
     this.isMessageActive = false;
+
+    return ret;
   }
 }
