@@ -22,7 +22,7 @@ export class Safari extends OverworldUi {
     const overworldInfo = this.getOverworldInfo();
 
     super.show();
-    this.addOverworldPokemons(this.scene, this.getMap());
+    await this.addOverworldPokemons(this.scene, this.getMap());
     this.pokemons = overworldInfo?.getPokemons()!;
   }
 
@@ -46,7 +46,7 @@ export class Safari extends OverworldUi {
     }
   }
 
-  addOverworldPokemons(scene: InGameScene, map: Phaser.Tilemaps.Tilemap) {
+  addOverworldPokemons(scene: InGameScene, map: Phaser.Tilemaps.Tilemap): Promise<void> {
     const validPosition = this.doMapScan(map);
     const overworldInfo = this.getOverworldInfo();
 
@@ -59,6 +59,8 @@ export class Safari extends OverworldUi {
       const pokemon = new PokemonObject(scene, `pokemon_overworld${pokedex}`, `${pokedex}`, pos[0], pos[1], map, i18next.t(`pokemon:${originPokedex}.name`), this.getOverworldInfo());
       overworldInfo.addPokemon(pokemon);
     }
+
+    return Promise.resolve();
   }
 
   private doMapScan(map: Phaser.Tilemaps.Tilemap): [number, number][] {
