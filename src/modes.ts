@@ -16,7 +16,7 @@ import { OverworldUi } from './ui/overworld-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
-import { Overworld006 } from './ui/overworld-006';
+import { Overworld011 } from './ui/overworld-011';
 import { OverworldBattleUi } from './ui/overworld-battle-ui';
 import { Bag } from './storage/bag';
 import { BagChoiceUi } from './ui/bag-choice-ui';
@@ -27,6 +27,7 @@ import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
 import { ShopChoiceUi } from './ui/shop-choice-ui';
+import { delay, runFadeEffect } from './ui/ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -160,7 +161,7 @@ export class OverworldMode extends Mode {
 
   init(): void {
     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
-    this.uis.push(new Overworld006(this.scene, this, OVERWORLD_TYPE.SAFARI));
+    this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
     this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldHUDUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
@@ -205,6 +206,8 @@ export class OverworldMode extends Mode {
   update(time: number, delta: number): void {
     const overworld = this.uiStack[this.currentOverworldUisIndex];
     overworld.update(time, delta);
+
+    //TODO: 적절한 제어? overworldHUDUi가 들어올 경우, update가 실행되버린다.
   }
 
   getBag() {
@@ -239,39 +242,16 @@ export class OverworldMode extends Mode {
     }
   }
 
-  changeFollowPokemon(pokedex: string) {
-    const firstUi = this.getUiStackTop();
-    if (firstUi instanceof OverworldUi) {
-      firstUi.changeFollowPokemon(pokedex);
-    }
+  updateOverworld(key: string) {
+    const overworld = this.getUiStackTop() as OverworldUi;
+
+    runFadeEffect(this.scene, 1200, 'in');
+
+    overworld.clean();
+    this.popUiStack();
+
+    this.addUiStackOverlap(`Overworld${key}`);
   }
-
-  chnagePokemonSlot() {
-    const ui = this.getUiType('OverworldHUDUi');
-    if (ui instanceof OverworldHUDUi) {
-      ui.updatePokemonSlotUi();
-    }
-  }
-
-  changeOverworldInfo(overworld: string) {
-    this.getPlayerInfoManager().setCurrentOverworld(overworld);
-    const ui = this.getUiType('OverworldHUDUi');
-    if (ui instanceof OverworldHUDUi) {
-      ui.updateOverworldInfoUi();
-    }
-  }
-
-  // changeOverworld(overworldKey: string) {
-  //   this.changeOverworldInfo(overworldKey);
-  //   const overworld = getOverworldInfo(overworldKey);
-
-  //   if (!overworld) return;
-
-  //   this.getUiStackTop().clean();
-  //   this.popUiStack();
-
-  //   this.addUiStackOverlap(`Overworld${overworldKey}`, { x: overworld.entryPos.x, y: overworld.entryPos.y });
-  // }
 
   changeTitleMode() {
     this.manager.changeMode(MODE.TITLE);
@@ -280,26 +260,7 @@ export class OverworldMode extends Mode {
   moveToVillage() {
     this.getUiStackTop().clean();
     this.popUiStack();
-    this.changeOverworldInfo('000');
     this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
-  }
-
-  getOverworldManager() {
-    if (this.overworldManger) return this.overworldManger;
-
-    throw new Error('OverworldManager 인스턴스가 존재하지 않습니다.');
-  }
-
-  getPlayerInfoManager() {
-    if (this.playerInfoManager) return this.playerInfoManager;
-
-    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
-  }
-
-  getPlayerPokemonManager() {
-    if (this.playerPokemonManager) return this.playerPokemonManager;
-
-    throw new Error('playerItemManager 인스턴스가 존재하지 않습니다.');
   }
 
   async startMessage(data: Message[]) {
@@ -323,10 +284,5 @@ export class OverworldMode extends Mode {
       overworldHUDUi.pause(onoff ? true : false);
       overworld.pause(onoff ? true : false);
     }
-  }
-
-  finishBattle() {
-    const overworld = this.getUiStackTop() as OverworldUi;
-    // overworld.finishBattle();
   }
 }

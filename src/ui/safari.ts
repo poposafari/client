@@ -17,9 +17,13 @@ export class Safari extends OverworldUi {
     super.setup();
   }
 
-  show(): void {}
+  show(): void {
+    super.show();
+  }
 
-  clean(): void {}
+  clean(): void {
+    super.clean();
+  }
 
   update(time: number, delta: number): void {
     super.update(time, delta);
