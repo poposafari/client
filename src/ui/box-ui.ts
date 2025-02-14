@@ -6,7 +6,7 @@ import { KeyboardManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { getPokemonType } from '../data/types';
-import { pokemons } from '../data/pokemon';
+// import { pokemons } from '../data/pokemon';
 import { OverworldMode } from '../modes';
 import { DEPTH } from '../enums/depth';
 

@@ -56,7 +56,17 @@ export class Safari extends OverworldUi {
     for (const pokedex of test) {
       const pos = this.getRandomTilePosition(validPosition);
       const originPokedex = pokedex.endsWith('s') ? pokedex.slice(0, -1) : pokedex;
-      const pokemon = new PokemonObject(scene, `pokemon_overworld${pokedex}`, `${pokedex}`, pos[0], pos[1], map, i18next.t(`pokemon:${originPokedex}.name`), this.getOverworldInfo());
+      const pokemon = new PokemonObject(
+        scene,
+        `pokemon_overworld${pokedex}`,
+        `${pokedex}`,
+        pos[0],
+        pos[1],
+        map,
+        i18next.t(`pokemon:${originPokedex}.name`),
+        this.getOverworldInfo(),
+        this.getOverworldMode().getPlayerInfo()!,
+      );
       overworldInfo.addPokemon(pokemon);
     }
 

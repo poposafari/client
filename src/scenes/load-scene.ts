@@ -1,6 +1,6 @@
 import { itemData } from '../data/items';
 import { npcData } from '../data/npc';
-import { pokemons } from '../data/pokemon';
+import { pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { AREA } from '../enums/area';
 import { TEXTURE } from '../enums/texture';
@@ -30,6 +30,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
     this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
     this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
+    this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
+    this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
 
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
@@ -167,10 +169,10 @@ export class LoadingScene extends BaseScene {
       this.loadAtlas(`${key}`, 'ui/character/npc', `${key}`, `npc`);
     }
 
-    let pokemonIdx = 0;
-    for (const pokemon of pokemons.keys()) {
-      this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemon}`);
-      this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite', `${pokemon}s`);
+    let pokemonIdx = 1;
+    for (const pokemon of Object.keys(pokemonData)) {
+      this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemonIdx}`);
+      this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite/shiny', `${pokemonIdx}`);
 
       this.loadAtlas(`pokemon_icon${pokemon}`, 'ui/pokemon/icon', `icon${pokemon}`, 'pokemon_icon');
       this.loadAtlas(`pokemon_icon${pokemon}s`, 'ui/pokemon/icon', `icon${pokemon}s`, 'pokemon_icon');

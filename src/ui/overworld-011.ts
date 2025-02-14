@@ -29,7 +29,7 @@ export class Overworld011 extends Safari {
     this.setupPlayerInitPos(initPos.x, initPos.y);
   }
 
-  show(): void {
+  async show(): Promise<void> {
     super.show();
   }
 

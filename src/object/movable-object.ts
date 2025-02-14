@@ -2,9 +2,9 @@ import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
 import { TEXTURE } from '../enums/texture';
-import { OverworldManager, PlayerInfoManager } from '../managers';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
+import { PlayerInfo } from '../storage/player-info';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 
 const Vector2 = Phaser.Math.Vector2;
@@ -26,7 +26,8 @@ export class MovableObject extends BaseObject {
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
   protected map: Phaser.Tilemaps.Tilemap;
-  private overworldInfo: OverworldInfo;
+  protected overworldInfo: OverworldInfo;
+  protected playerInfo: PlayerInfo;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -37,10 +38,21 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT, overworldInfo: OverworldInfo) {
+  constructor(
+    scene: InGameScene,
+    texture: TEXTURE | string,
+    x: number,
+    y: number,
+    map: Phaser.Tilemaps.Tilemap | null,
+    nickname: string,
+    objectType: OBJECT,
+    playerInfo: PlayerInfo,
+    overworldInfo: OverworldInfo,
+  ) {
     super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
     this.overworldInfo = overworldInfo;
+    this.playerInfo = playerInfo;
 
     this.stopAnmation(3);
 
@@ -207,9 +219,8 @@ export class MovableObject extends BaseObject {
   }
 
   private hasPlayerObject(pos: Phaser.Math.Vector2): boolean {
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const playerInfo = playerInfoManager.getInfo();
-    if (playerInfo.pos.x === pos.x && playerInfo.pos.y === pos.y) {
+    const location = this.playerInfo.getLocation();
+    if (location.x === pos.x && location.y === pos.y) {
       return true;
     }
 
@@ -271,19 +282,7 @@ export class MovableObject extends BaseObject {
     return this.movementFinish;
   }
 
-  updateObjectData() {
-    const objType = this.getType();
-
-    if (objType === OBJECT.PLAYER) {
-      const playerInfoManager = PlayerInfoManager.getInstance();
-      playerInfoManager.setPosX(this.getTilePos().x);
-      playerInfoManager.setPosY(this.getTilePos().y);
-    } else if (objType === OBJECT.PET) {
-      const playerInfoManager = PlayerInfoManager.getInstance();
-      playerInfoManager.setFollowPokemonPosX(this.getTilePos().x);
-      playerInfoManager.setFollowPokemonPosY(this.getTilePos().y);
-    }
-  }
+  updateObjectData() {}
 
   setMap(map: Phaser.Tilemaps.Tilemap) {
     if (!map) return;

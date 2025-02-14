@@ -23,11 +23,6 @@ export interface TranslationNpc {
 
 export interface TranslationPokemonInfo {
   name: string;
-  rank: string;
-  generation: number;
-  evoles_from: string;
-  type1: string;
-  type2: string;
   description: string;
 }
 

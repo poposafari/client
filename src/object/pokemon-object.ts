@@ -6,6 +6,7 @@ import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
+import { PlayerInfo } from '../storage/player-info';
 import { MovableObject } from './movable-object';
 
 export class PokemonObject extends MovableObject {
@@ -16,8 +17,18 @@ export class PokemonObject extends MovableObject {
   private againTimer?: Phaser.Time.TimerEvent;
   private status: POKEMON_STATUS;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, pokedex: string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
-    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON, overworldInfo);
+  constructor(
+    scene: InGameScene,
+    texture: TEXTURE | string,
+    pokedex: string,
+    x: number,
+    y: number,
+    map: Phaser.Tilemaps.Tilemap,
+    nickname: string,
+    overworldInfo: OverworldInfo,
+    playerInfo: PlayerInfo,
+  ) {
+    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON, playerInfo, overworldInfo);
     this.pokedex = pokedex;
     this.status = POKEMON_STATUS.ROAMING;
     this.setScale(1.5);

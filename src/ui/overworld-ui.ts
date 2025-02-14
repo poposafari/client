@@ -292,6 +292,7 @@ export class OverworldUi extends Ui {
     const keys = [KEY.SELECT, KEY.RUNNING, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
 
     this.sysBlock = false;
+    this.isBattle = false;
 
     keyboardMananger.setAllowKey(keys);
     keyboardMananger.setKeyDownCallback(async (key) => {
@@ -308,14 +309,11 @@ export class OverworldUi extends Ui {
                 if (talkResult) {
                   this.handleNpcPostScriptAction(obj, key);
                 }
+              } else if (obj instanceof PokemonObject) {
+                this.talkToPokemon(obj);
+                this.mode.pauseOverworldSystem(true);
+                this.mode.addUiStackOverlap('BattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
               }
-              // } else if (obj instanceof PokemonObject) {
-              //   this.isBattle = true;
-              //   obj.reaction(this.playerObj.getLastDirection());
-              //   await delay(this.scene, 500);
-              //   this.mode.pauseOverworldSystem(true);
-              //   this.mode.addUiStackOverlap('OverworldBattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
-              // }
             }
             break;
           case KEY.MENU:
@@ -417,5 +415,10 @@ export class OverworldUi extends Ui {
     this.isMessageActive = false;
 
     return ret;
+  }
+
+  private talkToPokemon(obj: PokemonObject) {
+    this.isBattle = true;
+    obj.reaction(this.playerObj.getLastDirection());
   }
 }
