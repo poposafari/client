@@ -1,35 +1,35 @@
-import i18next from '../i18n';
-import { createZeroPad } from '../utils/string-util';
+import { POKEMON_RANK } from '../enums/pokemon-rank';
+import { TYPE } from '../enums/type';
 
-export interface Pokemon {
-  name: string;
-  rank: string;
-  generation: number;
-  evoles_from: string;
-  type1: string;
-  type2: string;
-  description: string;
-  size: 1 | 2 | 3;
+export const MAX_POKEDEX = 9;
+
+export interface PokemonInfo {
+  rank: POKEMON_RANK;
+  nextEvole: string | null;
+  type1: TYPE;
+  type2: TYPE;
+  size: 1 | 2 | 3 | 4;
 }
 
-export const pokemons: Map<string, Pokemon> = new Map();
+const initial: Record<string, PokemonInfo> = {
+  '001': { rank: POKEMON_RANK.NORMAL, nextEvole: '002', type1: TYPE.GRASS, type2: TYPE.POISON, size: 1 },
+  '002': { rank: POKEMON_RANK.NORMAL, nextEvole: '003', type1: TYPE.GRASS, type2: TYPE.POISON, size: 2 },
+  '003': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.GRASS, type2: TYPE.POISON, size: 3 },
+  '004': { rank: POKEMON_RANK.NORMAL, nextEvole: '005', type1: TYPE.FIRE, type2: TYPE.NONE, size: 1 },
+  '005': { rank: POKEMON_RANK.NORMAL, nextEvole: '006', type1: TYPE.FIRE, type2: TYPE.NONE, size: 2 },
+  '006': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.FIRE, type2: TYPE.FLYING, size: 3 },
+  '007': { rank: POKEMON_RANK.NORMAL, nextEvole: '008', type1: TYPE.WATER, type2: TYPE.NONE, size: 1 },
+  '008': { rank: POKEMON_RANK.NORMAL, nextEvole: '009', type1: TYPE.WATER, type2: TYPE.NONE, size: 2 },
+  '009': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.WATER, type2: TYPE.NONE, size: 3 },
+};
 
-i18next.on('initialized', () => {
-  for (let i = 0; i <= 9; i++) {
-    const key = createZeroPad(i);
-    pokemons.set(key, {
-      name: i18next.t(`pokemon:${key}.name`),
-      rank: i18next.t(`pokemon:${key}.rank`),
-      generation: Number.parseInt(i18next.t(`pokemon:${key}.generation`)),
-      evoles_from: i18next.t(`pokemon:${key}.evoles_from`),
-      type1: i18next.t(`pokemon:${key}.type1`),
-      type2: i18next.t(`pokemon:${key}.type2`),
-      description: i18next.t(`pokemon:${key}.description`),
-      size: 1,
-    });
-  }
+export const pokemonData = new Proxy(initial, {
+  get(target, key: string) {
+    if (key in target) {
+      return target[key];
+    } else {
+      console.warn(`Pokemon '${key}' does not exist.`);
+      return null;
+    }
+  },
 });
-
-export function getPokemon(key: string) {
-  return pokemons.get(key);
-}

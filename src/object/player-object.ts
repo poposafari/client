@@ -12,7 +12,6 @@ import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
   private bag: Bag;
-  private playerInfo: PlayerInfo;
 
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
@@ -29,14 +28,14 @@ export class PlayerObject extends MovableObject {
     playerInfo: PlayerInfo,
     overworldInfo: OverworldInfo,
   ) {
-    super(scene, texture, x, y, map!, nickname, type, overworldInfo);
+    super(scene, texture, x, y, map!, nickname, type, playerInfo, overworldInfo);
     this.setStatus(PLAYER_STATUS.WALK);
 
     this.bag = bag;
     this.playerInfo = playerInfo;
 
     // const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
-    this.pet = new PetObject(scene, `pokemon_overworld${this.playerInfo.getPet()}`, playerInfo.getLocation().x, playerInfo.getLocation().y - 1, map!, '');
+    this.pet = new PetObject(scene, `pokemon_overworld${this.playerInfo.getPet()}`, playerInfo.getLocation().x, playerInfo.getLocation().y - 1, map!, '', this.playerInfo, this.overworldInfo);
     const petSprite = this.pet.getSprite();
     this.pet.setVisible(this.playerInfo.getPet() !== '000' ? true : false);
     petSprite.setScale(1.5);

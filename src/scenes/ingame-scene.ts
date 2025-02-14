@@ -1,9 +1,9 @@
 import { npcData } from '../data/npc';
-import { pokemons } from '../data/pokemon';
+import { pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerPokemonManager } from '../managers';
+import { KeyboardManager, MessageManager, ModeManager, PlayerPokemonManager } from '../managers';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
@@ -35,14 +35,8 @@ export class InGameScene extends BaseScene {
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.initialize(this);
 
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    playerInfoManager.init();
-
     const playerPokemonManager = PlayerPokemonManager.getInstance();
     playerPokemonManager.init();
-
-    const overworldManager = OverworldManager.getInstance();
-    overworldManager.init();
 
     this.modeManager.registerModes();
     this.modeManager.changeMode(MODE.NONE);
@@ -100,7 +94,7 @@ export class InGameScene extends BaseScene {
   }
 
   private initPokemonAnimation() {
-    for (const pokemon of pokemons.keys()) {
+    for (const pokemon of Object.keys(pokemonData)) {
       const movementFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}`, ANIMATION.POKEMON_OVERWORLD);
       const movementShinyFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}s`, ANIMATION.POKEMON_OVERWORLD);
 

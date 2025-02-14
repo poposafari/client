@@ -1,6 +1,6 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { MAX_PARTY_SLOT, PlayerInfoManager } from '../managers';
+import { MAX_PARTY_SLOT } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addWindow, Ui } from './ui';
@@ -49,12 +49,12 @@ export class OverworldPokemonSlotUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
 
-    const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
+    // const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    // const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
 
-    pokemonSlots.forEach((slot, i) => {
-      this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
-    });
+    // pokemonSlots.forEach((slot, i) => {
+    //   this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
+    // });
 
     this.pause(false);
   }
@@ -69,12 +69,11 @@ export class OverworldPokemonSlotUi extends Ui {
   }
 
   update(time?: number, delta?: number): void {
-    const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
-
-    pokemonSlots.forEach((slot, i) => {
-      this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
-    });
+    // const playerPokemonManager = this.mode.getPlayerPokemonManager();
+    // const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
+    // pokemonSlots.forEach((slot, i) => {
+    //   this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
+    // });
   }
 
   private blocking() {
@@ -86,30 +85,22 @@ export class OverworldPokemonSlotUi extends Ui {
   }
 
   private unblocking() {
-    const playerInfoManager = this.mode.getPlayerInfoManager();
-    const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
-
-    this.pokemonSlotBtns.forEach((icon, i) => {
-      icon.setScrollFactor(0);
-      icon.setInteractive({ cursor: 'pointer' });
-
-      icon.on('pointerover', () => {
-        icon.setAlpha(0.7);
-      });
-
-      icon.on('pointerout', () => {
-        icon.setAlpha(1);
-      });
-
-      icon.on('pointerup', () => {
-        if (playerInfoManager.getMyFollowPokemon() !== pokemonSlots[i]) {
-          PlayerInfoManager.getInstance().setMyFollowPokemon(pokemonSlots[i]);
-
-          const pokedex = playerPokemonManager.getMyPokemonKey(pokemonSlots[i]);
-          this.mode.changeFollowPokemon(pokedex);
-        }
-      });
-    });
+    //   this.pokemonSlotBtns.forEach((icon, i) => {
+    //     icon.setScrollFactor(0);
+    //     icon.setInteractive({ cursor: 'pointer' });
+    //     icon.on('pointerover', () => {
+    //       icon.setAlpha(0.7);
+    //     });
+    //     icon.on('pointerout', () => {
+    //       icon.setAlpha(1);
+    //     });
+    //     icon.on('pointerup', () => {
+    //       if (playerInfoManager.getMyFollowPokemon() !== pokemonSlots[i]) {
+    //         PlayerInfoManager.getInstance().setMyFollowPokemon(pokemonSlots[i]);
+    //         const pokedex = playerPokemonManager.getMyPokemonKey(pokemonSlots[i]);
+    //       }
+    //     });
+    //   });
+    // }
   }
 }
