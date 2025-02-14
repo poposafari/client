@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Account, Message } from './interface/sys';
-import { MessageManager, ModeManager, OverworldManager, PlayerInfoManager, PlayerPokemonManager } from './managers';
+import { MessageManager, ModeManager, PlayerPokemonManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -17,7 +17,6 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld011 } from './ui/overworld-011';
-import { OverworldBattleUi } from './ui/overworld-battle-ui';
 import { Bag } from './storage/bag';
 import { BagChoiceUi } from './ui/bag-choice-ui';
 import { BagRegisterUi } from './ui/bag-register-ui';
@@ -27,8 +26,10 @@ import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
 import { ShopChoiceUi } from './ui/shop-choice-ui';
-import { delay, runFadeEffect } from './ui/ui';
 import { OverworldInfo } from './storage/overworld-info';
+import { BattlePokeballUi } from './ui/battle-pokeball-ui';
+import { BattleUi } from './ui/battle-ui';
+import { BattlePlayerUi } from './ui/battle-player-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -149,9 +150,7 @@ export class OverworldMode extends Mode {
   private bag: Bag;
   private playerInfo: PlayerInfo;
   private overworldInfo: OverworldInfo;
-  private playerInfoManager!: PlayerInfoManager;
   private playerPokemonManager!: PlayerPokemonManager;
-  private overworldManger!: OverworldManager;
   private currentOverworldUisIndex!: number;
 
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -178,7 +177,8 @@ export class OverworldMode extends Mode {
     this.uis.push(new BoxRegisterUi(this.scene, this));
     this.uis.push(new ShopListUi(this.scene, this));
     this.uis.push(new ShopChoiceUi(this.scene, this));
-    this.uis.push(new OverworldBattleUi(this.scene, this));
+    this.uis.push(new BattleUi(this.scene, this));
+    this.uis.push(new BattlePlayerUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -189,9 +189,7 @@ export class OverworldMode extends Mode {
   }
 
   enter(data?: any): void {
-    this.playerInfoManager = PlayerInfoManager.getInstance();
     this.playerPokemonManager = PlayerPokemonManager.getInstance();
-    this.overworldManger = OverworldManager.getInstance();
 
     this.addUiStackOverlap('OverworldHUDUi', data);
     this.addUiStackOverlap('Overworld000', data);
