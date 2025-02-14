@@ -20,7 +20,7 @@ export class SeasonUi extends Ui {
 
     this.container = this.scene.add.container(width / 4, height / 4);
 
-    const bg = addBackground(this.scene, TEXTURE.BLACK, 0, 0);
+    const bg = addBackground(this.scene, TEXTURE.BLACK);
     this.container.add(bg);
 
     const season = addImage(this.scene, TEXTURE.SEASON_3, 0, 0);

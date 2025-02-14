@@ -6,11 +6,12 @@ import { MovableObject } from './movable-object';
 import { PlayerObject } from './player-object';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { OBJECT } from '../enums/object-type';
-import { PlayerInfoManager, PlayerPokemonManager } from '../managers';
+import { PlayerInfo } from '../storage/player-info';
+import { OverworldInfo } from '../storage/overworld-info';
 
 export class PetObject extends MovableObject {
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
-    super(scene, texture, x, y, map, nickname, OBJECT.PET);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, playerInfo: PlayerInfo, overworldInfo: OverworldInfo) {
+    super(scene, texture, x, y, map, nickname, OBJECT.PET, playerInfo, overworldInfo);
   }
 
   move(player: PlayerObject) {
@@ -39,10 +40,7 @@ export class PetObject extends MovableObject {
   }
 
   private getAnimation(key: KEY) {
-    const playerInfoManager = PlayerInfoManager.getInstance();
-    const playerPokemonManager = PlayerPokemonManager.getInstance();
-
-    const pokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
+    const pokedex = `001s`;
 
     switch (key) {
       case KEY.UP:
