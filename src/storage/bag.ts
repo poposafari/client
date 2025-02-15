@@ -11,7 +11,7 @@ export class Bag {
   constructor() {}
 
   setup() {
-    this.addItems('001');
+    this.addItems('001', 999);
     this.addItems('002');
     this.addItems('003');
     this.addItems('004');
