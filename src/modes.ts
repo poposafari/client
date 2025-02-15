@@ -179,6 +179,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new ShopChoiceUi(this.scene, this));
     this.uis.push(new BattleUi(this.scene, this));
     this.uis.push(new BattlePlayerUi(this.scene, this));
+    this.uis.push(new BattlePokeballUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -286,7 +287,7 @@ export class OverworldMode extends Mode {
 
   pauseOverworldSystem(onoff: boolean) {
     const overworldHUDUi = this.getUiType('OverworldHUDUi');
-    const overworld = this.getUiStackTop();
+    const overworld = this.getUiStackTop() as OverworldUi;
 
     if (overworldHUDUi && overworld) {
       overworldHUDUi.pause(onoff ? true : false);

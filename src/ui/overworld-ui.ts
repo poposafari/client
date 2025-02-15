@@ -14,6 +14,7 @@ import { KEY } from '../enums/key';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PokemonObject } from '../object/pokemon-object';
+import { BattleInfo } from './battle-ui';
 
 export interface Layer {
   idx: number;
@@ -312,7 +313,7 @@ export class OverworldUi extends Ui {
               } else if (obj instanceof PokemonObject) {
                 this.talkToPokemon(obj);
                 this.mode.pauseOverworldSystem(true);
-                this.mode.addUiStackOverlap('BattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj });
+                this.mode.addUiStackOverlap('BattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj } as BattleInfo);
               }
             }
             break;

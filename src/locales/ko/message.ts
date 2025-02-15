@@ -23,4 +23,5 @@ export const message: TranslationDefault = {
   battle_thinking1: '(은/는)',
   battle_thinking2: '\n무엇을 할까?',
   battle_run: '(은/는)\n도망쳤다.',
+  battle_use: '(을/를) 사용했다.',
 };
