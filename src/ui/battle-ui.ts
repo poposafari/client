@@ -112,6 +112,7 @@ export class BattleUi extends Ui {
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
             this.currentStatus = BATTLE_STATUS.WELCOME;
+            this.targetPokemon.capture();
             this.targetPokemon.destroy();
           }
           break;
