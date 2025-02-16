@@ -1,5 +1,6 @@
-export enum BATTLE_BEHAVIOR {
-  NONE,
+export enum BATTLE_STATUS {
+  MENU,
+  MENU_POKEBALL,
   WELCOME,
   RUN_PLAYER,
   THROW_POKEBALL,

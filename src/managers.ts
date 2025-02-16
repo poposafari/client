@@ -65,6 +65,7 @@ export class KeyboardManager {
   private allowKey: Map<KEY, Phaser.Input.Keyboard.Key> = new Map();
   private keyDownCallback!: KeyCallback;
   private keyUpCallback!: KeyCallback;
+  private isKeyBlocked: boolean = false;
 
   static getInstance(): KeyboardManager {
     if (!KeyboardManager.instance) {
@@ -79,6 +80,8 @@ export class KeyboardManager {
   }
 
   setAllowKey(keys: KEY[]): void {
+    if (this.isKeyBlocked) return;
+
     this.allowKey.clear();
 
     keys.forEach((keyCode) => {
@@ -95,12 +98,18 @@ export class KeyboardManager {
     this.keyUpCallback = callback;
   }
 
+  blockKeys(onoff: boolean): void {
+    this.isKeyBlocked = onoff;
+  }
+
   clearCallbacks(): void {
     this.keyDownCallback = undefined!;
     this.keyUpCallback = undefined!;
   }
 
   private updateKeys(): void {
+    if (this.isKeyBlocked) return;
+
     this.allowKey.forEach((key, keyCode) => {
       if (Phaser.Input.Keyboard.JustDown(key) && this.keyDownCallback) {
         this.keyDownCallback(keyCode);

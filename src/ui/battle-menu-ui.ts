@@ -1,41 +1,29 @@
 import i18next from 'i18next';
-import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, createSprite, delay, Ui } from './ui';
+import { addImage, addText, addWindow, Ui } from './ui';
+import { TEXTURE } from '../enums/texture';
+import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { PokemonObject } from '../object/pokemon-object';
-import { PlayerItem } from '../object/player-item';
-import { EASE } from '../enums/ease';
-import { BattleBehavior } from './battle-ui';
-import { BATTLE_BEHAVIOR } from '../enums/battle-behavior';
+import { BattleUi } from './battle-ui';
+import { BATTLE_STATUS } from '../enums/battle-status';
 
-export interface BattleFlowData {
-  pokemon: PokemonObject;
-}
-
-export interface UseItemInfo {
-  type: 'pokeball' | 'berry';
-  item: PlayerItem;
-}
-
-export class BattlePlayerUi extends Ui {
+export class BattleMenuUi extends Ui {
   private mode: OverworldMode;
-  private container!: Phaser.GameObjects.Container;
-  private targetPokemon!: PokemonObject;
-  private throwItem!: Phaser.GameObjects.Sprite;
+  private battleUi: BattleUi;
 
+  private container!: Phaser.GameObjects.Container;
   private texts: Phaser.GameObjects.Text[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
 
   private readonly menus: string[] = [i18next.t('menu:battleSelect0'), i18next.t('menu:battleSelect1'), i18next.t('menu:battleSelect3')];
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  constructor(scene: InGameScene, mode: OverworldMode, battleUi: BattleUi) {
     super(scene);
     this.mode = mode;
+    this.battleUi = battleUi;
   }
 
   setup(): void {
@@ -57,23 +45,16 @@ export class BattlePlayerUi extends Ui {
     this.dummys[1] = addImage(this.scene, TEXTURE.BLANK, +180 + offsetX, 0 + offsetY).setScale(1.5);
     this.dummys[2] = addImage(this.scene, TEXTURE.BLANK, -10 + offsetX, +60 + offsetY).setScale(1.5);
 
-    this.throwItem = createSprite(this.scene, TEXTURE.BLANK, -300, +100).setVisible(false);
-
     this.container.add(window);
     this.container.add(this.texts);
     this.container.add(this.dummys);
-    this.container.add(this.throwItem);
 
     this.container.setVisible(false);
-    this.container.setDepth(DEPTH.BATTLE_UI + 1);
+    this.container.setDepth(DEPTH.BATTLE_UI + 5);
     this.container.setScrollFactor(0);
   }
 
-  show(data?: BattleFlowData): void {
-    if (data) {
-      this.targetPokemon = data.pokemon;
-    }
-
+  show(data?: any): void {
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -83,16 +64,9 @@ export class BattlePlayerUi extends Ui {
     this.pause(true);
   }
 
-  pause(onoff: boolean, data?: BattleBehavior): void {
-    if (data) {
-      this.clean();
-      this.mode.popUiStack({ type: data.type, target: data.target } as BattleBehavior);
-    }
-
+  pause(onoff: boolean, data?: any): void {
     onoff ? this.block() : this.unblock();
   }
-
-  update(time: number, delta: number): void {}
 
   private block() {}
 
@@ -128,13 +102,13 @@ export class BattlePlayerUi extends Ui {
             const target = this.menus[choice];
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             if (target === i18next.t('menu:battleSelect0')) {
-              this.mode.addUiStackOverlap('BattlePokeballUi');
+              this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU_POKEBALL);
+              return;
             } else if (target === i18next.t('menu:battleSelect1')) {
-              //add ui battle-berry-ui
+              return;
             } else if (target === i18next.t('menu:battleSelect3')) {
-              this.targetPokemon.scheduleRandomMovement();
-              this.clean();
-              this.mode.popUiStack({ type: BATTLE_BEHAVIOR.RUN_PLAYER, target: null });
+              this.battleUi.checkCurrentStatus(BATTLE_STATUS.RUN_PLAYER);
+              return;
             }
             break;
         }
@@ -148,4 +122,6 @@ export class BattlePlayerUi extends Ui {
       }
     });
   }
+
+  update(time: number, delta: number): void {}
 }
