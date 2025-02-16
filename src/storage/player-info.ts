@@ -18,8 +18,8 @@ export class PlayerInfo {
     //TODO: 외부로부터 사용자 데이터를 받아오자.
 
     this.nickname = '운영자';
-    this.gender = 'girl';
-    this.avatar = 2;
+    this.gender = 'boy';
+    this.avatar = 1;
     this.location = {
       overworld: '000',
       x: 10,

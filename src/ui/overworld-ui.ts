@@ -14,7 +14,7 @@ import { KEY } from '../enums/key';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PokemonObject } from '../object/pokemon-object';
-import { BattleInfo } from './battle-ui';
+import { BattleInfo } from './battle-base-ui';
 
 export interface Layer {
   idx: number;
