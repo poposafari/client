@@ -1,21 +1,22 @@
 import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { ITEM } from '../enums/item';
-import { KEY } from '../enums/key';
-import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager } from '../managers';
-import { OverworldMode } from '../modes';
+import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
-import { PlayerItem } from '../object/player-item';
-import { BattleBehavior } from './battle-ui';
-import { BATTLE_BEHAVIOR } from '../enums/battle-behavior';
+import { TEXTSTYLE } from '../enums/textstyle';
+import { KEY } from '../enums/key';
+import { KeyboardManager } from '../managers';
+import { BATTLE_STATUS } from '../enums/battle-status';
+import { OverworldMode } from '../modes';
+import { BattleUi } from './battle-ui';
 
-export class BattlePokeballUi extends Ui {
+export class BattleMenuPokeballUi extends Ui {
   private mode: OverworldMode;
-  private container!: Phaser.GameObjects.Container;
+  private battleUi: BattleUi;
 
+  private container!: Phaser.GameObjects.Container;
   private window!: Phaser.GameObjects.NineSlice;
   private windowHeight!: number;
   private names: Phaser.GameObjects.Text[] = [];
@@ -28,10 +29,12 @@ export class BattlePokeballUi extends Ui {
   private readonly contentHeight: number = 50;
   private readonly contentSpacing: number = 5;
   private readonly windowWidth = 450;
+  keyboardManager: any;
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  constructor(scene: InGameScene, mode: OverworldMode, battleUi: BattleUi) {
     super(scene);
     this.mode = mode;
+    this.battleUi = battleUi;
   }
 
   setup(): void {
@@ -45,7 +48,7 @@ export class BattlePokeballUi extends Ui {
     this.container.add(this.window);
 
     this.container.setVisible(false);
-    this.container.setDepth(DEPTH.BATTLE_UI + 2);
+    this.container.setDepth(DEPTH.BATTLE_UI + 5);
     this.container.setScrollFactor(0);
   }
 
@@ -107,7 +110,7 @@ export class BattlePokeballUi extends Ui {
     this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
 
     keyboardManager.setAllowKey(keys);
-    keyboardManager.setKeyDownCallback(async (key) => {
+    keyboardManager.setKeyDownCallback((key) => {
       const prevChoice = choice;
 
       try {
@@ -126,13 +129,13 @@ export class BattlePokeballUi extends Ui {
             const target = this.pokeballs[choice];
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.mode.popUiStack({ type: BATTLE_BEHAVIOR.THROW_POKEBALL, target: target } as BattleBehavior);
-            break;
+            this.battleUi.checkCurrentStatus(BATTLE_STATUS.THROW_POKEBALL, target);
+            return;
           case KEY.CANCEL:
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.mode.popUiStack();
-            break;
+            this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU);
+            return;
         }
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {

@@ -27,9 +27,7 @@ import { SafariListUi } from './ui/safari-list-ui';
 import { ShopListUi } from './ui/shop-list-ui.ts';
 import { ShopChoiceUi } from './ui/shop-choice-ui';
 import { OverworldInfo } from './storage/overworld-info';
-import { BattlePokeballUi } from './ui/battle-pokeball-ui';
 import { BattleUi } from './ui/battle-ui';
-import { BattlePlayerUi } from './ui/battle-player-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -178,8 +176,6 @@ export class OverworldMode extends Mode {
     this.uis.push(new ShopListUi(this.scene, this));
     this.uis.push(new ShopChoiceUi(this.scene, this));
     this.uis.push(new BattleUi(this.scene, this));
-    this.uis.push(new BattlePlayerUi(this.scene, this));
-    this.uis.push(new BattlePokeballUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
