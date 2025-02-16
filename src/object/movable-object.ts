@@ -1,6 +1,7 @@
 import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
+import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
@@ -201,7 +202,7 @@ export class MovableObject extends BaseObject {
 
     for (const pokemon of this.overworldInfo.getPokemons()) {
       const pokemonTilePos = pokemon.getTilePos();
-      if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y) {
+      if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
         return pokemon;
       }
     }
@@ -230,7 +231,7 @@ export class MovableObject extends BaseObject {
   private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
     for (const pokemon of this.overworldInfo.getPokemons()) {
       const pokemonTilePos = pokemon.getTilePos();
-      if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y) {
+      if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
         return true;
       }
     }
