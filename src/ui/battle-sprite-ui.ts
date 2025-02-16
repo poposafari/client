@@ -112,6 +112,10 @@ export class BattleSpriteUi extends Ui {
     });
   }
 
+  private resetPlayerAnimation() {
+    this.player.setFrame(0);
+  }
+
   private async startThrowItem(item: PlayerItem) {
     const startX = this.fixedStartItemPosX;
     const startY = this.fixedStartItemPosY;
@@ -141,8 +145,8 @@ export class BattleSpriteUi extends Ui {
         this.throwItem.y = startY + (endY - startY) * progress + parabola;
       },
       onComplete: async () => {
+        this.resetPlayerAnimation();
         this.throwItem.setVisible(false);
-
         await this.startEnterItemAnimation(item);
         await delay(this.scene, 500);
         await this.startDropItemAnimation(item);
