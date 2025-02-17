@@ -89,7 +89,7 @@ export class BattleUi extends Ui {
 
   private block() {}
 
-  private unblock() {
+  private unblock(isRun?: boolean) {
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT];
     const keyboardManager = KeyboardManager.getInstance();
 
@@ -106,7 +106,7 @@ export class BattleUi extends Ui {
             this.mode.popUiStack();
             this.currentStatus = BATTLE_STATUS.WELCOME;
             this.targetPokemon.scheduleRandomMovement();
-          } else if (this.currentStatus === BATTLE_STATUS.CATCH_SUCCESS) {
+          } else if (this.currentStatus === (BATTLE_STATUS.CATCH_SUCCESS || BATTLE_STATUS.RUN_ENEMY)) {
             runFadeEffect(this.scene, 1200, 'in');
             this.clean();
             this.mode.pauseOverworldSystem(false);
@@ -115,14 +115,27 @@ export class BattleUi extends Ui {
             this.targetPokemon.capture();
             this.targetPokemon.destroy();
           } else if (this.currentStatus === BATTLE_STATUS.CATCH_FAIL) {
-            this.checkCurrentStatus(BATTLE_STATUS.MENU);
+            if (isRun) {
+              this.checkCurrentStatus(BATTLE_STATUS.RUN_ENEMY);
+              return;
+            } else {
+              this.checkCurrentStatus(BATTLE_STATUS.MENU);
+            }
+          } else if (this.currentStatus === BATTLE_STATUS.RUN_ENEMY) {
+            runFadeEffect(this.scene, 1200, 'in');
+            this.clean();
+            this.mode.pauseOverworldSystem(false);
+            this.mode.popUiStack();
+            this.currentStatus = BATTLE_STATUS.WELCOME;
+            this.targetPokemon.capture();
+            this.targetPokemon.destroy();
           }
           break;
       }
     });
   }
 
-  checkCurrentStatus(status: BATTLE_STATUS, data?: PlayerItem | null) {
+  checkCurrentStatus(status: BATTLE_STATUS, data?: PlayerItem | null | any) {
     this.currentStatus = status;
 
     switch (this.currentStatus) {
@@ -139,10 +152,10 @@ export class BattleUi extends Ui {
         this.battleMenuPokeballUi.show();
         break;
       case BATTLE_STATUS.THROW_POKEBALL:
-        this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_POKEBALL, data?.getKey());
+        this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_POKEBALL, data.getKey() as PlayerItem);
         this.battleMenuPokeballUi.clean();
         this.battleMenuUi.clean();
-        this.battleSpriteUi.throwPokeball(data!);
+        this.battleSpriteUi.throwPokeball(data as PlayerItem);
         this.unblock();
         break;
       case BATTLE_STATUS.CATCH_SUCCESS:
@@ -151,6 +164,10 @@ export class BattleUi extends Ui {
         break;
       case BATTLE_STATUS.CATCH_FAIL:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.CATCH_FAIL, this.targetPokemon.getPokedex());
+        this.unblock(data);
+        break;
+      case BATTLE_STATUS.RUN_ENEMY:
+        this.battleMessageUi.showBattleMessage(BATTLE_STATUS.RUN_ENEMY, this.targetPokemon.getPokedex());
         this.unblock();
         break;
     }

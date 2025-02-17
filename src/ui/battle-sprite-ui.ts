@@ -152,12 +152,13 @@ export class BattleSpriteUi extends Ui {
         await this.startDropItemAnimation(item);
         await delay(this.scene, 1000);
 
-        //TODO: 서버로부터 포획 성공 여부를 반환받는다.(반환은 0<=cnt<=3로 받는다.)
-        const testCnt = 3;
+        //TODO: 서버로부터 포획 성공 여부와 도망여부를 받는다.(반환은 0<=cnt<=3로 받는다. isRun boolean 값을 받는다.)
+        const testCnt = 1;
+        const isRun = false;
         await this.startShakeItemAnimation(item, testCnt);
-        await this.startExitItemAnimation(item, testCnt);
+        await this.startExitItemAnimation(item, testCnt, isRun);
         await delay(this.scene, 1000);
-        await this.startCatchItemAnimation(testCnt);
+        await this.startCatchItemAnimation(testCnt, isRun);
       },
     });
   }
@@ -234,7 +235,7 @@ export class BattleSpriteUi extends Ui {
     }
   }
 
-  private async startExitItemAnimation(item: PlayerItem, count: number) {
+  private async startExitItemAnimation(item: PlayerItem, count: number, isRun: boolean) {
     if (count >= 3) return;
 
     this.enemy.setScale(0.1);
@@ -261,12 +262,16 @@ export class BattleSpriteUi extends Ui {
         this.throwItem.setVisible(false);
         this.cleanThrowItem();
         await delay(this.scene, 600);
-        this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_FAIL);
+        this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_FAIL, isRun);
       },
     });
   }
 
-  private async startCatchItemAnimation(count: number) {
+  private async startRunAway(isRun: boolean) {
+    if (isRun) this.battleUi.checkCurrentStatus(BATTLE_STATUS.RUN_ENEMY);
+  }
+
+  private async startCatchItemAnimation(count: number, isRun: boolean) {
     if (count < 3) return;
 
     this.throwItem.setTint(0x5a5a5a);
