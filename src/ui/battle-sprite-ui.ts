@@ -151,7 +151,9 @@ export class BattleSpriteUi extends Ui {
         await delay(this.scene, 500);
         await this.startDropItemAnimation(item);
         await delay(this.scene, 1000);
-        const testCnt = 2;
+
+        //TODO: 서버로부터 포획 성공 여부를 반환받는다.(반환은 0<=cnt<=3로 받는다.)
+        const testCnt = 3;
         await this.startShakeItemAnimation(item, testCnt);
         await this.startExitItemAnimation(item, testCnt);
         await delay(this.scene, 1000);
@@ -254,10 +256,11 @@ export class BattleSpriteUi extends Ui {
           frameRate: 10,
         });
       },
-      onComplete: () => {
+      onComplete: async () => {
         this.enemy.clearTint();
         this.throwItem.setVisible(false);
         this.cleanThrowItem();
+        await delay(this.scene, 600);
         this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_FAIL);
       },
     });
@@ -268,6 +271,7 @@ export class BattleSpriteUi extends Ui {
 
     this.throwItem.setTint(0x5a5a5a);
 
+    await delay(this.scene, 600);
     this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_SUCCESS);
   }
 
