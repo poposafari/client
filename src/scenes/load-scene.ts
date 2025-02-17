@@ -161,6 +161,8 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.ENEMY_INFO, 'ui', TEXTURE.ENEMY_INFO);
 
+    this.loadAtlas(TEXTURE.OVERWORLD_SHINY, 'ui', TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
+
     for (const key of Object.keys(itemData)) {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }

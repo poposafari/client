@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "overworld_shiny-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 99,
+        "h": 40
+      }
+    },
+    "overworld_shiny-1": {
+      "frame": {
+        "x": 33,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 33,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 99,
+        "h": 40
+      }
+    },
+    "overworld_shiny-2": {
+      "frame": {
+        "x": 66,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 66,
+        "y": 0,
+        "w": 33,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 99,
+        "h": 40
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "overworld_shiny.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 99,
+      "h": 40
+    },
+    "scale": "1"
+  }
+}

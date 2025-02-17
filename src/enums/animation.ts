@@ -61,4 +61,5 @@ export const enum ANIMATION {
   POKEBALL_GROUND = 'pokeball_ground',
   EMOTION_0 = 'emotion_0',
   POKEBALL = 'pokeball',
+  OVERWORLD_SHINY = 'overworld_shiny',
 }

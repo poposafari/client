@@ -43,6 +43,7 @@ export class BaseObject {
     this.initSetPosition(this.tilePos.x, this.tilePos.y);
     this.nickname.setDepth(DEPTH.NICKNAME);
     this.dummy1.setDepth(DEPTH.NICKNAME + 1);
+    this.dummy2.setDepth(DEPTH.NICKNAME + 1);
     this.setDepth(this.tilePos.y);
   }
 
