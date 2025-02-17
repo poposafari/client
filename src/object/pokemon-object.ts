@@ -7,10 +7,14 @@ import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
+import { isPokedexShiny } from '../utils/string-util';
 import { MovableObject } from './movable-object';
 
 export class PokemonObject extends MovableObject {
   private pokedex: string;
+  private gender: 0 | 1 | 2;
+  private skill: 0 | 1 | 2 | 3 | 4 | null;
+  private habitat: 0 | 1 | 2;
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
@@ -21,6 +25,9 @@ export class PokemonObject extends MovableObject {
     scene: InGameScene,
     texture: TEXTURE | string,
     pokedex: string,
+    gender: 0 | 1 | 2,
+    skill: 0 | 1 | 2 | 3 | 4 | null,
+    habitat: 0 | 1 | 2,
     x: number,
     y: number,
     map: Phaser.Tilemaps.Tilemap,
@@ -30,11 +37,32 @@ export class PokemonObject extends MovableObject {
   ) {
     super(scene, texture, x, y, map, nickname, OBJECT.POKEMON, playerInfo, overworldInfo);
     this.pokedex = pokedex;
+    this.gender = gender;
+    this.skill = skill;
+    this.habitat = habitat;
     this.status = POKEMON_STATUS.ROAMING;
     this.setScale(1.5);
     this.setSpeed(2);
     this.setSmoothFrames([12, 0, 4, 8]);
+    if (isPokedexShiny(pokedex)) {
+      this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
+      this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
+      this.dummy2.setScale(2.4);
+    }
+
     this.scheduleRandomMovement();
+  }
+
+  getGender() {
+    return this.gender;
+  }
+
+  getSkill() {
+    return this.skill;
+  }
+
+  getHabitat() {
+    return this.habitat;
   }
 
   getPokedex() {
