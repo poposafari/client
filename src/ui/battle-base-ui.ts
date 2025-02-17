@@ -53,7 +53,7 @@ export class BattleBaseUi extends Ui {
     this.enemyInfo = addImage(this.scene, TEXTURE.ENEMY_INFO, 0, 0).setOrigin(0.5, 0.5).setScale(2);
     this.enemyInfoName = addText(this.scene, -220, -65, '리자몽', TEXTSTYLE.BATTLE_MESSAGE).setOrigin(0, 0).setScale(0.8);
     this.enemyInfoShiny = addImage(this.scene, TEXTURE.SHINY, -240, -40).setOrigin(0.5, 0.5).setScale(2);
-    this.enemyInfoGender = addImage(this.scene, TEXTURE.GENDER_0, +210, -35).setOrigin(0.5, 0.5).setScale(4);
+    this.enemyInfoGender = addImage(this.scene, TEXTURE.BLANK, +210, -35).setOrigin(0.5, 0.5).setScale(4);
     this.enemyInfoContainer.add(this.enemyInfo);
     this.enemyInfoContainer.add(this.enemyInfoName);
     this.enemyInfoContainer.add(this.enemyInfoShiny);
@@ -86,6 +86,9 @@ export class BattleBaseUi extends Ui {
 
     this.enemyInfoName.setText(i18next.t(`pokemon:${isPokedexShiny(data.pokedex) ? trimLastChar(data.pokedex) : data.pokedex}.name`));
     this.enemyInfoShiny.setVisible(isPokedexShiny(data.pokedex));
+
+    if (data.pokemon.getGender() === 0) this.enemyInfoGender.setTexture(TEXTURE.GENDER_0);
+    if (data.pokemon.getGender() === 1) this.enemyInfoGender.setTexture(TEXTURE.GENDER_1);
 
     this.container.setVisible(true);
   }
