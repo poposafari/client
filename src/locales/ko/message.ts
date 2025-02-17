@@ -25,4 +25,5 @@ export const message: TranslationDefault = {
   battle_run: '(은/는)\n도망쳤다.',
   battle_use: '(을/를) 사용했다.',
   battle_catch_success: '(을/를) 붙잡았다!',
+  battle_catch_fail: '(이/가) 풀려났다!',
 };
