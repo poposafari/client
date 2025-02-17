@@ -151,7 +151,7 @@ export class BattleSpriteUi extends Ui {
         await delay(this.scene, 500);
         await this.startDropItemAnimation(item);
         await delay(this.scene, 1000);
-        const testCnt = 3;
+        const testCnt = 2;
         await this.startShakeItemAnimation(item, testCnt);
         await this.startExitItemAnimation(item, testCnt);
         await delay(this.scene, 1000);
@@ -242,8 +242,8 @@ export class BattleSpriteUi extends Ui {
 
     this.scene.tweens.add({
       targets: this.enemy,
-      scaleX: 2,
-      scaleY: 2,
+      scaleX: 4,
+      scaleY: 4,
       alpha: 1,
       duration: 300,
       ease: EASE.LINEAR,
@@ -257,6 +257,8 @@ export class BattleSpriteUi extends Ui {
       onComplete: () => {
         this.enemy.clearTint();
         this.throwItem.setVisible(false);
+        this.cleanThrowItem();
+        this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_FAIL);
       },
     });
   }
@@ -275,6 +277,10 @@ export class BattleSpriteUi extends Ui {
     this.throwItem.destroy();
 
     this.container.removeAll(true);
+  }
+
+  private cleanThrowItem() {
+    this.throwItem.setPosition(-300, +100).setVisible(false);
   }
 
   private showSprite() {

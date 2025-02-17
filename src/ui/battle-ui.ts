@@ -114,6 +114,8 @@ export class BattleUi extends Ui {
             this.currentStatus = BATTLE_STATUS.WELCOME;
             this.targetPokemon.capture();
             this.targetPokemon.destroy();
+          } else if (this.currentStatus === BATTLE_STATUS.CATCH_FAIL) {
+            this.checkCurrentStatus(BATTLE_STATUS.MENU);
           }
           break;
       }
@@ -145,6 +147,11 @@ export class BattleUi extends Ui {
         break;
       case BATTLE_STATUS.CATCH_SUCCESS:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.CATCH_SUCCESS, this.targetPokemon.getPokedex());
+        this.unblock();
+        break;
+      case BATTLE_STATUS.CATCH_FAIL:
+        this.battleMessageUi.showBattleMessage(BATTLE_STATUS.CATCH_FAIL, this.targetPokemon.getPokedex());
+        this.unblock();
         break;
     }
   }
