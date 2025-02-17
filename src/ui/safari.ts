@@ -5,6 +5,13 @@ import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldUi } from './overworld-ui';
 
+export interface WildPokemon {
+  pokedex: string;
+  gender: 0 | 1 | 2; //0:male, 1:female, 2:nothing
+  skill: 0 | 1 | 2 | 3 | 4 | null;
+  habitat: 0 | 1 | 2; //0: land, 1:water, 2:etc
+}
+
 export class Safari extends OverworldUi {
   private pokemons!: PokemonObject[];
   private isReadyPokemons!: boolean;
@@ -50,16 +57,29 @@ export class Safari extends OverworldUi {
     const validPosition = this.doMapScan(map);
     const overworldInfo = this.getOverworldInfo();
 
-    let test = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '001s', '002s', '003s', '004s', '005s', '006s', '007s', '008s', '009s', '004', '005', '006', '007'];
-    //TODO: overworld.spawnTypes들을 가지고, 서버에게 request를 날리도록 해야 한다.
+    let test: WildPokemon[] = [
+      { pokedex: '001', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '002s', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '003', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '004', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '005', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '006s', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '007s', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '009', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '008', gender: 0, skill: null, habitat: 0 },
+    ];
 
-    for (const pokedex of test) {
+    //TODO: overworld.spawnTypes들을 가지고, 서버에게 request를 날리도록 해야 한다.
+    for (const wild of test) {
       const pos = this.getRandomTilePosition(validPosition);
-      const originPokedex = pokedex.endsWith('s') ? pokedex.slice(0, -1) : pokedex;
+      const originPokedex = wild.pokedex.endsWith('s') ? wild.pokedex.slice(0, -1) : wild.pokedex;
       const pokemon = new PokemonObject(
         scene,
-        `pokemon_overworld${pokedex}`,
-        `${pokedex}`,
+        `pokemon_overworld${wild.pokedex}`,
+        `${wild.pokedex}`,
+        wild.gender,
+        wild.skill,
+        wild.habitat,
         pos[0],
         pos[1],
         map,
