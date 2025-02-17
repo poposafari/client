@@ -88,6 +88,9 @@ export class BattleMessageUi extends Ui {
       case BATTLE_STATUS.CATCH_FAIL:
         text = i18next.t(`pokemon:${isPokedexShiny(target as string) ? trimLastChar(target as string) : target}.name`) + i18next.t('message:battle_catch_fail');
         break;
+      case BATTLE_STATUS.RUN_ENEMY:
+        text = i18next.t(`pokemon:${isPokedexShiny(target as string) ? trimLastChar(target as string) : target}.name`) + i18next.t('message:battle_run');
+        break;
     }
 
     let textArr = text.length > 0 ? text.split('') : [];
