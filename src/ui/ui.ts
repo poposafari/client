@@ -175,6 +175,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 4;
     case ANIMATION.POKEBALL:
       return 67;
+    case ANIMATION.OVERWORLD_SHINY:
+      return 2;
   }
 }
 
