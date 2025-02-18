@@ -13,11 +13,13 @@ import { BattleMenuPokeballUi } from './battle-menu-pokeball-ui';
 import { BattleMessageUi } from './battle-message-ui';
 import { BattleSpriteUi } from './battle-sprite-ui';
 import { addBackground, delay, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
+import { Battle } from '../storage/battle';
 
 export class BattleUi extends Ui {
   private mode: OverworldMode;
   private currentStatus: BATTLE_STATUS;
   private targetPokemon!: PokemonObject;
+  private battle!: Battle;
 
   private blackContainer!: Phaser.GameObjects.Container;
   private bgBlack!: Phaser.GameObjects.Image;
@@ -65,6 +67,8 @@ export class BattleUi extends Ui {
     if (data) {
       this.targetPokemon = data.pokemon;
     }
+
+    this.battle = new Battle();
 
     await this.encounterEffect();
     this.battleMessageUi.show();
