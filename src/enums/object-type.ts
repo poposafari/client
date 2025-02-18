@@ -6,4 +6,5 @@ export const enum OBJECT {
   PORTAL = 'portal',
   NPC = 'npc',
   ITEM_THROW = 'item-throw',
+  ITEM_GROUND = 'item-ground',
 }
