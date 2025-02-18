@@ -221,7 +221,12 @@ export class OverworldUi extends Ui {
       target.stopMovement();
       target.destroy();
     }
+
+    for (const target of this.overworldInfo.getGroundItems()) {
+      target.destroy();
+    }
     this.overworldInfo.resetPokemons();
+    this.overworldInfo.resetGroundItem();
   }
 
   private cleanMap() {
