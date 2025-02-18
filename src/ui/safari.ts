@@ -4,12 +4,20 @@ import { OverworldMode } from '../modes';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldUi } from './overworld-ui';
+import { GroundItemObject } from '../object/ground-item-object';
+import { OBJECT } from '../enums/object-type';
+import { TEXTURE } from '../enums/texture';
 
 export interface WildPokemon {
   pokedex: string;
   gender: 0 | 1 | 2; //0:male, 1:female, 2:nothing
   skill: 0 | 1 | 2 | 3 | 4 | null;
   habitat: 0 | 1 | 2; //0: land, 1:water, 2:etc
+}
+
+export interface GroundItem {
+  item: string;
+  count: number;
 }
 
 export class Safari extends OverworldUi {
@@ -69,6 +77,14 @@ export class Safari extends OverworldUi {
       { pokedex: '008', gender: 0, skill: null, habitat: 0 },
     ];
 
+    let test2: GroundItem[] = [
+      { item: '002', count: 2 },
+      { item: '002', count: 2 },
+      { item: '003', count: 2 },
+      { item: '001', count: 5 },
+      { item: '004', count: 99 },
+    ];
+
     //TODO: overworld.spawnTypes들을 가지고, 서버에게 request를 날리도록 해야 한다.
     for (const wild of test) {
       const pos = this.getRandomTilePosition(validPosition);
@@ -88,6 +104,12 @@ export class Safari extends OverworldUi {
         this.getOverworldMode().getPlayerInfo()!,
       );
       overworldInfo.addPokemon(pokemon);
+    }
+
+    for (const item of test2) {
+      const pos = this.getRandomTilePosition(validPosition);
+      const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], this.getMap(), OBJECT.ITEM_GROUND, item.count, item.item);
+      overworldInfo.addGroundItem(groundItem);
     }
 
     return Promise.resolve();

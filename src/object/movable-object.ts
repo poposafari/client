@@ -206,12 +206,23 @@ export class MovableObject extends BaseObject {
         return pokemon;
       }
     }
+
+    for (const groundItem of this.overworldInfo.getGroundItems()) {
+      const groundTilePos = groundItem.getTilePos();
+      if (groundTilePos.x === nextTilePos.x && groundTilePos.y === nextTilePos.y && groundItem.getActive() === true) {
+        return groundItem;
+      }
+    }
   }
 
   isBlockingDirection(direction: DIRECTION): boolean {
     const nextTilePos = this.tilePosInDirection(direction);
     const isBlocked =
-      this.hasBlockingTile(nextTilePos) || this.hasBlockingNpc(nextTilePos) || this.hasPokemonObject(nextTilePos) || (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos));
+      this.hasBlockingTile(nextTilePos) ||
+      this.hasBlockingNpc(nextTilePos) ||
+      this.hasGroundItemObject(nextTilePos) ||
+      this.hasPokemonObject(nextTilePos) ||
+      (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos));
     return isBlocked;
   }
 
@@ -225,6 +236,16 @@ export class MovableObject extends BaseObject {
       return true;
     }
 
+    return false;
+  }
+
+  private hasGroundItemObject(pos: Phaser.Math.Vector2) {
+    for (const groundItem of this.overworldInfo.getGroundItems()) {
+      const groundTilePos = groundItem.getTilePos();
+      if (groundTilePos.x === pos.x && groundTilePos.y === pos.y && groundItem.getActive() === true) {
+        return true;
+      }
+    }
     return false;
   }
 

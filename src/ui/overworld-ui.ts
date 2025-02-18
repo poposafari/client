@@ -15,6 +15,7 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PokemonObject } from '../object/pokemon-object';
 import { BattleInfo } from './battle-base-ui';
+import { GroundItemObject } from '../object/ground-item-object';
 
 export interface Layer {
   idx: number;
@@ -314,6 +315,8 @@ export class OverworldUi extends Ui {
                 this.talkToPokemon(obj);
                 this.mode.pauseOverworldSystem(true);
                 this.mode.addUiStackOverlap('BattleUi', { overworld: this.overworldKey, pokedex: obj.getPokedex(), pokemon: obj } as BattleInfo);
+              } else if (obj instanceof GroundItemObject) {
+                this.talkToGroundItem(obj);
               }
             }
             break;
@@ -421,5 +424,17 @@ export class OverworldUi extends Ui {
   private talkToPokemon(obj: PokemonObject) {
     this.isBattle = true;
     obj.reaction(this.playerObj.getLastDirection());
+  }
+
+  private async talkToGroundItem(obj: GroundItemObject) {
+    const playerInfo = this.mode.getPlayerInfo();
+    const bag = this.mode.getBag();
+    await this.mode.startMessage(obj.reaction(playerInfo ? playerInfo?.getNickname() : ''));
+
+    bag?.addItems(obj.getItemKey(), obj.getCount());
+    this.mode.updateOverworldInfoUi();
+    obj.destroy();
+    obj.changeActive();
+    this.isMessageActive = false;
   }
 }
