@@ -62,6 +62,8 @@ export class OverworldHUDUi extends Ui {
 
   updateOverworldInfoUi() {
     this.overworldInfoUi.updateData();
+    this.overworldItemSlotUi.updateSlot();
+    this.overworldPokemonSlotUi.update();
   }
 
   updateOverworldLocationUi(location: Location) {
