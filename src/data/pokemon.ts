@@ -12,6 +12,7 @@ export interface PokemonInfo {
 }
 
 const initial: Record<string, PokemonInfo> = {
+  '000': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.GRASS, type2: TYPE.POISON, size: 1 },
   '001': { rank: POKEMON_RANK.NORMAL, nextEvole: '002', type1: TYPE.GRASS, type2: TYPE.POISON, size: 1 },
   '002': { rank: POKEMON_RANK.NORMAL, nextEvole: '003', type1: TYPE.GRASS, type2: TYPE.POISON, size: 2 },
   '003': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.GRASS, type2: TYPE.POISON, size: 3 },
