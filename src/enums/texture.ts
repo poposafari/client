@@ -89,12 +89,14 @@ export const enum TEXTURE {
   BAG3 = 'bag3',
   BAG4 = 'bag4',
   BAG_REG = 'bag_reg',
-  BG_BOX = 'bg_pokebox',
+  BG_BOX = 'bg_box',
+  OVERLAY_BOX = 'overlay_box',
   WINDOW_BOX = 'window_box',
   WINDOW_BOX_STORAGE = 'window_box_storage',
   BOX_NAME = 'box_name',
   BOX_DESC = 'box_desc',
   FINGER = 'finger',
+  FINGER_RED = 'finger_red',
   BLANK = 'blank',
   TYPES = 'types',
   SHINY = 'shiny',
@@ -113,6 +115,10 @@ export const enum TEXTURE {
   ENEMY_INFO = 'enemy_info',
   INFO_BOX = 'info_box',
   OVERWORLD_SHINY = 'overworld_shiny',
+  BOXBALL_001 = 'boxball_001',
+  BOXBALL_002 = 'boxball_002',
+  BOXBALL_003 = 'boxball_003',
+  BOXBALL_004 = 'boxball_004',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
