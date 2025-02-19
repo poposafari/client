@@ -123,7 +123,7 @@ export class OverworldMenuUi extends Ui {
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             // console.log(texture);
             if (texture === 'box') {
-              this.mode.addUiStackOverlap('BoxUi');
+              this.mode.addUiStackOverlap('PokeBoxUi');
             } else if (texture === 'bag') {
               this.mode.addUiStackOverlap('BagUi');
             } else if (texture === 'title') {

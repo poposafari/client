@@ -33,6 +33,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
     this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
 
+    this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
+    this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
+
     this.loadImage(TEXTURE.BG_LOBBY, 'ui', 'bg_lobby');
 
     this.loadAtlas(TEXTURE.PAUSE_BLACK, 'ui', TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE_BLACK);
@@ -130,11 +133,8 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.BAG3, 'ui', TEXTURE.BAG3, ANIMATION.BAG3);
     this.loadAtlas(TEXTURE.BAG4, 'ui', TEXTURE.BAG4, ANIMATION.BAG4);
 
-    this.loadImage(TEXTURE.BG_BOX, 'ui', TEXTURE.BG_BOX);
+    this.loadImage(TEXTURE.BG_BOX, 'ui/box', TEXTURE.BG_BOX);
     this.loadImage(TEXTURE.WINDOW_BOX, 'ui', TEXTURE.WINDOW_BOX);
-    this.loadImage(TEXTURE.WINDOW_BOX_STORAGE, 'ui', TEXTURE.WINDOW_BOX_STORAGE);
-    this.loadImage(TEXTURE.BOX_NAME, 'ui', TEXTURE.BOX_NAME);
-    this.loadImage(TEXTURE.BOX_DESC, 'ui', TEXTURE.BOX_DESC);
 
     this.loadImage(TEXTURE.FINGER, 'ui', TEXTURE.FINGER);
     this.loadImage(TEXTURE.BLANK, 'ui', TEXTURE.BLANK);
@@ -163,6 +163,16 @@ export class LoadingScene extends BaseScene {
 
     this.loadAtlas(TEXTURE.OVERWORLD_SHINY, 'ui', TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
 
+    this.loadImage(TEXTURE.BOXBALL_001, 'ui/box', TEXTURE.BOXBALL_001);
+    this.loadImage(TEXTURE.BOXBALL_002, 'ui/box', TEXTURE.BOXBALL_002);
+    this.loadImage(TEXTURE.BOXBALL_003, 'ui/box', TEXTURE.BOXBALL_003);
+    this.loadImage(TEXTURE.BOXBALL_004, 'ui/box', TEXTURE.BOXBALL_004);
+
+    const maxBox = 15;
+    for (let i = 0; i <= maxBox; i++) {
+      this.loadImage(`box${i}`, 'ui/box', `box${i}`);
+    }
+
     for (const key of Object.keys(itemData)) {
       this.loadImage(`item${key}`, 'ui/item', `item${key}`);
     }
@@ -171,7 +181,7 @@ export class LoadingScene extends BaseScene {
       this.loadAtlas(`${key}`, 'ui/character/npc', `${key}`, `npc`);
     }
 
-    let pokemonIdx = 1;
+    let pokemonIdx = 0;
     for (const pokemon of Object.keys(pokemonData)) {
       this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemonIdx}`);
       this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite/shiny', `${pokemonIdx}`);

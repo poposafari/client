@@ -28,6 +28,8 @@ import { ShopListUi } from './ui/shop-list-ui.ts';
 import { ShopChoiceUi } from './ui/shop-choice-ui';
 import { OverworldInfo } from './storage/overworld-info';
 import { BattleUi } from './ui/battle-ui';
+import { PokeBoxUi } from './ui/pokebox-ui';
+import { Box } from './storage/box';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -146,6 +148,7 @@ export class NewGameMode extends Mode {
 
 export class OverworldMode extends Mode {
   private bag: Bag;
+  private box: Box;
   private playerInfo: PlayerInfo;
   private overworldInfo: OverworldInfo;
   private playerPokemonManager!: PlayerPokemonManager;
@@ -155,6 +158,7 @@ export class OverworldMode extends Mode {
     super(scene, manager);
 
     this.bag = new Bag();
+    this.box = new Box();
     this.playerInfo = new PlayerInfo();
     this.overworldInfo = new OverworldInfo();
   }
@@ -176,12 +180,14 @@ export class OverworldMode extends Mode {
     this.uis.push(new ShopListUi(this.scene, this));
     this.uis.push(new ShopChoiceUi(this.scene, this));
     this.uis.push(new BattleUi(this.scene, this));
+    this.uis.push(new PokeBoxUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
     }
 
     this.bag.setup();
+    this.box.setup();
     this.playerInfo.setup();
   }
 
@@ -215,6 +221,15 @@ export class OverworldMode extends Mode {
     }
 
     return this.bag;
+  }
+
+  getBox() {
+    if (!this.box) {
+      console.error('Bag object does not exist.');
+      return;
+    }
+
+    return this.box;
   }
 
   getPlayerInfo() {
