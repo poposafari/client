@@ -17,4 +17,5 @@ export const enum TYPE {
   DARK,
   STEEL,
   FAIRY,
+  NORMAL,
 }
