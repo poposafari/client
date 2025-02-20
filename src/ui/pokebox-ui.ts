@@ -10,6 +10,7 @@ import { PokeBoxSlotUi } from './pokebox-slot-ui';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
+import { pokemonData } from '../data/pokemon';
 
 export class PokeBoxUi extends Ui {
   private mode: OverworldMode;
@@ -29,6 +30,9 @@ export class PokeBoxUi extends Ui {
   private pokemonSprite!: Phaser.GameObjects.Image;
   private pokemonGender!: Phaser.GameObjects.Image;
   private pokemonShiny!: Phaser.GameObjects.Image;
+  private pokemonPokedex!: Phaser.GameObjects.Text;
+  private pokemonType1!: Phaser.GameObjects.Image;
+  private pokemonType2!: Phaser.GameObjects.Image;
 
   private box!: Phaser.GameObjects.Image;
   private windowBox!: Phaser.GameObjects.NineSlice;
@@ -67,9 +71,12 @@ export class PokeBoxUi extends Ui {
     this.pokemonCaptureBall = addImage(this.scene, TEXTURE.BOXBALL_001, +450, -440).setScale(2);
     this.pokemonCaptureDate = addText(this.scene, +500, +405, '2024-10-12', TEXTSTYLE.BOX_NAME).setScale(0.7);
     this.pokemonGender = addImage(this.scene, TEXTURE.GENDER_0, +910, -440).setScale(5);
-    this.pokemonName = addText(this.scene, +480, -440, '한카리아스', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
+    this.pokemonName = addText(this.scene, +490, -440, '한카리아스', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
     this.pokemonSprite = addImage(this.scene, `pokemon_sprite001`, +680, 0).setScale(5);
     this.pokemonShiny = addImage(this.scene, TEXTURE.SHINY, +420, -260).setScale(3);
+    this.pokemonPokedex = addText(this.scene, +430, -350, `No.001`, TEXTSTYLE.BOX_POKEDEX).setOrigin(0, 0.5).setScale(1.4);
+    this.pokemonType1 = addImage(this.scene, TEXTURE.TYPES, +760, -340).setScale(1.8);
+    this.pokemonType2 = addImage(this.scene, TEXTURE.TYPES, +880, -340).setScale(1.8);
 
     this.container.add(this.bg);
     this.container.add(this.windowName);
@@ -79,6 +86,9 @@ export class PokeBoxUi extends Ui {
     this.container.add(this.pokemonCaptureDate);
     this.container.add(this.pokemonGender);
     this.container.add(this.pokemonShiny);
+    this.container.add(this.pokemonPokedex);
+    this.container.add(this.pokemonType1);
+    this.container.add(this.pokemonType2);
     this.container.add(this.pokemonName);
     this.container.add(this.pokemonSprite);
     this.container.add(this.box);
@@ -152,17 +162,25 @@ export class PokeBoxUi extends Ui {
         choice = row * this.MaxRow + col;
 
         if (choice !== prevChoice) {
-          const target = this.mypokemons[choice];
-
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.dummys[choice].setTexture(finger);
+
+          const target = this.mypokemons[choice];
+
           if (target) {
+            const originPokedex = isPokedexShiny(target.pokedex) ? trimLastChar(target.pokedex) : target.pokedex;
             this.pokemonSprite.setTexture(`pokemon_sprite${target.pokedex}`);
-            this.pokemonName.setText(i18next.t(`pokemon:${isPokedexShiny(target.pokedex) ? trimLastChar(target.pokedex) : target.pokedex}.name`));
+            this.pokemonName.setText(i18next.t(`pokemon:${originPokedex}.name`));
             this.pokemonCaptureBall.setTexture(`boxball_${target.capturePokeball}`);
             this.pokemonCaptureDate.setText(target.captureDate);
             this.pokemonGender.setTexture(this.genderTexture[target.gender]);
             this.pokemonShiny.setTexture(isPokedexShiny(target.pokedex) ? TEXTURE.SHINY : TEXTURE.BLANK);
+            this.pokemonPokedex.setText(`No.${originPokedex}`);
+
+            if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
+            else this.pokemonType1.setTexture(TEXTURE.BLANK);
+            if (pokemonData[originPokedex].type2) this.pokemonType2.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type2}`);
+            else this.pokemonType2.setTexture(TEXTURE.BLANK);
           } else {
             this.pokemonSprite.setTexture(`pokemon_sprite000`);
             this.pokemonName.setText('');
@@ -170,6 +188,7 @@ export class PokeBoxUi extends Ui {
             this.pokemonCaptureDate.setText(`0000-00-00`);
             this.pokemonGender.setTexture(TEXTURE.BLANK);
             this.pokemonShiny.setTexture(TEXTURE.BLANK);
+            this.pokemonPokedex.setText(`No.000`);
           }
         }
       } catch (error) {
