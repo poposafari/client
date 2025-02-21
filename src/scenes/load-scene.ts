@@ -32,6 +32,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
     this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
     this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
+    this.loadImage(TEXTURE.WINDOW_12, 'ui/windows', TEXTURE.WINDOW_12);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -144,6 +145,7 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.ARROW_W_R, 'ui', TEXTURE.ARROW_W_R);
     this.loadImage(TEXTURE.ARROW_B_R, 'ui', TEXTURE.ARROW_B_R);
+    this.loadImage(TEXTURE.ARROW_BOX, 'ui/box', TEXTURE.ARROW_BOX);
 
     this.loadAtlas(TEXTURE.POKEMON_CALL, 'ui', TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
     this.loadAtlas(TEXTURE.POKEMON_RECALL, 'ui', TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);

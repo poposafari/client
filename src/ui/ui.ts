@@ -196,6 +196,8 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.ITEM_NOTICE:
     case TEXTSTYLE.ITEM_LIST:
     case TEXTSTYLE.OVERWORLD_LIST:
+    case TEXTSTYLE.BOX_CAPTURE_TITLE:
+    case TEXTSTYLE.BOX_CAPTURE_VALUE:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
@@ -295,6 +297,15 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.BATTLE_MENU:
       config.fontSize = '90px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.BOX_CAPTURE_TITLE:
+      config.fontSize = '80px';
+      config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.BOX_CAPTURE_VALUE:
+      config.fontSize = '60px';
+      config.color = '#284ffc';
+      config.fontStyle = 'bold';
       break;
   }
 
