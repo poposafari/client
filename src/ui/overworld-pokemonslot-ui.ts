@@ -7,9 +7,12 @@ import { addImage, addWindow, Ui } from './ui';
 
 export class OverworldPokemonSlotUi extends Ui {
   private mode: OverworldMode;
+
   private container!: Phaser.GameObjects.Container;
-  protected pokemonSlotBtns: Phaser.GameObjects.NineSlice[] = [];
-  protected pokemonSlotIcons: Phaser.GameObjects.Image[] = [];
+  protected windows: Phaser.GameObjects.NineSlice[] = [];
+  protected icons: Phaser.GameObjects.Image[] = [];
+
+  private readonly MaxSlot: number = 6;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -20,24 +23,23 @@ export class OverworldPokemonSlotUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    const slotSize = 50;
-    const slotSpacing = 5;
-    const totalSlots = MAX_PARTY_SLOT;
+    const contentHeight = 60;
+    const spacing = 5;
+    let currentY = 0;
 
     this.container = this.scene.add.container(width - 35, height / 3 + 50);
 
-    for (let i = 0; i < totalSlots; i++) {
-      const xPosition = 0;
-      const yPosition = i * (slotSize + slotSpacing);
+    for (let i = 0; i < this.MaxSlot; i++) {
+      const window = addWindow(this.scene, TEXTURE.WINDOW_0, 0, currentY, contentHeight, contentHeight, 8, 8, 8, 8);
+      const icon = addImage(this.scene, 'pokemon_icon000', 0, currentY);
 
-      const pokemonSlotWindow = addWindow(this.scene, TEXTURE.WINDOW_0, xPosition, yPosition, slotSize, slotSize, 8, 8, 8, 8);
-      const pokemonIcon = addImage(this.scene, 'pokemon_icon000', xPosition, yPosition).setVisible(false);
+      this.container.add(window);
+      this.container.add(icon);
 
-      this.container.add(pokemonSlotWindow);
-      this.container.add(pokemonIcon);
+      this.windows.push(window);
+      this.icons.push(icon);
 
-      this.pokemonSlotBtns.push(pokemonSlotWindow);
-      this.pokemonSlotIcons.push(pokemonIcon);
+      currentY += contentHeight + spacing;
     }
     this.container.setScale(1);
 
@@ -48,14 +50,6 @@ export class OverworldPokemonSlotUi extends Ui {
 
   show(data?: any): void {
     this.container.setVisible(true);
-
-    // const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    // const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
-
-    // pokemonSlots.forEach((slot, i) => {
-    //   this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
-    // });
-
     this.pause(false);
   }
 
@@ -65,42 +59,26 @@ export class OverworldPokemonSlotUi extends Ui {
   }
 
   pause(onoff: boolean, data?: any): void {
-    onoff ? this.blocking() : this.unblocking();
+    onoff ? this.block() : this.unblock();
   }
 
-  update(time?: number, delta?: number): void {
-    // const playerPokemonManager = this.mode.getPlayerPokemonManager();
-    // const pokemonSlots = playerPokemonManager.getMyPokemonSlots();
-    // pokemonSlots.forEach((slot, i) => {
-    //   this.pokemonSlotIcons[i].setTexture(`pokemon_icon${slot !== -1 ? playerPokemonManager.getMyPokemonKey(slot) : -1}`).setVisible(slot !== -1);
-    // });
-  }
+  update(time?: number, delta?: number): void {}
 
-  private blocking() {
-    this.pokemonSlotBtns.forEach((icon) => {
-      icon.off('pointerover');
-      icon.off('pointerout');
-      icon.off('pointerup');
-    });
-  }
+  private block() {}
 
-  private unblocking() {
-    //   this.pokemonSlotBtns.forEach((icon, i) => {
-    //     icon.setScrollFactor(0);
-    //     icon.setInteractive({ cursor: 'pointer' });
-    //     icon.on('pointerover', () => {
-    //       icon.setAlpha(0.7);
-    //     });
-    //     icon.on('pointerout', () => {
-    //       icon.setAlpha(1);
-    //     });
-    //     icon.on('pointerup', () => {
-    //       if (playerInfoManager.getMyFollowPokemon() !== pokemonSlots[i]) {
-    //         PlayerInfoManager.getInstance().setMyFollowPokemon(pokemonSlots[i]);
-    //         const pokedex = playerPokemonManager.getMyPokemonKey(pokemonSlots[i]);
-    //       }
-    //     });
-    //   });
-    // }
+  private unblock() {
+    const partySlot = this.mode.getPlayerInfo()?.getPartySlot();
+
+    if (!partySlot) return;
+
+    let idx = 0;
+
+    for (let i = 0; i < this.MaxSlot; i++) {
+      if (partySlot[i]) {
+        this.icons[i].setTexture(`pokemon_icon${partySlot[i]}`);
+      } else {
+        this.icons[i].setTexture(`pokemon_icon000`);
+      }
+    }
   }
 }
