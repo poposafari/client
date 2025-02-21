@@ -11,10 +11,14 @@ import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
+import { PokeboxBoxChoiceUi } from './pokebox-box-choice-ui';
+import { PokeboxRegisterUi } from './pokebox-register-ui';
 
 export class PokeBoxUi extends Ui {
   private mode: OverworldMode;
   private pokeboxSlotUi: PokeBoxSlotUi;
+  private pokeboxBoxChoiceUi: PokeboxBoxChoiceUi;
+  private pokeboxRegisterUi: PokeboxRegisterUi;
   private container!: Phaser.GameObjects.Container;
 
   private iconContainer!: Phaser.GameObjects.Container;
@@ -33,6 +37,8 @@ export class PokeBoxUi extends Ui {
   private pokemonPokedex!: Phaser.GameObjects.Text;
   private pokemonType1!: Phaser.GameObjects.Image;
   private pokemonType2!: Phaser.GameObjects.Image;
+  private captureCountTitle!: Phaser.GameObjects.Text;
+  private captureCountValue!: Phaser.GameObjects.Text;
 
   private box!: Phaser.GameObjects.Image;
   private windowBox!: Phaser.GameObjects.NineSlice;
@@ -40,6 +46,10 @@ export class PokeBoxUi extends Ui {
   private icons: Phaser.GameObjects.Image[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
   private mypokemons: MyPokemon[] = [];
+
+  private lastChoice!: number | null;
+  private lastRow!: number | null;
+  private lastCol!: number | null;
 
   private readonly MaxRow: number = 9;
   private readonly MaxColumn: number = 7;
@@ -49,6 +59,8 @@ export class PokeBoxUi extends Ui {
     super(scene);
     this.mode = mode;
     this.pokeboxSlotUi = new PokeBoxSlotUi(this.scene, this.mode);
+    this.pokeboxBoxChoiceUi = new PokeboxBoxChoiceUi(this.scene, this.mode, this);
+    this.pokeboxRegisterUi = new PokeboxRegisterUi(this.scene, this.mode, this, this.pokeboxSlotUi);
   }
 
   setup(): void {
@@ -56,6 +68,8 @@ export class PokeBoxUi extends Ui {
     const height = this.getHeight();
 
     this.pokeboxSlotUi.setup();
+    this.pokeboxBoxChoiceUi.setup();
+    this.pokeboxRegisterUi.setup();
 
     this.container = this.scene.add.container(width / 2, height / 2);
     this.iconContainer = this.scene.add.container(-680, -230);
@@ -71,9 +85,11 @@ export class PokeBoxUi extends Ui {
     this.pokemonCaptureBall = addImage(this.scene, TEXTURE.BOXBALL_001, +450, -440).setScale(2);
     this.pokemonCaptureDate = addText(this.scene, +500, +405, '2024-10-12', TEXTSTYLE.BOX_NAME).setScale(0.7);
     this.pokemonGender = addImage(this.scene, TEXTURE.GENDER_0, +910, -440).setScale(5);
+    this.captureCountTitle = addText(this.scene, +400, -250, i18next.t('menu:captureCount'), TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
+    this.captureCountValue = addText(this.scene, +610, -250, '', TEXTSTYLE.BOX_CAPTURE_VALUE).setScale(1).setOrigin(0, 0.5);
     this.pokemonName = addText(this.scene, +490, -440, '한카리아스', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
     this.pokemonSprite = addImage(this.scene, `pokemon_sprite001`, +680, 0).setScale(5);
-    this.pokemonShiny = addImage(this.scene, TEXTURE.SHINY, +420, -260).setScale(3);
+    this.pokemonShiny = addImage(this.scene, TEXTURE.SHINY, +900, -260).setScale(3);
     this.pokemonPokedex = addText(this.scene, +430, -350, `No.001`, TEXTSTYLE.BOX_POKEDEX).setOrigin(0, 0.5).setScale(1.4);
     this.pokemonType1 = addImage(this.scene, TEXTURE.TYPES, +760, -340).setScale(1.8);
     this.pokemonType2 = addImage(this.scene, TEXTURE.TYPES, +880, -340).setScale(1.8);
@@ -85,6 +101,8 @@ export class PokeBoxUi extends Ui {
     this.container.add(this.pokemonCaptureBall);
     this.container.add(this.pokemonCaptureDate);
     this.container.add(this.pokemonGender);
+    this.container.add(this.captureCountTitle);
+    this.container.add(this.captureCountValue);
     this.container.add(this.pokemonShiny);
     this.container.add(this.pokemonPokedex);
     this.container.add(this.pokemonType1);
@@ -97,17 +115,21 @@ export class PokeBoxUi extends Ui {
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE);
     this.container.setScrollFactor(0);
+
+    this.lastChoice = null;
+    this.lastRow = null;
+    this.lastCol = null;
   }
 
   show(data?: any): void {
     this.container.setVisible(true);
-    // this.pokeboxSlotUi.show();
+    this.pokeboxSlotUi.show();
     this.pause(false);
   }
 
   clean(data?: any): void {
     this.container.setVisible(false);
-    // this.pokeboxSlotUi.clean();
+    this.pokeboxSlotUi.clean();
     this.pause(true);
   }
 
@@ -124,8 +146,8 @@ export class PokeBoxUi extends Ui {
 
     this.renderPage();
 
-    let row = 0;
-    let col = 0;
+    let row = this.lastRow ? this.lastRow : 0;
+    let col = this.lastCol ? this.lastCol : 0;
 
     const finger = TEXTURE.FINGER;
 
@@ -138,7 +160,12 @@ export class PokeBoxUi extends Ui {
       try {
         switch (key) {
           case KEY.UP:
-            if (row > 0) row--;
+            if (row > -1) row--;
+            if (row === -1) {
+              this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+              this.pokeboxBoxChoiceUi.show();
+              return;
+            }
             break;
           case KEY.DOWN:
             if (row < this.MaxColumn - 1) row++;
@@ -150,6 +177,12 @@ export class PokeBoxUi extends Ui {
             if (col < this.MaxRow - 1) col++;
             break;
           case KEY.SELECT:
+            const target = this.mypokemons[choice];
+
+            if (this.mypokemons[choice]) {
+              this.pokeboxRegisterUi.show(target.pokedex);
+            }
+
             break;
           case KEY.CANCEL:
             this.clean();
@@ -160,6 +193,8 @@ export class PokeBoxUi extends Ui {
         }
 
         choice = row * this.MaxRow + col;
+        this.lastRow = row;
+        this.lastCol = col;
 
         if (choice !== prevChoice) {
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
@@ -176,6 +211,7 @@ export class PokeBoxUi extends Ui {
             this.pokemonGender.setTexture(this.genderTexture[target.gender]);
             this.pokemonShiny.setTexture(isPokedexShiny(target.pokedex) ? TEXTURE.SHINY : TEXTURE.BLANK);
             this.pokemonPokedex.setText(`No.${originPokedex}`);
+            this.captureCountValue.setText(`${target.captureCount}`);
 
             if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
             else this.pokemonType1.setTexture(TEXTURE.BLANK);
@@ -189,6 +225,10 @@ export class PokeBoxUi extends Ui {
             this.pokemonGender.setTexture(TEXTURE.BLANK);
             this.pokemonShiny.setTexture(TEXTURE.BLANK);
             this.pokemonPokedex.setText(`No.000`);
+            this.captureCountValue.setText(`0`);
+            this.pokemonType1.setTexture(TEXTURE.BLANK);
+            this.pokemonType2.setTexture(TEXTURE.BLANK);
+            this.captureCountValue.setText(``);
           }
         }
       } catch (error) {
@@ -199,6 +239,8 @@ export class PokeBoxUi extends Ui {
 
   private renderPage() {
     const box = this.mode.getBox();
+    const playerInfo = this.mode.getPlayerInfo();
+    const partSlots = playerInfo?.getPartySlot();
 
     this.cleanPage();
 
@@ -231,6 +273,7 @@ export class PokeBoxUi extends Ui {
     for (const pokemon of box.getMyPokemons()) {
       this.mypokemons.push(pokemon);
       this.icons[idx].setTexture(`pokemon_icon${pokemon.pokedex}`);
+      playerInfo?.hasPartySlot(pokemon.pokedex) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
       idx++;
     }
   }

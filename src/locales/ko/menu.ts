@@ -58,4 +58,7 @@ export const menu: TranslationDefault = {
   register: '등록',
   cancel: '취소',
   registerCancel: '등록 해제',
+  captureCount: '포획 횟수 : ',
+  addParty: '파티에 추가',
+  removeParty: '파티에서 제외',
 };

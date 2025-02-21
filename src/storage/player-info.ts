@@ -11,12 +11,14 @@ export class PlayerInfo {
   private location!: Location;
   private pet!: string | '000';
   private money!: number;
+  private partySlot: string[] = [];
+
+  private readonly MaxSlot: number = 6;
 
   constructor() {}
 
   setup() {
     //TODO: 외부로부터 사용자 데이터를 받아오자.
-
     this.nickname = '운영자';
     this.gender = 'girl';
     this.avatar = 1;
@@ -90,5 +92,34 @@ export class PlayerInfo {
 
     this.setMoney(this.money - cost);
     return true;
+  }
+
+  getPartySlot() {
+    return this.partySlot;
+  }
+
+  addPartySlot(pokedex: string): boolean {
+    if (this.partySlot.length === this.MaxSlot) {
+      return false;
+    }
+
+    this.partySlot.push(pokedex);
+
+    return true;
+  }
+
+  hasPartySlot(pokedex: string) {
+    return this.partySlot.includes(pokedex);
+  }
+
+  removePartSlot(pokedex: string): boolean {
+    const index = this.partySlot.indexOf(pokedex);
+
+    if (index !== -1) {
+      this.partySlot.splice(index, 1);
+      return true;
+    }
+
+    return false;
   }
 }
