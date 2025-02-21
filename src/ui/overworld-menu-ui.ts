@@ -2,7 +2,7 @@ import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, Ui } from './ui';
+import { addImage, addText, addWindow, runFadeEffect, Ui } from './ui';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { TEXTSTYLE } from '../enums/textstyle';
@@ -123,6 +123,7 @@ export class OverworldMenuUi extends Ui {
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             // console.log(texture);
             if (texture === 'box') {
+              runFadeEffect(this.scene, 800, 'in');
               this.mode.addUiStackOverlap('PokeBoxUi');
             } else if (texture === 'bag') {
               this.mode.addUiStackOverlap('BagUi');
