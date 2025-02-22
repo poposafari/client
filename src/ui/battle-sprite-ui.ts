@@ -153,7 +153,7 @@ export class BattleSpriteUi extends Ui {
         await delay(this.scene, 1000);
 
         //TODO: 서버로부터 포획 성공 여부와 도망여부를 받는다.(반환은 0<=cnt<=3로 받는다. isRun boolean 값을 받는다.)
-        const testCnt = 1;
+        const testCnt = 2;
         const isRun = false;
         await this.startShakeItemAnimation(item, testCnt);
         await this.startExitItemAnimation(item, testCnt, isRun);

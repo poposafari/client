@@ -102,6 +102,7 @@ export class PokeboxRegisterUi extends Ui {
               if (playerInfo.hasPartySlot(this.targetPokedex)) {
                 this.registerText.setText(i18next.t('menu:removeParty'));
                 playerInfo.removePartSlot(this.targetPokedex);
+                this.pokeboxSlotUi.updateFollowPet(this.targetPokedex);
               } else {
                 const result = playerInfo.addPartySlot(this.targetPokedex);
                 if (!result) {
