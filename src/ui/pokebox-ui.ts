@@ -58,7 +58,7 @@ export class PokeBoxUi extends Ui {
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
     this.mode = mode;
-    this.pokeboxSlotUi = new PokeBoxSlotUi(this.scene, this.mode);
+    this.pokeboxSlotUi = new PokeBoxSlotUi(this.scene, this.mode, this);
     this.pokeboxBoxChoiceUi = new PokeboxBoxChoiceUi(this.scene, this.mode, this);
     this.pokeboxRegisterUi = new PokeboxRegisterUi(this.scene, this.mode, this, this.pokeboxSlotUi);
   }
@@ -171,7 +171,11 @@ export class PokeBoxUi extends Ui {
             if (row < this.MaxColumn - 1) row++;
             break;
           case KEY.LEFT:
-            if (col > 0) col--;
+            if (col > -1) col--;
+            if (col === -1) {
+              this.pokeboxSlotUi.pause(false);
+              return;
+            }
             break;
           case KEY.RIGHT:
             if (col < this.MaxRow - 1) col++;
@@ -200,41 +204,43 @@ export class PokeBoxUi extends Ui {
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.dummys[choice].setTexture(finger);
 
-          const target = this.mypokemons[choice];
-
-          if (target) {
-            const originPokedex = isPokedexShiny(target.pokedex) ? trimLastChar(target.pokedex) : target.pokedex;
-            this.pokemonSprite.setTexture(`pokemon_sprite${target.pokedex}`);
-            this.pokemonName.setText(i18next.t(`pokemon:${originPokedex}.name`));
-            this.pokemonCaptureBall.setTexture(`boxball_${target.capturePokeball}`);
-            this.pokemonCaptureDate.setText(target.captureDate);
-            this.pokemonGender.setTexture(this.genderTexture[target.gender]);
-            this.pokemonShiny.setTexture(isPokedexShiny(target.pokedex) ? TEXTURE.SHINY : TEXTURE.BLANK);
-            this.pokemonPokedex.setText(`No.${originPokedex}`);
-            this.captureCountValue.setText(`${target.captureCount}`);
-
-            if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
-            else this.pokemonType1.setTexture(TEXTURE.BLANK);
-            if (pokemonData[originPokedex].type2) this.pokemonType2.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type2}`);
-            else this.pokemonType2.setTexture(TEXTURE.BLANK);
-          } else {
-            this.pokemonSprite.setTexture(`pokemon_sprite000`);
-            this.pokemonName.setText('');
-            this.pokemonCaptureBall.setTexture(TEXTURE.BLANK);
-            this.pokemonCaptureDate.setText(`0000-00-00`);
-            this.pokemonGender.setTexture(TEXTURE.BLANK);
-            this.pokemonShiny.setTexture(TEXTURE.BLANK);
-            this.pokemonPokedex.setText(`No.000`);
-            this.captureCountValue.setText(`0`);
-            this.pokemonType1.setTexture(TEXTURE.BLANK);
-            this.pokemonType2.setTexture(TEXTURE.BLANK);
-            this.captureCountValue.setText(``);
-          }
+          this.updatePokemonInfo(this.mypokemons[choice]);
         }
       } catch (error) {
         console.error(`Error handling key input: ${error}`);
       }
     });
+  }
+
+  updatePokemonInfo(pokemon: MyPokemon) {
+    if (pokemon) {
+      const originPokedex = isPokedexShiny(pokemon.pokedex) ? trimLastChar(pokemon.pokedex) : pokemon.pokedex;
+      this.pokemonSprite.setTexture(`pokemon_sprite${pokemon.pokedex}`);
+      this.pokemonName.setText(i18next.t(`pokemon:${originPokedex}.name`));
+      this.pokemonCaptureBall.setTexture(`boxball_${pokemon.capturePokeball}`);
+      this.pokemonCaptureDate.setText(pokemon.captureDate);
+      this.pokemonGender.setTexture(this.genderTexture[pokemon.gender]);
+      this.pokemonShiny.setTexture(isPokedexShiny(pokemon.pokedex) ? TEXTURE.SHINY : TEXTURE.BLANK);
+      this.pokemonPokedex.setText(`No.${originPokedex}`);
+      this.captureCountValue.setText(`${pokemon.captureCount}`);
+
+      if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
+      else this.pokemonType1.setTexture(TEXTURE.BLANK);
+      if (pokemonData[originPokedex].type2) this.pokemonType2.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type2}`);
+      else this.pokemonType2.setTexture(TEXTURE.BLANK);
+    } else {
+      this.pokemonSprite.setTexture(`pokemon_sprite000`);
+      this.pokemonName.setText('');
+      this.pokemonCaptureBall.setTexture(TEXTURE.BLANK);
+      this.pokemonCaptureDate.setText(`0000-00-00`);
+      this.pokemonGender.setTexture(TEXTURE.BLANK);
+      this.pokemonShiny.setTexture(TEXTURE.BLANK);
+      this.pokemonPokedex.setText(`No.000`);
+      this.captureCountValue.setText(`0`);
+      this.pokemonType1.setTexture(TEXTURE.BLANK);
+      this.pokemonType2.setTexture(TEXTURE.BLANK);
+      this.captureCountValue.setText(``);
+    }
   }
 
   private renderPage() {

@@ -45,6 +45,8 @@ export interface NpcInfo {
 export interface PlayerInitPos {
   x: number;
   y: number;
+  px: number;
+  py: number;
 }
 
 export class OverworldUi extends Ui {
@@ -69,7 +71,7 @@ export class OverworldUi extends Ui {
   private layers: Phaser.Tilemaps.TilemapLayer[] = [];
 
   //player
-  private playerInitPos: PlayerInitPos = { x: 0, y: 0 };
+  private playerInitPos: PlayerInitPos = { x: 0, y: 0, px: 0, py: 0 };
   private playerObj!: PlayerObject;
 
   private readonly MapScale: number = 1.5;
@@ -125,6 +127,8 @@ export class OverworldUi extends Ui {
   setupPlayerInitPos(x: number, y: number) {
     this.playerInitPos.x = x;
     this.playerInitPos.y = y;
+    this.playerInitPos.px = x + 1;
+    this.playerInitPos.py = y;
   }
 
   show(): void {
