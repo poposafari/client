@@ -270,6 +270,7 @@ export class OverworldMode extends Mode {
     overworld.clean();
     this.popUiStack();
 
+    this.overworldInfo.setKey(key);
     this.addUiStackOverlap(`Overworld${key}`);
   }
 

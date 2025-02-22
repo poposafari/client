@@ -3,6 +3,7 @@ import { NpcObject } from '../object/npc-object';
 import { PokemonObject } from '../object/pokemon-object';
 
 export class OverworldInfo {
+  private key!: string;
   private npcs: NpcObject[] = [];
   private pokemons: PokemonObject[] = [];
   private groundItems: GroundItemObject[] = [];
@@ -15,6 +16,14 @@ export class OverworldInfo {
 
   getNpcs() {
     return this.npcs;
+  }
+
+  getKey() {
+    return this.key;
+  }
+
+  setKey(key: string) {
+    this.key = key;
   }
 
   resetNpcs() {

@@ -34,10 +34,12 @@ export class PlayerObject extends MovableObject {
     this.bag = bag;
     this.playerInfo = playerInfo;
 
+    this.playerInfo.setLocation({ overworld: '000', x: x, y: y });
+
     // const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
     this.pet = new PetObject(scene, `pokemon_overworld${this.playerInfo.getPet()}`, playerInfo.getLocation().x, playerInfo.getLocation().y - 1, map!, '', this.playerInfo, this.overworldInfo);
     const petSprite = this.pet.getSprite();
-    this.pet.setVisible(this.playerInfo.getPet() !== '000' ? true : false);
+    this.pet.setVisible(this.playerInfo.getPet() ? true : false);
     petSprite.setScale(1.5);
   }
 

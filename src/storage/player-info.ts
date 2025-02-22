@@ -9,7 +9,7 @@ export class PlayerInfo {
   private gender!: 'boy' | 'girl';
   private avatar!: 1 | 2 | 3 | 4;
   private location!: Location;
-  private pet!: string | '000';
+  private pet!: string | null;
   private money!: number;
   private partySlot: string[] = [];
 
@@ -20,14 +20,14 @@ export class PlayerInfo {
   setup() {
     //TODO: 외부로부터 사용자 데이터를 받아오자.
     this.nickname = '운영자';
-    this.gender = 'girl';
-    this.avatar = 1;
+    this.gender = 'boy';
+    this.avatar = 2;
     this.location = {
       overworld: '000',
       x: 10,
       y: 10,
     };
-    this.pet = '000';
+    this.pet = null;
     this.money = 100000;
   }
 
@@ -77,7 +77,7 @@ export class PlayerInfo {
     this.location.y = location.y;
   }
 
-  setPet(pet: string) {
+  setPet(pet: string | null) {
     this.pet = pet;
   }
 

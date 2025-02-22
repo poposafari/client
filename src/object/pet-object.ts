@@ -8,6 +8,8 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { OBJECT } from '../enums/object-type';
 import { PlayerInfo } from '../storage/player-info';
 import { OverworldInfo } from '../storage/overworld-info';
+import { isPokedexShiny } from '../utils/string-util';
+import { ANIMATION } from '../enums/animation';
 
 export class PetObject extends MovableObject {
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, playerInfo: PlayerInfo, overworldInfo: OverworldInfo) {
@@ -40,7 +42,22 @@ export class PetObject extends MovableObject {
   }
 
   private getAnimation(key: KEY) {
-    const pokedex = `001s`;
+    let pokedex = this.playerInfo.getPet();
+
+    if (pokedex) {
+      this.setVisible(true);
+      if (isPokedexShiny(pokedex)) {
+        this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
+        this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
+        this.dummy2.setScale(2.4);
+      } else {
+        this.dummy2.setTexture(TEXTURE.BLANK);
+        this.dummy2.stop();
+      }
+    } else {
+      pokedex = '000';
+      this.setVisible(false);
+    }
 
     switch (key) {
       case KEY.UP:
