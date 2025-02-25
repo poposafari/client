@@ -4,14 +4,20 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
+import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
+import { BagChoiceUi } from './bag-choice-ui';
+import { BagUi } from './bag-ui';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 
 export class BagRegisterUi extends Ui {
   private mode: OverworldMode;
+  private bagChoiceUi!: BagChoiceUi;
+  private bagUi!: BagUi;
+
   private container!: Phaser.GameObjects.Container;
   private bg!: Phaser.GameObjects.Image;
-  private targetItem!: string;
+  private targetItem!: PlayerItem;
 
   //slots
   private slotContainer!: Phaser.GameObjects.Container;
@@ -22,9 +28,11 @@ export class BagRegisterUi extends Ui {
 
   private readonly MaxSlot: number = 9;
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  constructor(scene: InGameScene, mode: OverworldMode, bagChoiceUi: BagChoiceUi, bagUi: BagUi) {
     super(scene);
     this.mode = mode;
+    this.bagChoiceUi = bagChoiceUi;
+    this.bagUi = bagUi;
   }
 
   setup(): void {
@@ -67,8 +75,8 @@ export class BagRegisterUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
-    this.targetItem = data;
+  show(data?: PlayerItem): void {
+    if (data) this.targetItem = data;
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -118,7 +126,7 @@ export class BagRegisterUi extends Ui {
           case KEY.CANCEL:
             this.renderChoice(choice, 0);
             this.clean();
-            this.mode.popUiStack();
+            this.bagChoiceUi.pause(false);
             break;
         }
         if (key === KEY.LEFT || key === KEY.RIGHT) {
@@ -160,7 +168,8 @@ export class BagRegisterUi extends Ui {
       return;
     }
 
-    bag.registerItem(this.targetItem, choice);
+    bag.registerItem(this.targetItem.getKey(), choice);
+    this.bagUi.setRegVisual(true);
   }
 
   updateSlotTexture() {}

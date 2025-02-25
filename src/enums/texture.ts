@@ -90,6 +90,7 @@ export const enum TEXTURE {
   BAG3 = 'bag3',
   BAG4 = 'bag4',
   BAG_REG = 'bag_reg',
+  BAG_BAR = 'bag_bar',
   BG_BOX = 'bg_box',
   OVERLAY_BOX = 'overlay_box',
   WINDOW_BOX = 'window_box',
@@ -121,6 +122,7 @@ export const enum TEXTURE {
   BOXBALL_002 = 'boxball_002',
   BOXBALL_003 = 'boxball_003',
   BOXBALL_004 = 'boxball_004',
+  SYMBOL = 'symbol',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
