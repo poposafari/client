@@ -235,7 +235,7 @@ export class SafariListUi extends Ui {
       const safari = this.safaris[i];
       const name = addText(this.scene, -160, this.fixedTopY + currentY + 25, i18next.t(`menu:overworld_${safari.key}`), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
       const cost = addText(this.scene, +145, this.fixedTopY + currentY + 25, 'x' + safari.cost.toString(), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
-      const icon = addImage(this.scene, 'item006', +120, this.fixedTopY + currentY + 25);
+      const icon = addImage(this.scene, 'item030', +120, this.fixedTopY + currentY + 25);
       const dummy = addImage(this.scene, TEXTURE.BLANK, -175, this.fixedTopY + currentY + 25).setScale(1.8);
 
       this.safariNames.push(name);
@@ -301,7 +301,7 @@ export class SafariListUi extends Ui {
 
   private renderYourTickets() {
     const bag = this.mode.getBag();
-    const ticket = bag?.getItem('006');
+    const ticket = bag?.getItem('030');
     let stock = 0;
 
     if (ticket) stock = ticket.getStock();
@@ -317,7 +317,7 @@ export class SafariListUi extends Ui {
       return false;
     }
 
-    const myTicket = bag.getItem('006');
+    const myTicket = bag.getItem('030');
 
     if (!myTicket) return false;
 
@@ -336,6 +336,6 @@ export class SafariListUi extends Ui {
       return 0;
     }
 
-    bag.useItem('006', cost);
+    bag.useItem('030', cost);
   }
 }
