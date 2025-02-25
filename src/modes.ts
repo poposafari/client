@@ -7,7 +7,6 @@ import { LoginUi } from './ui/login-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { RegisterUi } from './ui/register-ui';
 import { TitleUi } from './ui/title-ui';
-import { BagUi } from './ui/bag-ui';
 import { BoxUi } from './ui/box-ui';
 import { BoxChoiceUi } from './ui/box-choice-ui';
 import { BoxRegisterUi } from './ui/box-register-ui';
@@ -18,8 +17,6 @@ import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld011 } from './ui/overworld-011';
 import { Bag } from './storage/bag';
-import { BagChoiceUi } from './ui/bag-choice-ui';
-import { BagRegisterUi } from './ui/bag-register-ui';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { Location, PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
@@ -30,6 +27,7 @@ import { OverworldInfo } from './storage/overworld-info';
 import { BattleUi } from './ui/battle-ui';
 import { PokeBoxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
+import { BagUi } from './ui/bag-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -172,8 +170,6 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldItemSlotUi(this.scene, this));
     this.uis.push(new SafariListUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new BagChoiceUi(this.scene, this));
-    this.uis.push(new BagRegisterUi(this.scene, this));
     this.uis.push(new BoxUi(this.scene, this));
     this.uis.push(new BoxChoiceUi(this.scene, this));
     this.uis.push(new BoxRegisterUi(this.scene, this));

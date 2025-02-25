@@ -1,128 +1,142 @@
 import i18next from 'i18next';
-import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, Ui } from './ui';
+import { addImage, addText, Ui } from './ui';
+import { TEXTURE } from '../enums/texture';
 import { TEXTSTYLE } from '../enums/textstyle';
+import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
-import { DEPTH } from '../enums/depth';
+import { BagUi } from './bag-ui';
+import { PlayerItem } from '../object/player-item';
+import { BagRegisterUi } from './bag-register-ui';
 
 export class BagChoiceUi extends Ui {
   private mode: OverworldMode;
-  private container!: Phaser.GameObjects.Container;
-  private bg!: Phaser.GameObjects.Image;
-  private targetItem!: string;
+  private bagUi: BagUi;
+  private bagRegisterUi: BagRegisterUi;
+  private targetItem!: PlayerItem;
   private isRegister!: boolean;
 
-  //choice
-  private choiceTitles: string[] = [i18next.t('menu:register'), i18next.t('menu:cancel')];
-  private choiceWindows: Phaser.GameObjects.Image[] = [];
-  private choiceTexts: Phaser.GameObjects.Text[] = [];
+  private container!: Phaser.GameObjects.Container;
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  private windows: Phaser.GameObjects.Image[] = [];
+  private texts: Phaser.GameObjects.Text[] = [];
+  private titles: string[] = [i18next.t('menu:use'), i18next.t('menu:register'), i18next.t('menu:cancel')];
+
+  constructor(scene: InGameScene, mode: OverworldMode, bagUi: BagUi) {
     super(scene);
     this.mode = mode;
+
+    this.bagUi = bagUi;
+    this.bagRegisterUi = new BagRegisterUi(scene, mode, this, bagUi);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
-    const spacing = 50;
-    const contentHeight = 50;
 
+    const contentHeight = 45;
+    const spacing = 5;
     let currentY = 0;
 
-    this.container = this.scene.add.container(width / 2, height / 2);
-    this.bg = addBackground(this.scene, TEXTURE.BLACK).setOrigin(0.5, 0.5);
-    this.bg.setAlpha(0.5);
-    this.container.add(this.bg);
+    this.container = this.scene.add.container(width / 2 + 720, height / 2 + 200);
 
-    for (const title of this.choiceTitles) {
-      const window = addImage(this.scene, TEXTURE.CHOICE, +780, currentY + 370).setScale(2);
-      const text = addText(this.scene, -110 + 780, currentY + contentHeight / 2 - 25 + 370, title, TEXTSTYLE.ITEM_NOTICE).setOrigin(0, 0.5);
+    this.bagRegisterUi.setup();
 
-      this.choiceWindows.push(window);
-      this.choiceTexts.push(text);
+    for (const title of this.titles) {
+      const window = addImage(this.scene, TEXTURE.CHOICE, 0, currentY);
+      const text = addText(this.scene, -65, currentY, title, TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
+
+      this.windows.push(window);
+      this.texts.push(text);
 
       this.container.add(window);
       this.container.add(text);
 
       currentY += contentHeight + spacing;
-    }
 
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
-    this.container.setScrollFactor(0);
+      this.container.setScale(2.6);
+      this.container.setVisible(false);
+      this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
+      this.container.setScrollFactor(0);
+    }
   }
 
-  show(data: any): void {
-    this.targetItem = data;
+  show(data?: PlayerItem): void {
+    if (data) this.targetItem = data;
 
     this.container.setVisible(true);
     this.pause(false);
   }
 
-  clean(): void {
+  clean(data?: any): void {
     this.container.setVisible(false);
     this.pause(true);
   }
 
-  pause(onoff: boolean): void {
+  pause(onoff: boolean, data?: any): void {
     onoff ? this.block() : this.unblock();
   }
+
+  update(time: number, delta: number): void {}
 
   private block() {}
 
   private unblock() {
-    const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
+    const keyboardManager = KeyboardManager.getInstance();
 
     let start = 0;
-    let end = this.choiceTitles.length - 1;
+    let end = 2;
     let choice = start;
 
-    this.renderChoice(1, 0);
+    this.windows[1].setTexture(TEXTURE.CHOICE);
+    this.windows[2].setTexture(TEXTURE.CHOICE);
+    this.windows[0].setTexture(TEXTURE.CHOICE_S);
+
     this.registerCheck();
 
-    keyboardMananger.setAllowKey(keys);
-    keyboardMananger.setKeyDownCallback((key) => {
+    keyboardManager.setAllowKey(keys);
+    keyboardManager.setKeyDownCallback((key) => {
       const prevChoice = choice;
 
       try {
         switch (key) {
           case KEY.UP:
-            if (choice > start) {
-              choice--;
-            }
+            if (choice > 0) choice--;
             break;
           case KEY.DOWN:
-            if (choice < end && choice < this.choiceTitles.length - 1) {
-              choice++;
-            }
+            if (choice < end) choice++;
             break;
           case KEY.SELECT:
-            if (choice === 0 && !this.isRegister) {
-              this.clean();
-              this.mode.popUiStack();
-              this.mode.addUiStackOverlap('BagRegisterUi', this.targetItem);
-            } else if (choice === 0 && this.isRegister) {
-              this.cancelRegister(this.targetItem);
-              this.clean();
-              this.mode.popUiStack();
+            if (choice === 0) {
+              //use
             } else if (choice === 1) {
+              //register
+              if (this.isRegister) {
+                this.cancelRegister(this.targetItem);
+                this.clean();
+                this.bagUi.pause(false);
+              } else {
+                this.bagRegisterUi.show(this.targetItem);
+              }
+            } else if (choice === 2) {
+              //cancel
               this.clean();
-              this.mode.popUiStack();
+              this.bagUi.pause(false);
             }
             break;
           case KEY.CANCEL:
             this.clean();
-            this.mode.popUiStack();
+            this.bagUi.pause(false);
             break;
         }
+
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
-            this.renderChoice(prevChoice, choice);
+            this.windows[prevChoice].setTexture(TEXTURE.CHOICE);
+            this.windows[choice].setTexture(TEXTURE.CHOICE_S);
           }
         }
       } catch (error) {
@@ -131,26 +145,20 @@ export class BagChoiceUi extends Ui {
     });
   }
 
-  update(time: number, delta: number): void {}
-
-  private renderChoice(prev: number, current: number) {
-    this.choiceWindows[prev].setTexture(TEXTURE.CHOICE);
-    this.choiceWindows[current].setTexture(TEXTURE.CHOICE_S);
+  private cancelRegister(item: PlayerItem) {
+    this.mode.getBag()?.getItem(item.getKey())?.registerSlot(null);
+    this.bagUi.setRegVisual(false);
   }
 
   private registerCheck() {
-    const playerItem = this.mode.getBag()?.getItem(this.targetItem);
+    const playerItem = this.mode.getBag()?.getItem(this.targetItem.getKey());
 
     if (!playerItem?.getRegister()) {
-      this.choiceTexts[0].setText(i18next.t('menu:register'));
+      this.texts[1].setText(i18next.t('menu:register'));
       this.isRegister = false;
     } else {
-      this.choiceTexts[0].setText(i18next.t('menu:registerCancel'));
+      this.texts[1].setText(i18next.t('menu:registerCancel'));
       this.isRegister = true;
     }
-  }
-
-  private cancelRegister(item: string) {
-    this.mode.getBag()?.getItem(item)?.registerSlot(null);
   }
 }
