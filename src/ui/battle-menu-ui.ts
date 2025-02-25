@@ -105,6 +105,7 @@ export class BattleMenuUi extends Ui {
               this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU_POKEBALL);
               return;
             } else if (target === i18next.t('menu:battleSelect1')) {
+              this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU_BERRY);
               return;
             } else if (target === i18next.t('menu:battleSelect3')) {
               this.battleUi.checkCurrentStatus(BATTLE_STATUS.RUN_PLAYER);
