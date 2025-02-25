@@ -14,6 +14,7 @@ import { BattleMessageUi } from './battle-message-ui';
 import { BattleSpriteUi } from './battle-sprite-ui';
 import { addBackground, delay, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
 import { Battle } from '../storage/battle';
+import { BattleMenuBerryUi } from './battle-menu-berry-ui';
 
 export class BattleUi extends Ui {
   private mode: OverworldMode;
@@ -29,6 +30,7 @@ export class BattleUi extends Ui {
   private battleSpriteUi: BattleSpriteUi;
   private battleMenuUi: BattleMenuUi;
   private battleMenuPokeballUi: BattleMenuPokeballUi;
+  private battleMenuBerryUi: BattleMenuBerryUi;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -40,6 +42,7 @@ export class BattleUi extends Ui {
     this.battleSpriteUi = new BattleSpriteUi(scene, mode, this);
     this.battleMenuUi = new BattleMenuUi(scene, mode, this);
     this.battleMenuPokeballUi = new BattleMenuPokeballUi(scene, mode, this);
+    this.battleMenuBerryUi = new BattleMenuBerryUi(scene, mode, this);
   }
 
   setup(): void {
@@ -61,6 +64,7 @@ export class BattleUi extends Ui {
     this.battleSpriteUi.setup();
     this.battleMenuUi.setup();
     this.battleMenuPokeballUi.setup();
+    this.battleMenuBerryUi.setup();
   }
 
   async show(data?: BattleInfo): Promise<void> {
@@ -154,6 +158,9 @@ export class BattleUi extends Ui {
         break;
       case BATTLE_STATUS.MENU_POKEBALL:
         this.battleMenuPokeballUi.show();
+        break;
+      case BATTLE_STATUS.MENU_BERRY:
+        this.battleMenuBerryUi.show();
         break;
       case BATTLE_STATUS.THROW_POKEBALL:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_POKEBALL, data.getKey() as PlayerItem);
