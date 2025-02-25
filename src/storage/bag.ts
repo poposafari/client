@@ -11,12 +11,32 @@ export class Bag {
   constructor() {}
 
   setup() {
-    this.addItems('001', 999);
+    this.addItems('001');
     this.addItems('002');
     this.addItems('003');
     this.addItems('004');
-    this.addItems('005');
-    this.addItems('006', 3);
+
+    this.addItems('011');
+    this.addItems('012');
+    this.addItems('013');
+    this.addItems('014');
+    this.addItems('015');
+    this.addItems('016');
+    this.addItems('017');
+    this.addItems('018');
+    this.addItems('019');
+    this.addItems('020');
+    this.addItems('021');
+    this.addItems('022');
+    this.addItems('023');
+    this.addItems('024');
+    this.addItems('025');
+    this.addItems('026');
+    this.addItems('027');
+    this.addItems('028');
+    this.addItems('029');
+
+    this.addItems('030', 3);
   }
 
   addItems(key: string, stock: number = 1, register: Register = null) {

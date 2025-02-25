@@ -129,6 +129,7 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.BAG, 'ui', TEXTURE.BAG);
     this.loadImage(TEXTURE.BAG_REG, 'ui', TEXTURE.BAG_REG);
+    this.loadImage(TEXTURE.BAG_BAR, 'ui', TEXTURE.BAG_BAR);
     this.loadAtlas(TEXTURE.BAG1, 'ui', TEXTURE.BAG1, ANIMATION.BAG1);
     this.loadAtlas(TEXTURE.BAG2, 'ui', TEXTURE.BAG2, ANIMATION.BAG2);
     this.loadAtlas(TEXTURE.BAG3, 'ui', TEXTURE.BAG3, ANIMATION.BAG3);
@@ -169,6 +170,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.BOXBALL_002, 'ui/box', TEXTURE.BOXBALL_002);
     this.loadImage(TEXTURE.BOXBALL_003, 'ui/box', TEXTURE.BOXBALL_003);
     this.loadImage(TEXTURE.BOXBALL_004, 'ui/box', TEXTURE.BOXBALL_004);
+
+    this.loadImage(TEXTURE.SYMBOL, 'ui', TEXTURE.SYMBOL);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
