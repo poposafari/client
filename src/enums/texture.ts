@@ -56,6 +56,7 @@ export const enum TEXTURE {
   GIRL_3_BACK = 'girl_3_back',
   GIRL_4_BACK = 'girl_4_back',
   ARROW = 'arrow',
+  ARROW_RED = 'arrow_r',
   BLACK = 'black',
   SEASON_0 = 'season_0',
   SEASON_1 = 'season_1',

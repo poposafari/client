@@ -144,6 +144,7 @@ export class LoadingScene extends BaseScene {
 
     this.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
 
+    this.loadImage(TEXTURE.ARROW_RED, 'ui', TEXTURE.ARROW_RED);
     this.loadImage(TEXTURE.ARROW_W_R, 'ui', TEXTURE.ARROW_W_R);
     this.loadImage(TEXTURE.ARROW_B_R, 'ui', TEXTURE.ARROW_B_R);
     this.loadImage(TEXTURE.ARROW_BOX, 'ui/box', TEXTURE.ARROW_BOX);
