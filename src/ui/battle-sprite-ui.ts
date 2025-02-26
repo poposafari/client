@@ -89,11 +89,11 @@ export class BattleSpriteUi extends Ui {
     }
   }
 
-  throwPokeball(item: PlayerItem) {
+  throwBerryOrPokeball(item: PlayerItem, type: 'berry' | 'pokeball') {
     this.startPlayerThrowAnimation();
 
     this.player.once('animationcomplete', async () => {
-      await this.startThrowItem(item);
+      await this.startThrowItem(item, type);
     });
   }
 
@@ -116,7 +116,7 @@ export class BattleSpriteUi extends Ui {
     this.player.setFrame(0);
   }
 
-  private async startThrowItem(item: PlayerItem) {
+  private async startThrowItem(item: PlayerItem, type: 'berry' | 'pokeball') {
     const startX = this.fixedStartItemPosX;
     const startY = this.fixedStartItemPosY;
     const endX = this.fixedEndItemPosX - 50;
@@ -126,10 +126,14 @@ export class BattleSpriteUi extends Ui {
 
     this.throwItem.setVisible(true);
 
-    this.throwItem.anims.play({
-      key: `${item.getKey()}_launch`,
-      repeat: 0,
-    });
+    if (type === 'pokeball') {
+      this.throwItem.anims.play({
+        key: `${item.getKey()}_launch`,
+        repeat: 0,
+      });
+    } else {
+      this.throwItem.setTexture(`item${item.getKey()}`);
+    }
 
     this.scene.tweens.add({
       targets: this.throwItem,
@@ -147,20 +151,30 @@ export class BattleSpriteUi extends Ui {
       onComplete: async () => {
         this.resetPlayerAnimation();
         this.throwItem.setVisible(false);
-        await this.startEnterItemAnimation(item);
-        await delay(this.scene, 500);
-        await this.startDropItemAnimation(item);
-        await delay(this.scene, 1000);
 
-        //TODO: 서버로부터 포획 성공 여부와 도망여부를 받는다.(반환은 0<=cnt<=3로 받는다. isRun boolean 값을 받는다.)
-        const testCnt = 2;
-        const isRun = false;
-        await this.startShakeItemAnimation(item, testCnt);
-        await this.startExitItemAnimation(item, testCnt, isRun);
-        await delay(this.scene, 1000);
-        await this.startCatchItemAnimation(testCnt, isRun);
+        if (type === 'pokeball') await this.startPokeballAnimation(item);
+        else await this.startBerryAnimation(item);
       },
     });
+  }
+
+  private async startPokeballAnimation(item: PlayerItem) {
+    await this.startEnterItemAnimation(item);
+    await delay(this.scene, 500);
+    await this.startDropItemAnimation(item);
+    await delay(this.scene, 1000);
+
+    //TODO: 서버로부터 포획 성공 여부와 도망여부를 받는다.(반환은 0<=cnt<=3로 받는다. isRun boolean 값을 받는다.)
+    const testCnt = 2;
+    const isRun = false;
+    await this.startShakeItemAnimation(item, testCnt);
+    await this.startExitItemAnimation(item, testCnt, isRun);
+    await delay(this.scene, 1000);
+    await this.startCatchItemAnimation(testCnt, isRun);
+  }
+
+  private async startBerryAnimation(item: PlayerItem) {
+    console.log(item);
   }
 
   private async startEnterItemAnimation(item: PlayerItem) {

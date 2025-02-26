@@ -184,10 +184,10 @@ export class SafariListUi extends Ui {
             }
             break;
           case KEY.CANCEL:
+            this.safariDummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
-            this.safariDummys[choice].setTexture(TEXTURE.BLANK);
             this.renderPage(1);
             break;
           default:

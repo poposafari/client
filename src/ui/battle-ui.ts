@@ -166,7 +166,13 @@ export class BattleUi extends Ui {
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_POKEBALL, data.getKey() as PlayerItem);
         this.battleMenuPokeballUi.clean();
         this.battleMenuUi.clean();
-        this.battleSpriteUi.throwPokeball(data as PlayerItem);
+        this.battleSpriteUi.throwBerryOrPokeball(data as PlayerItem, 'pokeball');
+        this.unblock();
+        break;
+      case BATTLE_STATUS.THROW_BERRY:
+        this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_BERRY, data.getKey() as PlayerItem);
+        this.battleMenuUi.clean();
+        this.battleSpriteUi.throwBerryOrPokeball(data as PlayerItem, 'berry');
         this.unblock();
         break;
       case BATTLE_STATUS.CATCH_SUCCESS:
