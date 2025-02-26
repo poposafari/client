@@ -114,10 +114,9 @@ export class BattleMenuBerryUi extends Ui {
             break;
           case KEY.SELECT:
             const target = this.berries[choice + this.start];
-            console.log(target);
-            // this.dummys[choice].setTexture(TEXTURE.BLANK);
-            // this.clean();
-            // this.battleUi.checkCurrentStatus(BATTLE_STATUS.THROW_POKEBALL, target);
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
+            this.clean();
+            this.battleUi.checkCurrentStatus(BATTLE_STATUS.THROW_BERRY, target);
             return;
           case KEY.CANCEL:
             this.dummys[choice].setTexture(TEXTURE.BLANK);
