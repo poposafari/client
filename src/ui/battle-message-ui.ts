@@ -79,6 +79,7 @@ export class BattleMessageUi extends Ui {
       case BATTLE_STATUS.RUN_PLAYER:
         text = playerInfo.getNickname() + i18next.t('message:battle_run');
         break;
+      case BATTLE_STATUS.THROW_BERRY:
       case BATTLE_STATUS.THROW_POKEBALL:
         text = playerInfo.getNickname() + i18next.t('message:battle_thinking1') + '\n' + i18next.t(`item:${target}.name`) + i18next.t('message:battle_use');
         break;
