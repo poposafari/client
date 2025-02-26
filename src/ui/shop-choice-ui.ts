@@ -8,21 +8,24 @@ import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { NpcObject } from '../object/npc-object';
+import { Item } from '../data/items';
+import { ShopUi } from './shop-ui';
 
 export interface BuyInfo {
   npc: NpcObject;
-  item: string;
-  cost: number;
+  item: Item;
 }
 
 export class ShopChoiceUi extends Ui {
   private mode: OverworldMode;
+  private shopUi!: ShopUi;
+
   private container!: Phaser.GameObjects.Container;
   private npc!: NpcObject;
   private choice: number = 1;
   private cost!: number;
   private resultCost!: number;
-  private item!: string;
+  private item!: Item;
 
   private inBagText!: Phaser.GameObjects.Text;
   private countText!: Phaser.GameObjects.Text;
@@ -31,16 +34,17 @@ export class ShopChoiceUi extends Ui {
   private readonly minChoice: number = 1;
   private readonly maxChoice: number = 99;
 
-  constructor(scene: InGameScene, mode: OverworldMode) {
+  constructor(scene: InGameScene, mode: OverworldMode, shopUi: ShopUi) {
     super(scene);
     this.mode = mode;
+    this.shopUi = shopUi;
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.scene.add.container(width / 2 - 85, height / 2);
+    this.container = this.scene.add.container(width / 2, height / 2);
 
     const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_7, -360, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
     const costWindow = addWindow(this.scene, TEXTURE.WINDOW_7, -30, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
@@ -70,12 +74,11 @@ export class ShopChoiceUi extends Ui {
 
   show(data?: BuyInfo): void {
     if (data) {
-      this.cost = data.cost;
       this.npc = data.npc;
       this.item = data.item;
     }
 
-    this.choice = 0;
+    this.choice = this.minChoice;
     this.resultCost = 0;
     this.renderText();
 
@@ -119,21 +122,19 @@ export class ShopChoiceUi extends Ui {
           case KEY.SELECT:
             this.clean();
             const bag = this.mode.getBag();
-            const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'question', 'welcome', i18next.t(`item:${this.item}.name`) + `x${this.choice}\n`));
+            const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'question', 'welcome', i18next.t(`item:${this.item.key}.name`) + `x${this.choice}\n`));
             if (messageResult) {
               if (this.useMoney(this.resultCost)) {
-                bag?.addItems(this.item, this.choice);
+                bag?.addItems(this.item.key, this.choice);
                 const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'success'));
               } else {
                 const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc002', 'talk', 'reject'));
               }
             }
-            this.mode.popUiStack();
             break;
           case KEY.CANCEL:
             this.clean();
-            this.mode.popUiStack();
-
+            this.shopUi.pause(false);
             break;
         }
       } catch (error) {
@@ -158,7 +159,7 @@ export class ShopChoiceUi extends Ui {
   }
 
   private renderText() {
-    this.resultCost = this.choice * this.cost;
+    this.resultCost = this.choice * this.item.price;
     this.countText.setText(this.choice.toString());
     this.costText.setText(this.resultCost.toString());
   }
