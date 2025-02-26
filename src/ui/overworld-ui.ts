@@ -410,7 +410,7 @@ export class OverworldUi extends Ui {
         return;
       case 'npc002':
         this.mode.pauseOverworldSystem(true);
-        this.mode.addUiStackOverlap('ShopListUi', npcObj);
+        this.mode.addUiStackOverlap('ShopUi', npcObj);
         return;
     }
   }

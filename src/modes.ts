@@ -18,13 +18,12 @@ import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { Location, PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { SafariListUi } from './ui/safari-list-ui';
-import { ShopListUi } from './ui/shop-list-ui.ts';
-import { ShopChoiceUi } from './ui/shop-choice-ui';
 import { OverworldInfo } from './storage/overworld-info';
 import { BattleUi } from './ui/battle-ui';
 import { PokeBoxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
 import { BagUi } from './ui/bag-ui';
+import { ShopUi } from './ui/shop-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -167,10 +166,9 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldItemSlotUi(this.scene, this));
     this.uis.push(new SafariListUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new ShopListUi(this.scene, this));
-    this.uis.push(new ShopChoiceUi(this.scene, this));
     this.uis.push(new BattleUi(this.scene, this));
     this.uis.push(new PokeBoxUi(this.scene, this));
+    this.uis.push(new ShopUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
