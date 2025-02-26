@@ -229,7 +229,7 @@ export class PlayerObject extends MovableObject {
 
   useItem(item: string) {
     switch (item) {
-      case '005':
+      case '046':
         return this.setStatus(PLAYER_STATUS.RIDE);
     }
   }
