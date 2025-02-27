@@ -1,105 +1,99 @@
 import i18next from 'i18next';
-import { getAllSafaris, safariData, SafariData } from '../data/overworld';
+import { getAllSafaris, SafariData } from '../data/overworld';
 import { DEPTH } from '../enums/depth';
+import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
+import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
+import { NpcObject } from '../object/npc-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { KEY } from '../enums/key';
-import { KeyboardManager } from '../managers';
-import { NpcObject } from '../object/npc-object';
 
 export class SafariListUi extends Ui {
   private mode: OverworldMode;
-  private container!: Phaser.GameObjects.Container;
+  private npc!: NpcObject;
   private safaris!: SafariData[];
-  private taxiNpc!: NpcObject;
-  private lastChoice!: number | null;
-  private lastPage!: number | null;
+  private start!: number;
 
-  private safariWindow!: Phaser.GameObjects.NineSlice;
-  private safariWindowHeight!: number;
-  private safariNames: Phaser.GameObjects.Text[] = [];
-  private safariTicketCosts: Phaser.GameObjects.Text[] = [];
-  private safariTicketIcons: Phaser.GameObjects.Image[] = [];
-  private safariDummys: Phaser.GameObjects.Image[] = [];
+  private container!: Phaser.GameObjects.Container;
+  private listContainer!: Phaser.GameObjects.Container;
+  private descContainer!: Phaser.GameObjects.Container;
 
-  private yourStockWindow!: Phaser.GameObjects.NineSlice;
-  private yourStockText!: Phaser.GameObjects.Text;
+  private arrowUp!: Phaser.GameObjects.Image;
+  private arrowDown!: Phaser.GameObjects.Image;
 
-  private pageWindow!: Phaser.GameObjects.NineSlice;
-  private pageText!: Phaser.GameObjects.Text;
+  private window!: Phaser.GameObjects.NineSlice;
+  private names: Phaser.GameObjects.Text[] = [];
+  private icons: Phaser.GameObjects.Image[] = [];
+  private dummys: Phaser.GameObjects.Image[] = [];
+  private costs: Phaser.GameObjects.Text[] = [];
 
-  private spawnTypesWindow!: Phaser.GameObjects.NineSlice;
-  private spawnTypesTexts: Phaser.GameObjects.Text[] = [];
+  private yourTicketWindow!: Phaser.GameObjects.NineSlice;
+  private stock!: Phaser.GameObjects.Text;
 
-  private readonly fixedTopY: number = -400;
-  private readonly ListPerPage: number = 13;
-  private readonly safariWindowWidth: number = 400;
-  private readonly spawnTypesWindowWidth: number = 100;
-  private readonly scale: number = 2;
+  private descWindow!: Phaser.GameObjects.NineSlice;
+  private spawnTypes: Phaser.GameObjects.Image[] = [];
+
+  private readonly scale: number = 4;
+  private readonly ITEMS_PER_PAGE = 8;
+  private readonly contentHeight: number = 60;
+  private readonly contentSpacing: number = 5;
+  private readonly windowWidth = 350;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
+
     this.mode = mode;
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
-    const contentHeight = 50;
-    const spacing = 5;
-    const bag = this.mode.getBag();
-
-    this.lastChoice = null;
-    this.lastPage = null;
-
-    this.container = this.scene.add.container(width / 2 + 280, height / 2);
 
     this.safaris = getAllSafaris();
-    this.safariWindowHeight = this.safaris.length * (contentHeight + spacing);
 
-    this.safariWindow = addWindow(
-      this.scene,
-      TEXTURE.WINDOW_5,
-      0,
-      this.fixedTopY + this.safariWindowHeight / this.scale,
-      this.safariWindowWidth / this.scale,
-      this.safariWindowHeight / this.scale,
-      16,
-      16,
-      16,
-      16,
-    ).setScale(this.scale);
+    this.container = this.scene.add.container(width / 2 + 250, height / 2 - 100);
+    this.listContainer = this.scene.add.container(0, 0);
+    this.descContainer = this.scene.add.container(+300, -95);
 
-    this.pageWindow = addWindow(this.scene, TEXTURE.WINDOW_5, +140, this.fixedTopY - contentHeight + 15, 60, contentHeight / this.scale + 5, 16, 16, 16, 16).setScale(this.scale);
-    this.pageText = addText(this.scene, +120, this.fixedTopY - contentHeight + 15, '1/10', TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
+    this.arrowUp = addImage(this.scene, TEXTURE.ARROW_RED, +170, -115).setFlipY(true);
+    this.arrowDown = addImage(this.scene, TEXTURE.ARROW_RED, +170, +375);
+    this.arrowUp.setScale(1.4).setVisible(false);
+    this.arrowDown.setScale(1.4).setVisible(false);
 
-    this.yourStockWindow = addWindow(this.scene, TEXTURE.WINDOW_5, -63, this.fixedTopY - contentHeight + 15, 138, contentHeight / this.scale + 5, 16, 16, 16, 16).setScale(this.scale);
-    this.yourStockText = addText(this.scene, -63, this.fixedTopY - contentHeight + 15, ``, TEXTSTYLE.OVERWORLD_LIST);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 0, 0, 8, 8, 8, 8).setScale(this.scale);
+    const yourTicketTitle = addText(this.scene, -50, -180, i18next.t(`menu:yourTickets`), TEXTSTYLE.ITEM_LIST);
+    this.stock = addText(this.scene, +70, -180, '3', TEXTSTYLE.ITEM_LIST);
+    this.yourTicketWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, -180, 86, 20, 8, 8, 8, 8).setScale(this.scale);
 
-    this.spawnTypesWindow = addWindow(this.scene, TEXTURE.WINDOW_5, +305, this.fixedTopY + contentHeight / 2, this.spawnTypesWindowWidth, contentHeight / 2, 16, 16, 16, 16).setScale(this.scale);
+    this.descWindow = addWindow(this.scene, TEXTURE.WINDOW_1, +300, -180, 60, 20, 8, 8, 8, 8).setScale(this.scale);
+    const spawnTypesTitle = addText(this.scene, +300, -180, i18next.t('menu:typeTitle'), TEXTSTYLE.ITEM_LIST);
 
-    const spawnTypesTitle = addText(this.scene, +305, this.fixedTopY + contentHeight / 2, i18next.t('menu:typeTitle'), TEXTSTYLE.OVERWORLD_LIST);
-
-    this.container.add(this.safariWindow);
-    this.container.add(this.pageWindow);
-    this.container.add(this.pageText);
-    this.container.add(this.spawnTypesWindow);
-    this.container.add(this.yourStockWindow);
-    this.container.add(this.yourStockText);
+    this.container.add(this.window);
+    this.container.add(this.listContainer);
+    this.container.add(this.arrowUp);
+    this.container.add(this.arrowDown);
+    this.container.add(this.yourTicketWindow);
+    this.container.add(yourTicketTitle);
+    this.container.add(this.stock);
+    this.container.add(this.descWindow);
     this.container.add(spawnTypesTitle);
+    this.container.add(this.descContainer);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE);
     this.container.setScrollFactor(0);
-
-    this.renderPage(1);
   }
 
-  show(data?: any): void {
-    this.taxiNpc = data;
+  show(data?: NpcObject): void {
+    if (data) this.npc = data;
+
+    this.start = 0;
+
+    this.renderYourTickets();
+    this.renderWindow();
+
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -118,96 +112,71 @@ export class SafariListUi extends Ui {
   private block() {}
 
   private unblock() {
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const keyboardManager = KeyboardManager.getInstance();
 
-    let start = 0;
-    let end = this.ListPerPage - 1;
-    let choice = this.lastChoice ? this.lastChoice : start;
-    let currentPage = this.lastPage ? this.lastPage : 1;
-    const totalPages = Math.ceil(this.safaris.length / this.ListPerPage);
-    const globalChoice = (currentPage - 1) * this.ListPerPage + choice;
+    let choice = 0;
+    this.start = 0;
 
-    this.safariDummys[globalChoice].setTexture(TEXTURE.ARROW_W_R);
-    this.renderSpawnTypes(globalChoice, currentPage);
-    this.renderYourTickets();
+    this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
 
     keyboardManager.setAllowKey(keys);
     keyboardManager.setKeyDownCallback(async (key) => {
-      const prevChoice = choice;
-      const prevPage = currentPage;
+      let prevChoice = choice;
 
       try {
         switch (key) {
           case KEY.UP:
-            if (choice > start) choice--;
+            if (choice > 0) {
+              choice--;
+            } else if (this.start > 0) {
+              prevChoice = 1;
+              this.start--;
+              this.renderWindow();
+            }
             break;
           case KEY.DOWN:
-            if (choice < end && choice < this.safaris.length - 1 - (currentPage - 1) * this.ListPerPage) {
+            if (choice < Math.min(this.ITEMS_PER_PAGE, this.safaris.length) - 1) {
               choice++;
-            }
-            break;
-          case KEY.LEFT:
-            if (currentPage > 1) {
-              currentPage--;
-            }
-            break;
-          case KEY.RIGHT:
-            if (currentPage < totalPages) {
-              currentPage++;
+            } else if (this.start + this.ITEMS_PER_PAGE < this.safaris.length) {
+              prevChoice = this.ITEMS_PER_PAGE - 2;
+              this.start++;
+              this.renderWindow();
             }
             break;
           case KEY.SELECT:
-            if (this.safaris.length <= 0) return;
-            const globalChoice = (currentPage - 1) * this.ListPerPage + choice;
-            const targetSafari = this.safaris[globalChoice];
+            const target = this.safaris[choice + this.start];
             this.clean();
-            const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'question', 'welcome', i18next.t(`menu:overworld_${targetSafari.key}`)));
+            const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'question', 'welcome', i18next.t(`menu:overworld_${target.key}`)));
             if (!messageResult) {
-              const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'talk', 'sorry'));
+              const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'talk', 'sorry'));
               this.mode.popUiStack();
-              this.safariDummys[(currentPage - 1) * this.ListPerPage + choice].setTexture(TEXTURE.BLANK);
-              this.renderPage(1);
+              this.dummys[choice].setTexture(TEXTURE.BLANK);
+              this.start = 0;
             } else {
-              if (!this.validateTicket(targetSafari.cost)) {
-                const messageResult = await this.mode.startMessage(this.taxiNpc.reactionScript('npc000', 'talk', 'reject'));
-                this.show(this.taxiNpc);
+              if (!this.validateTicket(target.cost)) {
+                const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'talk', 'reject'));
+                this.show(this.npc);
               } else {
-                // console.log('결제 완!');
-                // console.log(targetSafari.key);
-                this.useTicket(targetSafari.cost);
+                this.useTicket(target.cost);
                 this.mode.pauseOverworldSystem(false);
                 this.clean();
                 this.mode.popUiStack();
-                this.mode.updateOverworld(targetSafari.key);
+                this.mode.updateOverworld(target.key);
               }
             }
             break;
           case KEY.CANCEL:
-            this.safariDummys[choice].setTexture(TEXTURE.BLANK);
+            this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
-            this.renderPage(1);
-            break;
-          default:
-            console.error(`Unhandled key: ${key}`);
             break;
         }
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
-            this.safariDummys[prevChoice].setTexture(TEXTURE.BLANK);
-            this.safariDummys[choice].setTexture(TEXTURE.ARROW_W_R);
-            this.renderSpawnTypes(choice, currentPage);
-          }
-        }
-        if (key === KEY.LEFT || key === KEY.RIGHT) {
-          if (currentPage !== prevPage) {
-            this.renderPage(currentPage);
-            choice = 0;
-            this.safariDummys[choice].setTexture(TEXTURE.ARROW_W_R);
-            this.updatePageText(currentPage);
-            this.renderSpawnTypes(choice, currentPage);
+            this.renderSpawnTypes(choice);
+            this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+            this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
           }
         }
       } catch (error) {
@@ -216,87 +185,60 @@ export class SafariListUi extends Ui {
     });
   }
 
-  private renderPage(page: number) {
-    const startIdx = (page - 1) * this.ListPerPage;
-    const endIdx = Math.min(startIdx + this.ListPerPage, this.safaris.length);
+  private cleanWindow() {
+    if (this.listContainer) {
+      this.listContainer.removeAll(true);
+    }
 
-    this.cleanPage();
+    this.names.forEach((text) => text.destroy());
+    this.costs.forEach((text) => text.destroy());
+    this.icons.forEach((image) => image.destroy());
+    this.dummys.forEach((image) => image.destroy());
 
-    const contentHeight = 50;
-    const spacing = 5;
-    const totalCnt = endIdx - startIdx;
-    const calcHeight = (totalCnt * (contentHeight + spacing)) / this.scale;
-    this.safariWindow.setSize(this.safariWindowWidth / this.scale, calcHeight);
-    this.safariWindow.setPosition(0, this.fixedTopY + calcHeight);
+    this.names = [];
+    this.costs = [];
+    this.icons = [];
+    this.dummys = [];
+  }
+
+  private renderWindow() {
+    const point = 430;
+    const calcHeight = (this.ITEMS_PER_PAGE * (this.contentHeight + this.contentSpacing)) / this.scale;
 
     let currentY = 0;
 
-    for (let i = startIdx; i < endIdx; i++) {
-      const safari = this.safaris[i];
-      const name = addText(this.scene, -160, this.fixedTopY + currentY + 25, i18next.t(`menu:overworld_${safari.key}`), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
-      const cost = addText(this.scene, +145, this.fixedTopY + currentY + 25, 'x' + safari.cost.toString(), TEXTSTYLE.OVERWORLD_LIST).setOrigin(0, 0.5);
-      const icon = addImage(this.scene, 'item030', +120, this.fixedTopY + currentY + 25);
-      const dummy = addImage(this.scene, TEXTURE.BLANK, -175, this.fixedTopY + currentY + 25).setScale(1.8);
+    this.cleanWindow();
 
-      this.safariNames.push(name);
-      this.safariTicketCosts.push(cost);
-      this.safariTicketIcons.push(icon);
-      this.safariDummys.push(dummy);
+    this.window.setSize(this.windowWidth / this.scale, calcHeight);
+    this.window.setPosition(0, calcHeight);
 
-      currentY += contentHeight + spacing;
+    if (this.start <= 0) this.arrowUp.setVisible(false);
+    if (this.start > 0) this.arrowUp.setVisible(true);
+
+    if (this.start + this.ITEMS_PER_PAGE >= this.safaris.length) this.arrowDown.setVisible(false);
+    else this.arrowDown.setVisible(true);
+
+    const visibleSafaris = this.safaris.slice(this.start, this.start + this.ITEMS_PER_PAGE);
+
+    for (const safari of visibleSafaris) {
+      const additionalCalc = point - this.ITEMS_PER_PAGE * (this.contentHeight + this.contentSpacing);
+      const name = addText(this.scene, -140, currentY + additionalCalc, i18next.t(`menu:overworld_${safari.key}`), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
+      const cost = addText(this.scene, +125, currentY + additionalCalc, 'x' + safari.cost.toString(), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
+      const icon = addImage(this.scene, 'item030', +100, currentY + additionalCalc);
+      const dummy = addImage(this.scene, TEXTURE.BLANK, -150, currentY + additionalCalc).setScale(1.2);
+
+      this.names.push(name);
+      this.costs.push(cost);
+      this.icons.push(icon);
+      this.dummys.push(dummy);
+
+      this.listContainer.add(name);
+      this.listContainer.add(cost);
+      this.listContainer.add(icon);
+      this.listContainer.add(dummy);
+
+      currentY += this.contentHeight + this.contentSpacing;
     }
-
-    this.container.add(this.safariNames);
-    this.container.add(this.safariTicketCosts);
-    this.container.add(this.safariTicketIcons);
-    this.container.add(this.safariDummys);
-
-    this.updatePageText(page);
-  }
-
-  private cleanPage() {
-    this.safariNames.forEach((name) => name.destroy());
-    this.safariTicketCosts.forEach((cost) => cost.destroy());
-    this.safariTicketIcons.forEach((icon) => icon.destroy());
-    this.safariDummys.forEach((dummy) => dummy.destroy());
-
-    this.safariNames = [];
-    this.safariTicketCosts = [];
-    this.safariTicketIcons = [];
-    this.safariDummys = [];
-  }
-
-  private updatePageText(currentPage: number): void {
-    const totalPages = Math.ceil(this.safaris.length / this.ListPerPage);
-    this.pageText.setText(`${currentPage}/${totalPages}`);
-  }
-
-  private renderSpawnTypes(choice: number, page: number) {
-    const globalChoice = (page - 1) * this.ListPerPage + choice;
-
-    this.spawnTypesTexts.forEach((text) => {
-      text.destroy();
-    });
-    this.spawnTypesTexts = [];
-
-    const contentHeight = 50;
-    const spacing = 5;
-    const totalCnt = this.safaris[globalChoice].spawnTypes.length;
-    const calcHeight = (totalCnt * (contentHeight + spacing)) / this.scale;
-    this.spawnTypesWindow.setSize(this.spawnTypesWindowWidth, calcHeight + (contentHeight + spacing) / this.scale);
-    this.spawnTypesWindow.setPosition(+305, this.fixedTopY + calcHeight + (contentHeight + spacing) / this.scale);
-
-    let currentY = contentHeight + spacing;
-
-    this.safaris[globalChoice].spawnTypes.forEach((value) => {
-      const text = addText(this.scene, +305, this.fixedTopY + currentY + 25, i18next.t(`menu:type${value}`), TEXTSTYLE.OVERWORLD_LIST);
-
-      this.spawnTypesTexts.push(text);
-
-      currentY += contentHeight + spacing;
-    });
-
-    this.container.add(this.spawnTypesTexts);
   }
 
   private renderYourTickets() {
@@ -306,7 +248,32 @@ export class SafariListUi extends Ui {
 
     if (ticket) stock = ticket.getStock();
 
-    this.yourStockText.setText(i18next.t('menu:yourTickets') + stock);
+    this.stock.setText(stock.toString());
+  }
+
+  private renderSpawnTypes(choice: number) {
+    const globalChoice = choice + this.start;
+    const contentHeight = 70;
+    const spacing = 5;
+
+    let currentY = 0;
+
+    this.cleanSpawnTypes();
+
+    this.safaris[globalChoice].spawnTypes.forEach((value) => {
+      const image = addImage(this.scene, TEXTURE.TYPES, 0, currentY).setScale(2.5);
+      image.setTexture(TEXTURE.TYPES, `types-${value}`);
+
+      currentY += contentHeight + spacing;
+
+      this.descContainer.add(image);
+    });
+  }
+
+  private cleanSpawnTypes() {
+    if (this.descContainer) {
+      this.descContainer.removeAll(true);
+    }
   }
 
   private validateTicket(cost: number): boolean {

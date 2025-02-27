@@ -17,13 +17,13 @@ import { Bag } from './storage/bag';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { Location, PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
-import { SafariListUi } from './ui/safari-list-ui';
 import { OverworldInfo } from './storage/overworld-info';
 import { BattleUi } from './ui/battle-ui';
 import { PokeBoxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
 import { BagUi } from './ui/bag-ui';
 import { ShopUi } from './ui/shop-ui';
+import { SafariListUi } from './ui/safari-list-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {

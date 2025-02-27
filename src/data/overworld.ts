@@ -49,6 +49,86 @@ const initialSafari: Record<string, SafariData> = {
     },
     area: 'field',
   },
+  '013': {
+    key: '013',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '014': {
+    key: '014',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '015': {
+    key: '015',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '016': {
+    key: '016',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '017': {
+    key: '017',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '018': {
+    key: '018',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '019': {
+    key: '019',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '020': {
+    key: '020',
+    cost: 4,
+    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON, TYPE.FIRE],
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
 };
 
 export const safariData = new Proxy(initialSafari, {

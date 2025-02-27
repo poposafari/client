@@ -2,7 +2,7 @@ import { TranslationDefault } from '../../interface/locales';
 
 export const menu: TranslationDefault = {
   captureDate: '포획 날짜',
-  typeTitle: '<출현 타입>',
+  typeTitle: '출현 타입',
   type0: '???',
   type1: '불',
   type2: '물',
