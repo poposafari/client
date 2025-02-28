@@ -150,6 +150,7 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.PLAYER_RIDE:
       return 11;
     case ANIMATION.TYPES:
+    case ANIMATION.TYPES_1:
       return 17;
     case ANIMATION.POKEMON_CALL:
     case ANIMATION.POKEMON_RECALL:
@@ -198,6 +199,7 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.OVERWORLD_LIST:
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
     case TEXTSTYLE.BOX_CAPTURE_VALUE:
+    case TEXTSTYLE.BATTLE_NAME:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
@@ -297,6 +299,20 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.BATTLE_MENU:
       config.fontSize = '90px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.BATTLE_NAME:
+      config.fontSize = '90px';
+      config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.GENDER_0:
+      config.fontSize = '70px';
+      config.color = '#53a8fc';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.GENDER_1:
+      config.fontSize = '70px';
+      config.color = '#fc5353';
+      config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
       config.fontSize = '80px';
