@@ -63,4 +63,5 @@ export const menu: TranslationDefault = {
   addParty: '파티에 추가',
   removeParty: '파티에서 제외',
   followPet: '동행 포켓몬',
+  emptyParty: '파티가 비어있습니다.',
 };

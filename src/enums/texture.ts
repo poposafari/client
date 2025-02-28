@@ -102,6 +102,7 @@ export const enum TEXTURE {
   FINGER_RED = 'finger_red',
   BLANK = 'blank',
   TYPES = 'types',
+  TYPES_1 = 'types_1',
   SHINY = 'shiny',
   ARROW_W_R = 'arrow_w_r',
   ARROW_B_R = 'arrow_b_r',
@@ -124,6 +125,8 @@ export const enum TEXTURE {
   BOXBALL_003 = 'boxball_003',
   BOXBALL_004 = 'boxball_004',
   SYMBOL = 'symbol',
+  OWNED = 'owned',
+  ENEMY_BAR = 'enemy_bar',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

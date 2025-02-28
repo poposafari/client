@@ -18,7 +18,7 @@ const initial: Record<string, PokemonInfo> = {
   '003': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.GRASS, type2: TYPE.POISON, size: 3 },
   '004': { rank: POKEMON_RANK.NORMAL, nextEvole: '005', type1: TYPE.FIRE, type2: null, size: 1 },
   '005': { rank: POKEMON_RANK.NORMAL, nextEvole: '006', type1: TYPE.FIRE, type2: null, size: 2 },
-  '006': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.FIRE, type2: TYPE.FLYING, size: 3 },
+  '006': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.FIRE, type2: TYPE.FLYING, size: 4 },
   '007': { rank: POKEMON_RANK.NORMAL, nextEvole: '008', type1: TYPE.WATER, type2: null, size: 1 },
   '008': { rank: POKEMON_RANK.NORMAL, nextEvole: '009', type1: TYPE.WATER, type2: null, size: 2 },
   '009': { rank: POKEMON_RANK.NORMAL, nextEvole: null, type1: TYPE.WATER, type2: null, size: 3 },
