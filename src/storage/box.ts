@@ -36,4 +36,8 @@ export class Box {
   cleanMyPokemons() {
     this.mypokemons.clear();
   }
+
+  hasPokemon(pokedex: string) {
+    return this.mypokemons.get(pokedex);
+  }
 }

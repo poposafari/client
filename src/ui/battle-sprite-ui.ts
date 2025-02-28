@@ -86,6 +86,7 @@ export class BattleSpriteUi extends Ui {
     } else if (size === 3) {
       this.enemy.setPosition(500, -200);
     } else {
+      this.enemy.setPosition(500, -220);
     }
   }
 
