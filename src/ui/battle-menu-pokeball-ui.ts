@@ -11,12 +11,16 @@ import { KeyboardManager } from '../managers';
 import { BATTLE_STATUS } from '../enums/battle-status';
 import { OverworldMode } from '../modes';
 import { BattleUi } from './battle-ui';
+import { BattleMenuDescUi } from './battle-menu-desc-ui';
 
 export class BattleMenuPokeballUi extends Ui {
   private mode: OverworldMode;
   private battleUi: BattleUi;
+  private battleMenuDescUi: BattleMenuDescUi;
 
   private container!: Phaser.GameObjects.Container;
+  private descContainer!: Phaser.GameObjects.Container;
+
   private window!: Phaser.GameObjects.NineSlice;
   private windowHeight!: number;
   private names: Phaser.GameObjects.Text[] = [];
@@ -35,13 +39,17 @@ export class BattleMenuPokeballUi extends Ui {
     super(scene);
     this.mode = mode;
     this.battleUi = battleUi;
+    this.battleMenuDescUi = new BattleMenuDescUi(scene, mode);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
+    this.battleMenuDescUi.setup();
+
     this.container = this.scene.add.container(width / 2 + 735, height / 2);
+    this.descContainer = this.scene.add.container(0, 0);
 
     this.window = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 0, 0, 16, 16, 16, 16).setScale(this.scale);
 
@@ -52,10 +60,11 @@ export class BattleMenuPokeballUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data?: PlayerItem): void {
     this.cleanWindow();
     const bag = this.mode.getBag();
     this.pokeballs = Object.values(bag?.getPockets(ITEM.POKEBALL)!);
+    this.battleMenuDescUi.show(this.pokeballs[0]);
 
     const point = 365;
     const calcHeight = (this.pokeballs.length * (this.contentHeight + this.contentSpacing)) / this.scale;
@@ -86,6 +95,7 @@ export class BattleMenuPokeballUi extends Ui {
   }
 
   clean(data?: any): void {
+    this.battleMenuDescUi.clean();
     this.cleanWindow();
     this.container.setVisible(false);
     this.pause(true);
@@ -141,6 +151,7 @@ export class BattleMenuPokeballUi extends Ui {
           if (choice !== prevChoice) {
             this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
             this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
+            this.battleMenuDescUi.updateDesc(this.pokeballs[choice]);
           }
         }
       } catch (error) {
