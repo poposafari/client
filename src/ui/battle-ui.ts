@@ -15,6 +15,7 @@ import { BattleSpriteUi } from './battle-sprite-ui';
 import { addBackground, delay, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
 import { Battle } from '../storage/battle';
 import { BattleMenuBerryUi } from './battle-menu-berry-ui';
+import { ITEM } from '../enums/item';
 
 export class BattleUi extends Ui {
   private mode: OverworldMode;
@@ -157,10 +158,12 @@ export class BattleUi extends Ui {
         this.unblock();
         break;
       case BATTLE_STATUS.MENU_POKEBALL:
-        this.battleMenuPokeballUi.show();
+        const firstItem = this.mode.getBag()?.getPockets(ITEM.POKEBALL);
+        console.log(firstItem);
+        this.battleMenuPokeballUi.show(data);
         break;
       case BATTLE_STATUS.MENU_BERRY:
-        this.battleMenuBerryUi.show();
+        this.battleMenuBerryUi.show(data);
         break;
       case BATTLE_STATUS.THROW_POKEBALL:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_POKEBALL, data.getKey() as PlayerItem);

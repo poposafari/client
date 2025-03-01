@@ -11,14 +11,17 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { BATTLE_STATUS } from '../enums/battle-status';
+import { BattleMenuDescUi } from './battle-menu-desc-ui';
 
 export class BattleMenuBerryUi extends Ui {
   private mode: OverworldMode;
   private battleUi: BattleUi;
+  private battleMenuDescUi: BattleMenuDescUi;
   private start!: number;
 
   private container!: Phaser.GameObjects.Container;
   private listContainer!: Phaser.GameObjects.Container;
+  private descContainer!: Phaser.GameObjects.Container;
 
   private window!: Phaser.GameObjects.NineSlice;
   private windowHeight!: number;
@@ -38,13 +41,17 @@ export class BattleMenuBerryUi extends Ui {
     super(scene);
     this.mode = mode;
     this.battleUi = battleUi;
+    this.battleMenuDescUi = new BattleMenuDescUi(scene, mode);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
+    this.battleMenuDescUi.setup();
+
     this.container = this.scene.add.container(width / 2 + 735, height / 2);
+    this.descContainer = this.scene.add.container(0, 0);
     this.listContainer = this.scene.add.container(0, 0);
 
     this.window = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 0, 0, 16, 16, 16, 16).setScale(this.scale);
@@ -61,12 +68,14 @@ export class BattleMenuBerryUi extends Ui {
     const bag = this.mode.getBag();
     if (bag) this.berries = Object.values(bag.getPockets(ITEM.BERRY));
 
+    this.battleMenuDescUi.show(this.berries[0]);
     this.start = 0;
     this.renderWindow();
     this.pause(false);
   }
 
   clean(data?: any): void {
+    this.battleMenuDescUi.clean();
     this.cleanWindow();
     this.container.setVisible(false);
     this.pause(true);
@@ -126,6 +135,7 @@ export class BattleMenuBerryUi extends Ui {
         }
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
+            this.battleMenuDescUi.show(this.berries[choice + this.start]);
             this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
             this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
           }
