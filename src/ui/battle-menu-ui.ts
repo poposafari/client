@@ -9,6 +9,7 @@ import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { BattleUi } from './battle-ui';
 import { BATTLE_STATUS } from '../enums/battle-status';
+import { ITEM } from '../enums/item';
 
 export class BattleMenuUi extends Ui {
   private mode: OverworldMode;
