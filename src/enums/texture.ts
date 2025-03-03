@@ -127,6 +127,7 @@ export const enum TEXTURE {
   SYMBOL = 'symbol',
   OWNED = 'owned',
   ENEMY_BAR = 'enemy_bar',
+  EMO = 'emo',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

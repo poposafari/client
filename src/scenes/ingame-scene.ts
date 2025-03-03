@@ -73,10 +73,23 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.GIRL_4_BACK, ANIMATION.GIRL_4_BACK);
 
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
+    createSpriteAnimation(this, TEXTURE.EMO, ANIMATION.EMO);
 
     this.initPlayerAnimation();
     this.initPokemonAnimation();
     this.initPokeballAnimation();
+    this.initEmotionAnimation();
+  }
+
+  private initEmotionAnimation() {
+    const texture = getSpriteFrames(this, TEXTURE.EMO, ANIMATION.EMO);
+    const line = 2;
+    for (let i = 1; i <= 4; i++) {
+      const emotionTexture = `emo_${i}`;
+      const emo = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 1]]];
+
+      createSpriteAnimation(this, emotionTexture, emotionTexture, emo[0]);
+    }
   }
 
   private initNpcAnimation() {
