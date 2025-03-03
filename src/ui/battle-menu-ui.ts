@@ -9,7 +9,6 @@ import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { BattleUi } from './battle-ui';
 import { BATTLE_STATUS } from '../enums/battle-status';
-import { ITEM } from '../enums/item';
 
 export class BattleMenuUi extends Ui {
   private mode: OverworldMode;
@@ -103,13 +102,13 @@ export class BattleMenuUi extends Ui {
             const target = this.menus[choice];
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             if (target === i18next.t('menu:battleSelect0')) {
-              this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU_POKEBALL);
+              this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU_POKEBALL);
               return;
             } else if (target === i18next.t('menu:battleSelect1')) {
-              this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU_BERRY);
+              this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU_BERRY);
               return;
             } else if (target === i18next.t('menu:battleSelect3')) {
-              this.battleUi.checkCurrentStatus(BATTLE_STATUS.RUN_PLAYER);
+              this.battleUi.handleBattleStatus(BATTLE_STATUS.RUN_PLAYER);
               return;
             }
             break;
@@ -126,4 +125,8 @@ export class BattleMenuUi extends Ui {
   }
 
   update(time: number, delta: number): void {}
+
+  onoffBerryMenu(onoff: boolean) {
+    this.texts[1].setAlpha(onoff ? 1 : 0.5);
+  }
 }

@@ -60,7 +60,7 @@ export class BattleMenuPokeballUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: PlayerItem): void {
+  show(): void {
     this.cleanWindow();
     const bag = this.mode.getBag();
     this.pokeballs = Object.values(bag?.getPockets(ITEM.POKEBALL)!);
@@ -139,12 +139,12 @@ export class BattleMenuPokeballUi extends Ui {
             const target = this.pokeballs[choice];
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.battleUi.checkCurrentStatus(BATTLE_STATUS.THROW_POKEBALL, target);
+            this.battleUi.handleBattleStatus(BATTLE_STATUS.THROW_POKEBALL, target);
             return;
           case KEY.CANCEL:
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU);
+            this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU);
             return;
         }
         if (key === KEY.UP || key === KEY.DOWN) {
