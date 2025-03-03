@@ -9,4 +9,5 @@ export enum BATTLE_STATUS {
   CATCH_SUCCESS,
   CATCH_FAIL,
   RUN_ENEMY,
+  FEED,
 }
