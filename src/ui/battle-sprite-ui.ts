@@ -17,11 +17,13 @@ export class BattleSpriteUi extends Ui {
 
   //container.
   private container!: Phaser.GameObjects.Container;
+  private emotionContainer!: Phaser.GameObjects.Container;
 
   //sprite.
   private enemy!: Phaser.GameObjects.Image;
   private player!: Phaser.GameObjects.Sprite;
   private throwItem!: Phaser.GameObjects.Sprite;
+  private heart!: Phaser.GameObjects.Sprite;
 
   private readonly fixedStartItemPosX: number = -300;
   private readonly fixedStartItemPosY: number = 100;
@@ -39,6 +41,14 @@ export class BattleSpriteUi extends Ui {
     const height = this.getHeight();
 
     this.container = this.scene.add.container(width / 2, height / 2);
+    this.emotionContainer = this.scene.add.container(width / 2, height / 2);
+    this.heart = createSprite(this.scene, TEXTURE.BLANK, 0, 0).setScale(2).setOrigin(0.5, 0);
+
+    this.emotionContainer.add(this.heart);
+
+    this.emotionContainer.setVisible(false);
+    this.emotionContainer.setScrollFactor(0);
+    this.emotionContainer.setDepth(DEPTH.BATTLE_UI + 6);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.BATTLE_UI + 4);
@@ -55,16 +65,22 @@ export class BattleSpriteUi extends Ui {
 
     const playerInfo = this.mode.getPlayerInfo();
     const playerBack = `${playerInfo?.getGender()}_${playerInfo?.getAvatar()}_back`;
+    const enemyTexture = `pokemon_sprite${data.pokedex}`;
+    const enemyHeight = getRealBounds(this.enemy, this.scene);
 
     this.player.setTexture(playerBack);
-    this.enemy.setTexture(`pokemon_sprite${data.pokedex}`);
+    this.enemy.setTexture(enemyTexture);
+
+    this.heart.setPosition(+500, enemyHeight.y - 350);
 
     this.adjustPokemonSpritePos(data.pokedex);
 
     this.container.setVisible(true);
+    this.emotionContainer.setVisible(true);
   }
 
   clean(data?: any): void {
+    this.emotionContainer.setVisible(false);
     this.container.setVisible(false);
 
     this.cleanSprite();
@@ -167,7 +183,7 @@ export class BattleSpriteUi extends Ui {
 
     //TODO: 서버로부터 포획 성공 여부와 도망여부를 받는다.(반환은 0<=cnt<=3로 받는다. isRun boolean 값을 받는다.)
     const testCnt = 2;
-    const isRun = false;
+    const isRun = true;
     await this.startShakeItemAnimation(item, testCnt);
     await this.startExitItemAnimation(item, testCnt, isRun);
     await delay(this.scene, 1000);
@@ -175,7 +191,10 @@ export class BattleSpriteUi extends Ui {
   }
 
   private async startBerryAnimation(item: PlayerItem) {
-    console.log(item);
+    this.battleUi.handleBattleStatus(BATTLE_STATUS.FEED, item);
+    this.cleanThrowItem();
+
+    this.showEmotion();
   }
 
   private async startEnterItemAnimation(item: PlayerItem) {
@@ -277,13 +296,13 @@ export class BattleSpriteUi extends Ui {
         this.throwItem.setVisible(false);
         this.cleanThrowItem();
         await delay(this.scene, 600);
-        this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_FAIL, isRun);
+        this.battleUi.handleBattleStatus(BATTLE_STATUS.CATCH_FAIL, isRun);
       },
     });
   }
 
   private async startRunAway(isRun: boolean) {
-    if (isRun) this.battleUi.checkCurrentStatus(BATTLE_STATUS.RUN_ENEMY);
+    if (isRun) this.battleUi.handleBattleStatus(BATTLE_STATUS.RUN_ENEMY);
   }
 
   private async startCatchItemAnimation(count: number, isRun: boolean) {
@@ -292,7 +311,7 @@ export class BattleSpriteUi extends Ui {
     this.throwItem.setTint(0x5a5a5a);
 
     await delay(this.scene, 600);
-    this.battleUi.checkCurrentStatus(BATTLE_STATUS.CATCH_SUCCESS);
+    this.battleUi.handleBattleStatus(BATTLE_STATUS.CATCH_SUCCESS);
   }
 
   private cleanSprite() {
@@ -315,5 +334,15 @@ export class BattleSpriteUi extends Ui {
     this.container.add(this.enemy);
     this.container.add(this.player);
     this.container.add(this.throwItem);
+  }
+
+  private showEmotion() {
+    this.heart.setTexture(`emo_2`);
+    this.heart.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
+    this.heart.anims.play({
+      key: 'emo_2',
+      repeat: 0,
+      frameRate: 10,
+    });
   }
 }

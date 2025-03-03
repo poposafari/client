@@ -9,6 +9,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, delay, getTextStyle, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { pokemonData } from '../data/pokemon';
+import { PlayerItem } from '../object/player-item';
 
 export interface BattleInfo {
   overworld: string;
@@ -37,6 +38,7 @@ export class BattleBaseUi extends Ui {
   private enemyInfoOwned!: Phaser.GameObjects.Image;
   private enemyInfoType1!: Phaser.GameObjects.Image;
   private enemyInfoType2!: Phaser.GameObjects.Image;
+  private enemyInfoFeed!: Phaser.GameObjects.Image;
 
   //player.
   private playerBase!: Phaser.GameObjects.Image;
@@ -68,6 +70,7 @@ export class BattleBaseUi extends Ui {
     this.enemyInfoOwned = addImage(this.scene, TEXTURE.OWNED, -235, +45).setOrigin(0.5, 0.5).setScale(2);
     this.enemyInfoType1 = addImage(this.scene, TEXTURE.BLANK, +120, -10).setScale(1.2);
     this.enemyInfoType2 = addImage(this.scene, TEXTURE.BLANK, +130 * 1.4, -10).setScale(1.2);
+    this.enemyInfoFeed = addImage(this.scene, TEXTURE.BLANK, -230, +120).setScale(1.5);
     this.enemyInfoContainer.add(this.enemyInfo);
     this.enemyInfoContainer.add(this.enemyInfoName);
     this.enemyInfoContainer.add(this.enemyInfoShiny);
@@ -75,6 +78,7 @@ export class BattleBaseUi extends Ui {
     this.enemyInfoContainer.add(this.enemyInfoOwned);
     this.enemyInfoContainer.add(this.enemyInfoType1);
     this.enemyInfoContainer.add(this.enemyInfoType2);
+    this.enemyInfoContainer.add(this.enemyInfoFeed);
 
     this.playerBase = addImage(this.scene, '', -400, +290).setScale(1.6);
     this.playerInfo = addImage(this.scene, TEXTURE.ENEMY_BAR, 0, 0).setOrigin(0.5, 0.5).setScale(2.4);
@@ -173,12 +177,21 @@ export class BattleBaseUi extends Ui {
   }
 
   clean(data?: any): void {
+    this.cleanFeedIcon();
     this.container.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}
 
   update(time: number, delta: number): void {}
+
+  updateFeedIcon(item: PlayerItem) {
+    this.enemyInfoFeed.setTexture(`item${item.getKey()}`);
+  }
+
+  cleanFeedIcon() {
+    this.enemyInfoFeed.setTexture(TEXTURE.BLANK);
+  }
 
   private cleanPartyInfoContainer() {
     if (this.partysInfoContainer) {

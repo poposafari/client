@@ -21,7 +21,6 @@ export class BattleMenuBerryUi extends Ui {
 
   private container!: Phaser.GameObjects.Container;
   private listContainer!: Phaser.GameObjects.Container;
-  private descContainer!: Phaser.GameObjects.Container;
 
   private window!: Phaser.GameObjects.NineSlice;
   private windowHeight!: number;
@@ -51,7 +50,6 @@ export class BattleMenuBerryUi extends Ui {
     this.battleMenuDescUi.setup();
 
     this.container = this.scene.add.container(width / 2 + 735, height / 2);
-    this.descContainer = this.scene.add.container(0, 0);
     this.listContainer = this.scene.add.container(0, 0);
 
     this.window = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 0, 0, 16, 16, 16, 16).setScale(this.scale);
@@ -64,7 +62,7 @@ export class BattleMenuBerryUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(): void {
     const bag = this.mode.getBag();
     if (bag) this.berries = Object.values(bag.getPockets(ITEM.BERRY));
 
@@ -125,12 +123,12 @@ export class BattleMenuBerryUi extends Ui {
             const target = this.berries[choice + this.start];
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.battleUi.checkCurrentStatus(BATTLE_STATUS.THROW_BERRY, target);
+            this.battleUi.handleBattleStatus(BATTLE_STATUS.THROW_BERRY, target);
             return;
           case KEY.CANCEL:
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.clean();
-            this.battleUi.checkCurrentStatus(BATTLE_STATUS.MENU);
+            this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU);
             return;
         }
         if (key === KEY.UP || key === KEY.DOWN) {
