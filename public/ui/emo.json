@@ -16,7 +16,7 @@
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
@@ -36,54 +36,54 @@
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
     "emo-2": {
       "frame": {
-        "x": 0,
-        "y": 34,
+        "x": 64,
+        "y": 0,
         "w": 32,
         "h": 34
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 34,
+        "x": 64,
+        "y": 0,
         "w": 32,
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
     "emo-3": {
       "frame": {
-        "x": 32,
-        "y": 34,
+        "x": 96,
+        "y": 0,
         "w": 32,
         "h": 34
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
-        "x": 32,
-        "y": 34,
+        "x": 96,
+        "y": 0,
         "w": 32,
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
     "emo-4": {
       "frame": {
         "x": 0,
-        "y": 68,
+        "y": 34,
         "w": 32,
         "h": 34
       },
@@ -91,19 +91,19 @@
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 68,
+        "y": 34,
         "w": 32,
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
     "emo-5": {
       "frame": {
         "x": 32,
-        "y": 68,
+        "y": 34,
         "w": 32,
         "h": 34
       },
@@ -111,17 +111,137 @@
       "trimmed": false,
       "spriteSourceSize": {
         "x": 32,
-        "y": 68,
+        "y": 34,
         "w": 32,
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
     "emo-6": {
       "frame": {
+        "x": 64,
+        "y": 34,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 64,
+        "y": 34,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-7": {
+      "frame": {
+        "x": 96,
+        "y": 34,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 96,
+        "y": 34,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-8": {
+      "frame": {
+        "x": 0,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-9": {
+      "frame": {
+        "x": 32,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-10": {
+      "frame": {
+        "x": 64,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 64,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-11": {
+      "frame": {
+        "x": 96,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 96,
+        "y": 68,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-12": {
+      "frame": {
         "x": 0,
         "y": 102,
         "w": 32,
@@ -136,11 +256,11 @@
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
         "h": 136
       }
     },
-    "emo-7": {
+    "emo-13": {
       "frame": {
         "x": 32,
         "y": 102,
@@ -156,7 +276,47 @@
         "h": 34
       },
       "sourceSize": {
-        "w": 64,
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-14": {
+      "frame": {
+        "x": 64,
+        "y": 102,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 64,
+        "y": 102,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 136
+      }
+    },
+    "emo-15": {
+      "frame": {
+        "x": 96,
+        "y": 102,
+        "w": 32,
+        "h": 34
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 96,
+        "y": 102,
+        "w": 32,
+        "h": 34
+      },
+      "sourceSize": {
+        "w": 128,
         "h": 136
       }
     }
@@ -167,7 +327,7 @@
     "image": "emo.png",
     "format": "RGBA8888",
     "size": {
-      "w": 64,
+      "w": 128,
       "h": 136
     },
     "scale": "1"

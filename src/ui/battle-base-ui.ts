@@ -10,6 +10,7 @@ import { addBackground, addImage, addText, delay, getTextStyle, runFlashEffect, 
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { pokemonData } from '../data/pokemon';
 import { PlayerItem } from '../object/player-item';
+import { EASE } from '../enums/ease';
 
 export interface BattleInfo {
   overworld: string;
@@ -186,7 +187,22 @@ export class BattleBaseUi extends Ui {
   update(time: number, delta: number): void {}
 
   updateFeedIcon(item: PlayerItem) {
+    this.enemyInfoFeed.setScale(0.1);
+    this.enemyInfoFeed.setAlpha(0);
+    this.enemyInfoFeed.setTintFill(0xffffff);
     this.enemyInfoFeed.setTexture(`item${item.getKey()}`);
+
+    this.scene.tweens.add({
+      targets: this.enemyInfoFeed,
+      scaleX: 2,
+      scaleY: 2,
+      alpha: 1,
+      duration: 300,
+      ease: EASE.LINEAR,
+      onComplete: async () => {
+        this.enemyInfoFeed.clearTint();
+      },
+    });
   }
 
   cleanFeedIcon() {
