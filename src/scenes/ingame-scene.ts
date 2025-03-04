@@ -74,6 +74,7 @@ export class InGameScene extends BaseScene {
 
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
     createSpriteAnimation(this, TEXTURE.EMO, ANIMATION.EMO);
+    createSpriteAnimation(this, TEXTURE.SPARKLE, ANIMATION.SPARKLE);
 
     this.initPlayerAnimation();
     this.initPokemonAnimation();

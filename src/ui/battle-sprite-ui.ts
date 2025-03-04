@@ -21,6 +21,7 @@ export class BattleSpriteUi extends Ui {
 
   //sprite.
   private enemy!: Phaser.GameObjects.Image;
+  private effect!: Phaser.GameObjects.Sprite;
   private player!: Phaser.GameObjects.Sprite;
   private throwItem!: Phaser.GameObjects.Sprite;
   private heart!: Phaser.GameObjects.Sprite;
@@ -44,7 +45,11 @@ export class BattleSpriteUi extends Ui {
     this.emotionContainer = this.scene.add.container(width / 2, height / 2);
     this.heart = createSprite(this.scene, TEXTURE.BLANK, 0, 0).setScale(2).setOrigin(0.5, 0);
 
+    this.effect = createSprite(this.scene, TEXTURE.BLANK, +500, -300).setOrigin(0.5, 0);
+    this.effect.setScale(6);
+
     this.emotionContainer.add(this.heart);
+    this.emotionContainer.add(this.effect);
 
     this.emotionContainer.setVisible(false);
     this.emotionContainer.setScrollFactor(0);
@@ -67,6 +72,8 @@ export class BattleSpriteUi extends Ui {
     const playerBack = `${playerInfo?.getGender()}_${playerInfo?.getAvatar()}_back`;
     const enemyTexture = `pokemon_sprite${data.pokedex}`;
     const enemyHeight = getRealBounds(this.enemy, this.scene);
+
+    this.startShinyEffect(data.pokedex);
 
     this.player.setTexture(playerBack);
     this.enemy.setTexture(enemyTexture);
@@ -364,6 +371,20 @@ export class BattleSpriteUi extends Ui {
       this.scene.time.delayedCall(800, () => {
         this.heart.setTexture(TEXTURE.BLANK);
       });
+    });
+  }
+
+  private startShinyEffect(pokedex: string) {
+    if (!isPokedexShiny(pokedex)) return;
+
+    this.effect.anims.play({
+      key: 'sparkle',
+      repeat: 0,
+      frameRate: 50,
+    });
+
+    this.effect.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.effect.setTexture(TEXTURE.BLANK);
     });
   }
 }

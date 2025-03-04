@@ -179,6 +179,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.OWNED, 'ui/battle', TEXTURE.OWNED);
     this.loadImage(TEXTURE.ENEMY_BAR, 'ui/battle', TEXTURE.ENEMY_BAR);
 
+    this.loadAtlas(TEXTURE.SPARKLE, 'ui', TEXTURE.SPARKLE, ANIMATION.SPARKLE);
+
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
       this.loadImage(`box${i}`, 'ui/box', `box${i}`);
