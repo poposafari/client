@@ -83,10 +83,10 @@ export class InGameScene extends BaseScene {
 
   private initEmotionAnimation() {
     const texture = getSpriteFrames(this, TEXTURE.EMO, ANIMATION.EMO);
-    const line = 2;
+    const line = 4;
     for (let i = 1; i <= 4; i++) {
       const emotionTexture = `emo_${i}`;
-      const emo = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 1]]];
+      const emo = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 1], texture[line * (i - 1) + 2], texture[line * (i - 1) + 3]]];
 
       createSpriteAnimation(this, emotionTexture, emotionTexture, emo[0]);
     }

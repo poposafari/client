@@ -167,7 +167,6 @@ export class BattleSpriteUi extends Ui {
       },
       onComplete: async () => {
         this.resetPlayerAnimation();
-        this.throwItem.setVisible(false);
 
         if (type === 'pokeball') await this.startPokeballAnimation(item);
         else await this.startBerryAnimation(item);
@@ -191,10 +190,26 @@ export class BattleSpriteUi extends Ui {
   }
 
   private async startBerryAnimation(item: PlayerItem) {
-    this.battleUi.handleBattleStatus(BATTLE_STATUS.FEED, item);
-    this.cleanThrowItem();
+    this.biteBerry(item);
+  }
 
-    this.showEmotion();
+  private biteBerry(item: PlayerItem) {
+    this.scene.tweens.add({
+      targets: this.throwItem,
+      duration: 1000,
+      ease: EASE.BACK_EASEIN,
+      scaleX: 0,
+      scaleY: 0,
+      alpha: 0,
+      onComplete: () => {
+        this.showEmotion();
+        this.throwItem.setTexture(TEXTURE.BLANK);
+        this.battleUi.handleBattleStatus(BATTLE_STATUS.FEED, item);
+        this.throwItem.setScale(2, 2);
+        this.throwItem.setAlpha(1);
+        this.cleanThrowItem();
+      },
+    });
   }
 
   private async startEnterItemAnimation(item: PlayerItem) {
@@ -337,12 +352,18 @@ export class BattleSpriteUi extends Ui {
   }
 
   private showEmotion() {
-    this.heart.setTexture(`emo_2`);
     this.heart.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
+
     this.heart.anims.play({
       key: 'emo_2',
       repeat: 0,
-      frameRate: 10,
+      frameRate: 7,
+    });
+
+    this.heart.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.scene.time.delayedCall(800, () => {
+        this.heart.setTexture(TEXTURE.BLANK);
+      });
     });
   }
 }

@@ -179,7 +179,7 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.OVERWORLD_SHINY:
       return 2;
     case ANIMATION.EMO:
-      return 7;
+      return 15;
   }
 }
 
