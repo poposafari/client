@@ -180,6 +180,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 2;
     case ANIMATION.EMO:
       return 15;
+    case ANIMATION.SPARKLE:
+      return 47;
   }
 }
 
