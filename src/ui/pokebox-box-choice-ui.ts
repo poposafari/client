@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
@@ -5,13 +6,18 @@ import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxUi } from './pokebox-ui';
-import { addImage, Ui } from './ui';
+import { addImage, addText, Ui } from './ui';
+import { TEXTSTYLE } from '../enums/textstyle';
+import { PokeboxBoxSelectUi } from './pokebox-box-select-ui';
 
 export class PokeboxBoxChoiceUi extends Ui {
   private mode: OverworldMode;
   private pokeboxUi: PokeBoxUi;
+  private pokeboxBoxSelectUi: PokeboxBoxSelectUi;
 
   private container!: Phaser.GameObjects.Container;
+  private choiceContainer!: Phaser.GameObjects.Container;
+
   private arrowLeft!: Phaser.GameObjects.Image;
   private arrowRight!: Phaser.GameObjects.Image;
   private finger!: Phaser.GameObjects.Image;
@@ -20,11 +26,15 @@ export class PokeboxBoxChoiceUi extends Ui {
     super(scene);
     this.mode = mode;
     this.pokeboxUi = pokeboxUi;
+
+    this.pokeboxBoxSelectUi = new PokeboxBoxSelectUi(scene, mode, pokeboxUi, this);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
+
+    this.pokeboxBoxSelectUi.setup();
 
     this.container = this.scene.add.container(width / 2, height / 2);
 
@@ -76,6 +86,7 @@ export class PokeboxBoxChoiceUi extends Ui {
             this.pokeboxUi.pause(false);
             break;
           case KEY.SELECT:
+            this.pokeboxBoxSelectUi.show();
             break;
           case KEY.LEFT:
             break;
