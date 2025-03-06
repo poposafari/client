@@ -66,20 +66,20 @@ export const menu: TranslationDefault = {
   emptyParty: '파티가 비어있습니다.',
   box: '박스 ',
   boxBackground: '벽지 바꾸기',
-  box0: 'Forest',
-  box1: 'City',
-  box2: 'Desert',
-  box3: 'Savanna',
-  box4: 'Crag',
-  box5: 'Volcano',
-  box6: 'Snow',
-  box7: 'Cave',
-  box8: 'Beach',
-  box9: 'Seafloor',
-  box10: 'River',
-  box11: 'Sky',
-  box12: 'PokéCenter',
-  box13: 'Machine',
-  box14: 'Checks',
-  box15: 'Simple',
+  box0: '숲', //Forest
+  box1: '도시', //City
+  box2: '사막', //Desert
+  box3: '사바나', //Savana
+  box4: '바위산', //Crag
+  box5: '화산', //Volcano
+  box6: '설산', //Snow
+  box7: '동굴', //Cave
+  box8: '바닷가', //Beach
+  box9: '해저', //Seafloor
+  box10: '강', //River
+  box11: '하늘', //Sky
+  box12: '포켓센', //PokéCenter
+  box13: '금속', //Machine
+  box14: '체크무늬', //Checkes
+  box15: '심플', //Simple
 };
