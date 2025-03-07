@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PokeboxBoxChoiceUi } from './pokebox-box-choice-ui';
+import { PokeboxBoxUi } from './pokebox-box-ui';
 import { PokeBoxUi } from './pokebox-ui';
 import { addImage, addText, Ui } from './ui';
 import { TEXTURE } from '../enums/texture';
@@ -9,12 +9,14 @@ import { DEPTH } from '../enums/depth';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
+import { PokeboxBoxMenuUi } from './pokebox-box-menu-ui';
 
-export class PokeboxBoxListUi extends Ui {
+export class PokeboxBoxBgListUi extends Ui {
   private mode: OverworldMode;
   private pokeboxUi: PokeBoxUi;
-  private pokeboxBoxChoiceUi: PokeboxBoxChoiceUi;
+  private pokeboxBoxMenuUi: PokeboxBoxMenuUi;
   private start!: number;
+  private targetPage!: number;
 
   private container!: Phaser.GameObjects.Container;
   private listContainer!: Phaser.GameObjects.Container;
@@ -24,12 +26,11 @@ export class PokeboxBoxListUi extends Ui {
 
   private readonly ITEMS_PER_PAGE = 5;
 
-  constructor(scene: InGameScene, mode: OverworldMode, pokeboxUi: PokeBoxUi, pokeboxBoxChoiceUi: PokeboxBoxChoiceUi) {
+  constructor(scene: InGameScene, mode: OverworldMode, pokeboxUi: PokeBoxUi, pokeboxBoxMenuUi: PokeboxBoxMenuUi) {
     super(scene);
     this.mode = mode;
     this.pokeboxUi = pokeboxUi;
-
-    this.pokeboxBoxChoiceUi = pokeboxBoxChoiceUi;
+    this.pokeboxBoxMenuUi = pokeboxBoxMenuUi;
   }
 
   setup(): void {
@@ -46,11 +47,14 @@ export class PokeboxBoxListUi extends Ui {
     this.container.add(this.listContainer);
 
     this.container.setVisible(false);
-    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
+    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data?: number): void {
+    if (data) this.targetPage = data - 1;
+    // console.log('pokebox-box-bg-list-ui: ' + this.targetPage);
+
     this.container.setVisible(true);
     this.pause(false);
 
@@ -102,13 +106,12 @@ export class PokeboxBoxListUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            this.pokeboxUi.changeBoxBackground(choice + this.start);
+            this.pokeboxUi.updateBox(this.targetPage, choice + this.start);
             break;
           case KEY.CANCEL:
             this.clean();
-            this.start = 0;
             this.windows[choice].setTexture(TEXTURE.CHOICE);
-            this.pokeboxBoxChoiceUi.pause(false);
+            this.pokeboxBoxMenuUi.show();
             break;
         }
 
