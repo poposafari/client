@@ -8,33 +8,34 @@ import { DEPTH } from '../enums/depth';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PokeBoxUi } from './pokebox-ui';
-import { PokeboxBoxChoiceUi } from './pokebox-box-choice-ui';
-import { PokeboxBoxListUi } from './pokebox-box-list-ui';
+import { PokeboxBoxUi } from './pokebox-box-ui';
+import { PokeboxBoxBgListUi } from './pokebox-box-bg-list-ui';
 
-export class PokeboxBoxSelectUi extends Ui {
+export class PokeboxBoxMenuUi extends Ui {
   private mode: OverworldMode;
   private pokeboxUi: PokeBoxUi;
-  private pokeboxBoxChoiceUi: PokeboxBoxChoiceUi;
-  private pokeboxBoxListUi: PokeboxBoxListUi;
+  private pokeboxBoxUi: PokeboxBoxUi;
+  private pokeboxBoxBgListUi: PokeboxBoxBgListUi;
+  private targetPage!: number;
 
   private container!: Phaser.GameObjects.Container;
   private choiceContainer!: Phaser.GameObjects.Container;
 
   private btns: Phaser.GameObjects.Image[] = [];
 
-  constructor(scene: InGameScene, mode: OverworldMode, pokeboxUi: PokeBoxUi, pokeboxBoxChoiceUi: PokeboxBoxChoiceUi) {
+  constructor(scene: InGameScene, mode: OverworldMode, pokeboxUi: PokeBoxUi, pokeboxBoxUi: PokeboxBoxUi) {
     super(scene);
     this.mode = mode;
     this.pokeboxUi = pokeboxUi;
-    this.pokeboxBoxChoiceUi = pokeboxBoxChoiceUi;
-    this.pokeboxBoxListUi = new PokeboxBoxListUi(scene, mode, pokeboxUi, pokeboxBoxChoiceUi);
+    this.pokeboxBoxUi = pokeboxBoxUi;
+    this.pokeboxBoxBgListUi = new PokeboxBoxBgListUi(scene, mode, pokeboxUi, this);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.pokeboxBoxListUi.setup();
+    this.pokeboxBoxBgListUi.setup();
 
     this.container = this.scene.add.container(width / 2 + 730, height / 2 + 360);
     this.choiceContainer = this.scene.add.container(0, 0);
@@ -58,7 +59,11 @@ export class PokeboxBoxSelectUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data?: number): void {
+    if (data) this.targetPage = data - 1;
+
+    // console.log('pokebox-box-menu-ui: ' + this.targetPage);
+
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -69,6 +74,12 @@ export class PokeboxBoxSelectUi extends Ui {
   }
 
   pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  private block() {}
+
+  private unblock() {
     const keyboardMananger = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
 
@@ -93,14 +104,15 @@ export class PokeboxBoxSelectUi extends Ui {
           case KEY.SELECT:
             if (choice === 0) {
               this.exitUi(choice);
-              this.pokeboxBoxListUi.show();
-              // this.pokeboxUi.changeBoxBackground(2);
+              this.pokeboxBoxBgListUi.show(this.targetPage + 1);
             } else {
               this.exitUi(choice);
+              this.pokeboxBoxUi.pause(false);
             }
             break;
           case KEY.CANCEL:
             this.exitUi(choice);
+            this.pokeboxBoxUi.pause(false);
             break;
         }
       } catch (error) {
@@ -119,6 +131,6 @@ export class PokeboxBoxSelectUi extends Ui {
   private exitUi(choice: number) {
     this.btns[choice].setTexture(TEXTURE.CHOICE);
     this.clean();
-    this.pokeboxBoxChoiceUi.pause(false);
+    this.pause(true);
   }
 }
