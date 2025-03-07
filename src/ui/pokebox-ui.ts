@@ -11,14 +11,13 @@ import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
-import { PokeboxBoxChoiceUi } from './pokebox-box-choice-ui';
+import { PokeboxBoxUi } from './pokebox-box-ui';
 import { PokeboxRegisterUi } from './pokebox-register-ui';
-import { PokeboxBoxSelectUi } from './pokebox-box-select-ui';
 
 export class PokeBoxUi extends Ui {
   private mode: OverworldMode;
   private pokeboxSlotUi: PokeBoxSlotUi;
-  private pokeboxBoxChoiceUi: PokeboxBoxChoiceUi;
+  private pokeboxBoxUi: PokeboxBoxUi;
   private pokeboxRegisterUi: PokeboxRegisterUi;
   private container!: Phaser.GameObjects.Container;
 
@@ -44,11 +43,11 @@ export class PokeBoxUi extends Ui {
   private box!: Phaser.GameObjects.Image;
   private windowBox!: Phaser.GameObjects.NineSlice;
 
+  private backgrounds: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 12, 11, 5, 4, 2, 7];
+
   private icons: Phaser.GameObjects.Image[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
   private mypokemons: MyPokemon[] = [];
-
-  private boxTitle!: Phaser.GameObjects.Text;
 
   private lastChoice!: number | null;
   private lastRow!: number | null;
@@ -62,7 +61,7 @@ export class PokeBoxUi extends Ui {
     super(scene);
     this.mode = mode;
     this.pokeboxSlotUi = new PokeBoxSlotUi(this.scene, this.mode, this);
-    this.pokeboxBoxChoiceUi = new PokeboxBoxChoiceUi(this.scene, this.mode, this);
+    this.pokeboxBoxUi = new PokeboxBoxUi(this.scene, this.mode, this);
     this.pokeboxRegisterUi = new PokeboxRegisterUi(this.scene, this.mode, this, this.pokeboxSlotUi);
   }
 
@@ -71,7 +70,7 @@ export class PokeBoxUi extends Ui {
     const height = this.getHeight();
 
     this.pokeboxSlotUi.setup();
-    this.pokeboxBoxChoiceUi.setup();
+    this.pokeboxBoxUi.setup();
     this.pokeboxRegisterUi.setup();
 
     this.container = this.scene.add.container(width / 2, height / 2);
@@ -97,10 +96,6 @@ export class PokeBoxUi extends Ui {
     this.pokemonType1 = addImage(this.scene, TEXTURE.TYPES, +760, -340).setScale(1.8);
     this.pokemonType2 = addImage(this.scene, TEXTURE.TYPES, +880, -340).setScale(1.8);
 
-    this.boxTitle = addText(this.scene, -290, -390, i18next.t(`menu:box`) + '1', TEXTSTYLE.BOX_NAME)
-      .setScale(0.8)
-      .setOrigin(0, 0.5);
-
     this.container.add(this.bg);
     this.container.add(this.windowName);
     this.container.add(this.windowDesc);
@@ -117,7 +112,6 @@ export class PokeBoxUi extends Ui {
     this.container.add(this.pokemonName);
     this.container.add(this.pokemonSprite);
     this.container.add(this.box);
-    this.container.add(this.boxTitle);
     this.container.add(this.iconContainer);
 
     this.container.setVisible(false);
@@ -132,12 +126,16 @@ export class PokeBoxUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
     this.pokeboxSlotUi.show();
+    this.pokeboxBoxUi.showBoxTitle();
+    this.updateBox(0);
+
     this.pause(false);
   }
 
   clean(data?: any): void {
     this.container.setVisible(false);
     this.pokeboxSlotUi.clean();
+    this.pokeboxBoxUi.cleanBoxTitle();
     this.pause(true);
   }
 
@@ -171,7 +169,7 @@ export class PokeBoxUi extends Ui {
             if (row > -1) row--;
             if (row === -1) {
               this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-              this.pokeboxBoxChoiceUi.show();
+              this.pokeboxBoxUi.show();
               return;
             }
             break;
@@ -198,6 +196,8 @@ export class PokeBoxUi extends Ui {
             break;
           case KEY.CANCEL:
             this.clean();
+            this.roatationBackground(0);
+            this.pokeboxBoxUi.restoreData();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
@@ -251,11 +251,22 @@ export class PokeBoxUi extends Ui {
     }
   }
 
-  changeBoxBackground(value: number) {
-    this.box.setTexture(`box${value}`);
+  updateBox(index: number, value?: number) {
+    if (value) {
+      this.backgrounds[index] = value;
+    }
+
+    this.roatationBackground(index);
   }
 
-  rotationBoxBackground() {}
+  private changeBoxBackground(index: number, value: number) {
+    this.box.setTexture(`box${this.backgrounds[index]}`);
+  }
+
+  private roatationBackground(index: number) {
+    this.box.setTexture(`box${this.backgrounds[index]}`);
+    this.pokeboxBoxUi.updateBoxTitle(index + 1);
+  }
 
   private renderPage() {
     const box = this.mode.getBox();
