@@ -128,7 +128,6 @@ export class BattleUi extends Ui {
             this.exitBattle();
           } else if (status === BATTLE_STATUS.CATCH_FAIL) {
             if (this.battle?.getIsRunAway()) {
-              console.log('??? 통과?');
               this.handleBattleStatus(BATTLE_STATUS.RUN_ENEMY);
               return;
             } else {
@@ -152,7 +151,7 @@ export class BattleUi extends Ui {
     switch (status) {
       case BATTLE_STATUS.MENU:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.MENU);
-        this.battleMenuUi.show();
+        this.battleMenuUi.show(this.battle);
         break;
       case BATTLE_STATUS.RUN_PLAYER:
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.RUN_PLAYER);
@@ -189,6 +188,7 @@ export class BattleUi extends Ui {
         this.battleMessageUi.showBattleMessage(BATTLE_STATUS.THROW_BERRY, data.getKey() as PlayerItem);
         this.battleMenuBerryUi.clean();
         this.battleMenuUi.clean();
+        this.battle.setBerry(data as PlayerItem);
         this.battleSpriteUi.throwBerryOrPokeball(data as PlayerItem, 'berry');
         this.startKeyDownSelect();
         break;
