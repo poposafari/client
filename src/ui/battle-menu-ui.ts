@@ -9,10 +9,13 @@ import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { BattleUi } from './battle-ui';
 import { BATTLE_STATUS } from '../enums/battle-status';
+import { Battle } from '../storage/battle';
 
 export class BattleMenuUi extends Ui {
   private mode: OverworldMode;
   private battleUi: BattleUi;
+
+  private battle!: Battle;
 
   private container!: Phaser.GameObjects.Container;
   private texts: Phaser.GameObjects.Text[] = [];
@@ -55,6 +58,11 @@ export class BattleMenuUi extends Ui {
   }
 
   show(data?: any): void {
+    if (data) this.battle = data;
+
+    if (this.battle.getBerry()) this.texts[1].setTint(0x808080);
+    else this.texts[1].setTint(0xffffff);
+
     this.container.setVisible(true);
     this.pause(false);
   }
@@ -105,6 +113,10 @@ export class BattleMenuUi extends Ui {
               this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU_POKEBALL);
               return;
             } else if (target === i18next.t('menu:battleSelect1')) {
+              if (this.battle.getBerry()) {
+                this.dummys[choice].setTexture(TEXTURE.ARROW_W_R);
+                return;
+              }
               this.battleUi.handleBattleStatus(BATTLE_STATUS.MENU_BERRY);
               return;
             } else if (target === i18next.t('menu:battleSelect3')) {
