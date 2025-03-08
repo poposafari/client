@@ -1,11 +1,12 @@
 import { itemData } from '../data/items';
 import { npcData } from '../data/npc';
-import { pokemonData } from '../data/pokemon';
+import { females, pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { AREA } from '../enums/area';
 import { TEXTURE } from '../enums/texture';
 import { TIME } from '../enums/time';
 import { initI18n } from '../i18n';
+import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 
 export class LoadingScene extends BaseScene {
@@ -196,15 +197,23 @@ export class LoadingScene extends BaseScene {
 
     let pokemonIdx = 0;
     for (const pokemon of Object.keys(pokemonData)) {
-      this.loadImage(`pokemon_sprite${pokemon}`, 'ui/pokemon/sprite', `${pokemonIdx}`);
-      this.loadImage(`pokemon_sprite${pokemon}s`, 'ui/pokemon/sprite/shiny', `${pokemonIdx}`);
+      this.loadImage(`pokemon_sprite${pokemon}m`, 'ui/pokemon/sprite', `${pokemonIdx}`);
+      this.loadImage(`pokemon_sprite${pokemon}ms`, 'ui/pokemon/sprite/shiny', `${pokemonIdx}`);
 
       this.loadAtlas(`pokemon_icon${pokemon}`, 'ui/pokemon/icon', `icon${pokemon}`, 'pokemon_icon');
-      this.loadAtlas(`pokemon_icon${pokemon}s`, 'ui/pokemon/icon', `icon${pokemon}s`, 'pokemon_icon');
+      this.loadAtlas(`pokemon_icon${pokemon}s`, 'ui/pokemon/icon/shiny', `icon${pokemon}s`, 'pokemon_icon');
 
       this.loadAtlas(`pokemon_overworld${pokemon}`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_0`);
       this.loadAtlas(`pokemon_overworld${pokemon}s`, 'ui/pokemon/overworld', `${pokemon}s`, `pokemon_overworld_0`);
 
+      pokemonIdx++;
+    }
+
+    pokemonIdx = 0;
+    for (const pokemon of females) {
+      const target = createZeroPad(pokemon);
+      this.loadImage(`pokemon_sprite${target}f`, 'ui/pokemon/sprite/female', `${pokemon}`);
+      this.loadImage(`pokemon_sprite${target}fs`, 'ui/pokemon/sprite/female/shiny', `${pokemon}`);
       pokemonIdx++;
     }
 
