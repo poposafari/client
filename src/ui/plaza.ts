@@ -1,4 +1,3 @@
-import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldUi } from './overworld-ui';

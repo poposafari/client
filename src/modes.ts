@@ -1,6 +1,6 @@
 import { MODE } from './enums/mode';
 import { Account, Message } from './interface/sys';
-import { MessageManager, ModeManager, PlayerPokemonManager } from './managers';
+import { MessageManager, ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
 import { LoginUi } from './ui/login-ui';
@@ -34,7 +34,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.OVERWORLD);
+    this.manager.changeMode(MODE.LOGIN);
   }
   exit(): void {}
 
@@ -145,7 +145,6 @@ export class OverworldMode extends Mode {
   private box: Box;
   private playerInfo: PlayerInfo;
   private overworldInfo: OverworldInfo;
-  private playerPokemonManager!: PlayerPokemonManager;
   private currentOverworldUisIndex!: number;
 
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -180,8 +179,6 @@ export class OverworldMode extends Mode {
   }
 
   enter(data?: any): void {
-    this.playerPokemonManager = PlayerPokemonManager.getInstance();
-
     this.addUiStackOverlap('OverworldHUDUi', data);
     this.addUiStackOverlap('Overworld000', data);
 

@@ -23,7 +23,7 @@ export class TitleUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY, width, height);
+    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY);
     this.bg.setVisible(false);
     ui.add(this.bg);
 

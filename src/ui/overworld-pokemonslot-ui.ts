@@ -1,6 +1,5 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { MAX_PARTY_SLOT } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addWindow, Ui } from './ui';

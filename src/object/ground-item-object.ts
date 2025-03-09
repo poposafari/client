@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
 import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';

@@ -1,10 +1,7 @@
 import { DEPTH } from '../enums/depth';
-import { OBJECT } from '../enums/object-type';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
-import { MAP_SCALE } from '../object/base-object';
-import { NpcObject } from '../object/npc-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Plaza } from './plaza';
 

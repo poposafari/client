@@ -7,7 +7,6 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
 import { KeyboardManager } from '../managers';
-import { KEY } from '../enums/key';
 import { PlayerItem } from '../object/player-item';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';
 

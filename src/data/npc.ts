@@ -1,6 +1,3 @@
-import i18next from '../i18n';
-import { Message } from '../interface/sys';
-
 export interface Npc {
   movable: boolean;
 }

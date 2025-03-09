@@ -8,7 +8,7 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
 import { addBackground, addImage, addText, addWindow, getTextStyle, Ui } from './ui';
-import { getGenderAndShinyInfo, getOriginPokedex, isFemale, isPokedexShiny, trimLastChar } from '../utils/string-util';
+import { getGenderAndShinyInfo, getOriginPokedex, isFemale, isPokedexShiny } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
 import { PokeboxBoxUi } from './pokebox-box-ui';
