@@ -66,15 +66,15 @@ export class Safari extends OverworldUi {
     const overworldInfo = this.getOverworldInfo();
 
     let test: WildPokemon[] = [
-      { pokedex: '001', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '146s', gender: 0, skill: null, habitat: 0 },
       { pokedex: '002s', gender: 1, skill: null, habitat: 0 },
       { pokedex: '003', gender: 0, skill: null, habitat: 0 },
-      { pokedex: '004', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '005', gender: 0, skill: null, habitat: 0 },
-      { pokedex: '006s', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '007s', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '009', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '008', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '045', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '144', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '149s', gender: 1, skill: null, habitat: 0 },
+      { pokedex: '151s', gender: 2, skill: null, habitat: 0 },
+      { pokedex: '150', gender: 2, skill: null, habitat: 0 },
+      { pokedex: '130s', gender: 0, skill: null, habitat: 0 },
     ];
 
     let test2: GroundItem[] = [
