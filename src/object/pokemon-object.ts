@@ -151,14 +151,10 @@ export class PokemonObject extends MovableObject {
         break;
     }
 
-    this.dummy1.setTexture(TEXTURE.EMOTION_0);
-    this.dummy1.anims.play(ANIMATION.EMOTION_0, true);
-
-    const duration = this.dummy1.anims.currentAnim!.frames.length * (1000 / this.dummy1.anims.currentAnim!.frameRate);
-
-    this.getScene().time.delayedCall(duration, () => {
-      this.dummy1.stop();
-      this.dummy1.setFrame(`emotion_0-2`);
+    this.dummy1.anims.play({
+      key: 'emo_1',
+      repeat: 0,
+      frameRate: 7,
     });
 
     this.getScene().time.delayedCall(2000, () => {
