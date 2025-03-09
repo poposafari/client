@@ -6,7 +6,6 @@ import { AREA } from '../enums/area';
 import { TEXTURE } from '../enums/texture';
 import { TIME } from '../enums/time';
 import { initI18n } from '../i18n';
-import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 
 export class LoadingScene extends BaseScene {

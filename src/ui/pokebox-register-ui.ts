@@ -4,7 +4,7 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxUi } from './pokebox-ui';
-import { addBackground, addImage, addText, Ui } from './ui';
+import { addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
