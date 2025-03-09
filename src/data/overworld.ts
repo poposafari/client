@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import { TYPE } from '../enums/type';
 
 export interface PlazaData {

@@ -1,7 +1,6 @@
 import i18next from 'i18next';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PokeboxBoxUi } from './pokebox-box-ui';
 import { PokeBoxUi } from './pokebox-ui';
 import { addImage, addText, Ui } from './ui';
 import { TEXTURE } from '../enums/texture';

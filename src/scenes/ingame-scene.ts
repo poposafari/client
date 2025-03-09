@@ -3,7 +3,7 @@ import { pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, MessageManager, ModeManager, PlayerPokemonManager } from '../managers';
+import { KeyboardManager, MessageManager, ModeManager } from '../managers';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
@@ -34,9 +34,6 @@ export class InGameScene extends BaseScene {
 
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.initialize(this);
-
-    const playerPokemonManager = PlayerPokemonManager.getInstance();
-    playerPokemonManager.init();
 
     this.modeManager.registerModes();
     this.modeManager.changeMode(MODE.NONE);
