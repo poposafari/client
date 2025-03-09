@@ -7,8 +7,8 @@ import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
-import { addBackground, addImage, addText, addWindow, Ui } from './ui';
-import { isPokedexShiny, trimLastChar } from '../utils/string-util';
+import { addBackground, addImage, addText, addWindow, getTextStyle, Ui } from './ui';
+import { getGenderAndShinyInfo, getOriginPokedex, isFemale, isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
 import { PokeboxBoxUi } from './pokebox-box-ui';
@@ -32,7 +32,7 @@ export class PokeBoxUi extends Ui {
   private pokemonCaptureDate!: Phaser.GameObjects.Text;
   private pokemonName!: Phaser.GameObjects.Text;
   private pokemonSprite!: Phaser.GameObjects.Image;
-  private pokemonGender!: Phaser.GameObjects.Image;
+  private pokemonGender!: Phaser.GameObjects.Text;
   private pokemonShiny!: Phaser.GameObjects.Image;
   private pokemonPokedex!: Phaser.GameObjects.Text;
   private pokemonType1!: Phaser.GameObjects.Image;
@@ -86,11 +86,13 @@ export class PokeBoxUi extends Ui {
 
     this.pokemonCaptureBall = addImage(this.scene, TEXTURE.BOXBALL_001, +450, -440).setScale(2);
     this.pokemonCaptureDate = addText(this.scene, +500, +405, '2024-10-12', TEXTSTYLE.BOX_NAME).setScale(0.7);
-    this.pokemonGender = addImage(this.scene, TEXTURE.GENDER_0, +910, -440).setScale(5);
     this.captureCountTitle = addText(this.scene, +400, -250, i18next.t('menu:captureCount'), TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
     this.captureCountValue = addText(this.scene, +610, -250, '', TEXTSTYLE.BOX_CAPTURE_VALUE).setScale(1).setOrigin(0, 0.5);
     this.pokemonName = addText(this.scene, +490, -440, '한카리아스', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
-    this.pokemonSprite = addImage(this.scene, `pokemon_sprite001`, +680, 0).setScale(5);
+    this.pokemonGender = addText(this.scene, this.pokemonName.x + this.pokemonName.displayWidth, -5, '♂♀', TEXTSTYLE.GENDER_0)
+      .setOrigin(0, 0.5)
+      .setScale(0.8);
+    this.pokemonSprite = addImage(this.scene, `pokemon_sprite000`, +680, 0).setScale(5);
     this.pokemonShiny = addImage(this.scene, TEXTURE.SHINY, +900, -260).setScale(3);
     this.pokemonPokedex = addText(this.scene, +430, -350, `No.001`, TEXTSTYLE.BOX_POKEDEX).setOrigin(0, 0.5).setScale(1.4);
     this.pokemonType1 = addImage(this.scene, TEXTURE.TYPES, +760, -340).setScale(1.8);
@@ -102,7 +104,6 @@ export class PokeBoxUi extends Ui {
     this.container.add(this.windowBox);
     this.container.add(this.pokemonCaptureBall);
     this.container.add(this.pokemonCaptureDate);
-    this.container.add(this.pokemonGender);
     this.container.add(this.captureCountTitle);
     this.container.add(this.captureCountValue);
     this.container.add(this.pokemonShiny);
@@ -110,6 +111,7 @@ export class PokeBoxUi extends Ui {
     this.container.add(this.pokemonType1);
     this.container.add(this.pokemonType2);
     this.container.add(this.pokemonName);
+    this.container.add(this.pokemonGender);
     this.container.add(this.pokemonSprite);
     this.container.add(this.box);
     this.container.add(this.iconContainer);
@@ -222,15 +224,25 @@ export class PokeBoxUi extends Ui {
 
   updatePokemonInfo(pokemon: MyPokemon) {
     if (pokemon) {
-      const originPokedex = isPokedexShiny(pokemon.pokedex) ? trimLastChar(pokemon.pokedex) : pokemon.pokedex;
+      const originPokedex = getOriginPokedex(pokemon.pokedex);
+      const genderAndShinyInfo = getGenderAndShinyInfo(pokemon.pokedex);
+
       this.pokemonSprite.setTexture(`pokemon_sprite${pokemon.pokedex}`);
       this.pokemonName.setText(i18next.t(`pokemon:${originPokedex}.name`));
       this.pokemonCaptureBall.setTexture(`boxball_${pokemon.capturePokeball}`);
       this.pokemonCaptureDate.setText(pokemon.captureDate);
-      this.pokemonGender.setTexture(this.genderTexture[pokemon.gender]);
-      this.pokemonShiny.setTexture(isPokedexShiny(pokemon.pokedex) ? TEXTURE.SHINY : TEXTURE.BLANK);
+      this.pokemonGender.setPosition(this.pokemonName.x + this.pokemonName.displayWidth, this.pokemonName.y + 5);
+      this.pokemonShiny.setTexture(isPokedexShiny(genderAndShinyInfo) ? TEXTURE.SHINY : TEXTURE.BLANK);
       this.pokemonPokedex.setText(`No.${originPokedex}`);
       this.captureCountValue.setText(`${pokemon.captureCount}`);
+
+      if (isFemale(pokemon.pokedex)) {
+        this.pokemonGender.setText(`♀`);
+        this.pokemonGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_1));
+      } else {
+        this.pokemonGender.setText(`♂`);
+        this.pokemonGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_0));
+      }
 
       if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
       else this.pokemonType1.setTexture(TEXTURE.BLANK);
@@ -241,7 +253,7 @@ export class PokeBoxUi extends Ui {
       this.pokemonName.setText('');
       this.pokemonCaptureBall.setTexture(TEXTURE.BLANK);
       this.pokemonCaptureDate.setText(`0000-00-00`);
-      this.pokemonGender.setTexture(TEXTURE.BLANK);
+      this.pokemonGender.setText('');
       this.pokemonShiny.setTexture(TEXTURE.BLANK);
       this.pokemonPokedex.setText(`No.000`);
       this.captureCountValue.setText(`0`);
@@ -302,8 +314,11 @@ export class PokeBoxUi extends Ui {
 
     let idx = 0;
     for (const pokemon of box.getMyPokemons()) {
+      const originPokedex = getOriginPokedex(pokemon.pokedex);
+      const genderAndShinyInfo = getGenderAndShinyInfo(pokemon.pokedex);
+
       this.mypokemons.push(pokemon);
-      this.icons[idx].setTexture(`pokemon_icon${pokemon.pokedex}`);
+      this.icons[idx].setTexture(`pokemon_icon${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`);
       playerInfo?.hasPartySlot(pokemon.pokedex) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
       idx++;
     }

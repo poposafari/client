@@ -110,6 +110,18 @@ export class InGameScene extends BaseScene {
   }
 
   private initPokemonAnimation() {
+    const movementFrames = getSpriteFrames(this, `pokemon_overworld000`, ANIMATION.POKEMON_OVERWORLD);
+
+    const upD = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
+    const downD = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
+    const leftD = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
+    const rightD = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
+
+    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_up`, upD);
+    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_down`, downD);
+    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_left`, leftD);
+    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_right`, rightD);
+
     for (const pokemon of Object.keys(pokemonData)) {
       const movementFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}`, ANIMATION.POKEMON_OVERWORLD);
       const movementShinyFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}s`, ANIMATION.POKEMON_OVERWORLD);
