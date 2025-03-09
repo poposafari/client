@@ -7,7 +7,7 @@ import { OverworldMode } from '../modes';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, delay, getTextStyle, runFlashEffect, runWipeRifghtToLeftEffect, stopPostPipeline, Ui } from './ui';
-import { isPokedexShiny, trimLastChar } from '../utils/string-util';
+import { getGenderAndShinyInfo, getOriginPokedex, isFemale, isPokedexShiny, trimLastChar } from '../utils/string-util';
 import { pokemonData } from '../data/pokemon';
 import { PlayerItem } from '../object/player-item';
 import { EASE } from '../enums/ease';
@@ -146,7 +146,7 @@ export class BattleBaseUi extends Ui {
         const shiny = addImage(this.scene, TEXTURE.SHINY, currentX - 25, -21).setScale(1.5);
 
         if (box) {
-          shiny.setVisible(isPokedexShiny(box.hasPokemon(party)!.pokedex) ? true : false);
+          shiny.setVisible(isPokedexShiny(party) ? true : false);
         }
 
         this.playerInfoPartyIcon.push(icon);
@@ -171,6 +171,10 @@ export class BattleBaseUi extends Ui {
     }
     if (data.pokemon.getGender() === 1) {
       this.enemyInfoGender.setText(`♀`);
+      this.enemyInfoGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_1));
+    }
+    if (data.pokemon.getGender() === 2) {
+      this.enemyInfoGender.setText(``);
       this.enemyInfoGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_1));
     }
 
