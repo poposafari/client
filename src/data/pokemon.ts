@@ -134,6 +134,7 @@ const initial: Record<string, PokemonInfo> = {
   '119': { rank: POKEMON_RANK.NORMAL, type1: TYPE.WATER, type2: null, size: 1 },
   '120': { rank: POKEMON_RANK.NORMAL, type1: TYPE.WATER, type2: null, size: 1 },
   '121': { rank: POKEMON_RANK.NORMAL, type1: TYPE.WATER, type2: TYPE.PSYCHIC, size: 1 },
+  '122': { rank: POKEMON_RANK.NORMAL, type1: TYPE.PSYCHIC, type2: TYPE.FAIRY, size: 1 },
   '123': { rank: POKEMON_RANK.NORMAL, type1: TYPE.BUG, type2: TYPE.FLYING, size: 1 },
   '124': { rank: POKEMON_RANK.NORMAL, type1: TYPE.ICE, type2: TYPE.PSYCHIC, size: 1 },
   '125': { rank: POKEMON_RANK.NORMAL, type1: TYPE.ELECTRIC, type2: null, size: 1 },

@@ -309,12 +309,12 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.GENDER_0:
-      config.fontSize = '70px';
+      config.fontSize = '80px';
       config.color = '#53a8fc';
       config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.GENDER_1:
-      config.fontSize = '70px';
+      config.fontSize = '80px';
       config.color = '#fc5353';
       config.fontStyle = 'bold';
       break;
