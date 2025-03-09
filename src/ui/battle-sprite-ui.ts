@@ -70,7 +70,10 @@ export class BattleSpriteUi extends Ui {
 
     const playerInfo = this.mode.getPlayerInfo();
     const playerBack = `${playerInfo?.getGender()}_${playerInfo?.getAvatar()}_back`;
-    const enemyTexture = `pokemon_sprite${data.pokedex}`;
+    const originPokedex = isPokedexShiny(data.pokedex) ? trimLastChar(data.pokedex) : data.pokedex;
+    const shinyStr = isPokedexShiny(data.pokedex) ? 's' : '';
+    const genderStr = data.pokemon.getGender() === 0 ? 'm' : data.pokemon.getGender() === 1 ? 'f' : 'm';
+    const enemyTexture = `pokemon_sprite${originPokedex}_${genderStr + shinyStr}`;
     const enemyHeight = getRealBounds(this.enemy, this.scene);
 
     this.startShinyEffect(data.pokedex);
