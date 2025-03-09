@@ -10,6 +10,7 @@ import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { Message } from '../interface/sys';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
+import { getGenderAndShinyInfo, getOriginPokedex, isPokedexShiny } from '../utils/string-util';
 
 export class PokeboxRegisterUi extends Ui {
   private mode: OverworldMode;
@@ -104,7 +105,10 @@ export class PokeboxRegisterUi extends Ui {
                 playerInfo.removePartSlot(this.targetPokedex);
                 this.pokeboxSlotUi.updateFollowPet(this.targetPokedex);
               } else {
-                const result = playerInfo.addPartySlot(this.targetPokedex);
+                const originPokedex = getOriginPokedex(this.targetPokedex);
+                const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
+
+                const result = playerInfo.addPartySlot(`${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`);
                 if (!result) {
                   this.mode.startMessage(this.cautionSlotMessage());
                 }
