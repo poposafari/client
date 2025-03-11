@@ -73,7 +73,11 @@ export class PokeboxRegisterUi extends Ui {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const playerInfo = this.mode.getPlayerInfo();
 
-    if (playerInfo!.hasPartySlot(this.targetPokedex)) {
+    const originPokedex = getOriginPokedex(this.targetPokedex);
+    const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
+    const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
+
+    if (playerInfo!.hasPartySlot(target)) {
       this.registerText.setText(i18next.t('menu:removeParty'));
     } else {
       this.registerText.setText(i18next.t('menu:addParty'));
@@ -99,16 +103,18 @@ export class PokeboxRegisterUi extends Ui {
             break;
           case KEY.SELECT:
             if (!playerInfo) return;
-            if (choice === 0) {
-              if (playerInfo.hasPartySlot(this.targetPokedex)) {
-                this.registerText.setText(i18next.t('menu:removeParty'));
-                playerInfo.removePartSlot(this.targetPokedex);
-                this.pokeboxSlotUi.updateFollowPet(this.targetPokedex);
-              } else {
-                const originPokedex = getOriginPokedex(this.targetPokedex);
-                const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
 
-                const result = playerInfo.addPartySlot(`${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`);
+            const originPokedex = getOriginPokedex(this.targetPokedex);
+            const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
+            const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
+
+            if (choice === 0) {
+              if (playerInfo.hasPartySlot(target)) {
+                this.registerText.setText(i18next.t('menu:removeParty'));
+                playerInfo.removePartSlot(target);
+                this.pokeboxSlotUi.updateFollowPet(target);
+              } else {
+                const result = playerInfo.addPartySlot(target);
                 if (!result) {
                   this.mode.startMessage(this.cautionSlotMessage());
                 }
