@@ -74,6 +74,7 @@ export class OverworldUi extends Ui {
   private playerInitPos: PlayerInitPos = { x: 0, y: 0, px: 0, py: 0 };
   private playerObj!: PlayerObject;
 
+  // private readonly MapScale: number = 3;
   private readonly MapScale: number = 1.5;
 
   constructor(scene: InGameScene, mode: OverworldMode, key: string) {
