@@ -62,19 +62,21 @@ export class Safari extends OverworldUi {
   }
 
   addOverworldPokemons(scene: InGameScene, map: Phaser.Tilemaps.Tilemap): Promise<void> {
-    const validPosition = this.doMapScan(map);
+    const validLandPosition = this.doMapScanLand(map);
+    const validWaterPosition = this.doMapScanWater(map);
+
     const overworldInfo = this.getOverworldInfo();
 
     let test: WildPokemon[] = [
-      { pokedex: '146s', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '055s', gender: 0, skill: null, habitat: 1 },
       { pokedex: '002s', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '003', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '060', gender: 0, skill: null, habitat: 1 },
       { pokedex: '045', gender: 1, skill: null, habitat: 0 },
-      { pokedex: '144', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '117', gender: 0, skill: null, habitat: 1 },
       { pokedex: '149s', gender: 1, skill: null, habitat: 0 },
       { pokedex: '151s', gender: 2, skill: null, habitat: 0 },
-      { pokedex: '150', gender: 2, skill: null, habitat: 0 },
-      { pokedex: '130s', gender: 0, skill: null, habitat: 0 },
+      { pokedex: '073s', gender: 2, skill: null, habitat: 1 },
+      { pokedex: '130s', gender: 0, skill: null, habitat: 1 },
     ];
 
     let test2: GroundItem[] = [
@@ -87,7 +89,10 @@ export class Safari extends OverworldUi {
 
     //TODO: overworld.spawnTypes들을 가지고, 서버에게 request를 날리도록 해야 한다.
     for (const wild of test) {
-      const pos = this.getRandomTilePosition(validPosition);
+      let pos = null;
+      if (wild.habitat === 0) pos = this.getRandomTilePosition(validLandPosition);
+      if (wild.habitat === 1) pos = this.getRandomTilePosition(validWaterPosition);
+
       const originPokedex = wild.pokedex.endsWith('s') ? wild.pokedex.slice(0, -1) : wild.pokedex;
       const pokemon = new PokemonObject(
         scene,
@@ -96,8 +101,8 @@ export class Safari extends OverworldUi {
         wild.gender,
         wild.skill,
         wild.habitat,
-        pos[0],
-        pos[1],
+        pos![0],
+        pos![1],
         map,
         i18next.t(`pokemon:${originPokedex}.name`),
         this.getOverworldInfo(),
@@ -107,7 +112,7 @@ export class Safari extends OverworldUi {
     }
 
     for (const item of test2) {
-      const pos = this.getRandomTilePosition(validPosition);
+      const pos = this.getRandomTilePosition(validLandPosition);
       const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], this.getMap(), OBJECT.ITEM_GROUND, item.count, item.item);
       overworldInfo.addGroundItem(groundItem);
     }
@@ -133,6 +138,33 @@ export class Safari extends OverworldUi {
     return validPositions;
   }
 
+  private doMapScanLand(map: Phaser.Tilemaps.Tilemap) {
+    const validPositions: [number, number][] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (!this.hasBlockingTile(this.getMap(), new Phaser.Math.Vector2(x, y)) && this.hasLandTile(this.getMap(), new Phaser.Math.Vector2(x, y))) {
+          validPositions.push([x, y]);
+        }
+      }
+    }
+    return validPositions;
+  }
+
+  private doMapScanWater(map: Phaser.Tilemaps.Tilemap) {
+    const validPositions: [number, number][] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (!this.hasBlockingTile(this.getMap(), new Phaser.Math.Vector2(x, y)) && this.hasWaterTile(this.getMap(), new Phaser.Math.Vector2(x, y))) {
+          validPositions.push([x, y]);
+        }
+      }
+    }
+
+    return validPositions;
+  }
+
   private getRandomTilePosition(validPositions: [number, number][]) {
     return Phaser.Utils.Array.GetRandom(validPositions);
   }
@@ -148,6 +180,22 @@ export class Safari extends OverworldUi {
     return map.layers.some((layer) => {
       const tile = map.getTileAt(pos.x, pos.y, false, layer.name);
       return tile && tile.properties.collides;
+    });
+  }
+
+  private hasLandTile(map: Phaser.Tilemaps.Tilemap, pos: Phaser.Math.Vector2): boolean {
+    if (this.hasNoTile(map, pos)) return true;
+    return map.layers.some((layer) => {
+      const tile = map.getTileAt(pos.x, pos.y, false, layer.name);
+      return tile && tile.properties.habitat === 0;
+    });
+  }
+
+  private hasWaterTile(map: Phaser.Tilemaps.Tilemap, pos: Phaser.Math.Vector2): boolean {
+    if (this.hasNoTile(map, pos)) return true;
+    return map.layers.some((layer) => {
+      const tile = map.getTileAt(pos.x, pos.y, false, layer.name);
+      return tile && tile.properties.habitat === 1;
     });
   }
 }
