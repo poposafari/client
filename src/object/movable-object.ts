@@ -217,7 +217,7 @@ export class MovableObject extends BaseObject {
 
   isBlockingDirection(direction: DIRECTION): boolean {
     const nextTilePos = this.tilePosInDirection(direction);
-    const isBlocked =
+    let isBlocked =
       this.hasBlockingTile(nextTilePos) ||
       this.hasBlockingNpc(nextTilePos) ||
       this.hasGroundItemObject(nextTilePos) ||
