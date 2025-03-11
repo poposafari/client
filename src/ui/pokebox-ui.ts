@@ -316,10 +316,11 @@ export class PokeBoxUi extends Ui {
     for (const pokemon of box.getMyPokemons()) {
       const originPokedex = getOriginPokedex(pokemon.pokedex);
       const genderAndShinyInfo = getGenderAndShinyInfo(pokemon.pokedex);
+      const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
 
       this.mypokemons.push(pokemon);
-      this.icons[idx].setTexture(`pokemon_icon${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`);
-      playerInfo?.hasPartySlot(pokemon.pokedex) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
+      this.icons[idx].setTexture(`pokemon_icon` + target);
+      playerInfo?.hasPartySlot(target) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
       idx++;
     }
   }
