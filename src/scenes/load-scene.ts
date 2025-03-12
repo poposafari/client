@@ -98,10 +98,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_2, 'ui', TEXTURE.SEASON_2);
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
-    this.loadImage(TEXTURE.MAP_L0, 'ui/map', TEXTURE.MAP_L0);
-    this.loadImage(TEXTURE.MAP_L1_0, 'ui/map', TEXTURE.MAP_L1_0);
-    this.loadMap(TEXTURE.MAP_000, 'ui/map', TEXTURE.MAP_000);
-    this.loadMap(TEXTURE.MAP_011, 'ui/map', TEXTURE.MAP_011);
+    this.loadMap(TEXTURE.OVERWORLD_000, 'ui/map', TEXTURE.OVERWORLD_000);
+    this.loadImage(TEXTURE.TILE_NATURE, 'ui/map', TEXTURE.TILE_NATURE);
+    this.loadImage(TEXTURE.TILE_URBAN, 'ui/map', TEXTURE.TILE_URBAN);
 
     this.loadImage(TEXTURE.MENU_BOX, 'ui', TEXTURE.MENU_BOX);
     this.loadImage(TEXTURE.MENU_BAG, 'ui', TEXTURE.MENU_BAG);
