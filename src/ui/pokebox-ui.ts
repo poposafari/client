@@ -8,7 +8,7 @@ import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
 import { addBackground, addImage, addText, addWindow, getTextStyle, Ui } from './ui';
-import { getGenderAndShinyInfo, getOriginPokedex, isFemale, isPokedexShiny } from '../utils/string-util';
+import { getGenderAndShinyInfo, getOriginPokedex, getPokemonOverworldOrIconKey, getPokemonSpriteKey, isFemale, isPokedexShiny } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
 import { PokeboxBoxUi } from './pokebox-box-ui';
@@ -192,7 +192,7 @@ export class PokeBoxUi extends Ui {
             const target = this.mypokemons[choice];
 
             if (this.mypokemons[choice]) {
-              this.pokeboxRegisterUi.show(target.pokedex);
+              this.pokeboxRegisterUi.show(target);
             }
 
             break;
@@ -224,39 +224,41 @@ export class PokeBoxUi extends Ui {
 
   updatePokemonInfo(pokemon: MyPokemon) {
     if (pokemon) {
-      const originPokedex = getOriginPokedex(pokemon.pokedex);
-      const genderAndShinyInfo = getGenderAndShinyInfo(pokemon.pokedex);
+      const texture = getPokemonSpriteKey(pokemon);
+      const pokedex = pokemon.pokedex;
 
-      this.pokemonSprite.setTexture(`pokemon_sprite${pokemon.pokedex}`);
-      this.pokemonName.setText(i18next.t(`pokemon:${originPokedex}.name`));
+      this.pokemonSprite.setTexture(`pokemon_sprite${texture}`);
+      this.pokemonName.setText(i18next.t(`pokemon:${pokedex}.name`));
       this.pokemonCaptureBall.setTexture(`boxball_${pokemon.capturePokeball}`);
       this.pokemonCaptureDate.setText(pokemon.captureDate);
       this.pokemonGender.setPosition(this.pokemonName.x + this.pokemonName.displayWidth, this.pokemonName.y + 5);
-      this.pokemonShiny.setTexture(isPokedexShiny(genderAndShinyInfo) ? TEXTURE.SHINY : TEXTURE.BLANK);
-      this.pokemonPokedex.setText(`No.${originPokedex}`);
+      this.pokemonShiny.setTexture(pokemon.shiny ? TEXTURE.SHINY : TEXTURE.BLANK);
+      this.pokemonPokedex.setText(`No.${pokedex}`);
       this.captureCountValue.setText(`${pokemon.captureCount}`);
 
-      if (isFemale(pokemon.pokedex)) {
+      if (pokemon.gender === 'f') {
         this.pokemonGender.setText(`♀`);
         this.pokemonGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_1));
-      } else {
+      } else if (pokemon.gender === 'm') {
         this.pokemonGender.setText(`♂`);
         this.pokemonGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_0));
+      } else {
+        this.pokemonGender.setText(``);
       }
 
-      if (pokemonData[originPokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type1}`);
+      if (pokemonData[pokedex].type1) this.pokemonType1.setTexture(TEXTURE.TYPES, `types-${pokemonData[pokedex].type1}`);
       else this.pokemonType1.setTexture(TEXTURE.BLANK);
-      if (pokemonData[originPokedex].type2) this.pokemonType2.setTexture(TEXTURE.TYPES, `types-${pokemonData[originPokedex].type2}`);
+      if (pokemonData[pokedex].type2) this.pokemonType2.setTexture(TEXTURE.TYPES, `types-${pokemonData[pokedex].type2}`);
       else this.pokemonType2.setTexture(TEXTURE.BLANK);
     } else {
       this.pokemonSprite.setTexture(`pokemon_sprite000`);
       this.pokemonName.setText('');
       this.pokemonCaptureBall.setTexture(TEXTURE.BLANK);
-      this.pokemonCaptureDate.setText(`0000-00-00`);
+      this.pokemonCaptureDate.setText(``);
       this.pokemonGender.setText('');
       this.pokemonShiny.setTexture(TEXTURE.BLANK);
-      this.pokemonPokedex.setText(`No.000`);
-      this.captureCountValue.setText(`0`);
+      this.pokemonPokedex.setText(``);
+      this.captureCountValue.setText(``);
       this.pokemonType1.setTexture(TEXTURE.BLANK);
       this.pokemonType2.setTexture(TEXTURE.BLANK);
       this.captureCountValue.setText(``);
@@ -314,13 +316,12 @@ export class PokeBoxUi extends Ui {
 
     let idx = 0;
     for (const pokemon of box.getMyPokemons()) {
-      const originPokedex = getOriginPokedex(pokemon.pokedex);
-      const genderAndShinyInfo = getGenderAndShinyInfo(pokemon.pokedex);
-      const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
+      const key = getPokemonOverworldOrIconKey(pokemon);
+      const texture = `pokemon_icon` + key;
 
       this.mypokemons.push(pokemon);
-      this.icons[idx].setTexture(`pokemon_icon` + target);
-      playerInfo?.hasPartySlot(target) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
+      this.icons[idx].setTexture(texture);
+      playerInfo?.hasPartySlot(pokemon) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
       idx++;
     }
   }
