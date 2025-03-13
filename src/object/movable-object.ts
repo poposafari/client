@@ -278,6 +278,13 @@ export class MovableObject extends BaseObject {
       return tile && tile.properties.collides;
     });
   }
+
+  getTileInfo(direction: DIRECTION): Phaser.Tilemaps.Tile | null {
+    const nextTilePos = this.tilePosInDirection(direction);
+
+    return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name)).find((tile) => tile !== null && tile.index !== -1) || null;
+  }
+
   private hasNoTile(pos: Phaser.Math.Vector2): boolean {
     return this.map.layers.some((layer) => {
       this.map.hasTileAt(pos.x, pos.y, layer.name);

@@ -8,6 +8,8 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxUi } from './pokebox-ui';
 import { addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
+import { getGenderAndShinyInfo, getOriginPokedex, getPokemonOverworldOrIconKey, isPokedexShiny, trimLastChar } from '../utils/string-util';
+import { MyPokemon } from '../storage/box';
 
 export class PokeBoxSlotUi extends Ui {
   private mode: OverworldMode;
@@ -86,7 +88,8 @@ export class PokeBoxSlotUi extends Ui {
     for (let i = 0; i < this.MaxSlot; i++) {
       const slotInfo = slots[i];
       if (slotInfo) {
-        this.icons[i].setTexture(`pokemon_icon${slotInfo}`);
+        const iconKey = getPokemonOverworldOrIconKey(slotInfo);
+        this.icons[i].setTexture(`pokemon_icon${iconKey}`);
       } else {
         this.icons[i].setTexture(`pokemon_icon000`);
       }
@@ -145,21 +148,22 @@ export class PokeBoxSlotUi extends Ui {
     });
   }
 
-  updateFollowPet(pokedex: string) {
+  updateFollowPet(pokemon: MyPokemon) {
     const playerInfo = this.mode.getPlayerInfo();
+    const iconKey = getPokemonOverworldOrIconKey(pokemon);
 
     if (!playerInfo) return;
 
-    if (playerInfo.getPet() === pokedex) {
+    if (playerInfo.getPet() === pokemon) {
       playerInfo.setPet(null);
       this.iconPet.setTexture(`pokemon_icon000`);
       return;
     } else {
-      if (playerInfo.hasPartySlot(pokedex)) {
-        playerInfo.setPet(pokedex);
-        this.iconPet.setTexture(`pokemon_icon${pokedex}`);
+      if (playerInfo.hasPartySlot(pokemon)) {
+        playerInfo.setPet(pokemon);
+        this.iconPet.setTexture(`pokemon_icon${iconKey}`);
       } else {
-        if (playerInfo.getPet() === pokedex) {
+        if (playerInfo.getPet() === pokemon) {
           playerInfo.setPet(null);
           this.iconPet.setTexture(`pokemon_icon000`);
         }
