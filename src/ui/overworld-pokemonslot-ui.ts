@@ -2,6 +2,7 @@ import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
+import { getPokemonOverworldOrIconKey } from '../utils/string-util';
 import { addImage, addWindow, Ui } from './ui';
 
 export class OverworldPokemonSlotUi extends Ui {
@@ -66,15 +67,17 @@ export class OverworldPokemonSlotUi extends Ui {
   private block() {}
 
   private unblock() {
-    const partySlot = this.mode.getPlayerInfo()?.getPartySlot();
+    const playerInfo = this.mode.getPlayerInfo();
 
-    if (!partySlot) return;
+    if (!playerInfo) return;
 
-    let idx = 0;
+    const slots = playerInfo.getPartySlot();
 
     for (let i = 0; i < this.MaxSlot; i++) {
-      if (partySlot[i]) {
-        this.icons[i].setTexture(`pokemon_icon${partySlot[i]}`);
+      const slotInfo = slots[i];
+      if (slotInfo) {
+        const iconKey = getPokemonOverworldOrIconKey(slotInfo);
+        this.icons[i].setTexture(`pokemon_icon${iconKey}`);
       } else {
         this.icons[i].setTexture(`pokemon_icon000`);
       }

@@ -10,13 +10,14 @@ import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
 import { Message } from '../interface/sys';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
-import { getGenderAndShinyInfo, getOriginPokedex, isPokedexShiny } from '../utils/string-util';
+import { getGenderAndShinyInfo, getOriginPokedex, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
+import { MyPokemon } from '../storage/box';
 
 export class PokeboxRegisterUi extends Ui {
   private mode: OverworldMode;
   private pokeboxUi: PokeBoxUi;
   private pokeboxSlotUi: PokeBoxSlotUi;
-  private targetPokedex!: string;
+  private targetPokemon!: MyPokemon;
 
   private container!: Phaser.GameObjects.Container;
   private choiceContainer!: Phaser.GameObjects.Container;
@@ -57,7 +58,7 @@ export class PokeboxRegisterUi extends Ui {
   }
 
   show(data?: any): void {
-    this.targetPokedex = data;
+    this.targetPokemon = data;
 
     this.container.setVisible(true);
     this.pause(false, data);
@@ -73,11 +74,7 @@ export class PokeboxRegisterUi extends Ui {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const playerInfo = this.mode.getPlayerInfo();
 
-    const originPokedex = getOriginPokedex(this.targetPokedex);
-    const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
-    const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
-
-    if (playerInfo!.hasPartySlot(target)) {
+    if (playerInfo!.hasPartySlot(this.targetPokemon)) {
       this.registerText.setText(i18next.t('menu:removeParty'));
     } else {
       this.registerText.setText(i18next.t('menu:addParty'));
@@ -104,17 +101,13 @@ export class PokeboxRegisterUi extends Ui {
           case KEY.SELECT:
             if (!playerInfo) return;
 
-            const originPokedex = getOriginPokedex(this.targetPokedex);
-            const genderAndShinyInfo = getGenderAndShinyInfo(this.targetPokedex);
-            const target = `${originPokedex}${isPokedexShiny(genderAndShinyInfo) ? 's' : ''}`;
-
             if (choice === 0) {
-              if (playerInfo.hasPartySlot(target)) {
+              if (playerInfo.hasPartySlot(this.targetPokemon)) {
                 this.registerText.setText(i18next.t('menu:removeParty'));
-                playerInfo.removePartSlot(target);
-                this.pokeboxSlotUi.updateFollowPet(target);
+                playerInfo.removePartSlot(this.targetPokemon);
+                this.pokeboxSlotUi.updateFollowPet(this.targetPokemon);
               } else {
-                const result = playerInfo.addPartySlot(target);
+                const result = playerInfo.addPartySlot(this.targetPokemon);
                 if (!result) {
                   this.mode.startMessage(this.cautionSlotMessage());
                 }

@@ -1,3 +1,5 @@
+import { MyPokemon } from './box';
+
 export interface Location {
   overworld: string;
   x: number;
@@ -9,9 +11,9 @@ export class PlayerInfo {
   private gender!: 'boy' | 'girl';
   private avatar!: 1 | 2 | 3 | 4;
   private location!: Location;
-  private pet!: string | null;
+  private pet!: MyPokemon | null;
   private money!: number;
-  private partySlot: string[] = [];
+  private partySlot: MyPokemon[] = [];
 
   private readonly MaxSlot: number = 6;
 
@@ -77,7 +79,7 @@ export class PlayerInfo {
     this.location.y = location.y;
   }
 
-  setPet(pet: string | null) {
+  setPet(pet: MyPokemon | null) {
     this.pet = pet;
   }
 
@@ -98,22 +100,22 @@ export class PlayerInfo {
     return this.partySlot;
   }
 
-  addPartySlot(pokedex: string): boolean {
+  addPartySlot(pokemon: MyPokemon): boolean {
     if (this.partySlot.length === this.MaxSlot) {
       return false;
     }
 
-    this.partySlot.push(pokedex);
+    this.partySlot.push(pokemon);
 
     return true;
   }
 
-  hasPartySlot(pokedex: string) {
-    return this.partySlot.includes(pokedex);
+  hasPartySlot(pokemon: MyPokemon) {
+    return this.partySlot.includes(pokemon);
   }
 
-  removePartSlot(pokedex: string): boolean {
-    const index = this.partySlot.indexOf(pokedex);
+  removePartSlot(pokemon: MyPokemon): boolean {
+    const index = this.partySlot.indexOf(pokemon);
 
     if (index !== -1) {
       this.partySlot.splice(index, 1);

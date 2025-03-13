@@ -8,7 +8,7 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { OBJECT } from '../enums/object-type';
 import { PlayerInfo } from '../storage/player-info';
 import { OverworldInfo } from '../storage/overworld-info';
-import { isPokedexShiny } from '../utils/string-util';
+import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { ANIMATION } from '../enums/animation';
 
 export class PetObject extends MovableObject {
@@ -42,11 +42,13 @@ export class PetObject extends MovableObject {
   }
 
   private getAnimation(key: KEY) {
-    let pokedex = this.playerInfo.getPet();
+    let pokemon = this.playerInfo.getPet();
+    let overworldKey = '000';
 
-    if (pokedex) {
+    if (pokemon) {
+      overworldKey = getPokemonOverworldOrIconKey(pokemon!);
       this.setVisible(true);
-      if (isPokedexShiny(pokedex)) {
+      if (pokemon.shiny) {
         if (!this.dummy2.anims.isPlaying) {
           this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
           this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
@@ -57,19 +59,18 @@ export class PetObject extends MovableObject {
         this.dummy2.stop();
       }
     } else {
-      pokedex = '000';
       this.setVisible(false);
     }
 
     switch (key) {
       case KEY.UP:
-        return `pokemon_overworld${pokedex}_up`;
+        return `pokemon_overworld${overworldKey}_up`;
       case KEY.DOWN:
-        return `pokemon_overworld${pokedex}_down`;
+        return `pokemon_overworld${overworldKey}_down`;
       case KEY.LEFT:
-        return `pokemon_overworld${pokedex}_left`;
+        return `pokemon_overworld${overworldKey}_left`;
       case KEY.RIGHT:
-        return `pokemon_overworld${pokedex}_right`;
+        return `pokemon_overworld${overworldKey}_right`;
     }
   }
 
