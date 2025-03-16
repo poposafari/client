@@ -50,6 +50,8 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.SELECT, 'ui', TEXTURE.SELECT);
 
+    this.loadImage(TEXTURE.BG_HM, 'ui', TEXTURE.BG_HM);
+
     this.loadImage(TEXTURE.BOY_1_STATUE, 'ui/character/statue', 'boy_1');
     this.loadImage(TEXTURE.BOY_2_STATUE, 'ui/character/statue', 'boy_2');
     this.loadImage(TEXTURE.BOY_3_STATUE, 'ui/character/statue', 'boy_3');
@@ -69,6 +71,17 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.GIRL_2_MOVEMENT, 'ui/character/movement', 'girl_2', ANIMATION.PLAYER_MOVEMENT);
     this.loadAtlas(TEXTURE.GIRL_3_MOVEMENT, 'ui/character/movement', 'girl_3', ANIMATION.PLAYER_MOVEMENT);
     this.loadAtlas(TEXTURE.GIRL_4_MOVEMENT, 'ui/character/movement', 'girl_4', ANIMATION.PLAYER_MOVEMENT);
+
+    this.loadAtlas(TEXTURE.SURF, 'ui/character/surf', 'surf', ANIMATION.SURF);
+    this.loadAtlas(TEXTURE.BOY_1_SURF, 'ui/character/surf', 'boy_1', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.BOY_2_SURF, 'ui/character/surf', 'boy_2', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.BOY_3_SURF, 'ui/character/surf', 'boy_3', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.BOY_4_SURF, 'ui/character/surf', 'boy_4', ANIMATION.PLAYER_SURF);
+
+    this.loadAtlas(TEXTURE.GIRL_1_SURF, 'ui/character/surf', 'girl_1', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.GIRL_2_SURF, 'ui/character/surf', 'girl_2', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.GIRL_3_SURF, 'ui/character/surf', 'girl_3', ANIMATION.PLAYER_SURF);
+    this.loadAtlas(TEXTURE.GIRL_4_SURF, 'ui/character/surf', 'girl_4', ANIMATION.PLAYER_SURF);
 
     this.loadAtlas(TEXTURE.BOY_1_RIDE, 'ui/character/ride', 'boy_1', ANIMATION.PLAYER_RIDE);
     this.loadAtlas(TEXTURE.BOY_2_RIDE, 'ui/character/ride', 'boy_2', ANIMATION.PLAYER_RIDE);
@@ -99,6 +112,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
     this.loadMap(TEXTURE.OVERWORLD_000, 'ui/map', TEXTURE.OVERWORLD_000);
+    this.loadMap(TEXTURE.OVERWORLD_011, 'ui/map', TEXTURE.OVERWORLD_011);
     this.loadImage(TEXTURE.TILE_NATURE, 'ui/map', TEXTURE.TILE_NATURE);
     this.loadImage(TEXTURE.TILE_URBAN, 'ui/map', TEXTURE.TILE_URBAN);
 

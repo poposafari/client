@@ -16,6 +16,11 @@ import { OverworldInfo } from '../storage/overworld-info';
 import { PokemonObject } from '../object/pokemon-object';
 import { BattleInfo } from './battle-base-ui';
 import { GroundItemObject } from '../object/ground-item-object';
+import { SKILL } from '../enums/skill';
+import { Message } from '../interface/sys';
+import { HiddenMoveUi } from './hidden-move-ui';
+import { getPokemonSpriteKey } from '../utils/string-util';
+import { DIRECTION } from '../enums/direction';
 
 export interface Layer {
   idx: number;
@@ -57,6 +62,7 @@ export class OverworldUi extends Ui {
   private isMessageActive: boolean = false;
   private isBattle: boolean = false;
   private overworldInfo: OverworldInfo;
+  private hiddenMoveUi: HiddenMoveUi;
 
   //overworld creative info.
   private npcsInfo: NpcInfo[] = [];
@@ -72,7 +78,7 @@ export class OverworldUi extends Ui {
 
   //player
   private playerInitPos: PlayerInitPos = { x: 0, y: 0, px: 0, py: 0 };
-  private playerObj!: PlayerObject;
+  private playerObj!: PlayerObject | null;
 
   private readonly MapScale: number = 3;
   // private readonly MapScale: number = 1.5;
@@ -83,9 +89,13 @@ export class OverworldUi extends Ui {
     this.overworldKey = key;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.overworldInfo = this.mode.getOverworldInfo()!;
+
+    this.hiddenMoveUi = new HiddenMoveUi(scene, mode);
   }
 
-  setup(): void {}
+  setup(): void {
+    this.hiddenMoveUi.setup();
+  }
 
   setupMap(texture: TEXTURE, tilesets: TEXTURE[]) {
     const width = this.getWidth();
@@ -175,26 +185,27 @@ export class OverworldUi extends Ui {
     }
   }
 
-  private showPlayer() {
+  private showPlayer(x?: number, y?: number, texture?: string) {
     const playerData = this.mode.getPlayerInfo();
+    let pTexture = `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`;
+    let px = this.playerInitPos.x;
+    let py = this.playerInitPos.y;
+
+    if (x && y) {
+      px = x;
+      py = y;
+    }
+
+    if (texture) {
+      pTexture = texture;
+    }
 
     if (!playerData) {
       console.error('Player does not exist.');
       return;
     }
 
-    this.playerObj = new PlayerObject(
-      this.scene,
-      `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`,
-      this.playerInitPos.x,
-      this.playerInitPos.y,
-      this.map,
-      playerData?.getNickname(),
-      OBJECT.PLAYER,
-      this.mode.getBag()!,
-      this.mode.getPlayerInfo()!,
-      this.overworldInfo,
-    );
+    this.playerObj = new PlayerObject(this.scene, pTexture, px, py, this.map, playerData?.getNickname(), OBJECT.PLAYER, this.mode.getBag()!, this.mode.getPlayerInfo()!, this.overworldInfo);
 
     this.playerObj.getSprite().setVisible(true).setScale(PLAYER_SCALE);
     this.scene.cameras.main.startFollow(this.playerObj.getSprite(), true, 0.5, 0.5, 0, 0);
@@ -208,8 +219,9 @@ export class OverworldUi extends Ui {
   }
 
   private cleanPlayer() {
-    this.playerObj.destroy();
-    this.playerObj.getPet().destroy();
+    this.playerObj!.destroy();
+    this.playerObj!.getPet().destroy();
+    this.playerObj = null;
     this.scene.cameras.main.stopFollow();
     this.scene.cameras.main.setScroll(0, 0);
   }
@@ -257,11 +269,14 @@ export class OverworldUi extends Ui {
   }
 
   update(time: number, delta: number): void {
-    this.mode.updateOverworldLocationUi({ overworld: '000', x: this.playerObj.getTilePos().x, y: this.playerObj.getTilePos().y });
     if (this.sysBlock) return;
-    this.movement();
-    this.playerObj.update(delta);
-    this.playerObj.getPet().update();
+
+    if (this.playerObj) {
+      this.mode.updateOverworldLocationUi({ overworld: '000', x: this.playerObj.getTilePos().x, y: this.playerObj.getTilePos().y });
+      this.playerMovement();
+      this.playerObj.update(delta);
+      this.playerObj.getPet().update();
+    }
   }
 
   getOverworldMode() {
@@ -313,8 +328,11 @@ export class OverworldUi extends Ui {
       try {
         switch (key) {
           case KEY.SELECT:
-            const obj = this.playerObj.getObjectInFront(this.playerObj.getLastDirection());
-            if (obj && this.playerObj.isMovementFinish() && !this.isMessageActive && !this.isBattle) {
+            const obj = this.playerObj!.getObjectInFront(this.playerObj!.getLastDirection());
+
+            if (!(this.playerObj!.isMovementFinish() && !this.isMessageActive && !this.isBattle)) return;
+
+            if (obj) {
               const key = obj.getKey();
               if (obj instanceof NpcObject) {
                 const talkResult = await this.talkToNpc(obj, key);
@@ -328,17 +346,37 @@ export class OverworldUi extends Ui {
               } else if (obj instanceof GroundItemObject) {
                 this.talkToGroundItem(obj);
               }
+            } else {
+              const tile = this.playerObj!.getTileInfo(this.playerObj!.getLastDirection());
+              if (tile?.properties.event === 'surf' && this.playerObj?.getStatus() !== PLAYER_STATUS.SURF) {
+                this.isMessageActive = true;
+                const msgResult = await this.mode.startMessage(this.talkToWater());
+                if (msgResult) {
+                  // this.mode.pauseOverworldSystem(true);
+                  this.hiddenMoveUi.show();
+                  this.showSurf();
+                  this.playerObj!.setStatus(PLAYER_STATUS.SURF);
+                }
+                this.isMessageActive = false;
+              } else if (tile?.properties.event === 'surf' && this.playerObj?.getStatus() === PLAYER_STATUS.SURF) {
+                this.isMessageActive = true;
+                const msgResult = await this.mode.startMessage(this.talkToGround());
+                if (msgResult) {
+                  this.showSurfToGround();
+                }
+                this.isMessageActive = false;
+              }
             }
             break;
           case KEY.MENU:
-            if (this.playerObj.isMovementFinish()) {
+            if (this.playerObj!.isMovementFinish()) {
               this.mode.pauseOverworldSystem(true);
               this.mode.addUiStackOverlap('OverworldMenuUi');
             }
             break;
           case KEY.RUNNING:
-            if (this.playerObj.isMovementFinish()) {
-              this.playerObj.setStatus(PLAYER_STATUS.RUNNING);
+            if (this.playerObj!.isMovementFinish()) {
+              this.playerObj!.setStatus(PLAYER_STATUS.RUNNING);
             }
             break;
           case KEY.USE_1:
@@ -376,26 +414,26 @@ export class OverworldUi extends Ui {
   }
 
   changeFollowPokemon(pokedex: string) {
-    const pet = this.playerObj.getPet();
+    const pet = this.playerObj!.getPet();
 
     pet.startAnmation(`pokemon_overworld${pokedex}_${pet.getLastDirection()}`);
     pet.setVisible(pokedex !== '000' ? true : false);
-    this.playerObj.getPet().getSprite().setTexture(`pokemon_overworld${pokedex}`);
+    this.playerObj!.getPet().getSprite().setTexture(`pokemon_overworld${pokedex}`);
   }
 
   private useItem(slotIdx: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
-    this.playerObj.readyItem(slotIdx);
+    this.playerObj!.readyItem(slotIdx);
   }
 
-  private movement() {
-    if (this.cursorKey.up.isDown && this.playerObj.isMovementFinish()) {
-      this.playerObj.move(KEY.UP);
-    } else if (this.cursorKey.down.isDown && this.playerObj.isMovementFinish()) {
-      this.playerObj.move(KEY.DOWN);
-    } else if (this.cursorKey.left.isDown && this.playerObj.isMovementFinish()) {
-      this.playerObj.move(KEY.LEFT);
-    } else if (this.cursorKey.right.isDown && this.playerObj.isMovementFinish()) {
-      this.playerObj.move(KEY.RIGHT);
+  private playerMovement() {
+    if (this.cursorKey.up.isDown && this.playerObj!.isMovementFinish()) {
+      this.playerObj!.move(KEY.UP);
+    } else if (this.cursorKey.down.isDown && this.playerObj!.isMovementFinish()) {
+      this.playerObj!.move(KEY.DOWN);
+    } else if (this.cursorKey.left.isDown && this.playerObj!.isMovementFinish()) {
+      this.playerObj!.move(KEY.LEFT);
+    } else if (this.cursorKey.right.isDown && this.playerObj!.isMovementFinish()) {
+      this.playerObj!.move(KEY.RIGHT);
     }
   }
 
@@ -422,9 +460,9 @@ export class OverworldUi extends Ui {
     this.isMessageActive = true;
 
     if (obj.getStartMessageType() === 'talk') {
-      await this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'talk', 'welcome'));
+      await this.mode.startMessage(obj.reaction(this.playerObj!.getLastDirection(), key, 'talk', 'welcome'));
     } else {
-      ret = this.mode.startMessage(obj.reaction(this.playerObj.getLastDirection(), key, 'question', 'welcome'));
+      ret = this.mode.startMessage(obj.reaction(this.playerObj!.getLastDirection(), key, 'question', 'welcome'));
     }
     this.isMessageActive = false;
 
@@ -433,7 +471,7 @@ export class OverworldUi extends Ui {
 
   private talkToPokemon(obj: PokemonObject) {
     this.isBattle = true;
-    obj.reaction(this.playerObj.getLastDirection());
+    obj.reaction(this.playerObj!.getLastDirection());
   }
 
   private async talkToGroundItem(obj: GroundItemObject) {
@@ -446,5 +484,95 @@ export class OverworldUi extends Ui {
     obj.destroy();
     obj.changeActive();
     this.isMessageActive = false;
+  }
+
+  private talkToWater(): Message[] {
+    const playerInfo = this.mode.getPlayerInfo();
+    const box = this.mode.getBox();
+    const script1 = i18next.t(`message:surf_welcome`);
+    const script2 = i18next.t(`message:surf_question`);
+
+    let ret: Message[] = [];
+    let script = script1;
+    let format: 'talk' | 'question' = 'talk';
+
+    if (playerInfo && box) {
+      playerInfo.getPartySlot().forEach((party) => {
+        const target = box.hasPokemon(party.pokedex, party.shiny, party.gender);
+        if (target && target.skill === SKILL.SURF) {
+          this.hiddenMoveUi.setPokemonSprite(getPokemonSpriteKey(target));
+          script += script2;
+          format = 'question';
+        }
+      });
+    }
+    ret.push({ type: 'sys', format: format, content: script });
+    return ret;
+  }
+
+  private talkToGround() {
+    const script = i18next.t(`message:surf_cancel`);
+    let ret: Message[] = [];
+    let format: 'talk' | 'question' = 'question';
+
+    ret.push({ type: 'sys', format: format, content: script });
+
+    return ret;
+  }
+
+  private showSurf() {
+    const playerPos = this.playerObj!.getTilePos();
+    let px = playerPos.x;
+    let py = playerPos.y;
+    let texture = 'up';
+
+    switch (this.playerObj!.getLastDirection()) {
+      case DIRECTION.UP:
+        py -= 2;
+        texture = 'up';
+        break;
+      case DIRECTION.DOWN:
+        py += 2;
+        texture = 'down';
+        break;
+      case DIRECTION.LEFT:
+        texture = 'left';
+        px -= 2;
+        break;
+      case DIRECTION.RIGHT:
+        texture = 'right';
+        px += 2;
+        break;
+    }
+    this.cleanPlayer();
+    this.showPlayer(px, py, `surf`);
+  }
+
+  private showSurfToGround() {
+    const surfPos = this.playerObj!.getTilePos();
+    let px = surfPos.x;
+    let py = surfPos.y;
+    let texture = 'up';
+
+    switch (this.playerObj!.getLastDirection()) {
+      case DIRECTION.UP:
+        py -= 2;
+        texture = 'up';
+        break;
+      case DIRECTION.DOWN:
+        py += 2;
+        texture = 'down';
+        break;
+      case DIRECTION.LEFT:
+        px -= 2;
+        texture = 'left';
+        break;
+      case DIRECTION.RIGHT:
+        px += 2;
+        texture = 'right';
+        break;
+    }
+    this.cleanPlayer();
+    this.showPlayer(px, py);
   }
 }

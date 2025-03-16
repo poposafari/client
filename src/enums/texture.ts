@@ -39,6 +39,15 @@ export const enum TEXTURE {
   GIRL_2_MOVEMENT = 'girl_2_movement',
   GIRL_3_MOVEMENT = 'girl_3_movement',
   GIRL_4_MOVEMENT = 'girl_4_movement',
+  BOY_1_SURF = 'boy_1_surf',
+  BOY_2_SURF = 'boy_2_surf',
+  BOY_3_SURF = 'boy_3_surf',
+  BOY_4_SURF = 'boy_4_surf',
+  GIRL_1_SURF = 'girl_1_surf',
+  GIRL_2_SURF = 'girl_2_surf',
+  GIRL_3_SURF = 'girl_3_surf',
+  GIRL_4_SURF = 'girl_4_surf',
+  SURF = 'surf',
   BOY_1_RIDE = 'boy_1_ride',
   BOY_2_RIDE = 'boy_2_ride',
   BOY_3_RIDE = 'boy_3_ride',
@@ -63,6 +72,7 @@ export const enum TEXTURE {
   SEASON_2 = 'season_2',
   SEASON_3 = 'season_3',
   OVERWORLD_000 = 'overworld-000',
+  OVERWORLD_011 = 'overworld-011',
   TILE_NATURE = 'nature',
   TILE_URBAN = 'urban',
   MENU_BOX = 'menu_box',
@@ -128,6 +138,7 @@ export const enum TEXTURE {
   ENEMY_BAR = 'enemy_bar',
   EMO = 'emo',
   SPARKLE = 'sparkle',
+  BG_HM = 'bg_hm',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

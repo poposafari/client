@@ -77,6 +77,7 @@ export class InGameScene extends BaseScene {
     this.initPokemonAnimation();
     this.initPokeballAnimation();
     this.initEmotionAnimation();
+    this.initSurfAnimation();
   }
 
   private initEmotionAnimation() {
@@ -218,15 +219,19 @@ export class InGameScene extends BaseScene {
     for (let i = 1; i <= 4; i++) {
       const boyMovementTexture = `boy_${i}_movement`;
       const boyRideTexture = `boy_${i}_ride`;
+      const boySurfTexture = `boy_${i}_surf`;
 
       const girlMovementTexture = `girl_${i}_movement`;
       const girlRideTexture = `girl_${i}_ride`;
+      const girlSurfTexture = `girl_${i}_surf`;
 
       const movementFramesB = getSpriteFrames(this, boyMovementTexture, ANIMATION.PLAYER_MOVEMENT);
       const rideFramesB = getSpriteFrames(this, boyRideTexture, ANIMATION.PLAYER_RIDE);
+      const surfFramesB = getSpriteFrames(this, boySurfTexture, ANIMATION.PLAYER_SURF);
 
       const movementFramesG = getSpriteFrames(this, girlMovementTexture, ANIMATION.PLAYER_MOVEMENT);
       const rideFramesG = getSpriteFrames(this, girlRideTexture, ANIMATION.PLAYER_RIDE);
+      const surfFramesG = getSpriteFrames(this, girlSurfTexture, ANIMATION.PLAYER_SURF);
 
       //boy
       const walkUpB = [
@@ -309,6 +314,11 @@ export class InGameScene extends BaseScene {
         [rideFramesB[9], rideFramesB[9]],
       ];
 
+      const surfUpB = [[surfFramesB[0]]];
+      const surfDownB = [[surfFramesB[3]]];
+      const surfLeftB = [[surfFramesB[6]]];
+      const surfRightB = [[surfFramesB[9]]];
+
       createSpriteAnimation(this, boyMovementTexture, `${boyMovementTexture}_walk_up_1`, walkUpB[0]);
       createSpriteAnimation(this, boyMovementTexture, `${boyMovementTexture}_walk_up_2`, walkUpB[1]);
       createSpriteAnimation(this, boyMovementTexture, `${boyMovementTexture}_walk_down_1`, walkDownB[0]);
@@ -354,6 +364,11 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_4`, rideRightB[3]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_5`, rideRightB[4]);
       createSpriteAnimation(this, boyRideTexture, `${boyRideTexture}_right_6`, rideRightB[5]);
+
+      createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_up`, surfUpB[0]);
+      createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_down`, surfDownB[0]);
+      createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_left`, surfLeftB[0]);
+      createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_right`, surfRightB[0]);
 
       //girl
       const walkUpG = [
@@ -436,6 +451,11 @@ export class InGameScene extends BaseScene {
         [rideFramesG[9], rideFramesG[9]],
       ];
 
+      const surfUpG = [[surfFramesG[0]]];
+      const surfDownG = [[surfFramesG[3]]];
+      const surfLeftG = [[surfFramesG[6]]];
+      const surfRightG = [[surfFramesG[9]]];
+
       createSpriteAnimation(this, girlMovementTexture, `${girlMovementTexture}_walk_up_1`, walkUpG[0]);
       createSpriteAnimation(this, girlMovementTexture, `${girlMovementTexture}_walk_up_2`, walkUpG[1]);
       createSpriteAnimation(this, girlMovementTexture, `${girlMovementTexture}_walk_down_1`, walkDownG[0]);
@@ -481,6 +501,25 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_4`, rideRightG[3]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_5`, rideRightG[4]);
       createSpriteAnimation(this, girlRideTexture, `${girlRideTexture}_right_6`, rideRightG[5]);
+
+      createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_up`, surfUpG[0]);
+      createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_down`, surfDownG[0]);
+      createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_left`, surfLeftG[0]);
+      createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_right`, surfRightG[0]);
     }
+  }
+
+  private initSurfAnimation() {
+    const frames = getSpriteFrames(this, TEXTURE.SURF, ANIMATION.SURF);
+
+    const up = [[frames[0]]];
+    const down = [[frames[3]]];
+    const left = [[frames[6]]];
+    const right = [[frames[9]]];
+
+    createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_up`, up[0]);
+    createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_down`, down[0]);
+    createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_left`, left[0]);
+    createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_right`, right[0]);
   }
 }

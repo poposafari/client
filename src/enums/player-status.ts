@@ -2,7 +2,7 @@ export const enum PLAYER_STATUS {
   WALK = 'walk',
   RUNNING = 'running',
   RIDE = 'RIDE',
-  SURF = 'SURF',
+  SURF = 'surf',
   FISHING = 'FISHING',
   TALK = 'talk',
 }
