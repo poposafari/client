@@ -87,6 +87,9 @@ export class PetObject extends MovableObject {
       case PLAYER_STATUS.RIDE:
         speed = 8;
         break;
+      case PLAYER_STATUS.SURF:
+        speed = 4;
+        break;
     }
 
     this.setSmoothFrames(smoothFrames!);

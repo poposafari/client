@@ -4,251 +4,251 @@
       "frame": {
         "x": 0,
         "y": 0,
-        "w": 64,
-        "h": 64
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 64,
-        "h": 64
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-1": {
       "frame": {
         "x": 0,
-        "y": 64,
-        "w": 64,
-        "h": 64
+        "y": 32,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 64,
-        "w": 64,
-        "h": 64
+        "y": 32,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-2": {
       "frame": {
         "x": 0,
-        "y": 128,
-        "w": 64,
-        "h": 64
+        "y": 64,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 128,
-        "w": 64,
-        "h": 64
+        "y": 64,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-3": {
       "frame": {
         "x": 0,
-        "y": 192,
-        "w": 64,
-        "h": 64
+        "y": 96,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 192,
-        "w": 64,
-        "h": 64
+        "y": 96,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-4": {
       "frame": {
         "x": 0,
-        "y": 256,
-        "w": 64,
-        "h": 64
+        "y": 128,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 256,
-        "w": 64,
-        "h": 64
+        "y": 128,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-5": {
       "frame": {
         "x": 0,
-        "y": 320,
-        "w": 64,
-        "h": 64
+        "y": 160,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 320,
-        "w": 64,
-        "h": 64
+        "y": 160,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-6": {
       "frame": {
         "x": 0,
-        "y": 384,
-        "w": 64,
-        "h": 64
+        "y": 192,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 384,
-        "w": 64,
-        "h": 64
+        "y": 192,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-7": {
       "frame": {
         "x": 0,
-        "y": 448,
-        "w": 64,
-        "h": 64
+        "y": 224,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 448,
-        "w": 64,
-        "h": 64
+        "y": 224,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-8": {
       "frame": {
         "x": 0,
-        "y": 512,
-        "w": 64,
-        "h": 64
+        "y": 256,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 512,
-        "w": 64,
-        "h": 64
+        "y": 256,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-9": {
       "frame": {
         "x": 0,
-        "y": 576,
-        "w": 64,
-        "h": 64
+        "y": 288,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 576,
-        "w": 64,
-        "h": 64
+        "y": 288,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-10": {
       "frame": {
         "x": 0,
-        "y": 640,
-        "w": 64,
-        "h": 64
+        "y": 320,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 640,
-        "w": 64,
-        "h": 64
+        "y": 320,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     },
     "surf-11": {
       "frame": {
         "x": 0,
-        "y": 704,
-        "w": 64,
-        "h": 64
+        "y": 352,
+        "w": 32,
+        "h": 32
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 704,
-        "w": 64,
-        "h": 64
+        "y": 352,
+        "w": 32,
+        "h": 32
       },
       "sourceSize": {
-        "w": 64,
-        "h": 768
+        "w": 32,
+        "h": 384
       }
     }
   },
   "meta": {
     "app": "sprite-sheet-to-json",
     "version": "1.0.0",
-    "image": "surf.png",
+    "image": "boy_1.png",
     "format": "RGBA8888",
     "size": {
-      "w": 64,
-      "h": 768
+      "w": 32,
+      "h": 384
     },
     "scale": "1"
   }

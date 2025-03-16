@@ -69,6 +69,8 @@ export class PlayerObject extends MovableObject {
         this.pet.move(this);
         break;
     }
+
+    this.moveSurfDeco(key);
   }
 
   isPlayerStop() {
@@ -83,6 +85,8 @@ export class PlayerObject extends MovableObject {
         return this.getRunAnimationType(key);
       case PLAYER_STATUS.RIDE:
         return this.getRideAnimationType(key);
+      case PLAYER_STATUS.SURF:
+        return this.getSurfAnimationType(key);
     }
   }
 
@@ -172,6 +176,21 @@ export class PlayerObject extends MovableObject {
     }
   }
 
+  private getSurfAnimationType(key: KEY) {
+    const animationKey = `surf_`;
+
+    switch (key) {
+      case KEY.UP:
+        return animationKey + 'up';
+      case KEY.DOWN:
+        return animationKey + 'down';
+      case KEY.LEFT:
+        return animationKey + 'left';
+      case KEY.RIGHT:
+        return animationKey + 'right';
+    }
+  }
+
   setStatus(status: PLAYER_STATUS) {
     switch (status) {
       case PLAYER_STATUS.WALK:
@@ -183,6 +202,9 @@ export class PlayerObject extends MovableObject {
         break;
       case PLAYER_STATUS.RIDE:
         this.currentStatus = this.currentStatus === PLAYER_STATUS.RIDE ? PLAYER_STATUS.WALK : PLAYER_STATUS.RIDE;
+        break;
+      case PLAYER_STATUS.SURF:
+        this.currentStatus = PLAYER_STATUS.SURF;
         break;
     }
     this.setMovement();
@@ -196,7 +218,8 @@ export class PlayerObject extends MovableObject {
     /*
     walk = 2
     run = 4
-    ride = 8 
+    ride = 8
+    surf = 4
     */
 
     let smoothFrames;
@@ -216,6 +239,10 @@ export class PlayerObject extends MovableObject {
         smoothFrames = [0, 3, 6, 9];
         speed = 8;
         break;
+      case PLAYER_STATUS.SURF:
+        smoothFrames = [0, 3, 6, 9];
+        speed = 4;
+        break;
     }
 
     this.setSmoothFrames(smoothFrames!);
@@ -232,5 +259,30 @@ export class PlayerObject extends MovableObject {
       case '046':
         return this.setStatus(PLAYER_STATUS.RIDE);
     }
+  }
+
+  private moveSurfDeco(key: KEY) {
+    if (this.currentStatus !== PLAYER_STATUS.SURF) return;
+
+    let animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_surf_`;
+
+    switch (key) {
+      case KEY.UP:
+        animationKey += 'up';
+        break;
+      case KEY.DOWN:
+        animationKey += 'down';
+        break;
+      case KEY.LEFT:
+        animationKey += 'left';
+        break;
+      case KEY.RIGHT:
+        animationKey += 'right';
+        break;
+    }
+
+    this.dummy2.setScale(3);
+    this.dummy2.play(animationKey);
+    this.setDeccoSpritePosition('y', -20);
   }
 }

@@ -147,6 +147,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 3;
     case ANIMATION.PLAYER_MOVEMENT:
       return 23;
+    case ANIMATION.SURF:
+    case ANIMATION.PLAYER_SURF:
     case ANIMATION.PLAYER_RIDE:
       return 11;
     case ANIMATION.TYPES:
