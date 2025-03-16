@@ -43,7 +43,7 @@ export class BaseObject {
     this.initSetPosition(this.tilePos.x, this.tilePos.y);
     this.nickname.setDepth(DEPTH.NICKNAME);
     this.dummy1.setDepth(DEPTH.NICKNAME + 1);
-    this.dummy2.setDepth(DEPTH.NICKNAME + 1);
+    this.dummy2.setDepth(DEPTH.NICKNAME - 2);
     this.setDepth(this.tilePos.y);
   }
 
@@ -59,7 +59,7 @@ export class BaseObject {
   }
 
   setScale(value: number) {
-    this.sprite.setScale(1.5);
+    this.sprite.setScale(value);
   }
 
   getType() {
@@ -121,7 +121,7 @@ export class BaseObject {
     this.sprite.setPosition(position.x, position.y);
     this.spriteShadow.setPosition(position.x, position.y);
     this.dummy1.setPosition(position.x, position.y - 80);
-    this.dummy2.setPosition(position.x, position.y);
+    this.dummy2.setPosition(position.x, position.y - 20);
     this.nickname.setPosition(position.x, position.y - 100);
   }
 
@@ -161,5 +161,13 @@ export class BaseObject {
 
   getKey() {
     return this.sprite.texture.key;
+  }
+
+  setDeccoSpritePosition(target: 'x' | 'y', value: number) {
+    const retX = this.tilePos.x * TILE_SIZE * MAP_SCALE + this.offsetX * MAP_SCALE;
+    const retY = this.tilePos.y * TILE_SIZE * MAP_SCALE + this.offsetY * MAP_SCALE;
+
+    if (target === 'x') this.dummy2.setPosition(retX + value, retY);
+    else if (target === 'y') this.dummy2.setPosition(retX, retY + value);
   }
 }

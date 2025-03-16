@@ -15,6 +15,7 @@ export class MessageUi extends Ui {
   private messageContainer!: Phaser.GameObjects.Container;
   private messageText!: Phaser.GameObjects.Text;
   private messageWindow!: Phaser.GameObjects.NineSlice;
+  private questionWindow!: Phaser.GameObjects.NineSlice;
   private endMark!: Phaser.GameObjects.Sprite;
   private questionContainer!: Phaser.GameObjects.Container;
   private questionTexts: Phaser.GameObjects.Text[] = [];
@@ -45,8 +46,8 @@ export class MessageUi extends Ui {
     this.messageContainer.add(this.endMark);
 
     this.questionContainer = this.scene.add.container(width / 2 + 685, height / 2 + 230);
-    const questionWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 150, 100, 8, 8, 8, 8);
-    this.questionContainer.add(questionWindow);
+    this.questionWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 150, 100, 8, 8, 8, 8);
+    this.questionContainer.add(this.questionWindow);
 
     const options = [i18next.t('menu:accept'), i18next.t('menu:reject')];
     options.forEach((text, index) => {
@@ -85,6 +86,11 @@ export class MessageUi extends Ui {
       this.endMark.setTexture(TEXTURE.PAUSE_WHITE);
       this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
       this.messageText.setPosition(-380, 180);
+      this.questionWindow.setTexture(TEXTURE.WINDOW_0);
+      this.questionTexts[0].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
+      this.questionTexts[1].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
+      this.questionDummys[0].setTexture(TEXTURE.ARROW_W_R);
+      this.questionDummys[1].setTexture(TEXTURE.BLANK);
     } else if (type === 'battle') {
       this.messageWindow.setTexture(TEXTURE.BLANK);
       this.endMark.setTexture(TEXTURE.PAUSE_WHITE);
@@ -95,6 +101,11 @@ export class MessageUi extends Ui {
       this.endMark.setTexture(TEXTURE.PAUSE_BLACK);
       this.messageText.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
       this.messageText.setPosition(-380, 180);
+      this.questionWindow.setTexture(TEXTURE.WINDOW_1);
+      this.questionTexts[0].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+      this.questionTexts[1].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+      this.questionDummys[0].setTexture(TEXTURE.ARROW_B_R);
+      this.questionDummys[1].setTexture(TEXTURE.BLANK);
     }
 
     const keyboardManager = KeyboardManager.getInstance();
@@ -119,7 +130,7 @@ export class MessageUi extends Ui {
               }
             });
           } else {
-            this.showQuestion(resolve);
+            this.showQuestion(resolve, type);
           }
         }
       };
@@ -128,10 +139,8 @@ export class MessageUi extends Ui {
     });
   }
 
-  private showQuestion(resolve: (value: boolean) => void): void {
+  private showQuestion(resolve: (value: boolean) => void, type: 'sys' | 'default' | 'battle'): void {
     this.questionContainer.setVisible(true);
-
-    this.questionDummys[this.selectedIndex].setTexture(TEXTURE.ARROW_B_R);
 
     const keyboardManager = KeyboardManager.getInstance();
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
@@ -155,14 +164,16 @@ export class MessageUi extends Ui {
       }
 
       if (this.selectedIndex !== prevIndex) {
-        this.updateSelection(prevIndex, this.selectedIndex);
+        this.updateSelection(prevIndex, this.selectedIndex, type);
       }
     });
   }
 
-  private updateSelection(prevIndex: number, currentIndex: number): void {
+  private updateSelection(prevIndex: number, currentIndex: number, type: 'sys' | 'default' | 'battle'): void {
     this.questionDummys[prevIndex].setTexture(TEXTURE.BLANK);
-    this.questionDummys[currentIndex].setTexture(TEXTURE.ARROW_B_R);
+
+    if (type === 'sys') this.questionDummys[currentIndex].setTexture(TEXTURE.ARROW_W_R);
+    if (type === 'default') this.questionDummys[currentIndex].setTexture(TEXTURE.ARROW_B_R);
   }
 
   clean(): void {
