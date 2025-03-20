@@ -1,4 +1,4 @@
-import { TYPE } from '../enums/type';
+import { TYPE } from "../enums/type";
 
 export interface PlazaData {
   entryPos: {
@@ -10,7 +10,6 @@ export interface PlazaData {
 export interface SafariData {
   key: string;
   cost: number;
-  spawnTypes: TYPE[];
   entryPos: {
     x: number;
     y: number;
@@ -19,7 +18,7 @@ export interface SafariData {
 }
 
 const initialPlaza: Record<string, PlazaData> = {
-  '000': {
+  "000": {
     entryPos: {
       x: 10,
       y: 10,
@@ -28,105 +27,95 @@ const initialPlaza: Record<string, PlazaData> = {
 };
 
 const initialSafari: Record<string, SafariData> = {
-  '011': {
-    key: '011',
+  "011": {
+    key: "011",
     cost: 0,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '012': {
-    key: '012',
+  "012": {
+    key: "012",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '013': {
-    key: '013',
+  "013": {
+    key: "013",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '014': {
-    key: '014',
+  "014": {
+    key: "014",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '015': {
-    key: '015',
+  "015": {
+    key: "015",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '016': {
-    key: '016',
+  "016": {
+    key: "016",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '017': {
-    key: '017',
+  "017": {
+    key: "017",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '018': {
-    key: '018',
+  "018": {
+    key: "018",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '019': {
-    key: '019',
+  "019": {
+    key: "019",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
-  '020': {
-    key: '020',
+  "020": {
+    key: "020",
     cost: 4,
-    spawnTypes: [TYPE.WATER, TYPE.GRASS, TYPE.DRAGON, TYPE.FIRE],
     entryPos: {
       x: 10,
       y: 10,
     },
-    area: 'field',
+    area: "field",
   },
 };
 
@@ -140,7 +129,7 @@ export const safariData = new Proxy(initialSafari, {
     }
   },
   set() {
-    console.warn('Data modification is not allowed.');
+    console.warn("Data modification is not allowed.");
     return false;
   },
 });
