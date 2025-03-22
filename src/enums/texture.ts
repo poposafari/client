@@ -76,6 +76,7 @@ export const enum TEXTURE {
   TILE_FLOOR = 'floor',
   TILE_EDGE = 'edge',
   TILE_OBJECT = 'object',
+  TILE_OBJECT_URBAN = 'object_urban',
   TILE_URBAN = 'urban',
   MENU_BOX = 'menu_box',
   MENU_SHOES = 'menu_shoes',

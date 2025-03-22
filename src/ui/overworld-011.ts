@@ -16,13 +16,14 @@ export class Overworld011 extends Safari {
 
     super.setup();
 
-    // this.setupMap(TEXTURE.MAP_011, [TEXTURE.MAP_L0, TEXTURE.MAP_L1_0]);
-    // this.setupMapLayer(0, TEXTURE.MAP_L0, DEPTH.GROUND);
-    // this.setupMapLayer(1, TEXTURE.MAP_L0, DEPTH.GROUND + 1);
-    // this.setupMapLayer(2, TEXTURE.MAP_L0, DEPTH.GROUND + 2);
-    // this.setupMapLayer(3, TEXTURE.MAP_L0, DEPTH.GROUND + 3);
-    // this.setupMapLayer(4, TEXTURE.MAP_L1_0, DEPTH.GROUND + 4);
-    // this.setupMapForegroundLayer(5, [TEXTURE.MAP_L1_0, TEXTURE.MAP_L0], DEPTH.FOREGROND);
+    this.setupMap(TEXTURE.OVERWORLD_011, [TEXTURE.TILE_FLOOR, TEXTURE.TILE_EDGE, TEXTURE.TILE_OBJECT, TEXTURE.TILE_OBJECT_URBAN]);
+    this.setupMapLayer(0, TEXTURE.TILE_FLOOR, DEPTH.GROUND);
+    this.setupMapLayer(1, TEXTURE.TILE_FLOOR, DEPTH.GROUND + 1);
+    this.setupMapLayer(2, TEXTURE.TILE_EDGE, DEPTH.GROUND + 3);
+    this.setupMapLayer(3, TEXTURE.TILE_OBJECT, DEPTH.GROUND + 4);
+    this.setupMapLayer(4, TEXTURE.TILE_OBJECT, DEPTH.GROUND + 5);
+    this.setupMapLayer(5, TEXTURE.TILE_OBJECT_URBAN, DEPTH.GROUND + 6);
+    this.setupMapForegroundLayer(6, [TEXTURE.TILE_OBJECT], DEPTH.FOREGROND);
 
     this.setupNpc(`npc001`, 8, 8, OVERWORLD_TYPE.SAFARI, 'question');
 
