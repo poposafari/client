@@ -14,7 +14,7 @@ export class PokemonObject extends MovableObject {
   private pokedex: string;
   private gender: 0 | 1 | 2;
   private skill: 0 | 1 | 2 | 3 | 4 | null;
-  private habitat: 0 | 1 | 2;
+  private habitat: 'forest' | 'lake' | 'mt';
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
@@ -27,7 +27,7 @@ export class PokemonObject extends MovableObject {
     pokedex: string,
     gender: 0 | 1 | 2,
     skill: 0 | 1 | 2 | 3 | 4 | null,
-    habitat: 0 | 1 | 2,
+    habitat: 'forest' | 'lake' | 'mt',
     x: number,
     y: number,
     map: Phaser.Tilemaps.Tilemap,
