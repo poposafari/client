@@ -68,7 +68,7 @@ export class BattleBaseUi extends Ui {
     this.enemyInfoName = addText(this.scene, -235, -12, '', TEXTSTYLE.BATTLE_NAME).setOrigin(0, 0.5).setScale(0.7);
     this.enemyInfoShiny = addImage(this.scene, TEXTURE.SHINY, -253, -10).setOrigin(0.5, 0.5).setScale(1.8);
     this.enemyInfoGender = addText(this.scene, 0, 0, '♂♀', TEXTSTYLE.BATTLE_MESSAGE).setOrigin(0, 0.5).setScale(0.6);
-    this.enemyInfoOwned = addImage(this.scene, TEXTURE.OWNED, -235, +45).setOrigin(0.5, 0.5).setScale(2);
+    // this.enemyInfoOwned = addImage(this.scene, TEXTURE.OWNED, -235, +45).setOrigin(0.5, 0.5).setScale(2);
     this.enemyInfoType1 = addImage(this.scene, TEXTURE.BLANK, +120, -10).setScale(1.2);
     this.enemyInfoType2 = addImage(this.scene, TEXTURE.BLANK, +130 * 1.4, -10).setScale(1.2);
     this.enemyInfoFeed = addImage(this.scene, TEXTURE.BLANK, -230, +120).setScale(1.5);
@@ -76,7 +76,7 @@ export class BattleBaseUi extends Ui {
     this.enemyInfoContainer.add(this.enemyInfoName);
     this.enemyInfoContainer.add(this.enemyInfoShiny);
     this.enemyInfoContainer.add(this.enemyInfoGender);
-    this.enemyInfoContainer.add(this.enemyInfoOwned);
+    // this.enemyInfoContainer.add(this.enemyInfoOwned);
     this.enemyInfoContainer.add(this.enemyInfoType1);
     this.enemyInfoContainer.add(this.enemyInfoType2);
     this.enemyInfoContainer.add(this.enemyInfoFeed);
@@ -120,7 +120,7 @@ export class BattleBaseUi extends Ui {
 
     this.enemyInfoName.setText(i18next.t(`pokemon:${originPokedex}.name`));
     this.enemyInfoShiny.setVisible(isPokedexShiny(data.pokedex));
-    this.enemyInfoOwned.setVisible(box!.hasPokemon(data.pokedex) ? true : false);
+    // this.enemyInfoOwned.setVisible(box!.hasPokemon(targetPokemon.getPokedex()) ? true : false);
 
     const type1 = pokemonData[originPokedex].type1;
     const type2 = pokemonData[originPokedex].type2;
@@ -142,11 +142,11 @@ export class BattleBaseUi extends Ui {
       //TODO data와 동일한 타입의 파티 포켓몬을 골라내야 함 :)
       parties.forEach((party) => {
         const box = this.mode.getBox();
-        const icon = addImage(this.scene, `pokemon_icon${party}`, currentX, 0).setScale(1.5);
+        const icon = addImage(this.scene, `pokemon_icon${party.pokedex}${party.shiny ? 's' : ''}`, currentX, 0).setScale(1.5);
         const shiny = addImage(this.scene, TEXTURE.SHINY, currentX - 25, -21).setScale(1.5);
 
         if (box) {
-          shiny.setVisible(isPokedexShiny(party) ? true : false);
+          shiny.setVisible(party.shiny);
         }
 
         this.playerInfoPartyIcon.push(icon);
