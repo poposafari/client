@@ -20,7 +20,7 @@ export class GroundItemObject extends BaseObject {
     this.active = true;
 
     this.setSpriteFrame(0);
-    this.setScale(1);
+    this.setScale(1.5);
 
     this.startMessageType = 'talk';
     this.talkType = 'sys';
