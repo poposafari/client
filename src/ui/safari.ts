@@ -135,7 +135,7 @@ export class Safari extends OverworldUi {
   }
 
   private getRandomGroundItemTilePosition(validPositions: [number, number, string, boolean][]) {
-    const targetTiles = validPositions.filter(([x, y, any, target]) => target === target);
+    const targetTiles = validPositions.filter(([x, y, any, target]) => target === true);
 
     return Phaser.Utils.Array.GetRandom(targetTiles);
   }
