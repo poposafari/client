@@ -25,7 +25,7 @@ export class Overworld011 extends Safari {
     this.setupMapLayer(5, TEXTURE.TILE_OBJECT_URBAN, DEPTH.GROUND + 6);
     this.setupMapForegroundLayer(6, [TEXTURE.TILE_OBJECT], DEPTH.FOREGROND);
 
-    this.setupNpc(`npc001`, 8, 8, OVERWORLD_TYPE.SAFARI, 'question');
+    this.setupNpc(`npc001`, 6, 6, OVERWORLD_TYPE.SAFARI, 'question');
 
     this.setupPlayerInitPos(initPos.x, initPos.y);
   }
