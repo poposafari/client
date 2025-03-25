@@ -1,8 +1,8 @@
 export const enum TEXTURE {
-  WINDOW_0 = 'window_0',
-  WINDOW_1 = 'window_1',
-  WINDOW_2 = 'window_2',
-  WINDOW_3 = 'window_3',
+  WINDOW_0 = 'window0',
+  WINDOW_1 = 'window1',
+  WINDOW_2 = 'window2',
+  WINDOW_3 = 'window3',
   WINDOW_4 = 'window_4',
   WINDOW_5 = 'window_5',
   WINDOW_6 = 'window_6',
@@ -142,6 +142,8 @@ export const enum TEXTURE {
   EMO = 'emo',
   SPARKLE = 'sparkle',
   BG_HM = 'bg_hm',
+  DISCORD = 'discord',
+  GOOGLE = 'google',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
