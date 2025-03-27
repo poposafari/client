@@ -1,4 +1,5 @@
 export const enum DEPTH {
+  TITLE = 1,
   GROUND = 0,
   NICKNAME = 10001,
   FOREGROND = 10000,

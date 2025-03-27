@@ -24,15 +24,6 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
     this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
     this.loadImage(TEXTURE.WINDOW_3, 'ui/windows', TEXTURE.WINDOW_3);
-    this.loadImage(TEXTURE.WINDOW_4, 'ui/windows', TEXTURE.WINDOW_4);
-    this.loadImage(TEXTURE.WINDOW_5, 'ui/windows', TEXTURE.WINDOW_5);
-    this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
-    this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
-    this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
-    this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
-    this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
-    this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
-    this.loadImage(TEXTURE.WINDOW_12, 'ui/windows', TEXTURE.WINDOW_12);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -196,6 +187,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ENEMY_BAR, 'ui/battle', TEXTURE.ENEMY_BAR);
 
     this.loadAtlas(TEXTURE.SPARKLE, 'ui', TEXTURE.SPARKLE, ANIMATION.SPARKLE);
+
+    this.loadImage(TEXTURE.GOOGLE, 'ui', TEXTURE.GOOGLE);
+    this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
