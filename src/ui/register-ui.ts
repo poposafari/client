@@ -1,27 +1,36 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
+
+import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { InGameScene } from '../scenes/ingame-scene';
-import { registerConfirmBtnConfig, registerConfirmPasswordConfig, registerLoginBtnConfig, registerPasswordConfig, registerUsernameConfig } from './config';
-import { ModalUi } from './modal-ui';
-import { addBackground, addText, addTextInput, addWindow } from './ui';
-import { TEXTSTYLE } from '../enums/textstyle';
-import i18next from 'i18next';
 import { RegisterMode } from '../modes';
+import { InGameScene } from '../scenes/ingame-scene';
+import { addBackground, addText, addTextInput, addWindow, startModalAnimation } from './ui';
+import { ModalFormUi } from './modal-form-ui';
+import i18next from 'i18next';
+import { TEXTSTYLE } from '../enums/textstyle';
 import { MessageManager } from '../managers';
+import { isValidPassword, isValidUsername } from '../utils/string-util';
 
-interface Register {
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export class RegisterUi extends ModalUi {
+export class RegisterUi extends ModalFormUi {
   private mode: RegisterMode;
+
   private bg!: Phaser.GameObjects.Image;
-  private inputContainers: Phaser.GameObjects.Container[] = [];
-  private inputs: InputText[] = [];
-  private btns: Phaser.GameObjects.NineSlice[] = [];
+
   private title!: Phaser.GameObjects.Text;
+
+  private inputWindows: Phaser.GameObjects.NineSlice[] = [];
+  private inputs: InputText[] = [];
+
+  private btnWindows: Phaser.GameObjects.NineSlice[] = [];
+  private btnTexts: Phaser.GameObjects.Text[] = [];
+
+  private container!: Phaser.GameObjects.Container;
+  private inputContainer!: Phaser.GameObjects.Container;
+  private btnContainer!: Phaser.GameObjects.Container;
+  private titleContainer!: Phaser.GameObjects.Container;
+
+  private targetContainers!: Phaser.GameObjects.Container[];
+  private restorePosY!: number[];
 
   constructor(scene: InGameScene, mode: RegisterMode) {
     super(scene);
@@ -29,170 +38,216 @@ export class RegisterUi extends ModalUi {
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY);
-    this.bg.setVisible(false);
-    ui.add(this.bg);
-
     super.setup();
+    this.setModalSize(TEXTURE.WINDOW_2, 160, 145, 4);
 
-    const inputConfig = [registerUsernameConfig, registerPasswordConfig, registerConfirmPasswordConfig];
-    const btnConfig = [registerConfirmBtnConfig, registerLoginBtnConfig];
+    this.container = this.createContainer(width / 2, height / 2);
 
-    this.title = addText(this.scene, 0, -160, i18next.t('lobby:register'), TEXTSTYLE.LOBBY_TITLE);
-    this.modalContainer.add(this.title);
+    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
+    this.setUpTitle(width, height);
+    this.setUpInput(width, height);
+    this.setUpBtn(width, height);
 
-    for (const config of inputConfig) {
-      const inputContainer = this.scene.add.container(config.x, config.y);
-      const inputLabel = addText(this.scene, config.labelX, config.labelY, config.label, TEXTSTYLE.LOBBY_DEFAULT);
-      const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, config.w, config.h, 8, 8, 8, 8);
-      const input = addTextInput(this.scene, 5, 0, config.w, config.h, TEXTSTYLE.LOBBY_INPUT, {
-        type: config.type,
-        placeholder: config.placeholder,
-        minLength: config.minLength,
-        maxLength: config.maxLength,
-      });
+    this.targetContainers = [this.inputContainer, this.btnContainer, this.titleContainer, this.getModal()];
+    this.restorePosY = [this.inputContainer.y, this.btnContainer.y, this.titleContainer.y, this.getModal().y];
 
-      inputContainer.add(inputLabel);
-      inputContainer.add(inputWindow);
-      inputContainer.add(input);
-      inputContainer.setVisible(false);
+    this.container.add(this.bg);
 
-      this.inputs.push(input);
-      this.inputContainers.push(inputContainer);
-      this.modalContainer.add(inputContainer);
-    }
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.TITLE - 1);
+    this.container.setScrollFactor(0);
 
-    for (const config of btnConfig) {
-      const btnContainer = this.scene.add.container(config.x, config.y);
-      const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 0, config.w, config.h, 8, 8, 8, 8).setScale(1.5);
-      const btnTitle = addText(this.scene, config.contentX, config.contentY, config.content, TEXTSTYLE.LOBBY_DEFAULT);
-
-      btnContainer.add(btnWindow);
-      btnContainer.add(btnTitle);
-
-      this.btns.push(btnWindow);
-      this.modalContainer.add(btnContainer);
-    }
+    this.handleMouseBtn();
   }
 
-  show(): void {
-    super.show();
+  show(data?: any): void {
+    this.container.setVisible(true);
 
     this.inputs[0].text = '';
     this.inputs[1].text = '';
     this.inputs[2].text = '';
 
-    for (const container of this.inputContainers) {
+    for (const container of this.targetContainers) {
+      container.y += 48;
+      container.setAlpha(0);
       container.setVisible(true);
+      startModalAnimation(this.scene, container);
     }
 
-    for (const btn of this.btns) {
-      btn.setVisible(true);
-      btn.setInteractive({ cursor: 'pointer' });
-    }
-
-    this.btns[0].on('pointerdown', async () => {
-      const data: Register = { username: this.inputs[0].text, password: this.inputs[1].text, confirmPassword: this.inputs[2].text };
-
-      if (this.validate(data)) {
-        this.mode.submit({ username: data.username, password: data.password });
-      }
-    });
-    this.btns[0].on('pointerover', () => {
-      this.btns[0].setAlpha(0.7);
-    });
-    this.btns[0].on('pointerout', () => {
-      this.btns[0].setAlpha(1);
-    });
-
-    this.btns[1].on('pointerdown', async () => {
-      this.mode.changeLoginMode();
-    });
-    this.btns[1].on('pointerover', () => {
-      this.btns[1].setAlpha(0.7);
-    });
-    this.btns[1].on('pointerout', () => {
-      this.btns[1].setAlpha(1);
-    });
+    this.pause(false);
   }
 
-  clean(): void {
-    super.clean();
+  clean(data?: any): void {
+    this.container.setVisible(false);
 
-    for (const container of this.inputContainers) {
-      container.setVisible(false);
-    }
-
-    for (const btn of this.btns) {
-      btn.setVisible(false);
-      btn.off('pointerdown');
+    for (let i = 0; i < this.targetContainers.length; i++) {
+      this.targetContainers[i].y = this.restorePosY[i];
+      this.targetContainers[i].setAlpha(1);
+      this.targetContainers[i].setVisible(false);
     }
   }
 
-  pause(onoff: boolean): void {
-    super.pause(onoff);
-    onoff ? this.blockInputs() : this.unblockInputs();
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
   }
 
-  private blockInputs(): void {
+  update(time: number, delta: number): void {}
+
+  private block() {
     for (const input of this.inputs) {
       input.setBlur();
       input.pointerEvents = 'none';
     }
-    for (const btn of this.btns) {
+
+    for (const btn of this.btnWindows) {
       btn.disableInteractive();
     }
   }
 
-  private unblockInputs(): void {
+  private unblock() {
     for (const input of this.inputs) {
       input.pointerEvents = 'auto';
     }
-    for (const btn of this.btns) {
+
+    for (const btn of this.btnWindows) {
       btn.setInteractive();
     }
   }
 
-  validate(data: Register): boolean {
-    const messageUi = MessageManager.getInstance();
+  private setUpTitle(width: number, height: number) {
+    this.titleContainer = this.createContainer(width / 2, height / 2 - 210);
 
-    const usernameRegex = /^[A-Za-z\d@!%*#?&]{8,16}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+])[A-Za-z\d!@#$%^&*()\-_=+]{8,16}$/;
+    this.title = addText(this.scene, 0, 0, i18next.t('lobby:register'), TEXTSTYLE.TITLE_MODAL);
 
-    const username = data.username;
-    const password = data.password;
-    const confirmPassword = data.confirmPassword;
+    this.titleContainer.add(this.title);
 
-    if (username === '') {
+    this.titleContainer.setVisible(false);
+    this.titleContainer.setDepth(DEPTH.TITLE + 3);
+    this.titleContainer.setScrollFactor(0);
+
+    return this.titleContainer;
+  }
+
+  private setUpInput(width: number, height: number) {
+    this.inputContainer = this.createContainer(width / 2, height / 2 - 110);
+
+    this.inputWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_1, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[2] = addWindow(this.scene, TEXTURE.WINDOW_1, 0, +200, 380, 60, 16, 16, 16, 16).setScale(1.2);
+
+    this.inputs[0] = addTextInput(this.scene, -200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+      type: 'text',
+      placeholder: i18next.t('lobby:usernamePlaceholder'),
+      minLength: 6,
+      maxLength: 18,
+    }).setScale(2);
+
+    this.inputs[1] = addTextInput(this.scene, -200, +100, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+      type: 'password',
+      placeholder: i18next.t('lobby:passwordPlaceholder'),
+      minLength: 6,
+      maxLength: 18,
+    }).setScale(2);
+
+    this.inputs[2] = addTextInput(this.scene, -200, +200, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+      type: 'password',
+      placeholder: i18next.t('lobby:confirmPasswordPlaceholder'),
+      minLength: 6,
+      maxLength: 18,
+    }).setScale(2);
+
+    this.inputContainer.add(this.inputWindows[0]);
+    this.inputContainer.add(this.inputWindows[1]);
+    this.inputContainer.add(this.inputWindows[2]);
+    this.inputContainer.add(this.inputs[0]);
+    this.inputContainer.add(this.inputs[1]);
+    this.inputContainer.add(this.inputs[2]);
+
+    this.inputContainer.setVisible(false);
+    this.inputContainer.setDepth(DEPTH.TITLE + 2);
+    this.inputContainer.setScrollFactor(0);
+  }
+
+  private setUpBtn(width: number, height: number) {
+    this.btnContainer = this.createContainer(width / 2, height / 2 + 195);
+
+    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_2, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_2, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnTexts[0] = addText(this.scene, -125, 0, i18next.t('lobby:register'), TEXTSTYLE.DEFAULT);
+    this.btnTexts[1] = addText(this.scene, +125, 0, i18next.t('lobby:backToLogin'), TEXTSTYLE.DEFAULT).setFontSize(50);
+
+    this.btnContainer.add(this.btnWindows[0]);
+    this.btnContainer.add(this.btnWindows[1]);
+    this.btnContainer.add(this.btnTexts[0]);
+    this.btnContainer.add(this.btnTexts[1]);
+
+    this.btnContainer.setVisible(false);
+    this.btnContainer.setDepth(DEPTH.TITLE + 2);
+    this.btnContainer.setScrollFactor(0);
+  }
+
+  private handleMouseBtn() {
+    this.btnWindows[0].on('pointerover', () => {
+      this.btnWindows[0].setTint(0xcccccc);
+    });
+    this.btnWindows[1].on('pointerover', () => {
+      this.btnWindows[1].setTint(0xcccccc);
+    });
+
+    this.btnWindows[0].on('pointerout', () => {
+      this.btnWindows[0].clearTint();
+    });
+    this.btnWindows[1].on('pointerout', () => {
+      this.btnWindows[1].clearTint();
+    });
+
+    this.btnWindows[0].on('pointerup', async () => {
+      if (await this.validate(this.inputs[0].text, this.inputs[1].text, this.inputs[2].text)) {
+        this.mode.submit(this.inputs[0].text, this.inputs[1].text);
+        console.log('register');
+      }
+    });
+    this.btnWindows[1].on('pointerup', () => {
+      this.mode.changeLoginMode();
+    });
+  }
+
+  private async validate(username: string, pw: string, pwR: string) {
+    const message = MessageManager.getInstance();
+
+    if (username.length <= 0) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
+      await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty1') }]);
       return false;
     }
-    if (password === '') {
+
+    if (pw.length <= 0) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
+      message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty2') }]);
       return false;
     }
-    if (password !== confirmPassword) {
+
+    if (pw !== pwR) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError1') }]);
+      message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError1') }]);
       return false;
     }
-    if (!usernameRegex.test(username)) {
+
+    if (!isValidUsername(username)) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError2') }]);
+      message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError2') }]);
       return false;
     }
-    if (!passwordRegex.test(password)) {
-      console.log(password);
+
+    if (!isValidPassword(pw)) {
       this.pause(true);
-      messageUi.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError3') }]);
+      message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError3') }]);
       return false;
     }
+
     return true;
   }
 }

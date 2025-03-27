@@ -47,3 +47,17 @@ export function getPokemonSpriteKey(pokemon: MyPokemon) {
 
   return ret;
 }
+
+export function isValidUsername(username: string): boolean {
+  // 영어 소문자 + 숫자, 4~16자
+  const usernameRegex = /^[a-z0-9]{4,16}$/;
+
+  return usernameRegex.test(username);
+}
+
+export function isValidPassword(password: string): boolean {
+  //영문 대소문자 + 숫자 + 특수문자(!@#$%^&*()_+), 6~20자
+  const passwordRegex = /^[A-Za-z0-9!@#$%^&*()_+]{6,20}$/;
+
+  return passwordRegex.test(password);
+}

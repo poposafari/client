@@ -65,6 +65,7 @@ export function addTextInput(scene: InGameScene, x: number, y: number, width: nu
 
   scene.add.existing(result);
   result.setScale(1);
+  result.setOrigin(0, 0.5);
 
   return result;
 }
@@ -189,6 +190,8 @@ function getAnimationSize(key: ANIMATION | string) {
 
 function getTextShadow(style: TEXTSTYLE) {
   switch (style) {
+    case TEXTSTYLE.TITLE_MODAL:
+      return [8, 4, '#266c58'];
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
@@ -206,6 +209,7 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
     case TEXTSTYLE.BOX_CAPTURE_VALUE:
     case TEXTSTYLE.BATTLE_NAME:
+    case TEXTSTYLE.DEFAULT:
       return [3, 2, '#91919a'];
     case TEXTSTYLE.MENU:
       return [2, 1, '#91919a'];
@@ -329,6 +333,20 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.color = '#284ffc';
       config.fontStyle = 'bold';
       break;
+    case TEXTSTYLE.DEFAULT:
+      config.fontSize = '80px';
+      config.color = '#505058';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.DEFAULT_GRAY:
+      config.fontSize = '60px';
+      config.color = '#b0b0b0';
+      break;
+    case TEXTSTYLE.TITLE_MODAL:
+      config.fontSize = '150px';
+      config.color = '#40a174';
+      config.fontStyle = 'bold';
+      break;
   }
 
   return config;
@@ -447,6 +465,16 @@ export function delay(scene: InGameScene, time: number): Promise<void> {
   });
 }
 
+export function startModalAnimation(scene: InGameScene, target: any) {
+  scene.tweens.add({
+    targets: target,
+    duration: 700,
+    ease: EASE.SINE_EASEINOUT,
+    y: '-=48',
+    alpha: 1,
+  });
+}
+
 export abstract class Ui {
   protected scene: InGameScene;
 
@@ -470,5 +498,9 @@ export abstract class Ui {
 
   getHeight() {
     return this.scene.game.canvas.height;
+  }
+
+  createContainer(width: number, height: number) {
+    return this.scene.add.container(width, height);
   }
 }
