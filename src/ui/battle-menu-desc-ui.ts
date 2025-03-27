@@ -28,7 +28,7 @@ export class BattleMenuDescUi extends Ui {
 
     this.container = this.scene.add.container(width / 2 - 240, height / 2 + 440);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_10, 0, 0, 720, 100, 16, 16, 16, 16).setScale(this.scale);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, 720, 100, 16, 16, 16, 16).setScale(this.scale);
     this.icon = addImage(this.scene, `item000`, -610, 0).setScale(2.4);
     this.text = addText(this.scene, -500, -20, i18next.t(`item:000.description`), TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5).setScale(0.6);
 

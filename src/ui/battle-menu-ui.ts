@@ -38,7 +38,7 @@ export class BattleMenuUi extends Ui {
 
     this.container = this.scene.add.container(width / 2, height / 2);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_10, +720, 440, 120, 50, 8, 8, 8, 8).setScale(4);
+    const window = addWindow(this.scene, TEXTURE.WINDOW_2, +720, 440, 120, 50, 8, 8, 8, 8).setScale(4);
 
     this.texts[0] = addText(this.scene, 0 + offsetX, 0 + offsetY, this.menus[0], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5);
     this.texts[1] = addText(this.scene, +200 + offsetX, 0 + offsetY, this.menus[1], TEXTSTYLE.BATTLE_MENU).setOrigin(0, 0.5);

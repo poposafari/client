@@ -45,7 +45,7 @@ export class OverworldMenuUi extends Ui {
 
     this.container = this.scene.add.container(width / 2 + 750, height / 2);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_4, 0, this.FIXED_TOP_Y + windowHeight / 2, 250, windowHeight, 16, 16, 16, 16);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, this.FIXED_TOP_Y + windowHeight / 2, 250, windowHeight, 16, 16, 16, 16);
 
     this.guideText = addText(this.scene, width / 2 + 655, 40, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE_WHITE).setOrigin(0.5, 0.5);
 

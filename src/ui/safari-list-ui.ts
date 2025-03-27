@@ -1,14 +1,14 @@
-import i18next from "i18next";
-import { getAllSafaris, SafariData } from "../data/overworld";
-import { DEPTH } from "../enums/depth";
-import { KEY } from "../enums/key";
-import { TEXTURE } from "../enums/texture";
-import { KeyboardManager } from "../managers";
-import { OverworldMode } from "../modes";
-import { NpcObject } from "../object/npc-object";
-import { InGameScene } from "../scenes/ingame-scene";
-import { addImage, addText, addWindow, Ui } from "./ui";
-import { TEXTSTYLE } from "../enums/textstyle";
+import i18next from 'i18next';
+import { getAllSafaris, SafariData } from '../data/overworld';
+import { DEPTH } from '../enums/depth';
+import { KEY } from '../enums/key';
+import { TEXTURE } from '../enums/texture';
+import { KeyboardManager } from '../managers';
+import { OverworldMode } from '../modes';
+import { NpcObject } from '../object/npc-object';
+import { InGameScene } from '../scenes/ingame-scene';
+import { addImage, addText, addWindow, Ui } from './ui';
+import { TEXTSTYLE } from '../enums/textstyle';
 
 export class SafariListUi extends Ui {
   private mode: OverworldMode;
@@ -59,10 +59,10 @@ export class SafariListUi extends Ui {
     this.arrowUp.setScale(1.4).setVisible(false);
     this.arrowDown.setScale(1.4).setVisible(false);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 0, 0, 8, 8, 8, 8).setScale(this.scale);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, 0, 0, 8, 8, 8, 8).setScale(this.scale);
     const yourTicketTitle = addText(this.scene, -50, -180, i18next.t(`menu:yourTickets`), TEXTSTYLE.ITEM_LIST);
-    this.stock = addText(this.scene, +70, -180, "3", TEXTSTYLE.ITEM_LIST);
-    this.yourTicketWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, -180, 86, 20, 8, 8, 8, 8).setScale(this.scale);
+    this.stock = addText(this.scene, +70, -180, '3', TEXTSTYLE.ITEM_LIST);
+    this.yourTicketWindow = addWindow(this.scene, TEXTURE.WINDOW_2, 0, -180, 86, 20, 8, 8, 8, 8).setScale(this.scale);
 
     this.container.add(this.window);
     this.container.add(this.listContainer);
@@ -139,15 +139,15 @@ export class SafariListUi extends Ui {
           case KEY.SELECT:
             const target = this.safaris[choice + this.start];
             this.clean();
-            const messageResult = await this.mode.startMessage(this.npc.reactionScript("npc000", "question", "welcome", i18next.t(`menu:overworld_${target.key}`)));
+            const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'question', 'welcome', i18next.t(`menu:overworld_${target.key}`)));
             if (!messageResult) {
-              const messageResult = await this.mode.startMessage(this.npc.reactionScript("npc000", "talk", "sorry"));
+              const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'talk', 'sorry'));
               this.mode.popUiStack();
               this.dummys[choice].setTexture(TEXTURE.BLANK);
               this.start = 0;
             } else {
               if (!this.validateTicket(target.cost)) {
-                const messageResult = await this.mode.startMessage(this.npc.reactionScript("npc000", "talk", "reject"));
+                const messageResult = await this.mode.startMessage(this.npc.reactionScript('npc000', 'talk', 'reject'));
                 this.show(this.npc);
               } else {
                 this.useTicket(target.cost);
@@ -214,8 +214,8 @@ export class SafariListUi extends Ui {
     for (const safari of visibleSafaris) {
       const additionalCalc = point - this.ITEMS_PER_PAGE * (this.contentHeight + this.contentSpacing);
       const name = addText(this.scene, -140, currentY + additionalCalc, i18next.t(`menu:overworld_${safari.key}`), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
-      const cost = addText(this.scene, +125, currentY + additionalCalc, "x" + safari.cost.toString(), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
-      const icon = addImage(this.scene, "item030", +100, currentY + additionalCalc);
+      const cost = addText(this.scene, +125, currentY + additionalCalc, 'x' + safari.cost.toString(), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
+      const icon = addImage(this.scene, 'item030', +100, currentY + additionalCalc);
       const dummy = addImage(this.scene, TEXTURE.BLANK, -150, currentY + additionalCalc).setScale(1.2);
 
       this.names.push(name);
@@ -234,7 +234,7 @@ export class SafariListUi extends Ui {
 
   private renderYourTickets() {
     const bag = this.mode.getBag();
-    const ticket = bag?.getItem("030");
+    const ticket = bag?.getItem('030');
     let stock = 0;
 
     if (ticket) stock = ticket.getStock();
@@ -246,11 +246,11 @@ export class SafariListUi extends Ui {
     const bag = this.mode.getBag();
 
     if (!bag) {
-      console.error("Bag does not exist");
+      console.error('Bag does not exist');
       return false;
     }
 
-    const myTicket = bag.getItem("030");
+    const myTicket = bag.getItem('030');
 
     if (!myTicket) return false;
 
@@ -265,10 +265,10 @@ export class SafariListUi extends Ui {
     const bag = this.mode.getBag();
 
     if (!bag) {
-      console.error("Bag does not exist");
+      console.error('Bag does not exist');
       return 0;
     }
 
-    bag.useItem("030", cost);
+    bag.useItem('030', cost);
   }
 }

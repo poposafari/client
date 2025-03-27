@@ -46,8 +46,8 @@ export class ShopChoiceUi extends Ui {
 
     this.container = this.scene.add.container(width / 2, height / 2);
 
-    const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_7, -360, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
-    const costWindow = addWindow(this.scene, TEXTURE.WINDOW_7, -30, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
+    const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_2, -360, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
+    const costWindow = addWindow(this.scene, TEXTURE.WINDOW_2, -30, 330, 230, 50, 16, 16, 16, 16).setScale(1.4);
 
     const textInBagTitle = addText(this.scene, -430, 330, i18next.t('menu:inBag'), TEXTSTYLE.MESSAGE_BLACK);
     this.inBagText = addText(this.scene, -320, 330, '1', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5);
