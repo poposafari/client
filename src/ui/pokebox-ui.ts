@@ -82,7 +82,7 @@ export class PokeBoxUi extends Ui {
     this.windowDesc = addImage(this.scene, TEXTURE.BOX_DESC, +650, +410).setScale(2.8);
 
     this.box = addImage(this.scene, `box0`, -230, +20).setScale(3.4);
-    this.windowBox = addWindow(this.scene, TEXTURE.WINDOW_4, -230, 20, 506, 462, 16, 16, 16, 16).setScale(2.12);
+    this.windowBox = addWindow(this.scene, TEXTURE.WINDOW_2, -230, 20, 506, 462, 16, 16, 16, 16).setScale(2.12);
 
     this.pokemonCaptureBall = addImage(this.scene, TEXTURE.BOXBALL_001, +450, -440).setScale(2);
     this.pokemonCaptureDate = addText(this.scene, +500, +405, '2024-10-12', TEXTSTYLE.BOX_NAME).setScale(0.7);

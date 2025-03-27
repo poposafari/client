@@ -29,7 +29,7 @@ export class BattleMessageUi extends Ui {
 
     this.container = this.scene.add.container(width / 2, height / 2);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_10, 0, 440, 490 * 4, 50 * 4, 16, 16, 16, 16).setScale(1);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 440, 490 * 4, 50 * 4, 16, 16, 16, 16).setScale(1);
     this.text = addText(this.scene, -460 * 2, +190 * 2, '', TEXTSTYLE.BATTLE_MESSAGE)
       .setScale(1)
       .setOrigin(0, 0);
