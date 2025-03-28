@@ -3,6 +3,7 @@ import { TranslationDefault } from '../../interface/locales';
 export const message: TranslationDefault = {
   accountEmpty1: '아이디를 입력해주세요.\n',
   accountEmpty2: '비밀번호를 입력해주세요.\n',
+  accountEmpty3: '아이디 또는 비밀번호가 일치하지 않습니다.\n',
   registerError1: '비밀번호가 일치하지 않습니다.\n',
   registerError2: '아이디는 4~16자의 영문 소문자 또는 숫자로 이루어져야 합니다.',
   registerError3: '비밀번호는 6~20자이며, 영문자, 숫자, \n특수문자(!@#$%^&*()_+)로 구성되어야 합니다.',
