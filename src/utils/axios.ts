@@ -21,3 +21,8 @@ export const registerApi = async (data: AccountReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/account/register', data);
   return res.data;
 };
+
+export const loginApi = async (data: AccountReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/account/login', data);
+  return res.data;
+};
