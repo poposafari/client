@@ -1,5 +1,6 @@
 import { ModeManager } from './managers';
 import { InGameScene } from './scenes/ingame-scene';
+import { LoadingDefaultUi } from './ui/loading-default-ui';
 import { Ui } from './ui/ui';
 
 export abstract class Mode {
@@ -12,6 +13,7 @@ export abstract class Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
     this.scene = scene;
     this.manager = manager;
+    this.uis.push(new LoadingDefaultUi(scene, this));
   }
 
   findUiByType(type: string): Ui | undefined {

@@ -19,4 +19,5 @@ export const lobby: TranslationDefault = {
   selectBoy1: '남자',
   selectGirl1: '여자',
   generate: '생성',
+  loadingDefault: '로딩중...',
 };
