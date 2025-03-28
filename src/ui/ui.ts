@@ -192,6 +192,8 @@ function getTextShadow(style: TEXTSTYLE) {
   switch (style) {
     case TEXTSTYLE.TITLE_MODAL:
       return [8, 4, '#266c58'];
+    case TEXTSTYLE.LOADING:
+      return [8, 4, '#91919a'];
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
@@ -346,6 +348,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.fontSize = '150px';
       config.color = '#40a174';
       config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.LOADING:
+      config.fontSize = '150px';
+      config.color = '#ffffff';
       break;
   }
 
