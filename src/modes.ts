@@ -26,7 +26,7 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { registerApi } from './utils/axios';
+import { loginApi, registerApi } from './utils/axios';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -75,8 +75,28 @@ export class LoginMode extends Mode {
     this.manager.changeMode(MODE.REGISTER);
   }
 
-  submit(data: Account): void {
-    console.log('login submit');
+  async submit(username: string, password: string): Promise<void> {
+    let res;
+    try {
+      this.addUiStack('LoadingDefaultUi');
+      res = await loginApi({ username, password });
+      this.getUiStackTop().clean();
+    } catch (err: any) {
+      this.getUiStackTop().clean();
+      const status = err.status as HttpStatusCode;
+      const message = MessageManager.getInstance();
+      if (status === 404) {
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty3') }]);
+      } else {
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+      }
+    } finally {
+      console.log('finally??');
+      this.popUiStack();
+      this.getUiStackTop().pause(false);
+
+      if (res) this.manager.changeMode(MODE.TITLE);
+    }
   }
 }
 
@@ -111,9 +131,11 @@ export class RegisterMode extends Mode {
   }
 
   async submit(username: string, password: string): Promise<void> {
+    let res;
     try {
       this.addUiStack('LoadingDefaultUi');
-      const response = await registerApi({ username, password });
+      res = await registerApi({ username, password });
+      this.getUiStackTop().clean();
     } catch (err: any) {
       this.getUiStackTop().clean();
       const status = err.status as HttpStatusCode;
@@ -126,6 +148,8 @@ export class RegisterMode extends Mode {
     } finally {
       this.popUiStack();
       this.getUiStackTop().pause(false);
+
+      if (res) this.manager.changeMode(MODE.NEWGAME);
     }
   }
 }

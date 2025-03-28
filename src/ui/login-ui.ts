@@ -218,7 +218,7 @@ export class LoginUi extends ModalFormUi {
 
     this.btnWindows[0].on('pointerup', async () => {
       if (await this.validate(this.inputs[0].text, this.inputs[1].text)) {
-        console.log('submit');
+        this.mode.submit(this.inputs[0].text, this.inputs[1].text);
       }
     });
     this.btnWindows[1].on('pointerup', () => {
