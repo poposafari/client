@@ -9,4 +9,5 @@ export const enum DEPTH {
   MESSAGE = 10050,
   BATTLE_UI = 10020,
   BATTLE_STATUS = 10021,
+  TOP = 11000,
 }

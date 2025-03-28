@@ -112,18 +112,20 @@ export class RegisterMode extends Mode {
 
   async submit(username: string, password: string): Promise<void> {
     try {
+      this.addUiStack('LoadingDefaultUi');
       const response = await registerApi({ username, password });
-      console.log('회원가입 성공:', response);
     } catch (err: any) {
+      this.getUiStackTop().clean();
       const status = err.status as HttpStatusCode;
       const message = MessageManager.getInstance();
       if (status === 409) {
-        this.getUiStackTop().pause(true);
-        message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError4') }]);
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError4') }]);
       } else {
-        this.getUiStackTop().pause(true);
-        message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
       }
+    } finally {
+      this.popUiStack();
+      this.getUiStackTop().pause(false);
     }
   }
 }

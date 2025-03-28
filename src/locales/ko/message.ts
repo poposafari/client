@@ -5,7 +5,7 @@ export const message: TranslationDefault = {
   accountEmpty2: '비밀번호를 입력해주세요.\n',
   registerError1: '비밀번호가 일치하지 않습니다.\n',
   registerError2: '아이디는 4~16자의 영문 소문자 또는 숫자로 이루어져야 합니다.',
-  registerError3: '비밀번호는 6~20자이며, 영문자, 숫자, 특수문자(!@#$%^&*()_+)로 구성되어야 합니다.',
+  registerError3: '비밀번호는 6~20자이며, 영문자, 숫자, \n특수문자(!@#$%^&*()_+)로 구성되어야 합니다.',
   registerError4: '이미 등록된 사용자입니다.',
   registerError5: '예기치 못한 에러입니다.',
   newgameWelcome1: '포포섭에 오신 것을 환영합니다!\n포포섭은 오픈 월드 요소가 들어간 포켓몬 팬게임입니다.\n',
