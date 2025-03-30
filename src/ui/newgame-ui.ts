@@ -1,246 +1,324 @@
 import i18next from 'i18next';
+import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { MessageManager } from '../managers';
 import { NewGameMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow } from './ui';
-import { ModalUi } from './modal-ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, startModalAnimation, Ui } from './ui';
+import { ModalFormUi } from './modal-form-ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import InputText from 'phaser3-rex-plugins/plugins/inputtext';
+import { isValidNickname } from '../utils/string-util';
 
-interface userInfo {
-  nickname: string;
-  gender: 0 | 1;
-  avatarType: 1 | 2 | 3 | 4;
-}
-
-export class NewGameUi extends ModalUi {
+export class NewGameUi extends ModalFormUi {
   private mode: NewGameMode;
+  private gender!: 'boy' | 'girl';
+  private avatar!: '1' | '2' | '3' | '4';
+
   private bg!: Phaser.GameObjects.Image;
+
+  private inputWindow!: Phaser.GameObjects.NineSlice;
   private input!: InputText;
-  private avartar!: Phaser.GameObjects.Image;
-  private genderBoy!: Phaser.GameObjects.Image;
-  private genderGirl!: Phaser.GameObjects.Image;
-  private selectGender!: Phaser.GameObjects.Image;
-  private selects: Phaser.GameObjects.Image[] = [];
-  private btnLabelStr!: Phaser.GameObjects.Text;
-  private btnLabelNumber!: Phaser.GameObjects.Text;
-  private btns: Phaser.GameObjects.NineSlice[] = [];
+
+  private statue!: Phaser.GameObjects.Image;
+
+  private selectBtns: Phaser.GameObjects.Image[] = [];
+  private selectTexts: (number[] | string[])[] = [];
+  private selectViewTexts: Phaser.GameObjects.Text[] = [];
+
+  private btnWindow!: Phaser.GameObjects.NineSlice;
+  private btnText!: Phaser.GameObjects.Text;
+
+  private container!: Phaser.GameObjects.Container;
+  private titleContainer!: Phaser.GameObjects.Container;
+  private statueContainer!: Phaser.GameObjects.Container;
+  private inputContainer!: Phaser.GameObjects.Container;
+  private selectContainer!: Phaser.GameObjects.Container;
+  private btnContainer!: Phaser.GameObjects.Container;
+
+  private targetContainers!: Phaser.GameObjects.Container[];
+  private restorePosY!: number[];
 
   constructor(scene: InGameScene, mode: NewGameMode) {
     super(scene);
+
     this.mode = mode;
   }
 
   setup(): void {
-    super.setup();
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY);
-    this.bg.setVisible(false);
-    ui.add(this.bg);
+    this.gender = 'boy';
+    this.avatar = '1';
 
     super.setup();
+    this.setModalSize(TEXTURE.WINDOW_2, 160, 145, 4);
 
-    const title = addText(this.scene, 0, -160, i18next.t('lobby:whoAreYou'), TEXTSTYLE.LOBBY_TITLE);
-    this.modalContainer.add(title);
+    this.container = this.createContainer(width / 2, height / 2);
 
-    this.avartar = addImage(this.scene, TEXTURE.BOY_1_STATUE, 0, -100);
-    this.avartar.setScale(2);
-    this.modalContainer.add(this.avartar);
+    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
+    this.setUpTitles(width, height);
+    this.setUpStatue(width, height);
+    this.setUpSelects(width, height);
+    this.setUpInputs(width, height);
 
-    this.genderBoy = addImage(this.scene, TEXTURE.GENDER_0, -20, -40);
-    this.genderGirl = addImage(this.scene, TEXTURE.GENDER_1, 20, -40);
-    this.genderBoy.setScale(2);
-    this.genderGirl.setScale(2);
-    this.modalContainer.add(this.genderBoy);
-    this.modalContainer.add(this.genderGirl);
+    this.targetContainers = [this.titleContainer, this.statueContainer, this.inputContainer, this.selectContainer, this.btnContainer, this.getModal()];
+    this.restorePosY = [this.titleContainer.y, this.statueContainer.y, this.inputContainer.y, this.selectContainer.y, this.btnContainer.y, this.getModal().y];
 
-    this.selectGender = addImage(this.scene, TEXTURE.SELECT, -20, -40);
-    this.selectGender.setScale(2);
-    this.modalContainer.add(this.selectGender);
+    this.container.add(this.bg);
 
-    const selectContainer = this.scene.add.container(0, 0);
-    const selectLeft = addImage(this.scene, TEXTURE.ARROW, -60, 50);
-    const selectRight = addImage(this.scene, TEXTURE.ARROW, 60, 50).setFlipX(true);
-    this.btnLabelStr = addText(this.scene, 0, 40, i18next.t('lobby:selectBoy1'), TEXTSTYLE.LOBBY_DEFAULT);
-    this.btnLabelNumber = addText(this.scene, 0, 55, '1', TEXTSTYLE.LOBBY_DEFAULT);
-    selectLeft.setScale(2);
-    selectRight.setScale(2);
-    selectContainer.add(this.btnLabelStr);
-    selectContainer.add(this.btnLabelNumber);
-    selectContainer.add(selectLeft);
-    selectContainer.add(selectRight);
-    this.selects.push(selectLeft);
-    this.selects.push(selectRight);
-    this.modalContainer.add(selectContainer);
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.TITLE - 1);
+    this.container.setScrollFactor(0);
 
-    const inputContainer = this.scene.add.container(0, 150);
-    const inputLabel = addText(this.scene, 0, -20, i18next.t('lobby:yourName'), TEXTSTYLE.LOBBY_DEFAULT);
-    const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 110, 20);
-    this.input = addTextInput(this.scene, 0, 0, 100, 20, TEXTSTYLE.LOBBY_INPUT, {
-      type: 'text',
-      minLength: 1,
-      maxLength: 16,
-    });
+    this.handleMouseBtn();
 
-    inputContainer.add(inputLabel);
-    inputContainer.add(inputWindow);
-    inputContainer.add(this.input);
-    this.modalContainer.add(inputContainer);
-
-    const btnContainer = this.scene.add.container(0, 190);
-    const btnWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 110, 30);
-    const btnTitle = addText(this.scene, 0, 0, i18next.t('lobby:generate'), TEXTSTYLE.LOBBY_DEFAULT);
-
-    btnContainer.add(btnWindow);
-    btnContainer.add(btnTitle);
-
-    this.btns.push(btnWindow);
-    this.modalContainer.add(btnContainer);
+    this.pause(false);
   }
 
-  async show(): Promise<void> {
-    let choice = 1;
-    let choiceGender = 0;
-    const message = MessageManager.getInstance();
+  async show(data?: any): Promise<void> {
+    this.container.setVisible(true);
+    await this.showIntro();
 
-    this.bg.setVisible(true);
+    for (const container of this.targetContainers) {
+      container.y += 48;
+      container.setAlpha(0);
+      container.setVisible(true);
+      startModalAnimation(this.scene, container);
+    }
+  }
+
+  clean(data?: any): void {
+    this.container.setVisible(false);
+
+    for (let i = 0; i < this.targetContainers.length; i++) {
+      this.targetContainers[i].y = this.restorePosY[i];
+      this.targetContainers[i].setAlpha(1);
+      this.targetContainers[i].setVisible(false);
+    }
+  }
+
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  update(time: number, delta: number): void {}
+
+  private setUpTitles(width: number, height: number) {
+    this.titleContainer = this.createContainer(width / 2, height / 2 - 205);
+
+    const text = addText(this.scene, 0, 0, i18next.t('lobby:setAvatar'), TEXTSTYLE.TITLE_MODAL);
+
+    this.titleContainer.add(text);
+
+    this.titleContainer.setVisible(false);
+    this.titleContainer.setDepth(DEPTH.TITLE + 3);
+    this.titleContainer.setScrollFactor(0);
+  }
+
+  private setUpInputs(width: number, height: number) {
+    this.inputContainer = this.createContainer(width / 2, height / 2 + 150);
+    this.btnContainer = this.createContainer(width / 2, height / 2 + 223);
+
+    this.inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 210, 50, 16, 16, 16, 16).setScale(1.2);
+
+    this.input = addTextInput(this.scene, -110, 0, 210, 50, TEXTSTYLE.LOBBY_INPUT, {
+      type: 'text',
+      placeholder: i18next.t('lobby:nickname'),
+      minLength: 2,
+      maxLength: 10,
+    }).setScale(2);
+
+    this.btnWindow = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, 123, 56, 16, 16, 16, 16).setScale(1.2);
+    this.btnText = addText(this.scene, 0, 0, i18next.t('lobby:createAvatar'), TEXTSTYLE.DEFAULT);
+
+    this.inputContainer.add(this.inputWindow);
+    this.inputContainer.add(this.input);
+
+    this.btnContainer.add(this.btnWindow);
+    this.btnContainer.add(this.btnText);
+
+    this.inputContainer.setVisible(false);
+    this.inputContainer.setDepth(DEPTH.TITLE + 3);
+    this.inputContainer.setScrollFactor(0);
+
+    this.btnContainer.setVisible(false);
+    this.btnContainer.setDepth(DEPTH.TITLE + 3);
+    this.btnContainer.setScrollFactor(0);
+  }
+
+  private setUpStatue(width: number, height: number) {
+    this.statueContainer = this.createContainer(width / 2, height / 2 - 120);
+
+    this.statue = addImage(this.scene, `${this.gender}_${this.avatar}_statue`, 0, 0).setScale(3);
+
+    this.statueContainer.add(this.statue);
+
+    this.statueContainer.setVisible(false);
+    this.statueContainer.setDepth(DEPTH.TITLE + 3);
+    this.statueContainer.setScrollFactor(0);
+  }
+
+  private setUpSelects(width: number, height: number) {
+    this.selectContainer = this.createContainer(width / 2, height / 2 - 20);
+
+    const genderRight = addImage(this.scene, TEXTURE.ARROW_B_R, +150, 0).setScale(2);
+    const genderLeft = addImage(this.scene, TEXTURE.ARROW_B_R, -150, 0).setFlipX(true).setScale(2);
+    const genderViewText = addText(this.scene, 0, 0, '', TEXTSTYLE.DEFAULT);
+
+    const avatarIdxRight = addImage(this.scene, TEXTURE.ARROW_B_R, +150, +70).setScale(2);
+    const avatarIdxLeft = addImage(this.scene, TEXTURE.ARROW_B_R, -150, +70).setFlipX(true).setScale(2);
+    const avartarViewText = addText(this.scene, 0, +70, '', TEXTSTYLE.DEFAULT);
+
+    //gender
+    this.selectBtns.push(genderLeft);
+    this.selectBtns.push(genderRight);
+    this.selectTexts[0] = [i18next.t('lobby:selectBoy'), i18next.t('lobby:selectGirl')];
+    this.selectViewTexts[0] = genderViewText;
+
+    //avatar index
+    this.selectBtns.push(avatarIdxLeft);
+    this.selectBtns.push(avatarIdxRight);
+    this.selectTexts[1] = [i18next.t('lobby:set') + ' 1', i18next.t('lobby:set') + ' 2', i18next.t('lobby:set') + ' 3', i18next.t('lobby:set') + ' 4'];
+    this.selectViewTexts[1] = avartarViewText;
+
+    this.selectContainer.add(this.selectBtns);
+    this.selectContainer.add(this.selectViewTexts);
+
+    this.selectContainer.setVisible(false);
+    this.selectContainer.setDepth(DEPTH.TITLE + 3);
+    this.selectContainer.setScrollFactor(0);
+
+    this.selectViewTexts[0].setText(this.selectTexts[0][0].toString());
+    this.selectViewTexts[1].setText(this.selectTexts[1][0].toString());
+  }
+
+  private block() {
+    this.input!.setBlur();
+    this.input!.pointerEvents = 'none';
+
+    this.btnWindow.disableInteractive();
+
+    this.selectBtns[0].disableInteractive();
+    this.selectBtns[1].disableInteractive();
+    this.selectBtns[2].disableInteractive();
+    this.selectBtns[3].disableInteractive();
+  }
+
+  private unblock() {
+    this.input!.pointerEvents = 'auto';
+
+    this.btnWindow.setInteractive({ cursor: 'pointer' });
+
+    this.selectBtns[0].setInteractive({ cursor: 'pointer' });
+    this.selectBtns[1].setInteractive({ cursor: 'pointer' });
+    this.selectBtns[2].setInteractive({ cursor: 'pointer' });
+    this.selectBtns[3].setInteractive({ cursor: 'pointer' });
+  }
+
+  private async showIntro() {
+    const message = MessageManager.getInstance();
 
     await message.show(this, [
       { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome1') },
       { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome2') },
       { type: 'sys', format: 'talk', content: i18next.t('message:newgameWelcome3') },
     ]);
+  }
 
-    super.show();
-
-    this.genderBoy.setInteractive({ cursor: 'pointer' });
-    this.genderBoy.on('pointerup', () => {
-      this.selectGender.setPosition(-20, -40);
-      this.avartar.setTexture(TEXTURE.BOY_1_STATUE);
-      this.btnLabelStr.setText(i18next.t('lobby:selectBoy1'));
-      this.btnLabelNumber.setText('1');
-      choice = 1;
-      choiceGender = 0;
+  private handleMouseBtn() {
+    this.btnWindow.on('pointerover', () => {
+      this.btnWindow.setTint(0xcccccc);
     });
-    this.genderBoy.on('pointerover', () => {
-      this.genderBoy.setAlpha(0.7);
+    this.btnWindow.on('pointerout', () => {
+      this.btnWindow.clearTint();
     });
-    this.genderBoy.on('pointerout', () => {
-      this.genderBoy.setAlpha(1);
-    });
-
-    this.genderGirl.setInteractive({ cursor: 'pointer' });
-    this.genderGirl.on('pointerup', () => {
-      this.selectGender.setPosition(20, -40);
-      this.avartar.setTexture(TEXTURE.GIRL_1_STATUE);
-      this.btnLabelStr.setText(i18next.t('lobby:selectGirl1'));
-      this.btnLabelNumber.setText('1');
-      choice = 1;
-      choiceGender = 1;
-    });
-    this.genderGirl.on('pointerover', () => {
-      this.genderGirl.setAlpha(0.7);
-    });
-    this.genderGirl.on('pointerout', () => {
-      this.genderGirl.setAlpha(1);
-    });
-
-    const boyStatues = [TEXTURE.BOY_1_STATUE, TEXTURE.BOY_2_STATUE, TEXTURE.BOY_3_STATUE, TEXTURE.BOY_4_STATUE];
-    const girlStatues = [TEXTURE.GIRL_1_STATUE, TEXTURE.GIRL_2_STATUE, TEXTURE.GIRL_3_STATUE, TEXTURE.GIRL_4_STATUE];
-    this.selects[0].setInteractive({ cursor: 'pointer' });
-    this.selects[0].on('pointerup', async () => {
-      choice = Math.max(1, choice - 1);
-      this.btnLabelNumber.setText(choice.toString());
-
-      this.avartar.setTexture(choiceGender ? girlStatues[choice - 1] : boyStatues[choice - 1]);
-    });
-    this.selects[0].on('pointerover', () => {
-      this.selects[0].setAlpha(0.7);
-    });
-    this.selects[0].on('pointerout', () => {
-      this.selects[0].setAlpha(1);
-    });
-
-    this.selects[1].setInteractive({ cursor: 'pointer' });
-    this.selects[1].on('pointerup', async () => {
-      choice = Math.min(4, choice + 1);
-      this.btnLabelNumber.setText(choice.toString());
-
-      this.avartar.setTexture(choiceGender ? girlStatues[choice - 1] : boyStatues[choice - 1]);
-    });
-    this.selects[1].on('pointerover', () => {
-      this.selects[1].setAlpha(0.7);
-    });
-    this.selects[1].on('pointerout', () => {
-      this.selects[1].setAlpha(1);
-    });
-
-    this.btns[0].setInteractive({ cursor: 'pointer' });
-    this.btns[0].on('pointerdown', async () => {
-      const data: userInfo = { nickname: this.input.text, gender: choiceGender as 0 | 1, avatarType: choice as 1 | 2 | 3 | 4 };
-
-      if (this.validate(data)) {
-        console.log('캐릭터 생성 성공!');
+    this.btnWindow.on('pointerup', async () => {
+      if (await this.validate(this.input.text)) {
+        this.mode.submit(this.input.text, this.gender, this.avatar);
       }
     });
-    this.btns[0].on('pointerover', () => {
-      this.btns[0].setAlpha(0.7);
+
+    this.selectBtns[0].on('pointerover', () => {
+      this.selectBtns[0].setAlpha(0.5);
     });
-    this.btns[0].on('pointerout', () => {
-      this.btns[0].setAlpha(1);
+    this.selectBtns[0].on('pointerout', () => {
+      this.selectBtns[0].setAlpha(1);
+    });
+    this.selectBtns[0].on('pointerup', () => {
+      this.updateSelectText(0, -1);
+    });
+
+    this.selectBtns[1].on('pointerover', () => {
+      this.selectBtns[1].setAlpha(0.5);
+    });
+    this.selectBtns[1].on('pointerout', () => {
+      this.selectBtns[1].setAlpha(1);
+    });
+    this.selectBtns[1].on('pointerup', () => {
+      this.updateSelectText(0, 1);
+    });
+
+    this.selectBtns[2].on('pointerover', () => {
+      this.selectBtns[2].setAlpha(0.5);
+    });
+    this.selectBtns[2].on('pointerout', () => {
+      this.selectBtns[2].setAlpha(1);
+    });
+    this.selectBtns[2].on('pointerup', () => {
+      this.updateSelectText(1, -1);
+    });
+
+    this.selectBtns[3].on('pointerover', () => {
+      this.selectBtns[3].setAlpha(0.5);
+    });
+    this.selectBtns[3].on('pointerout', () => {
+      this.selectBtns[3].setAlpha(1);
+    });
+    this.selectBtns[3].on('pointerup', () => {
+      this.updateSelectText(1, 1);
     });
   }
 
-  clean(): void {
-    console.log('?');
-  }
+  private updateSelectText(section: number, value: -1 | 1) {
+    const texts = this.selectTexts[section];
+    if (!texts || texts.length === 0) return;
 
-  pause(onoff: boolean): void {
-    super.pause(onoff);
-    onoff ? this.blockInputs() : this.unblockInputs();
-  }
+    const currentText = this.selectViewTexts[section].text;
+    const currentIndex = texts.findIndex((t) => t === currentText);
 
-  private blockInputs(): void {
-    this.input.setBlur();
-    this.input.pointerEvents = 'none';
+    const nextIndex = (currentIndex + value + texts.length) % texts.length;
+    const nextText = texts[nextIndex];
 
-    this.genderBoy.disableInteractive();
-    this.genderGirl.disableInteractive();
+    this.selectViewTexts[section].setText(nextText.toString());
 
-    this.selects[0].disableInteractive();
-    this.selects[1].disableInteractive();
-
-    for (const btn of this.btns) {
-      btn.disableInteractive();
+    if (section === 0) {
+      this.gender = nextIndex === 0 ? 'boy' : 'girl';
+    } else if (section === 1) {
+      this.avatar = (nextIndex + 1).toString() as '1' | '2' | '3' | '4';
     }
+
+    this.updateStatueImage();
   }
 
-  private unblockInputs(): void {
-    this.input.setBlur();
-    this.input.pointerEvents = 'auto';
-
-    this.genderBoy.setInteractive({ cursor: 'pointer' });
-    this.genderGirl.setInteractive({ cursor: 'pointer' });
-
-    this.selects[0].setInteractive({ cursor: 'pointer' });
-    this.selects[1].setInteractive({ cursor: 'pointer' });
-
-    for (const btn of this.btns) {
-      btn.setInteractive();
-    }
+  private updateStatueImage() {
+    const textureKey = `${this.gender}_${this.avatar}_statue`;
+    this.statue.setTexture(textureKey);
   }
 
-  validate(data: userInfo) {
+  private async validate(nickname: string) {
     const message = MessageManager.getInstance();
-    const nickname = data.nickname;
 
-    if (nickname === '') {
+    if (nickname.length <= 0) {
       this.pause(true);
-      message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:newgameNicknameEmpty') }]);
+      await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:nicknameError1') }]);
+      return false;
+    }
+
+    if (!isValidNickname(nickname)) {
+      this.pause(true);
+      await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:nicknameError2') }]);
       return false;
     }
 
