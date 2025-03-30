@@ -194,6 +194,8 @@ function getTextShadow(style: TEXTSTYLE) {
       return [8, 4, '#266c58'];
     case TEXTSTYLE.LOADING:
       return [8, 4, '#91919a'];
+    case TEXTSTYLE.DEFAULT_BLACK:
+      return [5, 3, '#91919a'];
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
@@ -343,6 +345,12 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.DEFAULT_GRAY:
       config.fontSize = '60px';
       config.color = '#b0b0b0';
+      break;
+    case TEXTSTYLE.DEFAULT_BLACK:
+      config.fontSize = '100px';
+      config.color = '#505058';
+      config.fontStyle = 'bold';
+
       break;
     case TEXTSTYLE.TITLE_MODAL:
       config.fontSize = '150px';
