@@ -61,3 +61,9 @@ export function isValidPassword(password: string): boolean {
 
   return passwordRegex.test(password);
 }
+
+export function isValidNickname(nickname: string): boolean {
+  const nicknameRegex = /^[\p{L}0-9]{2,10}$/u;
+
+  return nicknameRegex.test(nickname);
+}

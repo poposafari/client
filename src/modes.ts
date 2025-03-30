@@ -5,8 +5,6 @@ import { Account, Message } from './interface/sys';
 import { MessageManager, ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
-import { NewGameUi } from './ui/newgame-ui';
-import { TitleUi } from './ui/title-ui';
 import { SeasonUi } from './ui/season-ui';
 import { OverworldUi } from './ui/overworld-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
@@ -26,7 +24,9 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { loginApi, registerApi } from './utils/axios';
+import { loginApi, nicknameApi, registerApi } from './utils/axios';
+import { TitleUi } from './ui/title-ui';
+import { NewGameUi } from './ui/newgame-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -160,19 +160,24 @@ export class TitleMode extends Mode {
   }
 
   init(): void {
-    this.ui = new TitleUi(this.scene, this);
-    this.ui.setup();
+    this.uis.push(new TitleUi(this.scene, this));
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
   }
 
   enter(): void {
-    //user data load.
-
-    this.ui.show();
+    this.addUiStackOverlap('TitleUi');
   }
 
   exit(): void {
-    this.ui.clean();
+    for (const ui of this.uiStack) {
+      ui.clean();
+    }
+    this.cleanUiStack();
   }
+
   update(): void {}
 
   changeLoginMode() {
@@ -186,16 +191,39 @@ export class NewGameMode extends Mode {
   }
 
   init(): void {
-    this.ui = new NewGameUi(this.scene, this);
-    this.ui.setup();
+    this.uis.push(new NewGameUi(this.scene, this));
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
   }
 
   enter(): void {
-    this.ui.show();
+    this.addUiStackOverlap('NewGameTestUi');
   }
+
+  exit(): void {
+    for (const ui of this.uiStack) {
+      ui.clean();
+    }
+    this.cleanUiStack();
+  }
+
   update(): void {}
 
-  exit(): void {}
+  async submit(nickname: string, gender: 'boy' | 'girl', avatar: '1' | '2' | '3' | '4') {
+    let res;
+    try {
+      this.addUiStack('LoadingDefaultUi');
+      res = await nicknameApi({ nickname, gender, avatar });
+    } catch (err: any) {
+    } finally {
+      this.popUiStack();
+      this.getUiStackTop().pause(false);
+
+      if (res) this.manager.changeMode(MODE.TITLE);
+    }
+  }
 }
 
 export class OverworldMode extends Mode {
