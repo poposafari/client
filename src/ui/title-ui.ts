@@ -1,17 +1,34 @@
-import { KEY } from '../enums/key';
-import { TEXTSTYLE } from '../enums/textstyle';
+import i18next from 'i18next';
+import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager } from '../managers';
 import { TitleMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { titleContinueConfig, titleLogoutConfig, titleMysteryGiftConfig, titleNewGameConfig, titleSettingConfig } from './config';
-import { addBackground, addImage, addText, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, Ui } from './ui';
+import { TEXTSTYLE } from '../enums/textstyle';
+import { KeyboardManager } from '../managers';
+import { KEY } from '../enums/key';
 
 export class TitleUi extends Ui {
   private mode: TitleMode;
+  private start!: number;
+
   private bg!: Phaser.GameObjects.Image;
-  private btns: Phaser.GameObjects.Image[] = [];
-  private containers: Phaser.GameObjects.Container[] = [];
+
+  private windows: Phaser.GameObjects.NineSlice[] = [];
+  private texts: Phaser.GameObjects.Text[] = [];
+
+  private continueName!: Phaser.GameObjects.Text;
+  private continueLocation!: Phaser.GameObjects.Text;
+  private continuePlaytime!: Phaser.GameObjects.Text;
+  private continueParties: Phaser.GameObjects.Image[] = [];
+
+  private container!: Phaser.GameObjects.Container;
+  private windowContainer!: Phaser.GameObjects.Container;
+
+  private readonly contentHeight: number = 100;
+  private readonly contentSpacing: number = 15;
+  private readonly scale: number = 3.4;
+  private readonly menus = [i18next.t('lobby:newGame'), i18next.t('lobby:mysteryGift'), i18next.t('lobby:settings'), i18next.t('lobby:logout')];
 
   constructor(scene: InGameScene, mode: TitleMode) {
     super(scene);
@@ -19,99 +36,128 @@ export class TitleUi extends Ui {
   }
 
   setup(): void {
-    const ui = this.getUi();
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY);
-    this.bg.setVisible(false);
-    ui.add(this.bg);
+    this.container = this.createContainer(width / 2, height / 2);
 
-    const btnConfig = [titleContinueConfig, titleNewGameConfig, titleMysteryGiftConfig, titleSettingConfig, titleLogoutConfig];
+    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
 
-    for (const config of btnConfig) {
-      const btnContainer = this.scene.add.container(width / 4, config.y);
-      const btnWindow = addImage(this.scene, TEXTURE.BAR, 0, 0);
-      const btnTitle = addText(this.scene, config.contentX - 175, config.contentY, config.content, TEXTSTYLE.TITLE_DEFAULT);
-      btnTitle.setOrigin(0, 0.5);
+    this.windowContainer = this.createContainer(width / 2, height / 2 + 10);
 
-      this.btns.push(btnWindow);
+    this.createContinue();
+    this.createMenus();
 
-      btnContainer.add(btnWindow);
-      btnContainer.add(btnTitle);
-      btnContainer.setVisible(false);
+    this.container.add(this.bg);
 
-      this.containers.push(btnContainer);
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.TITLE - 1);
+    this.container.setScrollFactor(0);
 
-      ui.add(btnContainer);
-    }
+    this.windowContainer.setVisible(false);
+    this.windowContainer.setDepth(DEPTH.TITLE);
+    this.windowContainer.setScrollFactor(0);
   }
 
-  show(): void {
-    const keyboardMananger = KeyboardManager.getInstance();
+  show(data?: any): void {
+    this.container.setVisible(true);
+    this.windowContainer.setVisible(true);
 
-    this.bg.setVisible(true);
-
-    let startIndex = this.getUserGameData() ? 0 : 1;
-    let endIndex = this.getBtnSize();
-    let choice = startIndex;
-
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
-    keyboardMananger.setAllowKey(keys);
-
-    keyboardMananger.setKeyDownCallback((key) => {
-      if (key === KEY.UP) {
-        choice = Math.max(startIndex, choice - 1);
-      } else if (key === KEY.DOWN) {
-        choice = Math.min(endIndex, choice + 1);
-      } else if (key === KEY.SELECT) {
-        this.choiceMenu(choice);
-      }
-
-      for (const btn of this.btns) {
-        btn.setTexture(TEXTURE.BAR);
-      }
-      this.btns[choice].setTexture(TEXTURE.BAR_S);
-    });
-
-    for (let i = startIndex; i <= endIndex; i++) {
-      if (!this.getUserGameData()) {
-        this.containers[i].y -= 50;
-      }
-      this.containers[i].setVisible(true);
-    }
-    this.btns[choice].setTexture(TEXTURE.BAR_S);
+    this.pause(false);
   }
 
-  choiceMenu(choice: number) {
-    if (choice === 0) {
-    } else if (choice === 1) {
-    } else if (choice === 2) {
-    } else if (choice === 3) {
-    } else if (choice === 4) {
-      this.mode.changeLoginMode();
-    }
+  clean(data?: any): void {
+    this.container.setVisible(false);
+    this.windowContainer.setVisible(false);
   }
 
-  clean(): void {
-    this.bg.setVisible(false);
-
-    for (const container of this.containers) {
-      container.setVisible(false);
-    }
-
-    KeyboardManager.getInstance().clearCallbacks();
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
   }
-
-  pause(onoff: boolean): void {}
 
   update(time: number, delta: number): void {}
 
-  private getUserGameData() {
-    return false;
+  private block() {}
+
+  private unblock() {
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
+    const keyboardManager = KeyboardManager.getInstance();
+
+    let choice = 0;
+    this.start = 0;
+
+    this.windows[choice].setTexture(TEXTURE.WINDOW_4);
+
+    keyboardManager.setAllowKey(keys);
+    keyboardManager.setKeyDownCallback(async (key) => {
+      let prevChoice = choice;
+
+      try {
+        switch (key) {
+          case KEY.UP:
+            if (choice > 0) {
+              choice--;
+            }
+            break;
+          case KEY.DOWN:
+            if (choice < this.windows.length - 1) {
+              choice++;
+            }
+            break;
+          case KEY.SELECT:
+            const target = this.windows[choice];
+            break;
+        }
+
+        if (key === KEY.UP || key === KEY.DOWN) {
+          if (choice !== prevChoice) {
+            this.windows[prevChoice].setTexture(TEXTURE.WINDOW_5);
+            this.windows[choice].setTexture(TEXTURE.WINDOW_4);
+          }
+        }
+      } catch (error) {
+        console.error(`Error handling key input: ${error}`);
+      }
+    });
   }
 
-  private getBtnSize() {
-    return this.containers.length - 1;
+  private createContinue() {
+    const window = addWindow(this.scene, TEXTURE.WINDOW_5, 0, -195, 210, 75, 16, 16, 16, 16).setScale(this.scale);
+    const text = addText(this.scene, -320, -275, i18next.t('lobby:continue'), TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+    const labelName = addText(this.scene, -320, -230, i18next.t('menu:continueName'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const labelLocation = addText(this.scene, -320, -190, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const labelPlaytime = addText(this.scene, -320, -150, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+
+    this.continueName = addText(this.scene, -60, -230, '테스트테스트테스트맨', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    this.continueLocation = addText(this.scene, -60, -190, '미친 광장', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    this.continuePlaytime = addText(this.scene, -60, -150, '00:00', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+
+    this.windowContainer.add(window);
+    this.windowContainer.add(text);
+    this.windowContainer.add(labelName);
+    this.windowContainer.add(labelLocation);
+    this.windowContainer.add(labelPlaytime);
+    this.windowContainer.add(this.continueName);
+    this.windowContainer.add(this.continueLocation);
+    this.windowContainer.add(this.continuePlaytime);
+
+    this.windows.unshift(window);
+  }
+
+  private createMenus() {
+    let currentY = 0;
+
+    for (const target of this.menus) {
+      const window = addWindow(this.scene, TEXTURE.WINDOW_5, 0, currentY, 210, 30, 16, 16, 16, 16).setScale(this.scale);
+      const text = addText(this.scene, -320, currentY, target, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+
+      this.windows.push(window);
+      this.texts.push(text);
+
+      this.windowContainer.add(window);
+      this.windowContainer.add(text);
+
+      currentY += this.contentHeight + this.contentSpacing;
+    }
   }
 }

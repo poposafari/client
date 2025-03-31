@@ -38,3 +38,8 @@ export const nicknameApi = async (data: NicknameReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/ingame/register', data);
   return res.data;
 };
+
+export const ingameApi = async (data: any): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/ingame/userdata');
+  return res.data;
+};
