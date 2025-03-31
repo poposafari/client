@@ -27,6 +27,7 @@ import { RegisterUi } from './ui/register-ui';
 import { loginApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
+import { message } from './locales/ko/message';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene, manager: ModeManager) {
@@ -37,7 +38,7 @@ export class NoneMode extends Mode {
 
   enter(): void {
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.LOGIN);
+    this.manager.changeMode(MODE.REGISTER);
   }
 
   exit(): void {}
@@ -199,7 +200,7 @@ export class NewGameMode extends Mode {
   }
 
   enter(): void {
-    this.addUiStackOverlap('NewGameTestUi');
+    this.addUiStackOverlap('NewGameUi');
   }
 
   exit(): void {
@@ -216,12 +217,24 @@ export class NewGameMode extends Mode {
     try {
       this.addUiStack('LoadingDefaultUi');
       res = await nicknameApi({ nickname, gender, avatar });
+      this.getUiStackTop().clean();
     } catch (err: any) {
+      this.getUiStackTop().clean();
+      const status = err.status as HttpStatusCode;
+      const message = MessageManager.getInstance();
+
+      if (status === 409) {
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:nicknameError3') }]);
+      } else {
+        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
+      }
     } finally {
       this.popUiStack();
       this.getUiStackTop().pause(false);
 
-      if (res) this.manager.changeMode(MODE.TITLE);
+      if (res) {
+        this.manager.changeMode(MODE.TITLE);
+      }
     }
   }
 }
