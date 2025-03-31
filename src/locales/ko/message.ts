@@ -9,6 +9,7 @@ export const message: TranslationDefault = {
   registerError3: '비밀번호는 6~20자이며, 영문자, 숫자, \n특수문자(!@#$%^&*()_+)로 구성되어야 합니다.',
   registerError4: '이미 등록된 사용자입니다.',
   registerError5: '예기치 못한 에러입니다.',
+  unexpectedError: '예기치 못한 에러입니다.',
   newgameWelcome1: '포포섭에 오신 것을 환영합니다!\n포포섭은 오픈 월드 요소가 들어간 포켓몬 팬게임입니다.\n',
   newgameWelcome2: '이 게임은 수익을 창출하지 않으며 Pokémon 및 사용된\n리소스에 대한 소유권을 주장하지 않습니다.\n',
   newgameWelcome3: '당신은 누구인가요?\n',

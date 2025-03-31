@@ -24,7 +24,7 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { loginApi, nicknameApi, registerApi } from './utils/axios';
+import { ingameApi, loginApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { message } from './locales/ko/message';
@@ -168,7 +168,9 @@ export class TitleMode extends Mode {
     }
   }
 
-  enter(): void {
+  async enter(): Promise<void> {
+    await this.getIngameUserData();
+
     this.addUiStackOverlap('TitleUi');
   }
 
@@ -183,6 +185,24 @@ export class TitleMode extends Mode {
 
   changeLoginMode() {
     this.manager.changeMode(MODE.LOGIN);
+  }
+
+  async getIngameUserData() {
+    let res;
+    try {
+      this.addUiStack('LoadingDefaultUi');
+      res = await ingameApi({});
+      this.getUiStackTop().clean();
+    } catch (err: any) {
+      const status = err.status as HttpStatusCode;
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
+    } finally {
+      this.popUiStack();
+      this.getUiStackTop().pause(false);
+
+      if (res) this.manager.changeMode(MODE.NEWGAME);
+    }
   }
 }
 
