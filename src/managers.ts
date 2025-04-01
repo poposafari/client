@@ -20,7 +20,7 @@ export class MessageManager {
   private questionUi!: QuestionUi;
   private isMessageAcive: boolean = false;
 
-  initialize(scene: InGameScene): void {
+  init(scene: InGameScene): void {
     this.scene = scene;
     this.messageUi = new MessageUi(scene);
     this.messageUi.setup();
@@ -74,7 +74,7 @@ export class KeyboardManager {
     return KeyboardManager.instance;
   }
 
-  initialize(scene: InGameScene): void {
+  init(scene: InGameScene): void {
     this.scene = scene;
     this.scene.events.on('update', this.updateKeys, this);
   }
@@ -121,22 +121,29 @@ export class KeyboardManager {
 }
 
 export class ModeManager {
-  private scene: InGameScene;
-  private modes: Modes[];
+  private static instance: ModeManager;
+  private modes!: Modes[];
   private modeCache: Map<MODE, Mode> = new Map();
   private currentMode!: Mode;
 
-  constructor(scene: InGameScene) {
-    this.scene = scene;
+  static getInstance(): ModeManager {
+    if (!ModeManager.instance) {
+      ModeManager.instance = new ModeManager();
+    }
+    return ModeManager.instance;
+  }
 
+  init(scene: InGameScene) {
     this.modes = [
-      { key: MODE.NONE, value: new NoneMode(scene, this) },
-      { key: MODE.LOGIN, value: new LoginMode(scene, this) },
-      { key: MODE.REGISTER, value: new RegisterMode(scene, this) },
-      { key: MODE.TITLE, value: new TitleMode(scene, this) },
-      { key: MODE.NEWGAME, value: new NewGameMode(scene, this) },
-      { key: MODE.OVERWORLD, value: new OverworldMode(scene, this) },
+      { key: MODE.NONE, value: new NoneMode(scene) },
+      { key: MODE.LOGIN, value: new LoginMode(scene) },
+      { key: MODE.REGISTER, value: new RegisterMode(scene) },
+      { key: MODE.TITLE, value: new TitleMode(scene) },
+      { key: MODE.NEWGAME, value: new NewGameMode(scene) },
+      { key: MODE.OVERWORLD, value: new OverworldMode(scene) },
     ];
+
+    this.registerModes();
   }
 
   registerModes() {

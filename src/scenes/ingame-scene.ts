@@ -4,6 +4,9 @@ import { ANIMATION } from '../enums/animation';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, MessageManager, ModeManager } from '../managers';
+import { Bag } from '../storage/bag';
+import { Box } from '../storage/box';
+import { PlayerInfo } from '../storage/player-info';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
@@ -18,24 +21,8 @@ export class InGameScene extends BaseScene {
 
   create() {
     this.initAnimation();
+    this.initManagers();
 
-    if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
-      this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
-    }
-
-    this.ui = this.add.container(0, 0);
-    this.add.existing(this.ui);
-    this.ui.setScale(2);
-
-    this.modeManager = new ModeManager(this);
-
-    const messageManager = MessageManager.getInstance();
-    messageManager.initialize(this);
-
-    const keyboardMananger = KeyboardManager.getInstance();
-    keyboardMananger.initialize(this);
-
-    this.modeManager.registerModes();
     this.modeManager.changeMode(MODE.NONE);
   }
 
@@ -43,6 +30,17 @@ export class InGameScene extends BaseScene {
     if (this.modeManager.isOverworldMode()) {
       this.modeManager.getCurrentMode().update(time, delta);
     }
+  }
+
+  private initManagers() {
+    this.modeManager = ModeManager.getInstance();
+    this.modeManager.init(this);
+
+    const messageManager = MessageManager.getInstance();
+    messageManager.init(this);
+
+    const keyboardMananger = KeyboardManager.getInstance();
+    keyboardMananger.init(this);
   }
 
   private initAnimation() {
@@ -73,11 +71,13 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.EMO, ANIMATION.EMO);
     createSpriteAnimation(this, TEXTURE.SPARKLE, ANIMATION.SPARKLE);
 
+    // this.initNpcAnimation();
     this.initPlayerAnimation();
     this.initPokemonAnimation();
     this.initPokeballAnimation();
     this.initEmotionAnimation();
     this.initSurfAnimation();
+    this.initShader();
   }
 
   private initEmotionAnimation() {
@@ -521,5 +521,11 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_down`, down[0]);
     createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_left`, left[0]);
     createSpriteAnimation(this, TEXTURE.SURF, `${TEXTURE.SURF}_right`, right[0]);
+  }
+
+  private initShader() {
+    if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
+      this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
+    }
   }
 }

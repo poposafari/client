@@ -5,7 +5,6 @@ import { Account, Message } from './interface/sys';
 import { MessageManager, ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
-import { SeasonUi } from './ui/season-ui';
 import { OverworldUi } from './ui/overworld-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
@@ -30,15 +29,16 @@ import { NewGameUi } from './ui/newgame-ui';
 import { message } from './locales/ko/message';
 
 export class NoneMode extends Mode {
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
   }
 
   init(): void {}
 
-  enter(): void {
+  async enter(): Promise<void> {
+    await PlayerInfo.getInstance().setup();
     //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.manager.changeMode(MODE.REGISTER);
+    this.changeMode(MODE.LOGIN);
   }
 
   exit(): void {}
@@ -47,8 +47,8 @@ export class NoneMode extends Mode {
 }
 
 export class LoginMode extends Mode {
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
   }
 
   init(): void {
@@ -73,7 +73,7 @@ export class LoginMode extends Mode {
   update(): void {}
 
   changeRegisterMode() {
-    this.manager.changeMode(MODE.REGISTER);
+    this.changeMode(MODE.REGISTER);
   }
 
   async submit(username: string, password: string): Promise<void> {
@@ -96,14 +96,14 @@ export class LoginMode extends Mode {
       this.popUiStack();
       this.getUiStackTop().pause(false);
 
-      if (res) this.manager.changeMode(MODE.TITLE);
+      if (res) this.changeMode(MODE.TITLE);
     }
   }
 }
 
 export class RegisterMode extends Mode {
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
   }
 
   init(): void {
@@ -128,7 +128,7 @@ export class RegisterMode extends Mode {
   update(): void {}
 
   changeLoginMode() {
-    this.manager.changeMode(MODE.LOGIN);
+    this.changeMode(MODE.LOGIN);
   }
 
   async submit(username: string, password: string): Promise<void> {
@@ -150,14 +150,14 @@ export class RegisterMode extends Mode {
       this.popUiStack();
       this.getUiStackTop().pause(false);
 
-      if (res) this.manager.changeMode(MODE.NEWGAME);
+      if (res) this.changeMode(MODE.NEWGAME);
     }
   }
 }
 
 export class TitleMode extends Mode {
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
   }
 
   init(): void {
@@ -184,7 +184,7 @@ export class TitleMode extends Mode {
   update(): void {}
 
   changeLoginMode() {
-    this.manager.changeMode(MODE.LOGIN);
+    this.changeMode(MODE.LOGIN);
   }
 
   async getIngameUserData() {
@@ -201,14 +201,14 @@ export class TitleMode extends Mode {
       this.popUiStack();
       this.getUiStackTop().pause(false);
 
-      if (res) this.manager.changeMode(MODE.NEWGAME);
+      if (res) this.changeMode(MODE.NEWGAME);
     }
   }
 }
 
 export class NewGameMode extends Mode {
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
   }
 
   init(): void {
@@ -253,7 +253,7 @@ export class NewGameMode extends Mode {
       this.getUiStackTop().pause(false);
 
       if (res) {
-        this.manager.changeMode(MODE.TITLE);
+        this.changeMode(MODE.TITLE);
       }
     }
   }
@@ -266,8 +266,8 @@ export class OverworldMode extends Mode {
   private overworldInfo: OverworldInfo;
   private currentOverworldUisIndex!: number;
 
-  constructor(scene: InGameScene, manager: ModeManager) {
-    super(scene, manager);
+  constructor(scene: InGameScene) {
+    super(scene);
 
     this.bag = new Bag();
     this.box = new Box();
@@ -278,7 +278,6 @@ export class OverworldMode extends Mode {
   init(): void {
     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
     this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
-    this.uis.push(new SeasonUi(this.scene, this));
     this.uis.push(new OverworldHUDUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new OverworldItemSlotUi(this.scene, this));
@@ -379,7 +378,7 @@ export class OverworldMode extends Mode {
   }
 
   changeTitleMode() {
-    this.manager.changeMode(MODE.TITLE);
+    this.changeMode(MODE.TITLE);
   }
 
   moveToVillage() {

@@ -1,19 +1,24 @@
+import { MODE } from './enums/mode';
 import { ModeManager } from './managers';
 import { InGameScene } from './scenes/ingame-scene';
+import { Bag } from './storage/bag';
+import { Box } from './storage/box';
+import { PlayerInfo } from './storage/player-info';
 import { LoadingDefaultUi } from './ui/loading-default-ui';
 import { Ui } from './ui/ui';
 
 export abstract class Mode {
   protected scene: InGameScene;
-  protected manager: ModeManager;
-  protected ui!: Ui;
   protected uis: Ui[] = [];
   protected uiStack: Ui[] = [];
 
-  constructor(scene: InGameScene, manager: ModeManager) {
+  constructor(scene: InGameScene) {
     this.scene = scene;
-    this.manager = manager;
     this.uis.push(new LoadingDefaultUi(scene, this));
+  }
+
+  changeMode(mode: MODE) {
+    ModeManager.getInstance().changeMode(mode);
   }
 
   findUiByType(type: string): Ui | undefined {
