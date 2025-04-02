@@ -12,9 +12,18 @@ export interface MyPokemon {
 }
 
 export class Box {
+  private static instance: Box;
+
   private mypokemons: Map<string, MyPokemon> = new Map();
 
   constructor() {}
+
+  static getInstance(): Box {
+    if (!Box.instance) {
+      Box.instance = new Box();
+    }
+    return Box.instance;
+  }
 
   setup() {
     this.addMyPokemon({ pokedex: '001', shiny: false, gender: 'm', form: 0, captureDate: '2025-02-19', capturePokeball: '001', captureCount: 1, skill: null });
