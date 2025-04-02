@@ -22,6 +22,7 @@ export class InGameScene extends BaseScene {
   create() {
     this.initAnimation();
     this.initManagers();
+    this.initStorage();
 
     this.modeManager.changeMode(MODE.NONE);
   }
@@ -41,6 +42,12 @@ export class InGameScene extends BaseScene {
 
     const keyboardMananger = KeyboardManager.getInstance();
     keyboardMananger.init(this);
+  }
+
+  private initStorage() {
+    PlayerInfo.getInstance();
+    Bag.getInstance();
+    Box.getInstance();
   }
 
   private initAnimation() {

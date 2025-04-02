@@ -1,3 +1,5 @@
+import { HttpStatusCode } from 'axios';
+import { ingameApi, nicknameApi } from '../utils/axios';
 import { MyPokemon } from './box';
 
 export interface Location {
@@ -7,6 +9,8 @@ export interface Location {
 }
 
 export class PlayerInfo {
+  private static instance: PlayerInfo;
+
   private nickname!: string;
   private gender!: 'boy' | 'girl';
   private avatar!: 1 | 2 | 3 | 4;
@@ -19,18 +23,25 @@ export class PlayerInfo {
 
   constructor() {}
 
-  setup() {
-    //TODO: 외부로부터 사용자 데이터를 받아오자.
-    this.nickname = '운영자';
-    this.gender = 'boy';
-    this.avatar = 2;
+  static getInstance(): PlayerInfo {
+    if (!PlayerInfo.instance) {
+      PlayerInfo.instance = new PlayerInfo();
+    }
+    return PlayerInfo.instance;
+  }
+
+  setup(data: any) {
+    const playerData = data;
+    this.nickname = playerData.nickname;
+    this.gender = playerData.gender;
+    this.avatar = playerData.avatar;
     this.location = {
-      overworld: '000',
-      x: 10,
-      y: 10,
+      overworld: playerData.location,
+      x: playerData.x,
+      y: playerData.y,
     };
-    this.pet = null;
-    this.money = 100000;
+    this.pet = playerData.pet;
+    this.money = playerData.money;
   }
 
   getNickname() {
