@@ -3,12 +3,21 @@ import { ITEM } from '../enums/item';
 import { PlayerItem, Register } from '../object/player-item';
 
 export class Bag {
+  private static instance: Bag;
+
   private pokeballs: Record<string, PlayerItem> = {};
   private berries: Record<string, PlayerItem> = {};
   private keys: Record<string, PlayerItem> = {};
   private etc: Record<string, PlayerItem> = {};
 
   constructor() {}
+
+  static getInstance(): Bag {
+    if (!Bag.instance) {
+      Bag.instance = new Bag();
+    }
+    return Bag.instance;
+  }
 
   setup() {
     this.addItems('001');
