@@ -7,6 +7,7 @@ import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KeyboardManager } from '../managers';
 import { KEY } from '../enums/key';
+import { PlayerInfo } from '../storage/player-info';
 
 export class TitleUi extends Ui {
   private mode: TitleMode;
@@ -60,6 +61,11 @@ export class TitleUi extends Ui {
   }
 
   show(data?: any): void {
+    const playerData = PlayerInfo.getInstance();
+
+    this.continueName.setText(playerData.getNickname());
+    this.continueLocation.setText(playerData.getLocation().overworld);
+
     this.container.setVisible(true);
     this.windowContainer.setVisible(true);
 

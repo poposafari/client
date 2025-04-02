@@ -23,22 +23,33 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { ingameApi, loginApi, nicknameApi, registerApi } from './utils/axios';
+import { autoLoginApi, ingameApi, loginApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
-import { message } from './locales/ko/message';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  init(): void {}
+  init(): void {
+    for (const ui of this.uis) {
+      ui.setup();
+    }
+  }
 
   async enter(): Promise<void> {
-    await PlayerInfo.getInstance().setup();
-    //TODO: 분기점을 언젠가는 넣어야 한다. 로그인이 되어 있는 상태면, TITLE 모드로 변경되어야하고, 아니라면, LOGIN 모드로 변경되어야 한다.
-    this.changeMode(MODE.LOGIN);
+    try {
+      await autoLoginApi();
+      const res = await ingameApi();
+      if (res) {
+        this.changeMode(MODE.TITLE);
+      } else {
+        this.changeMode(MODE.NEWGAME);
+      }
+    } catch (err: any) {
+      this.changeMode(MODE.LOGIN);
+    }
   }
 
   exit(): void {}
@@ -79,11 +90,8 @@ export class LoginMode extends Mode {
   async submit(username: string, password: string): Promise<void> {
     let res;
     try {
-      this.addUiStack('LoadingDefaultUi');
       res = await loginApi({ username, password });
-      this.getUiStackTop().clean();
     } catch (err: any) {
-      this.getUiStackTop().clean();
       const status = err.status as HttpStatusCode;
       const message = MessageManager.getInstance();
       if (status === 404) {
@@ -92,10 +100,6 @@ export class LoginMode extends Mode {
         await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
       }
     } finally {
-      console.log('finally??');
-      this.popUiStack();
-      this.getUiStackTop().pause(false);
-
       if (res) this.changeMode(MODE.TITLE);
     }
   }
@@ -134,11 +138,8 @@ export class RegisterMode extends Mode {
   async submit(username: string, password: string): Promise<void> {
     let res;
     try {
-      this.addUiStack('LoadingDefaultUi');
       res = await registerApi({ username, password });
-      this.getUiStackTop().clean();
     } catch (err: any) {
-      this.getUiStackTop().clean();
       const status = err.status as HttpStatusCode;
       const message = MessageManager.getInstance();
       if (status === 409) {
@@ -147,9 +148,6 @@ export class RegisterMode extends Mode {
         await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
       }
     } finally {
-      this.popUiStack();
-      this.getUiStackTop().pause(false);
-
       if (res) this.changeMode(MODE.NEWGAME);
     }
   }
@@ -169,9 +167,15 @@ export class TitleMode extends Mode {
   }
 
   async enter(): Promise<void> {
-    await this.getIngameUserData();
+    try {
+      const res = await ingameApi();
+      PlayerInfo.getInstance().setup(res);
+      this.addUiStackOverlap('TitleUi');
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
 
-    this.addUiStackOverlap('TitleUi');
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
+    }
   }
 
   exit(): void {
@@ -185,24 +189,6 @@ export class TitleMode extends Mode {
 
   changeLoginMode() {
     this.changeMode(MODE.LOGIN);
-  }
-
-  async getIngameUserData() {
-    let res;
-    try {
-      this.addUiStack('LoadingDefaultUi');
-      res = await ingameApi({});
-      this.getUiStackTop().clean();
-    } catch (err: any) {
-      const status = err.status as HttpStatusCode;
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
-    } finally {
-      this.popUiStack();
-      this.getUiStackTop().pause(false);
-
-      if (res) this.changeMode(MODE.NEWGAME);
-    }
   }
 }
 
@@ -235,11 +221,8 @@ export class NewGameMode extends Mode {
   async submit(nickname: string, gender: 'boy' | 'girl', avatar: '1' | '2' | '3' | '4') {
     let res;
     try {
-      this.addUiStack('LoadingDefaultUi');
       res = await nicknameApi({ nickname, gender, avatar });
-      this.getUiStackTop().clean();
     } catch (err: any) {
-      this.getUiStackTop().clean();
       const status = err.status as HttpStatusCode;
       const message = MessageManager.getInstance();
 
@@ -249,9 +232,7 @@ export class NewGameMode extends Mode {
         await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
       }
     } finally {
-      this.popUiStack();
-      this.getUiStackTop().pause(false);
-
+      console.log(res);
       if (res) {
         this.changeMode(MODE.TITLE);
       }
@@ -291,9 +272,9 @@ export class OverworldMode extends Mode {
       ui.setup();
     }
 
-    this.bag.setup();
-    this.box.setup();
-    this.playerInfo.setup();
+    // this.bag.setup();
+    // this.box.setup();
+    // this.playerInfo.setup();
   }
 
   enter(data?: any): void {
