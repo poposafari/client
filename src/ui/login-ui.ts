@@ -60,6 +60,8 @@ export class LoginUi extends ModalFormUi {
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.TITLE - 1);
     this.container.setScrollFactor(0);
+
+    this.handleMouseBtn();
   }
 
   show(data?: any): void {
@@ -74,8 +76,6 @@ export class LoginUi extends ModalFormUi {
       container.setVisible(true);
       startModalAnimation(this.scene, container);
     }
-
-    this.handleMouseBtn();
 
     this.pause(false);
   }
