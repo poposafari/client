@@ -23,9 +23,10 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { autoLoginApi, ingameApi, loginApi, nicknameApi, registerApi } from './utils/axios';
+import { autoLoginApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
+import { runFadeEffect } from './ui/ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -170,6 +171,7 @@ export class TitleMode extends Mode {
     try {
       const res = await ingameApi();
       PlayerInfo.getInstance().setup(res);
+      runFadeEffect(this.scene, 500, 'in');
       this.addUiStackOverlap('TitleUi');
     } catch (err: any) {
       const message = MessageManager.getInstance();
@@ -189,6 +191,11 @@ export class TitleMode extends Mode {
 
   changeLoginMode() {
     this.changeMode(MODE.LOGIN);
+  }
+
+  async logout() {
+    await logoutApi();
+    this.changeLoginMode();
   }
 }
 
