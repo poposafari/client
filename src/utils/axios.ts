@@ -77,6 +77,11 @@ export const logoutApi = async (): Promise<BaseRes> => {
   return res.data;
 };
 
+export const deleteAccountApi = async (): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/account/delete');
+  return res.data;
+};
+
 export const nicknameApi = async (data: NicknameReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/ingame/register', data);
   return res.data;

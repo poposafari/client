@@ -23,7 +23,7 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { autoLoginApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
+import { autoLoginApi, deleteAccountApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { runFadeEffect } from './ui/ui';
@@ -196,6 +196,17 @@ export class TitleMode extends Mode {
   async logout() {
     await logoutApi();
     this.changeLoginMode();
+  }
+
+  async deleteAccount() {
+    const message = MessageManager.getInstance();
+    try {
+      await deleteAccountApi();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:accountDelete4') }]);
+      await this.logout();
+    } catch (err: any) {
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
+    }
   }
 }
 
