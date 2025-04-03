@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { ModeManager } from '../managers';
 import { LoadingDefaultUi } from '../ui/loading-default-ui';
-import { NoneMode } from '../modes';
 
 interface AccountReq {
   username: string;
@@ -70,6 +69,11 @@ export const loginApi = async (data: AccountReq): Promise<BaseRes> => {
 
 export const autoLoginApi = async (): Promise<BaseRes> => {
   const res = await AxiosManager.get<BaseRes>('/account/auto-login');
+  return res.data;
+};
+
+export const logoutApi = async (): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/account/logout');
   return res.data;
 };
 
