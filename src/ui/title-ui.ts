@@ -5,7 +5,7 @@ import { TitleMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
-import { KeyboardManager } from '../managers';
+import { KeyboardManager, MessageManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PlayerInfo } from '../storage/player-info';
 
@@ -111,7 +111,18 @@ export class TitleUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            const target = this.windows[choice];
+            if (choice === 0) {
+              //continue
+            } else if (choice === 1) {
+              //newgame
+            } else if (choice === 2) {
+              //gift
+            } else if (choice === 3) {
+              //settings
+            } else if (choice === 4) {
+              //logout
+              this.mode.logout();
+            }
             break;
         }
 
