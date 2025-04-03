@@ -8,6 +8,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { KeyboardManager, MessageManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PlayerInfo } from '../storage/player-info';
+import { deleteAccountApi } from '../utils/axios';
 
 export class TitleUi extends Ui {
   private mode: TitleMode;
@@ -115,6 +116,15 @@ export class TitleUi extends Ui {
               //continue
             } else if (choice === 1) {
               //newgame
+              const message = MessageManager.getInstance();
+              await message.show(this, [{ type: 'sys', format: 'question', content: i18next.t('message:accountDelete1') }]).then(async (result) => {
+                if (result) {
+                  await message.show(this, [{ type: 'sys', format: 'question', content: i18next.t('message:accountDelete2') }]).then(async (result) => {
+                    if (result) this.mode.deleteAccount();
+                  });
+                }
+                return false;
+              });
             } else if (choice === 2) {
               //gift
             } else if (choice === 3) {
