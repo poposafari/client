@@ -3,6 +3,7 @@ import { npcData } from '../data/npc';
 import { females, pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { AREA } from '../enums/area';
+import { AUDIO } from '../enums/audio';
 import { TEXTURE } from '../enums/texture';
 import { TIME } from '../enums/time';
 import { initI18n } from '../i18n';
@@ -192,6 +193,8 @@ export class LoadingScene extends BaseScene {
 
     this.loadImage(TEXTURE.GOOGLE, 'ui', TEXTURE.GOOGLE);
     this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
+
+    this.loadAudio(AUDIO.MENU, 'audio', AUDIO.MENU);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
