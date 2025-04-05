@@ -1,6 +1,7 @@
 import { npcData } from '../data/npc';
 import { pokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
+import { AUDIO } from '../enums/audio';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager, MessageManager, ModeManager } from '../managers';
@@ -21,6 +22,7 @@ export class InGameScene extends BaseScene {
 
   create() {
     this.initAnimation();
+    this.initAudio();
     this.initManagers();
     this.initStorage();
 
@@ -534,5 +536,9 @@ export class InGameScene extends BaseScene {
     if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
       this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
     }
+  }
+
+  private initAudio() {
+    this.sound.add(AUDIO.MENU).setVolume(0.2);
   }
 }

@@ -5,7 +5,7 @@ import { Account, Message } from './interface/sys';
 import { MessageManager, ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
-import { OverworldUi } from './ui/overworld-ui';
+import { OverworldUi } from './ui/overworld-test-ui';
 import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
@@ -27,6 +27,8 @@ import { autoLoginApi, deleteAccountApi, ingameApi, loginApi, logoutApi, nicknam
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { runFadeEffect } from './ui/ui';
+import { checkOverworldType } from './data/overworld';
+import { AUDIO } from './enums/audio';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -40,17 +42,19 @@ export class NoneMode extends Mode {
   }
 
   async enter(): Promise<void> {
-    try {
-      await autoLoginApi();
-      const res = await ingameApi();
-      if (res) {
-        this.changeMode(MODE.TITLE);
-      } else {
-        this.changeMode(MODE.NEWGAME);
-      }
-    } catch (err: any) {
-      this.changeMode(MODE.LOGIN);
-    }
+    await autoLoginApi()
+      .then(async () => {
+        const res = await ingameApi();
+        if (res) {
+          this.changeMode(MODE.TITLE);
+        } else {
+          this.changeMode(MODE.NEWGAME);
+        }
+      })
+      .catch((err: any) => {
+        console.log(err);
+        this.changeMode(MODE.LOGIN);
+      });
   }
 
   exit(): void {}
@@ -72,6 +76,7 @@ export class LoginMode extends Mode {
   }
 
   enter(): void {
+    this.scene.sound.get(AUDIO.MENU).play();
     this.addUiStackOverlap('LoginUi');
   }
 
@@ -208,6 +213,10 @@ export class TitleMode extends Mode {
       await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
     }
   }
+
+  changeOverworldMode() {
+    this.changeMode(MODE.OVERWORLD);
+  }
 }
 
 export class NewGameMode extends Mode {
@@ -259,48 +268,19 @@ export class NewGameMode extends Mode {
 }
 
 export class OverworldMode extends Mode {
-  private bag: Bag;
-  private box: Box;
-  private playerInfo: PlayerInfo;
-  private overworldInfo: OverworldInfo;
   private currentOverworldUisIndex!: number;
 
   constructor(scene: InGameScene) {
     super(scene);
-
-    this.bag = new Bag();
-    this.box = new Box();
-    this.playerInfo = new PlayerInfo();
-    this.overworldInfo = new OverworldInfo();
   }
 
   init(): void {
-    this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
-    this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
+    // this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
+    // this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
     this.uis.push(new OverworldHUDUi(this.scene, this));
-    this.uis.push(new OverworldMenuUi(this.scene, this));
-    this.uis.push(new OverworldItemSlotUi(this.scene, this));
-    this.uis.push(new SafariListUi(this.scene, this));
-    this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new BattleUi(this.scene, this));
-    this.uis.push(new PokeBoxUi(this.scene, this));
-    this.uis.push(new ShopUi(this.scene, this));
-
-    for (const ui of this.uis) {
-      ui.setup();
-    }
-
-    // this.bag.setup();
-    // this.box.setup();
-    // this.playerInfo.setup();
   }
 
-  enter(data?: any): void {
-    this.addUiStackOverlap('OverworldHUDUi', data);
-    this.addUiStackOverlap('Overworld000', data);
-
-    this.currentOverworldUisIndex = 1;
-  }
+  enter(): void {}
 
   exit(): void {
     for (const ui of this.uiStack) {
@@ -312,100 +292,146 @@ export class OverworldMode extends Mode {
   update(time: number, delta: number): void {
     const overworld = this.uiStack[this.currentOverworldUisIndex];
     overworld.update(time, delta);
-
-    //TODO: 적절한 제어? overworldHUDUi가 들어올 경우, update가 실행되버린다.
-  }
-
-  getBag() {
-    if (!this.bag) {
-      console.error('Bag object does not exist.');
-      return;
-    }
-
-    return this.bag;
-  }
-
-  getBox() {
-    if (!this.box) {
-      console.error('Bag object does not exist.');
-      return;
-    }
-
-    return this.box;
-  }
-
-  getPlayerInfo() {
-    if (!this.playerInfo) {
-      console.error('Player does not exist.');
-      return;
-    }
-
-    return this.playerInfo;
-  }
-
-  getOverworldInfo() {
-    if (!this.overworldInfo) {
-      console.error('Overworld Info does not exist.');
-      return;
-    }
-
-    return this.overworldInfo;
-  }
-
-  updateOverworldInfoUi() {
-    const ui = this.getUiType('OverworldHUDUi');
-    if (ui instanceof OverworldHUDUi) {
-      ui.updateOverworldInfoUi();
-    }
-  }
-
-  updateOverworldLocationUi(location: Location) {
-    const ui = this.getUiType('OverworldHUDUi');
-    if (ui instanceof OverworldHUDUi) {
-      ui.updateOverworldLocationUi(location);
-    }
   }
 
   updateOverworld(key: string) {
-    const overworld = this.getUiStackTop() as OverworldUi;
+    const playerData = PlayerInfo.getInstance();
+    const overworldKey = key;
+    const overworldType = checkOverworldType(playerData.getLocation());
 
-    overworld.clean();
-    this.popUiStack();
-
-    this.overworldInfo.setKey(key);
-    this.addUiStackOverlap(`Overworld${key}`);
-  }
-
-  changeTitleMode() {
-    this.changeMode(MODE.TITLE);
-  }
-
-  moveToVillage() {
-    this.getUiStackTop().clean();
-    this.popUiStack();
-    this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
-  }
-
-  async startMessage(data: Message[]) {
-    const overworld = this.getUiStackTop();
-
-    this.pauseOverworldSystem(true);
-
-    const message = MessageManager.getInstance();
-    const ret = await message.show(overworld, data);
-
-    this.pauseOverworldSystem(false);
-
-    return ret;
-  }
-
-  pauseOverworldSystem(onoff: boolean) {
-    const overworldHUDUi = this.getUiType('OverworldHUDUi');
-    const overworld = this.getUiStackTop() as OverworldUi;
-
-    if (overworldHUDUi && overworld) {
-      overworldHUDUi.pause(onoff ? true : false);
-      overworld.pause(onoff ? true : false);
+    try {
+      if (overworldType === OVERWORLD_TYPE.PLAZA) {
+        //network plaza info.
+      } else if (overworldType === OVERWORLD_TYPE.SAFARI) {
+        //network safari info.
+      } else {
+        //network error.
+      }
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      const overworld = this.getUiStackTop() as OverworldUi;
+      if (overworld) {
+        overworld.clean();
+        this.popUiStack();
+      }
+      this.addUiStackOverlap('OverworldHUDUi');
+      this.addUiStackOverlap(`Overworld${overworldKey}`);
+      this.currentOverworldUisIndex = this.uiStack.length - 1;
     }
   }
 }
+
+// export class OverworldMode extends Mode {
+//   private currentOverworldUisIndex!: number;
+
+//   constructor(scene: InGameScene) {
+//     super(scene);
+//   }
+
+//   init(): void {
+//     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
+//     this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
+//     this.uis.push(new OverworldHUDUi(this.scene, this));
+//     this.uis.push(new OverworldMenuUi(this.scene, this));
+//     this.uis.push(new OverworldItemSlotUi(this.scene, this));
+//     this.uis.push(new SafariListUi(this.scene, this));
+//     this.uis.push(new BagUi(this.scene, this));
+//     this.uis.push(new BattleUi(this.scene, this));
+//     this.uis.push(new PokeBoxUi(this.scene, this));
+//     this.uis.push(new ShopUi(this.scene, this));
+
+//     for (const ui of this.uis) {
+//       ui.setup();
+//     }
+//   }
+
+//   enter(data?: any): void {
+//     const playerData = PlayerInfo.getInstance();
+//     const overworldKey = playerData.getLocation();
+//     const overworldType = checkOverworldType(playerData.getLocation());
+
+//     try {
+//       if (overworldType === OVERWORLD_TYPE.SAFARI) {
+//       } else if (overworldType === OVERWORLD_TYPE.PLAZA) {
+//       } else {
+//         throw new Error(`Invalid overworld type: ${overworldType}`);
+//       }
+
+//       if (playerData.getLocation()) this.addUiStackOverlap('OverworldHUDUi', data);
+//       this.addUiStackOverlap(`Overworld${overworldKey}`, data);
+
+//       this.currentOverworldUisIndex = 1;
+//     } catch (err: any) {}
+//   }
+
+//   exit(): void {
+//     for (const ui of this.uiStack) {
+//       ui.clean();
+//     }
+//     this.cleanUiStack();
+//   }
+
+//   update(time: number, delta: number): void {
+//     const overworld = this.uiStack[this.currentOverworldUisIndex];
+//     overworld.update(time, delta);
+
+//     //TODO: 적절한 제어? overworldHUDUi가 들어올 경우, update가 실행되버린다.
+//   }
+
+//   updateOverworldInfoUi() {
+//     const ui = this.getUiType('OverworldHUDUi');
+//     if (ui instanceof OverworldHUDUi) {
+//       ui.updateOverworldInfoUi();
+//     }
+//   }
+
+//   updateOverworldLocationUi(location: Location) {
+//     const ui = this.getUiType('OverworldHUDUi');
+//     if (ui instanceof OverworldHUDUi) {
+//       ui.updateOverworldLocationUi(location);
+//     }
+//   }
+
+//   updateOverworld(key: string) {
+//     const overworld = this.getUiStackTop() as OverworldUi;
+
+//     overworld.clean();
+//     this.popUiStack();
+
+//     this.addUiStackOverlap(`Overworld${key}`);
+//   }
+
+//   changeTitleMode() {
+//     this.changeMode(MODE.TITLE);
+//   }
+
+//   moveToVillage() {
+//     this.getUiStackTop().clean();
+//     this.popUiStack();
+//     this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
+//   }
+
+//   async startMessage(data: Message[]) {
+//     const overworld = this.getUiStackTop();
+
+//     this.pauseOverworldSystem(true);
+
+//     const message = MessageManager.getInstance();
+//     const ret = await message.show(overworld, data);
+
+//     this.pauseOverworldSystem(false);
+
+//     return ret;
+//   }
+
+//   pauseOverworldSystem(onoff: boolean) {
+//     const overworldHUDUi = this.getUiType('OverworldHUDUi');
+//     const overworld = this.getUiStackTop() as OverworldUi;
+
+//     if (overworldHUDUi && overworld) {
+//       overworldHUDUi.pause(onoff ? true : false);
+//       overworld.pause(onoff ? true : false);
+//     }
+//   }
+// }
