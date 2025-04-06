@@ -1,3 +1,4 @@
+import { AUDIO } from './enums/audio';
 import { KEY } from './enums/key';
 import { MODE } from './enums/mode';
 import { Message } from './interface/sys';
@@ -39,9 +40,10 @@ export class MessageManager {
     let ret = false;
     if (this.isMessageAcive) return ret;
     this.isMessageAcive = true;
-
+    this.scene.sound.get(AUDIO.SELECT).play();
     try {
       for (const msg of messages) {
+        this.scene.sound.get(AUDIO.SELECT).play();
         const result = await this.messageUi.show(msg);
         if (msg.format === 'question' && result) {
           ret = result;
@@ -50,7 +52,8 @@ export class MessageManager {
     } finally {
       this.isMessageAcive = false;
       this.messageUi.pause(true);
-      currentUi.pause(false);
+
+      if (currentUi) currentUi.pause(false);
     }
 
     return ret;
