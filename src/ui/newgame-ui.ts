@@ -9,6 +9,7 @@ import { ModalFormUi } from './modal-form-ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import InputText from 'phaser3-rex-plugins/plugins/inputtext';
 import { isValidNickname } from '../utils/string-util';
+import { AUDIO } from '../enums/audio';
 
 export class NewGameUi extends ModalFormUi {
   private mode: NewGameMode;
@@ -86,6 +87,7 @@ export class NewGameUi extends ModalFormUi {
       container.setAlpha(0);
       container.setVisible(true);
       startModalAnimation(this.scene, container);
+      this.scene.sound.get(AUDIO.MENU).play();
     }
   }
 

@@ -195,6 +195,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
 
     this.loadAudio(AUDIO.MENU, 'audio', AUDIO.MENU);
+    this.loadAudio(AUDIO.SELECT, 'audio', AUDIO.SELECT);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
