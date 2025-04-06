@@ -540,5 +540,6 @@ export class InGameScene extends BaseScene {
 
   private initAudio() {
     this.sound.add(AUDIO.MENU).setVolume(0.2);
+    this.sound.add(AUDIO.SELECT).setVolume(0.2);
   }
 }

@@ -9,6 +9,7 @@ import { KeyboardManager, MessageManager } from '../managers';
 import { KEY } from '../enums/key';
 import { PlayerInfo } from '../storage/player-info';
 import { deleteAccountApi } from '../utils/axios';
+import { AUDIO } from '../enums/audio';
 
 export class TitleUi extends Ui {
   private mode: TitleMode;
@@ -65,7 +66,7 @@ export class TitleUi extends Ui {
     const playerData = PlayerInfo.getInstance();
 
     this.continueName.setText(playerData.getNickname());
-    this.continueLocation.setText(playerData.getLocation().overworld);
+    this.continueLocation.setText(i18next.t(`menu:overworld_${playerData.getLocation()}`));
 
     this.container.setVisible(true);
     this.windowContainer.setVisible(true);
@@ -112,8 +113,10 @@ export class TitleUi extends Ui {
             }
             break;
           case KEY.SELECT:
+            this.scene.sound.get(AUDIO.SELECT).play();
             if (choice === 0) {
               //continue
+              this.mode.changeOverworldMode();
             } else if (choice === 1) {
               //newgame
               const message = MessageManager.getInstance();
@@ -137,6 +140,7 @@ export class TitleUi extends Ui {
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
+          this.scene.sound.get(AUDIO.SELECT).play();
           if (choice !== prevChoice) {
             this.windows[prevChoice].setTexture(TEXTURE.WINDOW_5);
             this.windows[choice].setTexture(TEXTURE.WINDOW_4);
