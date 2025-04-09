@@ -27,6 +27,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_3, 'ui/windows', TEXTURE.WINDOW_3);
     this.loadImage(TEXTURE.WINDOW_4, 'ui/windows', TEXTURE.WINDOW_4);
     this.loadImage(TEXTURE.WINDOW_5, 'ui/windows', TEXTURE.WINDOW_5);
+    this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -113,17 +114,16 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.TILE_OBJECT_URBAN, 'ui/map', TEXTURE.TILE_OBJECT_URBAN);
     this.loadImage(TEXTURE.TILE_URBAN, 'ui/map', TEXTURE.TILE_URBAN);
 
-    this.loadImage(TEXTURE.MENU_BOX, 'ui', TEXTURE.MENU_BOX);
-    this.loadImage(TEXTURE.MENU_BAG, 'ui', TEXTURE.MENU_BAG);
-    this.loadImage(TEXTURE.MENU_POKEDEX, 'ui', TEXTURE.MENU_POKEDEX);
-    this.loadImage(TEXTURE.MENU_CARD, 'ui', TEXTURE.MENU_CARD);
-    this.loadImage(TEXTURE.MENU_DOLL, 'ui', TEXTURE.MENU_DOLL);
-    this.loadImage(TEXTURE.MENU_CHAT, 'ui', TEXTURE.MENU_CHAT);
-    this.loadImage(TEXTURE.MENU_LOCATION, 'ui', TEXTURE.MENU_LOCATION);
-    this.loadImage(TEXTURE.MENU_MONEY, 'ui', TEXTURE.MENU_MONEY);
-    this.loadImage(TEXTURE.MENU_TITLE, 'ui', TEXTURE.MENU_TITLE);
-    this.loadImage(TEXTURE.MENU_ICON, 'ui', TEXTURE.MENU_ICON);
-    this.loadImage(TEXTURE.MENU_SHOES, 'ui', TEXTURE.MENU_SHOES);
+    this.loadImage(TEXTURE.MENU_POKEBOX, 'ui/menu', TEXTURE.MENU_POKEBOX);
+    this.loadImage(TEXTURE.MENU_BAG_BOY, 'ui/menu', TEXTURE.MENU_BAG_BOY);
+    this.loadImage(TEXTURE.MENU_BAG_GIRL, 'ui/menu', TEXTURE.MENU_BAG_GIRL);
+    this.loadImage(TEXTURE.MENU_PROFILE, 'ui/menu', TEXTURE.MENU_PROFILE);
+    this.loadImage(TEXTURE.MENU_OPTION, 'ui/menu', TEXTURE.MENU_OPTION);
+    this.loadImage(TEXTURE.MENU_EXIT, 'ui/menu', TEXTURE.MENU_EXIT);
+    this.loadImage(TEXTURE.MENU_SHOES, 'ui/menu', TEXTURE.MENU_SHOES);
+    this.loadImage(TEXTURE.MENU_LOCATION, 'ui/menu', TEXTURE.MENU_LOCATION);
+    this.loadImage(TEXTURE.MENU_MONEY, 'ui/menu', TEXTURE.MENU_MONEY);
+    this.loadImage(TEXTURE.MENU_ICON, 'ui/menu', TEXTURE.MENU_ICON);
 
     this.loadImage(TEXTURE.BG_BAG, 'ui', TEXTURE.BG_BAG);
     this.loadImage(TEXTURE.XBOX, 'ui', TEXTURE.XBOX);
@@ -194,8 +194,13 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.GOOGLE, 'ui', TEXTURE.GOOGLE);
     this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
 
-    this.loadAudio(AUDIO.MENU, 'audio', AUDIO.MENU);
-    this.loadAudio(AUDIO.SELECT, 'audio', AUDIO.SELECT);
+    this.loadAudio(AUDIO.MENU, 'audio', AUDIO.MENU, 'wav');
+    this.loadAudio(AUDIO.SELECT, 'audio', AUDIO.SELECT, 'wav');
+    this.loadAudio(AUDIO.OVERWORD_MENU_SELECT, 'audio', AUDIO.OVERWORD_MENU_SELECT, 'ogg');
+    this.loadAudio(AUDIO.OVERWORD_MENU_DECISION, 'audio', AUDIO.OVERWORD_MENU_DECISION, 'ogg');
+    this.loadAudio(AUDIO.OVERWORD_MENU_CLOSE, 'audio', AUDIO.OVERWORD_MENU_CLOSE, 'ogg');
+    this.loadAudio(AUDIO.POKEBOX_ACCESS, 'audio', AUDIO.POKEBOX_ACCESS, 'ogg');
+    this.loadAudio(AUDIO.POKEBOX_CLOSE, 'audio', AUDIO.POKEBOX_CLOSE, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

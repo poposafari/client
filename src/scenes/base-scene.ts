@@ -21,9 +21,9 @@ export class BaseScene extends Phaser.Scene {
     this.load.tilemapTiledJSON(key, `${folder}/${filename}`);
   }
 
-  loadAudio(key: string, folder: string, filename: string) {
+  loadAudio(key: string, folder: string, filename: string, extension: string) {
     if (filename) {
-      filename = `${filename}.wav`;
+      filename = `${filename}.${extension}`;
     }
     this.load.audio(key, `${folder}/${filename}`);
   }
