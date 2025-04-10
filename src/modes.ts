@@ -10,7 +10,7 @@ import { OverworldMenuUi } from './ui/overworld-menu-ui';
 import { Overworld000 } from './ui/overworld-000';
 import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld011 } from './ui/overworld-011';
-import { Bag } from './storage/bag';
+import { Bag, ItemCategory } from './storage/bag';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
 import { Location, PlayerInfo } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
@@ -23,12 +23,13 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { autoLoginApi, deleteAccountApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
+import { autoLoginApi, deleteAccountApi, getItemsApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { runFadeEffect } from './ui/ui';
 import { checkOverworldType } from './data/overworld';
 import { AUDIO } from './enums/audio';
+import { OverworldLocationUi } from './ui/overworld-location-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -52,7 +53,6 @@ export class NoneMode extends Mode {
         }
       })
       .catch((err: any) => {
-        console.log(err);
         this.changeMode(MODE.LOGIN);
       });
   }
@@ -125,6 +125,7 @@ export class RegisterMode extends Mode {
   }
 
   enter(): void {
+    this.scene.sound.get(AUDIO.MENU).play();
     this.addUiStackOverlap('RegisterUi');
   }
 
@@ -252,7 +253,6 @@ export class NewGameMode extends Mode {
     } catch (err: any) {
       const status = err.status as HttpStatusCode;
       const message = MessageManager.getInstance();
-
       if (status === 409) {
         await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:nicknameError3') }]);
       } else {
@@ -269,18 +269,33 @@ export class NewGameMode extends Mode {
 
 export class OverworldMode extends Mode {
   private currentOverworldUisIndex!: number;
+  private overworldUiBlock: boolean;
 
   constructor(scene: InGameScene) {
     super(scene);
+
+    this.overworldUiBlock = false;
   }
 
   init(): void {
-    // this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
+    this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
     // this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
     this.uis.push(new OverworldHUDUi(this.scene, this));
+    this.uis.push(new OverworldMenuUi(this.scene, this));
+    this.uis.push(new BagUi(this.scene, this));
+    this.uis.push(new PokeBoxUi(this.scene, this));
+
+    for (const ui of this.uis) {
+      ui.setup();
+    }
+
+    Bag.getInstance();
   }
 
-  enter(): void {}
+  enter(): void {
+    this.addUiStackOverlap('OverworldHUDUi');
+    this.updateOverworld(PlayerInfo.getInstance().getLocation());
+  }
 
   exit(): void {
     for (const ui of this.uiStack) {
@@ -290,8 +305,15 @@ export class OverworldMode extends Mode {
   }
 
   update(time: number, delta: number): void {
+    if (this.uiStack.length <= 1) return;
+
+    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
+    if (hud instanceof OverworldHUDUi) hud.updateInfoUi();
+
+    if (this.overworldUiBlock) return;
+
     const overworld = this.uiStack[this.currentOverworldUisIndex];
-    overworld.update(time, delta);
+    if (overworld instanceof OverworldUi) overworld.update(time, delta);
   }
 
   updateOverworld(key: string) {
@@ -310,14 +332,32 @@ export class OverworldMode extends Mode {
     } catch (err: any) {
       console.error(err);
     } finally {
-      const overworld = this.getUiStackTop() as OverworldUi;
-      if (overworld) {
+      const overworld = this.getUiStackTop();
+      if (overworld instanceof OverworldUi) {
         overworld.clean();
         this.popUiStack();
       }
-      this.addUiStackOverlap('OverworldHUDUi');
+      if (overworld instanceof OverworldHUDUi) {
+        overworld.showLocationUi(overworldKey);
+      }
       this.addUiStackOverlap(`Overworld${overworldKey}`);
       this.currentOverworldUisIndex = this.uiStack.length - 1;
+    }
+  }
+
+  setOverworldUiBlock(onoff: boolean) {
+    onoff ? (this.overworldUiBlock = true) : (this.overworldUiBlock = false);
+  }
+
+  async getBag(category: ItemCategory) {
+    const bag = Bag.getInstance();
+
+    try {
+      const res = await getItemsApi({ category: category });
+      bag.setup(res);
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
     }
   }
 }

@@ -3,6 +3,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
+import { Bag } from '../storage/bag';
 import { addImage, addText, addWindow, Ui } from './ui';
 
 export class OverworldItemSlotUi extends Ui {
@@ -25,11 +26,11 @@ export class OverworldItemSlotUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
     const contentHeight = 55;
-    const spacing = 8;
+    const spacing = 10;
 
     let currentX = 0;
 
-    this.container = this.scene.add.container(width / 2 - 195, height / 2 + 507);
+    this.container = this.scene.add.container(width / 2 - 200, height / 2 + 500);
 
     for (let i = 1; i <= this.MaxSlot; i++) {
       const window = addWindow(this.scene, TEXTURE.WINDOW_0, currentX, 0, 60, 60, 8, 8, 8, 8);
@@ -72,13 +73,11 @@ export class OverworldItemSlotUi extends Ui {
   private block() {}
 
   private unblock() {
-    this.updateSlot();
+    this.update();
   }
 
-  update(time: number, delta: number): void {}
-
-  updateSlot() {
-    const bag = this.mode.getBag();
+  update(): void {
+    const bag = Bag.getInstance();
 
     for (let i = 1; i <= this.MaxSlot; i++) {
       const item = bag?.findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);

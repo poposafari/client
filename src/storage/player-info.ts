@@ -2,6 +2,13 @@ import { HttpStatusCode } from 'axios';
 import { ingameApi, nicknameApi } from '../utils/axios';
 import { MyPokemon } from './box';
 
+export const MAX_PARTY_SLOT = 6;
+export const MAX_ITEM_SLOT = 9;
+
+export type PlayerGender = 'boy' | 'girl';
+export type PlayerAvatar = '1' | '2' | '3' | '4';
+export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18';
+
 export interface Location {
   overworld: string;
   x: number;
@@ -12,12 +19,17 @@ export class PlayerInfo {
   private static instance: PlayerInfo;
 
   private nickname!: string;
-  private gender!: 'boy' | 'girl';
-  private avatar!: 1 | 2 | 3 | 4;
-  private location!: Location;
-  private pet!: MyPokemon | null;
+  private gender!: PlayerGender;
+  private avatar!: PlayerAvatar;
+  private location!: string;
+  private x!: number;
+  private y!: number;
   private money!: number;
-  private partySlot: MyPokemon[] = [];
+
+  private pet!: MyPokemon | null;
+  private partySlot: (MyPokemon | null)[] = [];
+  private itemSlot: ('string' | null)[] = [];
+  private pokeboxBg: PokeBoxBG[] = [];
 
   private readonly MaxSlot: number = 6;
 
@@ -31,17 +43,15 @@ export class PlayerInfo {
   }
 
   setup(data: any) {
-    const playerData = data;
-    this.nickname = playerData.nickname;
-    this.gender = playerData.gender;
-    this.avatar = playerData.avatar;
-    this.location = {
-      overworld: playerData.location,
-      x: playerData.x,
-      y: playerData.y,
-    };
-    this.pet = playerData.pet;
-    this.money = playerData.money;
+    if (!data) throw new Error('Player data is required');
+
+    this.nickname = data.nickname;
+    this.gender = data.gender;
+    this.avatar = data.avatar;
+    this.location = data.location;
+    this.x = data.x;
+    this.y = data.y;
+    this.money = data.money;
   }
 
   getNickname() {
@@ -60,6 +70,14 @@ export class PlayerInfo {
     return this.location;
   }
 
+  getPosX() {
+    return this.x;
+  }
+
+  getPosY() {
+    return this.y;
+  }
+
   getPet() {
     return this.pet;
   }
@@ -72,22 +90,23 @@ export class PlayerInfo {
     this.nickname = nickname;
   }
 
-  setGender(gender: 'boy' | 'girl') {
+  setGender(gender: PlayerGender) {
     this.gender = gender;
   }
 
-  setAvatar(avatar: 1 | 2 | 3 | 4) {
+  setAvatar(avatar: PlayerAvatar) {
     this.avatar = avatar;
   }
 
-  setLocation(location: Location) {
-    if (!this.location) {
-      this.location = { overworld: '', x: 0, y: 0 };
-    }
+  setLocation(location: string) {
+    this.location = location;
+  }
 
-    this.location.overworld = location.overworld;
-    this.location.x = location.x;
-    this.location.y = location.y;
+  setX(x: number) {
+    this.x = x;
+  }
+  setY(y: number) {
+    this.y = y;
   }
 
   setPet(pet: MyPokemon | null) {
