@@ -1,3 +1,4 @@
+import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TYPE } from '../enums/type';
 
 export interface PlazaData {
@@ -140,4 +141,14 @@ export function getAllSafaris(): SafariData[] {
 
 export function getSafari(key: string) {
   return initialSafari[key];
+}
+
+export function checkOverworldType(type: string): OVERWORLD_TYPE {
+  if (type in initialPlaza) {
+    return OVERWORLD_TYPE.PLAZA;
+  } else if (type in initialSafari) {
+    return OVERWORLD_TYPE.SAFARI;
+  } else {
+    return OVERWORLD_TYPE.NONE;
+  }
 }

@@ -5,6 +5,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { ANIMATION } from '../enums/animation';
 import { EASE } from '../enums/ease';
 import { PIPELINES } from '../enums/pipelines';
+import { AUDIO } from '../enums/audio';
 
 export function addWindow(
   scene: InGameScene,
@@ -492,6 +493,13 @@ export function startModalAnimation(scene: InGameScene, target: any) {
     ease: EASE.SINE_EASEINOUT,
     y: '-=48',
     alpha: 1,
+  });
+}
+
+export function playSound(scene: InGameScene, key: AUDIO, volume: number = 1, loop: boolean = false) {
+  scene.sound.play(key, {
+    volume: volume,
+    loop: loop,
   });
 }
 

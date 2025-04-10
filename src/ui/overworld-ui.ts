@@ -54,7 +54,7 @@ export interface PlayerInitPos {
   py: number;
 }
 
-export class OverworldUi extends Ui {
+export class OverworlUiDummy extends Ui {
   private mode: OverworldMode;
   private overworldKey: string;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -81,7 +81,6 @@ export class OverworldUi extends Ui {
   private playerObj!: PlayerObject | null;
 
   private readonly MapScale: number = 3;
-  // private readonly MapScale: number = 1.5;
 
   constructor(scene: InGameScene, mode: OverworldMode, key: string) {
     super(scene);

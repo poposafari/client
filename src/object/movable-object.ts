@@ -28,7 +28,6 @@ export class MovableObject extends BaseObject {
   private movementDirectionQueue: Array<MovementQueue> = [];
   protected map: Phaser.Tilemaps.Tilemap;
   protected overworldInfo: OverworldInfo;
-  protected playerInfo: PlayerInfo;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -39,21 +38,11 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(
-    scene: InGameScene,
-    texture: TEXTURE | string,
-    x: number,
-    y: number,
-    map: Phaser.Tilemaps.Tilemap | null,
-    nickname: string,
-    objectType: OBJECT,
-    playerInfo: PlayerInfo,
-    overworldInfo: OverworldInfo,
-  ) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, objectType: OBJECT) {
     super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
+
     this.overworldInfo = overworldInfo;
-    this.playerInfo = playerInfo;
 
     this.stopAnmation(3);
 
@@ -102,7 +91,7 @@ export class MovableObject extends BaseObject {
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION | string) {
-    if (this.overworldInfo && this.isBlockingDirection(direction)) {
+    if (this.isBlockingDirection(direction)) {
       this.startAnmation(animationKey);
       this.lastDirection = direction;
       this.movementDirectionQueue.length = 0;
@@ -231,8 +220,11 @@ export class MovableObject extends BaseObject {
   }
 
   private hasPlayerObject(pos: Phaser.Math.Vector2): boolean {
-    const location = this.playerInfo.getLocation();
-    if (location.x === pos.x && location.y === pos.y) {
+    const playerData = PlayerInfo.getInstance();
+    const x = playerData.getPosX();
+    const y = playerData.getPosY();
+
+    if (x === pos.x && y === pos.y) {
       return true;
     }
 
@@ -311,7 +303,15 @@ export class MovableObject extends BaseObject {
     return this.movementFinish;
   }
 
-  updateObjectData() {}
+  updateObjectData() {
+    const type = this.getType();
+
+    if (type === OBJECT.PLAYER) {
+      const playerData = PlayerInfo.getInstance();
+      playerData.setX(this.getTilePos().x);
+      playerData.setY(this.getTilePos().y);
+    }
+  }
 
   setMap(map: Phaser.Tilemaps.Tilemap) {
     if (!map) return;

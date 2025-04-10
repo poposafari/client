@@ -5,7 +5,7 @@ import { addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { Location } from '../storage/player-info';
+import { Location, PlayerInfo } from '../storage/player-info';
 
 export class OverworldInfoUi extends Ui {
   private mode: OverworldMode;
@@ -13,6 +13,7 @@ export class OverworldInfoUi extends Ui {
   private titles: Phaser.GameObjects.Text[] = [];
   private textMyMoney!: Phaser.GameObjects.Text;
   private textLocation!: Phaser.GameObjects.Text;
+  private textPosition!: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -25,14 +26,16 @@ export class OverworldInfoUi extends Ui {
 
     this.container = this.scene.add.container(width / 2 - 920, height / 2 - 500);
 
-    const iconLocation = addImage(this.scene, TEXTURE.MENU_LOCATION, 0, 0).setScale(0.8);
-    const iconMoney = addImage(this.scene, TEXTURE.MENU_MONEY, 0, +50).setScale(1.2);
+    const iconLocation = addImage(this.scene, TEXTURE.MENU_LOCATION, 0, 0).setScale(2);
+    const iconMoney = addImage(this.scene, TEXTURE.MENU_MONEY, 0, +50).setScale(2);
 
     this.textLocation = addText(this.scene, +30, 0, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
     this.textMyMoney = addText(this.scene, +30, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
+    this.textPosition = addText(this.scene, this.textMyMoney.displayWidth, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
 
     this.container.add(iconLocation);
     this.container.add(this.textLocation);
+    this.container.add(this.textPosition);
     this.container.add(iconMoney);
     this.container.add(this.textMyMoney);
 
@@ -44,7 +47,6 @@ export class OverworldInfoUi extends Ui {
   show(data?: any): void {
     this.container.setVisible(true);
     this.pause(false);
-    this.updateData();
   }
 
   clean(data?: any): void {
@@ -56,36 +58,14 @@ export class OverworldInfoUi extends Ui {
     onoff ? this.block() : this.unblock();
   }
 
-  update(time: number, delta: number): void {}
+  update(): void {}
 
   private block() {}
 
-  private unblock() {
-    this.updateData();
-  }
+  private unblock() {}
 
-  updateData() {
-    this.updateLocation();
-    this.updateMyMoney();
-  }
-
-  updateLocation(location?: Location) {
-    const playerInfo = this.mode.getPlayerInfo();
-
-    if (!playerInfo) {
-      throw Error('Player Info does not exist.');
-    }
-
-    if (location) {
-      playerInfo.setLocation({ overworld: location.overworld, x: location.x, y: location.y });
-    }
-
-    const playerLocation = playerInfo.getLocation();
-    this.textLocation.setText(i18next.t(`menu:overworld_${playerLocation.overworld}`) + ` (X:${location?.x} / Y:${location?.y})`);
-  }
-
-  private updateMyMoney() {
-    const playerInfo = this.mode.getPlayerInfo();
+  updateMyMoney() {
+    const playerInfo = PlayerInfo.getInstance();
 
     if (!playerInfo) {
       throw Error('Player Info does not exist.');
@@ -93,5 +73,21 @@ export class OverworldInfoUi extends Ui {
 
     const playerMoney = playerInfo.getMoney();
     this.textMyMoney.setText(`$ ${playerMoney.toString()}`);
+  }
+
+  updateLocation() {
+    const playerInfo = PlayerInfo.getInstance();
+
+    if (!playerInfo) {
+      throw Error('Player Info does not exist.');
+    }
+
+    this.textLocation.setText(i18next.t(`menu:overworld_${playerInfo.getLocation()}`));
+    this.textPosition.setPosition(this.textLocation.displayWidth + 35, this.textLocation.y);
+  }
+
+  updatePosition() {
+    const playerInfo = PlayerInfo.getInstance();
+    this.textPosition.setText(`(X:${playerInfo.getPosX()}/Y:${playerInfo.getPosY()})`);
   }
 }

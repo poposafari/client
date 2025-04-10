@@ -4,7 +4,7 @@ import { TEXTURE } from '../enums/texture';
 import { MessageManager } from '../managers';
 import { NewGameMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow, startModalAnimation, Ui } from './ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, playSound, startModalAnimation, Ui } from './ui';
 import { ModalFormUi } from './modal-form-ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import InputText from 'phaser3-rex-plugins/plugins/inputtext';
@@ -87,7 +87,7 @@ export class NewGameUi extends ModalFormUi {
       container.setAlpha(0);
       container.setVisible(true);
       startModalAnimation(this.scene, container);
-      this.scene.sound.get(AUDIO.MENU).play();
+      playSound(this.scene, AUDIO.MENU);
     }
   }
 

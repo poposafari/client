@@ -12,8 +12,8 @@ import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-ut
 import { ANIMATION } from '../enums/animation';
 
 export class PetObject extends MovableObject {
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, playerInfo: PlayerInfo, overworldInfo: OverworldInfo) {
-    super(scene, texture, x, y, map, nickname, OBJECT.PET, playerInfo, overworldInfo);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
+    super(scene, texture, x, y, map, nickname, overworldInfo, OBJECT.PET);
   }
 
   move(player: PlayerObject) {
@@ -42,7 +42,9 @@ export class PetObject extends MovableObject {
   }
 
   private getAnimation(key: KEY) {
-    let pokemon = this.playerInfo.getPet();
+    const playerData = PlayerInfo.getInstance();
+
+    let pokemon = playerData.getPet();
     let overworldKey = '000';
 
     if (pokemon) {
