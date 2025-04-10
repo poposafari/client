@@ -3,7 +3,7 @@ import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { TitleMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addWindow, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, playSound, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KeyboardManager, MessageManager } from '../managers';
 import { KEY } from '../enums/key';
@@ -113,7 +113,7 @@ export class TitleUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            this.scene.sound.get(AUDIO.SELECT).play();
+            playSound(this.scene, AUDIO.SELECT);
             if (choice === 0) {
               //continue
               this.mode.changeOverworldMode();
@@ -140,7 +140,7 @@ export class TitleUi extends Ui {
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
-          this.scene.sound.get(AUDIO.SELECT).play();
+          playSound(this.scene, AUDIO.SELECT);
           if (choice !== prevChoice) {
             this.windows[prevChoice].setTexture(TEXTURE.WINDOW_5);
             this.windows[choice].setTexture(TEXTURE.WINDOW_4);

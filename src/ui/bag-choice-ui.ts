@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, Ui } from './ui';
+import { addImage, addText, playSound, Ui } from './ui';
 import { TEXTURE } from '../enums/texture';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
@@ -10,6 +10,8 @@ import { KeyboardManager } from '../managers';
 import { BagUi } from './bag-ui';
 import { PlayerItem } from '../object/player-item';
 import { BagRegisterUi } from './bag-register-ui';
+import { Bag } from '../storage/bag';
+import { AUDIO } from '../enums/audio';
 
 export class BagChoiceUi extends Ui {
   private mode: OverworldMode;
@@ -112,8 +114,10 @@ export class BagChoiceUi extends Ui {
           case KEY.SELECT:
             if (choice === 0) {
               //use
+              playSound(this.scene, AUDIO.SELECT);
             } else if (choice === 1) {
               //register
+              playSound(this.scene, AUDIO.SELECT);
               if (this.isRegister) {
                 this.cancelRegister(this.targetItem);
                 this.clean();
@@ -128,6 +132,7 @@ export class BagChoiceUi extends Ui {
             }
             break;
           case KEY.CANCEL:
+            playSound(this.scene, AUDIO.BAG_CLOSE);
             this.clean();
             this.bagUi.pause(false);
             break;
@@ -135,6 +140,7 @@ export class BagChoiceUi extends Ui {
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
+            playSound(this.scene, AUDIO.BAG_DECISON);
             this.windows[prevChoice].setTexture(TEXTURE.CHOICE);
             this.windows[choice].setTexture(TEXTURE.CHOICE_S);
           }
@@ -146,12 +152,12 @@ export class BagChoiceUi extends Ui {
   }
 
   private cancelRegister(item: PlayerItem) {
-    this.mode.getBag()?.getItem(item.getKey())?.registerSlot(null);
+    Bag.getInstance().getItem(item.getKey())?.registerSlot(null);
     this.bagUi.setRegVisual(false);
   }
 
   private registerCheck() {
-    const playerItem = this.mode.getBag()?.getItem(this.targetItem.getKey());
+    const playerItem = Bag.getInstance().getItem(this.targetItem.getKey());
 
     if (!playerItem?.getRegister()) {
       this.texts[1].setText(i18next.t('menu:register'));

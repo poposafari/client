@@ -36,11 +36,11 @@ export class PokeBoxSlotUi extends Ui {
     let currentY = 0;
 
     this.container = this.scene.add.container(width / 2 - 855, height / 2);
-    const windowParty = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 20, contentHeight + 30, contentHeight * this.MaxSlot, 16, 16, 16, 16).setScale(1.6);
+    const windowParty = addWindow(this.scene, TEXTURE.WINDOW_5, 0, 20, contentHeight + 30, contentHeight * this.MaxSlot, 16, 16, 16, 16).setScale(1.6);
     this.container.add(windowParty);
 
     const textPet = addText(this.scene, 0, -440, i18next.t('menu:followPet'), TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.4);
-    const windowPet = addWindow(this.scene, TEXTURE.WINDOW_2, 0, -390, contentHeight + 30, contentHeight + 30, 16, 16, 16, 16).setScale(1.6);
+    const windowPet = addWindow(this.scene, TEXTURE.WINDOW_5, 0, -390, contentHeight + 30, contentHeight + 30, 16, 16, 16, 16).setScale(1.6);
     this.iconPet = addImage(this.scene, `pokemon_icon000`, 0, -390).setScale(2);
     this.container.add(windowPet);
     this.container.add(textPet);

@@ -201,6 +201,11 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.OVERWORD_MENU_CLOSE, 'audio', AUDIO.OVERWORD_MENU_CLOSE, 'ogg');
     this.loadAudio(AUDIO.POKEBOX_ACCESS, 'audio', AUDIO.POKEBOX_ACCESS, 'ogg');
     this.loadAudio(AUDIO.POKEBOX_CLOSE, 'audio', AUDIO.POKEBOX_CLOSE, 'ogg');
+    this.loadAudio(AUDIO.BAG_CATEGORY, 'audio', AUDIO.BAG_CATEGORY, 'wav');
+    this.loadAudio(AUDIO.BAG_CLOSE, 'audio', AUDIO.BAG_CLOSE, 'wav');
+    this.loadAudio(AUDIO.BAG_DECISON, 'audio', AUDIO.BAG_DECISON, 'wav');
+    this.loadAudio(AUDIO.BAG_SELECT, 'audio', AUDIO.BAG_SELECT, 'wav');
+    this.loadAudio(AUDIO.REGISTER, 'audio', AUDIO.REGISTER, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

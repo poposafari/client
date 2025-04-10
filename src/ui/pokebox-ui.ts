@@ -7,12 +7,13 @@ import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeBoxSlotUi } from './pokebox-slot-ui';
-import { addBackground, addImage, addText, addWindow, getTextStyle, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
 import { getGenderAndShinyInfo, getOriginPokedex, getPokemonOverworldOrIconKey, getPokemonSpriteKey, isFemale, isPokedexShiny } from '../utils/string-util';
 import { MyPokemon } from '../storage/box';
 import { pokemonData } from '../data/pokemon';
 import { PokeboxBoxUi } from './pokebox-box-ui';
 import { PokeboxRegisterUi } from './pokebox-register-ui';
+import { AUDIO } from '../enums/audio';
 
 export class PokeBoxUi extends Ui {
   private mode: OverworldMode;
@@ -82,7 +83,7 @@ export class PokeBoxUi extends Ui {
     this.windowDesc = addImage(this.scene, TEXTURE.BOX_DESC, +650, +410).setScale(2.8);
 
     this.box = addImage(this.scene, `box0`, -230, +20).setScale(3.4);
-    this.windowBox = addWindow(this.scene, TEXTURE.WINDOW_2, -230, 20, 506, 462, 16, 16, 16, 16).setScale(2.12);
+    this.windowBox = addWindow(this.scene, TEXTURE.WINDOW_5, -230, 20, 506, 462, 16, 16, 16, 16).setScale(2.12);
 
     this.pokemonCaptureBall = addImage(this.scene, TEXTURE.BOXBALL_001, +450, -440).setScale(2);
     this.pokemonCaptureDate = addText(this.scene, +500, +405, '2024-10-12', TEXTSTYLE.BOX_NAME).setScale(0.7);
@@ -126,12 +127,13 @@ export class PokeBoxUi extends Ui {
   }
 
   show(data?: any): void {
+    playSound(this.scene, AUDIO.POKEBOX_ACCESS);
     this.container.setVisible(true);
     this.pokeboxSlotUi.show();
     this.pokeboxBoxUi.showBoxTitle();
-    this.updateBox(0);
+    // this.updateBox(0);
 
-    this.pause(false);
+    this.handleKeyInput();
   }
 
   clean(data?: any): void {
@@ -142,13 +144,13 @@ export class PokeBoxUi extends Ui {
   }
 
   pause(onoff: boolean, data?: any): void {
-    onoff ? this.block() : this.unblock();
+    if (!onoff) this.handleKeyInput();
   }
 
   update(time: number, delta: number): void {}
 
-  private block() {}
-  private unblock() {
+  private handleKeyInput() {
+    console.log('pokebox ui unblock');
     const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
     const keyboardManager = KeyboardManager.getInstance();
 
@@ -197,11 +199,11 @@ export class PokeBoxUi extends Ui {
 
             break;
           case KEY.CANCEL:
+            playSound(this.scene, AUDIO.POKEBOX_CLOSE);
             this.clean();
             this.roatationBackground(0);
             this.pokeboxBoxUi.restoreData();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
-            this.mode.pauseOverworldSystem(false);
             this.mode.popUiStack();
             return;
         }
@@ -283,11 +285,11 @@ export class PokeBoxUi extends Ui {
   }
 
   private renderPage() {
-    const box = this.mode.getBox();
-    const playerInfo = this.mode.getPlayerInfo();
-    const partSlots = playerInfo?.getPartySlot();
+    // const box = this.mode.getBox();
+    // const playerInfo = this.mode.getPlayerInfo();
+    // const partSlots = playerInfo?.getPartySlot();
 
-    this.cleanPage();
+    // this.cleanPage();
 
     const contentHeight = 100;
     const spacing = 10;
@@ -312,18 +314,18 @@ export class PokeBoxUi extends Ui {
       currentY += contentHeight + spacing;
     }
 
-    if (!box) return;
+    // if (!box) return;
 
-    let idx = 0;
-    for (const pokemon of box.getMyPokemons()) {
-      const key = getPokemonOverworldOrIconKey(pokemon);
-      const texture = `pokemon_icon` + key;
+    // let idx = 0;
+    // for (const pokemon of box.getMyPokemons()) {
+    //   const key = getPokemonOverworldOrIconKey(pokemon);
+    //   const texture = `pokemon_icon` + key;
 
-      this.mypokemons.push(pokemon);
-      this.icons[idx].setTexture(texture);
-      playerInfo?.hasPartySlot(pokemon) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
-      idx++;
-    }
+    //   this.mypokemons.push(pokemon);
+    //   this.icons[idx].setTexture(texture);
+    //   playerInfo?.hasPartySlot(pokemon) ? this.icons[idx].setAlpha(0.5) : this.icons[idx].setAlpha(1);
+    //   idx++;
+    // }
   }
 
   private cleanPage() {
