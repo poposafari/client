@@ -1,6 +1,6 @@
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { OverworldUi } from './overworld-ui';
+import { OverworldUi } from './overworld-test-ui';
 
 export class Plaza extends OverworldUi {
   constructor(scene: InGameScene, mode: OverworldMode, key: string) {

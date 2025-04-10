@@ -2,31 +2,27 @@ import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, runFadeEffect, Ui } from './ui';
+import { addImage, addText, addWindow, playSound, runFadeEffect, Ui } from './ui';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { TEXTSTYLE } from '../enums/textstyle';
 import i18next from 'i18next';
+import { AUDIO } from '../enums/audio';
 
 export class OverworldMenuUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
-  private menuSlotBtns: Phaser.GameObjects.Image[] = [];
-  private dummys: Phaser.GameObjects.NineSlice[] = [];
-  private texts: Phaser.GameObjects.Text[] = [];
+
+  private lastStart!: number;
+
   private window!: Phaser.GameObjects.NineSlice;
-  private guideText!: Phaser.GameObjects.Text;
-  private selectedIndex: number = 0;
-  private readonly MENU_LIST_ICON = [TEXTURE.MENU_POKEDEX, TEXTURE.MENU_BOX, TEXTURE.MENU_BAG, TEXTURE.MENU_CARD, TEXTURE.MENU_DOLL, TEXTURE.MENU_TITLE];
-  private readonly MENU_LIST_TEXT = [
-    i18next.t('menu:menuPokedex'),
-    i18next.t('menu:menuPokemon'),
-    i18next.t('menu:menuBag'),
-    i18next.t('menu:menuTrainerCard'),
-    i18next.t('menu:menuCloset'),
-    i18next.t('menu:menuTitle'),
-  ];
-  private readonly FIXED_TOP_Y: number = -150;
+  private dummys: Phaser.GameObjects.NineSlice[] = [];
+  private icons: Phaser.GameObjects.Image[] = [];
+  private texts: Phaser.GameObjects.Text[] = [];
+
+  private readonly ListIcons = [TEXTURE.MENU_POKEBOX, TEXTURE.MENU_BAG_BOY, TEXTURE.MENU_PROFILE, TEXTURE.MENU_OPTION, TEXTURE.MENU_EXIT];
+  private readonly ListTexts = [i18next.t('menu:menuPokebox'), i18next.t('menu:menuBag'), i18next.t('menu:menuProfile'), i18next.t('menu:menuOption'), i18next.t('menu:menuBackToTitle')];
+  private readonly scale: number = 2;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -37,74 +33,50 @@ export class OverworldMenuUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    const slotSize = 20;
-    const slotSpacing = 3;
-    const totalHeight = this.MENU_LIST_ICON.length * (slotSize + slotSpacing * 1.8);
-    const minWindowHeight = 100;
-    const windowHeight = Math.max(minWindowHeight, totalHeight);
+    this.lastStart = 0;
 
-    this.container = this.scene.add.container(width / 2 + 750, height / 2);
+    this.container = this.scene.add.container(width / 2 + 480, height / 2 - 470);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, this.FIXED_TOP_Y + windowHeight / 2, 250, windowHeight, 16, 16, 16, 16);
-
-    this.guideText = addText(this.scene, width / 2 + 655, 40, i18next.t('sys:selectOrCancelGuide'), TEXTSTYLE.INPUT_GUIDE_WHITE).setOrigin(0.5, 0.5);
-
-    for (let i = 0; i < this.MENU_LIST_ICON.length; i++) {
-      const yPosition = this.FIXED_TOP_Y + i * (slotSize + slotSpacing) + slotSize / 2 + 6;
-      const menuIcon = addImage(this.scene, this.MENU_LIST_ICON[i], -36, yPosition);
-      const dummy = addWindow(this.scene, TEXTURE.BLANK, -51, yPosition, 102, 25, 16, 16, 16, 16).setOrigin(0, 0.5);
-      const text = addText(this.scene, -20, yPosition, this.MENU_LIST_TEXT[i], TEXTSTYLE.MENU).setOrigin(0, 0.5);
-
-      this.texts.push(text);
-      this.menuSlotBtns.push(menuIcon);
-      this.dummys.push(dummy);
-    }
-
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_5, 0, -30, 130, 0, 16, 16, 16, 16).setOrigin(0, 0).setScale(this.scale);
     this.container.add(this.window);
-    this.container.add(this.menuSlotBtns);
-    this.container.add(this.dummys);
-    this.container.add(this.texts);
 
-    this.container.setScale(3.2);
+    this.renderList();
+
+    this.container.setScale(1.8);
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI + 1);
     this.container.setScrollFactor(0);
-
-    this.guideText.setVisible(false);
-    this.guideText.setDepth(DEPTH.OVERWORLD_UI + 1);
-    this.guideText.setScrollFactor(0);
   }
 
   show(data?: any): void {
-    this.guideText.setVisible(true);
+    playSound(this.scene, AUDIO.MENU);
+
+    this.renderIconsTint();
+    this.icons[0].clearTint();
+
+    this.handleKeyInput();
     this.container.setVisible(true);
-    this.updateWindowHeight();
-    this.pause(false);
   }
 
   clean(data?: any): void {
-    this.guideText.setVisible(false);
     this.container.setVisible(false);
-    this.pause(true);
   }
 
   pause(onoff: boolean, data?: any): void {
-    onoff ? this.blocking() : this.unblocking();
+    if (!onoff) this.handleKeyInput();
   }
 
   update(time: number, delta: number): void {}
 
-  private blocking() {}
-
-  private unblocking() {
+  private handleKeyInput() {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const keyboardManager = KeyboardManager.getInstance();
 
-    let startIndex = 0;
-    let endIndex = this.MENU_LIST_ICON.length - 1;
+    let startIndex = this.lastStart ? this.lastStart : 0;
+    let endIndex = this.ListIcons.length - 1;
     let choice = startIndex;
 
-    this.dummys[choice].setTexture(TEXTURE.WINDOW_3);
+    this.dummys[choice].setTexture(TEXTURE.WINDOW_6);
 
     keyboardManager.setAllowKey(keys);
     keyboardManager.setKeyDownCallback((key) => {
@@ -113,37 +85,35 @@ export class OverworldMenuUi extends Ui {
       try {
         switch (key) {
           case KEY.UP:
-            if (choice > startIndex) choice--;
+            if (choice >= startIndex && choice > 0) choice--;
             break;
           case KEY.DOWN:
-            if (choice < endIndex && choice < this.MENU_LIST_ICON.length - 1) choice++;
+            if (choice < endIndex && choice < this.ListIcons.length - 1) choice++;
             break;
           case KEY.SELECT:
-            const texture = this.MENU_LIST_ICON[choice].split('_')[1];
-            this.dummys[choice].setTexture(TEXTURE.BLANK);
-            // console.log(texture);
-            if (texture === 'box') {
-              runFadeEffect(this.scene, 800, 'in');
-              this.mode.addUiStackOverlap('PokeBoxUi');
-            } else if (texture === 'bag') {
-              this.mode.addUiStackOverlap('BagUi');
-            } else if (texture === 'title') {
-              this.clean();
-              this.mode.changeTitleMode();
-            }
+            playSound(this.scene, AUDIO.OVERWORD_MENU_SELECT);
+            this.lastStart = choice;
+            this.selectMenu(choice);
             break;
           case KEY.CANCEL:
+            playSound(this.scene, AUDIO.OVERWORD_MENU_CLOSE);
             this.clean();
+            this.lastStart = 0;
+            this.renderIconsTint();
             this.dummys[choice].setTexture(TEXTURE.BLANK);
-            this.mode.pauseOverworldSystem(false);
+            this.mode.setOverworldUiBlock(false);
             this.mode.popUiStack();
             break;
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
+            playSound(this.scene, AUDIO.OVERWORD_MENU_DECISION);
+            this.renderIconsTint();
+            this.icons[choice].clearTint();
+
             this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-            this.dummys[choice].setTexture(TEXTURE.WINDOW_3);
+            this.dummys[choice].setTexture(TEXTURE.WINDOW_6);
           }
         }
       } catch (error) {
@@ -152,14 +122,55 @@ export class OverworldMenuUi extends Ui {
     });
   }
 
-  private updateWindowHeight(): void {
-    const slotSize = 20;
-    const slotSpacing = 3;
-    const totalHeight = this.MENU_LIST_ICON.length * (slotSize + slotSpacing * 1.8);
-    const minWindowHeight = 100;
-    const newWindowHeight = Math.max(minWindowHeight, totalHeight);
+  private renderList(): void {
+    const spacing = 5;
+    const contentHeight = 50;
+    let currentY = 0;
 
-    this.window.setSize(110, newWindowHeight);
-    this.window.setPosition(0, this.FIXED_TOP_Y + newWindowHeight / 2);
+    for (let i = 0; i < this.ListIcons.length; i++) {
+      const icon = addImage(this.scene, this.ListIcons[i], +10, currentY).setOrigin(0, 0.5).setScale(this.scale);
+      const text = addText(this.scene, +60, currentY, this.ListTexts[i], TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5);
+      const dummy = addWindow(this.scene, TEXTURE.BLANK, +10, currentY, this.window.width - 10, contentHeight / this.scale, 16, 16, 16, 16)
+        .setOrigin(0, 0.5)
+        .setScale(this.scale);
+
+      this.icons.push(icon);
+      this.texts.push(text);
+      this.dummys.push(dummy);
+
+      this.container.add(icon);
+      this.container.add(text);
+      this.container.add(dummy);
+
+      currentY += contentHeight + spacing;
+    }
+
+    this.window.setSize(this.window.width, (currentY + spacing) / this.scale);
+  }
+
+  private renderIconsTint() {
+    for (const icon of this.icons) {
+      icon.setTint(0x7f7f7f);
+    }
+  }
+
+  private selectMenu(choice: number) {
+    const taret = this.ListTexts[choice];
+
+    runFadeEffect(this.scene, 700, 'in');
+
+    if (taret === i18next.t('menu:menuPokebox')) {
+      //pokebox
+      this.mode.addUiStackOverlap('PokeBoxUi');
+    } else if (taret === i18next.t('menu:menuBag')) {
+      //bag
+      this.mode.addUiStackOverlap('BagUi');
+    } else if (taret === i18next.t('menu:menuProfile')) {
+      //profile
+    } else if (taret === i18next.t('menu:menuOption')) {
+      //option
+    } else if (taret === i18next.t('menu:menuBackToTitle')) {
+      //back to title
+    }
   }
 }

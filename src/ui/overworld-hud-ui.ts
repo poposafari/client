@@ -4,6 +4,7 @@ import { Location } from '../storage/player-info';
 import { OverworldIconUi } from './overworld-icon-ui';
 import { OverworldInfoUi } from './overworld-info-ui';
 import { OverworldItemSlotUi } from './overworld-itemslot-ui';
+import { OverworldLocationUi } from './overworld-location-ui';
 import { OverworldPokemonSlotUi } from './overworld-pokemonslot-ui';
 import { Ui } from './ui';
 
@@ -14,6 +15,7 @@ export class OverworldHUDUi extends Ui {
   private overworldPokemonSlotUi: OverworldPokemonSlotUi;
   private overworldInfoUi: OverworldInfoUi;
   private overworldIconUi: OverworldIconUi;
+  private overworldLocationUi: OverworldLocationUi;
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -23,6 +25,7 @@ export class OverworldHUDUi extends Ui {
     this.overworldPokemonSlotUi = new OverworldPokemonSlotUi(scene, mode);
     this.overworldInfoUi = new OverworldInfoUi(scene, mode);
     this.overworldIconUi = new OverworldIconUi(scene, mode);
+    this.overworldLocationUi = new OverworldLocationUi(scene, mode);
   }
 
   setup(): void {
@@ -30,6 +33,7 @@ export class OverworldHUDUi extends Ui {
     this.overworldPokemonSlotUi.setup();
     this.overworldInfoUi.setup();
     this.overworldIconUi.setup();
+    this.overworldLocationUi.setup();
   }
 
   show(data?: any): void {
@@ -53,21 +57,23 @@ export class OverworldHUDUi extends Ui {
   update(time: number, delta: number): void {}
 
   updateItemSlotUi() {
-    this.overworldItemSlotUi.updateSlot();
+    this.overworldItemSlotUi.update();
   }
 
   updatePokemonSlotUi() {
     this.overworldPokemonSlotUi.update();
   }
 
-  updateOverworldInfoUi() {
-    this.overworldInfoUi.updateData();
-    this.overworldItemSlotUi.updateSlot();
-    this.overworldPokemonSlotUi.update();
+  updateInfoUi() {
+    this.overworldInfoUi.updateLocation();
+    this.overworldInfoUi.updatePosition();
+    this.overworldInfoUi.updateMyMoney();
   }
 
-  updateOverworldLocationUi(location: Location) {
-    this.overworldInfoUi.updateLocation(location);
+  showLocationUi(overworld: string) {
+    if (!overworld) return;
+
+    this.overworldLocationUi.show(overworld);
   }
 
   private block() {

@@ -11,35 +11,16 @@ import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
-  private bag: Bag;
-
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
 
-  constructor(
-    scene: InGameScene,
-    texture: TEXTURE | string,
-    x: number,
-    y: number,
-    map: Phaser.Tilemaps.Tilemap | null,
-    nickname: string,
-    type: OBJECT,
-    bag: Bag,
-    playerInfo: PlayerInfo,
-    overworldInfo: OverworldInfo,
-  ) {
-    super(scene, texture, x, y, map!, nickname, type, playerInfo, overworldInfo);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, type: OBJECT) {
+    super(scene, texture, x, y, map!, nickname, overworldInfo, type);
     this.setStatus(PLAYER_STATUS.WALK);
 
-    this.bag = bag;
-    this.playerInfo = playerInfo;
-
-    this.playerInfo.setLocation({ overworld: '000', x: x, y: y });
-
-    // const followPokedex = playerPokemonManager.getMyPokemonKey(playerInfoManager.getMyFollowPokemon());
-    this.pet = new PetObject(scene, `pokemon_overworld${this.playerInfo.getPet()}`, playerInfo.getLocation().x, playerInfo.getLocation().y - 1, map!, '', this.playerInfo, this.overworldInfo);
+    this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '', this.overworldInfo);
     const petSprite = this.pet.getSprite();
-    this.pet.setVisible(this.playerInfo.getPet() ? true : false);
+    this.pet.setVisible(this.getPlayerData().getPet() ? true : false);
     petSprite.setScale(1.5);
   }
 
@@ -94,7 +75,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 2) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_movement_walk_`;
+    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement_walk_`;
 
     switch (key) {
       case KEY.UP:
@@ -116,7 +97,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 3) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_movement_run_`;
+    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement_run_`;
 
     switch (key) {
       case KEY.UP:
@@ -142,7 +123,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 5) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_ride_`;
+    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_ride_`;
 
     switch (key) {
       case KEY.UP:
@@ -251,7 +232,7 @@ export class PlayerObject extends MovableObject {
 
   readyItem(target: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
     if (!this.isMovementFinish()) return;
-    this.useItem(this.bag.findItemByRegister(target)?.getKey()!);
+    // this.useItem(this.bag.findItemByRegister(target)?.getKey()!);
   }
 
   useItem(item: string) {
@@ -264,7 +245,7 @@ export class PlayerObject extends MovableObject {
   private moveSurfDeco(key: KEY) {
     if (this.currentStatus !== PLAYER_STATUS.SURF) return;
 
-    let animationKey = `${this.playerInfo.getGender()}_${this.playerInfo.getAvatar()}_surf_`;
+    let animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_surf_`;
 
     switch (key) {
       case KEY.UP:
@@ -284,5 +265,9 @@ export class PlayerObject extends MovableObject {
     this.dummy2.setScale(3);
     this.dummy2.play(animationKey);
     this.setDeccoSpritePosition('y', -20);
+  }
+
+  private getPlayerData() {
+    return PlayerInfo.getInstance();
   }
 }
