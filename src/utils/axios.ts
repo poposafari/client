@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ModeManager } from '../managers';
 import { LoadingDefaultUi } from '../ui/loading-default-ui';
+import { ItemCategory } from '../storage/bag';
 
 interface AccountReq {
   username: string;
@@ -15,6 +16,10 @@ interface NicknameReq {
 
 interface BaseRes {
   result: string;
+}
+
+interface ItemCategoryReq {
+  category: ItemCategory;
 }
 
 const AxiosManager = axios.create({
@@ -44,7 +49,7 @@ AxiosManager.interceptors.response.use(
       mode.getUiStackTop().clean();
       mode.getUiStack().pop();
     }
-    return config;
+    return Promise.resolve(config);
   },
   (error) => {
     const mode = ModeManager.getInstance().getCurrentMode();
@@ -89,5 +94,10 @@ export const nicknameApi = async (data: NicknameReq): Promise<BaseRes> => {
 
 export const ingameApi = async (): Promise<BaseRes> => {
   const res = await AxiosManager.get<BaseRes>('/ingame/userdata');
+  return res.data;
+};
+
+export const getItemsApi = async (data: ItemCategoryReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/bag/category', data);
   return res.data;
 };
