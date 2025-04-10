@@ -1,3 +1,4 @@
+import { AUDIO } from '../enums/audio';
 import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTSTYLE } from '../enums/textstyle';
@@ -6,9 +7,10 @@ import { KeyboardManager } from '../managers';
 import { OverworldMode } from '../modes';
 import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
+import { Bag } from '../storage/bag';
 import { BagChoiceUi } from './bag-choice-ui';
 import { BagUi } from './bag-ui';
-import { addBackground, addImage, addText, addWindow, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, playSound, Ui } from './ui';
 
 export class BagRegisterUi extends Ui {
   private mode: OverworldMode;
@@ -124,6 +126,7 @@ export class BagRegisterUi extends Ui {
             this.renderSlot();
             break;
           case KEY.CANCEL:
+            playSound(this.scene, AUDIO.BAG_CLOSE);
             this.renderChoice(choice, 0);
             this.clean();
             this.bagChoiceUi.pause(false);
@@ -131,6 +134,7 @@ export class BagRegisterUi extends Ui {
         }
         if (key === KEY.LEFT || key === KEY.RIGHT) {
           if (choice !== prevChoice) {
+            playSound(this.scene, AUDIO.BAG_DECISON);
             this.renderChoice(prevChoice, choice);
           }
         }
@@ -148,10 +152,8 @@ export class BagRegisterUi extends Ui {
   }
 
   private renderSlot() {
-    const bag = this.mode.getBag();
-
     for (let i = 1; i <= this.MaxSlot; i++) {
-      const item = bag?.findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+      const item = Bag.getInstance().findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
       if (item) {
         this.slotIcons[i - 1].setTexture(`item${item.getKey()}`);
       } else {
@@ -161,14 +163,7 @@ export class BagRegisterUi extends Ui {
   }
 
   registerItem(choice: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
-    const bag = this.mode.getBag();
-
-    if (!bag) {
-      console.error('Bag object does not exist.');
-      return;
-    }
-
-    bag.registerItem(this.targetItem.getKey(), choice);
+    Bag.getInstance().registerItem(this.targetItem.getKey(), choice);
     this.bagUi.setRegVisual(true);
   }
 

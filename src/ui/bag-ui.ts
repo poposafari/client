@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, createSprite, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, createSprite, playSound, runFadeEffect, Ui } from './ui';
 import { TEXTURE } from '../enums/texture';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
@@ -10,6 +10,8 @@ import { KEY } from '../enums/key';
 import { PlayerItem } from '../object/player-item';
 import { ITEM } from '../enums/item';
 import { BagChoiceUi } from './bag-choice-ui';
+import { Bag, ItemCategory } from '../storage/bag';
+import { AUDIO } from '../enums/audio';
 
 export class BagUi extends Ui {
   private mode: OverworldMode;
@@ -127,7 +129,7 @@ export class BagUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  async show(data?: any): Promise<void> {
     this.lastChoice = null;
     this.lastPage = null;
     this.lastStart = null;
@@ -136,8 +138,9 @@ export class BagUi extends Ui {
     this.container.setVisible(true);
     this.pause(false);
 
+    playSound(this.scene, AUDIO.BAG_CATEGORY);
     this.runPocketAnimation(0);
-    this.getListInfo(0);
+    await this.getListInfo(0);
     this.renderPage(0);
     this.renderChoice(1, 0);
   }
@@ -167,7 +170,7 @@ export class BagUi extends Ui {
     this.start = this.lastStart ? this.lastStart : 0;
 
     keyboardManager.setAllowKey(keys);
-    keyboardManager.setKeyDownCallback((key) => {
+    keyboardManager.setKeyDownCallback(async (key) => {
       let prevChoice = choice;
       const prevPage = page;
 
@@ -206,6 +209,7 @@ export class BagUi extends Ui {
             this.tempTargetIdx = choice;
             const target = Object.values(this.listInfo)[choice + this.start];
             if (target) {
+              playSound(this.scene, AUDIO.BAG_SELECT);
               this.lastChoice = choice;
               this.lastPage = page;
               this.lastStart = this.start;
@@ -214,6 +218,7 @@ export class BagUi extends Ui {
             break;
           case KEY.CANCEL:
             this.clean();
+            playSound(this.scene, AUDIO.BAG_CLOSE);
             this.runSwitchPocketAnimation(prevPage, 0);
             this.mode.popUiStack();
             break;
@@ -221,6 +226,7 @@ export class BagUi extends Ui {
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
+            playSound(this.scene, AUDIO.BAG_DECISON);
             this.renderChoice(prevChoice, choice);
           }
         }
@@ -229,8 +235,9 @@ export class BagUi extends Ui {
           if (page !== prevPage) {
             choice = 0;
             this.start = 0;
+            playSound(this.scene, AUDIO.BAG_CATEGORY);
             this.runSwitchPocketAnimation(prevPage, page);
-            this.getListInfo(page);
+            await this.getListInfo(page);
             this.renderPage(page);
             this.renderChoice(1, 0);
           }
@@ -241,31 +248,25 @@ export class BagUi extends Ui {
     });
   }
 
-  private getListInfo(current: number) {
-    const bag = this.mode.getBag();
-    let playerItems;
+  private async getListInfo(current: number) {
+    const bag = Bag.getInstance();
 
     switch (current) {
       case 0:
-        playerItems = bag?.getPockets(ITEM.POKEBALL);
+        await this.mode.getBag(ItemCategory.POKEBALL);
         break;
       case 1:
-        playerItems = bag?.getPockets(ITEM.ETC);
+        await this.mode.getBag(ItemCategory.ETC);
         break;
       case 2:
-        playerItems = bag?.getPockets(ITEM.BERRY);
+        await this.mode.getBag(ItemCategory.BERRY);
         break;
       case 3:
-        playerItems = bag?.getPockets(ITEM.KEY);
+        await this.mode.getBag(ItemCategory.KEY);
         break;
     }
 
-    if (!playerItems) {
-      console.error('Player Item does not exist.');
-      return;
-    }
-
-    this.listInfo = playerItems;
+    this.listInfo = bag.getItems();
   }
 
   private renderPage(current: number) {
@@ -335,6 +336,7 @@ export class BagUi extends Ui {
   }
 
   private runSwitchPocketAnimation(prev: number, current: number) {
+    Bag.getInstance().clearItems();
     this.pocketSprites[prev].anims.playReverse({ key: `bag${prev + 1}`, repeat: 0 });
     this.runPocketAnimation(current);
   }

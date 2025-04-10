@@ -1,14 +1,16 @@
 import { itemData } from '../data/items';
-import { ITEM } from '../enums/item';
 import { PlayerItem, Register } from '../object/player-item';
+
+export enum ItemCategory {
+  POKEBALL = 'pokeball',
+  ETC = 'etc',
+  BERRY = 'berry',
+  KEY = 'key',
+}
 
 export class Bag {
   private static instance: Bag;
-
-  private pokeballs: Record<string, PlayerItem> = {};
-  private berries: Record<string, PlayerItem> = {};
-  private keys: Record<string, PlayerItem> = {};
-  private etc: Record<string, PlayerItem> = {};
+  private items: Record<string, PlayerItem> = {};
 
   constructor() {}
 
@@ -19,34 +21,14 @@ export class Bag {
     return Bag.instance;
   }
 
-  setup() {
-    this.addItems('001');
-    this.addItems('002');
-    this.addItems('003');
-    this.addItems('004');
-
-    this.addItems('011');
-    this.addItems('012');
-    this.addItems('013');
-    // this.addItems('014');
-    // this.addItems('015');
-    // this.addItems('016');
-    // this.addItems('017');
-    // this.addItems('018');
-    // this.addItems('019');
-    // this.addItems('020');
-    // this.addItems('021');
-    // this.addItems('022');
-    // this.addItems('023');
-    // this.addItems('024');
-    // this.addItems('025');
-    // this.addItems('026');
-    // this.addItems('027');
-    // this.addItems('028');
-    // this.addItems('029');
-
-    this.addItems('030', 3);
-    this.addItems('046');
+  setup(data: any) {
+    if (data.length > 0) {
+      for (const item of data) {
+        this.addItems(item.item, item.stock);
+      }
+    } else {
+      this.items = {};
+    }
   }
 
   addItems(key: string, stock: number = 1, register: Register = null) {
@@ -61,37 +43,15 @@ export class Bag {
 
     const obj = new PlayerItem(key, stock, register);
 
-    switch (item.type) {
-      case ITEM.POKEBALL:
-        this.pokeballs[key] = obj;
-        break;
-      case ITEM.BERRY:
-        this.berries[key] = obj;
-        break;
-      case ITEM.KEY:
-        this.keys[key] = obj;
-        break;
-      case ITEM.ETC:
-        this.etc[key] = obj;
-        break;
-    }
+    this.items[key] = obj;
   }
 
-  getPockets(type: ITEM): Record<string, PlayerItem> {
-    switch (type) {
-      case ITEM.POKEBALL:
-        return this.pokeballs;
-      case ITEM.BERRY:
-        return this.berries;
-      case ITEM.KEY:
-        return this.keys;
-      case ITEM.ETC:
-        return this.etc;
-    }
+  getItems(): Record<string, PlayerItem> {
+    return this.items;
   }
 
   getItem(key: string): PlayerItem | null {
-    return this.pokeballs[key] || this.berries[key] || this.keys[key] || this.etc[key];
+    return this.items[key] || null;
   }
 
   useItem(key: string, useValue: number = 1): boolean {
@@ -122,15 +82,15 @@ export class Bag {
   }
 
   findItemByRegister(slot: Register): PlayerItem | null {
-    const allItems = [...Object.values(this.pokeballs), ...Object.values(this.berries), ...Object.values(this.keys), ...Object.values(this.etc)];
-
-    return allItems.find((item) => item.getRegister() === slot) || null;
+    const Items = [...Object.values(this.items)];
+    return Items.find((item) => item.getRegister() === slot) || null;
   }
 
   private removeItem(key: string) {
-    delete this.pokeballs[key];
-    delete this.berries[key];
-    delete this.keys[key];
-    delete this.etc[key];
+    delete this.items[key];
+  }
+
+  clearItems() {
+    this.items = {};
   }
 }
