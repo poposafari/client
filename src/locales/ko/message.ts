@@ -41,4 +41,5 @@ export const message: TranslationDefault = {
   surf_welcome: '물은 깊고 푸른 색이다.\n',
   surf_question: '파도타기를 쓰겠습니까?',
   surf_cancel: '파도타기를 취소하겠습니까?',
+  use_inbag_warning: '운영자의 말 : 이런 것은 쓸 데가 따로 있단다.',
 };

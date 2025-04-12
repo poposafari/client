@@ -22,6 +22,18 @@ interface ItemCategoryReq {
   category: ItemCategory;
 }
 
+interface ItemSlotReq {
+  slot1: string | null;
+  slot2: string | null;
+  slot3: string | null;
+  slot4: string | null;
+  slot5: string | null;
+  slot6: string | null;
+  slot7: string | null;
+  slot8: string | null;
+  slot9: string | null;
+}
+
 const AxiosManager = axios.create({
   baseURL: 'https://localhost:443',
   timeout: 5000,
@@ -99,5 +111,10 @@ export const ingameApi = async (): Promise<BaseRes> => {
 
 export const getItemsApi = async (data: ItemCategoryReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/bag/category', data);
+  return res.data;
+};
+
+export const updateItemSlotApi = async (data: ItemSlotReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('ingame/itemslot/update', data);
   return res.data;
 };

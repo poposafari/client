@@ -68,24 +68,6 @@ export class Bag {
     return true;
   }
 
-  registerItem(key: string, slot: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9): void {
-    const existingItem = this.findItemByRegister(slot);
-
-    if (existingItem) {
-      existingItem.registerSlot(null);
-    }
-
-    const item = this.getItem(key);
-    if (item) {
-      item.registerSlot(slot);
-    }
-  }
-
-  findItemByRegister(slot: Register): PlayerItem | null {
-    const Items = [...Object.values(this.items)];
-    return Items.find((item) => item.getRegister() === slot) || null;
-  }
-
   private removeItem(key: string) {
     delete this.items[key];
   }
