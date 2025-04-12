@@ -28,7 +28,7 @@ export class PlayerInfo {
 
   private pet!: MyPokemon | null;
   private partySlot: (MyPokemon | null)[] = [];
-  private itemSlot: ('string' | null)[] = [];
+  private itemSlot: (string | null)[] = [];
   private pokeboxBg: PokeBoxBG[] = [];
 
   private readonly MaxSlot: number = 6;
@@ -45,6 +45,8 @@ export class PlayerInfo {
   setup(data: any) {
     if (!data) throw new Error('Player data is required');
 
+    console.log(data);
+
     this.nickname = data.nickname;
     this.gender = data.gender;
     this.avatar = data.avatar;
@@ -52,6 +54,45 @@ export class PlayerInfo {
     this.x = data.x;
     this.y = data.y;
     this.money = data.money;
+
+    //item slots
+    this.itemSlot[0] = data.itemSlot.slot1;
+    this.itemSlot[1] = data.itemSlot.slot2;
+    this.itemSlot[2] = data.itemSlot.slot3;
+    this.itemSlot[3] = data.itemSlot.slot4;
+    this.itemSlot[4] = data.itemSlot.slot5;
+    this.itemSlot[5] = data.itemSlot.slot6;
+    this.itemSlot[6] = data.itemSlot.slot7;
+    this.itemSlot[7] = data.itemSlot.slot8;
+    this.itemSlot[8] = data.itemSlot.slot9;
+  }
+
+  getItemSlot() {
+    return this.itemSlot;
+  }
+
+  setItemSlot(slot: number, item: string | null) {
+    if (slot < 0 || slot >= MAX_ITEM_SLOT) {
+      throw new Error('Invalid item slot index');
+    }
+
+    const find = this.findItemSlot(item);
+
+    if (find !== null) {
+      this.itemSlot[find] = null;
+    }
+
+    this.itemSlot[slot] = item;
+  }
+
+  findItemSlot(item: string | null): number | null {
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+      if (this.itemSlot[i] === item) {
+        return i as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+      }
+    }
+
+    return null;
   }
 
   getNickname() {

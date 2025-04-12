@@ -6,25 +6,36 @@ import { TEXTURE } from '../enums/texture';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
-import { KeyboardManager } from '../managers';
+import { KeyboardManager, MessageManager } from '../managers';
 import { BagUi } from './bag-ui';
 import { PlayerItem } from '../object/player-item';
 import { BagRegisterUi } from './bag-register-ui';
 import { Bag } from '../storage/bag';
 import { AUDIO } from '../enums/audio';
+import { getItemByKey, itemData } from '../data/items';
+import { PlayerInfo } from '../storage/player-info';
 
 export class BagChoiceUi extends Ui {
   private mode: OverworldMode;
   private bagUi: BagUi;
   private bagRegisterUi: BagRegisterUi;
   private targetItem!: PlayerItem;
-  private isRegister!: boolean;
 
-  private container!: Phaser.GameObjects.Container;
+  private registerableTrueContainer!: Phaser.GameObjects.Container;
+  private registerableFalseContainer!: Phaser.GameObjects.Container;
 
-  private windows: Phaser.GameObjects.Image[] = [];
-  private texts: Phaser.GameObjects.Text[] = [];
-  private titles: string[] = [i18next.t('menu:use'), i18next.t('menu:register'), i18next.t('menu:cancel')];
+  private reggisterableTrueWindows: Phaser.GameObjects.Image[] = [];
+  private registerableTrueTexts: Phaser.GameObjects.Text[] = [];
+  private registerableTrueTitles: string[] = [i18next.t('menu:use'), i18next.t('menu:register'), i18next.t('menu:cancel')];
+
+  private reggisterableFalseWindows: Phaser.GameObjects.Image[] = [];
+  private registerableFalseTexts: Phaser.GameObjects.Text[] = [];
+  private registerableFalseTitles: string[] = [i18next.t('menu:use'), i18next.t('menu:cancel')];
+
+  private targetContainer!: Phaser.GameObjects.Container;
+  private targetWindows: Phaser.GameObjects.Image[] = [];
+  private targetTexts: Phaser.GameObjects.Text[] = [];
+  private targetTitles: string[] = [];
 
   constructor(scene: InGameScene, mode: OverworldMode, bagUi: BagUi) {
     super(scene);
@@ -42,38 +53,72 @@ export class BagChoiceUi extends Ui {
     const spacing = 5;
     let currentY = 0;
 
-    this.container = this.scene.add.container(width / 2 + 720, height / 2 + 200);
+    this.registerableTrueContainer = this.scene.add.container(width / 2 + 720, height / 2);
+    this.registerableFalseContainer = this.scene.add.container(width / 2 + 720, height / 2);
 
     this.bagRegisterUi.setup();
 
-    for (const title of this.titles) {
+    for (const title of this.registerableTrueTitles) {
       const window = addImage(this.scene, TEXTURE.CHOICE, 0, currentY);
       const text = addText(this.scene, -65, currentY, title, TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
 
-      this.windows.push(window);
-      this.texts.push(text);
+      this.reggisterableTrueWindows.push(window);
+      this.registerableTrueTexts.push(text);
 
-      this.container.add(window);
-      this.container.add(text);
+      this.registerableTrueContainer.add(window);
+      this.registerableTrueContainer.add(text);
 
       currentY += contentHeight + spacing;
 
-      this.container.setScale(2.6);
-      this.container.setVisible(false);
-      this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
-      this.container.setScrollFactor(0);
+      this.registerableTrueContainer.setScale(2.6);
+      this.registerableTrueContainer.setVisible(false);
+      this.registerableTrueContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
+      this.registerableTrueContainer.setScrollFactor(0);
+    }
+
+    for (const title of this.registerableFalseTitles) {
+      const window = addImage(this.scene, TEXTURE.CHOICE, 0, currentY);
+      const text = addText(this.scene, -65, currentY, title, TEXTSTYLE.CHOICE_DEFAULT).setOrigin(0, 0.5);
+
+      this.reggisterableFalseWindows.push(window);
+      this.registerableFalseTexts.push(text);
+
+      this.registerableFalseContainer.add(window);
+      this.registerableFalseContainer.add(text);
+
+      currentY += contentHeight + spacing;
+
+      this.registerableFalseContainer.setScale(2.6);
+      this.registerableFalseContainer.setVisible(false);
+      this.registerableFalseContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
+      this.registerableFalseContainer.setScrollFactor(0);
     }
   }
 
   show(data?: PlayerItem): void {
     if (data) this.targetItem = data;
 
-    this.container.setVisible(true);
+    const checkResult = this.checkItemRegisterable();
+
+    this.targetContainer = checkResult ? this.registerableTrueContainer : this.registerableFalseContainer;
+    this.targetWindows = checkResult ? this.reggisterableTrueWindows : this.reggisterableFalseWindows;
+    this.targetTitles = checkResult ? this.registerableTrueTitles : this.registerableFalseTitles;
+    this.targetTexts = checkResult ? this.registerableTrueTexts : this.registerableFalseTexts;
+
+    checkResult ? this.targetContainer.setY(+720) : this.targetContainer.setY(+450);
+
+    const findItem = PlayerInfo.getInstance().findItemSlot(this.targetItem.getKey());
+
+    checkResult && findItem !== null ? this.targetTexts[1].setText(i18next.t('menu:registerCancel')) : this.targetTexts[1].setText(i18next.t('menu:register'));
+
+    if (!checkResult) this.targetTexts[1].setText(i18next.t('menu:cancel'));
+
+    this.targetContainer.setVisible(true);
     this.pause(false);
   }
 
   clean(data?: any): void {
-    this.container.setVisible(false);
+    this.targetContainer.setVisible(false);
     this.pause(true);
   }
 
@@ -88,19 +133,16 @@ export class BagChoiceUi extends Ui {
   private unblock() {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const keyboardManager = KeyboardManager.getInstance();
+    const playerInfo = PlayerInfo.getInstance();
 
     let start = 0;
-    let end = 2;
+    let end = this.targetWindows.length - 1;
     let choice = start;
 
-    this.windows[1].setTexture(TEXTURE.CHOICE);
-    this.windows[2].setTexture(TEXTURE.CHOICE);
-    this.windows[0].setTexture(TEXTURE.CHOICE_S);
-
-    this.registerCheck();
+    this.targetWindows[0].setTexture(TEXTURE.CHOICE_S);
 
     keyboardManager.setAllowKey(keys);
-    keyboardManager.setKeyDownCallback((key) => {
+    keyboardManager.setKeyDownCallback(async (key) => {
       const prevChoice = choice;
 
       try {
@@ -112,37 +154,52 @@ export class BagChoiceUi extends Ui {
             if (choice < end) choice++;
             break;
           case KEY.SELECT:
+            playSound(this.scene, AUDIO.BAG_SELECT);
+            this.close(choice);
             if (choice === 0) {
-              //use
-              playSound(this.scene, AUDIO.SELECT);
-            } else if (choice === 1) {
-              //register
-              playSound(this.scene, AUDIO.SELECT);
-              if (this.isRegister) {
-                this.cancelRegister(this.targetItem);
-                this.clean();
+              if (!this.checkItemUsable()) {
+                const message = MessageManager.getInstance();
+                await message.show(this, [{ type: 'sys', format: 'talk', content: i18next.t('message:use_inbag_warning') }]);
                 this.bagUi.pause(false);
               } else {
-                this.bagRegisterUi.show(this.targetItem);
+                playSound(this.scene, AUDIO.BAG_SELECT);
+                //use item.
               }
-            } else if (choice === 2) {
-              //cancel
-              this.clean();
-              this.bagUi.pause(false);
+            }
+            if (this.checkItemRegisterable()) {
+              if (choice === 1) {
+                const find = playerInfo.findItemSlot(this.targetItem.getKey());
+                //register
+
+                if (find !== null) {
+                  PlayerInfo.getInstance().setItemSlot(find, null);
+                  this.bagUi.setRegVisual(false);
+                  this.mode.updateItemSlotUi();
+                } else {
+                  this.bagRegisterUi.show(this.targetItem);
+                }
+              } else if (choice === 2) {
+                //cancel
+                this.close(choice);
+              }
+            } else {
+              if (choice === 1) {
+                //cancel
+                this.close(choice);
+              }
             }
             break;
           case KEY.CANCEL:
             playSound(this.scene, AUDIO.BAG_CLOSE);
-            this.clean();
-            this.bagUi.pause(false);
+            this.close(choice);
             break;
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
             playSound(this.scene, AUDIO.BAG_DECISON);
-            this.windows[prevChoice].setTexture(TEXTURE.CHOICE);
-            this.windows[choice].setTexture(TEXTURE.CHOICE_S);
+            this.targetWindows[prevChoice].setTexture(TEXTURE.CHOICE);
+            this.targetWindows[choice].setTexture(TEXTURE.CHOICE_S);
           }
         }
       } catch (error) {
@@ -151,20 +208,25 @@ export class BagChoiceUi extends Ui {
     });
   }
 
-  private cancelRegister(item: PlayerItem) {
-    Bag.getInstance().getItem(item.getKey())?.registerSlot(null);
-    this.bagUi.setRegVisual(false);
+  private checkItemRegisterable() {
+    const itemInfo = getItemByKey(this.targetItem.getKey());
+
+    if (!itemInfo) throw Error('exist not item');
+
+    return itemInfo.registerable;
   }
 
-  private registerCheck() {
-    const playerItem = Bag.getInstance().getItem(this.targetItem.getKey());
+  private checkItemUsable() {
+    const itemInfo = getItemByKey(this.targetItem.getKey());
 
-    if (!playerItem?.getRegister()) {
-      this.texts[1].setText(i18next.t('menu:register'));
-      this.isRegister = false;
-    } else {
-      this.texts[1].setText(i18next.t('menu:registerCancel'));
-      this.isRegister = true;
-    }
+    if (!itemInfo) throw Error('exist not item');
+
+    return itemInfo.usable;
+  }
+
+  private close(choice: number) {
+    this.targetWindows[choice].setTexture(TEXTURE.CHOICE);
+    this.clean();
+    this.bagUi.pause(false);
   }
 }

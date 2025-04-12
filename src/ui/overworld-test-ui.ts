@@ -1,11 +1,8 @@
-import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { OBJECT } from '../enums/object-type';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
-import { PLAYER_SCALE } from '../object/base-object';
-import { NpcObject } from '../object/npc-object';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addMap, runFadeEffect, Ui } from './ui';
@@ -281,10 +278,41 @@ export class OverworldPlayer {
               this.obj.setStatus(PLAYER_STATUS.RUNNING);
             }
             break;
+          case KEY.USE_1:
+            this.useItem(1);
+            break;
+          case KEY.USE_2:
+            this.useItem(2);
+            break;
+          case KEY.USE_3:
+            this.useItem(3);
+            break;
+          case KEY.USE_4:
+            this.useItem(4);
+            break;
+          case KEY.USE_5:
+            this.useItem(5);
+            break;
+          case KEY.USE_6:
+            this.useItem(6);
+            break;
+          case KEY.USE_7:
+            this.useItem(7);
+            break;
+          case KEY.USE_8:
+            this.useItem(8);
+            break;
+          case KEY.USE_9:
+            this.useItem(9);
+            break;
         }
       } catch (err: any) {
         console.error(`Error handling key input: ${err}`);
       }
     });
+  }
+
+  private useItem(slotIdx: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
+    if (this.obj?.isMovementFinish()) this.obj!.readyItem(slotIdx);
   }
 }

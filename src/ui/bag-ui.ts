@@ -12,6 +12,7 @@ import { ITEM } from '../enums/item';
 import { BagChoiceUi } from './bag-choice-ui';
 import { Bag, ItemCategory } from '../storage/bag';
 import { AUDIO } from '../enums/audio';
+import { PlayerInfo } from '../storage/player-info';
 
 export class BagUi extends Ui {
   private mode: OverworldMode;
@@ -279,13 +280,16 @@ export class BagUi extends Ui {
 
     const items = Object.keys(this.listInfo);
     const visibleItems = items.slice(this.start, this.start + this.ITEMS_PER_PAGE);
+    const playerInfo = PlayerInfo.getInstance();
 
     for (const key of visibleItems) {
       if (key) {
         const window = addImage(this.scene, TEXTURE.ITEM_BOX, 0, currentY).setOrigin(0, 0.5);
         const name = addText(this.scene, 15, currentY + contentHeight / 2 - 25, i18next.t(`item:${key}.name`), TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0.5);
         const stock = addText(this.scene, 170, currentY + contentHeight / 2 - 25, `x${this.listInfo[key].getStock()}`, TEXTSTYLE.ITEM_TITLE).setOrigin(0, 0.5);
-        const reg = addImage(this.scene, this.listInfo[key].getRegister() !== null ? TEXTURE.BAG_REG : TEXTURE.BLANK, -20, currentY);
+        const reg = addImage(this.scene, TEXTURE.BLANK, -20, currentY);
+
+        if (playerInfo.findItemSlot(key) !== null) reg.setTexture(TEXTURE.BAG_REG);
 
         this.listWindows.push(window);
         this.listNames.push(name);
