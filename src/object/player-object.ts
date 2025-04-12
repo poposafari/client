@@ -232,7 +232,10 @@ export class PlayerObject extends MovableObject {
 
   readyItem(target: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
     if (!this.isMovementFinish()) return;
-    // this.useItem(this.bag.findItemByRegister(target)?.getKey()!);
+    const item = PlayerInfo.getInstance().getItemSlot()[target - 1];
+
+    if (!item) return;
+    this.useItem(item);
   }
 
   useItem(item: string) {

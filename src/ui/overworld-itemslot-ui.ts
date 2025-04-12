@@ -4,6 +4,7 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
+import { MAX_ITEM_SLOT, PlayerInfo } from '../storage/player-info';
 import { addImage, addText, addWindow, Ui } from './ui';
 
 export class OverworldItemSlotUi extends Ui {
@@ -13,9 +14,7 @@ export class OverworldItemSlotUi extends Ui {
   protected slotWindows: Phaser.GameObjects.NineSlice[] = [];
   protected slotIcons: Phaser.GameObjects.Image[] = [];
   protected slotNumbers: Phaser.GameObjects.Text[] = [];
-  protected slotStock: Phaser.GameObjects.Text[] = [];
-
-  private readonly MaxSlot: number = 9;
+  // protected slotStock: Phaser.GameObjects.Text[] = [];
 
   constructor(scene: InGameScene, mode: OverworldMode) {
     super(scene);
@@ -32,10 +31,10 @@ export class OverworldItemSlotUi extends Ui {
 
     this.container = this.scene.add.container(width / 2 - 200, height / 2 + 500);
 
-    for (let i = 1; i <= this.MaxSlot; i++) {
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
       const window = addWindow(this.scene, TEXTURE.WINDOW_0, currentX, 0, 60, 60, 8, 8, 8, 8);
       const icon = addImage(this.scene, '', currentX, 0);
-      const num = addText(this.scene, currentX - 20, 0 - 12, i.toString(), TEXTSTYLE.CHOICE_DEFAULT);
+      const num = addText(this.scene, currentX - 20, 0 - 12, (i + 1).toString(), TEXTSTYLE.CHOICE_DEFAULT);
       const stock = addText(this.scene, currentX + 10, +15, '', TEXTSTYLE.CHOICE_DEFAULT);
 
       this.container.add(window);
@@ -46,7 +45,7 @@ export class OverworldItemSlotUi extends Ui {
       this.slotWindows.push(window);
       this.slotIcons.push(icon);
       this.slotNumbers.push(num);
-      this.slotStock.push(stock);
+      // this.slotStock.push(stock);
 
       currentX += contentHeight + spacing;
     }
@@ -77,16 +76,15 @@ export class OverworldItemSlotUi extends Ui {
   }
 
   update(): void {
-    const bag = Bag.getInstance();
+    const playerInfo = PlayerInfo.getInstance();
+    const itemSlots = playerInfo.getItemSlot();
 
-    for (let i = 1; i <= this.MaxSlot; i++) {
-      const item = bag?.findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+      const item = itemSlots[i];
       if (item) {
-        this.slotIcons[i - 1].setTexture(`item${item.getKey()}`);
-        this.slotStock[i - 1].setText(`x${item.getStock()}`);
+        this.slotIcons[i].setTexture(`item${item}`);
       } else {
-        this.slotIcons[i - 1].setTexture(TEXTURE.BLANK);
-        this.slotStock[i - 1].setText(``);
+        this.slotIcons[i].setTexture(TEXTURE.BLANK);
       }
     }
   }

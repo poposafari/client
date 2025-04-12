@@ -8,6 +8,7 @@ import { OverworldMode } from '../modes';
 import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
+import { MAX_ITEM_SLOT, PlayerInfo } from '../storage/player-info';
 import { BagChoiceUi } from './bag-choice-ui';
 import { BagUi } from './bag-ui';
 import { addBackground, addImage, addText, addWindow, playSound, Ui } from './ui';
@@ -27,8 +28,6 @@ export class BagRegisterUi extends Ui {
   private slotNumbers: Phaser.GameObjects.Text[] = [];
   private slotIcons: Phaser.GameObjects.Image[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
-
-  private readonly MaxSlot: number = 9;
 
   constructor(scene: InGameScene, mode: OverworldMode, bagChoiceUi: BagChoiceUi, bagUi: BagUi) {
     super(scene);
@@ -50,7 +49,7 @@ export class BagRegisterUi extends Ui {
     this.bg.setAlpha(0.5);
 
     this.slotContainer = this.scene.add.container(-400, +455);
-    for (let i = 1; i <= this.MaxSlot; i++) {
+    for (let i = 1; i <= MAX_ITEM_SLOT; i++) {
       const window = addWindow(this.scene, TEXTURE.WINDOW_0, currentX, 0, 100, 100, 16, 16, 16, 16);
       const dummy = addImage(this.scene, TEXTURE.BLANK, currentX, -90).setScale(4);
       const num = addText(this.scene, currentX - 40, -20, i.toString(), TEXTSTYLE.ITEM_NOTICE).setOrigin(0, 0.5);
@@ -99,7 +98,7 @@ export class BagRegisterUi extends Ui {
     const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
     let start = 0;
-    let end = this.MaxSlot - 1;
+    let end = MAX_ITEM_SLOT - 1;
     let choice = start;
 
     this.renderSlot();
@@ -117,7 +116,7 @@ export class BagRegisterUi extends Ui {
             }
             break;
           case KEY.RIGHT:
-            if (choice < end && choice < this.MaxSlot - 1) {
+            if (choice < end && choice < MAX_ITEM_SLOT) {
               choice++;
             }
             break;
@@ -127,9 +126,10 @@ export class BagRegisterUi extends Ui {
             break;
           case KEY.CANCEL:
             playSound(this.scene, AUDIO.BAG_CLOSE);
+            this.mode.updateItemSlotUi();
             this.renderChoice(choice, 0);
             this.clean();
-            this.bagChoiceUi.pause(false);
+            this.bagUi.pause(false);
             break;
         }
         if (key === KEY.LEFT || key === KEY.RIGHT) {
@@ -152,20 +152,20 @@ export class BagRegisterUi extends Ui {
   }
 
   private renderSlot() {
-    for (let i = 1; i <= this.MaxSlot; i++) {
-      const item = Bag.getInstance().findItemByRegister(i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+    const itemSlots = PlayerInfo.getInstance().getItemSlot();
+
+    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+      const item = itemSlots[i];
       if (item) {
-        this.slotIcons[i - 1].setTexture(`item${item.getKey()}`);
+        this.slotIcons[i].setTexture(`item${item}`);
       } else {
-        this.slotIcons[i - 1].setTexture(TEXTURE.BLANK);
+        this.slotIcons[i].setTexture(TEXTURE.BLANK);
       }
     }
   }
 
   registerItem(choice: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
-    Bag.getInstance().registerItem(this.targetItem.getKey(), choice);
+    PlayerInfo.getInstance().setItemSlot(choice - 1, this.targetItem.getKey());
     this.bagUi.setRegVisual(true);
   }
-
-  updateSlotTexture() {}
 }

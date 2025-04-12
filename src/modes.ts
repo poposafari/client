@@ -349,6 +349,11 @@ export class OverworldMode extends Mode {
     onoff ? (this.overworldUiBlock = true) : (this.overworldUiBlock = false);
   }
 
+  updateItemSlotUi() {
+    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
+    if (hud instanceof OverworldHUDUi) hud.updateItemSlotUi();
+  }
+
   async getBag(category: ItemCategory) {
     const bag = Bag.getInstance();
 
