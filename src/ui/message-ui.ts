@@ -21,7 +21,6 @@ export class MessageUi extends Ui {
   private questionTexts: Phaser.GameObjects.Text[] = [];
   private questionDummys: Phaser.GameObjects.Image[] = [];
   private selectedIndex: number = 0;
-
   constructor(scene: InGameScene, mode?: OverworldMode) {
     super(scene);
 
@@ -68,7 +67,7 @@ export class MessageUi extends Ui {
     this.messageContainer.setScrollFactor(0);
   }
 
-  async show(data: Message): Promise<boolean | void> {
+  async show(data: Message, speed: number = 10): Promise<boolean | void> {
     const text = data.content;
     let textArray = text.split('');
     let index = 0;
@@ -117,7 +116,7 @@ export class MessageUi extends Ui {
         if (index < textArray.length) {
           this.messageText.text += textArray[index];
           index++;
-          this.scene.time.delayedCall(10, addNextChar, [], this);
+          this.scene.time.delayedCall(speed, addNextChar, [], this);
         } else if (!isFinish) {
           isFinish = true;
           if (type !== 'battle') this.endMark.setVisible(!isQuestion);

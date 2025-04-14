@@ -7,7 +7,7 @@ const initial: Record<string, Npc> = {
   npc000: {
     movable: false,
   },
-  //Taxi driver safari.
+  //ticket provider
   npc001: {
     movable: false,
   },
@@ -15,6 +15,7 @@ const initial: Record<string, Npc> = {
   npc002: {
     movable: false,
   },
+  //
 };
 
 export const npcData = new Proxy(initial, {

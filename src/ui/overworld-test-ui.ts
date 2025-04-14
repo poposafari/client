@@ -5,12 +5,17 @@ import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { PlayerObject } from '../object/player-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addMap, runFadeEffect, Ui } from './ui';
+import { addMap, playSound, runFadeEffect, Ui } from './ui';
 import { PlayerInfo } from '../storage/player-info';
 import { KEY } from '../enums/key';
 import { OverworldInfo } from '../storage/overworld-info';
 import { KeyboardManager } from '../managers';
 import { PLAYER_STATUS } from '../enums/player-status';
+import { NpcObject } from '../object/npc-object';
+import i18next from 'i18next';
+import { DIRECTION } from '../enums/direction';
+import { Message } from '../interface/sys';
+import { AUDIO } from '../enums/audio';
 
 export interface Layer {
   idx: number;
@@ -50,13 +55,15 @@ export class OverworldUi extends Ui {
   protected map: OverworldMap;
   protected player: OverworldPlayer;
   protected info: OverworldInfo;
+  protected npc: OverworldNpc;
 
   constructor(scene: InGameScene, mode: OverworldMode, key: string) {
     super(scene);
     this.mode = mode;
     this.map = new OverworldMap(scene);
     this.info = new OverworldInfo();
-    this.player = new OverworldPlayer(scene, mode, this.info);
+    this.npc = new OverworldNpc(scene, mode, this.info);
+    this.player = new OverworldPlayer(scene, this.npc, mode, this.info);
   }
 
   setup(): void {}
@@ -66,6 +73,7 @@ export class OverworldUi extends Ui {
 
     this.map.show();
     this.player.show(this.map.get());
+    this.npc.show(this.map.get());
   }
 
   clean(data?: any): void {
@@ -190,6 +198,7 @@ export class OverworldMap {
 export class OverworldPlayer {
   private scene: InGameScene;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
+  private npc: OverworldNpc;
   private mode: OverworldMode;
   private updateBlock: boolean;
 
@@ -198,11 +207,12 @@ export class OverworldPlayer {
 
   private readonly scale: number = 3;
 
-  constructor(scene: InGameScene, mode: OverworldMode, overworldInfo: OverworldInfo) {
+  constructor(scene: InGameScene, npc: OverworldNpc, mode: OverworldMode, overworldInfo: OverworldInfo) {
     this.scene = scene;
     this.mode = mode;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.overworldInfo = overworldInfo;
+    this.npc = npc;
 
     this.updateBlock = false;
   }
@@ -266,6 +276,14 @@ export class OverworldPlayer {
       try {
         switch (key) {
           case KEY.SELECT:
+            if (!this.obj?.isMovementFinish()) return;
+
+            const target = this.obj?.getObjectInFront(this.obj.getLastDirection());
+
+            if (target instanceof NpcObject) {
+              await this.npc.talk(target, this.obj.getLastDirection());
+            }
+
             break;
           case KEY.MENU:
             if (this.obj && this.obj.isMovementFinish()) {
@@ -314,5 +332,108 @@ export class OverworldPlayer {
 
   private useItem(slotIdx: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
     if (this.obj?.isMovementFinish()) this.obj!.readyItem(slotIdx);
+  }
+}
+
+export class OverworldNpc {
+  private scene: InGameScene;
+  private mode: OverworldMode;
+  private overworldInfo: OverworldInfo;
+  private info: NpcInfo[] = [];
+
+  constructor(scene: InGameScene, mode: OverworldMode, overworldInfo: OverworldInfo) {
+    this.scene = scene;
+    this.mode = mode;
+    this.overworldInfo = overworldInfo;
+  }
+
+  setup(npcKey: string, x: number, y: number, overworldType: OVERWORLD_TYPE, startMessageType: 'talk' | 'question') {
+    this.info.push({
+      key: npcKey,
+      x: x,
+      y: y,
+      overworldType: overworldType,
+      startMessageType: startMessageType,
+    });
+  }
+
+  show(map: Phaser.Tilemaps.Tilemap) {
+    for (const info of this.info) {
+      const npc = new NpcObject(this.scene, info.key, info.x, info.y, map, i18next.t(`npc:${info.key}.name`), OBJECT.NPC, info.overworldType, info.startMessageType);
+      this.overworldInfo.addNpc(npc);
+    }
+  }
+
+  async talk(obj: NpcObject, direction: DIRECTION) {
+    let ret: boolean = true;
+
+    const etc = await this.preAction(obj);
+
+    await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'intro', etc: etc })).then((result) => {
+      if (result) ret = true;
+      else ret = false;
+    });
+
+    await this.action(obj, direction, etc);
+    await this.postAction(obj, direction, etc);
+
+    return ret;
+  }
+
+  async preAction(obj: NpcObject) {
+    const key = obj.getKey();
+    let ret;
+
+    switch (key) {
+      case 'npc001':
+        ret = await this.mode.getAvailableTicket();
+        break;
+    }
+
+    return ret;
+  }
+
+  async action(obj: NpcObject, direction: DIRECTION, etc: any) {
+    const key = obj.getKey();
+    let ret;
+
+    switch (key) {
+      case 'npc001':
+        if (etc) {
+          ret = await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'action', etc: etc })).then((result) => {
+            if (result) ret = true;
+            else ret = false;
+          });
+        } else {
+          ret = await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'reject', etc: etc }));
+          ret = false;
+        }
+        break;
+    }
+
+    return ret;
+  }
+
+  async postAction(obj: NpcObject, direction: DIRECTION, etc: any) {
+    const key = obj.getKey();
+
+    switch (key) {
+      case 'npc001':
+        if (!etc) return;
+        await this.mode.startMessage(obj.reaction(direction, { messageType: 'question', talkType: 'intro', etc: null })).then(async (result) => {
+          if (result) {
+            this.mode.receiveAvailableTicket();
+            playSound(this.scene, AUDIO.ITEM_GET);
+
+            const script1 = PlayerInfo.getInstance().getNickname() + i18next.t(`message:battle_thinking1`);
+            const script2 = '\n' + i18next.t(`item:030.name`) + i18next.t('message:receive');
+
+            const script = script1 + script2;
+
+            await this.mode.startMessage([{ type: 'default', format: 'talk', content: script }], 30);
+          }
+        });
+        break;
+    }
   }
 }

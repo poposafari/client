@@ -6,6 +6,13 @@ import { TEXTURE } from '../enums/texture';
 import { Message } from '../interface/sys';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject } from './base-object';
+import { replacePercentSymbol } from '../utils/string-util';
+
+interface ScriptFilterOption {
+  messageType: 'talk' | 'question';
+  talkType: 'intro' | 'action' | 'accept' | 'reject';
+  etc: any | null;
+}
 
 export class NpcObject extends BaseObject {
   private location: OVERWORLD_TYPE;
@@ -40,10 +47,10 @@ export class NpcObject extends BaseObject {
     return this.location;
   }
 
-  reaction(playerDirection: DIRECTION, key: string, messageType: 'talk' | 'question', talkType: string): Message[] {
-    this.reactionDirection(playerDirection);
+  reaction(direction: DIRECTION, option?: ScriptFilterOption): Message[] {
+    this.reactionDirection(direction);
 
-    return this.reactionScript(key, messageType, talkType);
+    return this.reactionScript(option);
   }
 
   afterReaction(key: string) {}
@@ -65,17 +72,18 @@ export class NpcObject extends BaseObject {
     }
   }
 
-  reactionScript(key: string, messageType: 'talk' | 'question', talkType: string, etc?: string): Message[] {
+  reactionScript(option?: ScriptFilterOption): Message[] {
     let ret: Message[] = [];
 
-    const scripts = i18next.t(`npc:${key}.scripts`, { returnObjects: true });
-    const filteredScripts = this.filterScripts(scripts as string[], messageType, talkType);
+    let scripts = i18next.t(`npc:${this.key}.scripts`, { returnObjects: true }) as string[];
 
-    for (const script of filteredScripts) {
+    if (option) scripts = this.filterScripts(scripts, option.messageType, option.talkType);
+
+    for (const script of scripts) {
       ret.push({
         type: 'default',
-        format: messageType,
-        content: etc ? etc + script : script,
+        format: option && option.messageType ? option.messageType : 'talk',
+        content: option && option.etc ? replacePercentSymbol(script, option.etc) : script,
       });
     }
 
@@ -90,7 +98,7 @@ export class NpcObject extends BaseObject {
     return ret;
   }
 
-  private filterScripts(scripts: string[], messageType: string, talkType: string): string[] {
+  private filterScripts(scripts: string[], messageType: 'talk' | 'question', talkType: 'intro' | 'action' | 'accept' | 'reject'): string[] {
     return scripts
       .filter((script) => {
         const [type, talk] = script.split('_');

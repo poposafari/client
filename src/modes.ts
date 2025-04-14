@@ -23,7 +23,7 @@ import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { autoLoginApi, deleteAccountApi, getItemsApi, ingameApi, loginApi, logoutApi, nicknameApi, registerApi } from './utils/axios';
+import { autoLoginApi, deleteAccountApi, getAvailableTicketApi, getItemsApi, ingameApi, loginApi, logoutApi, nicknameApi, receiveAvailableTicketApi, registerApi } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { runFadeEffect } from './ui/ui';
@@ -354,6 +354,19 @@ export class OverworldMode extends Mode {
     if (hud instanceof OverworldHUDUi) hud.updateItemSlotUi();
   }
 
+  async startMessage(data: Message[], speed: number = 10): Promise<boolean> {
+    const overworld = this.getUiStackTop();
+
+    this.setOverworldUiBlock(true);
+
+    const message = MessageManager.getInstance();
+    const ret = await message.show(overworld, data, speed);
+
+    this.setOverworldUiBlock(false);
+
+    return ret;
+  }
+
   async getBag(category: ItemCategory) {
     const bag = Bag.getInstance();
 
@@ -364,6 +377,32 @@ export class OverworldMode extends Mode {
       const message = MessageManager.getInstance();
       await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
     }
+  }
+
+  async getAvailableTicket() {
+    let res;
+
+    try {
+      res = await getAvailableTicketApi();
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+
+    return res;
+  }
+
+  async receiveAvailableTicket() {
+    let res;
+
+    try {
+      res = await receiveAvailableTicketApi();
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+
+    return res;
   }
 }
 
