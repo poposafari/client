@@ -13,13 +13,18 @@ export const npc: TranslationNpc = {
     postAction: 'OverworldTaxiListUi',
   },
   npc001: {
-    name: '택시 드라이버',
-    scripts: ['question_welcome_마을로 돌아가시겠습니까?'],
-    postAction: 'backToVillage',
+    name: '티켓 우체부',
+    scripts: [
+      'talk_intro_안녕하십니까!\n무료 사파리 티켓을 나눠드리고 있습니다.',
+      'talk_action_현재 수령 가능한 티켓은\n%개 입니다.',
+      'question_intro_수령하시겠습니까?',
+      'talk_reject_현재 수령 가능한 티켓은 없습니다.',
+    ],
+    postAction: '',
   },
   npc002: {
     name: '상점 주인',
-    scripts: ['talk_welcome_안녕하세요! 무엇을 도와드릴까요?', 'question_welcome_구매하시겠습니까?', 'talk_reject_돈이 부족하시네요', 'talk_success_계산되었습니다!\n다음에 또 이용해주세요.'],
+    scripts: ['talk_welcome_안녕하세요! 무엇을 도와드릴까요?', 'question_welcome_구매하시겠습니까?', 'talk_reject_돈이 부족하시네요', 'talk_accept_계산되었습니다!\n다음에 또 이용해주세요.'],
     postAction: '',
   },
 };
