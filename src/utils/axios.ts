@@ -35,7 +35,7 @@ interface ItemSlotReq {
 }
 
 const AxiosManager = axios.create({
-  baseURL: 'https://localhost:443',
+  baseURL: 'https://localhost:443/api',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
@@ -116,5 +116,15 @@ export const getItemsApi = async (data: ItemCategoryReq): Promise<BaseRes> => {
 
 export const updateItemSlotApi = async (data: ItemSlotReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('ingame/itemslot/update', data);
+  return res.data;
+};
+
+export const getAvailableTicketApi = async (): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/ticket/get');
+  return res.data;
+};
+
+export const receiveAvailableTicketApi = async (): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/ticket/receive');
   return res.data;
 };

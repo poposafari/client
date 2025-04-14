@@ -36,7 +36,7 @@ export class MessageManager {
     return MessageManager.instance;
   }
 
-  async show(currentUi: Ui, messages: Message[]): Promise<boolean> {
+  async show(currentUi: Ui, messages: Message[], speed: number = 10): Promise<boolean> {
     let ret = false;
     if (this.isMessageAcive) return ret;
     this.isMessageAcive = true;
@@ -44,7 +44,7 @@ export class MessageManager {
     try {
       for (const msg of messages) {
         this.scene.sound.get(AUDIO.SELECT).play();
-        const result = await this.messageUi.show(msg);
+        const result = await this.messageUi.show(msg, speed);
         if (msg.format === 'question' && result) {
           ret = result;
         }

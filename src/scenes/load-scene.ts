@@ -206,6 +206,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.BAG_DECISON, 'audio', AUDIO.BAG_DECISON, 'wav');
     this.loadAudio(AUDIO.BAG_SELECT, 'audio', AUDIO.BAG_SELECT, 'wav');
     this.loadAudio(AUDIO.REGISTER, 'audio', AUDIO.REGISTER, 'ogg');
+    this.loadAudio(AUDIO.ITEM_GET, 'audio', AUDIO.ITEM_GET, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
