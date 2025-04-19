@@ -1,5 +1,5 @@
 import { npcData } from '../data/npc';
-import { pokemonData } from '../data/pokemon';
+import { PokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
 import { AUDIO } from '../enums/audio';
 import { MODE } from '../enums/mode';
@@ -9,6 +9,7 @@ import { Bag } from '../storage/bag';
 import { Box } from '../storage/box';
 import { PlayerInfo } from '../storage/player-info';
 import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
+import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
 
@@ -129,9 +130,10 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_left`, leftD);
     createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_right`, rightD);
 
-    for (const pokemon of Object.keys(pokemonData)) {
-      const movementFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}`, ANIMATION.POKEMON_OVERWORLD);
-      const movementShinyFrames = getSpriteFrames(this, `pokemon_overworld${pokemon}s`, ANIMATION.POKEMON_OVERWORLD);
+    for (const pokemon of Object.keys(PokemonData)) {
+      const pokedex = createZeroPad(Number(pokemon));
+      const movementFrames = getSpriteFrames(this, `pokemon_overworld${pokedex}`, ANIMATION.POKEMON_OVERWORLD);
+      const movementShinyFrames = getSpriteFrames(this, `pokemon_overworld${pokedex}s`, ANIMATION.POKEMON_OVERWORLD);
 
       const up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
       const down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
