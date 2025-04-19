@@ -1,7 +1,7 @@
 import { MyPokemon } from '../storage/box';
 
 export function createZeroPad(value: number): string {
-  return value.toString().padStart(3, '0');
+  return value.toString().padStart(4, '0');
 }
 
 export function isPokedexShiny(pokedex: string) {
