@@ -58,16 +58,19 @@ export const menu: TranslationDefault = {
   register: '등록하기',
   cancel: '취소하기',
   registerCancel: '등록 해제',
-  captureCount: '포획 횟수 : ',
+  captureCount: '포획 횟수',
   continueName: '이름',
   continueLocation: '장소',
   continuePlaytime: '플레이 시간',
   continueParty: '파티',
   addParty: '파티에 추가',
   removeParty: '파티에서 제외',
-  followPet: '동행 포켓몬',
+  followPokemon: '동행 포켓몬',
+  follow: '동행하기',
+  removeFollow: '동행 해제',
   emptyParty: '파티가 비어있습니다.',
   box: '박스 ',
+  boxJump: '이동하기',
   boxBackground: '벽지 바꾸기',
   box0: '숲', //Forest
   box1: '도시', //City
@@ -85,4 +88,7 @@ export const menu: TranslationDefault = {
   box13: '금속', //Machine
   box14: '체크무늬', //Checkes
   box15: '심플', //Simple
+  capture: '만난 장소/시간',
+  surf: '파도타기',
+  darkeyes: '검은눈빛',
 };

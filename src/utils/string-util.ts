@@ -24,6 +24,18 @@ export function trimLastChar(pokedex: string) {
   return pokedex.slice(0, -1);
 }
 
+export function getPartyKey(pokemon: MyPokemon | null) {
+  if (!pokemon) return null;
+
+  const pokedex = pokemon.pokedex;
+  const shiny = pokemon.shiny ? 's' : '';
+  const gender = pokemon.gender;
+  const skills = pokemon.skill;
+  // const form = pokemon.form;
+
+  return `${pokedex}${shiny}_${gender}_${skills}`;
+}
+
 export function getPokemonOverworldOrIconKey(pokemon: MyPokemon) {
   let ret = '000';
 
@@ -34,6 +46,12 @@ export function getPokemonOverworldOrIconKey(pokemon: MyPokemon) {
   ret = `${pokedex}${shiny}`;
 
   return ret;
+}
+
+export function getPokemonOverworldKey(data: string | null) {
+  if (data) return data.split('_')[0];
+
+  return '000';
 }
 
 export function getPokemonSpriteKey(pokemon: MyPokemon) {

@@ -38,7 +38,7 @@ export const message: TranslationDefault = {
   battle_catch_fail: '(이/가) 풀려났다!',
   find: '(을/를) 발견했다!',
   receive: '(을/를) 받았다!',
-  maxSlot: `파티가 가득 찼습니다!`,
+  partyIsFull: `파티가 가득 찼습니다!`,
   surf_welcome: '물은 깊고 푸른 색이다.\n',
   surf_question: '파도타기를 쓰겠습니까?',
   surf_cancel: '파도타기를 취소하겠습니까?',

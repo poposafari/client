@@ -1,7 +1,7 @@
 import { HttpStatusCode } from 'axios';
 import i18next from 'i18next';
 import { MODE } from './enums/mode';
-import { Account, Message } from './interface/sys';
+import { Account, Message, MyPokemon } from './interface/sys';
 import { MessageManager, ModeManager } from './managers';
 import { Mode } from './mode';
 import { InGameScene } from './scenes/ingame-scene';
@@ -12,18 +12,32 @@ import { OVERWORLD_TYPE } from './enums/overworld-type';
 import { Overworld011 } from './ui/overworld-011';
 import { Bag, ItemCategory } from './storage/bag';
 import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
-import { Location, PlayerInfo } from './storage/player-info';
+import { Location, PlayerInfo, PokeBoxBG } from './storage/player-info';
 import { OverworldHUDUi } from './ui/overworld-hud-ui';
 import { OverworldInfo } from './storage/overworld-info';
 import { BattleUi } from './ui/battle-ui';
-import { PokeBoxUi } from './ui/pokebox-ui';
+import { PokeboxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
 import { BagUi } from './ui/bag-ui';
 import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
-import { autoLoginApi, deleteAccountApi, getAvailableTicketApi, getItemsApi, ingameApi, loginApi, logoutApi, nicknameApi, receiveAvailableTicketApi, registerApi } from './utils/axios';
+import {
+  autoLoginApi,
+  deleteAccountApi,
+  getAvailableTicketApi,
+  getItemsApi,
+  getPokeboxApi,
+  ingameApi,
+  loginApi,
+  logoutApi,
+  moveToPokemonApi,
+  MoveToPokemonReq,
+  nicknameApi,
+  receiveAvailableTicketApi,
+  registerApi,
+} from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
 import { runFadeEffect } from './ui/ui';
@@ -283,7 +297,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldHUDUi(this.scene, this));
     this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new PokeBoxUi(this.scene, this));
+    this.uis.push(new PokeboxUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -295,6 +309,9 @@ export class OverworldMode extends Mode {
   enter(): void {
     this.addUiStackOverlap('OverworldHUDUi');
     this.updateOverworld(PlayerInfo.getInstance().getLocation());
+
+    this.updateItemSlotUi();
+    this.updatePartySlotUi();
   }
 
   exit(): void {
@@ -354,6 +371,11 @@ export class OverworldMode extends Mode {
     if (hud instanceof OverworldHUDUi) hud.updateItemSlotUi();
   }
 
+  updatePartySlotUi() {
+    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
+    if (hud instanceof OverworldHUDUi) hud.updatePokemonSlotUi();
+  }
+
   async startMessage(data: Message[], speed: number = 10): Promise<boolean> {
     const overworld = this.getUiStackTop();
 
@@ -373,6 +395,32 @@ export class OverworldMode extends Mode {
     try {
       const res = await getItemsApi({ category: category });
       bag.setup(res);
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+  }
+
+  async getPokebox(boxNumber: number) {
+    const box = Box.getInstance();
+
+    try {
+      const res = await getPokeboxApi({ box: boxNumber });
+      box.setup(res as any);
+      return res;
+    } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+  }
+
+  async moveToPokemon(data: MoveToPokemonReq) {
+    const box = Box.getInstance();
+
+    try {
+      const res = await moveToPokemonApi(data);
+      box.setup(res as any);
+      return res;
     } catch (err: any) {
       const message = MessageManager.getInstance();
       await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);

@@ -170,3 +170,43 @@ export class PokemonObject extends MovableObject {
     return Phaser.Math.Between(1, 5);
   }
 }
+
+export type PokemonGender = 'male' | 'female' | 'none';
+export type PokemonSkill = 'none' | 'surf' | 'darkeyes';
+
+export class PlayerPokemon {
+  private pokedex: string;
+  private gender: PokemonGender;
+  private shiny: boolean;
+  private form: number;
+  private count: number;
+  private skill: PokemonSkill;
+  private nickname: string;
+  private captureBall: string;
+  private captureDate: Date;
+  private captureLocation: string;
+
+  constructor(
+    pokedex: string,
+    gender: PokemonGender,
+    shiny: boolean,
+    form: number,
+    count: number,
+    skill: PokemonSkill,
+    nickname: string,
+    captureBall: string,
+    captureDate: Date,
+    captureLocation: string,
+  ) {
+    this.pokedex = pokedex;
+    this.gender = gender;
+    this.shiny = shiny;
+    this.form = form;
+    this.count = count;
+    this.skill = skill;
+    this.nickname = nickname;
+    this.captureBall = captureBall;
+    this.captureDate = captureDate;
+    this.captureLocation = captureLocation;
+  }
+}

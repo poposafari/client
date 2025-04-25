@@ -157,6 +157,18 @@ const initial: Record<string, Item> = {
     registerable: false,
     usable: false,
   },
+  //비전머신(물)
+  '032': {
+    key: '032',
+    registerable: false,
+    usable: true,
+  },
+  //비전머신(노말)
+  '033': {
+    key: '033',
+    registerable: false,
+    usable: true,
+  },
   //자전거
   '046': {
     key: '046',

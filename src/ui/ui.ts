@@ -189,7 +189,7 @@ function getAnimationSize(key: ANIMATION | string) {
   }
 }
 
-function getTextShadow(style: TEXTSTYLE) {
+export function getTextShadow(style: TEXTSTYLE) {
   switch (style) {
     case TEXTSTYLE.TITLE_MODAL:
       return [8, 4, '#266c58'];
@@ -202,7 +202,7 @@ function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
-    case TEXTSTYLE.BOX_POKEDEX:
+    // case TEXTSTYLE.BOX_POKEDEX:
     case TEXTSTYLE.CHOICE_DEFAULT:
     case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
@@ -222,6 +222,8 @@ function getTextShadow(style: TEXTSTYLE) {
       return [2, 1, '#91919a'];
     case TEXTSTYLE.LOBBY_TITLE:
       return [3, 2, '#2CC295'];
+    case TEXTSTYLE.SHINY:
+      return [3, 2, '#EC7D10'];
   }
 
   return [0, 0, 0];
@@ -273,12 +275,16 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       break;
     case TEXTSTYLE.BOX_POKEDEX:
       config.fontSize = '50px';
-      config.color = '#b0b0b0';
-      config.fontStyle = 'bold';
+      config.color = '#ffffff';
+      // config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.BOX_NAME:
       config.fontSize = '80px';
       config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.SHINY:
+      config.fontSize = '80px';
+      config.color = '#FFBC0A';
       break;
     case TEXTSTYLE.BOX_DEFAULT:
       config.fontSize = '50px';

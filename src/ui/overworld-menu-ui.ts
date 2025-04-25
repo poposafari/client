@@ -161,7 +161,7 @@ export class OverworldMenuUi extends Ui {
 
     if (taret === i18next.t('menu:menuPokebox')) {
       //pokebox
-      this.mode.addUiStackOverlap('PokeBoxUi');
+      this.mode.addUiStackOverlap('PokeboxUi');
     } else if (taret === i18next.t('menu:menuBag')) {
       //bag
       this.mode.addUiStackOverlap('BagUi');

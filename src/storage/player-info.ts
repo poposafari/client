@@ -1,13 +1,15 @@
 import { HttpStatusCode } from 'axios';
 import { ingameApi, nicknameApi } from '../utils/axios';
 import { MyPokemon } from './box';
+import { getPartyKey } from '../utils/string-util';
 
 export const MAX_PARTY_SLOT = 6;
 export const MAX_ITEM_SLOT = 9;
+export const MAX_POKEBOXBG_SLOT = 33;
 
 export type PlayerGender = 'boy' | 'girl';
 export type PlayerAvatar = '1' | '2' | '3' | '4';
-export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18';
+export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
 
 export interface Location {
   overworld: string;
@@ -26,12 +28,11 @@ export class PlayerInfo {
   private y!: number;
   private money!: number;
 
-  private pet!: MyPokemon | null;
-  private partySlot: (MyPokemon | null)[] = [];
+  private pet!: string | null;
+  private partySlot: (string | null)[] = [];
   private itemSlot: (string | null)[] = [];
   private pokeboxBg: PokeBoxBG[] = [];
-
-  private readonly MaxSlot: number = 6;
+  private pokeboxBgCopy: PokeBoxBG[] = [];
 
   constructor() {}
 
@@ -55,16 +56,31 @@ export class PlayerInfo {
     this.y = data.y;
     this.money = data.money;
 
-    //item slots
-    this.itemSlot[0] = data.itemSlot.slot1;
-    this.itemSlot[1] = data.itemSlot.slot2;
-    this.itemSlot[2] = data.itemSlot.slot3;
-    this.itemSlot[3] = data.itemSlot.slot4;
-    this.itemSlot[4] = data.itemSlot.slot5;
-    this.itemSlot[5] = data.itemSlot.slot6;
-    this.itemSlot[6] = data.itemSlot.slot7;
-    this.itemSlot[7] = data.itemSlot.slot8;
-    this.itemSlot[8] = data.itemSlot.slot9;
+    //party
+    this.partySlot = data.party;
+
+    //itemslot
+    this.itemSlot = data.itemslot;
+
+    //pokebox
+    this.pokeboxBg = data.boxes;
+
+    this.copyPokeboxBg('origin', 'copy');
+  }
+
+  copyPokeboxBg(from: 'origin' | 'copy', to: 'origin' | 'copy') {
+    if (from === 'origin' && to === 'copy') this.pokeboxBgCopy = [...this.pokeboxBg];
+    else if (from === 'copy' && to === 'origin') this.pokeboxBg = [...this.pokeboxBgCopy];
+  }
+
+  isPokeboxBgEqual(): boolean {
+    if (this.pokeboxBg.length !== this.pokeboxBgCopy.length) return false;
+
+    for (let i = 0; i < this.pokeboxBg.length; i++) {
+      if (this.pokeboxBg[i] !== this.pokeboxBgCopy[i]) return false;
+    }
+
+    return true;
   }
 
   getItemSlot() {
@@ -127,6 +143,16 @@ export class PlayerInfo {
     return this.money;
   }
 
+  getPokeboxBg() {
+    return this.pokeboxBgCopy;
+  }
+
+  setPokeboxBg(target: PokeBoxBG[]) {
+    if (target) {
+      this.pokeboxBgCopy = [...target];
+    }
+  }
+
   setNickname(nickname: string) {
     this.nickname = nickname;
   }
@@ -150,7 +176,7 @@ export class PlayerInfo {
     this.y = y;
   }
 
-  setPet(pet: MyPokemon | null) {
+  setPet(pet: string | null) {
     this.pet = pet;
   }
 
@@ -172,21 +198,28 @@ export class PlayerInfo {
   }
 
   addPartySlot(pokemon: MyPokemon): boolean {
-    if (this.partySlot.length === this.MaxSlot) {
+    const key = getPartyKey(pokemon);
+
+    if (this.partySlot.length >= MAX_PARTY_SLOT) {
       return false;
     }
 
-    this.partySlot.push(pokemon);
+    for (const party of this.partySlot) {
+      if (key === party) return false;
+    }
+
+    this.partySlot.push(key);
+    console.log(this.partySlot);
 
     return true;
   }
 
   hasPartySlot(pokemon: MyPokemon) {
-    return this.partySlot.includes(pokemon);
+    return this.partySlot.includes(getPartyKey(pokemon));
   }
 
-  removePartSlot(pokemon: MyPokemon): boolean {
-    const index = this.partySlot.indexOf(pokemon);
+  removePartSlot(pokemon: MyPokemon | null, idx?: number): boolean {
+    const index = idx !== undefined && idx >= 0 ? idx : this.partySlot.indexOf(getPartyKey(pokemon));
 
     if (index !== -1) {
       this.partySlot.splice(index, 1);
