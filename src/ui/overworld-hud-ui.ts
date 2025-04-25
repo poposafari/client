@@ -67,7 +67,7 @@ export class OverworldHUDUi extends Ui {
   updateInfoUi() {
     this.overworldInfoUi.updateLocation();
     this.overworldInfoUi.updatePosition();
-    this.overworldInfoUi.updateMyMoney();
+    this.overworldInfoUi.updateMyCandy();
   }
 
   showLocationUi(overworld: string) {

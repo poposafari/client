@@ -5,13 +5,13 @@ import { addImage, addText, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { Location, PlayerInfo } from '../storage/player-info';
+import { PlayerInfo } from '../storage/player-info';
 
 export class OverworldInfoUi extends Ui {
   private mode: OverworldMode;
   private container!: Phaser.GameObjects.Container;
   private titles: Phaser.GameObjects.Text[] = [];
-  private textMyMoney!: Phaser.GameObjects.Text;
+  private textMyCandy!: Phaser.GameObjects.Text;
   private textLocation!: Phaser.GameObjects.Text;
   private textPosition!: Phaser.GameObjects.Text;
 
@@ -27,17 +27,17 @@ export class OverworldInfoUi extends Ui {
     this.container = this.scene.add.container(width / 2 - 920, height / 2 - 500);
 
     const iconLocation = addImage(this.scene, TEXTURE.MENU_LOCATION, 0, 0).setScale(2);
-    const iconMoney = addImage(this.scene, TEXTURE.MENU_MONEY, 0, +50).setScale(2);
+    const iconCandy = addImage(this.scene, TEXTURE.MENU_CANDY, 0, +50).setScale(2);
 
     this.textLocation = addText(this.scene, +30, 0, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
-    this.textMyMoney = addText(this.scene, +30, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
-    this.textPosition = addText(this.scene, this.textMyMoney.displayWidth, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
+    this.textMyCandy = addText(this.scene, +30, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
+    this.textPosition = addText(this.scene, this.textMyCandy.displayWidth, +50, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
 
     this.container.add(iconLocation);
     this.container.add(this.textLocation);
     this.container.add(this.textPosition);
-    this.container.add(iconMoney);
-    this.container.add(this.textMyMoney);
+    this.container.add(iconCandy);
+    this.container.add(this.textMyCandy);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI);
@@ -64,15 +64,15 @@ export class OverworldInfoUi extends Ui {
 
   private unblock() {}
 
-  updateMyMoney() {
+  updateMyCandy() {
     const playerInfo = PlayerInfo.getInstance();
 
     if (!playerInfo) {
       throw Error('Player Info does not exist.');
     }
 
-    const playerMoney = playerInfo.getMoney();
-    this.textMyMoney.setText(`$ ${playerMoney.toString()}`);
+    const playerCandy = playerInfo.getCandy();
+    this.textMyCandy.setText(`${playerCandy.toString()}${i18next.t('menu:candy')}`);
   }
 
   updateLocation() {

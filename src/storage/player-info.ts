@@ -26,7 +26,7 @@ export class PlayerInfo {
   private location!: string;
   private x!: number;
   private y!: number;
-  private money!: number;
+  private candy!: number;
 
   private pet!: string | null;
   private partySlot: (string | null)[] = [];
@@ -54,7 +54,7 @@ export class PlayerInfo {
     this.location = data.location;
     this.x = data.x;
     this.y = data.y;
-    this.money = data.money;
+    this.candy = data.money;
 
     //party
     this.partySlot = data.party;
@@ -139,8 +139,8 @@ export class PlayerInfo {
     return this.pet;
   }
 
-  getMoney() {
-    return this.money;
+  getCandy() {
+    return this.candy;
   }
 
   getPokeboxBg() {
@@ -180,16 +180,16 @@ export class PlayerInfo {
     this.pet = pet;
   }
 
-  setMoney(money: number) {
-    this.money = money;
+  setCandy(candy: number) {
+    this.candy = candy;
   }
 
-  useMoney(cost: number) {
-    if (cost && this.money < cost) {
+  useCandy(cost: number) {
+    if (cost && this.candy < cost) {
       return false;
     }
 
-    this.setMoney(this.money - cost);
+    this.setCandy(this.candy - cost);
     return true;
   }
 
