@@ -65,7 +65,7 @@ export const menu: TranslationDefault = {
   continueParty: '파티',
   addParty: '파티에 추가',
   removeParty: '파티에서 제외',
-  followPokemon: '동행 포켓몬',
+  followPokemon: '<동행 포켓몬>',
   follow: '동행하기',
   removeFollow: '동행 해제',
   emptyParty: '파티가 비어있습니다.',

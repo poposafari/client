@@ -48,7 +48,7 @@ export class PokeboxPartyUi extends Ui {
     this.setupMenu(width, height);
     this.setupIcon(width, height, contentHeight);
 
-    this.container = this.scene.add.container(width / 2 - 850, height / 2 + 110);
+    this.container = this.scene.add.container(width / 2 - 850, height / 2 + 160);
 
     const petWindow = addWindow(this.scene, TEXTURE.WINDOW_7, 0, -192, contentHeight, contentHeight, 16, 16, 16, 16);
     const partyWindow = addWindow(this.scene, TEXTURE.WINDOW_7, 0, -32, contentHeight, 42 * MAX_PARTY_SLOT, 16, 16, 16, 16);
@@ -294,8 +294,9 @@ export class PokeboxPartyUi extends Ui {
     const spacing = 10;
     let currentY = 0;
 
-    this.iconContainer = this.scene.add.container(width / 2 - 850, height / 2);
+    this.iconContainer = this.scene.add.container(width / 2 - 850, height / 2 + 50);
 
+    const petTitle = addText(this.scene, 0, -330, i18next.t('menu:followPokemon'), TEXTSTYLE.INPUT_GUIDE_WHITE);
     this.petIcon = addImage(this.scene, `pokemon_icon000`, 0, -260);
     this.shinyIconPet = addImage(this.scene, TEXTURE.BLANK, -25, -280).setScale(1.1);
 
@@ -315,6 +316,7 @@ export class PokeboxPartyUi extends Ui {
       currentY += contentHeight + spacing;
     }
 
+    this.iconContainer.add(petTitle);
     this.iconContainer.add(this.petIcon);
     this.iconContainer.add(this.shinyIconPet);
     this.iconContainer.setScale(1.5);
