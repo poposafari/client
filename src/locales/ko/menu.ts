@@ -91,4 +91,7 @@ export const menu: TranslationDefault = {
   capture: '만난 장소/시간',
   surf: '파도타기',
   darkeyes: '검은눈빛',
+  guide_runningshoes: 'R: 러닝슈즈',
+  guide_menu: 'S: 메뉴',
+  candy: '개',
 };

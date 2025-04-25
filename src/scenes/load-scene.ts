@@ -126,6 +126,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.MENU_LOCATION, 'ui/menu', TEXTURE.MENU_LOCATION);
     this.loadImage(TEXTURE.MENU_MONEY, 'ui/menu', TEXTURE.MENU_MONEY);
     this.loadImage(TEXTURE.MENU_ICON, 'ui/menu', TEXTURE.MENU_ICON);
+    this.loadImage(TEXTURE.MENU_CANDY, 'ui/menu', TEXTURE.MENU_CANDY);
 
     this.loadImage(TEXTURE.BG_BAG, 'ui', TEXTURE.BG_BAG);
     this.loadImage(TEXTURE.XBOX, 'ui', TEXTURE.XBOX);

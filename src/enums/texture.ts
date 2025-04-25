@@ -88,6 +88,7 @@ export const enum TEXTURE {
   MENU_MONEY = 'menu_6',
   MENU_ICON = 'menu_13',
   MENU_OPTION = 'menu_12',
+  MENU_CANDY = 'menu_14',
   BG_BAG = 'bg_bag',
   XBOX = 'xbox',
   ITEM_BOX = 'item_box',
