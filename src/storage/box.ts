@@ -1,22 +1,26 @@
-export type PokeSlot = null | 1 | 2 | 3 | 4 | 5 | 6;
+import { PokemonGender, PokemonSkill } from '../object/pokemon-object';
 
 export interface MyPokemon {
   pokedex: string;
+  gender: PokemonGender;
   shiny: boolean;
-  gender: 'm' | 'f' | '';
   form: number;
+  count: number;
+  skill: PokemonSkill;
   captureDate: string;
   capturePokeball: string;
-  captureCount: number;
-  skill: 0 | 1 | 2 | 3 | 4 | null;
+  captureLocation: string;
+  nickname: string | null;
 }
+
+export const MAX_BOX_BG = 15;
 
 export class Box {
   private static instance: Box;
 
-  private mypokemons: Map<string, MyPokemon> = new Map();
+  private pokemons: MyPokemon[] = [];
 
-  constructor() {}
+  private constructor() {}
 
   static getInstance(): Box {
     if (!Box.instance) {
@@ -25,31 +29,23 @@ export class Box {
     return Box.instance;
   }
 
-  setup() {
-    // this.addMyPokemon({ pokedex: '001', shiny: false, gender: 'm', form: 0, captureDate: '2025-02-19', capturePokeball: '001', captureCount: 1, skill: null });
+  setup(data: MyPokemon[]) {
+    this.pokemons = data ? [...data] : [];
   }
 
   addMyPokemon(pokemon: MyPokemon) {
-    const key = this.generateKey(pokemon);
-    if (!this.mypokemons.has(key)) {
-      this.mypokemons.set(key, pokemon);
-    }
+    this.pokemons.push(pokemon);
   }
 
   getMyPokemons(): MyPokemon[] {
-    return Array.from(this.mypokemons.values());
+    return [...this.pokemons];
   }
 
   cleanMyPokemons() {
-    this.mypokemons.clear();
+    this.pokemons = [];
   }
 
-  hasPokemon(pokedex: string, shiny: boolean, gender: 'm' | 'f' | ''): MyPokemon | null {
-    const key = `${pokedex}-${shiny ? 'shiny' : 'normal'}-${gender}`;
-    return this.mypokemons.get(key) || null;
-  }
-
-  private generateKey(pokemon: MyPokemon): string {
-    return `${pokemon.pokedex}-${pokemon.shiny ? 'shiny' : 'normal'}-${pokemon.gender}`;
-  }
+  // hasPokemon(pokedex: string, shiny: boolean, gender: PokemonGender): MyPokemon | null {
+  //   return this.pokemons.find((p) => p.pokedex === pokedex && p.shiny === shiny && p.gender === gender) || null;
+  // }
 }

@@ -2,8 +2,8 @@ import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { OverworldMode } from '../modes';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PlayerInfo } from '../storage/player-info';
-import { getPokemonOverworldOrIconKey } from '../utils/string-util';
+import { MAX_PARTY_SLOT, PlayerInfo } from '../storage/player-info';
+import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { addImage, addWindow, Ui } from './ui';
 
 export class OverworldPokemonSlotUi extends Ui {
@@ -12,6 +12,7 @@ export class OverworldPokemonSlotUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   protected windows: Phaser.GameObjects.NineSlice[] = [];
   protected icons: Phaser.GameObjects.Image[] = [];
+  protected shinyIcons: Phaser.GameObjects.Image[] = [];
 
   private readonly MaxSlot: number = 6;
 
@@ -33,12 +34,15 @@ export class OverworldPokemonSlotUi extends Ui {
     for (let i = 0; i < this.MaxSlot; i++) {
       const window = addWindow(this.scene, TEXTURE.WINDOW_0, 0, currentY, contentHeight, contentHeight, 8, 8, 8, 8);
       const icon = addImage(this.scene, 'pokemon_icon000', 0, currentY);
+      const shiny = addImage(this.scene, TEXTURE.BLANK, -25, currentY - 15).setScale(1);
 
       this.container.add(window);
       this.container.add(icon);
+      this.container.add(shiny);
 
       this.windows.push(window);
       this.icons.push(icon);
+      this.shinyIcons.push(shiny);
 
       currentY += contentHeight + spacing;
     }
@@ -51,34 +55,24 @@ export class OverworldPokemonSlotUi extends Ui {
 
   show(data?: any): void {
     this.container.setVisible(true);
-    this.pause(false);
+    this.update();
   }
 
   clean(data?: any): void {
     this.container.setVisible(false);
-    this.pause(true);
   }
 
-  pause(onoff: boolean, data?: any): void {
-    onoff ? this.block() : this.unblock();
-  }
+  pause(onoff: boolean, data?: any): void {}
 
-  update(time?: number, delta?: number): void {}
+  update(): void {
+    const party = PlayerInfo.getInstance().getPartySlot();
 
-  private block() {}
-
-  private unblock() {
-    const playerInfo = PlayerInfo.getInstance();
-
-    if (!playerInfo) return;
-
-    const slots = playerInfo.getPartySlot();
-
-    for (let i = 0; i < this.MaxSlot; i++) {
-      const slotInfo = slots[i];
-      if (slotInfo) {
-        const iconKey = getPokemonOverworldOrIconKey(slotInfo);
-        this.icons[i].setTexture(`pokemon_icon${iconKey}`);
+    for (let i = 0; i < MAX_PARTY_SLOT; i++) {
+      this.shinyIcons[i].setTexture(TEXTURE.BLANK);
+      if (party[i]) {
+        const key = party[i]?.split('_')[0];
+        this.icons[i].setTexture(`pokemon_icon${key}`);
+        if (isPokedexShiny(key!)) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
       } else {
         this.icons[i].setTexture(`pokemon_icon000`);
       }

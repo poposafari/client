@@ -2,6 +2,8 @@ import axios from 'axios';
 import { ModeManager } from '../managers';
 import { LoadingDefaultUi } from '../ui/loading-default-ui';
 import { ItemCategory } from '../storage/bag';
+import { PokeBoxBG } from '../storage/player-info';
+import { PokemonGender } from '../object/pokemon-object';
 
 interface AccountReq {
   username: string;
@@ -32,6 +34,17 @@ interface ItemSlotReq {
   slot7: string | null;
   slot8: string | null;
   slot9: string | null;
+}
+
+interface PokeboxSelectReq {
+  box: number;
+}
+
+export interface MoveToPokemonReq {
+  pokedex: string;
+  gender: PokemonGender;
+  from: number;
+  to: number;
 }
 
 const AxiosManager = axios.create({
@@ -126,5 +139,15 @@ export const getAvailableTicketApi = async (): Promise<BaseRes> => {
 
 export const receiveAvailableTicketApi = async (): Promise<BaseRes> => {
   const res = await AxiosManager.get<BaseRes>('/ticket/receive');
+  return res.data;
+};
+
+export const getPokeboxApi = async (data: PokeboxSelectReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/pokebox/get', data);
+  return res.data;
+};
+
+export const moveToPokemonApi = async (data: MoveToPokemonReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/pokebox/move', data);
   return res.data;
 };

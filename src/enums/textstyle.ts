@@ -31,4 +31,5 @@ export const enum TEXTSTYLE {
   BOX_CAPTURE_VALUE,
   GENDER_0,
   GENDER_1,
+  SHINY,
 }
