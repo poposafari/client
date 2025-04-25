@@ -97,6 +97,14 @@ export const item: TranslationItem = {
     name: '티켓',
     description: '야생 포켓몬이 등장하는 월드에 입장할 수 있는 입장권이다.',
   },
+  '032': {
+    name: '파도타기',
+    description: '파도를 타는 기술을 배워 물 위를 타고 다닐 수 있다.',
+  },
+  '033': {
+    name: '검은눈빛',
+    description: '야생 포켓몬은 도망갈 수 없게 된다.',
+  },
   '046': {
     name: '자전거',
     description: '빠른 이동 속도를 얻기 위한 중요한 도구 중에 하나이다.',

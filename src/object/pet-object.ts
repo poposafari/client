@@ -8,7 +8,7 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { OBJECT } from '../enums/object-type';
 import { PlayerInfo } from '../storage/player-info';
 import { OverworldInfo } from '../storage/overworld-info';
-import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
+import { getPokemonOverworldKey, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { ANIMATION } from '../enums/animation';
 
 export class PetObject extends MovableObject {
@@ -48,9 +48,9 @@ export class PetObject extends MovableObject {
     let overworldKey = '000';
 
     if (pokemon) {
-      overworldKey = getPokemonOverworldOrIconKey(pokemon!);
+      overworldKey = getPokemonOverworldKey(pokemon);
       this.setVisible(true);
-      if (pokemon.shiny) {
+      if (isPokedexShiny(overworldKey)) {
         if (!this.dummy2.anims.isPlaying) {
           this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
           this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
