@@ -393,13 +393,13 @@ export class OverworldNpc {
     return [ret];
   }
 
-  async action(obj: NpcObject, direction: DIRECTION, etc: any) {
+  async action(obj: NpcObject, direction: DIRECTION, etc: any[]) {
     const key = obj.getKey();
     let ret;
 
     switch (key) {
       case 'npc001':
-        if (etc) {
+        if (etc[0]) {
           ret = await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'action', etc: etc })).then((result) => {
             if (result) ret = true;
             else ret = false;
@@ -423,7 +423,7 @@ export class OverworldNpc {
 
     switch (key) {
       case 'npc001':
-        if (!etc) return;
+        if (!etc[0]) return;
         await this.mode.startMessage(obj.reaction(direction, { messageType: 'question', talkType: 'intro', etc: null })).then(async (result) => {
           if (result) {
             this.mode.receiveAvailableTicket();
