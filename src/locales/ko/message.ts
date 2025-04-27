@@ -43,4 +43,5 @@ export const message: TranslationDefault = {
   surf_question: '파도타기를 쓰겠습니까?',
   surf_cancel: '파도타기를 취소하겠습니까?',
   use_inbag_warning: '운영자의 말 : 이런 것은 쓸 데가 따로 있단다.',
+  exceed_max_item: '아이템은 개당 최대 999개 까지 가지고 있을 수 있습니다.',
 };

@@ -139,9 +139,12 @@ export class BagUi extends Ui {
     this.container.setVisible(true);
     this.pause(false);
 
+    await this.mode.getBag();
+
     playSound(this.scene, AUDIO.BAG_CATEGORY);
+
     this.runPocketAnimation(0);
-    await this.getListInfo(0);
+    this.getListInfo(0);
     this.renderPage(0);
     this.renderChoice(1, 0);
   }
@@ -238,7 +241,7 @@ export class BagUi extends Ui {
             this.start = 0;
             playSound(this.scene, AUDIO.BAG_CATEGORY);
             this.runSwitchPocketAnimation(prevPage, page);
-            await this.getListInfo(page);
+            this.getListInfo(page);
             this.renderPage(page);
             this.renderChoice(1, 0);
           }
@@ -249,25 +252,29 @@ export class BagUi extends Ui {
     });
   }
 
-  private async getListInfo(current: number) {
+  private getListInfo(current: number) {
     const bag = Bag.getInstance();
 
     switch (current) {
       case 0:
-        await this.mode.getBag(ItemCategory.POKEBALL);
+        // await this.mode.getBag(ItemCategory.POKEBALL);
+        this.listInfo = bag.getCategory(ItemCategory.POKEBALL);
         break;
       case 1:
-        await this.mode.getBag(ItemCategory.ETC);
+        // await this.mode.getBag(ItemCategory.ETC);
+        this.listInfo = bag.getCategory(ItemCategory.ETC);
         break;
       case 2:
-        await this.mode.getBag(ItemCategory.BERRY);
+        // await this.mode.getBag(ItemCategory.BERRY);
+        this.listInfo = bag.getCategory(ItemCategory.BERRY);
         break;
       case 3:
-        await this.mode.getBag(ItemCategory.KEY);
+        // await this.mode.getBag(ItemCategory.KEY);
+        this.listInfo = bag.getCategory(ItemCategory.KEY);
         break;
     }
 
-    this.listInfo = bag.getItems();
+    // this.listInfo = bag.getItems();
   }
 
   private renderPage(current: number) {

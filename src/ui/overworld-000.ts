@@ -19,6 +19,7 @@ export class Overworld000 extends Plaza {
     this.map.setForegroundLayer(2, [TEXTURE.TILE_FLOOR, TEXTURE.TILE_OBJECT], DEPTH.FOREGROND);
 
     this.npc.setup(`npc001`, 11, 8, OVERWORLD_TYPE.PLAZA, 'talk');
+    this.npc.setup(`npc002`, 14, 8, OVERWORLD_TYPE.PLAZA, 'talk');
 
     // this.setupPlayerInitPos(2, 2);
   }

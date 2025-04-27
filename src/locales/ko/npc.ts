@@ -24,7 +24,13 @@ export const npc: TranslationNpc = {
   },
   npc002: {
     name: '상점 주인',
-    scripts: ['talk_welcome_안녕하세요! 무엇을 도와드릴까요?', 'question_welcome_구매하시겠습니까?', 'talk_reject_돈이 부족하시네요', 'talk_accept_계산되었습니다!\n다음에 또 이용해주세요.'],
+    scripts: [
+      'talk_intro_어서오세요! 무엇을 도와드릴까요?',
+      'question_action_% x%개 총 %캔디입니다.\n구매하시겠습니까?',
+      'talk_reject_사탕이 부족하시네요.',
+      'talk_accept_네 여기 있습니다.\n대단히 감사합니다.',
+      'talk_end_다음에 또 오세요',
+    ],
     postAction: '',
   },
 };

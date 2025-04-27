@@ -19,13 +19,14 @@ import { BattleUi } from './ui/battle-ui';
 import { PokeboxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
 import { BagUi } from './ui/bag-ui';
-import { ShopUi } from './ui/shop-ui';
 import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
 import {
   autoLoginApi,
+  buyItemApi,
   deleteAccountApi,
+  getAllItemsApi,
   getAvailableTicketApi,
   getItemsApi,
   getPokeboxApi,
@@ -44,6 +45,8 @@ import { runFadeEffect } from './ui/ui';
 import { checkOverworldType } from './data/overworld';
 import { AUDIO } from './enums/audio';
 import { OverworldLocationUi } from './ui/overworld-location-ui';
+import { ShopUi } from './ui/shop-test-ui';
+import { getAllItems } from './data/items';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -298,6 +301,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new OverworldMenuUi(this.scene, this));
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new PokeboxUi(this.scene, this));
+    this.uis.push(new ShopUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
@@ -306,7 +310,9 @@ export class OverworldMode extends Mode {
     Bag.getInstance();
   }
 
-  enter(): void {
+  async enter(): Promise<void> {
+    await this.getBag();
+
     this.addUiStackOverlap('OverworldHUDUi');
     this.updateOverworld(PlayerInfo.getInstance().getLocation());
 
@@ -324,8 +330,7 @@ export class OverworldMode extends Mode {
   update(time: number, delta: number): void {
     if (this.uiStack.length <= 1) return;
 
-    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
-    if (hud instanceof OverworldHUDUi) hud.updateInfoUi();
+    this.updateHUDUi();
 
     if (this.overworldUiBlock) return;
 
@@ -376,6 +381,11 @@ export class OverworldMode extends Mode {
     if (hud instanceof OverworldHUDUi) hud.updatePokemonSlotUi();
   }
 
+  updateHUDUi() {
+    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
+    if (hud instanceof OverworldHUDUi) hud.updateInfoUi();
+  }
+
   async startMessage(data: Message[], speed: number = 10): Promise<boolean> {
     const overworld = this.getUiStackTop();
 
@@ -389,11 +399,13 @@ export class OverworldMode extends Mode {
     return ret;
   }
 
-  async getBag(category: ItemCategory) {
+  async getBag(category?: ItemCategory) {
     const bag = Bag.getInstance();
 
     try {
-      const res = await getItemsApi({ category: category });
+      let res;
+      if (category) res = await getItemsApi({ category: category });
+      else res = await getAllItemsApi();
       bag.setup(res);
     } catch (err: any) {
       const message = MessageManager.getInstance();
@@ -446,6 +458,20 @@ export class OverworldMode extends Mode {
     try {
       res = await receiveAvailableTicketApi();
     } catch (err: any) {
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+
+    return res;
+  }
+
+  async buyItem(item: string, stock: number) {
+    let res;
+
+    try {
+      res = await buyItemApi({ item: item, stock: stock });
+    } catch (err: any) {
+      console.log(err);
       const message = MessageManager.getInstance();
       await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
     }

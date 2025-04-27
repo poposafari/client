@@ -30,6 +30,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_5, 'ui/windows', TEXTURE.WINDOW_5);
     this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
     this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
+    this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -210,6 +211,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.BAG_SELECT, 'audio', AUDIO.BAG_SELECT, 'wav');
     this.loadAudio(AUDIO.REGISTER, 'audio', AUDIO.REGISTER, 'ogg');
     this.loadAudio(AUDIO.ITEM_GET, 'audio', AUDIO.ITEM_GET, 'ogg');
+    this.loadAudio(AUDIO.BUY, 'audio', AUDIO.BUY, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
