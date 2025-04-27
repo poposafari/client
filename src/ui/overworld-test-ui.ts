@@ -390,7 +390,7 @@ export class OverworldNpc {
         break;
     }
 
-    return ret;
+    return [ret];
   }
 
   async action(obj: NpcObject, direction: DIRECTION, etc: any) {
@@ -408,6 +408,10 @@ export class OverworldNpc {
           ret = await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'reject', etc: etc }));
           ret = false;
         }
+        break;
+      case 'npc002':
+        this.mode.setOverworldUiBlock(true);
+        this.mode.addUiStack('ShopUi', obj);
         break;
     }
 

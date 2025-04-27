@@ -10,8 +10,8 @@ import { replacePercentSymbol } from '../utils/string-util';
 
 interface ScriptFilterOption {
   messageType: 'talk' | 'question';
-  talkType: 'intro' | 'action' | 'accept' | 'reject';
-  etc: any | null;
+  talkType: 'intro' | 'action' | 'accept' | 'reject' | 'end';
+  etc: any[] | null;
 }
 
 export class NpcObject extends BaseObject {
@@ -98,7 +98,7 @@ export class NpcObject extends BaseObject {
     return ret;
   }
 
-  private filterScripts(scripts: string[], messageType: 'talk' | 'question', talkType: 'intro' | 'action' | 'accept' | 'reject'): string[] {
+  private filterScripts(scripts: string[], messageType: 'talk' | 'question', talkType: 'intro' | 'action' | 'accept' | 'reject' | 'end'): string[] {
     return scripts
       .filter((script) => {
         const [type, talk] = script.split('_');

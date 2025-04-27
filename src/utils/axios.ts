@@ -47,6 +47,11 @@ export interface MoveToPokemonReq {
   to: number;
 }
 
+interface BuyItemReq {
+  item: string;
+  stock: number;
+}
+
 const AxiosManager = axios.create({
   baseURL: 'https://localhost:443/api',
   timeout: 5000,
@@ -124,6 +129,16 @@ export const ingameApi = async (): Promise<BaseRes> => {
 
 export const getItemsApi = async (data: ItemCategoryReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/bag/category', data);
+  return res.data;
+};
+
+export const getAllItemsApi = async (): Promise<BaseRes> => {
+  const res = await AxiosManager.get<BaseRes>('/bag/all');
+  return res.data;
+};
+
+export const buyItemApi = async (data: BuyItemReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/bag/buy', data);
   return res.data;
 };
 

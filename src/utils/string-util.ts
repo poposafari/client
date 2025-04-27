@@ -86,6 +86,12 @@ export function isValidNickname(nickname: string): boolean {
   return nicknameRegex.test(nickname);
 }
 
-export function replacePercentSymbol(input: string, replacement: string): string {
-  return input.replace(/%/g, replacement);
+export function replacePercentSymbol(input: string, replacement: any[]): string {
+  let index = 0;
+  return input.replace(/%/g, (match) => {
+    if (index < replacement.length) {
+      return replacement[index++];
+    }
+    return match;
+  });
 }

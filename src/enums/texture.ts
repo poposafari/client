@@ -7,7 +7,7 @@ export const enum TEXTURE {
   WINDOW_5 = 'window5',
   WINDOW_6 = 'window6',
   WINDOW_7 = 'window7',
-  WINDOW_8 = 'window_8',
+  WINDOW_8 = 'window8',
   WINDOW_9 = 'window_9',
   WINDOW_10 = 'window_10',
   WINDOW_11 = 'window_11',

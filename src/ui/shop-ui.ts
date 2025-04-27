@@ -11,7 +11,7 @@ import { KeyboardManager } from '../managers';
 import { ShopChoiceUi } from './shop-choice-ui';
 import { NpcObject } from '../object/npc-object';
 
-export class ShopUi extends Ui {
+export class ShopTestUi extends Ui {
   private mode: OverworldMode;
   private shopChoiceUi: ShopChoiceUi;
   private npc!: NpcObject;
@@ -209,15 +209,15 @@ export class ShopUi extends Ui {
     for (const item of visibleItems) {
       const additionalCalc = point - this.ITEMS_PER_PAGE * (this.contentHeight + this.contentSpacing);
       const name = addText(this.scene, -190, currentY + additionalCalc, i18next.t(`item:${item.key}.name`), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
-      const price = addText(this.scene, +120, currentY + additionalCalc, '$ ' + item.price.toString(), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
+      // const price = addText(this.scene, +120, currentY + additionalCalc, '$ ' + item.price.toString(), TEXTSTYLE.ITEM_LIST).setOrigin(0, 0.5);
       const dummy = addImage(this.scene, TEXTURE.BLANK, -200, currentY + additionalCalc).setScale(1.4);
 
       this.listNames.push(name);
-      this.listPrices.push(price);
+      // this.listPrices.push(price);
       this.listDummys.push(dummy);
 
       this.listContainer.add(name);
-      this.listContainer.add(price);
+      // this.listContainer.add(price);
       this.listContainer.add(dummy);
 
       currentY += this.contentHeight + this.contentSpacing;

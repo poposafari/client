@@ -12,4 +12,5 @@ export enum AUDIO {
   BAG_SELECT = 'bag_select',
   REGISTER = 'register',
   ITEM_GET = 'item_get',
+  BUY = 'buy',
 }
