@@ -4,6 +4,8 @@ export interface Item {
   key: string;
   registerable: boolean;
   usable: boolean;
+  purchasable: boolean;
+  price: number;
 }
 
 const initial: Record<string, Item> = {
@@ -12,168 +14,224 @@ const initial: Record<string, Item> = {
     key: '000',
     registerable: false,
     usable: false,
+    purchasable: false,
+    price: 10,
   },
-  //Poké Ball
+  //Master Ball
   '001': {
     key: '001',
     registerable: false,
     usable: false,
+    purchasable: false,
+    price: 0,
   },
-  //Great Ball
+  //Poké Ball
   '002': {
     key: '002',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 10,
   },
-  //Ultra Ball
+  //Great Ball
   '003': {
     key: '003',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 15,
   },
-  //Master Ball
+  //Ultra Ball
   '004': {
     key: '004',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 20,
   },
   //오카열매
   '011': {
     key: '011',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //꼬시개열매
   '012': {
     key: '012',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //초나열매
   '013': {
     key: '013',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //린드열매
   '014': {
     key: '014',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //플카열매
   '015': {
     key: '015',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //로플열매
   '016': {
     key: '016',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //으름열매
   '017': {
     key: '017',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //슈캐열매
   '018': {
     key: '018',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //바코열매
   '019': {
     key: '019',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //야파열매
   '020': {
     key: '020',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //리체열매
   '021': {
     key: '021',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //루미열매
   '022': {
     key: '022',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //수불열매
   '023': {
     key: '023',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //하반열매
   '024': {
     key: '024',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //마코열매
   '025': {
     key: '025',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //바리비열매
   '026': {
     key: '026',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //로셀열매
   '027': {
     key: '027',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //카리열매
   '028': {
     key: '028',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //의문열매
   '029': {
     key: '029',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 30,
   },
   //티켓
   '030': {
     key: '030',
     registerable: false,
     usable: false,
+    purchasable: true,
+    price: 100,
   },
   //비전머신(물)
   '032': {
     key: '032',
     registerable: false,
     usable: true,
+    purchasable: false,
+    price: 0,
   },
   //비전머신(노말)
   '033': {
     key: '033',
     registerable: false,
     usable: true,
+    purchasable: false,
+    price: 0,
   },
   //자전거
   '046': {
     key: '046',
     registerable: true,
     usable: true,
+    purchasable: false,
+    price: 0,
   },
 };
 
