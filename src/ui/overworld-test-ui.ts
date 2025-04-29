@@ -398,6 +398,10 @@ export class OverworldNpc {
     let ret;
 
     switch (key) {
+      case 'npc000':
+        this.mode.setOverworldUiBlock(true);
+        this.mode.addUiStack('SafariListUi', obj);
+        break;
       case 'npc001':
         if (etc[0]) {
           ret = await this.mode.startMessage(obj.reaction(direction, { messageType: 'talk', talkType: 'action', etc: etc })).then((result) => {
