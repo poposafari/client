@@ -10,7 +10,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 
-export class SafariListUi extends Ui {
+export class SafariTestListUi extends Ui {
   private mode: OverworldMode;
   private npc!: NpcObject;
   private safaris!: SafariData[];

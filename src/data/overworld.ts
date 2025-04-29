@@ -39,7 +39,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '012': {
     key: '012',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -48,7 +48,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '013': {
     key: '013',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -57,7 +57,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '014': {
     key: '014',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -66,7 +66,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '015': {
     key: '015',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -75,7 +75,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '016': {
     key: '016',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -84,7 +84,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '017': {
     key: '017',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -93,7 +93,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '018': {
     key: '018',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -102,7 +102,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '019': {
     key: '019',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,
@@ -111,7 +111,7 @@ const initialSafari: Record<string, SafariData> = {
   },
   '020': {
     key: '020',
-    cost: 4,
+    cost: 1,
     entryPos: {
       x: 10,
       y: 10,

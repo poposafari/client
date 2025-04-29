@@ -20,6 +20,7 @@ export class Overworld000 extends Plaza {
 
     this.npc.setup(`npc001`, 11, 8, OVERWORLD_TYPE.PLAZA, 'talk');
     this.npc.setup(`npc002`, 14, 8, OVERWORLD_TYPE.PLAZA, 'talk');
+    this.npc.setup(`npc000`, 8, 8, OVERWORLD_TYPE.PLAZA, 'talk');
 
     // this.setupPlayerInitPos(2, 2);
   }

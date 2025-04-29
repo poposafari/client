@@ -19,7 +19,6 @@ import { BattleUi } from './ui/battle-ui';
 import { PokeboxUi } from './ui/pokebox-ui';
 import { Box } from './storage/box';
 import { BagUi } from './ui/bag-ui';
-import { SafariListUi } from './ui/safari-list-ui';
 import { LoginUi } from './ui/login-ui';
 import { RegisterUi } from './ui/register-ui';
 import {
@@ -47,6 +46,7 @@ import { AUDIO } from './enums/audio';
 import { OverworldLocationUi } from './ui/overworld-location-ui';
 import { ShopUi } from './ui/shop-test-ui';
 import { getAllItems } from './data/items';
+import { SafariListUi } from './ui/safari-list-test-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -302,6 +302,7 @@ export class OverworldMode extends Mode {
     this.uis.push(new BagUi(this.scene, this));
     this.uis.push(new PokeboxUi(this.scene, this));
     this.uis.push(new ShopUi(this.scene, this));
+    this.uis.push(new SafariListUi(this.scene, this));
 
     for (const ui of this.uis) {
       ui.setup();
