@@ -52,6 +52,10 @@ interface BuyItemReq {
   stock: number;
 }
 
+interface UseTicketReq {
+  overworld: string;
+}
+
 const AxiosManager = axios.create({
   baseURL: 'https://localhost:443/api',
   timeout: 5000,
@@ -164,5 +168,10 @@ export const getPokeboxApi = async (data: PokeboxSelectReq): Promise<BaseRes> =>
 
 export const moveToPokemonApi = async (data: MoveToPokemonReq): Promise<BaseRes> => {
   const res = await AxiosManager.post<BaseRes>('/pokebox/move', data);
+  return res.data;
+};
+
+export const useTicketApi = async (data: UseTicketReq): Promise<BaseRes> => {
+  const res = await AxiosManager.post<BaseRes>('/safari/ticket', data);
   return res.data;
 };

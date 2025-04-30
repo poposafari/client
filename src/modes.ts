@@ -37,6 +37,7 @@ import {
   nicknameApi,
   receiveAvailableTicketApi,
   registerApi,
+  useTicketApi,
 } from './utils/axios';
 import { TitleUi } from './ui/title-ui';
 import { NewGameUi } from './ui/newgame-ui';
@@ -471,6 +472,20 @@ export class OverworldMode extends Mode {
 
     try {
       res = await buyItemApi({ item: item, stock: stock });
+    } catch (err: any) {
+      console.log(err);
+      const message = MessageManager.getInstance();
+      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    }
+
+    return res;
+  }
+
+  async useTicket(overworld: string) {
+    let res;
+
+    try {
+      res = await useTicketApi({ overworld: overworld });
     } catch (err: any) {
       console.log(err);
       const message = MessageManager.getInstance();
