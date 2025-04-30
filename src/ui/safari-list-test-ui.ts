@@ -229,19 +229,27 @@ export class SafariListUi extends Ui {
             this.container.setVisible(false);
             this.listContainer.setVisible(false);
             this.scrollContainer.setVisible(false);
-            await this.mode
-              .startMessage(this.npc.reactionScript({ messageType: 'question', talkType: 'action', etc: [`${i18next.t(`menu:overworld_${this.safaris[this.start + this.choice].key}`)}`] }))
-              .then((reuslt) => {
-                if (reuslt) {
-                  console.log(`Move to ${i18next.t(`menu:overworld_${this.start + this.choice}`)}`);
+
+            const overworld = this.safaris[this.start + this.choice].key;
+
+            await this.mode.startMessage(this.npc.reactionScript({ messageType: 'question', talkType: 'action', etc: [`${i18next.t(`menu:overworld_${overworld}`)}`] })).then(async (reuslt) => {
+              if (reuslt) {
+                const res = (await this.mode.useTicket(overworld)) as any;
+                if (res === 'not-enough-ticket') {
+                  await this.mode.startMessage(this.npc.reactionScript({ messageType: 'talk', talkType: 'reject', etc: null }));
+                  this.mode.popUiStack();
+                  this.mode.setOverworldUiBlock(false);
                 } else {
-                  this.container.setVisible(true);
-                  this.listContainer.setVisible(true);
-                  this.scrollContainer.setVisible(true);
-                  this.handleKeyInput();
+                  console.log(`Move to ${i18next.t(`menu:overworld_${this.start + this.choice}`)}`);
+                  this.mode.setOverworldUiBlock(true);
                 }
-              });
-            this.mode.setOverworldUiBlock(true);
+              } else {
+                this.container.setVisible(true);
+                this.listContainer.setVisible(true);
+                this.scrollContainer.setVisible(true);
+                this.handleKeyInput();
+              }
+            });
             break;
           case KEY.CANCEL:
             playSound(this.scene, AUDIO.BAG_CLOSE);
