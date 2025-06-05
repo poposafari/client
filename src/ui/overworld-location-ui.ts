@@ -3,7 +3,7 @@ import { DEPTH } from '../enums/depth';
 import { EASE } from '../enums/ease';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
 

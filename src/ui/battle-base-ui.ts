@@ -3,7 +3,7 @@ import { getSafari } from '../data/overworld';
 import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, getTextStyle, Ui } from './ui';

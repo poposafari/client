@@ -9,7 +9,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { KEY } from '../enums/key';
 import { KeyboardManager } from '../managers';
 import { BATTLE_STATUS } from '../enums/battle-status';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { BattleUi } from './battle-ui';
 import { BattleMenuDescUi } from './battle-menu-desc-ui';
 

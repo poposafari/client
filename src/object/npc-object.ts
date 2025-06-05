@@ -75,25 +75,27 @@ export class NpcObject extends BaseObject {
   reactionScript(option?: ScriptFilterOption): Message[] {
     let ret: Message[] = [];
 
-    let scripts = i18next.t(`npc:${this.key}.scripts`, { returnObjects: true }) as string[];
+    // let scripts = i18next.t(`npc:${this.key}.scripts`, { returnObjects: true }) as string[];
 
-    if (option) scripts = this.filterScripts(scripts, option.messageType, option.talkType);
+    // if (option) scripts = this.filterScripts(scripts, option.messageType, option.talkType);
 
-    for (const script of scripts) {
-      ret.push({
-        type: 'default',
-        format: option && option.messageType ? option.messageType : 'talk',
-        content: option && option.etc ? replacePercentSymbol(script, option.etc) : script,
-      });
-    }
+    // for (const script of scripts) {
+    //   ret.push({
+    //     type: 'default',
+    //     format: option && option.messageType ? option.messageType : 'talk',
+    //     content: option && option.etc ? replacePercentSymbol(script, option.etc) : script,
+    //     speed: 10,
+    //     end:''
+    //   });
+    // }
 
-    if (ret.length === 0) {
-      ret.push({
-        type: 'sys',
-        format: 'talk',
-        content: 'Error!',
-      });
-    }
+    // if (ret.length === 0) {
+    //   ret.push({
+    //     type: 'sys',
+    //     format: 'talk',
+    //     content: 'Error!',
+    //   });
+    // }
 
     return ret;
   }

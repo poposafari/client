@@ -1,5 +1,5 @@
 import { MessageManager } from '../managers';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Ui } from './ui';
 

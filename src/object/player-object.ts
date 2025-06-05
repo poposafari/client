@@ -1,4 +1,7 @@
+import { eventBus } from '../core/event-bus';
 import { DIRECTION } from '../enums/direction';
+import { EASE } from '../enums/ease';
+import { EVENT } from '../enums/event';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
@@ -7,6 +10,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
+import { MAP_SCALE, TILE_SIZE } from './base-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
@@ -31,6 +35,7 @@ export class PlayerObject extends MovableObject {
   move(key: KEY) {
     const animationKey = this.getAnimation(key);
     this.movementStop = false;
+    const currentTile = this.getTilePos();
 
     switch (key) {
       case KEY.UP:
@@ -187,6 +192,9 @@ export class PlayerObject extends MovableObject {
       case PLAYER_STATUS.SURF:
         this.currentStatus = PLAYER_STATUS.SURF;
         break;
+      case PLAYER_STATUS.TALK:
+        this.currentStatus = PLAYER_STATUS.TALK;
+        break;
     }
     this.setMovement();
   }
@@ -272,5 +280,49 @@ export class PlayerObject extends MovableObject {
 
   private getPlayerData() {
     return PlayerInfo.getInstance();
+  }
+
+  jump() {
+    if (this.isMoving() || !this.isMovementFinish()) return;
+
+    const direction = this.getLastDirection();
+    const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
+
+    const tileSize = TILE_SIZE * MAP_SCALE;
+    const sprite = this.getSprite();
+    const scene = this.getScene();
+    const currentPos = this.getPosition();
+    const targetPos = currentPos.clone().add(directionVector.clone().scale(tileSize * 2));
+    const jumpHeight = 40;
+
+    scene.tweens.add({
+      targets: sprite,
+      y: currentPos.y - jumpHeight,
+      duration: 200,
+      ease: EASE.SINE_EASEIN,
+      onComplete: () => {
+        scene.tweens.add({
+          targets: sprite,
+          x: targetPos.x,
+          y: targetPos.y - jumpHeight,
+          duration: 200,
+          ease: EASE.LINEAR,
+          onComplete: () => {
+            scene.tweens.add({
+              targets: sprite,
+              y: targetPos.y,
+              duration: 100,
+              ease: EASE.SINE_EASEOUT,
+              onComplete: () => {
+                eventBus.emit(EVENT.SURF_ON);
+                this.setTilePos(this.getTilePos().add(directionVector.clone().scale(2)));
+                this.setPosition(targetPos);
+                this.updateObjectData();
+              },
+            });
+          },
+        });
+      },
+    });
   }
 }

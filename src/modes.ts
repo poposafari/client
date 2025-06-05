@@ -1,78 +1,30 @@
-import { HttpStatusCode } from 'axios';
 import i18next from 'i18next';
+import { autoLoginApi, buyItemApi, deleteAccountApi, getIngameApi, ingameRegisterApi, loginApi, moveToOverworldApi, receiveAvailableTicketApi, registerApi } from './api';
+import { eventBus } from './core/event-bus';
+import { EVENT } from './enums/event';
 import { MODE } from './enums/mode';
-import { Account, Message, MyPokemon } from './interface/sys';
-import { MessageManager, ModeManager } from './managers';
+import { UiHandler } from './handlers/ui-handler';
 import { Mode } from './mode';
+import { PlayerInfo } from './storage/player-info';
+import { OverworldUi } from './uis/overworld/overworld-ui';
+import { playSound, runFadeEffect } from './uis/ui';
+import { replacePercentSymbol } from './utils/string-util';
+import { Bag } from './storage/bag';
+import { UI } from './enums/ui';
+import { Message, PlayerAvatar, PlayerGender } from './types';
 import { InGameScene } from './scenes/ingame-scene';
-import { OverworldUi } from './ui/overworld-test-ui';
-import { OverworldMenuUi } from './ui/overworld-menu-ui';
-import { Overworld000 } from './ui/overworld-000';
-import { OVERWORLD_TYPE } from './enums/overworld-type';
-import { Overworld011 } from './ui/overworld-011';
-import { Bag, ItemCategory } from './storage/bag';
-import { OverworldItemSlotUi } from './ui/overworld-itemslot-ui';
-import { Location, PlayerInfo, PokeBoxBG } from './storage/player-info';
-import { OverworldHUDUi } from './ui/overworld-hud-ui';
-import { OverworldInfo } from './storage/overworld-info';
-import { BattleUi } from './ui/battle-ui';
-import { PokeboxUi } from './ui/pokebox-ui';
-import { Box } from './storage/box';
-import { BagUi } from './ui/bag-ui';
-import { LoginUi } from './ui/login-ui';
-import { RegisterUi } from './ui/register-ui';
-import {
-  autoLoginApi,
-  buyItemApi,
-  deleteAccountApi,
-  getAllItemsApi,
-  getAvailableTicketApi,
-  getItemsApi,
-  getPokeboxApi,
-  ingameApi,
-  loginApi,
-  logoutApi,
-  moveToPokemonApi,
-  MoveToPokemonReq,
-  nicknameApi,
-  receiveAvailableTicketApi,
-  registerApi,
-  useTicketApi,
-} from './utils/axios';
-import { TitleUi } from './ui/title-ui';
-import { NewGameUi } from './ui/newgame-ui';
-import { runFadeEffect } from './ui/ui';
-import { checkOverworldType } from './data/overworld';
 import { AUDIO } from './enums/audio';
-import { OverworldLocationUi } from './ui/overworld-location-ui';
-import { ShopUi } from './ui/shop-test-ui';
-import { getAllItems } from './data/items';
-import { SafariListUi } from './ui/safari-list-test-ui';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  init(): void {
-    for (const ui of this.uis) {
-      ui.setup();
-    }
-  }
-
   async enter(): Promise<void> {
-    await autoLoginApi()
-      .then(async () => {
-        const res = await ingameApi();
-        if (res) {
-          this.changeMode(MODE.TITLE);
-        } else {
-          this.changeMode(MODE.NEWGAME);
-        }
-      })
-      .catch((err: any) => {
-        this.changeMode(MODE.LOGIN);
-      });
+    const result = await autoLoginApi();
+    if (result && result.data) {
+      eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE, result.data);
+    }
   }
 
   exit(): void {}
@@ -80,102 +32,117 @@ export class NoneMode extends Mode {
   update(): void {}
 }
 
-export class LoginMode extends Mode {
+export class MessageMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  init(): void {
-    this.uis.push(new LoginUi(this.scene, this));
-
-    for (const ui of this.uis) {
-      ui.setup();
-    }
-  }
-
-  enter(): void {
-    this.scene.sound.get(AUDIO.MENU).play();
-    this.addUiStackOverlap('LoginUi');
+  enter(data?: Message[]): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.MESSAGE, data);
   }
 
   exit(): void {
-    for (const ui of this.uiStack) {
-      ui.clean();
-    }
-    this.cleanUiStack();
+    eventBus.emit(EVENT.POP_UI);
   }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class ConnectMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  enter(data?: any): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.CONNECT);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class LoginMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+
+    eventBus.on(EVENT.SUBMIT_LOGIN, async (username: string, pw: string) => {
+      const result = await loginApi({ username: username, password: pw });
+      if (result) {
+        eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE);
+      }
+    });
+  }
+
+  enter(): void {
+    eventBus.emit(EVENT.CHANGE_UI, UI.LOGIN);
+  }
+
+  exit(): void {}
 
   update(): void {}
-
-  changeRegisterMode() {
-    this.changeMode(MODE.REGISTER);
-  }
-
-  async submit(username: string, password: string): Promise<void> {
-    let res;
-    try {
-      res = await loginApi({ username, password });
-    } catch (err: any) {
-      const status = err.status as HttpStatusCode;
-      const message = MessageManager.getInstance();
-      if (status === 404) {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:accountEmpty3') }]);
-      } else {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-      }
-    } finally {
-      if (res) this.changeMode(MODE.TITLE);
-    }
-  }
 }
 
 export class RegisterMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
-  }
 
-  init(): void {
-    this.uis.push(new RegisterUi(this.scene, this));
-
-    for (const ui of this.uis) {
-      ui.setup();
-    }
+    eventBus.on(EVENT.SUBMIT_REGISTER, async (username: string, pw: string) => {
+      const result = await registerApi({ username: username, password: pw });
+      if (result) {
+        eventBus.emit(EVENT.CHANGE_MODE, MODE.WELCOME);
+      }
+    });
   }
 
   enter(): void {
-    this.scene.sound.get(AUDIO.MENU).play();
-    this.addUiStackOverlap('RegisterUi');
+    eventBus.emit(EVENT.CHANGE_UI, UI.REGISTER);
+  }
+
+  exit(): void {}
+
+  update(): void {}
+}
+
+export class WelcomeMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  enter(): void {
+    eventBus.emit(EVENT.CHANGE_UI, UI.WELCOME);
   }
 
   exit(): void {
-    for (const ui of this.uiStack) {
-      ui.clean();
-    }
-    this.cleanUiStack();
+    eventBus.emit(EVENT.POP_UI);
   }
 
   update(): void {}
+}
 
-  changeLoginMode() {
-    this.changeMode(MODE.LOGIN);
-  }
+export class NewgameMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
 
-  async submit(username: string, password: string): Promise<void> {
-    let res;
-    try {
-      res = await registerApi({ username, password });
-    } catch (err: any) {
-      const status = err.status as HttpStatusCode;
-      const message = MessageManager.getInstance();
-      if (status === 409) {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError4') }]);
-      } else {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
+    eventBus.on(EVENT.SUBMIT_INGAME, async (nickname: string, gender: PlayerGender, avatar: PlayerAvatar) => {
+      const result = await ingameRegisterApi({ nickname: nickname, gender: gender, avatar: avatar });
+      if (result) {
+        eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE, result.data);
       }
-    } finally {
-      if (res) this.changeMode(MODE.NEWGAME);
-    }
+    });
   }
+
+  enter(): void {
+    eventBus.emit(EVENT.CHANGE_UI, UI.NEWGAME);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(): void {}
 }
 
 export class TitleMode extends Mode {
@@ -183,429 +150,235 @@ export class TitleMode extends Mode {
     super(scene);
   }
 
-  init(): void {
-    this.uis.push(new TitleUi(this.scene, this));
+  async enter(data: any): Promise<void> {
+    let playerInfo;
 
-    for (const ui of this.uis) {
-      ui.setup();
+    if (data) {
+      playerInfo = data;
+    } else {
+      const result = await getIngameApi();
+      playerInfo = result?.data;
     }
+
+    PlayerInfo.getInstance().setup(playerInfo);
+    Bag.getInstance().setItems(playerInfo.items);
+
+    eventBus.emit(EVENT.CHANGE_UI, UI.TITLE);
   }
 
-  async enter(): Promise<void> {
-    try {
-      const res = await ingameApi();
-      PlayerInfo.getInstance().setup(res);
-      runFadeEffect(this.scene, 500, 'in');
-      this.addUiStackOverlap('TitleUi');
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
-    }
-  }
-
-  exit(): void {
-    for (const ui of this.uiStack) {
-      ui.clean();
-    }
-    this.cleanUiStack();
-  }
-
+  exit(): void {}
   update(): void {}
-
-  changeLoginMode() {
-    this.changeMode(MODE.LOGIN);
-  }
-
-  async logout() {
-    await logoutApi();
-    this.changeLoginMode();
-  }
-
-  async deleteAccount() {
-    const message = MessageManager.getInstance();
-    try {
-      await deleteAccountApi();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:accountDelete4') }]);
-      await this.logout();
-    } catch (err: any) {
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
-    }
-  }
-
-  changeOverworldMode() {
-    this.changeMode(MODE.OVERWORLD);
-  }
 }
 
-export class NewGameMode extends Mode {
+export class AccountDeleteMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  init(): void {
-    this.uis.push(new NewGameUi(this.scene, this));
-
-    for (const ui of this.uis) {
-      ui.setup();
-    }
+  enter(data: any): void {
+    eventBus.emit(EVENT.CHANGE_UI, UI.ACCOUNT_DELETE);
   }
 
-  enter(): void {
-    this.addUiStackOverlap('NewGameUi');
-  }
-
-  exit(): void {
-    for (const ui of this.uiStack) {
-      ui.clean();
-    }
-    this.cleanUiStack();
-  }
+  exit(): void {}
 
   update(): void {}
+}
 
-  async submit(nickname: string, gender: 'boy' | 'girl', avatar: '1' | '2' | '3' | '4') {
-    let res;
-    try {
-      res = await nicknameApi({ nickname, gender, avatar });
-    } catch (err: any) {
-      const status = err.status as HttpStatusCode;
-      const message = MessageManager.getInstance();
-      if (status === 409) {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:nicknameError3') }]);
-      } else {
-        await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:unexpectedError') }]);
+export class ConnectAccountDeleteMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+
+    eventBus.on(EVENT.ACCOUNT_DELETE, async () => {
+      const result = await deleteAccountApi();
+
+      if (result) {
+        eventBus.emit(EVENT.POP_MODE);
+        eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'talk', content: i18next.t('message:deleteAccount4'), speed: 10, end: EVENT.MOVETO_LOGIN_MODE }]);
       }
-    } finally {
-      console.log(res);
-      if (res) {
-        this.changeMode(MODE.TITLE);
-      }
-    }
+    });
   }
+
+  enter(data: any): void {
+    eventBus.emit(EVENT.CHANGE_UI, UI.CONNECT_ACCOUNT_DELETE);
+  }
+
+  exit(): void {}
+
+  update(): void {}
 }
 
 export class OverworldMode extends Mode {
-  private currentOverworldUisIndex!: number;
-  private overworldUiBlock: boolean;
-
   constructor(scene: InGameScene) {
     super(scene);
 
-    this.overworldUiBlock = false;
+    eventBus.on(EVENT.RECEIVE_AVAILABLE_TICKET, async () => {
+      const result = await receiveAvailableTicketApi();
+
+      if (result) {
+        playSound(this.scene, AUDIO.GET_0);
+        eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
+          { type: 'sys', format: 'talk', content: replacePercentSymbol(i18next.t('message:receiveTicket'), [PlayerInfo.getInstance().getNickname()]), speed: 80 },
+          {
+            type: 'sys',
+            format: 'talk',
+            content: replacePercentSymbol(i18next.t('message:putPocket'), [PlayerInfo.getInstance().getNickname(), i18next.t('item:030.name'), i18next.t('menu:etc')]),
+            speed: 10,
+            end: EVENT.FINISH_TALK,
+          },
+        ]);
+      }
+    });
   }
 
-  init(): void {
-    this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
-    // this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
-    this.uis.push(new OverworldHUDUi(this.scene, this));
-    this.uis.push(new OverworldMenuUi(this.scene, this));
-    this.uis.push(new BagUi(this.scene, this));
-    this.uis.push(new PokeboxUi(this.scene, this));
-    this.uis.push(new ShopUi(this.scene, this));
-    this.uis.push(new SafariListUi(this.scene, this));
+  enter(data: any): void {
+    const overworld = data;
 
-    for (const ui of this.uis) {
-      ui.setup();
-    }
+    if (!overworld) console.error('not found overworld key on OverworldConnectingMode');
 
-    Bag.getInstance();
+    runFadeEffect(this.scene, 700, 'in');
+
+    eventBus.emit(EVENT.CHANGE_UI, UI.OVERWORLD_HUD);
+    eventBus.emit(EVENT.OVERLAP_UI, `Overworld${overworld}`);
+
+    eventBus.emit(EVENT.HUD_SHOW_OVERWORLD);
   }
 
-  async enter(): Promise<void> {
-    await this.getBag();
-
-    this.addUiStackOverlap('OverworldHUDUi');
-    this.updateOverworld(PlayerInfo.getInstance().getLocation());
-
-    this.updateItemSlotUi();
-    this.updatePartySlotUi();
-  }
-
-  exit(): void {
-    for (const ui of this.uiStack) {
-      ui.clean();
-    }
-    this.cleanUiStack();
-  }
+  exit(): void {}
 
   update(time: number, delta: number): void {
-    if (this.uiStack.length <= 1) return;
+    eventBus.emit(EVENT.HUD_LOCATION_UPDATE);
+    eventBus.emit(EVENT.HUD_CANDY_UPDATE);
+    eventBus.emit(EVENT.PLAYER_MOVEMENT_UPDATE, delta);
 
-    this.updateHUDUi();
-
-    if (this.overworldUiBlock) return;
-
-    const overworld = this.uiStack[this.currentOverworldUisIndex];
-    if (overworld instanceof OverworldUi) overworld.update(time, delta);
-  }
-
-  updateOverworld(key: string) {
-    const playerData = PlayerInfo.getInstance();
-    const overworldKey = key;
-    const overworldType = checkOverworldType(playerData.getLocation());
-
-    try {
-      if (overworldType === OVERWORLD_TYPE.PLAZA) {
-        //network plaza info.
-      } else if (overworldType === OVERWORLD_TYPE.SAFARI) {
-        //network safari info.
-      } else {
-        //network error.
-      }
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      const overworld = this.getUiStackTop();
-      if (overworld instanceof OverworldUi) {
-        overworld.clean();
-        this.popUiStack();
-      }
-      if (overworld instanceof OverworldHUDUi) {
-        overworld.showLocationUi(overworldKey);
-      }
-      this.addUiStackOverlap(`Overworld${overworldKey}`);
-      this.currentOverworldUisIndex = this.uiStack.length - 1;
-    }
-  }
-
-  setOverworldUiBlock(onoff: boolean) {
-    onoff ? (this.overworldUiBlock = true) : (this.overworldUiBlock = false);
-  }
-
-  updateItemSlotUi() {
-    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
-    if (hud instanceof OverworldHUDUi) hud.updateItemSlotUi();
-  }
-
-  updatePartySlotUi() {
-    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
-    if (hud instanceof OverworldHUDUi) hud.updatePokemonSlotUi();
-  }
-
-  updateHUDUi() {
-    const hud = this.uiStack[this.currentOverworldUisIndex - 1];
-    if (hud instanceof OverworldHUDUi) hud.updateInfoUi();
-  }
-
-  async startMessage(data: Message[], speed: number = 10): Promise<boolean> {
-    const overworld = this.getUiStackTop();
-
-    this.setOverworldUiBlock(true);
-
-    const message = MessageManager.getInstance();
-    const ret = await message.show(overworld, data, speed);
-
-    this.setOverworldUiBlock(false);
-
-    return ret;
-  }
-
-  async getBag(category?: ItemCategory) {
-    const bag = Bag.getInstance();
-
-    try {
-      let res;
-      if (category) res = await getItemsApi({ category: category });
-      else res = await getAllItemsApi();
-      bag.setup(res);
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-  }
-
-  async getPokebox(boxNumber: number) {
-    const box = Box.getInstance();
-
-    try {
-      const res = await getPokeboxApi({ box: boxNumber });
-      box.setup(res as any);
-      return res;
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-  }
-
-  async moveToPokemon(data: MoveToPokemonReq) {
-    const box = Box.getInstance();
-
-    try {
-      const res = await moveToPokemonApi(data);
-      box.setup(res as any);
-      return res;
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-  }
-
-  async getAvailableTicket() {
-    let res;
-
-    try {
-      res = await getAvailableTicketApi();
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-
-    return res;
-  }
-
-  async receiveAvailableTicket() {
-    let res;
-
-    try {
-      res = await receiveAvailableTicketApi();
-    } catch (err: any) {
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-
-    return res;
-  }
-
-  async buyItem(item: string, stock: number) {
-    let res;
-
-    try {
-      res = await buyItemApi({ item: item, stock: stock });
-    } catch (err: any) {
-      console.log(err);
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-
-    return res;
-  }
-
-  async useTicket(overworld: string) {
-    let res;
-
-    try {
-      res = await useTicketApi({ overworld: overworld });
-    } catch (err: any) {
-      console.log(err);
-      const message = MessageManager.getInstance();
-      await message.show(this.getUiStackTop(), [{ type: 'sys', format: 'talk', content: i18next.t('message:registerError5') }]);
-    }
-
-    return res;
+    // console.log('----------CURRENT_STACK-----------');
+    // eventBus.emit(EVENT.SHOW_MODE_STACK);
+    // eventBus.emit(EVENT.SHOW_UI_STACK);
   }
 }
 
-// export class OverworldMode extends Mode {
-//   private currentOverworldUisIndex!: number;
+export class OverworldConnectingMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
 
-//   constructor(scene: InGameScene) {
-//     super(scene);
-//   }
+  async enter(data?: any): Promise<void> {
+    const overworld = data;
 
-//   init(): void {
-//     this.uis.push(new Overworld000(this.scene, this, OVERWORLD_TYPE.PLAZA));
-//     this.uis.push(new Overworld011(this.scene, this, OVERWORLD_TYPE.SAFARI));
-//     this.uis.push(new OverworldHUDUi(this.scene, this));
-//     this.uis.push(new OverworldMenuUi(this.scene, this));
-//     this.uis.push(new OverworldItemSlotUi(this.scene, this));
-//     this.uis.push(new SafariListUi(this.scene, this));
-//     this.uis.push(new BagUi(this.scene, this));
-//     this.uis.push(new BattleUi(this.scene, this));
-//     this.uis.push(new PokeBoxUi(this.scene, this));
-//     this.uis.push(new ShopUi(this.scene, this));
+    if (!overworld) console.error('not found overworld key on OverworldConnectingMode');
 
-//     for (const ui of this.uis) {
-//       ui.setup();
-//     }
-//   }
+    eventBus.emit(EVENT.CHANGE_UI, UI.OVERWORLD_CONNECTING);
 
-//   enter(data?: any): void {
-//     const playerData = PlayerInfo.getInstance();
-//     const overworldKey = playerData.getLocation();
-//     const overworldType = checkOverworldType(playerData.getLocation());
+    const result = await moveToOverworldApi({ overworld: overworld });
+    if (result && result.data) {
+      PlayerInfo.getInstance().setX(result.data.entryX);
+      PlayerInfo.getInstance().setY(result.data.entryY);
+      PlayerInfo.getInstance().setLocation(overworld);
 
-//     try {
-//       if (overworldType === OVERWORLD_TYPE.SAFARI) {
-//       } else if (overworldType === OVERWORLD_TYPE.PLAZA) {
-//       } else {
-//         throw new Error(`Invalid overworld type: ${overworldType}`);
-//       }
+      eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD, overworld);
+    }
+  }
 
-//       if (playerData.getLocation()) this.addUiStackOverlap('OverworldHUDUi', data);
-//       this.addUiStackOverlap(`Overworld${overworldKey}`, data);
+  exit(): void {}
 
-//       this.currentOverworldUisIndex = 1;
-//     } catch (err: any) {}
-//   }
+  update(time?: number, delta?: number): void {}
+}
 
-//   exit(): void {
-//     for (const ui of this.uiStack) {
-//       ui.clean();
-//     }
-//     this.cleanUiStack();
-//   }
+export class OverworldMenuMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
 
-//   update(time: number, delta: number): void {
-//     const overworld = this.uiStack[this.currentOverworldUisIndex];
-//     overworld.update(time, delta);
+  enter(data?: any): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.OVERWORLD_MENU);
+  }
 
-//     //TODO: 적절한 제어? overworldHUDUi가 들어올 경우, update가 실행되버린다.
-//   }
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
 
-//   updateOverworldInfoUi() {
-//     const ui = this.getUiType('OverworldHUDUi');
-//     if (ui instanceof OverworldHUDUi) {
-//       ui.updateOverworldInfoUi();
-//     }
-//   }
+  update(time?: number, delta?: number): void {}
+}
 
-//   updateOverworldLocationUi(location: Location) {
-//     const ui = this.getUiType('OverworldHUDUi');
-//     if (ui instanceof OverworldHUDUi) {
-//       ui.updateOverworldLocationUi(location);
-//     }
-//   }
+export class BagMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
 
-//   updateOverworld(key: string) {
-//     const overworld = this.getUiStackTop() as OverworldUi;
+  enter(data?: any): void {
+    runFadeEffect(this.scene, 700, 'in');
 
-//     overworld.clean();
-//     this.popUiStack();
+    eventBus.emit(EVENT.OVERLAP_UI, UI.BAG);
+  }
 
-//     this.addUiStackOverlap(`Overworld${key}`);
-//   }
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
 
-//   changeTitleMode() {
-//     this.changeMode(MODE.TITLE);
-//   }
+  update(time?: number, delta?: number): void {}
+}
 
-//   moveToVillage() {
-//     this.getUiStackTop().clean();
-//     this.popUiStack();
-//     this.addUiStackOverlap(`Overworld000`, { x: 7, y: 8 });
-//   }
+export class ShopMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
 
-//   async startMessage(data: Message[]) {
-//     const overworld = this.getUiStackTop();
+  enter(data?: any): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.SHOP);
+  }
 
-//     this.pauseOverworldSystem(true);
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
 
-//     const message = MessageManager.getInstance();
-//     const ret = await message.show(overworld, data);
+  update(time?: number, delta?: number): void {}
+}
 
-//     this.pauseOverworldSystem(false);
+export class PokeboxMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
 
-//     return ret;
-//   }
+  enter(data?: any): void {
+    runFadeEffect(this.scene, 700, 'in');
 
-//   pauseOverworldSystem(onoff: boolean) {
-//     const overworldHUDUi = this.getUiType('OverworldHUDUi');
-//     const overworld = this.getUiStackTop() as OverworldUi;
+    eventBus.emit(EVENT.OVERLAP_UI, UI.POKEBOX);
+  }
 
-//     if (overworldHUDUi && overworld) {
-//       overworldHUDUi.pause(onoff ? true : false);
-//       overworld.pause(onoff ? true : false);
-//     }
-//   }
-// }
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class SafariListMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  enter(data?: any): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.SAFARI_LIST);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class HiddenMoveMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  enter(data?: any): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.HIDDEN_MOVE);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}

@@ -31,6 +31,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_6, 'ui/windows', TEXTURE.WINDOW_6);
     this.loadImage(TEXTURE.WINDOW_7, 'ui/windows', TEXTURE.WINDOW_7);
     this.loadImage(TEXTURE.WINDOW_8, 'ui/windows', TEXTURE.WINDOW_8);
+    this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
+    this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
+    this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -100,6 +103,16 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.GIRL_2_BACK, 'ui/character/back', 'girl_2', ANIMATION.GIRL_2_BACK);
     this.loadAtlas(TEXTURE.GIRL_3_BACK, 'ui/character/back', 'girl_3', ANIMATION.GIRL_3_BACK);
     this.loadAtlas(TEXTURE.GIRL_4_BACK, 'ui/character/back', 'girl_4', ANIMATION.GIRL_4_BACK);
+
+    this.loadAtlas(TEXTURE.BOY_1_HM, 'ui/character/hm', 'boy_1', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.BOY_2_HM, 'ui/character/hm', 'boy_2', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.BOY_3_HM, 'ui/character/hm', 'boy_3', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.BOY_4_HM, 'ui/character/hm', 'boy_4', ANIMATION.PLAYER_HM);
+
+    this.loadAtlas(TEXTURE.GIRL_1_HM, 'ui/character/hm', 'girl_1', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.GIRL_2_HM, 'ui/character/hm', 'girl_2', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.GIRL_3_HM, 'ui/character/hm', 'girl_3', ANIMATION.PLAYER_HM);
+    this.loadAtlas(TEXTURE.GIRL_4_HM, 'ui/character/hm', 'girl_4', ANIMATION.PLAYER_HM);
 
     this.loadImage(TEXTURE.ARROW, 'ui', TEXTURE.ARROW);
 
@@ -198,19 +211,18 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.GOOGLE, 'ui', TEXTURE.GOOGLE);
     this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
 
-    this.loadAudio(AUDIO.MENU, 'audio', AUDIO.MENU, 'wav');
-    this.loadAudio(AUDIO.SELECT, 'audio', AUDIO.SELECT, 'wav');
-    this.loadAudio(AUDIO.OVERWORD_MENU_SELECT, 'audio', AUDIO.OVERWORD_MENU_SELECT, 'ogg');
-    this.loadAudio(AUDIO.OVERWORD_MENU_DECISION, 'audio', AUDIO.OVERWORD_MENU_DECISION, 'ogg');
-    this.loadAudio(AUDIO.OVERWORD_MENU_CLOSE, 'audio', AUDIO.OVERWORD_MENU_CLOSE, 'ogg');
-    this.loadAudio(AUDIO.POKEBOX_ACCESS, 'audio', AUDIO.POKEBOX_ACCESS, 'ogg');
-    this.loadAudio(AUDIO.POKEBOX_CLOSE, 'audio', AUDIO.POKEBOX_CLOSE, 'ogg');
-    this.loadAudio(AUDIO.BAG_CATEGORY, 'audio', AUDIO.BAG_CATEGORY, 'wav');
-    this.loadAudio(AUDIO.BAG_CLOSE, 'audio', AUDIO.BAG_CLOSE, 'wav');
-    this.loadAudio(AUDIO.BAG_DECISON, 'audio', AUDIO.BAG_DECISON, 'wav');
-    this.loadAudio(AUDIO.BAG_SELECT, 'audio', AUDIO.BAG_SELECT, 'wav');
-    this.loadAudio(AUDIO.REGISTER, 'audio', AUDIO.REGISTER, 'ogg');
-    this.loadAudio(AUDIO.ITEM_GET, 'audio', AUDIO.ITEM_GET, 'ogg');
+    this.loadImage(TEXTURE.BG_HIDDEN_MOVE, 'ui', TEXTURE.BG_HIDDEN_MOVE);
+    this.loadImage(TEXTURE.PARTICLE_HM_0, 'ui/particle', TEXTURE.PARTICLE_HM_0);
+    this.loadImage(TEXTURE.PARTICLE_HM_1, 'ui/particle', TEXTURE.PARTICLE_HM_1);
+
+    this.loadAudio(AUDIO.SELECT_0, 'audio', AUDIO.SELECT_0, 'ogg');
+    this.loadAudio(AUDIO.SELECT_1, 'audio', AUDIO.SELECT_1, 'ogg');
+    this.loadAudio(AUDIO.SELECT_2, 'audio', AUDIO.SELECT_2, 'wav');
+    this.loadAudio(AUDIO.OPEN_0, 'audio', AUDIO.OPEN_0, 'wav');
+    this.loadAudio(AUDIO.OPEN_1, 'audio', AUDIO.OPEN_1, 'ogg');
+    this.loadAudio(AUDIO.CANCEL_0, 'audio', AUDIO.CANCEL_0, 'ogg');
+    this.loadAudio(AUDIO.CANCEL_1, 'audio', AUDIO.CANCEL_1, 'ogg');
+    this.loadAudio(AUDIO.GET_0, 'audio', AUDIO.GET_0, 'ogg');
     this.loadAudio(AUDIO.BUY, 'audio', AUDIO.BUY, 'ogg');
 
     const maxBox = 15;

@@ -4,7 +4,7 @@ import { OBJECT } from '../enums/object-type';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addTextBackground, createSprite } from '../ui/ui';
+import { addImage, addTextBackground, createSprite } from '../uis/ui';
 
 export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;

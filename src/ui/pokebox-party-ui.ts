@@ -3,7 +3,7 @@ import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { MyPokemon } from '../storage/box';
 import { MAX_PARTY_SLOT, PlayerInfo } from '../storage/player-info';

@@ -1,4 +1,4 @@
-export const enum DIRECTION {
+export enum DIRECTION {
   NONE = 'none',
   UP = 'up',
   DOWN = 'down',

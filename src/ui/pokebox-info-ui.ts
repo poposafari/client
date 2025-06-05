@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PokeboxUi } from './pokebox-ui';
 import { addImage, addText, getTextShadow, getTextStyle, Ui } from './ui';

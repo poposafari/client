@@ -18,6 +18,7 @@ interface MovementQueue {
 export class MovableObject extends BaseObject {
   private step: number = 0;
   private stepSpeed: number = 2;
+  private baseSpeed: number = 60;
   protected currentDirection: DIRECTION = DIRECTION.NONE;
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private tileSizePixelsWalked: number = 0;
@@ -68,6 +69,7 @@ export class MovableObject extends BaseObject {
   }
 
   private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number): boolean {
+    // console.log(`target : ${this.tileSizePixelsWalked + pixelsToWalkThisUpdate}, TILE_SIZE*MAP_SCALE : ${TILE_SIZE * MAP_SCALE}`);
     return this.tileSizePixelsWalked + pixelsToWalkThisUpdate >= TILE_SIZE * MAP_SCALE;
   }
 
@@ -101,7 +103,7 @@ export class MovableObject extends BaseObject {
     this.movementDirectionQueue.push({ direction: direction, animationKey: animationKey });
   }
 
-  update(delta?: number) {
+  update(delta: number) {
     if (this.movementStop) return;
 
     if (this.movementFinish && this.movementDirectionQueue.length === 0) {
@@ -112,7 +114,11 @@ export class MovableObject extends BaseObject {
       const temp = this.movementDirectionQueue.shift();
       this.process(temp!.direction, temp!.animationKey);
     }
-    if (this.isMoving()) this.moveObject();
+    if (this.isMoving()) {
+      // this.pixelsToWalkThisUpdate = (this.baseSpeed * delta * this.stepSpeed) / 1000;
+      Math.floor(this.pixelsToWalkThisUpdate);
+      this.moveObject();
+    }
   }
 
   protected standStop(direction: DIRECTION) {

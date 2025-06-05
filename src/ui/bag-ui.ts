@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, createSprite, playSound, runFadeEffect, Ui } from './ui';
 import { TEXTURE } from '../enums/texture';

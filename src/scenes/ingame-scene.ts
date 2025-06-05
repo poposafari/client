@@ -1,21 +1,63 @@
 import { npcData } from '../data/npc';
 import { PokemonData } from '../data/pokemon';
 import { ANIMATION } from '../enums/animation';
-import { AUDIO } from '../enums/audio';
 import { MODE } from '../enums/mode';
 import { TEXTURE } from '../enums/texture';
-import { KeyboardManager, MessageManager, ModeManager } from '../managers';
+import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { ModeHandler } from '../handlers/mode-handler';
+import { UiHandler } from '../handlers/ui-handler';
+import {
+  AccountDeleteMode,
+  BagMode,
+  ConnectAccountDeleteMode,
+  ConnectMode,
+  HiddenMoveMode,
+  LoginMode,
+  MessageMode,
+  NewgameMode,
+  NoneMode,
+  OverworldConnectingMode,
+  OverworldMenuMode,
+  OverworldMode,
+  PokeboxMode,
+  RegisterMode,
+  SafariListMode,
+  ShopMode,
+  TitleMode,
+  WelcomeMode,
+} from '../modes';
 import { Bag } from '../storage/bag';
 import { Box } from '../storage/box';
 import { PlayerInfo } from '../storage/player-info';
-import { createSpriteAnimation, getSpriteFrames } from '../ui/ui';
+import { OverworldHUDUi, OverworldOverlayUi } from '../uis/overworld/overworld-hud-ui';
+import { AccountDeleteUi } from '../uis/account-delete-ui';
+import { ConnectUi } from '../uis/connect-ui';
+import { LoginUi } from '../uis/login-ui';
+import { MessageUi } from '../uis/message-ui';
+import { NewgameUi } from '../uis/newgame-ui';
+import { OverworldConnectingUi } from '../uis/overworld/overworld-connecting-ui';
+import { RegisterUi } from '../uis/register-ui';
+import { TitleUi } from '../uis/title-ui';
+import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
+import { WelcomeUi } from '../uis/welcome-ui';
 import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
+import { Overworld000 } from '../uis/overworld/overworld-000';
+import { OverworldMenuUi } from '../uis/overworld/overworld-menu-ui';
+import { BagMenuUi, BagRegisterUi, BagUi } from '../uis/bag-ui';
+import { PokeboxUi } from '../uis/pokebox-ui';
+import { ShopUi } from '../uis/shop-ui';
+import { UI } from '../enums/ui';
+import { ConnectAccountDeleteUi } from '../uis/connect-account-delete-ui';
+import { SafariListUi } from '../uis/safari-list-ui';
+import { Overworld011 } from '../uis/overworld/overworld-011';
+import { HiddenMoveUi } from '../uis/hidden-move-ui';
+import { DummyUi } from '../uis/dummy-ui';
 
 export class InGameScene extends BaseScene {
-  private modeManager!: ModeManager;
-  public ui!: Phaser.GameObjects.Container;
+  private uiHandler = new UiHandler();
+  private modeHandler = new ModeHandler();
 
   constructor() {
     super('InGameScene');
@@ -24,27 +66,62 @@ export class InGameScene extends BaseScene {
   create() {
     this.initAnimation();
     this.initAudio();
-    this.initManagers();
     this.initStorage();
 
-    this.modeManager.changeMode(MODE.NONE);
+    const keyboard = KeyboardHandler.getInstance();
+    keyboard.init(this);
+
+    this.uiHandler.register(UI.MESSAGE, new MessageUi(this));
+    this.uiHandler.register(UI.CONNECT, new ConnectUi(this));
+    this.uiHandler.register(UI.LOGIN, new LoginUi(this));
+    this.uiHandler.register(UI.REGISTER, new RegisterUi(this));
+    this.uiHandler.register(UI.WELCOME, new WelcomeUi(this));
+    this.uiHandler.register(UI.NEWGAME, new NewgameUi(this));
+    this.uiHandler.register(UI.TITLE, new TitleUi(this));
+    this.uiHandler.register(UI.ACCOUNT_DELETE, new AccountDeleteUi(this));
+    this.uiHandler.register(UI.CONNECT_ACCOUNT_DELETE, new ConnectAccountDeleteUi(this));
+    this.uiHandler.register(UI.OVERWORLD_HUD, new OverworldHUDUi(this));
+    this.uiHandler.register(UI.OVERWORLD_MENU, new OverworldMenuUi(this));
+    this.uiHandler.register(UI.OVERWORLD_CONNECTING, new OverworldConnectingUi(this));
+    this.uiHandler.register(UI.BAG, new BagUi(this));
+    this.uiHandler.register(UI.BAG_MENU, new BagMenuUi(this));
+    this.uiHandler.register(UI.BAG_REGISTER, new BagRegisterUi(this));
+    this.uiHandler.register(UI.SHOP, new ShopUi(this));
+    this.uiHandler.register(UI.POKEBOX, new PokeboxUi(this));
+    this.uiHandler.register(UI.SAFARI_LIST, new SafariListUi(this));
+    this.uiHandler.register(UI.HIDDEN_MOVE, new HiddenMoveUi(this));
+    this.uiHandler.register(UI.DUMMY, new DummyUi(this));
+    this.uiHandler.register('Overworld000', new Overworld000(this));
+    this.uiHandler.register('Overworld011', new Overworld011(this));
+
+    this.modeHandler.register(MODE.NONE, new NoneMode(this));
+    this.modeHandler.register(MODE.CONNECT, new ConnectMode(this));
+    this.modeHandler.register(MODE.MESSAGE, new MessageMode(this));
+    this.modeHandler.register(MODE.LOGIN, new LoginMode(this));
+    this.modeHandler.register(MODE.REGISTER, new RegisterMode(this));
+    this.modeHandler.register(MODE.WELCOME, new WelcomeMode(this));
+    this.modeHandler.register(MODE.NEWGAME, new NewgameMode(this));
+    this.modeHandler.register(MODE.TITLE, new TitleMode(this));
+    this.modeHandler.register(MODE.ACCOUNT_DELETE, new AccountDeleteMode(this));
+    this.modeHandler.register(MODE.CONNECT_ACCOUNT_DELETE, new ConnectAccountDeleteMode(this));
+    this.modeHandler.register(MODE.OVERWORLD, new OverworldMode(this));
+    this.modeHandler.register(MODE.OVERWORLD_MENU, new OverworldMenuMode(this));
+    this.modeHandler.register(MODE.OVERWORLD_CONNECTING, new OverworldConnectingMode(this));
+    this.modeHandler.register(MODE.BAG, new BagMode(this));
+    this.modeHandler.register(MODE.SHOP, new ShopMode(this));
+    this.modeHandler.register(MODE.POKEBOX, new PokeboxMode(this));
+    this.modeHandler.register(MODE.SAFARI_LIST, new SafariListMode(this));
+    this.modeHandler.register(MODE.HIDDEN_MOVE, new HiddenMoveMode(this));
+
+    this.modeHandler.change(MODE.NONE);
   }
 
   update(time: number, delta: number): void {
-    if (this.modeManager.isOverworldMode()) {
-      this.modeManager.getCurrentMode().update(time, delta);
+    const mode = this.modeHandler.getCurrent();
+
+    if (mode instanceof OverworldMode) {
+      mode.update(time, delta);
     }
-  }
-
-  private initManagers() {
-    this.modeManager = ModeManager.getInstance();
-    this.modeManager.init(this);
-
-    const messageManager = MessageManager.getInstance();
-    messageManager.init(this);
-
-    const keyboardMananger = KeyboardManager.getInstance();
-    keyboardMananger.init(this);
   }
 
   private initStorage() {
@@ -231,18 +308,22 @@ export class InGameScene extends BaseScene {
       const boyMovementTexture = `boy_${i}_movement`;
       const boyRideTexture = `boy_${i}_ride`;
       const boySurfTexture = `boy_${i}_surf`;
+      const boyHiddenMoveTexture = `boy_${i}_hm`;
 
       const girlMovementTexture = `girl_${i}_movement`;
       const girlRideTexture = `girl_${i}_ride`;
       const girlSurfTexture = `girl_${i}_surf`;
+      const girlHiddenMoveTexture = `girl_${i}_hm`;
 
       const movementFramesB = getSpriteFrames(this, boyMovementTexture, ANIMATION.PLAYER_MOVEMENT);
       const rideFramesB = getSpriteFrames(this, boyRideTexture, ANIMATION.PLAYER_RIDE);
       const surfFramesB = getSpriteFrames(this, boySurfTexture, ANIMATION.PLAYER_SURF);
+      const hiddenMoveFramesB = getSpriteFrames(this, boyHiddenMoveTexture, ANIMATION.PLAYER_HM);
 
       const movementFramesG = getSpriteFrames(this, girlMovementTexture, ANIMATION.PLAYER_MOVEMENT);
       const rideFramesG = getSpriteFrames(this, girlRideTexture, ANIMATION.PLAYER_RIDE);
       const surfFramesG = getSpriteFrames(this, girlSurfTexture, ANIMATION.PLAYER_SURF);
+      const hiddenMoveFramesG = getSpriteFrames(this, girlHiddenMoveTexture, ANIMATION.PLAYER_HM);
 
       //boy
       const walkUpB = [
@@ -381,6 +462,8 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_left`, surfLeftB[0]);
       createSpriteAnimation(this, boySurfTexture, `${boySurfTexture}_right`, surfRightB[0]);
 
+      createSpriteAnimation(this, boyHiddenMoveTexture, boyHiddenMoveTexture, hiddenMoveFramesB);
+
       //girl
       const walkUpG = [
         [movementFramesG[1], movementFramesG[0]],
@@ -517,6 +600,8 @@ export class InGameScene extends BaseScene {
       createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_down`, surfDownG[0]);
       createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_left`, surfLeftG[0]);
       createSpriteAnimation(this, girlSurfTexture, `${girlSurfTexture}_right`, surfRightG[0]);
+
+      createSpriteAnimation(this, girlHiddenMoveTexture, girlHiddenMoveTexture, hiddenMoveFramesG);
     }
   }
 
@@ -540,8 +625,5 @@ export class InGameScene extends BaseScene {
     }
   }
 
-  private initAudio() {
-    this.sound.add(AUDIO.MENU).setVolume(0.2);
-    this.sound.add(AUDIO.SELECT).setVolume(0.2);
-  }
+  private initAudio() {}
 }

@@ -34,6 +34,11 @@ const config: Phaser.Types.Core.GameConfig = {
   dom: {
     createContainer: true,
   },
+  fps: {
+    target: 60,
+    min: 60,
+    forceSetTimeOut: false, // true : setTimeout 사용, false : requestAnimationFrame 사용
+  },
   pixelArt: true,
   scene: [LoadingScene, InGameScene],
 };

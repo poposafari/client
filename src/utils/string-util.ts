@@ -54,16 +54,21 @@ export function getPokemonOverworldKey(data: string | null) {
   return '000';
 }
 
-export function getPokemonSpriteKey(pokemon: MyPokemon) {
-  let ret = '000';
+export function changePartyKeyToSpriteKey(key: string) {
+  const split = key.split('_');
+  const rawPokedex = split[0];
+  const rawGender = split[1];
+  const isShiny = isPokedexShiny(rawPokedex);
 
-  const pokedex = pokemon.pokedex;
-  const shiny = pokemon.shiny ? 's' : '';
-  const gender = pokemon.gender;
+  const pokedex = isShiny ? rawPokedex.slice(0, -1) : rawPokedex;
+  const shiny = isShiny ? 's' : '';
+  let gender = 'm';
 
-  ret = `${pokedex}_${gender}${shiny}`;
+  if (rawGender === 'female') {
+    gender = 'f';
+  }
 
-  return ret;
+  return `pokemon_sprite${pokedex}_${gender}${shiny}`;
 }
 
 export function isValidUsername(username: string): boolean {
