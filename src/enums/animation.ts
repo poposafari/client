@@ -43,6 +43,7 @@ export const enum ANIMATION {
   GIRL_2_BACK = 'girl_2_back',
   GIRL_3_BACK = 'girl_3_back',
   GIRL_4_BACK = 'girl_4_back',
+  PLAYER_HM = 'player_hm',
   TYPES = 'types',
   TYPES_1 = 'types_1',
   POKEMON_CALL = 'pokemon_call',

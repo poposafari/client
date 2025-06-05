@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';

@@ -19,16 +19,17 @@ export class PetObject extends MovableObject {
   move(player: PlayerObject) {
     this.movementStop = false;
     this.setMovement(player.getStatus());
-    this.followReady(player.getPosition(), player.isPlayerStop());
+    this.followReady(player);
   }
 
-  followReady(playerPos: Phaser.Math.Vector2, isPlayerStop: boolean) {
-    const currentPos = this.getPosition();
+  followReady(player: PlayerObject) {
+    if (player.isPlayerStop()) return;
 
-    const diffX = playerPos.x - currentPos.x;
-    const diffY = playerPos.y - currentPos.y;
+    const current = this.getTilePos();
+    const playerPos = player.getTilePos();
 
-    if (isPlayerStop) return;
+    const diffX = playerPos.x - current.x;
+    const diffY = playerPos.y - current.y;
 
     if (diffX > 0) {
       this.ready(DIRECTION.RIGHT, this.getAnimation(KEY.RIGHT)!);
@@ -98,3 +99,74 @@ export class PetObject extends MovableObject {
     this.setSpeed(speed!);
   }
 }
+
+// export class PetObject extends MovableObject {
+//   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
+//     super(scene, texture, x, y, map, nickname, overworldInfo, OBJECT.PET);
+//   }
+
+//   tryFollow(player: PlayerObject) {
+//     // if (this.mov()) return;
+
+//     const petTile = this.getTilePos();
+//     const playerTile = player.getTilePos();
+
+//     const dx = playerTile.x - petTile.x;
+//     const dy = playerTile.y - petTile.y;
+
+//     // 이미 붙어 있으면 이동 X
+//     if (Math.abs(dx) + Math.abs(dy) > 1) return;
+
+//     let direction: DIRECTION | null = null;
+//     if (dx === 1) direction = DIRECTION.RIGHT;
+//     else if (dx === -1) direction = DIRECTION.LEFT;
+//     else if (dy === 1) direction = DIRECTION.DOWN;
+//     else if (dy === -1) direction = DIRECTION.UP;
+
+//     if (!direction) return;
+
+//     this.setMovement(player.getStatus());
+
+//     const animKey = this.getFollowAnimation(direction);
+//     this.tryMove(direction, animKey);
+//   }
+
+//   private getFollowAnimation(direction: DIRECTION): string {
+//     const playerData = PlayerInfo.getInstance();
+//     const pokemon = playerData.getPet();
+//     let overworldKey = pokemon ? getPokemonOverworldKey(pokemon) : '000';
+
+//     // 반짝이 포켓몬 효과
+//     if (pokemon && isPokedexShiny(overworldKey)) {
+//       if (!this.dummy2.anims.isPlaying) {
+//         this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
+//         this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
+//       }
+//       this.dummy2.setScale(2.4);
+//     } else {
+//       this.dummy2.setTexture(TEXTURE.BLANK);
+//       this.dummy2.stop();
+//     }
+
+//     this.setVisible(!!pokemon);
+
+//     return `pokemon_overworld${overworldKey}_${direction}`;
+//   }
+
+//   private setMovement(status: PLAYER_STATUS) {
+//     switch (status) {
+//       case PLAYER_STATUS.WALK:
+//         this.setMoveDuration(200);
+//         break;
+//       case PLAYER_STATUS.RUNNING:
+//         this.setMoveDuration(100);
+//         break;
+//       case PLAYER_STATUS.RIDE:
+//         this.setMoveDuration(70);
+//         break;
+//       case PLAYER_STATUS.SURF:
+//         this.setMoveDuration(120);
+//         break;
+//     }
+//   }
+// }

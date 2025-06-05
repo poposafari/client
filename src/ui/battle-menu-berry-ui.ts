@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { ITEM } from '../enums/item';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BattleUi } from './battle-ui';

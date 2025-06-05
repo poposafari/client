@@ -27,6 +27,10 @@ export class OverworldInfo {
   }
 
   resetNpcs() {
+    for (const npc of this.npcs) {
+      npc.destroy();
+    }
+
     this.npcs = [];
   }
 

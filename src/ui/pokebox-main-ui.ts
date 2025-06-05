@@ -4,7 +4,7 @@ import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { MAX_POKEBOXBG_SLOT, PlayerInfo, PokeBoxBG } from '../storage/player-info';
 import { PokeboxUi } from './pokebox-ui';
@@ -12,6 +12,8 @@ import { addImage, addText, addWindow, playSound, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { Box, MAX_BOX_BG, MyPokemon } from '../storage/box';
 import { PokemonGender } from '../object/pokemon-object';
+import { eventBus } from '../core/event-bus';
+import { EVENT } from '../enums/event';
 
 export class PokeboxMainUi extends Ui {
   private mode: OverworldMode;
@@ -803,7 +805,5 @@ export class PokeboxMainUi extends Ui {
     return -1;
   }
 
-  private async showFullPartyMessage() {
-    await this.mode.startMessage([{ type: 'sys', format: 'talk', content: i18next.t('message:partyIsFull') }]);
-  }
+  private async showFullPartyMessage() {}
 }

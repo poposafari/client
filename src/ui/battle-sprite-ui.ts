@@ -3,7 +3,7 @@ import { BATTLE_STATUS } from '../enums/battle-status';
 import { DEPTH } from '../enums/depth';
 import { EASE } from '../enums/ease';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { PlayerItem } from '../object/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { isPokedexShiny, trimLastChar } from '../utils/string-util';

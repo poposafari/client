@@ -1,15 +1,8 @@
-import { HttpStatusCode } from 'axios';
-import { ingameApi, nicknameApi } from '../utils/axios';
 import { MyPokemon } from './box';
 import { getPartyKey } from '../utils/string-util';
-
-export const MAX_PARTY_SLOT = 6;
-export const MAX_ITEM_SLOT = 9;
-export const MAX_POKEBOXBG_SLOT = 33;
-
-export type PlayerGender = 'boy' | 'girl';
-export type PlayerAvatar = '1' | '2' | '3' | '4';
-export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
+import { eventBus } from '../core/event-bus';
+import { EVENT } from '../enums/event';
+import { MaxItemSlot, MaxPartySlot, PlayerAvatar, PlayerGender, PokeBoxBG } from '../types';
 
 export interface Location {
   overworld: string;
@@ -43,10 +36,25 @@ export class PlayerInfo {
     return PlayerInfo.instance;
   }
 
+  get() {
+    return {
+      nickname: this.nickname,
+      x: this.x,
+      y: this.y,
+      location: this.location,
+      money: this.candy,
+      gender: this.gender,
+      avatar: this.avatar,
+      boxes: this.pokeboxBg,
+      party: this.partySlot,
+      itemslot: this.itemSlot,
+    };
+  }
+
   setup(data: any) {
     if (!data) throw new Error('Player data is required');
 
-    console.log(data);
+    // console.log(data);
 
     this.nickname = data.nickname;
     this.gender = data.gender;
@@ -88,7 +96,7 @@ export class PlayerInfo {
   }
 
   setItemSlot(slot: number, item: string | null) {
-    if (slot < 0 || slot >= MAX_ITEM_SLOT) {
+    if (slot < 0 || slot >= MaxItemSlot) {
       throw new Error('Invalid item slot index');
     }
 
@@ -102,7 +110,7 @@ export class PlayerInfo {
   }
 
   findItemSlot(item: string | null): number | null {
-    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+    for (let i = 0; i < MaxItemSlot; i++) {
       if (this.itemSlot[i] === item) {
         return i as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
       }
@@ -200,7 +208,7 @@ export class PlayerInfo {
   addPartySlot(pokemon: MyPokemon): boolean {
     const key = getPartyKey(pokemon);
 
-    if (this.partySlot.length >= MAX_PARTY_SLOT) {
+    if (this.partySlot.length >= MaxPartySlot) {
       return false;
     }
 
@@ -209,7 +217,7 @@ export class PlayerInfo {
     }
 
     this.partySlot.push(key);
-    console.log(this.partySlot);
+    // console.log(this.partySlot);
 
     return true;
   }
@@ -227,5 +235,23 @@ export class PlayerInfo {
     }
 
     return false;
+  }
+
+  hasSurfInParty() {
+    const slots = PlayerInfo.getInstance().getPartySlot();
+
+    let idx = 0;
+    for (const slot of slots) {
+      if (!slot) return -1;
+
+      const split = slot?.split('_');
+      const isSurf = split[2];
+
+      if (split[2] === 'surf') return idx;
+
+      idx++;
+    }
+
+    return -1;
   }
 }

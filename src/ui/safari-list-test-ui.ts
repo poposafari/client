@@ -4,7 +4,7 @@ import { DEPTH } from '../enums/depth';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardManager } from '../managers';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { NpcObject } from '../object/npc-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, playSound, Ui } from './ui';

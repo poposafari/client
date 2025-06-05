@@ -3,7 +3,7 @@ import { BATTLE_STATUS } from '../enums/battle-status';
 import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addText, addWindow, Ui } from './ui';
 import { KeyboardManager } from '../managers';

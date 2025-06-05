@@ -1,0 +1,38 @@
+import { eventBus } from '../../core/event-bus';
+import { DEPTH } from '../../enums/depth';
+import { EVENT } from '../../enums/event';
+import { OVERWORLD_TYPE } from '../../enums/overworld-type';
+import { TEXTURE } from '../../enums/texture';
+import { InGameScene } from '../../scenes/ingame-scene';
+import { OverworldUi } from './overworld-ui';
+
+export class Overworld000 extends OverworldUi {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  setup(): void {
+    super.setup();
+
+    // this.setupPlayerInitPos(2, 2);
+  }
+
+  show(): void {
+    this.map.setup(TEXTURE.OVERWORLD_000, [TEXTURE.TILE_FLOOR, TEXTURE.TILE_OBJECT]);
+    this.map.setLayer(0, TEXTURE.TILE_FLOOR, DEPTH.GROUND);
+    this.map.setLayer(1, TEXTURE.TILE_OBJECT, DEPTH.GROUND + 1);
+    this.map.setForegroundLayer(2, [TEXTURE.TILE_FLOOR, TEXTURE.TILE_OBJECT], DEPTH.FOREGROND);
+
+    this.npc.setup(`npc001`, 11, 8, OVERWORLD_TYPE.PLAZA, 'talk');
+    this.npc.setup(`npc002`, 14, 8, OVERWORLD_TYPE.PLAZA, 'talk');
+    this.npc.setup(`npc000`, 8, 8, OVERWORLD_TYPE.PLAZA, 'talk');
+
+    super.show();
+
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+  }
+
+  clean(): void {
+    super.clean();
+  }
+}
