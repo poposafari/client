@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { PokemonObject } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldUi } from './overworld-ui';

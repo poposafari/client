@@ -1,3 +1,6 @@
+import { EVENT } from '../enums/event';
+import { MODE } from '../enums/mode';
+
 export interface Register {}
 
 export interface Account {
@@ -9,6 +12,8 @@ export interface Message {
   type: 'sys' | 'default' | 'battle';
   format: 'talk' | 'question';
   content: string;
+  speed: number;
+  end: MODE | EVENT;
 }
 
 export interface BagItem {

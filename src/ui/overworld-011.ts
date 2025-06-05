@@ -2,7 +2,7 @@ import { getSafari } from '../data/overworld';
 import { DEPTH } from '../enums/depth';
 import { OVERWORLD_TYPE } from '../enums/overworld-type';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Safari } from './safari';
 

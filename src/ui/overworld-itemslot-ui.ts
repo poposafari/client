@@ -1,7 +1,7 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { MAX_ITEM_SLOT, PlayerInfo } from '../storage/player-info';

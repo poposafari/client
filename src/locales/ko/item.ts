@@ -3,19 +3,19 @@ import { TranslationItem } from '../../interface/locales';
 export const item: TranslationItem = {
   '001': {
     name: '마스터볼',
-    description: '야생 포켓몬을 반드시 잡을 수 있는 최고 성능의 볼.',
+    description: '야생 포켓몬을 반드시 잡을 수 있는\n최고 성능의 볼.',
   },
   '002': {
     name: '몬스터볼',
-    description: '야생 포켓몬에게 던져서 잡기 위한 볼. 캡슐식으로 되어 있다.',
+    description: '야생 포켓몬에게 던져서 잡기 위한 볼.\n캡슐식으로 되어 있다.',
   },
   '003': {
     name: '슈퍼볼',
-    description: '몬스터볼보다도 더욱 포켓몬을 잡기 쉬워진 약간 성능이 좋은 볼.',
+    description: '몬스터볼보다도 더욱 포켓몬을 잡기 쉬워진\n약간 성능이 좋은 볼.',
   },
   '004': {
     name: '하이퍼볼',
-    description: '수퍼볼보다도 더욱 포켓몬을 잡기 쉬워진 매우 성능이 좋은 볼.',
+    description: '수퍼볼보다도 더욱 포켓몬을 잡기 쉬워진\n매우 성능이 좋은 볼.',
   },
   '011': {
     name: '오카열매',
@@ -95,7 +95,7 @@ export const item: TranslationItem = {
   },
   '030': {
     name: '티켓',
-    description: '야생 포켓몬이 등장하는 월드에 입장할 수 있는 입장권이다.',
+    description: '야생 포켓몬이 등장하는 월드에\n입장할 수 있는 입장권이다.',
   },
   '032': {
     name: '파도타기',

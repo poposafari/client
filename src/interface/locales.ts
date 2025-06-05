@@ -10,7 +10,6 @@ export interface TranslationItemInfo {
 export interface TranslationNpcInfo {
   name: string;
   scripts: string[];
-  postAction: string;
 }
 
 export interface TranslationItem {

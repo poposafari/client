@@ -1,6 +1,6 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { MAX_PARTY_SLOT, PlayerInfo } from '../storage/player-info';
 import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';

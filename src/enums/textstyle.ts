@@ -1,4 +1,6 @@
 export const enum TEXTSTYLE {
+  BAG_DESC,
+  BAG_REGISTER,
   DEFAULT,
   DEFAULT_GRAY,
   DEFAULT_BLACK,

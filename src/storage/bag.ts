@@ -41,6 +41,14 @@ export class Bag {
     }
   }
 
+  setItems(data: any) {
+    if (data && data.length > 0) {
+      for (const item of data) {
+        this.addItems(item.item, item.stock, item.category);
+      }
+    }
+  }
+
   addItems(key: string, stock: number = 1, category: ItemCategory, register: Register = null) {
     const item = itemData[key];
     if (!item) return;

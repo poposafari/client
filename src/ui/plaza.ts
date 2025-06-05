@@ -1,4 +1,4 @@
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldUi } from './overworld-test-ui';
 

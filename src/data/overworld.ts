@@ -118,6 +118,24 @@ const initialSafari: Record<string, SafariData> = {
     },
     area: 'field',
   },
+  '021': {
+    key: '021',
+    cost: 1,
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
+  '022': {
+    key: '022',
+    cost: 1,
+    entryPos: {
+      x: 10,
+      y: 10,
+    },
+    area: 'field',
+  },
 };
 
 export const safariData = new Proxy(initialSafari, {

@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { enConfig } from './locales/en/config';
+// import { enConfig } from './locales/en/config';
 import { koConfig } from './locales/ko/config';
 
 const fonts = [
@@ -30,9 +30,9 @@ export async function initI18n(): Promise<void> {
     fallbackLng: 'en',
     supportedLngs: ['en', 'ko'],
     resources: {
-      en: {
-        ...enConfig,
-      },
+      // en: {
+      //   ...enConfig,
+      // },
       ko: {
         ...koConfig,
       },

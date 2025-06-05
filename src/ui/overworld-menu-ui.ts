@@ -1,6 +1,6 @@
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
-import { OverworldMode } from '../modes';
+import { OverworldMode } from '../modes-test';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, playSound, runFadeEffect, Ui } from './ui';
 import { KEY } from '../enums/key';
