@@ -224,7 +224,7 @@ export class OverworldPlayer {
     this.npc = npc;
 
     eventBus.on(EVENT.FINISH_TALK, () => {
-      this.obj?.setStatus(PLAYER_STATUS.WALK,this.obj.getLastDirection());
+      this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
     });
 
     eventBus.on(EVENT.START_SURF_ANIMATION, () => {
@@ -268,7 +268,7 @@ export class OverworldPlayer {
       this.dummy.destroy();
 
       eventBus.emit(EVENT.POP_MODE);
-      this.obj?.setStatus(PLAYER_STATUS.SURF,this.obj.getLastDirection());
+      this.obj?.setStatus(PLAYER_STATUS.SURF, this.obj.getLastDirection());
     });
   }
 
@@ -331,18 +331,18 @@ export class OverworldPlayer {
       try {
         switch (key) {
           case KEY.SELECT:
-            if (this.obj && this.obj.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.TALK) {
+            if (this.obj && this.obj.isMovementFinish()) {
               const target = this.obj.getObjectInFront(this.obj.getLastDirection());
               const tile = this.obj.getTileInfo(this.obj.getLastDirection());
 
               if (target instanceof NpcObject) {
-                this.obj.setStatus(PLAYER_STATUS.TALK,this.obj.getLastDirection());
                 this.npc.talk(target, this.obj!.getLastDirection());
-              } else {
+              } else if (tile?.properties.event) {
                 switch (tile?.properties.event) {
                   case 'surf':
-                    if (PlayerInfo.getInstance().hasSurfInParty() >= 0)
-                      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'question', content: i18next.t('message:surf'), speed: 10, questionYes: EVENT.MOVETO_HIDDENMOVE_MODE }]);
+                    if (PlayerInfo.getInstance().hasSurfInParty() >= 0) {
+                      this.showSurfMessage();
+                    }
                     break;
                 }
               }
@@ -350,14 +350,14 @@ export class OverworldPlayer {
 
             break;
           case KEY.MENU:
-            if (this.obj && this.obj.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.TALK) {
+            if (this.obj && this.obj.isMovementFinish()) {
               eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU);
               return;
             }
             break;
           case KEY.RUNNING:
             if (this.obj && this.obj.isMovementFinish()) {
-              this.obj.setStatus(PLAYER_STATUS.RUNNING,this.obj.getLastDirection());
+              this.obj.setStatus(PLAYER_STATUS.RUNNING, this.obj.getLastDirection());
             }
             break;
           case KEY.USE_1:
@@ -398,7 +398,9 @@ export class OverworldPlayer {
     if (this.obj?.isMovementFinish()) this.obj!.readyItem(slotIdx);
   }
 
-  private createSurfAnimation() {}
+  private showSurfMessage() {
+    eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'question', content: i18next.t('message:surf'), speed: 10, questionYes: EVENT.MOVETO_HIDDENMOVE_MODE }]);
+  }
 }
 
 export class OverworldNpc {
