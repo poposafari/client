@@ -20,7 +20,7 @@ export class PlayerObject extends MovableObject {
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, type: OBJECT) {
     super(scene, texture, x, y, map!, nickname, overworldInfo, type);
-    this.setStatus(PLAYER_STATUS.WALK);
+    this.setStatus(PLAYER_STATUS.WALK,this.getLastDirection());
 
     this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '', this.overworldInfo);
     const petSprite = this.pet.getSprite();
@@ -35,7 +35,6 @@ export class PlayerObject extends MovableObject {
   move(key: KEY) {
     const animationKey = this.getAnimation(key);
     this.movementStop = false;
-    const currentTile = this.getTilePos();
 
     switch (key) {
       case KEY.UP:
@@ -177,7 +176,9 @@ export class PlayerObject extends MovableObject {
     }
   }
 
-  setStatus(status: PLAYER_STATUS) {
+  setStatus(status: PLAYER_STATUS, direction:DIRECTION) {
+    let animationKey;
+
     switch (status) {
       case PLAYER_STATUS.WALK:
         this.currentStatus = PLAYER_STATUS.WALK;
@@ -191,12 +192,35 @@ export class PlayerObject extends MovableObject {
         break;
       case PLAYER_STATUS.SURF:
         this.currentStatus = PLAYER_STATUS.SURF;
+        this.setTexture(`surf`);
+        switch(direction){
+          case DIRECTION.UP:
+            this.moveSurfDeco(KEY.UP);
+            this.setSpriteFrame(0);
+            break;
+          case DIRECTION.DOWN:
+            this.moveSurfDeco(KEY.DOWN);
+            this.setSpriteFrame(3);
+            break;
+          case DIRECTION.LEFT:
+            this.moveSurfDeco(KEY.LEFT);
+            this.setSpriteFrame(6);
+            break;
+          case DIRECTION.RIGHT:
+            this.moveSurfDeco(KEY.RIGHT);
+            this.setSpriteFrame(9);
+            break;
+        }
         break;
       case PLAYER_STATUS.TALK:
         this.currentStatus = PLAYER_STATUS.TALK;
         break;
     }
+
     this.setMovement();
+
+
+
   }
 
   getStatus() {
@@ -249,7 +273,7 @@ export class PlayerObject extends MovableObject {
   useItem(item: string) {
     switch (item) {
       case '046':
-        return this.setStatus(PLAYER_STATUS.RIDE);
+        return this.setStatus(PLAYER_STATUS.RIDE, this.getLastDirection());
     }
   }
 
@@ -286,7 +310,10 @@ export class PlayerObject extends MovableObject {
     if (this.isMoving() || !this.isMovementFinish()) return;
 
     const direction = this.getLastDirection();
-    const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
+    const directionVector = new Phaser.Math.Vector2(
+      direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0,
+      direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0
+    );
 
     const tileSize = TILE_SIZE * MAP_SCALE;
     const sprite = this.getSprite();
@@ -294,34 +321,26 @@ export class PlayerObject extends MovableObject {
     const currentPos = this.getPosition();
     const targetPos = currentPos.clone().add(directionVector.clone().scale(tileSize * 2));
     const jumpHeight = 40;
+    const duration = 400;
+
+    const startTime = scene.time.now;
 
     scene.tweens.add({
       targets: sprite,
-      y: currentPos.y - jumpHeight,
-      duration: 200,
-      ease: EASE.SINE_EASEIN,
+      x: targetPos.x,
+      duration,
+      ease: EASE.LINEAR,
+      onUpdate: (tween) => {
+        const elapsed = scene.time.now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const parabolaY = -4 * jumpHeight * t * (1 - t);
+        sprite.y = Phaser.Math.Interpolation.Linear([currentPos.y, targetPos.y], t) + parabolaY;
+      },
       onComplete: () => {
-        scene.tweens.add({
-          targets: sprite,
-          x: targetPos.x,
-          y: targetPos.y - jumpHeight,
-          duration: 200,
-          ease: EASE.LINEAR,
-          onComplete: () => {
-            scene.tweens.add({
-              targets: sprite,
-              y: targetPos.y,
-              duration: 100,
-              ease: EASE.SINE_EASEOUT,
-              onComplete: () => {
-                eventBus.emit(EVENT.SURF_ON);
-                this.setTilePos(this.getTilePos().add(directionVector.clone().scale(2)));
-                this.setPosition(targetPos);
-                this.updateObjectData();
-              },
-            });
-          },
-        });
+        eventBus.emit(EVENT.SURF_ON);
+        this.setTilePos(this.getTilePos().add(directionVector.clone().scale(2)));
+        this.setPosition(targetPos);
+        this.updateObjectData();
       },
     });
   }
