@@ -224,7 +224,7 @@ export class OverworldPlayer {
     this.npc = npc;
 
     eventBus.on(EVENT.FINISH_TALK, () => {
-      this.obj?.setStatus(PLAYER_STATUS.WALK);
+      this.obj?.setStatus(PLAYER_STATUS.WALK,this.obj.getLastDirection());
     });
 
     eventBus.on(EVENT.START_SURF_ANIMATION, () => {
@@ -268,7 +268,7 @@ export class OverworldPlayer {
       this.dummy.destroy();
 
       eventBus.emit(EVENT.POP_MODE);
-      this.obj?.setStatus(PLAYER_STATUS.SURF);
+      this.obj?.setStatus(PLAYER_STATUS.SURF,this.obj.getLastDirection());
     });
   }
 
@@ -336,7 +336,7 @@ export class OverworldPlayer {
               const tile = this.obj.getTileInfo(this.obj.getLastDirection());
 
               if (target instanceof NpcObject) {
-                this.obj.setStatus(PLAYER_STATUS.TALK);
+                this.obj.setStatus(PLAYER_STATUS.TALK,this.obj.getLastDirection());
                 this.npc.talk(target, this.obj!.getLastDirection());
               } else {
                 switch (tile?.properties.event) {
@@ -357,7 +357,7 @@ export class OverworldPlayer {
             break;
           case KEY.RUNNING:
             if (this.obj && this.obj.isMovementFinish()) {
-              this.obj.setStatus(PLAYER_STATUS.RUNNING);
+              this.obj.setStatus(PLAYER_STATUS.RUNNING,this.obj.getLastDirection());
             }
             break;
           case KEY.USE_1:
