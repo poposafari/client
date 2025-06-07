@@ -45,9 +45,11 @@ export class ModeHandler {
 
   overlap(key: MODE, data?: any) {
     const nextMode = this.registry.get(key);
+    const top = this.getTop();
 
     if (!nextMode) throw new Error(`Mode not found : ${key}`);
-
+    if(top && top.constructor === nextMode.constructor) return;
+    
     nextMode.enter(data);
     this.stack.push(nextMode);
 
@@ -66,12 +68,14 @@ export class ModeHandler {
     return this.stack[this.stack.length - 1];
   }
 
-  getTop(): Mode {
+  getTop(): Mode | null {
     const mode = this.stack[this.stack.length - 1];
 
     if (mode) return mode;
 
-    throw new Error('Mode stack is empty');
+    console.log('Mode stack is empty');
+    
+    return null;
   }
 
   private clean() {
