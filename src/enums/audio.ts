@@ -8,4 +8,5 @@ export enum AUDIO {
   CANCEL_1 = 'cancel_1',
   GET_0 = 'get_0',
   BUY = 'buy',
+  JUMP = 'jump',
 }
