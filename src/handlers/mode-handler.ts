@@ -48,10 +48,10 @@ export class ModeHandler {
     const top = this.getTop();
 
     if (!nextMode) throw new Error(`Mode not found : ${key}`);
-    if(top && top.constructor === nextMode.constructor) return;
-    
-    nextMode.enter(data);
+    if (top && top.constructor === nextMode.constructor) return;
+
     this.stack.push(nextMode);
+    nextMode.enter(data);
 
     eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
@@ -74,7 +74,7 @@ export class ModeHandler {
     if (mode) return mode;
 
     console.log('Mode stack is empty');
-    
+
     return null;
   }
 
