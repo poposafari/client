@@ -3,6 +3,7 @@ import { ANIMATION } from '../enums/animation';
 import { DEPTH } from '../enums/depth';
 import { EASE } from '../enums/ease';
 import { EVENT } from '../enums/event';
+import { HM } from '../enums/hidden-move';
 import { KEY } from '../enums/key';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
@@ -119,8 +120,8 @@ export class HiddenMoveUi extends Ui {
         this.player.setTexture(TEXTURE.BLANK);
         this.player.stop();
         this.bg.setDisplaySize(startWidth, 0);
-        // eventBus.emit(EVENT.POP_MODE);
-        eventBus.emit(EVENT.START_SURF_ANIMATION);
+
+        eventBus.emit(EVENT.CHECK_HIDDEN_MOVE);
       },
     });
 
