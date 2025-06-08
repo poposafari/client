@@ -1,7 +1,9 @@
 import { eventBus } from '../core/event-bus';
+import { AUDIO } from '../enums/audio';
 import { DIRECTION } from '../enums/direction';
 import { EASE } from '../enums/ease';
 import { EVENT } from '../enums/event';
+import { HM } from '../enums/hidden-move';
 import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
@@ -10,22 +12,36 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
-import { MAP_SCALE, TILE_SIZE } from './base-object';
+import { playSound } from '../uis/ui';
+import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
   private pet!: PetObject;
+  private dummy!: BaseObject;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, type: OBJECT) {
     super(scene, texture, x, y, map!, nickname, overworldInfo, type);
-    this.setStatus(PLAYER_STATUS.WALK,this.getLastDirection());
+    this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
 
     this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '', this.overworldInfo);
     const petSprite = this.pet.getSprite();
     this.pet.setVisible(this.getPlayerData().getPet() ? true : false);
     petSprite.setScale(1.5);
+
+    eventBus.on(EVENT.CHECK_HIDDEN_MOVE, () => {
+      if (this.currentStatus !== PLAYER_STATUS.SURF) {
+        this.startSurfAnimation();
+      }
+    });
+
+    eventBus.on(EVENT.FINISH_SURF, () => {
+      if (this.currentStatus === PLAYER_STATUS.SURF) {
+        this.jump(HM.NONE);
+      }
+    });
   }
 
   getPet() {
@@ -176,12 +192,12 @@ export class PlayerObject extends MovableObject {
     }
   }
 
-  setStatus(status: PLAYER_STATUS, direction:DIRECTION) {
-    let animationKey;
-
+  setStatus(status: PLAYER_STATUS, direction: DIRECTION) {
     switch (status) {
       case PLAYER_STATUS.WALK:
         this.currentStatus = PLAYER_STATUS.WALK;
+        this.setTexture(`${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement`);
+        this.setSpriteFrameNow(direction, 0, 3, 6, 9);
         break;
       case PLAYER_STATUS.RUNNING:
         if (this.currentStatus === PLAYER_STATUS.RIDE) return;
@@ -189,28 +205,13 @@ export class PlayerObject extends MovableObject {
         break;
       case PLAYER_STATUS.RIDE:
         this.currentStatus = this.currentStatus === PLAYER_STATUS.RIDE ? PLAYER_STATUS.WALK : PLAYER_STATUS.RIDE;
+        this.setSpriteFrameNow(direction, 0, 3, 6, 9);
         break;
       case PLAYER_STATUS.SURF:
         this.currentStatus = PLAYER_STATUS.SURF;
         this.setTexture(`surf`);
-        switch(direction){
-          case DIRECTION.UP:
-            this.moveSurfDeco(KEY.UP);
-            this.setSpriteFrame(0);
-            break;
-          case DIRECTION.DOWN:
-            this.moveSurfDeco(KEY.DOWN);
-            this.setSpriteFrame(3);
-            break;
-          case DIRECTION.LEFT:
-            this.moveSurfDeco(KEY.LEFT);
-            this.setSpriteFrame(6);
-            break;
-          case DIRECTION.RIGHT:
-            this.moveSurfDeco(KEY.RIGHT);
-            this.setSpriteFrame(9);
-            break;
-        }
+        this.setSpriteFrameNow(direction, 0, 3, 6, 9);
+
         break;
       case PLAYER_STATUS.TALK:
         this.currentStatus = PLAYER_STATUS.TALK;
@@ -218,9 +219,6 @@ export class PlayerObject extends MovableObject {
     }
 
     this.setMovement();
-
-
-
   }
 
   getStatus() {
@@ -306,14 +304,16 @@ export class PlayerObject extends MovableObject {
     return PlayerInfo.getInstance();
   }
 
-  jump() {
+  jump(hm: HM) {
     if (this.isMoving() || !this.isMovementFinish()) return;
+    if (hm === HM.NONE) {
+      this.dummy2.setTexture(TEXTURE.BLANK);
+      this.dummy2.stop();
+      this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
+    }
 
     const direction = this.getLastDirection();
-    const directionVector = new Phaser.Math.Vector2(
-      direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0,
-      direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0
-    );
+    const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
 
     const tileSize = TILE_SIZE * MAP_SCALE;
     const sprite = this.getSprite();
@@ -330,18 +330,85 @@ export class PlayerObject extends MovableObject {
       x: targetPos.x,
       duration,
       ease: EASE.LINEAR,
+      onStart: () => {
+        playSound(this.getScene(), AUDIO.JUMP);
+      },
       onUpdate: (tween) => {
+        this.spriteShadow.setVisible(false);
         const elapsed = scene.time.now - startTime;
         const t = Math.min(elapsed / duration, 1);
         const parabolaY = -4 * jumpHeight * t * (1 - t);
         sprite.y = Phaser.Math.Interpolation.Linear([currentPos.y, targetPos.y], t) + parabolaY;
       },
       onComplete: () => {
-        eventBus.emit(EVENT.SURF_ON);
+        this.spriteShadow.setVisible(true);
         this.setTilePos(this.getTilePos().add(directionVector.clone().scale(2)));
         this.setPosition(targetPos);
         this.updateObjectData();
+
+        if (hm === HM.SURF) {
+          this.dummy.destroy();
+          eventBus.emit(EVENT.POP_MODE);
+          this.setStatus(PLAYER_STATUS.SURF, this.getLastDirection());
+        } else {
+          this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
+        }
       },
     });
+  }
+
+  private setSpriteFrameNow(direction: DIRECTION, upFrame: number, downFrame: number, leftFrame: number, rightFrame: number) {
+    switch (direction) {
+      case DIRECTION.UP:
+        if (this.currentStatus === PLAYER_STATUS.SURF) this.moveSurfDeco(KEY.UP);
+        this.setSpriteFrame(upFrame);
+        break;
+      case DIRECTION.DOWN:
+        if (this.currentStatus === PLAYER_STATUS.SURF) this.moveSurfDeco(KEY.DOWN);
+        this.setSpriteFrame(downFrame);
+        break;
+      case DIRECTION.LEFT:
+        if (this.currentStatus === PLAYER_STATUS.SURF) this.moveSurfDeco(KEY.LEFT);
+        this.setSpriteFrame(leftFrame);
+        break;
+      case DIRECTION.RIGHT:
+        if (this.currentStatus === PLAYER_STATUS.SURF) this.moveSurfDeco(KEY.RIGHT);
+        this.setSpriteFrame(rightFrame);
+        break;
+    }
+  }
+
+  private startSurfAnimation() {
+    const pos = this.getTilePos();
+    const lastDirection = this.getLastDirection();
+
+    let x = pos.x;
+    let y = pos.y;
+    let frame = 0;
+
+    switch (lastDirection) {
+      case DIRECTION.UP:
+        y = y - 2;
+        frame = 0;
+        break;
+      case DIRECTION.DOWN:
+        y = y + 2;
+        frame = 3;
+        break;
+      case DIRECTION.LEFT:
+        x = x - 2;
+        frame = 6;
+        break;
+      case DIRECTION.RIGHT:
+        x = x + 2;
+        frame = 9;
+        break;
+    }
+
+    this.dummy = new BaseObject(this.getScene(), `surf`, x, y, '', OBJECT.PLAYER);
+    this.dummy.setSpriteFrame(frame);
+    this.dummy.setScale(3.2);
+
+    this.jump(HM.SURF);
   }
 }

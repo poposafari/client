@@ -37,9 +37,8 @@ export enum EVENT {
   UPDATE_OVERWORLD_MENU,
   ACCEPT_BACKTO_PLAZA,
   REJECT_BACKTO_PLAZA,
-  START_SURF_ANIMATION,
-  SURF_ON,
-  SURF_OFF,
+  CHECK_HIDDEN_MOVE,
+  FINISH_SURF,
 }
 
 export function isEvent(data: any): data is EVENT {
