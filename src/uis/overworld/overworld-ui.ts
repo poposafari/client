@@ -226,50 +226,6 @@ export class OverworldPlayer {
     eventBus.on(EVENT.FINISH_TALK, () => {
       this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
     });
-
-    eventBus.on(EVENT.START_SURF_ANIMATION, () => {
-      if (!this.obj) return;
-
-      const pos = this.obj.getTilePos();
-      const lastDirection = this.obj.getLastDirection();
-
-      let x = pos.x;
-      let y = pos.y;
-      let frame = 0;
-
-      switch (lastDirection) {
-        case DIRECTION.UP:
-          y = y - 2;
-          frame = 0;
-          break;
-        case DIRECTION.DOWN:
-          y = y + 2;
-          frame = 3;
-          break;
-        case DIRECTION.LEFT:
-          x = x - 2;
-          frame = 6;
-          break;
-        case DIRECTION.RIGHT:
-          x = x + 2;
-          frame = 9;
-          break;
-      }
-
-      this.dummy = new BaseObject(this.scene, `surf`, x, y, '', OBJECT.PLAYER);
-      this.dummy.setSpriteFrame(frame);
-      this.dummy.setScale(3.2);
-      this.obj.jump();
-    });
-
-    eventBus.on(EVENT.SURF_ON, () => {
-      if (!this.obj) return;
-
-      this.dummy.destroy();
-
-      eventBus.emit(EVENT.POP_MODE);
-      this.obj?.setStatus(PLAYER_STATUS.SURF, this.obj.getLastDirection());
-    });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
@@ -341,7 +297,11 @@ export class OverworldPlayer {
                 switch (tile?.properties.event) {
                   case 'surf':
                     if (PlayerInfo.getInstance().hasSurfInParty() >= 0) {
-                      this.showSurfMessage();
+                      if (this.obj.getStatus() !== PLAYER_STATUS.SURF) {
+                        this.showSurfMessage(true);
+                      } else {
+                        this.showSurfMessage(false);
+                      }
                     }
                     break;
                 }
@@ -398,8 +358,12 @@ export class OverworldPlayer {
     if (this.obj?.isMovementFinish()) this.obj!.readyItem(slotIdx);
   }
 
-  private showSurfMessage() {
-    eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'question', content: i18next.t('message:surf'), speed: 10, questionYes: EVENT.MOVETO_HIDDENMOVE_MODE }]);
+  private showSurfMessage(onoff: boolean) {
+    if (onoff) {
+      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'question', content: i18next.t('message:surfOn'), speed: 10, questionYes: EVENT.MOVETO_HIDDENMOVE_MODE }]);
+    } else {
+      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'question', content: i18next.t('message:surfOff'), speed: 10, questionYes: EVENT.FINISH_SURF }]);
+    }
   }
 }
 

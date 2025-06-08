@@ -16,7 +16,7 @@ export class BaseObject {
   private sprite: Phaser.GameObjects.Sprite;
   protected dummy1!: Phaser.GameObjects.Sprite;
   protected dummy2!: Phaser.GameObjects.Sprite;
-  private spriteShadow: Phaser.GameObjects.Image;
+  protected spriteShadow: Phaser.GameObjects.Image;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
   private readonly offsetX = TILE_SIZE / 2;
