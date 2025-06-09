@@ -22,6 +22,7 @@ export class PlayerInfo {
   private candy!: number;
 
   private pet!: string | null;
+  private surfPokemon!: string | null;
   private partySlot: (string | null)[] = [];
   private itemSlot: (string | null)[] = [];
   private pokeboxBg: PokeBoxBG[] = [];
@@ -190,6 +191,14 @@ export class PlayerInfo {
 
   setCandy(candy: number) {
     this.candy = candy;
+  }
+
+  setSurfPokemon(pokemon: string | null) {
+    this.surfPokemon = pokemon;
+  }
+
+  getSurfPokemon() {
+    return this.surfPokemon;
   }
 
   useCandy(cost: number) {

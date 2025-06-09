@@ -6,7 +6,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { PokemonGender, PokemonSkill } from '../object/pokemon-object';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addWindow, getTextShadow, getTextStyle, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, getTextShadow, getTextStyle, playSound, Ui } from './ui';
 import { Box, MAX_BOX_BG, MyPokemon } from '../storage/box';
 import { TYPE } from '../enums/type';
 import { PokemonData } from '../data/pokemon';
@@ -19,6 +19,9 @@ import { getPokeboxApi, movePokemonApi } from '../api';
 import { PlayerInfo } from '../storage/player-info';
 import { isPokedexShiny } from '../utils/string-util';
 import { MODE } from '../enums/mode';
+import { PlayerObject } from '../object/player-object';
+import { PLAYER_STATUS } from '../enums/player-status';
+import { AUDIO } from '../enums/audio';
 
 export class PokeboxUi extends Ui {
   private pokeboxMainUi: PokeboxMainUi;
@@ -30,6 +33,8 @@ export class PokeboxUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
 
   public checkHandleKey!: boolean;
+
+  tempPlayerObject!: PlayerObject;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -60,7 +65,11 @@ export class PokeboxUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data?: PlayerObject): void {
+    if (data) {
+      this.tempPlayerObject = data;
+    }
+
     eventBus.emit(EVENT.PLAY_SOUND, this.scene);
 
     this.container.setVisible(true);
@@ -851,6 +860,10 @@ export class PokeboxPartyUi extends Ui {
     super(scene);
     this.pokeboxUi = pokeboxUi;
     this.menu = new MenuUi(scene);
+
+    eventBus.on(EVENT.BACKTO_POKEBOX_PARTYUI, () => {
+      this.handleKeyInput();
+    });
   }
 
   setup(): void {
@@ -927,6 +940,15 @@ export class PokeboxPartyUi extends Ui {
             break;
           case KEY.SELECT:
             const target = PlayerInfo.getInstance().getPartySlot()[choice];
+
+            let hasPet = this.hasPet(target);
+
+            if (hasPet) {
+              this.menu.updateInfo(i18next.t('menu:follow'), i18next.t('menu:removeFollow'));
+            } else {
+              this.menu.updateInfo(i18next.t('menu:removeFollow'), i18next.t('menu:follow'));
+            }
+
             if (target) {
               this.handleMenuKeyInput(target);
               return;
@@ -938,6 +960,8 @@ export class PokeboxPartyUi extends Ui {
       }
 
       if (choice !== prevChoice) {
+        playSound(this.scene, AUDIO.SELECT_0);
+
         this.partyDummys[prevChoice].setTexture(TEXTURE.BLANK);
         this.partyDummys[choice].setTexture(TEXTURE.ARROW_W_R);
 
@@ -951,14 +975,15 @@ export class PokeboxPartyUi extends Ui {
     const ret = await this.menu.handleKeyInput();
     let hasPet = this.hasPet(target);
 
-    if (hasPet) {
-      this.menu.updateInfo(i18next.t('menu:follow'), i18next.t('menu:removeFollow'));
-    } else {
-      this.menu.updateInfo(i18next.t('menu:removeFollow'), i18next.t('menu:follow'));
-    }
-
     if (ret === i18next.t('menu:removeParty')) {
       if (hasPet) PlayerInfo.getInstance().setPet(null);
+      if (this.pokeboxUi.tempPlayerObject.getStatus() === PLAYER_STATUS.SURF) {
+        if (PlayerInfo.getInstance().getSurfPokemon() === target) {
+          eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'default', format: 'talk', content: i18next.t(`message:warn_surf`), speed: 10, end: EVENT.BACKTO_POKEBOX_PARTYUI }]);
+          return;
+        }
+      }
+
       this.updatePetIcon();
 
       const [pokedex, gender] = target.split('_');
@@ -973,60 +998,6 @@ export class PokeboxPartyUi extends Ui {
     }
 
     this.handleKeyInput();
-
-    // this.menuWindows[choice].setTexture(TEXTURE.CHOICE_S);
-
-    // keyboard.setAllowKey(keys);
-    // keyboard.setKeyDownCallback((key) => {
-    //   const prevChoice = choice;
-
-    //   try {
-    //     switch (key) {
-    //       case KEY.UP:
-    //         choice = Math.max(start, choice - 1);
-    //         break;
-    //       case KEY.DOWN:
-    //         choice = Math.min(end, choice + 1);
-    //         break;
-    //       case KEY.SELECT:
-    //         if (choice === 0) {
-    //           if (hasPet) PlayerInfo.getInstance().setPet(null);
-    //           this.updatePetIcon();
-
-    //           const [pokedex, gender] = target.split('_');
-    //           this.removeParty(null, this.lastStart);
-    //           this.pokeboxUi.updatePokemonTint(pokedex, gender as PokemonGender);
-    //           eventBus.emit(EVENT.UPDATE_OVERWORLD_HUD_PARTY);
-    //           this.cleanMenu(choice);
-    //           this.handleKeyInput();
-    //         } else if (choice === 1) {
-    //           if (hasPet) {
-    //             PlayerInfo.getInstance().setPet(null);
-    //           } else {
-    //             this.setPet(target);
-    //           }
-    //           this.updatePetIcon();
-    //           this.cleanMenu(choice);
-    //           this.handleKeyInput();
-    //         } else {
-    //           this.cleanMenu(choice);
-    //           this.handleKeyInput();
-    //         }
-    //         break;
-    //       case KEY.CANCEL:
-    //         this.cleanMenu(choice);
-    //         this.handleKeyInput();
-    //         break;
-    //     }
-    //   } catch (error) {
-    //     console.error(`Error handling key input: ${error}`);
-    //   }
-
-    //   if (choice !== prevChoice) {
-    //     this.menuWindows[prevChoice].setTexture(TEXTURE.CHOICE);
-    //     this.menuWindows[choice].setTexture(TEXTURE.CHOICE_S);
-    //   }
-    // });
   }
 
   addParty(pokemon: MyPokemon) {
