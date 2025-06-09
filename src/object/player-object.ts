@@ -30,18 +30,6 @@ export class PlayerObject extends MovableObject {
     const petSprite = this.pet.getSprite();
     this.pet.setVisible(this.getPlayerData().getPet() ? true : false);
     petSprite.setScale(1.5);
-
-    eventBus.on(EVENT.CHECK_HIDDEN_MOVE, () => {
-      if (this.currentStatus !== PLAYER_STATUS.SURF) {
-        this.startSurfAnimation();
-      }
-    });
-
-    eventBus.on(EVENT.FINISH_SURF, () => {
-      if (this.currentStatus === PLAYER_STATUS.SURF) {
-        this.jump(HM.NONE);
-      }
-    });
   }
 
   getPet() {
@@ -314,7 +302,6 @@ export class PlayerObject extends MovableObject {
 
     const direction = this.getLastDirection();
     const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
-
     const tileSize = TILE_SIZE * MAP_SCALE;
     const sprite = this.getSprite();
     const scene = this.getScene();
@@ -378,7 +365,7 @@ export class PlayerObject extends MovableObject {
     }
   }
 
-  private startSurfAnimation() {
+  startSurfAnimation() {
     const pos = this.getTilePos();
     const lastDirection = this.getLastDirection();
 
