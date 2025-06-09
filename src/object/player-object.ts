@@ -319,6 +319,7 @@ export class PlayerObject extends MovableObject {
       ease: EASE.LINEAR,
       onStart: () => {
         playSound(this.getScene(), AUDIO.JUMP);
+        this.pet.jump();
       },
       onUpdate: (tween) => {
         this.spriteShadow.setVisible(false);

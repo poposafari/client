@@ -10,6 +10,9 @@ import { PlayerInfo } from '../storage/player-info';
 import { OverworldInfo } from '../storage/overworld-info';
 import { getPokemonOverworldKey, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { ANIMATION } from '../enums/animation';
+import { HM } from '../enums/hidden-move';
+import { MAP_SCALE, TILE_SIZE } from './base-object';
+import { EASE } from '../enums/ease';
 
 export class PetObject extends MovableObject {
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
@@ -52,14 +55,14 @@ export class PetObject extends MovableObject {
       overworldKey = getPokemonOverworldKey(pokemon);
       this.setVisible(true);
       if (isPokedexShiny(overworldKey)) {
-        if (!this.dummy2.anims.isPlaying) {
-          this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
-          this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
+        if (!this.dummy2?.anims.isPlaying) {
+          this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
+          this.dummy2?.setTexture(TEXTURE.OVERWORLD_SHINY);
         }
-        this.dummy2.setScale(2.4);
+        this.dummy2?.setScale(2.4);
       } else {
-        this.dummy2.setTexture(TEXTURE.BLANK);
-        this.dummy2.stop();
+        this.dummy2?.setTexture(TEXTURE.BLANK);
+        this.dummy2?.stop();
       }
     } else {
       this.setVisible(false);
@@ -75,6 +78,8 @@ export class PetObject extends MovableObject {
       case KEY.RIGHT:
         return `pokemon_overworld${overworldKey}_right`;
     }
+
+    return '';
   }
 
   private setMovement(status: PLAYER_STATUS) {
@@ -98,75 +103,41 @@ export class PetObject extends MovableObject {
     this.setSmoothFrames(smoothFrames!);
     this.setSpeed(speed!);
   }
+
+  jump() {
+    if (this.isMoving() || !this.isMovementFinish()) return;
+
+    const direction = this.getLastDirection();
+    const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
+
+    const tileSize = TILE_SIZE * MAP_SCALE;
+    const sprite = this.getSprite();
+    const scene = this.getScene();
+    const currentPos = this.getPosition();
+    // const targetPos = currentPos.clone().add(directionVector.clone().scale(tileSize)); // ✅ 1칸만 이동
+    const targetPos = currentPos.clone().add(directionVector.clone().scale(tileSize * 2)); // ✅ 2칸 이동
+    const jumpHeight = 30;
+    const duration = 300;
+
+    const startTime = scene.time.now;
+
+    scene.tweens.add({
+      targets: sprite,
+      x: targetPos.x,
+      duration,
+      ease: EASE.LINEAR,
+      onUpdate: () => {
+        const elapsed = scene.time.now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const parabolaY = -4 * jumpHeight * t * (1 - t);
+        sprite.y = Phaser.Math.Interpolation.Linear([currentPos.y, targetPos.y], t) + parabolaY;
+      },
+      onComplete: () => {
+        // this.setTilePos(this.getTilePos().add(directionVector)); // ✅ 1칸만 이동
+        this.setTilePos(this.getTilePos().add(directionVector.clone().scale(2))); // ✅ 2칸 이동
+        this.setPosition(targetPos);
+        this.updateObjectData();
+      },
+    });
+  }
 }
-
-// export class PetObject extends MovableObject {
-//   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
-//     super(scene, texture, x, y, map, nickname, overworldInfo, OBJECT.PET);
-//   }
-
-//   tryFollow(player: PlayerObject) {
-//     // if (this.mov()) return;
-
-//     const petTile = this.getTilePos();
-//     const playerTile = player.getTilePos();
-
-//     const dx = playerTile.x - petTile.x;
-//     const dy = playerTile.y - petTile.y;
-
-//     // 이미 붙어 있으면 이동 X
-//     if (Math.abs(dx) + Math.abs(dy) > 1) return;
-
-//     let direction: DIRECTION | null = null;
-//     if (dx === 1) direction = DIRECTION.RIGHT;
-//     else if (dx === -1) direction = DIRECTION.LEFT;
-//     else if (dy === 1) direction = DIRECTION.DOWN;
-//     else if (dy === -1) direction = DIRECTION.UP;
-
-//     if (!direction) return;
-
-//     this.setMovement(player.getStatus());
-
-//     const animKey = this.getFollowAnimation(direction);
-//     this.tryMove(direction, animKey);
-//   }
-
-//   private getFollowAnimation(direction: DIRECTION): string {
-//     const playerData = PlayerInfo.getInstance();
-//     const pokemon = playerData.getPet();
-//     let overworldKey = pokemon ? getPokemonOverworldKey(pokemon) : '000';
-
-//     // 반짝이 포켓몬 효과
-//     if (pokemon && isPokedexShiny(overworldKey)) {
-//       if (!this.dummy2.anims.isPlaying) {
-//         this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
-//         this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
-//       }
-//       this.dummy2.setScale(2.4);
-//     } else {
-//       this.dummy2.setTexture(TEXTURE.BLANK);
-//       this.dummy2.stop();
-//     }
-
-//     this.setVisible(!!pokemon);
-
-//     return `pokemon_overworld${overworldKey}_${direction}`;
-//   }
-
-//   private setMovement(status: PLAYER_STATUS) {
-//     switch (status) {
-//       case PLAYER_STATUS.WALK:
-//         this.setMoveDuration(200);
-//         break;
-//       case PLAYER_STATUS.RUNNING:
-//         this.setMoveDuration(100);
-//         break;
-//       case PLAYER_STATUS.RIDE:
-//         this.setMoveDuration(70);
-//         break;
-//       case PLAYER_STATUS.SURF:
-//         this.setMoveDuration(120);
-//         break;
-//     }
-//   }
-// }

@@ -271,6 +271,7 @@ export class MovableObject extends BaseObject {
 
   hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
     if (this.hasNoTile(pos)) return true;
+    if (this.getType() === OBJECT.PET) return false;
     return this.map.layers.some((layer) => {
       const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
       return tile && tile.properties.collides;
