@@ -21,6 +21,7 @@ import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
 import { MODE } from '../../enums/mode';
 import { BaseObject } from '../../object/base-object';
+import { HM } from '../../enums/hidden-move';
 
 type MapInfo = {
   texture: TEXTURE;
@@ -226,9 +227,23 @@ export class OverworldPlayer {
     eventBus.on(EVENT.FINISH_TALK, () => {
       this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
     });
+
+    eventBus.on(EVENT.CHECK_HIDDEN_MOVE, () => {
+      if (this.obj && this.obj.getStatus() !== PLAYER_STATUS.SURF) {
+        this.obj.startSurfAnimation();
+      }
+    });
+
+    eventBus.on(EVENT.FINISH_SURF, () => {
+      if (this.obj && this.obj.getStatus() === PLAYER_STATUS.SURF) {
+        this.obj.jump(HM.NONE);
+      }
+    });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
+    console.log('overworld-ui player show()');
+
     const playerData = PlayerInfo.getInstance();
 
     const texture = `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`;
@@ -248,6 +263,8 @@ export class OverworldPlayer {
       console.error('obj is null');
       return;
     }
+
+    console.log('overworld-ui player clean()');
 
     this.obj.destroy();
     this.obj.getPet().destroy();
