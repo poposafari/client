@@ -10,11 +10,14 @@ import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
 import { MODE } from '../../enums/mode';
+import { PLAYER_STATUS } from '../../enums/player-status';
+import { PlayerObject } from '../../object/player-object';
 
 export class OverworldMenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
 
   private lastStart!: number;
+  private tempPlayerObject!: PlayerObject;
 
   private window!: Phaser.GameObjects.NineSlice;
   private dummys: Phaser.GameObjects.NineSlice[] = [];
@@ -71,7 +74,11 @@ export class OverworldMenuUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data?: PlayerObject): void {
+    if (data) {
+      this.tempPlayerObject = data;
+    }
+
     eventBus.emit(EVENT.PLAY_SOUND, this.scene);
 
     this.renderIconsTint();
@@ -180,7 +187,7 @@ export class OverworldMenuUi extends Ui {
 
     if (target === i18next.t('menu:menuPokebox')) {
       //pokebox
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.POKEBOX);
+      eventBus.emit(EVENT.OVERLAP_MODE, MODE.POKEBOX, this.tempPlayerObject);
     } else if (target === i18next.t('menu:menuBag')) {
       //bag
       eventBus.emit(EVENT.OVERLAP_MODE, MODE.BAG);
