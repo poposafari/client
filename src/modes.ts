@@ -14,6 +14,7 @@ import { UI } from './enums/ui';
 import { Message, PlayerAvatar, PlayerGender } from './types';
 import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
+import { PlayerObject } from './object/player-object';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -289,7 +290,7 @@ export class OverworldMenuMode extends Mode {
   }
 
   enter(data?: any): void {
-    eventBus.emit(EVENT.OVERLAP_UI, UI.OVERWORLD_MENU);
+    eventBus.emit(EVENT.OVERLAP_UI, UI.OVERWORLD_MENU, data);
   }
 
   exit(): void {
@@ -338,10 +339,10 @@ export class PokeboxMode extends Mode {
     super(scene);
   }
 
-  enter(data?: any): void {
+  enter(data?: PlayerObject): void {
     runFadeEffect(this.scene, 700, 'in');
 
-    eventBus.emit(EVENT.OVERLAP_UI, UI.POKEBOX);
+    eventBus.emit(EVENT.OVERLAP_UI, UI.POKEBOX, data);
   }
 
   exit(): void {

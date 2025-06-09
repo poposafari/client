@@ -236,14 +236,13 @@ export class OverworldPlayer {
 
     eventBus.on(EVENT.FINISH_SURF, () => {
       if (this.obj && this.obj.getStatus() === PLAYER_STATUS.SURF) {
+        PlayerInfo.getInstance().setSurfPokemon(null);
         this.obj.jump(HM.NONE);
       }
     });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
-    console.log('overworld-ui player show()');
-
     const playerData = PlayerInfo.getInstance();
 
     const texture = `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`;
@@ -263,8 +262,6 @@ export class OverworldPlayer {
       console.error('obj is null');
       return;
     }
-
-    console.log('overworld-ui player clean()');
 
     this.obj.destroy();
     this.obj.getPet().destroy();
@@ -328,7 +325,7 @@ export class OverworldPlayer {
             break;
           case KEY.MENU:
             if (this.obj && this.obj.isMovementFinish()) {
-              eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU);
+              eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU, this.obj);
               return;
             }
             break;

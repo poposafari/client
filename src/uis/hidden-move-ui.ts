@@ -49,6 +49,7 @@ export class HiddenMoveUi extends Ui {
     const targetPokemon = playerInfo.hasSurfInParty();
 
     this.pokemon.setTexture(changePartyKeyToSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
+    playerInfo.setSurfPokemon(playerInfo.getPartySlot()[targetPokemon]!);
 
     this.container.setVisible(true);
 

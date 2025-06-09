@@ -39,6 +39,7 @@ export enum EVENT {
   REJECT_BACKTO_PLAZA,
   CHECK_HIDDEN_MOVE,
   FINISH_SURF,
+  BACKTO_POKEBOX_PARTYUI,
 }
 
 export function isEvent(data: any): data is EVENT {
