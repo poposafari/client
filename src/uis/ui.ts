@@ -520,6 +520,21 @@ export function playSound(scene: InGameScene, key: AUDIO, volume: number = 1, lo
   });
 }
 
+export function findEventTile(tiles: Phaser.Tilemaps.Tile[] | null) {
+  let ret: string | null = null;
+
+  if (!tiles) return ret;
+
+  for (const tile of tiles) {
+    const event = tile.properties.event;
+    if (event) {
+      ret = event;
+    }
+  }
+
+  return ret;
+}
+
 export abstract class Ui {
   protected scene: InGameScene;
 
