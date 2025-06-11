@@ -330,7 +330,7 @@ export class OverworldPlayer {
             }
             break;
           case KEY.RUNNING:
-            if (this.obj && this.obj.isMovementFinish()) {
+            if (this.obj && this.obj.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.SURF) {
               this.obj.setStatus(PLAYER_STATUS.RUNNING, this.obj.getLastDirection());
             }
             break;
