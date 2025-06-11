@@ -6,6 +6,7 @@ import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
+import { findEventTile } from '../uis/ui';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 
 const Vector2 = Phaser.Math.Vector2;
@@ -212,12 +213,16 @@ export class MovableObject extends BaseObject {
 
   isBlockingDirection(direction: DIRECTION): boolean {
     const nextTilePos = this.tilePosInDirection(direction);
+
+    if (this.hasStairTile(direction)) return false;
+
     let isBlocked =
       this.hasBlockingTile(nextTilePos) ||
       this.hasBlockingNpc(nextTilePos) ||
       this.hasGroundItemObject(nextTilePos) ||
       this.hasPokemonObject(nextTilePos) ||
       (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos));
+
     return isBlocked;
   }
 
@@ -278,10 +283,28 @@ export class MovableObject extends BaseObject {
     });
   }
 
-  getTileInfo(direction: DIRECTION): Phaser.Tilemaps.Tile | null {
+  hasStairTile(direction: DIRECTION): boolean {
+    const tiles = this.getTileInfo(direction);
+    const ret = findEventTile(tiles);
+
+    if (ret === 'stair') return true;
+
+    return false;
+  }
+
+  getTileInfo(direction: DIRECTION): Phaser.Tilemaps.Tile[] | null {
+    const ret: Phaser.Tilemaps.Tile[] = [];
     const nextTilePos = this.tilePosInDirection(direction);
 
-    return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name)).find((tile) => tile !== null && tile.index !== -1) || null;
+    // return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name)).find((tile) => tile !== null && tile.index !== -1) || null;
+    // return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name) || null);
+    this.map.layers.map((layer) => {
+      const tile = this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name);
+
+      if (tile) ret.push(tile!);
+    });
+
+    return ret;
   }
 
   private hasNoTile(pos: Phaser.Math.Vector2): boolean {

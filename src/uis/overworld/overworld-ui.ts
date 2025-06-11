@@ -11,7 +11,7 @@ import { PlayerObject } from '../../object/player-object';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { OverworldInfo } from '../../storage/overworld-info';
 import { PlayerInfo } from '../../storage/player-info';
-import { addMap, createSprite, runFadeEffect, Ui } from '../ui';
+import { addMap, createSprite, findEventTile, runFadeEffect, Ui } from '../ui';
 import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
@@ -303,12 +303,12 @@ export class OverworldPlayer {
           case KEY.SELECT:
             if (this.obj && this.obj.isMovementFinish()) {
               const target = this.obj.getObjectInFront(this.obj.getLastDirection());
-              const tile = this.obj.getTileInfo(this.obj.getLastDirection());
+              const tiles = this.obj.getTileInfo(this.obj.getLastDirection());
 
               if (target instanceof NpcObject) {
                 this.npc.talk(target, this.obj!.getLastDirection());
-              } else if (tile?.properties.event) {
-                switch (tile?.properties.event) {
+              } else if (findEventTile(tiles)) {
+                switch (findEventTile(tiles)) {
                   case 'surf':
                     if (PlayerInfo.getInstance().hasSurfInParty() >= 0) {
                       if (this.obj.getStatus() !== PLAYER_STATUS.SURF) {
