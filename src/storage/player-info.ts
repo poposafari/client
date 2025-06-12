@@ -3,6 +3,7 @@ import { getPartyKey } from '../utils/string-util';
 import { eventBus } from '../core/event-bus';
 import { EVENT } from '../enums/event';
 import { MaxItemSlot, MaxPartySlot, PlayerAvatar, PlayerGender, PokeBoxBG } from '../types';
+import { SKILL } from '../enums/skill';
 
 export interface Location {
   overworld: string;
@@ -21,9 +22,9 @@ export class PlayerInfo {
   private y!: number;
   private candy!: number;
 
-  private pet!: string | null;
-  private surfPokemon!: string | null;
-  private partySlot: (string | null)[] = [];
+  private pet!: MyPokemon | null;
+  private surfPokemon!: MyPokemon | null;
+  private partySlot: (MyPokemon | null)[] = [];
   private itemSlot: (string | null)[] = [];
   private pokeboxBg: PokeBoxBG[] = [];
   private pokeboxBgCopy: PokeBoxBG[] = [];
@@ -185,7 +186,7 @@ export class PlayerInfo {
     this.y = y;
   }
 
-  setPet(pet: string | null) {
+  setPet(pet: MyPokemon | null) {
     this.pet = pet;
   }
 
@@ -193,7 +194,7 @@ export class PlayerInfo {
     this.candy = candy;
   }
 
-  setSurfPokemon(pokemon: string | null) {
+  setSurfPokemon(pokemon: MyPokemon | null) {
     this.surfPokemon = pokemon;
   }
 
@@ -215,28 +216,35 @@ export class PlayerInfo {
   }
 
   addPartySlot(pokemon: MyPokemon): boolean {
-    const key = getPartyKey(pokemon);
-
     if (this.partySlot.length >= MaxPartySlot) {
       return false;
     }
 
-    for (const party of this.partySlot) {
-      if (key === party) return false;
-    }
-
-    this.partySlot.push(key);
-    // console.log(this.partySlot);
+    this.partySlot.push(pokemon);
 
     return true;
   }
 
   hasPartySlot(pokemon: MyPokemon) {
-    return this.partySlot.includes(getPartyKey(pokemon));
+    for(const party of this.partySlot){
+      if(party?.pokedex === pokemon.pokedex && party.gender === pokemon.gender) return true;
+    }
+
+    return false;
   }
 
   removePartSlot(pokemon: MyPokemon | null, idx?: number): boolean {
-    const index = idx !== undefined && idx >= 0 ? idx : this.partySlot.indexOf(getPartyKey(pokemon));
+    let index = 0;
+
+    if(idx !== undefined && idx >= 0){
+      index = idx;
+    }else{
+      for(let i=0;i<MaxPartySlot;i++){
+        if(this.partySlot[i]?.pokedex === pokemon?.pokedex && this.partySlot[i]?.gender === pokemon?.gender){
+          index = i;
+        }
+      }
+    }
 
     if (index !== -1) {
       this.partySlot.splice(index, 1);
@@ -253,10 +261,7 @@ export class PlayerInfo {
     for (const slot of slots) {
       if (!slot) return -1;
 
-      const split = slot?.split('_');
-      const isSurf = split[2];
-
-      if (split[2] === 'surf') return idx;
+      if (slot.skill === 'surf') return idx;
 
       idx++;
     }

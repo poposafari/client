@@ -1,6 +1,7 @@
 import { PokemonGender, PokemonSkill } from '../object/pokemon-object';
 
 export interface MyPokemon {
+  idx: number;
   pokedex: string;
   gender: PokemonGender;
   shiny: boolean;
