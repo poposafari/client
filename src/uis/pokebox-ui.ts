@@ -589,6 +589,7 @@ export class PokeboxMainUi extends Ui {
 
       if (hasPet?.pokedex === pokemon.pokedex && hasPet.gender === pokemon.gender) {
         PlayerInfo.getInstance().setPet(null);
+        this.pokeboxUi.getPokeboxPartyUi().updatePetIcon();
       }
 
       this.updateHasPartyUi(idx!, false);
@@ -1052,7 +1053,7 @@ export class PokeboxPartyUi extends Ui {
     }
   }
 
-  private updatePetIcon() {
+  updatePetIcon() {
     const pet = PlayerInfo.getInstance().getPet();
 
     this.shinyIconPet.setTexture(TEXTURE.BLANK);
