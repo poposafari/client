@@ -54,7 +54,7 @@ export class PetObject extends MovableObject {
     if (pokemon) {
       overworldKey = getPokemonOverworldKey(pokemon);
       this.setVisible(true);
-      if (isPokedexShiny(overworldKey)) {
+      if (pokemon.shiny) {
         if (!this.dummy2?.anims.isPlaying) {
           this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
           this.dummy2?.setTexture(TEXTURE.OVERWORLD_SHINY);

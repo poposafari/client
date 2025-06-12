@@ -17,7 +17,7 @@ import { KEY } from '../enums/key';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { getPokeboxApi, movePokemonApi } from '../api';
 import { PlayerInfo } from '../storage/player-info';
-import { isPokedexShiny } from '../utils/string-util';
+import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { MODE } from '../enums/mode';
 import { PlayerObject } from '../object/player-object';
 import { PLAYER_STATUS } from '../enums/player-status';
@@ -104,7 +104,7 @@ export class PokeboxUi extends Ui {
   }
 
   updatePokemonTint(pokedex: string, gender: PokemonGender) {
-    const idx = this.pokeboxMainUi.scanTargetPokemon(pokedex.slice(0, 4), gender);
+    const idx = this.pokeboxMainUi.scanTargetPokemon(pokedex, gender);
 
     if (idx >= 0) this.pokeboxMainUi.updateHasPartyUi(idx, false);
   }
@@ -576,7 +576,14 @@ export class PokeboxMainUi extends Ui {
     if (ret === i18next.t('menu:addParty')) {
       this.pokeboxUi.getPokeboxPartyUi().addParty(pokemon) ? this.updateHasPartyUi(idx!, true) : this.showFullPartyMessage();
     } else if (ret === i18next.t('menu:removeParty')) {
+      const hasPet = PlayerInfo.getInstance().getPet();
+
       this.pokeboxUi.getPokeboxPartyUi().removeParty(pokemon);
+
+      if(hasPet?.pokedex === pokemon.pokedex && hasPet.gender === pokemon.gender){
+        PlayerInfo.getInstance().setPet(null);
+      }
+
       this.updateHasPartyUi(idx!, false);
     } else if (ret === i18next.t('menu:boxJump')) {
       this.handleBoxListKeyInput('pokemon', pokemon);
@@ -745,7 +752,9 @@ export class PokeboxMainUi extends Ui {
       const target = pokemons[i];
       this.icons[i].setTexture(`pokemon_icon${target.pokedex}${target.shiny ? 's' : ''}`);
 
-      if (this.hasPartySlot(pokemons[i])) this.updateHasPartyUi(i, true);
+      if (this.hasPartySlot(pokemons[i])) {
+        this.updateHasPartyUi(i, true);
+      }
       if (target.shiny) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
       else this.shinyIcons[i].setTexture(TEXTURE.BLANK);
     }
@@ -970,7 +979,7 @@ export class PokeboxPartyUi extends Ui {
     });
   }
 
-  async handleMenuKeyInput(target: string) {
+  async handleMenuKeyInput(target: MyPokemon) {
     this.menu.show();
     const ret = await this.menu.handleKeyInput();
     let hasPet = this.hasPet(target);
@@ -986,9 +995,8 @@ export class PokeboxPartyUi extends Ui {
 
       this.updatePetIcon();
 
-      const [pokedex, gender] = target.split('_');
       this.removeParty(null, this.lastStart);
-      this.pokeboxUi.updatePokemonTint(pokedex, gender as PokemonGender);
+      this.pokeboxUi.updatePokemonTint(target.pokedex, target.gender as PokemonGender);
       this.handleKeyInput();
     } else if (ret === i18next.t('menu:follow')) {
       this.setPet(target);
@@ -1024,9 +1032,8 @@ export class PokeboxPartyUi extends Ui {
     for (let i = 0; i < MaxPartySlot; i++) {
       this.shinyIcons[i].setTexture(TEXTURE.BLANK);
       if (party[i]) {
-        const key = party[i]?.split('_')[0];
-        this.partyIcons[i].setTexture(`pokemon_icon${key}`);
-        if (isPokedexShiny(key!)) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
+        this.partyIcons[i].setTexture(`pokemon_icon${getPokemonOverworldOrIconKey(party[i])}`);
+        if (party[i]?.shiny) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
       } else {
         this.partyIcons[i].setTexture(`pokemon_icon000`);
       }
@@ -1039,7 +1046,7 @@ export class PokeboxPartyUi extends Ui {
     this.shinyIconPet.setTexture(TEXTURE.BLANK);
 
     if (pet) {
-      const key = pet.split('_')[0];
+      const key = getPokemonOverworldOrIconKey(pet);
       this.petIcon.setTexture(`pokemon_icon${key}`);
       if (isPokedexShiny(key!)) this.shinyIconPet.setTexture(TEXTURE.SHINY);
     } else {
@@ -1079,11 +1086,11 @@ export class PokeboxPartyUi extends Ui {
     this.iconContainer.setScale(1.5);
   }
 
-  private hasPet(target: string | null) {
+  private hasPet(target: MyPokemon | null) {
     return PlayerInfo.getInstance().getPet() === target;
   }
 
-  private setPet(pet: string | null) {
+  private setPet(pet: MyPokemon | null) {
     PlayerInfo.getInstance().setPet(pet);
     this.updatePetIcon();
   }

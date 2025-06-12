@@ -9,7 +9,7 @@ import { TEXTURE } from '../enums/texture';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PlayerInfo } from '../storage/player-info';
-import { changePartyKeyToSpriteKey } from '../utils/string-util';
+import { getPokemonSpriteKey } from '../utils/string-util';
 import { addImage, createSprite, Ui } from './ui';
 
 export class HiddenMoveUi extends Ui {
@@ -48,7 +48,7 @@ export class HiddenMoveUi extends Ui {
     const playerKey = `${playerInfo.getGender()}_${playerInfo.getAvatar()}_hm`;
     const targetPokemon = playerInfo.hasSurfInParty();
 
-    this.pokemon.setTexture(changePartyKeyToSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
+    this.pokemon.setTexture(getPokemonSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
     playerInfo.setSurfPokemon(playerInfo.getPartySlot()[targetPokemon]!);
 
     this.container.setVisible(true);
