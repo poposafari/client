@@ -6,7 +6,7 @@ import { TEXTURE } from '../../enums/texture';
 import i18next from 'i18next';
 import { TEXTSTYLE } from '../../enums/textstyle';
 import { MaxItemSlot, MaxPartySlot } from '../../types';
-import { isPokedexShiny } from '../../utils/string-util';
+import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../../utils/string-util';
 import { EASE } from '../../enums/ease';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
@@ -471,9 +471,8 @@ export class OverworldPokemonSlotUi extends Ui {
     for (let i = 0; i < MaxPartySlot; i++) {
       this.shinyIcons[i].setTexture(TEXTURE.BLANK);
       if (party[i]) {
-        const key = party[i]?.split('_')[0];
-        this.icons[i].setTexture(`pokemon_icon${key}`);
-        if (isPokedexShiny(key!)) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
+        this.icons[i].setTexture(`pokemon_icon${getPokemonOverworldOrIconKey(party[i])}`);
+        if (party[i]?.shiny) this.shinyIcons[i].setTexture(TEXTURE.SHINY);
       } else {
         this.icons[i].setTexture(`pokemon_icon000`);
       }

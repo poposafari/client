@@ -36,7 +36,9 @@ export function getPartyKey(pokemon: MyPokemon | null) {
   return `${pokedex}${shiny}_${gender}_${skills}`;
 }
 
-export function getPokemonOverworldOrIconKey(pokemon: MyPokemon) {
+export function getPokemonOverworldOrIconKey(pokemon: MyPokemon | null) {
+  if (!pokemon) return null;
+
   let ret = '000';
 
   const pokedex = pokemon.pokedex;
@@ -48,27 +50,18 @@ export function getPokemonOverworldOrIconKey(pokemon: MyPokemon) {
   return ret;
 }
 
-export function getPokemonOverworldKey(data: string | null) {
-  if (data) return data.split('_')[0];
+export function getPokemonOverworldKey(pokemon: MyPokemon | null) {
+  if (!pokemon) return `000`;
 
-  return '000';
+  const shiny = pokemon.shiny ? 's' : '';
+
+  return `${pokemon?.pokedex}${shiny}`;
 }
 
-export function changePartyKeyToSpriteKey(key: string) {
-  const split = key.split('_');
-  const rawPokedex = split[0];
-  const rawGender = split[1];
-  const isShiny = isPokedexShiny(rawPokedex);
+export function getPokemonSpriteKey(pokemon: MyPokemon) {
+  const shiny = pokemon.gender ? 's' : '';
 
-  const pokedex = isShiny ? rawPokedex.slice(0, -1) : rawPokedex;
-  const shiny = isShiny ? 's' : '';
-  let gender = 'm';
-
-  if (rawGender === 'female') {
-    gender = 'f';
-  }
-
-  return `pokemon_sprite${pokedex}_${gender}${shiny}`;
+  return `pokemon_sprite${pokemon.pokedex}_${pokemon.gender}${shiny}`;
 }
 
 export function isValidUsername(username: string): boolean {
