@@ -99,8 +99,15 @@ export class PokeboxUi extends Ui {
 
   update(time: number, delta: number): void {}
 
-  updatePokemonInfoUi(idx: number) {
-    this.pokeboxInfoUi.updateInfo(idx);
+  updatePokemonInfoUi(type: 'party' | 'main', idx: number) {
+    let pokemon;
+    if (type === 'main') {
+      pokemon = Box.getInstance().getMyPokemons()[idx];
+      this.pokeboxInfoUi.updateInfo(pokemon);
+    } else {
+      pokemon = PlayerInfo.getInstance().getPartySlot()[idx];
+      this.pokeboxInfoUi.updateInfo(pokemon!);
+    }
   }
 
   updatePokemonTint(pokedex: string, gender: PokemonGender) {
@@ -226,9 +233,7 @@ export class PokeboxInfoUi extends Ui {
 
   update(): void {}
 
-  updateInfo(idx: number) {
-    const pokemon = Box.getInstance().getMyPokemons()[idx];
-
+  updateInfo(pokemon: MyPokemon) {
     if (pokemon) {
       this.pokedex.setText(pokemon.pokedex);
       this.name.setText(i18next.t(`pokemon:${pokemon.pokedex}.name`));
@@ -499,6 +504,8 @@ export class PokeboxMainUi extends Ui {
 
     this.dummys[choice].setTexture(this.finger);
 
+    this.pokeboxUi.updatePokemonInfoUi('main', choice);
+
     keyboard.setAllowKey(keys);
     keyboard.setKeyDownCallback((key) => {
       const prevChoice = choice;
@@ -550,7 +557,7 @@ export class PokeboxMainUi extends Ui {
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.dummys[choice].setTexture(this.finger);
 
-          this.pokeboxUi.updatePokemonInfoUi(choice);
+          this.pokeboxUi.updatePokemonInfoUi('main', choice);
 
           this.lastRow = row;
           this.lastCol = col;
@@ -580,7 +587,7 @@ export class PokeboxMainUi extends Ui {
 
       this.pokeboxUi.getPokeboxPartyUi().removeParty(pokemon);
 
-      if(hasPet?.pokedex === pokemon.pokedex && hasPet.gender === pokemon.gender){
+      if (hasPet?.pokedex === pokemon.pokedex && hasPet.gender === pokemon.gender) {
         PlayerInfo.getInstance().setPet(null);
       }
 
@@ -617,7 +624,7 @@ export class PokeboxMainUi extends Ui {
             this.boxTitleDummy.setTexture(TEXTURE.BLANK);
             this.restoreBoxArrow(false);
             this.handleKeyInput();
-            this.pokeboxUi.updatePokemonInfoUi(this.lastRow! * this.MaxRow + this.lastCol!);
+            this.pokeboxUi.updatePokemonInfoUi('main', this.lastRow! * this.MaxRow + this.lastCol!);
             break;
           case KEY.SELECT:
             this.lastBoxSelect = page;
@@ -927,6 +934,7 @@ export class PokeboxPartyUi extends Ui {
     let choice = start;
 
     this.partyDummys[choice].setTexture(TEXTURE.ARROW_W_R);
+    this.pokeboxUi.updatePokemonInfoUi('party', choice);
 
     keyboard.setAllowKey(keys);
     keyboard.setKeyDownCallback((key) => {
@@ -949,6 +957,8 @@ export class PokeboxPartyUi extends Ui {
             break;
           case KEY.SELECT:
             const target = PlayerInfo.getInstance().getPartySlot()[choice];
+
+            if (target) playSound(this.scene, AUDIO.SELECT_0);
 
             let hasPet = this.hasPet(target);
 
@@ -973,6 +983,8 @@ export class PokeboxPartyUi extends Ui {
 
         this.partyDummys[prevChoice].setTexture(TEXTURE.BLANK);
         this.partyDummys[choice].setTexture(TEXTURE.ARROW_W_R);
+
+        this.pokeboxUi.updatePokemonInfoUi('party', choice);
 
         this.lastStart = choice;
       }
