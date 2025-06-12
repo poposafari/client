@@ -30,7 +30,7 @@ export class HiddenMoveUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
     this.bg = addImage(this.scene, TEXTURE.BG_HIDDEN_MOVE, 0, 0);
-    this.pokemon = addImage(this.scene, `pokemon_sprite0003_f`, 0, 0).setScale(4.8);
+    this.pokemon = addImage(this.scene, `pokemon_sprite0000`, 0, 0).setScale(4.8);
     this.player = createSprite(this.scene, TEXTURE.BLANK, -80, -80);
     this.player.setScale(4.4);
 
@@ -48,6 +48,7 @@ export class HiddenMoveUi extends Ui {
     const playerKey = `${playerInfo.getGender()}_${playerInfo.getAvatar()}_hm`;
     const targetPokemon = playerInfo.hasSurfInParty();
 
+    console.log(getPokemonSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
     this.pokemon.setTexture(getPokemonSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
     playerInfo.setSurfPokemon(playerInfo.getPartySlot()[targetPokemon]!);
 
