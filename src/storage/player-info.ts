@@ -226,8 +226,8 @@ export class PlayerInfo {
   }
 
   hasPartySlot(pokemon: MyPokemon) {
-    for(const party of this.partySlot){
-      if(party?.pokedex === pokemon.pokedex && party.gender === pokemon.gender) return true;
+    for (const party of this.partySlot) {
+      if (party?.pokedex === pokemon.pokedex && party.gender === pokemon.gender) return true;
     }
 
     return false;
@@ -236,11 +236,11 @@ export class PlayerInfo {
   removePartSlot(pokemon: MyPokemon | null, idx?: number): boolean {
     let index = 0;
 
-    if(idx !== undefined && idx >= 0){
+    if (idx !== undefined && idx >= 0) {
       index = idx;
-    }else{
-      for(let i=0;i<MaxPartySlot;i++){
-        if(this.partySlot[i]?.pokedex === pokemon?.pokedex && this.partySlot[i]?.gender === pokemon?.gender){
+    } else {
+      for (let i = 0; i < MaxPartySlot; i++) {
+        if (this.partySlot[i]?.pokedex === pokemon?.pokedex && this.partySlot[i]?.gender === pokemon?.gender) {
           index = i;
         }
       }
@@ -261,7 +261,9 @@ export class PlayerInfo {
     for (const slot of slots) {
       if (!slot) return -1;
 
-      if (slot.skill === 'surf') return idx;
+      for (const skill of slot.skill) {
+        if (skill === 'surf') return idx;
+      }
 
       idx++;
     }

@@ -59,9 +59,10 @@ export function getPokemonOverworldKey(pokemon: MyPokemon | null) {
 }
 
 export function getPokemonSpriteKey(pokemon: MyPokemon) {
-  const shiny = pokemon.gender ? 's' : '';
+  const shiny = pokemon.shiny ? 's' : '';
+  let gender = pokemon.gender === 'male' ? 'm' : pokemon.gender === 'female' ? 'f' : '';
 
-  return `pokemon_sprite${pokemon.pokedex}_${pokemon.gender}${shiny}`;
+  return `pokemon_sprite${pokemon.pokedex}_${gender}${shiny}`;
 }
 
 export function isValidUsername(username: string): boolean {
