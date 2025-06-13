@@ -17,6 +17,8 @@ import { PokeboxUi } from '../uis/pokebox-ui';
 import { ShopUi } from '../uis/shop-ui';
 import { UI } from '../enums/ui';
 import { OverworldUi } from '../uis/overworld/overworld-ui';
+import { MenuUi } from '../uis/menu-ui';
+import { OverworldInfo } from '../storage/overworld-info';
 
 export class UiHandler {
   private registry = new Map<string, Ui>();
@@ -44,6 +46,14 @@ export class UiHandler {
 
       if (top instanceof OverworldUi) {
         top.updatePlayer(delta);
+      }
+    });
+
+    eventBus.on(EVENT.WILD_MOVEMENT_UPDATE, (delta: number) => {
+      const ui = this.findOnStack(`Overworld${OverworldInfo.getInstance().getKey()}`);
+
+      if (ui instanceof OverworldUi) {
+        ui.updateWildPokemon(delta);
       }
     });
 

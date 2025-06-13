@@ -11,10 +11,11 @@ import { playSound, runFadeEffect } from './uis/ui';
 import { replacePercentSymbol } from './utils/string-util';
 import { Bag } from './storage/bag';
 import { UI } from './enums/ui';
-import { Message, PlayerAvatar, PlayerGender } from './types';
+import { GroundItemInfo, Message, PlayerAvatar, PlayerGender } from './types';
 import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
 import { PlayerObject } from './object/player-object';
+import { OverworldInfo } from './storage/overworld-info';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -250,6 +251,7 @@ export class OverworldMode extends Mode {
     eventBus.emit(EVENT.HUD_LOCATION_UPDATE);
     eventBus.emit(EVENT.HUD_CANDY_UPDATE);
     eventBus.emit(EVENT.PLAYER_MOVEMENT_UPDATE, delta);
+    eventBus.emit(EVENT.WILD_MOVEMENT_UPDATE, delta);
 
     // console.log('----------CURRENT_STACK-----------');
     // eventBus.emit(EVENT.SHOW_MODE_STACK);
@@ -271,9 +273,14 @@ export class OverworldConnectingMode extends Mode {
 
     const result = await moveToOverworldApi({ overworld: overworld });
     if (result && result.data) {
+      // console.log(result.data);
+
       PlayerInfo.getInstance().setX(result.data.entryX);
       PlayerInfo.getInstance().setY(result.data.entryY);
       PlayerInfo.getInstance().setLocation(overworld);
+
+      if (result.data.pokemons) OverworldInfo.getInstance().setupWildPokemonInfo(result.data.pokemons);
+      if (result.data.items) OverworldInfo.getInstance().setupGroundItemInfo(result.data.items);
 
       eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD, overworld);
     }

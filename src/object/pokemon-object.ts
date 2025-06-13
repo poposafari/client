@@ -5,16 +5,15 @@ import { OBJECT } from '../enums/object-type';
 import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { OverworldInfo } from '../storage/overworld-info';
-import { PlayerInfo } from '../storage/player-info';
+import { PokemonSpawn } from '../types';
 import { isPokedexShiny } from '../utils/string-util';
 import { MovableObject } from './movable-object';
 
 export class PokemonObject extends MovableObject {
   private pokedex: string;
-  private gender: 0 | 1 | 2;
-  private skill: 0 | 1 | 2 | 3 | 4 | null;
-  private habitat: 'forest' | 'lake' | 'mt';
+  private gender: PokemonGender;
+  private skill: PokemonSkill[] | null;
+  private spawn: PokemonSpawn;
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
@@ -25,21 +24,19 @@ export class PokemonObject extends MovableObject {
     scene: InGameScene,
     texture: TEXTURE | string,
     pokedex: string,
-    gender: 0 | 1 | 2,
-    skill: 0 | 1 | 2 | 3 | 4 | null,
-    habitat: 'forest' | 'lake' | 'mt',
+    gender: PokemonGender,
+    skill: PokemonSkill[] | null,
+    spawn: PokemonSpawn,
     x: number,
     y: number,
     map: Phaser.Tilemaps.Tilemap,
     nickname: string,
-    overworldInfo: OverworldInfo,
-    playerInfo: PlayerInfo,
   ) {
-    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON, playerInfo, overworldInfo);
+    super(scene, texture, x, y, map, nickname, OBJECT.POKEMON);
     this.pokedex = pokedex;
     this.gender = gender;
-    this.skill = skill;
-    this.habitat = habitat;
+    this.skill = skill ? skill : null;
+    this.spawn = spawn;
     this.status = POKEMON_STATUS.ROAMING;
     this.setScale(1.5);
     this.setSpeed(2);
@@ -61,8 +58,8 @@ export class PokemonObject extends MovableObject {
     return this.skill;
   }
 
-  getHabitat() {
-    return this.habitat;
+  getSpawn() {
+    return this.spawn;
   }
 
   getPokedex() {
