@@ -15,8 +15,8 @@ import { MAP_SCALE, TILE_SIZE } from './base-object';
 import { EASE } from '../enums/ease';
 
 export class PetObject extends MovableObject {
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, overworldInfo: OverworldInfo) {
-    super(scene, texture, x, y, map, nickname, overworldInfo, OBJECT.PET);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
+    super(scene, texture, x, y, map, nickname, OBJECT.PET);
   }
 
   move(player: PlayerObject) {

@@ -27,6 +27,23 @@ export type Message = {
   questionNo?: EVENT;
 };
 
+export interface WildPokemonInfo {
+  catch: boolean;
+  form: number;
+  gender: PokemonGender;
+  pokedex: string;
+  shiny: boolean;
+  skills: PokemonSkill[] | null;
+  spawns: PokemonSpawn;
+}
+
+export interface GroundItemInfo {
+  catch: boolean;
+  item: string;
+  stock: number;
+}
+
 export type PokemonGender = 'male' | 'female' | 'none';
 export type PokemonHabitat = 'land' | 'lake' | 'mt';
+export type PokemonSpawn = 'land' | 'water';
 export type PokemonSkill = 'none' | 'surf' | 'darkeyes';

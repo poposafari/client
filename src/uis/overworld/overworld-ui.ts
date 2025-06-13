@@ -16,12 +16,13 @@ import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
 import { getAvailableTicketApi } from '../../api';
-import { Message } from '../../types';
+import { Message, PokemonSpawn } from '../../types';
 import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
 import { MODE } from '../../enums/mode';
 import { BaseObject } from '../../object/base-object';
 import { HM } from '../../enums/hidden-move';
+import { PokemonObject } from '../../object/pokemon-object';
 
 type MapInfo = {
   texture: TEXTURE;
@@ -56,17 +57,22 @@ type PlayerInitPos = {
 };
 
 export class OverworldUi extends Ui {
+  private type: OVERWORLD_TYPE;
+
   protected map: OverworldMap;
   protected player: OverworldPlayer;
-  protected info: OverworldInfo;
   protected npc: OverworldNpc;
+  protected safari: OverworldSafari;
 
-  constructor(scene: InGameScene) {
+  constructor(scene: InGameScene, type: OVERWORLD_TYPE) {
     super(scene);
+
+    this.type = type;
+
     this.map = new OverworldMap(scene);
-    this.info = new OverworldInfo();
-    this.npc = new OverworldNpc(scene, this.info);
-    this.player = new OverworldPlayer(scene, this.npc, this.info);
+    this.npc = new OverworldNpc(scene);
+    this.player = new OverworldPlayer(scene, this.npc);
+    this.safari = new OverworldSafari(scene);
   }
 
   setup(): void {}
@@ -77,12 +83,16 @@ export class OverworldUi extends Ui {
     this.map.show();
     this.player.show(this.map.get());
     this.npc.show(this.map.get());
+
+    if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.show(this.map.get());
   }
 
   clean(data?: any): void {
     this.map.clean();
     this.player.clean();
     this.npc.clean();
+
+    if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.clean();
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -95,6 +105,10 @@ export class OverworldUi extends Ui {
 
   updatePlayer(delta: number) {
     this.player.update(delta);
+  }
+
+  updateWildPokemon(delta: number) {
+    this.safari.updateWildPokemon(delta);
   }
 }
 
@@ -213,15 +227,13 @@ export class OverworldPlayer {
   private npc: OverworldNpc;
 
   private obj!: PlayerObject | null;
-  private overworldInfo: OverworldInfo;
   private dummy!: BaseObject;
 
   private readonly scale: number = 3;
 
-  constructor(scene: InGameScene, npc: OverworldNpc, overworldInfo: OverworldInfo) {
+  constructor(scene: InGameScene, npc: OverworldNpc) {
     this.scene = scene;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
-    this.overworldInfo = overworldInfo;
     this.npc = npc;
 
     eventBus.on(EVENT.FINISH_TALK, () => {
@@ -250,7 +262,7 @@ export class OverworldPlayer {
     const px = playerData.getPosX();
     const py = playerData.getPosY();
 
-    this.obj = new PlayerObject(this.scene, texture, px, py, map, nickname, this.overworldInfo, OBJECT.PLAYER);
+    this.obj = new PlayerObject(this.scene, texture, px, py, map, nickname, OBJECT.PLAYER);
     this.obj.setScale(this.scale);
     this.scene.cameras.main.startFollow(this.obj.getSprite(), true, 0.5, 0.5);
 
@@ -383,12 +395,10 @@ export class OverworldPlayer {
 
 export class OverworldNpc {
   private scene: InGameScene;
-  private overworldInfo: OverworldInfo;
   private info: NpcInfo[] = [];
 
-  constructor(scene: InGameScene, overworldInfo: OverworldInfo) {
+  constructor(scene: InGameScene) {
     this.scene = scene;
-    this.overworldInfo = overworldInfo;
   }
 
   setup(npcKey: string, x: number, y: number, overworldType: OVERWORLD_TYPE, startMessageType: 'talk' | 'question') {
@@ -404,13 +414,13 @@ export class OverworldNpc {
   show(map: Phaser.Tilemaps.Tilemap) {
     for (const info of this.info) {
       const npc = new NpcObject(this.scene, info.key, info.x, info.y, map, i18next.t(`npc:${info.key}.name`), OBJECT.NPC, info.overworldType, info.startMessageType);
-      this.overworldInfo.addNpc(npc);
+      OverworldInfo.getInstance().addNpc(npc);
     }
   }
 
   clean() {
     this.info = [];
-    this.overworldInfo.resetNpcs();
+    OverworldInfo.getInstance().resetNpcs();
   }
 
   async talk(obj: NpcObject, direction: DIRECTION) {
@@ -459,5 +469,107 @@ export class OverworldNpc {
 
     obj.reaction(direction);
     eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, msgs);
+  }
+}
+
+export class OverworldSafari {
+  private scene: InGameScene;
+
+  constructor(scene: InGameScene) {
+    this.scene = scene;
+  }
+
+  show(map: Phaser.Tilemaps.Tilemap) {
+    this.addWildPokemons(map);
+  }
+
+  clean() {
+    for (const target of OverworldInfo.getInstance().getPokemons()) {
+      target.stopMovement();
+      target.destroy();
+    }
+    OverworldInfo.getInstance().resetPokemons();
+
+    // for (const target of OverworldInfo.getInstance().getGroundItems()) {
+    //   target.destroy();
+    // }
+    // OverworldInfo.getInstance().resetGroundItem();
+  }
+
+  updateWildPokemon(delta: number) {
+    for (const pokemon of OverworldInfo.getInstance().getPokemons()) {
+      if (pokemon.isMovementFinish()) {
+        pokemon.move();
+      }
+
+      pokemon.update(delta);
+    }
+  }
+
+  private addWildPokemons(map: Phaser.Tilemaps.Tilemap) {
+    OverworldInfo.getInstance().resetPokemons();
+
+    const validPosition = this.doScanSpawnTile(map);
+
+    for (const info of OverworldInfo.getInstance().getWildPokemonInfo()) {
+      const pos = this.getRandomSpawnTilePos(validPosition, info.spawns);
+
+      if (info.spawns === 'water') console.log(pos);
+
+      const pokemon = new PokemonObject(
+        this.scene,
+        `pokemon_overworld${info.pokedex}`,
+        info.pokedex,
+        info.gender,
+        info.skills,
+        info.spawns,
+        pos[0],
+        pos[1],
+        map,
+        i18next.t(`pokemon:${info.pokedex}.name`),
+      );
+
+      OverworldInfo.getInstance().addPokemon(pokemon);
+    }
+  }
+
+  private doScanSpawnTile(map: Phaser.Tilemaps.Tilemap) {
+    const validPositions: [number, number, PokemonSpawn][] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        const tiles = this.getTile(map, new Phaser.Math.Vector2(x, y));
+
+        if (!tiles || tiles.length > 1) {
+          continue;
+        }
+
+        for (const tile of tiles) {
+          if (tile && tile.properties.type) {
+            validPositions.push([x, y, tile.properties.type as PokemonSpawn]);
+          }
+        }
+      }
+    }
+
+    return validPositions;
+  }
+
+  private getTile(map: Phaser.Tilemaps.Tilemap, pos: Phaser.Math.Vector2): Phaser.Tilemaps.Tile[] | null {
+    const ret: Phaser.Tilemaps.Tile[] = [];
+
+    map.layers.map((layer) => {
+      const tile = map.getTileAt(pos.x, pos.y, false, layer.name);
+
+      if (tile) ret.push(tile!);
+    });
+
+    return ret;
+  }
+
+  private getRandomSpawnTilePos(pos: [number, number, PokemonSpawn][], targetSpawn: PokemonSpawn) {
+    const targetTiles = pos.filter(([x, y, spawn]) => spawn === targetSpawn);
+
+    return Phaser.Utils.Array.GetRandom(targetTiles);
   }
 }

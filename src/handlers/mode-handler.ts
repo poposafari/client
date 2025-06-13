@@ -4,6 +4,7 @@ import { eventBus } from '../core/event-bus';
 import { EVENT } from '../enums/event';
 import { MODE } from '../enums/mode';
 import { Mode } from '../mode';
+import { OverworldMode } from '../modes';
 
 export class ModeHandler {
   private registry = new Map<MODE, Mode>();
@@ -40,7 +41,7 @@ export class ModeHandler {
     nextMode.enter(data);
     this.stack.push(nextMode);
 
-    eventBus.emit(EVENT.SHOW_MODE_STACK);
+    // eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   overlap(key: MODE, data?: any) {
@@ -53,7 +54,7 @@ export class ModeHandler {
     this.stack.push(nextMode);
     nextMode.enter(data);
 
-    eventBus.emit(EVENT.SHOW_MODE_STACK);
+    // eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   pop() {
@@ -61,7 +62,7 @@ export class ModeHandler {
 
     if (top) top.exit();
 
-    eventBus.emit(EVENT.SHOW_MODE_STACK);
+    // eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   getCurrent(): Mode {
@@ -73,7 +74,17 @@ export class ModeHandler {
 
     if (mode) return mode;
 
-    console.log('Mode stack is empty');
+    // console.log('Mode stack is empty');
+
+    return null;
+  }
+
+  findOverworldMode() {
+    for (const mode of this.stack) {
+      if (mode instanceof OverworldMode) {
+        return mode;
+      }
+    }
 
     return null;
   }

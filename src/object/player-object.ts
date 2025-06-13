@@ -22,11 +22,11 @@ export class PlayerObject extends MovableObject {
   private pet!: PetObject;
   private dummy!: BaseObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, type: OBJECT) {
-    super(scene, texture, x, y, map!, nickname, overworldInfo, type);
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
+    super(scene, texture, x, y, map!, nickname, type);
     this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
 
-    this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '', this.overworldInfo);
+    this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '');
     const petSprite = this.pet.getSprite();
     this.pet.setVisible(this.getPlayerData().getPet() ? true : false);
     petSprite.setScale(1.5);

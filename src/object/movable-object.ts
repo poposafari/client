@@ -29,7 +29,6 @@ export class MovableObject extends BaseObject {
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
   protected map: Phaser.Tilemaps.Tilemap;
-  protected overworldInfo: OverworldInfo;
 
   private movementDirection: {
     [key in DIRECTION]?: Phaser.Math.Vector2;
@@ -40,11 +39,9 @@ export class MovableObject extends BaseObject {
     [DIRECTION.RIGHT]: Vector2.RIGHT,
   };
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, overworldInfo: OverworldInfo, objectType: OBJECT) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT) {
     super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
-
-    this.overworldInfo = overworldInfo;
 
     this.stopAnmation(3);
 
@@ -187,7 +184,7 @@ export class MovableObject extends BaseObject {
 
   getObjectInFront(direction: DIRECTION) {
     const nextTilePos = this.tilePosInDirection(direction);
-    const npcs = this.overworldInfo.getNpcs();
+    const npcs = OverworldInfo.getInstance().getNpcs();
 
     for (const npc of npcs) {
       const npcTilePos = npc.getTilePos();
@@ -196,14 +193,14 @@ export class MovableObject extends BaseObject {
       }
     }
 
-    for (const pokemon of this.overworldInfo.getPokemons()) {
+    for (const pokemon of OverworldInfo.getInstance().getPokemons()) {
       const pokemonTilePos = pokemon.getTilePos();
       if (pokemonTilePos.x === nextTilePos.x && pokemonTilePos.y === nextTilePos.y && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
         return pokemon;
       }
     }
 
-    for (const groundItem of this.overworldInfo.getGroundItems()) {
+    for (const groundItem of OverworldInfo.getInstance().getGroundItems()) {
       const groundTilePos = groundItem.getTilePos();
       if (groundTilePos.x === nextTilePos.x && groundTilePos.y === nextTilePos.y && groundItem.getActive() === true) {
         return groundItem;
@@ -243,7 +240,7 @@ export class MovableObject extends BaseObject {
   }
 
   private hasGroundItemObject(pos: Phaser.Math.Vector2) {
-    for (const groundItem of this.overworldInfo.getGroundItems()) {
+    for (const groundItem of OverworldInfo.getInstance().getGroundItems()) {
       const groundTilePos = groundItem.getTilePos();
       if (groundTilePos.x === pos.x && groundTilePos.y === pos.y && groundItem.getActive() === true) {
         return true;
@@ -253,7 +250,7 @@ export class MovableObject extends BaseObject {
   }
 
   private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
-    for (const pokemon of this.overworldInfo.getPokemons()) {
+    for (const pokemon of OverworldInfo.getInstance().getPokemons()) {
       const pokemonTilePos = pokemon.getTilePos();
       if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
         return true;
@@ -263,7 +260,7 @@ export class MovableObject extends BaseObject {
   }
 
   private hasBlockingNpc(pos: Phaser.Math.Vector2): boolean {
-    const npcs = this.overworldInfo.getNpcs();
+    const npcs = OverworldInfo.getInstance().getNpcs();
 
     for (const npc of npcs) {
       const npcTilePos = npc.getTilePos();
