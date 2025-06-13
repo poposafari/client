@@ -54,6 +54,7 @@ import { SafariListUi } from '../uis/safari-list-ui';
 import { Overworld011 } from '../uis/overworld/overworld-011';
 import { HiddenMoveUi } from '../uis/hidden-move-ui';
 import { DummyUi } from '../uis/dummy-ui';
+import { OverworldInfo } from '../storage/overworld-info';
 
 export class InGameScene extends BaseScene {
   private uiHandler = new UiHandler();
@@ -117,9 +118,9 @@ export class InGameScene extends BaseScene {
   }
 
   update(time: number, delta: number): void {
-    const mode = this.modeHandler.getCurrent();
+    const mode = this.modeHandler.findOverworldMode();
 
-    if (mode instanceof OverworldMode) {
+    if (mode && this.modeHandler.findOverworldMode()) {
       mode.update(time, delta);
     }
   }
@@ -128,6 +129,7 @@ export class InGameScene extends BaseScene {
     PlayerInfo.getInstance();
     Bag.getInstance();
     Box.getInstance();
+    OverworldInfo.getInstance();
   }
 
   private initAnimation() {

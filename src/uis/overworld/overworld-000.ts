@@ -4,11 +4,12 @@ import { EVENT } from '../../enums/event';
 import { OVERWORLD_TYPE } from '../../enums/overworld-type';
 import { TEXTURE } from '../../enums/texture';
 import { InGameScene } from '../../scenes/ingame-scene';
+import { OverworldInfo } from '../../storage/overworld-info';
 import { OverworldUi } from './overworld-ui';
 
 export class Overworld000 extends OverworldUi {
   constructor(scene: InGameScene) {
-    super(scene);
+    super(scene, OVERWORLD_TYPE.PLAZA);
   }
 
   setup(): void {
@@ -18,6 +19,8 @@ export class Overworld000 extends OverworldUi {
   }
 
   show(): void {
+    OverworldInfo.getInstance().setKey('000');
+
     this.map.setup(TEXTURE.OVERWORLD_000, [TEXTURE.TILE_FLOOR, TEXTURE.TILE_OBJECT, TEXTURE.TILE_EDGE]);
     this.map.setLayer(0, TEXTURE.TILE_FLOOR, DEPTH.GROUND);
     this.map.setLayer(1, TEXTURE.TILE_FLOOR, DEPTH.GROUND);
