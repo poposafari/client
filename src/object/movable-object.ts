@@ -202,7 +202,7 @@ export class MovableObject extends BaseObject {
 
     for (const groundItem of OverworldInfo.getInstance().getGroundItems()) {
       const groundTilePos = groundItem.getTilePos();
-      if (groundTilePos.x === nextTilePos.x && groundTilePos.y === nextTilePos.y && groundItem.getActive() === true) {
+      if (groundTilePos.x === nextTilePos.x && groundTilePos.y === nextTilePos.y && groundItem.getCatch() === false) {
         return groundItem;
       }
     }
@@ -242,7 +242,7 @@ export class MovableObject extends BaseObject {
   private hasGroundItemObject(pos: Phaser.Math.Vector2) {
     for (const groundItem of OverworldInfo.getInstance().getGroundItems()) {
       const groundTilePos = groundItem.getTilePos();
-      if (groundTilePos.x === pos.x && groundTilePos.y === pos.y && groundItem.getActive() === true) {
+      if (groundTilePos.x === pos.x && groundTilePos.y === pos.y && groundItem.getCatch() === false) {
         return true;
       }
     }

@@ -28,6 +28,7 @@ export type Message = {
 };
 
 export interface WildPokemonInfo {
+  idx: number;
   catch: boolean;
   form: number;
   gender: PokemonGender;
@@ -38,6 +39,7 @@ export interface WildPokemonInfo {
 }
 
 export interface GroundItemInfo {
+  idx: number;
   catch: boolean;
   item: string;
   stock: number;
