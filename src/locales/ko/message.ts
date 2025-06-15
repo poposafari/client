@@ -37,6 +37,7 @@ export const message: TranslationDefault = {
   surfOn: '물은 깊고 푸른 색이다\n파도타기를 쓰겠습니까?',
   surfOff: '파도타기를\n취소하시겠습니까?',
   warn_surf: '이미 파도타기를 사용 중입니다.',
+  catchItem: '%는\n% x%(을/를) 손에 넣었다.',
   putPocket: '%는\n%를 <%>포켓에 넣었다.',
   warn_max_stock: '아이템은 최대 999개 까지 소지할 수 있습니다.',
   warn_no_candy: '사탕이 부족합니다.',
