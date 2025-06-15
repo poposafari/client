@@ -273,7 +273,7 @@ export class OverworldConnectingMode extends Mode {
 
     const result = await moveToOverworldApi({ overworld: overworld });
     if (result && result.data) {
-      // console.log(result.data);
+      console.log(result.data);
 
       PlayerInfo.getInstance().setX(result.data.entryX);
       PlayerInfo.getInstance().setY(result.data.entryY);

@@ -38,8 +38,6 @@ export class OverworldInfo {
   }
 
   getWildPokemonInfo() {
-    console.log(this.pokemoninfo);
-
     return this.pokemoninfo;
   }
 

@@ -6,18 +6,20 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { BaseObject } from './base-object';
 
 export class GroundItemObject extends BaseObject {
+  private idx: number;
   private key: string;
   private count: number;
-  private active: boolean;
+  private catch: boolean;
   private startMessageType: 'talk' | 'question';
   private talkType: 'sys' | 'default' | 'battle';
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, type: OBJECT, count: number, key: string) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, type: OBJECT, idx: number, count: number, key: string, active: boolean) {
     super(scene, texture, x, y, '', OBJECT.ITEM_GROUND);
 
+    this.idx = idx;
     this.count = count;
     this.key = key;
-    this.active = true;
+    this.catch = active;
 
     this.setSpriteFrame(0);
     this.setScale(1.5);
@@ -26,28 +28,12 @@ export class GroundItemObject extends BaseObject {
     this.talkType = 'sys';
   }
 
-  reaction(playerNickname: string): Message[] {
-    return this.reactionScripts(playerNickname);
+  changeCatch() {
+    this.catch = true;
   }
 
-  private reactionScripts(playerNickname: string) {
-    let ret: Message[] = [];
-
-    const script1 = playerNickname + i18next.t(`message:battle_thinking1`);
-    const script2 = '\n' + i18next.t(`item:${this.key}.name`) + 'x' + this.count + ' ' + i18next.t('message:find');
-
-    const script = script1 + script2;
-    ret.push({ type: this.talkType, format: this.startMessageType, content: script });
-
-    return ret;
-  }
-
-  changeActive() {
-    this.active = false;
-  }
-
-  getActive() {
-    return this.active;
+  getCatch() {
+    return this.catch;
   }
 
   getCount() {
@@ -56,5 +42,9 @@ export class GroundItemObject extends BaseObject {
 
   getItemKey() {
     return this.key;
+  }
+
+  getIdx() {
+    return this.idx;
   }
 }

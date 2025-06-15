@@ -11,11 +11,11 @@ import { PlayerObject } from '../../object/player-object';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { OverworldInfo } from '../../storage/overworld-info';
 import { PlayerInfo } from '../../storage/player-info';
-import { addMap, createSprite, findEventTile, runFadeEffect, Ui } from '../ui';
+import { addMap, createSprite, findEventTile, playSound, runFadeEffect, Ui } from '../ui';
 import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
-import { getAvailableTicketApi } from '../../api';
+import { catchGroundItem, getAvailableTicketApi } from '../../api';
 import { Message, PokemonSpawn } from '../../types';
 import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
@@ -23,6 +23,9 @@ import { MODE } from '../../enums/mode';
 import { BaseObject } from '../../object/base-object';
 import { HM } from '../../enums/hidden-move';
 import { PokemonObject } from '../../object/pokemon-object';
+import { GroundItemObject } from '../../object/ground-item-object';
+import { Bag } from '../../storage/bag';
+import { AUDIO } from '../../enums/audio';
 
 type MapInfo = {
   texture: TEXTURE;
@@ -71,8 +74,8 @@ export class OverworldUi extends Ui {
 
     this.map = new OverworldMap(scene);
     this.npc = new OverworldNpc(scene);
-    this.player = new OverworldPlayer(scene, this.npc);
     this.safari = new OverworldSafari(scene);
+    this.player = new OverworldPlayer(scene, this.npc, this.safari);
   }
 
   setup(): void {}
@@ -225,16 +228,18 @@ export class OverworldPlayer {
   private scene: InGameScene;
   private cursorKey: Phaser.Types.Input.Keyboard.CursorKeys;
   private npc: OverworldNpc;
+  private safari: OverworldSafari;
 
   private obj!: PlayerObject | null;
   private dummy!: BaseObject;
 
   private readonly scale: number = 3;
 
-  constructor(scene: InGameScene, npc: OverworldNpc) {
+  constructor(scene: InGameScene, npc: OverworldNpc, safari: OverworldSafari) {
     this.scene = scene;
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.npc = npc;
+    this.safari = safari;
 
     eventBus.on(EVENT.FINISH_TALK, () => {
       this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
@@ -319,6 +324,8 @@ export class OverworldPlayer {
 
               if (target instanceof NpcObject) {
                 this.npc.talk(target, this.obj!.getLastDirection());
+              } else if (target instanceof GroundItemObject) {
+                this.safari.talkGroundItem(target);
               } else if (findEventTile(tiles)) {
                 switch (findEventTile(tiles)) {
                   case 'surf':
@@ -480,6 +487,7 @@ export class OverworldSafari {
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
+    this.addGroundItems(map);
     this.addWildPokemons(map);
   }
 
@@ -490,10 +498,10 @@ export class OverworldSafari {
     }
     OverworldInfo.getInstance().resetPokemons();
 
-    // for (const target of OverworldInfo.getInstance().getGroundItems()) {
-    //   target.destroy();
-    // }
-    // OverworldInfo.getInstance().resetGroundItem();
+    for (const target of OverworldInfo.getInstance().getGroundItems()) {
+      target.destroy();
+    }
+    OverworldInfo.getInstance().resetGroundItem();
   }
 
   updateWildPokemon(delta: number) {
@@ -514,7 +522,7 @@ export class OverworldSafari {
     for (const info of OverworldInfo.getInstance().getWildPokemonInfo()) {
       const pos = this.getRandomSpawnTilePos(validPosition, info.spawns);
 
-      if (info.spawns === 'water') console.log(pos);
+      if (info.catch) continue;
 
       const pokemon = new PokemonObject(
         this.scene,
@@ -530,6 +538,22 @@ export class OverworldSafari {
       );
 
       OverworldInfo.getInstance().addPokemon(pokemon);
+    }
+  }
+
+  private addGroundItems(map: Phaser.Tilemaps.Tilemap) {
+    OverworldInfo.getInstance().resetGroundItem();
+
+    const validPosition = this.doScanSpawnTile(map);
+
+    for (const info of OverworldInfo.getInstance().getGroundItemInfo()) {
+      const pos = this.getRandomSpawnTilePos(validPosition, 'land');
+
+      if (info.catch) continue;
+
+      const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], map, OBJECT.ITEM_GROUND, info.idx, info.stock, info.item, info.catch);
+
+      OverworldInfo.getInstance().addGroundItem(groundItem);
     }
   }
 
@@ -571,5 +595,37 @@ export class OverworldSafari {
     const targetTiles = pos.filter(([x, y, spawn]) => spawn === targetSpawn);
 
     return Phaser.Utils.Array.GetRandom(targetTiles);
+  }
+
+  async talkGroundItem(obj: GroundItemObject) {
+    obj.destroy();
+    obj.changeCatch();
+
+    const ret = await catchGroundItem({ idx: obj.getIdx() });
+
+    if (ret && ret.success) {
+      const bag = Bag.getInstance();
+
+      bag.addItems(ret.data.item, ret.data.stock, ret.data.category);
+      playSound(this.scene, AUDIO.GET_0);
+      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
+        {
+          type: 'default',
+          format: 'talk',
+          content: replacePercentSymbol(i18next.t(`message:catchItem`), [PlayerInfo.getInstance().getNickname(), i18next.t(`item:${obj.getItemKey()}.name`), obj.getCount()]),
+          speed: 60,
+        },
+        {
+          type: 'default',
+          format: 'talk',
+          content: replacePercentSymbol(i18next.t(`message:putPocket`), [
+            PlayerInfo.getInstance().getNickname(),
+            i18next.t(`item:${obj.getItemKey()}.name`),
+            i18next.t(`menu:${ret.data.data.category}`),
+          ]),
+          speed: 10,
+        },
+      ]);
+    }
   }
 }
