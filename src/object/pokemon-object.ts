@@ -14,6 +14,8 @@ export class PokemonObject extends MovableObject {
   private gender: PokemonGender;
   private skill: PokemonSkill[] | null;
   private spawn: PokemonSpawn;
+  private eatenBerry: string | null;
+  private shiny: boolean;
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
   private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
   private timer?: Phaser.Time.TimerEvent;
@@ -27,6 +29,7 @@ export class PokemonObject extends MovableObject {
     gender: PokemonGender,
     skill: PokemonSkill[] | null,
     spawn: PokemonSpawn,
+    shiny: boolean,
     x: number,
     y: number,
     map: Phaser.Tilemaps.Tilemap,
@@ -38,10 +41,13 @@ export class PokemonObject extends MovableObject {
     this.skill = skill ? skill : null;
     this.spawn = spawn;
     this.status = POKEMON_STATUS.ROAMING;
+    this.shiny = shiny;
+    this.eatenBerry = null;
+
     this.setScale(1.5);
     this.setSpeed(2);
     this.setSmoothFrames([12, 0, 4, 8]);
-    if (isPokedexShiny(pokedex)) {
+    if (this.shiny) {
       this.dummy2.setTexture(TEXTURE.OVERWORLD_SHINY);
       this.dummy2.play(ANIMATION.OVERWORLD_SHINY);
       this.dummy2.setScale(2.4);
@@ -52,6 +58,10 @@ export class PokemonObject extends MovableObject {
 
   getGender() {
     return this.gender;
+  }
+
+  getShiny() {
+    return this.shiny;
   }
 
   getSkill() {
@@ -80,16 +90,26 @@ export class PokemonObject extends MovableObject {
     }
   }
 
+  setEatenBerry(item: string) {
+    this.eatenBerry = item;
+  }
+
+  getEatenBerry() {
+    return this.eatenBerry;
+  }
+
   private getAnimation(key: KEY) {
+    const shiny = this.shiny ? 's' : '';
+
     switch (key) {
       case KEY.UP:
-        return `pokemon_overworld${this.pokedex}_up`;
+        return `pokemon_overworld${this.pokedex}${shiny}_up`;
       case KEY.DOWN:
-        return `pokemon_overworld${this.pokedex}_down`;
+        return `pokemon_overworld${this.pokedex}${shiny}_down`;
       case KEY.LEFT:
-        return `pokemon_overworld${this.pokedex}_left`;
+        return `pokemon_overworld${this.pokedex}${shiny}_left`;
       case KEY.RIGHT:
-        return `pokemon_overworld${this.pokedex}_right`;
+        return `pokemon_overworld${this.pokedex}${shiny}_right`;
     }
   }
 
@@ -131,20 +151,21 @@ export class PokemonObject extends MovableObject {
   }
 
   reaction(playerDirection: DIRECTION) {
+    const shiny = this.shiny ? 's' : '';
     this.stopMovement();
 
     switch (playerDirection) {
       case DIRECTION.DOWN:
-        this.startAnmation(`pokemon_overworld${this.pokedex}_up`);
+        this.startAnmation(`pokemon_overworld${this.pokedex}${shiny}_up`);
         break;
       case DIRECTION.LEFT:
-        this.startAnmation(`pokemon_overworld${this.pokedex}_right`);
+        this.startAnmation(`pokemon_overworld${this.pokedex}${shiny}_right`);
         break;
       case DIRECTION.RIGHT:
-        this.startAnmation(`pokemon_overworld${this.pokedex}_left`);
+        this.startAnmation(`pokemon_overworld${this.pokedex}${shiny}_left`);
         break;
       case DIRECTION.UP:
-        this.startAnmation(`pokemon_overworld${this.pokedex}_down`);
+        this.startAnmation(`pokemon_overworld${this.pokedex}${shiny}_down`);
         break;
     }
 
@@ -154,7 +175,7 @@ export class PokemonObject extends MovableObject {
       frameRate: 7,
     });
 
-    this.getScene().time.delayedCall(2000, () => {
+    this.getScene().time.delayedCall(1000, () => {
       this.dummy1.setTexture(TEXTURE.BLANK);
     });
   }

@@ -1,4 +1,5 @@
 import { MyPokemon } from '../storage/box';
+import { PokemonGender } from '../types';
 
 export function createZeroPad(value: number): string {
   return value.toString().padStart(4, '0');
@@ -63,6 +64,13 @@ export function getPokemonSpriteKey(pokemon: MyPokemon) {
   let gender = pokemon.gender === 'male' ? 'm' : pokemon.gender === 'female' ? 'f' : '';
 
   return `pokemon_sprite${pokemon.pokedex}_${gender}${shiny}`;
+}
+
+export function getBattlePokemonSpriteKey(pokedex: string, shiny: boolean, gender: PokemonGender) {
+  const isShiny = shiny ? 's' : '';
+  const isGender = gender === 'male' ? 'm' : gender === 'female' ? 'f' : '';
+
+  return `pokemon_sprite${pokedex}_${isGender}${isShiny}`;
 }
 
 export function isValidUsername(username: string): boolean {

@@ -34,6 +34,11 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_9, 'ui/windows', TEXTURE.WINDOW_9);
     this.loadImage(TEXTURE.WINDOW_10, 'ui/windows', TEXTURE.WINDOW_10);
     this.loadImage(TEXTURE.WINDOW_11, 'ui/windows', TEXTURE.WINDOW_11);
+    this.loadImage(TEXTURE.WINDOW_19, 'ui/windows', TEXTURE.WINDOW_19);
+    this.loadImage(TEXTURE.WINDOW_20, 'ui/windows', TEXTURE.WINDOW_20);
+    this.loadImage(TEXTURE.WINDOW_REWARD, 'ui/windows', TEXTURE.WINDOW_REWARD);
+    this.loadImage(TEXTURE.REWARD, 'ui', TEXTURE.REWARD);
+    this.loadImage(TEXTURE.OVERLAY_0, 'ui', TEXTURE.OVERLAY_0);
 
     this.loadImage(TEXTURE.BOX_NAME, 'ui/box', TEXTURE.BOX_NAME);
     this.loadImage(TEXTURE.BOX_DESC, 'ui/box', TEXTURE.BOX_DESC);
@@ -225,6 +230,15 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.GET_0, 'audio', AUDIO.GET_0, 'ogg');
     this.loadAudio(AUDIO.BUY, 'audio', AUDIO.BUY, 'ogg');
     this.loadAudio(AUDIO.JUMP, 'audio', AUDIO.JUMP, 'ogg');
+    this.loadAudio(AUDIO.REACTION_0, 'audio', AUDIO.REACTION_0, 'ogg');
+    this.loadAudio(AUDIO.THROW, 'audio', AUDIO.THROW, 'ogg');
+    this.loadAudio(AUDIO.BALL_CATCH, 'audio', AUDIO.BALL_CATCH, 'ogg');
+    this.loadAudio(AUDIO.BALL_DROP, 'audio', AUDIO.BALL_DROP, 'ogg');
+    this.loadAudio(AUDIO.BALL_ENTER, 'audio', AUDIO.BALL_ENTER, 'ogg');
+    this.loadAudio(AUDIO.BALL_ENTER, 'audio', AUDIO.BALL_ENTER, 'ogg');
+    this.loadAudio(AUDIO.BALL_EXIT, 'audio', AUDIO.BALL_EXIT, 'ogg');
+    this.loadAudio(AUDIO.BALL_SHAKE, 'audio', AUDIO.BALL_SHAKE, 'ogg');
+    this.loadAudio(AUDIO.BUZZER, 'audio', AUDIO.BUZZER, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

@@ -16,6 +16,8 @@ import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
 import { PlayerObject } from './object/player-object';
 import { OverworldInfo } from './storage/overworld-info';
+import { Battle } from './storage/battle';
+import { PokemonObject } from './object/pokemon-object';
 
 export class NoneMode extends Mode {
   constructor(scene: InGameScene) {
@@ -153,17 +155,13 @@ export class TitleMode extends Mode {
   }
 
   async enter(data: any): Promise<void> {
-    let playerInfo;
+    const result = await getIngameApi();
+    const playerInfo = result?.data;
 
-    if (data) {
-      playerInfo = data;
-    } else {
-      const result = await getIngameApi();
-      playerInfo = result?.data;
-    }
+    console.log(playerInfo);
 
     PlayerInfo.getInstance().setup(playerInfo);
-    Bag.getInstance().setItems(playerInfo.items);
+    Bag.getInstance().setup(playerInfo.items);
 
     eventBus.emit(EVENT.CHANGE_UI, UI.TITLE);
   }
@@ -382,6 +380,31 @@ export class HiddenMoveMode extends Mode {
 
   enter(data?: any): void {
     eventBus.emit(EVENT.OVERLAP_UI, UI.HIDDEN_MOVE);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class BattleMode extends Mode {
+  private wild: PokemonObject | null;
+
+  constructor(scene: InGameScene) {
+    super(scene);
+
+    this.wild = null;
+  }
+
+  enter(data?: PokemonObject) {
+    if (data) {
+      this.wild = null;
+      this.wild = data;
+    }
+
+    eventBus.emit(EVENT.OVERLAP_UI, UI.BATTLE, this.wild);
   }
 
   exit(): void {

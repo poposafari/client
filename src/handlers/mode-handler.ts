@@ -54,7 +54,7 @@ export class ModeHandler {
     this.stack.push(nextMode);
     nextMode.enter(data);
 
-    // eventBus.emit(EVENT.SHOW_MODE_STACK);
+    eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   pop() {
