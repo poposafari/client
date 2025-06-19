@@ -318,7 +318,7 @@ export class OverworldPlayer {
       try {
         switch (key) {
           case KEY.SELECT:
-            if (this.obj && this.obj.isMovementFinish()) {
+            if (this.obj && this.obj.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.TALK) {
               const target = this.obj.getObjectInFront(this.obj.getLastDirection());
               const tiles = this.obj.getTileInfo(this.obj.getLastDirection());
 
@@ -326,6 +326,9 @@ export class OverworldPlayer {
                 this.npc.talk(target, this.obj!.getLastDirection());
               } else if (target instanceof GroundItemObject) {
                 this.safari.talkGroundItem(target);
+              } else if (target instanceof PokemonObject) {
+                this.obj.setStatus(PLAYER_STATUS.TALK, DIRECTION.NONE);
+                this.safari.talkWildPokemon(target, this.obj!.getLastDirection());
               } else if (findEventTile(tiles)) {
                 switch (findEventTile(tiles)) {
                   case 'surf':
@@ -526,11 +529,12 @@ export class OverworldSafari {
 
       const pokemon = new PokemonObject(
         this.scene,
-        `pokemon_overworld${info.pokedex}`,
+        `pokemon_overworld${info.pokedex}${info.shiny ? 's' : ''}`,
         info.pokedex,
         info.gender,
         info.skills,
         info.spawns,
+        info.shiny,
         pos[0],
         pos[1],
         map,
@@ -627,5 +631,15 @@ export class OverworldSafari {
         },
       ]);
     }
+  }
+
+  talkWildPokemon(obj: PokemonObject, direction: DIRECTION) {
+    playSound(this.scene, AUDIO.REACTION_0);
+    obj.reaction(direction);
+
+    eventBus.emit(EVENT.OVERLAP_MODE, MODE.BATTLE, obj);
+
+    // this.scene.time.delayedCall(100, () => {
+    // });
   }
 }

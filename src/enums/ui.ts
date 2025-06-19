@@ -19,4 +19,5 @@ export enum UI {
   SAFARI_LIST = 'SafariListUi',
   HIDDEN_MOVE = 'HiddenMoveUi',
   DUMMY = 'DummyUi',
+  BATTLE = 'BattleUi',
 }

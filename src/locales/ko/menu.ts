@@ -80,7 +80,7 @@ export const menu: TranslationDefault = {
   inBag: '보유 개수 : ',
   location: '현재 위치 : ',
   myMoney: '소지금 : ',
-  battleSelect0: '몬스터볼',
+  battleSelect0: '잡는다',
   battleSelect1: '열매',
   battleSelect3: '도망간다',
   bag1: '몬스터볼',
@@ -135,4 +135,6 @@ export const menu: TranslationDefault = {
   guide_runningshoes: 'R: 러닝슈즈',
   guide_menu: 'S: 메뉴',
   candy: '개',
+  battleRewardTitle1: '포켓몬 박스에 등록 완료!',
+  battleRewardTitle2: '보상',
 };

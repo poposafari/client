@@ -34,14 +34,23 @@ export class Bag {
     this.keys = {};
     this.etc = {};
 
-    if (data.length > 0) {
+    console.log(data);
+
+    if (data && data.length > 0) {
       for (const item of data) {
         this.addItems(item.item, item.stock, item.category);
       }
     }
+
+    console.log(this.pokeballs);
+    console.log(this.berries);
+    console.log(this.etc);
+    console.log(this.keys);
   }
 
   setItems(data: any) {
+    console.log(data);
+
     if (data && data.length > 0) {
       for (const item of data) {
         this.addItems(item.item, item.stock, item.category);
