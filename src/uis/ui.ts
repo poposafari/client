@@ -181,7 +181,7 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.GIRL_4_BACK:
       return 4;
     case ANIMATION.POKEBALL:
-      return 67;
+      return 39;
     case ANIMATION.OVERWORLD_SHINY:
       return 2;
     case ANIMATION.EMO:
@@ -201,6 +201,8 @@ export function getTextShadow(style: TEXTSTYLE) {
       return [5, 3, '#91919a'];
     case TEXTSTYLE.SPECIAL:
       return [5, 3, '#53a8fc'];
+    case TEXTSTYLE.MESSAGE_GRAY:
+      return [3, 2, '#777777'];
     case TEXTSTYLE.ITEM_STOCK:
     case TEXTSTYLE.BOX_DEFAULT:
     case TEXTSTYLE.BOX_NAME:
@@ -242,6 +244,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.MESSAGE_BLACK:
       config.fontSize = '80px';
       config.color = '#4b4b4b';
+      break;
+    case TEXTSTYLE.MESSAGE_GRAY:
+      config.fontSize = '80px';
+      config.color = '#999999';
       break;
     case TEXTSTYLE.LOBBY_TITLE:
       config.fontSize = '80px';

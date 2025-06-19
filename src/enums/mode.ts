@@ -18,6 +18,7 @@ export enum MODE {
   POKEBOX,
   SAFARI_LIST,
   HIDDEN_MOVE,
+  BATTLE,
 }
 
 export function isMode(data: any): data is MODE {

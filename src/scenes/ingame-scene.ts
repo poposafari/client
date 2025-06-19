@@ -9,6 +9,7 @@ import { UiHandler } from '../handlers/ui-handler';
 import {
   AccountDeleteMode,
   BagMode,
+  BattleMode,
   ConnectAccountDeleteMode,
   ConnectMode,
   HiddenMoveMode,
@@ -55,6 +56,7 @@ import { Overworld011 } from '../uis/overworld/overworld-011';
 import { HiddenMoveUi } from '../uis/hidden-move-ui';
 import { DummyUi } from '../uis/dummy-ui';
 import { OverworldInfo } from '../storage/overworld-info';
+import { BattleUi } from '../uis/battle-ui';
 
 export class InGameScene extends BaseScene {
   private uiHandler = new UiHandler();
@@ -92,6 +94,7 @@ export class InGameScene extends BaseScene {
     this.uiHandler.register(UI.SAFARI_LIST, new SafariListUi(this));
     this.uiHandler.register(UI.HIDDEN_MOVE, new HiddenMoveUi(this));
     this.uiHandler.register(UI.DUMMY, new DummyUi(this));
+    this.uiHandler.register(UI.BATTLE, new BattleUi(this));
     this.uiHandler.register('Overworld000', new Overworld000(this));
     this.uiHandler.register('Overworld011', new Overworld011(this));
 
@@ -113,6 +116,7 @@ export class InGameScene extends BaseScene {
     this.modeHandler.register(MODE.POKEBOX, new PokeboxMode(this));
     this.modeHandler.register(MODE.SAFARI_LIST, new SafariListMode(this));
     this.modeHandler.register(MODE.HIDDEN_MOVE, new HiddenMoveMode(this));
+    this.modeHandler.register(MODE.BATTLE, new BattleMode(this));
 
     this.modeHandler.change(MODE.NONE);
   }
@@ -238,15 +242,13 @@ export class InGameScene extends BaseScene {
 
   private initPokeballAnimation() {
     const texture = getSpriteFrames(this, TEXTURE.POKEBALL, ANIMATION.POKEBALL);
-    const line = 17;
+    const line = 10;
     for (let i = 1; i <= 4; i++) {
       const pokeballLaunchTexture = `00${i}_launch`;
       const pokeballEnterTexture = `00${i}_enter`;
       const pokeballDropTexture = `00${i}_drop`;
       const pokeballExitTexture = `00${i}_exit`;
       const pokeballShake = `00${i}_shake`;
-      const pokeballShakeLeftTexture = `00${i}_shake_left`;
-      const pokeballShakeRightTexture = `00${i}_shake_right`;
 
       const launch = [
         [
@@ -259,48 +261,17 @@ export class InGameScene extends BaseScene {
           texture[line * (i - 1) + 6],
           texture[line * (i - 1) + 7],
           texture[line * (i - 1) + 8],
-          texture[line * (i - 1) + 9],
-          texture[line * (i - 1) + 0],
         ],
       ];
-      const enter = [[texture[line * (i - 1) + 10], texture[line * (i - 1) + 10], texture[line * (i - 1) + 10]]];
-      const drop = [
-        [
-          texture[line * (i - 1) + 0],
-          texture[line * (i - 1) + 1],
-          texture[line * (i - 1) + 2],
-          texture[line * (i - 1) + 3],
-          texture[line * (i - 1) + 4],
-          texture[line * (i - 1) + 5],
-          texture[line * (i - 1) + 6],
-          texture[line * (i - 1) + 7],
-          texture[line * (i - 1) + 8],
-          texture[line * (i - 1) + 9],
-          texture[line * (i - 1) + 0],
-        ],
-      ];
-      const exit = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 10]]];
-      const shake = [
-        [
-          texture[line * (i - 1) + 0],
-          texture[line * (i - 1) + 11],
-          texture[line * (i - 1) + 12],
-          texture[line * (i - 1) + 13],
-          texture[line * (i - 1) + 14],
-          texture[line * (i - 1) + 15],
-          texture[line * (i - 1) + 16],
-          texture[line * (i - 1) + 0],
-        ],
-      ];
-      const shakeLeft = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 11], texture[line * (i - 1) + 12], texture[line * (i - 1) + 13], texture[line * (i - 1) + 0]]];
-      const shakeRight = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 14], texture[line * (i - 1) + 15], texture[line * (i - 1) + 16], texture[line * (i - 1) + 0]]];
+      const enter = [[texture[line * (i - 1) + 8], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
+      const drop = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
+      const exit = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
+      const shake = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
 
       createSpriteAnimation(this, pokeballLaunchTexture, pokeballLaunchTexture, launch[0]);
       createSpriteAnimation(this, pokeballEnterTexture, pokeballEnterTexture, enter[0]);
       createSpriteAnimation(this, pokeballDropTexture, pokeballDropTexture, drop[0]);
       createSpriteAnimation(this, pokeballExitTexture, pokeballExitTexture, exit[0]);
-      createSpriteAnimation(this, pokeballShakeLeftTexture, pokeballShakeLeftTexture, shakeLeft[0]);
-      createSpriteAnimation(this, pokeballShakeRightTexture, pokeballShakeRightTexture, shakeRight[0]);
       createSpriteAnimation(this, pokeballShake, pokeballShake, shake[0]);
     }
   }

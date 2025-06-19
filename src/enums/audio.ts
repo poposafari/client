@@ -9,4 +9,12 @@ export enum AUDIO {
   GET_0 = 'get_0',
   BUY = 'buy',
   JUMP = 'jump',
+  REACTION_0 = 'reaction_0',
+  THROW = 'throw',
+  BALL_CATCH = 'ball_catch',
+  BALL_DROP = 'ball_drop',
+  BALL_ENTER = 'ball_enter',
+  BALL_EXIT = 'ball_exit',
+  BALL_SHAKE = 'ball_shake',
+  BUZZER = 'buzzer',
 }
