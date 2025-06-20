@@ -27,6 +27,20 @@ export type Message = {
   questionNo?: EVENT;
 };
 
+export type Reward = {
+  item: string;
+  stock: number;
+};
+
+export type RewardForm = {
+  pokedex: string;
+  gender: PokemonGender;
+  shiny: boolean;
+  form: number;
+  skill: PokemonSkill | null;
+  rewards: Reward[];
+};
+
 export interface WildPokemonInfo {
   idx: number;
   catch: boolean;

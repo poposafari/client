@@ -46,6 +46,8 @@ export enum EVENT {
   POKEMON_CATCH_FAIL,
   POKEMON_CATCH_CHECK,
   POKEMON_BERRY,
+  BATTLE_FINISH,
+  RESTORE_BATTLE,
 }
 
 export function isEvent(data: any): data is EVENT {
