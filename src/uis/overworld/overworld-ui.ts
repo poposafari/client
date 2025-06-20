@@ -257,6 +257,12 @@ export class OverworldPlayer {
         this.obj.jump(HM.NONE);
       }
     });
+
+    eventBus.on(EVENT.BATTLE_FINISH, () => {
+      runFadeEffect(this.scene, 1000, 'in');
+      this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
+      eventBus.emit(EVENT.RESTORE_BATTLE);
+    });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
@@ -292,6 +298,7 @@ export class OverworldPlayer {
       console.error('player obj is null');
       return;
     }
+
     this.movement();
     this.obj.update(delta);
     this.obj.getPet().update(delta);

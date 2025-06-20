@@ -509,12 +509,12 @@ export function delay(scene: InGameScene, time: number): Promise<void> {
   });
 }
 
-export function startModalAnimation(scene: InGameScene, target: any) {
+export function startModalAnimation(scene: InGameScene, target: any, duration: number = 700, y: number = 48) {
   scene.tweens.add({
     targets: target,
-    duration: 700,
+    duration: duration,
     ease: EASE.SINE_EASEINOUT,
-    y: '-=48',
+    y: `-=${y}`,
     alpha: 1,
   });
 }
