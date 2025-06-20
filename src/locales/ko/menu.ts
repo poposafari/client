@@ -137,4 +137,5 @@ export const menu: TranslationDefault = {
   candy: '개',
   battleRewardTitle1: '포켓몬 박스에 등록 완료!',
   battleRewardTitle2: '보상',
+  battleRewardTitle3: 'X 키를 눌러주세요.',
 };

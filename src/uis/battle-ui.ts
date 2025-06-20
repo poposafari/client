@@ -57,7 +57,6 @@ export class BattleUi extends Ui {
   }
 
   async show(data?: PokemonObject): Promise<void> {
-    // new BattleRewardUi(this.scene).show();
     await delay(this.scene, 500);
     await runFlashEffect(this.scene, 100);
     await runFlashEffect(this.scene, 100);
@@ -190,6 +189,11 @@ export class BattleSpriteUi extends Ui {
         await this.startExitBall(item);
         this.restore();
       }
+    });
+
+    eventBus.on(EVENT.RESTORE_BATTLE, () => {
+      this.restore();
+      this.restoreSprite();
     });
   }
 
@@ -382,7 +386,6 @@ export class BattleSpriteUi extends Ui {
       ease: EASE.LINEAR,
       onUpdate: (tween) => {
         const progress = tween.progress;
-        const currentX = Phaser.Math.Linear(startX, endX, progress);
 
         // 포물선 방정식: -4a(x - 0.5)^2 + 1 공식으로 y 값 계산.
         const parabola = -4 * peakHeight * (progress - 0.5) ** 2 + peakHeight;
@@ -480,6 +483,13 @@ export class BattleSpriteUi extends Ui {
     this.throwItem.setTexture(TEXTURE.BLANK);
     this.throwItem.setPosition(-230, +110);
     this.throwItem.stop();
+  }
+
+  private restoreSprite() {
+    this.throwItem.clearTint();
+    this.enemy.setScale(4);
+    this.enemy.setAlpha(1);
+    this.enemy.setVisible(true);
   }
 
   private startShakeBall(count: number = 3): Promise<void> {
@@ -621,7 +631,19 @@ export class BattleSpriteUi extends Ui {
 
   private showReward() {
     this.rewardUi = new BattleRewardUi(this.scene);
-    this.rewardUi.show();
+    this.rewardUi.show({
+      pokedex: '0001',
+      gender: 'male',
+      shiny: false,
+      skill: null,
+      form: 0,
+      rewards: [
+        { item: '001', stock: 10 },
+        { item: '002', stock: 1 },
+        { item: '014', stock: 5 },
+        { item: '017', stock: 3 },
+      ],
+    });
   }
 }
 
@@ -800,7 +822,7 @@ export class BattleMessageUi extends Ui {
                 speed: 20,
               });
               eventBus.emit(EVENT.POP_MODE);
-              eventBus.emit(EVENT.FINISH_TALK);
+              eventBus.emit(EVENT.BATTLE_FINISH);
               this.tempPokemonObject.scheduleRandomMovement();
             }
             break;
