@@ -34,6 +34,7 @@ export const message: TranslationDefault = {
   battleIntro: '앗! 야생의\n%(이)가 나타났다!',
   battleThinking: '%(은/는)\n무엇을 할까?',
   battleEscape: '%(은/는)\n도망쳤다.',
+  battlePokemonEscape: '야생 %(은/는)\n도망쳤다.',
   battleUse: '%(은/는)\n%(을/를) 사용했다.',
   battleSuccess: '신난다~!\n%을(를) 붙잡았다!',
   battleFail: '아쉽다!\n조금만 더하면 잡을 수 있었는데!',

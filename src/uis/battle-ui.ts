@@ -171,7 +171,8 @@ export class BattleSpriteUi extends Ui {
 
     eventBus.on(EVENT.POKEMON_CATCH_CHECK, async (item: string) => {
       // const ret = await 포획API()
-      const ret = true;
+      const ret = false;
+      const escape = true;
 
       await delay(this.scene, 500);
 
@@ -184,9 +185,9 @@ export class BattleSpriteUi extends Ui {
         await delay(this.scene, 3000);
         this.restore();
       } else {
-        const randomShake = 2;
+        const randomShake = 1;
         await this.startShakeBall(randomShake);
-        await this.startExitBall(item);
+        await this.startExitBall(item, escape);
         this.restore();
       }
     });
@@ -542,7 +543,7 @@ export class BattleSpriteUi extends Ui {
     });
   }
 
-  private async startExitBall(item: string): Promise<void> {
+  private async startExitBall(item: string, escape: boolean): Promise<void> {
     return new Promise((resolve) => {
       this.enemy.setScale(0.1);
       this.enemy.setAlpha(0);
@@ -569,7 +570,9 @@ export class BattleSpriteUi extends Ui {
           this.enemy.clearTint();
           this.throwItem.setTexture(TEXTURE.BLANK);
           await delay(this.scene, 600);
-          eventBus.emit(EVENT.POKEMON_CATCH_FAIL);
+
+          if (!escape) eventBus.emit(EVENT.POKEMON_CATCH_FAIL);
+          else this.startPokemonEscape();
           resolve();
         },
       });
@@ -631,6 +634,9 @@ export class BattleSpriteUi extends Ui {
 
   private showReward() {
     this.rewardUi = new BattleRewardUi(this.scene);
+
+    this.pokemonClean();
+
     this.rewardUi.show({
       pokedex: '0001',
       gender: 'male',
@@ -644,6 +650,17 @@ export class BattleSpriteUi extends Ui {
         { item: '017', stock: 3 },
       ],
     });
+  }
+
+  private startPokemonEscape() {
+    this.pokemonClean();
+    console.log(this.tempPokemonObject.getPokedex());
+    eventBus.emit(EVENT.POKEMON_ESCAPE, this.tempPokemonObject.getPokedex());
+  }
+
+  private pokemonClean() {
+    this.tempPokemonObject.capture();
+    this.tempPokemonObject.destroy();
   }
 }
 
@@ -679,6 +696,19 @@ export class BattleMessageUi extends Ui {
     eventBus.on(EVENT.POKEMON_CATCH_SUCCESS, async (pokemon: string) => {
       this.cleanText();
       await this.showMessage({ type: 'battle', format: 'talk', content: replacePercentSymbol(i18next.t('message:battleSuccess'), [i18next.t(`pokemon:${pokemon}.name`)]), speed: 20 });
+    });
+
+    eventBus.on(EVENT.POKEMON_ESCAPE, async (pokemon: string) => {
+      this.cleanText();
+      await this.handleMessageKeyInput({ type: 'battle', format: 'talk', content: i18next.t('message:battleFail'), speed: 20 });
+      await this.handleMessageKeyInput({
+        type: 'battle',
+        format: 'talk',
+        content: replacePercentSymbol(i18next.t('message:battlePokemonEscape'), [i18next.t(`pokemon:${pokemon}.name`)]),
+        speed: 20,
+      });
+      eventBus.emit(EVENT.POP_MODE);
+      eventBus.emit(EVENT.BATTLE_FINISH);
     });
 
     eventBus.on(EVENT.POKEMON_BERRY, () => {
