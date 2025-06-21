@@ -19,6 +19,7 @@ import { PetObject } from './pet-object';
 
 export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
+  private lastStatus!: PLAYER_STATUS;
   private pet!: PetObject;
   private dummy!: BaseObject;
 
@@ -64,6 +65,10 @@ export class PlayerObject extends MovableObject {
 
   isPlayerStop() {
     return this.getMovementDirectionQueue().length === 0 ? true : false;
+  }
+
+  getLastStatus() {
+    return this.lastStatus;
   }
 
   private getAnimation(key: KEY) {
@@ -202,6 +207,7 @@ export class PlayerObject extends MovableObject {
 
         break;
       case PLAYER_STATUS.TALK:
+        this.lastStatus = this.currentStatus;
         this.currentStatus = PLAYER_STATUS.TALK;
         break;
     }
