@@ -242,7 +242,7 @@ export class OverworldPlayer {
     this.safari = safari;
 
     eventBus.on(EVENT.FINISH_TALK, () => {
-      this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
+      this.obj?.setStatus(this.obj.getLastStatus(), this.obj.getLastDirection());
     });
 
     eventBus.on(EVENT.CHECK_HIDDEN_MOVE, () => {
@@ -260,7 +260,7 @@ export class OverworldPlayer {
 
     eventBus.on(EVENT.BATTLE_FINISH, () => {
       runFadeEffect(this.scene, 1000, 'in');
-      this.obj?.setStatus(PLAYER_STATUS.WALK, this.obj.getLastDirection());
+      this.obj?.setStatus(this.obj.getLastStatus(), this.obj.getLastDirection());
       eventBus.emit(EVENT.RESTORE_BATTLE);
     });
   }
