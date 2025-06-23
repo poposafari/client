@@ -537,6 +537,7 @@ export class OverworldSafari {
       const pokemon = new PokemonObject(
         this.scene,
         `pokemon_overworld${info.pokedex}${info.shiny ? 's' : ''}`,
+        info.idx,
         info.pokedex,
         info.gender,
         info.skills,
