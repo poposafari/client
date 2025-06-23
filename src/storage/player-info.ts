@@ -215,6 +215,12 @@ export class PlayerInfo {
     return this.partySlot;
   }
 
+  getPartySlotIdx() {
+    return this.partySlot.map((pokemon) => {
+      return pokemon ? pokemon.idx : null;
+    });
+  }
+
   addPartySlot(pokemon: MyPokemon): boolean {
     if (this.partySlot.length >= MaxPartySlot) {
       return false;

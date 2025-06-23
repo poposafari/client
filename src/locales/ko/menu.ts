@@ -135,6 +135,7 @@ export const menu: TranslationDefault = {
   guide_runningshoes: 'R: 러닝슈즈',
   guide_menu: 'S: 메뉴',
   candy: '개',
+  candyName: '사탕',
   battleRewardTitle1: '포켓몬 박스에 등록 완료!',
   battleRewardTitle2: '보상',
   battleRewardTitle3: 'X 키를 눌러주세요.',

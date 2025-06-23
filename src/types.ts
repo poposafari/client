@@ -38,6 +38,7 @@ export type RewardForm = {
   shiny: boolean;
   form: number;
   skill: PokemonSkill | null;
+  candy: number;
   rewards: Reward[];
 };
 

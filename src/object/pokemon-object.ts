@@ -10,6 +10,7 @@ import { isPokedexShiny } from '../utils/string-util';
 import { MovableObject } from './movable-object';
 
 export class PokemonObject extends MovableObject {
+  private idx: number;
   private pokedex: string;
   private gender: PokemonGender;
   private skill: PokemonSkill[] | null;
@@ -25,6 +26,7 @@ export class PokemonObject extends MovableObject {
   constructor(
     scene: InGameScene,
     texture: TEXTURE | string,
+    idx: number,
     pokedex: string,
     gender: PokemonGender,
     skill: PokemonSkill[] | null,
@@ -36,6 +38,7 @@ export class PokemonObject extends MovableObject {
     nickname: string,
   ) {
     super(scene, texture, x, y, map, nickname, OBJECT.POKEMON);
+    this.idx = idx;
     this.pokedex = pokedex;
     this.gender = gender;
     this.skill = skill ? skill : null;
@@ -54,6 +57,10 @@ export class PokemonObject extends MovableObject {
     }
 
     this.scheduleRandomMovement();
+  }
+
+  getIdx() {
+    return this.idx;
   }
 
   getGender() {
