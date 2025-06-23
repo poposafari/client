@@ -167,6 +167,11 @@ export class BattleRewardUi extends Ui {
 
     this.cleanReward();
 
+    const obj = new Reward(this.scene, TEXTURE.MENU_CANDY, data.candy);
+    const rewardObj = obj.show();
+    this.rewardContainer.add(rewardObj);
+    this.rewards.push(rewardObj);
+
     for (const reward of data.rewards) {
       const obj = new Reward(this.scene, reward.item, reward.stock);
       const rewardObj = obj.show();
@@ -198,6 +203,7 @@ class Reward extends Ui {
   private stockText!: Phaser.GameObjects.Text;
 
   private readonly iconScale: number = 0.5;
+  private readonly candyScale: number = 1;
   private readonly textScale: number = 0.15;
   private readonly stockScale: number = 0.15;
 
@@ -206,15 +212,18 @@ class Reward extends Ui {
 
     this.container = this.createContainer(0, 0);
 
-    const icon = addImage(this.scene, `item${item}`, 0, 0);
-    const nameText = addText(this.scene, 0, +18, i18next.t(`item:${item}.name`), TEXTSTYLE.MESSAGE_BLACK);
+    const iconTexture = item === TEXTURE.MENU_CANDY ? TEXTURE.MENU_CANDY : `item${item}`;
+    const nameValue = item === TEXTURE.MENU_CANDY ? i18next.t(`menu:candyName`) : i18next.t(`item:${item}.name`);
+
+    const icon = addImage(this.scene, iconTexture, 0, 0);
+    const nameText = addText(this.scene, 0, +18, nameValue, TEXTSTYLE.MESSAGE_BLACK);
     const stockSymbolText = addText(this.scene, +3, +8, 'x', TEXTSTYLE.MESSAGE_BLACK);
     const stockText = addText(this.scene, +8, +8, stock.toString(), TEXTSTYLE.MESSAGE_BLACK);
 
     stockSymbolText.setOrigin(0, 0.5);
     stockText.setOrigin(0, 0.5);
 
-    icon.setScale(this.iconScale);
+    icon.setScale(item === TEXTURE.MENU_CANDY ? this.candyScale : this.iconScale);
     nameText.setScale(this.textScale);
     stockSymbolText.setScale(this.stockScale);
     stockText.setScale(this.stockScale);

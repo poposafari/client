@@ -21,6 +21,7 @@ import { Bag, ItemCategory } from '../storage/bag';
 import { item } from '../locales/ko/item';
 import { EASE } from '../enums/ease';
 import { BattleRewardUi } from './battle-reward-ui';
+import { catchWildPokemon } from '../api';
 
 export class BattleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -170,25 +171,26 @@ export class BattleSpriteUi extends Ui {
     });
 
     eventBus.on(EVENT.POKEMON_CATCH_CHECK, async (item: string) => {
-      // const ret = await 포획API()
-      const ret = false;
-      const escape = true;
-
+      console.log(this.tempPokemonObject.getIdx());
+      const ret = await catchWildPokemon({ idx: this.tempPokemonObject.getIdx(), ball: item, berry: this.tempPokemonObject.getEatenBerry(), parties: PlayerInfo.getInstance().getPartySlotIdx() });
       await delay(this.scene, 500);
+      if (ret && ret.success) {
+        const isCatch = ret.data.catch;
 
-      if (ret) {
-        await this.startShakeBall();
-        await this.startCatchBall();
+        console.log(ret.data);
 
-        this.showReward();
-
-        await delay(this.scene, 3000);
-        this.restore();
-      } else {
-        const randomShake = 1;
-        await this.startShakeBall(randomShake);
-        await this.startExitBall(item, escape);
-        this.restore();
+        if (isCatch) {
+          await this.startShakeBall();
+          await this.startCatchBall();
+          this.showReward(ret.data.candy, ret.data.reward);
+          await delay(this.scene, 3000);
+          this.restore();
+        } else {
+          const randomShake = 1;
+          await this.startShakeBall(randomShake);
+          await this.startExitBall(item, ret.data.flee);
+          this.restore();
+        }
       }
     });
 
@@ -632,23 +634,19 @@ export class BattleSpriteUi extends Ui {
     this.eatenBerry.setTexture(`item${item}`);
   }
 
-  private showReward() {
+  private showReward(candy: number, rewards: any[]) {
     this.rewardUi = new BattleRewardUi(this.scene);
 
     this.pokemonClean();
 
     this.rewardUi.show({
-      pokedex: '0001',
-      gender: 'male',
-      shiny: false,
+      pokedex: `${this.tempPokemonObject.getPokedex()}`,
+      gender: `${this.tempPokemonObject.getGender()}`,
+      shiny: this.tempPokemonObject.getShiny(),
       skill: null,
+      candy: candy,
       form: 0,
-      rewards: [
-        { item: '001', stock: 10 },
-        { item: '002', stock: 1 },
-        { item: '014', stock: 5 },
-        { item: '017', stock: 3 },
-      ],
+      rewards: rewards,
     });
   }
 
