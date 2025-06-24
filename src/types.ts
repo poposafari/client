@@ -1,6 +1,7 @@
 import { EVENT } from './enums/event';
 import { MODE } from './enums/mode';
 import { TEXTURE } from './enums/texture';
+import { ItemCategory } from './storage/bag';
 
 export const MaxItemSlot = 9;
 export const MaxPartySlot = 6;
@@ -30,6 +31,7 @@ export type Message = {
 export type Reward = {
   item: string;
   stock: number;
+  category: ItemCategory;
 };
 
 export type RewardForm = {
