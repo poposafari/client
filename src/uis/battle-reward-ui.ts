@@ -14,6 +14,8 @@ import { KEY } from '../enums/key';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { eventBus } from '../core/event-bus';
 import { EVENT } from '../enums/event';
+import { Bag } from '../storage/bag';
+import { PlayerInfo } from '../storage/player-info';
 
 export class BattleRewardUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -171,12 +173,16 @@ export class BattleRewardUi extends Ui {
     const rewardObj = obj.show();
     this.rewardContainer.add(rewardObj);
     this.rewards.push(rewardObj);
+    PlayerInfo.getInstance().setCandy(PlayerInfo.getInstance().getCandy() + data.candy);
+    eventBus.emit(EVENT.HUD_CANDY_UPDATE);
 
     for (const reward of data.rewards) {
       const obj = new Reward(this.scene, reward.item, reward.stock);
       const rewardObj = obj.show();
       this.rewardContainer.add(rewardObj);
       this.rewards.push(rewardObj);
+
+      Bag.getInstance().addItems(reward.item, reward.stock, reward.category);
     }
 
     const totalWidth = (this.rewards.length - 1) * spacing;

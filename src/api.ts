@@ -39,6 +39,11 @@ type CatchSafariWildPokemonReq = {
   parties: (number | null)[];
 };
 
+type FeedBerryReq = {
+  idx: number;
+  berry: string | null;
+};
+
 type PokeboxRequest = {
   box: number;
 };
@@ -70,5 +75,6 @@ export const moveToOverworldApi = (data: MoveToOverworldReq) => apiWrap(() => Ax
 export const useTicketApi = (data: MoveToOverworldReq) => apiWrap(() => Axios.post('/overworld/ticket', data));
 export const catchGroundItem = (data: CatchSafariObjReq) => apiWrap(() => Axios.post('/overworld/catch/item', data));
 export const catchWildPokemon = (data: CatchSafariWildPokemonReq) => apiWrap(() => Axios.post('/overworld/catch/pokemon', data));
+export const feedBerryApi = (data: FeedBerryReq) => apiWrap(() => Axios.post('/overworld/feed/berry', data));
 export const getAvailableTicketApi = () => apiWrap(() => Axios.get('/ticket/get'));
 export const receiveAvailableTicketApi = () => apiWrap(() => Axios.get('/ticket/receive'));

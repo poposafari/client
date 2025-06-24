@@ -95,12 +95,20 @@ export class MenuListUi extends Ui {
 
   pause(onoff: boolean, data?: any): void {}
 
-  async handleKeyInput(data?: any): Promise<string | number> {
+  setInfo(data: ListForm[]) {
+    this.info = [];
+    this.info = data;
+    this.addCancel();
+  }
+
+  async handleKeyInput(data?: ListForm[]): Promise<string | number> {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
     const keyboard = KeyboardHandler.getInstance();
 
     let choice = this.lastChoice ? this.lastChoice : 0;
     this.start = this.lastStart ? this.lastStart : 0;
+
+    if (data) this.setInfo(data);
 
     this.show();
 
@@ -191,7 +199,7 @@ export class MenuListUi extends Ui {
     this.etcImages = [];
   }
 
-  private renderList() {
+  private renderList(data?: any) {
     this.cleanList();
     const lineHeight = this.contentHeight + this.spacing;
     const items = this.info;
