@@ -21,7 +21,7 @@ import { Bag, ItemCategory } from '../storage/bag';
 import { item } from '../locales/ko/item';
 import { EASE } from '../enums/ease';
 import { BattleRewardUi } from './battle-reward-ui';
-import { catchWildPokemon } from '../api';
+import { catchWildPokemon, feedBerryApi } from '../api';
 
 export class BattleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -172,7 +172,11 @@ export class BattleSpriteUi extends Ui {
 
     eventBus.on(EVENT.POKEMON_CATCH_CHECK, async (item: string) => {
       console.log(this.tempPokemonObject.getIdx());
-      const ret = await catchWildPokemon({ idx: this.tempPokemonObject.getIdx(), ball: item, berry: this.tempPokemonObject.getEatenBerry(), parties: PlayerInfo.getInstance().getPartySlotIdx() });
+      const eatenBerry = this.tempPokemonObject.getEatenBerry();
+      const ret = await catchWildPokemon({ idx: this.tempPokemonObject.getIdx(), ball: item, berry: eatenBerry, parties: PlayerInfo.getInstance().getPartySlotIdx() });
+
+      Bag.getInstance().useItem(item);
+
       await delay(this.scene, 500);
       if (ret && ret.success) {
         const isCatch = ret.data.catch;
@@ -756,8 +760,8 @@ export class BattleMessageUi extends Ui {
   async show(data?: PokemonObject): Promise<void> {
     if (!data) throw Error('Not found wild pokemon');
 
-    this.ballMenuListUi?.setup({ scale: 1.6, etcScale: 0, windowWidth: 350, offsetX: 400, offsetY: 215, depth: DEPTH.BATTLE + 6, per: 6, info: this.createListForm(ItemCategory.POKEBALL) });
-    this.berryMenuListUi?.setup({ scale: 1.6, etcScale: 0, windowWidth: 350, offsetX: 400, offsetY: 215, depth: DEPTH.BATTLE + 6, per: 6, info: this.createListForm(ItemCategory.BERRY) });
+    this.ballMenuListUi?.setup({ scale: 1.6, etcScale: 0, windowWidth: 350, offsetX: 400, offsetY: 215, depth: DEPTH.BATTLE + 6, per: 6, info: [] });
+    this.berryMenuListUi?.setup({ scale: 1.6, etcScale: 0, windowWidth: 350, offsetX: 400, offsetY: 215, depth: DEPTH.BATTLE + 6, per: 6, info: [] });
 
     this.tempPokemonObject = data;
 
@@ -872,7 +876,7 @@ export class BattleMessageUi extends Ui {
 
   private async handleBallMenuKeyInput() {
     const balls = this.getItems(ItemCategory.POKEBALL);
-    const ret = await this.ballMenuListUi?.handleKeyInput();
+    const ret = await this.ballMenuListUi?.handleKeyInput(this.createListForm(ItemCategory.POKEBALL));
 
     if (ret === i18next.t('menu:cancelMenu')) {
       this.handleMenuKeyInput();
@@ -891,7 +895,7 @@ export class BattleMessageUi extends Ui {
 
   private async handleBerryMenuKeyInput() {
     const berry = this.getItems(ItemCategory.BERRY);
-    const ret = await this.berryMenuListUi?.handleKeyInput();
+    const ret = await this.berryMenuListUi?.handleKeyInput(this.createListForm(ItemCategory.BERRY));
 
     if (ret === i18next.t('menu:cancelMenu')) {
       this.handleMenuKeyInput();
@@ -906,6 +910,12 @@ export class BattleMessageUi extends Ui {
       });
       eventBus.emit(EVENT.START_PLAYER_THROW, ItemCategory.BERRY, berry[ret][0]);
       this.tempPokemonObject.setEatenBerry(berry[ret][0]);
+
+      const result = await feedBerryApi({ idx: this.tempPokemonObject.getIdx(), berry: berry[ret][0] });
+
+      if (result?.success) {
+        Bag.getInstance().useItem(berry[ret][0]);
+      }
     }
   }
 
