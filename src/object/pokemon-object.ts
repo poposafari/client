@@ -32,6 +32,7 @@ export class PokemonObject extends MovableObject {
     skill: PokemonSkill[] | null,
     spawn: PokemonSpawn,
     shiny: boolean,
+    eatenBerry: string | null,
     x: number,
     y: number,
     map: Phaser.Tilemaps.Tilemap,
@@ -45,7 +46,7 @@ export class PokemonObject extends MovableObject {
     this.spawn = spawn;
     this.status = POKEMON_STATUS.ROAMING;
     this.shiny = shiny;
-    this.eatenBerry = null;
+    this.eatenBerry = eatenBerry;
 
     this.setScale(1.5);
     this.setSpeed(2);
