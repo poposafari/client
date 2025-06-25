@@ -575,6 +575,8 @@ export class BattleSpriteUi extends Ui {
         onComplete: async () => {
           this.enemy.clearTint();
           this.throwItem.setTexture(TEXTURE.BLANK);
+          this.tempPokemonObject.setEatenBerry(null);
+          this.eatenBerry.setTexture(TEXTURE.BLANK);
           await delay(this.scene, 600);
 
           if (!escape) eventBus.emit(EVENT.POKEMON_CATCH_FAIL);
