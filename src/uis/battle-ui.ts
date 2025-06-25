@@ -22,6 +22,7 @@ import { item } from '../locales/ko/item';
 import { EASE } from '../enums/ease';
 import { BattleRewardUi } from './battle-reward-ui';
 import { catchWildPokemon, feedBerryApi } from '../api';
+import { ANIMATION } from '../enums/animation';
 
 export class BattleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -66,8 +67,9 @@ export class BattleUi extends Ui {
     await stopPostPipeline(this.scene);
     runFadeEffect(this.scene, 1000, 'in');
     this.bgUi.show();
+    this.messageUi.showContainer();
+    await this.spriteUi.show(data);
     this.messageUi.show(data);
-    this.spriteUi.show(data);
   }
 
   clean(data?: any): void {
@@ -158,6 +160,7 @@ export class BattleSpriteUi extends Ui {
   private eatenBerry!: Phaser.GameObjects.Sprite;
   private parties: Phaser.GameObjects.Image[] = [];
   private shinies: Phaser.GameObjects.Image[] = [];
+  private effect: Phaser.GameObjects.Sprite;
 
   private tempPokemonObject!: PokemonObject;
   private bgUi!: BattleBgUi;
@@ -227,6 +230,7 @@ export class BattleSpriteUi extends Ui {
     this.enemyInfoType2 = addImage(this.scene, TEXTURE.BLANK, -215, -260).setScale(1.2);
     this.heart = createSprite(this.scene, TEXTURE.BLANK, +500, -400).setScale(2).setOrigin(0.5, 0.5);
     this.eatenBerry = createSprite(this.scene, TEXTURE.BLANK, -620, -120).setOrigin(0.5, 0.5);
+    this.effect = createSprite(this.scene, TEXTURE.BLANK, +500, -200).setScale(8).setOrigin(0.5, 0.5);
 
     const contentWidth = 50;
     const spacing = 15;
@@ -257,6 +261,7 @@ export class BattleSpriteUi extends Ui {
     this.container.add(this.enemyInfoType2);
     this.container.add(this.heart);
     this.container.add(this.eatenBerry);
+    this.container.add(this.effect);
 
     this.partyContainer.setScale(1.4);
     this.partyContainer.setVisible(false);
@@ -268,7 +273,7 @@ export class BattleSpriteUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: PokemonObject): void {
+  async show(data?: PokemonObject): Promise<void> {
     if (!data) throw Error('Not found wild pokemon');
 
     this.tempPokemonObject = data;
@@ -299,6 +304,8 @@ export class BattleSpriteUi extends Ui {
 
     this.container.setVisible(true);
     this.partyContainer.setVisible(true);
+
+    await this.showShinyEffect(data.getShiny());
   }
 
   clean(data?: any): void {
@@ -311,6 +318,30 @@ export class BattleSpriteUi extends Ui {
   handleKeyInput(...data: any[]) {}
 
   update(time?: number, delta?: number): void {}
+
+  private showShinyEffect(shiny: boolean): Promise<void> {
+    return new Promise((resolve) => {
+      if (!shiny) {
+        resolve();
+        return;
+      }
+
+      playSound(this.scene, AUDIO.SHINY);
+
+      this.effect.setTexture(TEXTURE.SPARKLE);
+      this.effect.anims.play({
+        key: TEXTURE.SPARKLE,
+        repeat: 0,
+        frameRate: 30,
+      });
+
+      this.effect.once('animationcomplete', () => {
+        this.effect.anims.stop();
+        this.effect.setTexture(TEXTURE.BLANK);
+        resolve();
+      });
+    });
+  }
 
   private showGender(pokemon: PokemonObject) {
     this.enemyInfoGender.setPosition(this.enemyInfoName.x + this.enemyInfoName.displayWidth, -260);
@@ -767,9 +798,6 @@ export class BattleMessageUi extends Ui {
 
     this.tempPokemonObject = data;
 
-    this.container.setVisible(true);
-    this.menuContainer.setVisible(false);
-
     await this.handleMessageKeyInput({ type: 'battle', format: 'talk', content: replacePercentSymbol(i18next.t('message:battleIntro'), [i18next.t(`pokemon:${data.getPokedex()}.name`)]), speed: 20 });
     this.handleMenuKeyInput();
   }
@@ -781,6 +809,11 @@ export class BattleMessageUi extends Ui {
 
   cleanText() {
     this.text.text = '';
+  }
+
+  showContainer() {
+    this.container.setVisible(true);
+    this.menuContainer.setVisible(false);
   }
 
   private cleanMenu() {
