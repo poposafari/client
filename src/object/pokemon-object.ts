@@ -97,7 +97,7 @@ export class PokemonObject extends MovableObject {
     }
   }
 
-  setEatenBerry(item: string) {
+  setEatenBerry(item: string | null) {
     this.eatenBerry = item;
   }
 
