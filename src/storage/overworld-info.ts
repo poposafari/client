@@ -28,6 +28,8 @@ export class OverworldInfo {
   setupWildPokemonInfo(data: WildPokemonInfo[]) {
     this.pokemoninfo = [];
     this.pokemoninfo = data;
+
+    console.log(this.pokemoninfo);
   }
 
   setupGroundItemInfo(data: GroundItemInfo[] | null) {

@@ -543,6 +543,7 @@ export class OverworldSafari {
         info.skills,
         info.spawns,
         info.shiny,
+        info.eaten_berry,
         pos[0],
         pos[1],
         map,
