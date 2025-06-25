@@ -52,6 +52,7 @@ export interface WildPokemonInfo {
   pokedex: string;
   shiny: boolean;
   skills: PokemonSkill[] | null;
+  eaten_berry: string | null;
   spawns: PokemonSpawn;
 }
 
