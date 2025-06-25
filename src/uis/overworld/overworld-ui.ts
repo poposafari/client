@@ -549,6 +549,8 @@ export class OverworldSafari {
         i18next.t(`pokemon:${info.pokedex}.name`),
       );
 
+      pokemon.updateShadowType(info.spawns);
+
       OverworldInfo.getInstance().addPokemon(pokemon);
     }
   }

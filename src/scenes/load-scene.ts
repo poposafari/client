@@ -189,7 +189,8 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.POKEBALL_GROUND, 'ui', TEXTURE.POKEBALL_GROUND, ANIMATION.POKEBALL_GROUND);
     this.loadAtlas(TEXTURE.POKEBALL, 'ui', TEXTURE.POKEBALL, ANIMATION.POKEBALL);
 
-    this.loadImage(TEXTURE.SHADOW, 'ui', TEXTURE.SHADOW);
+    this.loadAtlas(TEXTURE.SHADOW, 'ui', TEXTURE.SHADOW, ANIMATION.SHADOW);
+    this.loadAtlas(TEXTURE.SHADOW_WATER, 'ui', TEXTURE.SHADOW_WATER, ANIMATION.SHADOW_WATER);
 
     this.loadImage(TEXTURE.KEY_S, 'ui', TEXTURE.KEY_S);
     this.loadImage(TEXTURE.KEY_R, 'ui', TEXTURE.KEY_R);
