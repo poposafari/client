@@ -143,6 +143,8 @@ function isNagativeNumber(targetNumber: number) {
 
 function getAnimationSize(key: ANIMATION | string) {
   switch (key) {
+    case ANIMATION.SHADOW:
+      return 1;
     case ANIMATION.PAUSE:
     case ANIMATION.PAUSE_BLACK:
     case ANIMATION.PAUSE_WHITE:
@@ -182,6 +184,7 @@ function getAnimationSize(key: ANIMATION | string) {
       return 4;
     case ANIMATION.POKEBALL:
       return 39;
+    case ANIMATION.SHADOW_WATER:
     case ANIMATION.OVERWORLD_SHINY:
       return 2;
     case ANIMATION.EMO:

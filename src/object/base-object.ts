@@ -16,7 +16,7 @@ export class BaseObject {
   private sprite: Phaser.GameObjects.Sprite;
   protected dummy1!: Phaser.GameObjects.Sprite;
   protected dummy2!: Phaser.GameObjects.Sprite;
-  protected spriteShadow: Phaser.GameObjects.Image;
+  protected spriteShadow: Phaser.GameObjects.Sprite;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
   private readonly offsetX = TILE_SIZE / 2;
@@ -24,7 +24,7 @@ export class BaseObject {
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string, objectType: OBJECT) {
     this.scene = scene;
-    this.spriteShadow = addImage(scene, TEXTURE.SHADOW, 0, 0).setScale(2.8);
+    this.spriteShadow = createSprite(scene, TEXTURE.SHADOW, 0, 0).setScale(2.8);
     this.sprite = createSprite(scene, texture, 0, 0);
     this.dummy1 = createSprite(scene, TEXTURE.BLANK, 0, 0);
     this.dummy2 = createSprite(scene, TEXTURE.BLANK, 0, 0);
@@ -119,7 +119,13 @@ export class BaseObject {
 
   setPosition(position: Phaser.Math.Vector2): void {
     this.sprite.setPosition(position.x, position.y);
+    // this.spriteShadow.setPosition(position.x, this.spriteShadow.anims.getName() === 'shadow' ? position.y : position.y + 5);
     this.spriteShadow.setPosition(position.x, position.y);
+
+    if (this.spriteShadow.anims.getName() === 'shadow_water') {
+      this.spriteShadow.setPosition(position.x, position.y + 6);
+    }
+
     this.dummy1.setPosition(position.x, position.y - 80);
     this.dummy2.setPosition(position.x, position.y - 20);
     this.nickname.setPosition(position.x, position.y - 100);
@@ -149,6 +155,18 @@ export class BaseObject {
     const frameKeys = this.sprite.scene.textures.get(textureKey).getFrameNames();
     this.sprite.stop();
     this.sprite.setFrame(frameKeys[frameNumber]);
+  }
+
+  updateShadowType(type: 'land' | 'water') {
+    if (type === 'water') {
+      this.spriteShadow.setTexture(TEXTURE.SHADOW_WATER);
+      this.spriteShadow.play(ANIMATION.SHADOW_WATER);
+      this.spriteShadow.setDepth(DEPTH.NICKNAME);
+    } else {
+      this.spriteShadow.setTexture(TEXTURE.SHADOW);
+      this.spriteShadow.play(ANIMATION.SHADOW);
+      this.spriteShadow.setDepth(0);
+    }
   }
 
   getDepth() {

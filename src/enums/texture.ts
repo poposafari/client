@@ -141,6 +141,7 @@ export const enum TEXTURE {
   POKEBALL_GROUND = 'pokeball_ground',
   POKEBALL = 'pokeball',
   SHADOW = 'shadow',
+  SHADOW_WATER = 'shadow_water',
   KEY_R = 'key_r',
   KEY_S = 'key_s',
   EMOTION_0 = 'emotion_0',

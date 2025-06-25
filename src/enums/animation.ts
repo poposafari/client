@@ -5,6 +5,8 @@ export const enum ANIMATION {
   NPC_MOVEMENT = 'npc_movement',
   PLAYER_MOVEMENT = 'player_movement',
   PLAYER_SURF = 'player_surf',
+  SHADOW = 'shadow',
+  SHADOW_WATER = 'shadow_water',
   SURF = 'surf',
   PLAYER_MOVEMENT_WALK_UP_1 = 'player_movement_walk_up_1',
   PLAYER_MOVEMENT_WALK_UP_2 = 'player_movement_walk_up_2',
