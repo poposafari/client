@@ -19,4 +19,5 @@ export enum AUDIO {
   BUZZER = 'buzzer',
   REWARD = 'reward',
   SHINY = 'shiny',
+  FLEE = 'flee',
 }

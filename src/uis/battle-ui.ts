@@ -160,7 +160,7 @@ export class BattleSpriteUi extends Ui {
   private eatenBerry!: Phaser.GameObjects.Sprite;
   private parties: Phaser.GameObjects.Image[] = [];
   private shinies: Phaser.GameObjects.Image[] = [];
-  private effect: Phaser.GameObjects.Sprite;
+  private effect!: Phaser.GameObjects.Sprite;
 
   private tempPokemonObject!: PokemonObject;
   private bgUi!: BattleBgUi;
@@ -736,6 +736,7 @@ export class BattleMessageUi extends Ui {
     eventBus.on(EVENT.POKEMON_ESCAPE, async (pokemon: string) => {
       this.cleanText();
       await this.handleMessageKeyInput({ type: 'battle', format: 'talk', content: i18next.t('message:battleFail'), speed: 20 });
+      playSound(this.scene, AUDIO.FLEE);
       await this.handleMessageKeyInput({
         type: 'battle',
         format: 'talk',
@@ -881,6 +882,8 @@ export class BattleMessageUi extends Ui {
             } else if (target === i18next.t('menu:battleSelect3')) {
               this.dummys[choice].setTexture(TEXTURE.BLANK);
               this.lastChoice = 0;
+
+              playSound(this.scene, AUDIO.FLEE);
 
               await this.handleMessageKeyInput({
                 type: 'battle',
