@@ -204,6 +204,7 @@ export function getTextShadow(style: TEXTSTYLE) {
       return [5, 3, '#91919a'];
     case TEXTSTYLE.SPECIAL:
       return [5, 3, '#53a8fc'];
+    case TEXTSTYLE.MESSAGE_WHITE:
     case TEXTSTYLE.MESSAGE_GRAY:
       return [3, 2, '#777777'];
     case TEXTSTYLE.ITEM_STOCK:

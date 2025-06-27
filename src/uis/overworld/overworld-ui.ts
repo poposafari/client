@@ -544,6 +544,8 @@ export class OverworldSafari {
         info.spawns,
         info.shiny,
         info.eaten_berry,
+        info.baseRate,
+        info.rank,
         pos[0],
         pos[1],
         map,

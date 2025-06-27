@@ -53,6 +53,8 @@ export interface WildPokemonInfo {
   shiny: boolean;
   skills: PokemonSkill[] | null;
   eaten_berry: string | null;
+  baseRate: number;
+  rank: PokemonRank;
   spawns: PokemonSpawn;
 }
 
@@ -67,3 +69,4 @@ export type PokemonGender = 'male' | 'female' | 'none';
 export type PokemonHabitat = 'land' | 'lake' | 'mt';
 export type PokemonSpawn = 'land' | 'water';
 export type PokemonSkill = 'none' | 'surf' | 'darkeyes';
+export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
