@@ -1,4 +1,5 @@
 import { PokemonGender, PokemonSkill } from '../object/pokemon-object';
+import { PokemonRank } from '../types';
 
 export interface MyPokemon {
   idx: number;
@@ -8,6 +9,7 @@ export interface MyPokemon {
   form: number;
   count: number;
   skill: PokemonSkill;
+  rank: PokemonRank;
   captureDate: string;
   capturePokeball: string;
   captureLocation: string;

@@ -1,3 +1,4 @@
+import { getPokemonInfo } from '../data/pokemon';
 import { MyPokemon } from '../storage/box';
 import { PokemonGender } from '../types';
 
@@ -71,6 +72,13 @@ export function getBattlePokemonSpriteKey(pokedex: string, shiny: boolean, gende
   const isGender = gender === 'male' ? 'm' : gender === 'female' ? 'f' : '';
 
   return `pokemon_sprite${pokedex}_${isGender}${isShiny}`;
+}
+
+export function getPokemonType(pokedex: string) {
+  const type1 = getPokemonInfo(Number(pokedex))?.type1;
+  const type2 = getPokemonInfo(Number(pokedex))?.type2;
+
+  return [type1, type2];
 }
 
 export function isValidUsername(username: string): boolean {

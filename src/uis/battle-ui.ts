@@ -23,6 +23,8 @@ import { EASE } from '../enums/ease';
 import { BattleRewardUi } from './battle-reward-ui';
 import { catchWildPokemon, feedBerryApi } from '../api';
 import { ANIMATION } from '../enums/animation';
+import { TYPE } from '../enums/type';
+import { PlayerItem } from '../object/player-item';
 
 export class BattleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -66,7 +68,7 @@ export class BattleUi extends Ui {
     await delay(this.scene, 1000);
     await stopPostPipeline(this.scene);
     runFadeEffect(this.scene, 1000, 'in');
-    this.bgUi.show();
+    this.bgUi.show(data!);
     this.messageUi.showContainer();
     await this.spriteUi.show(data);
     this.messageUi.show(data);
@@ -91,9 +93,16 @@ export class BattleBgUi extends Ui {
   private bg!: Phaser.GameObjects.Image;
   private playerBase!: Phaser.GameObjects.Image;
   private enemyBase!: Phaser.GameObjects.Image;
+  private rateText!: Phaser.GameObjects.Text;
+  private tempPokemonObject!: PokemonObject;
 
   constructor(scene: InGameScene) {
     super(scene);
+
+    eventBus.on(EVENT.UPDATE_CATCHRATE, (item?: string, type1?: TYPE, type2?: TYPE) => {
+      const symbol = '%';
+      this.rateText.setText(`${this.tempPokemonObject.getCalcCatchRate(item, type1, type2).toFixed(1)}${symbol}`);
+    });
   }
 
   setup(data?: any): void {
@@ -105,17 +114,30 @@ export class BattleBgUi extends Ui {
     this.bg = addBackground(this.scene, TEXTURE.BLACK).setOrigin(0.5, 0.5).setScale(2);
     this.playerBase = addImage(this.scene, '', -400, +250).setScale(1.6);
     this.enemyBase = addImage(this.scene, '', +500, -100).setOrigin(0.5, 0.5).setScale(2);
+    this.rateText = addText(this.scene, +730, -480, '100.0%', TEXTSTYLE.MESSAGE_WHITE);
+    const rateTextTitle = addText(this.scene, this.rateText.x - 5, -490, i18next.t('menu:battleCaptureRateTitle'), TEXTSTYLE.MESSAGE_WHITE);
+
+    rateTextTitle.setOrigin(1, 0.5);
+    rateTextTitle.setScale(1.1);
+    this.rateText.setOrigin(0, 0.5);
+    this.rateText.setScale(1.4);
 
     this.container.add(this.bg);
     this.container.add(this.playerBase);
     this.container.add(this.enemyBase);
+    this.container.add(rateTextTitle);
+    this.container.add(this.rateText);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.BATTLE + 1);
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  show(data: PokemonObject): void {
+    if (!data) throw Error('Not found wild pokemon');
+
+    this.tempPokemonObject = data;
+
     const overworld = OverworldInfo.getInstance().getKey();
     const overworldData = getSafari(overworld);
     const time = 'day';
@@ -123,6 +145,8 @@ export class BattleBgUi extends Ui {
     this.bg.setTexture(`bg_${overworldData.area}_${time}`);
     this.playerBase.setTexture(`pb_${overworldData.area}_${time}`);
     this.enemyBase.setTexture(`eb_${overworldData.area}_${time}`);
+
+    eventBus.emit(EVENT.UPDATE_CATCHRATE);
 
     this.container.setVisible(true);
   }
@@ -198,6 +222,8 @@ export class BattleSpriteUi extends Ui {
           await this.startExitBall(item, ret.data.flee);
           this.restore();
         }
+
+        eventBus.emit(EVENT.UPDATE_CATCHRATE);
       }
     });
 
@@ -292,6 +318,11 @@ export class BattleSpriteUi extends Ui {
     this.eatenBerry.setTexture(eatenBerry ? `item${eatenBerry}` : TEXTURE.BLANK);
     this.showGender(data);
     this.showType(data);
+
+    for (let i = 0; i < MaxPartySlot; i++) {
+      this.parties[i].setTexture(`pokemon_icon000`);
+      this.shinies[i].setTexture(TEXTURE.BLANK);
+    }
 
     const playerParty = playerInfo.getPartySlot();
     let idx = 0;
@@ -711,7 +742,9 @@ export class BattleMessageUi extends Ui {
   private lastChoice!: number;
 
   private ballMenuListUi!: MenuListUi | null;
+  private ballMenuDummyUi!: BattleBallMenuDummyUi;
   private berryMenuListUi!: MenuListUi | null;
+  private berryMenuDummyUi!: BattleBerryMenuDummyUi;
 
   private readonly baseWindowScale: number = 2;
   private readonly menuWindowScale: number = 3.2;
@@ -720,8 +753,10 @@ export class BattleMessageUi extends Ui {
   constructor(scene: InGameScene) {
     super(scene);
 
-    this.ballMenuListUi = new MenuListUi(this.scene);
-    this.berryMenuListUi = new MenuListUi(this.scene);
+    this.ballMenuDummyUi = new BattleBallMenuDummyUi(scene);
+    this.berryMenuDummyUi = new BattleBerryMenuDummyUi(scene);
+    this.ballMenuListUi = new MenuListUi(this.scene, this.ballMenuDummyUi);
+    this.berryMenuListUi = new MenuListUi(this.scene, this.berryMenuDummyUi);
 
     eventBus.on(EVENT.POKEMON_CATCH_FAIL, async () => {
       await this.handleMessageKeyInput({ type: 'battle', format: 'talk', content: i18next.t('message:battleFail'), speed: 20 });
@@ -914,11 +949,14 @@ export class BattleMessageUi extends Ui {
 
   private async handleBallMenuKeyInput() {
     const balls = this.getItems(ItemCategory.POKEBALL);
+    this.ballMenuDummyUi.balls = balls;
     const ret = await this.ballMenuListUi?.handleKeyInput(this.createListForm(ItemCategory.POKEBALL));
 
     if (ret === i18next.t('menu:cancelMenu')) {
+      eventBus.emit(EVENT.UPDATE_CATCHRATE);
       this.handleMenuKeyInput();
     } else if (typeof ret === 'number') {
+      this.ballMenuListUi?.clean();
       this.cleanText();
       this.pause(true);
       this.showMessage({
@@ -933,11 +971,17 @@ export class BattleMessageUi extends Ui {
 
   private async handleBerryMenuKeyInput() {
     const berry = this.getItems(ItemCategory.BERRY);
+    this.berryMenuDummyUi.berries = berry;
+    this.berryMenuDummyUi.type1 = getPokemonInfo(Number(this.tempPokemonObject.getPokedex()))?.type1!;
+    this.berryMenuDummyUi.type2 = getPokemonInfo(Number(this.tempPokemonObject.getPokedex()))?.type2!;
+
     const ret = await this.berryMenuListUi?.handleKeyInput(this.createListForm(ItemCategory.BERRY));
 
     if (ret === i18next.t('menu:cancelMenu')) {
+      eventBus.emit(EVENT.UPDATE_CATCHRATE);
       this.handleMenuKeyInput();
     } else if (typeof ret === 'number') {
+      this.berryMenuListUi?.clean();
       this.cleanText();
       this.pause(true);
       this.showMessage({
@@ -1020,4 +1064,44 @@ export class BattleMessageUi extends Ui {
   private getItems(category: ItemCategory) {
     return Object.entries(Bag.getInstance().getCategory(category));
   }
+}
+
+export class BattleBallMenuDummyUi extends Ui {
+  public balls: [string, PlayerItem][] = [];
+
+  setup(data?: any): void {}
+
+  show(data?: any): void {}
+
+  clean(data?: any): void {}
+
+  pause(onoff: boolean, data?: any): void {}
+
+  handleKeyInput(...data: any[]) {
+    const item = this.balls[data[0]][0];
+    eventBus.emit(EVENT.UPDATE_CATCHRATE, item);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class BattleBerryMenuDummyUi extends Ui {
+  public berries: [string, PlayerItem][] = [];
+  public type1!: TYPE | null;
+  public type2!: TYPE | null;
+
+  setup(data?: any): void {}
+
+  show(data?: any): void {}
+
+  clean(data?: any): void {}
+
+  pause(onoff: boolean, data?: any): void {}
+
+  handleKeyInput(...data: any[]) {
+    const item = this.berries[data[0]][0];
+    eventBus.emit(EVENT.UPDATE_CATCHRATE, item, this.type1, this.type2);
+  }
+
+  update(time?: number, delta?: number): void {}
 }

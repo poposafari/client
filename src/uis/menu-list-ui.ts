@@ -44,8 +44,10 @@ export class MenuListUi extends Ui {
   private readonly contentHeight: number = 30;
   private readonly spacing: number = 10;
 
-  constructor(scene: InGameScene) {
+  constructor(scene: InGameScene, etcUi?: Ui) {
     super(scene);
+
+    if (etcUi) this.etcUi = etcUi;
   }
 
   setup(data: MenuListSetting): void {
@@ -87,6 +89,7 @@ export class MenuListUi extends Ui {
   }
 
   clean(data?: any): void {
+    console.log('?? 이거 왜 호출이?..');
     this.container.setVisible(false);
 
     this.lastChoice = 0;
@@ -127,6 +130,7 @@ export class MenuListUi extends Ui {
               if (choice > 0) {
                 choice--;
               } else if (this.start > 0) {
+                prevChoice = 1;
                 this.start--;
                 this.renderList();
                 this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
@@ -137,6 +141,7 @@ export class MenuListUi extends Ui {
               if (choice < Math.min(this.perList, totalItems) - 1) {
                 choice++;
               } else if (this.start + this.perList < totalItems) {
+                prevChoice = 5;
                 this.start++;
                 this.renderList();
                 this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
