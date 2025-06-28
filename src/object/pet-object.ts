@@ -20,19 +20,9 @@ import { delay } from '../uis/ui';
 export class PetObject extends MovableObject {
   private callOrRecallObj!: BaseObject;
   private lastPet!: string | null;
-  private isCall: boolean = false;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
     super(scene, texture, x, y, map, nickname, OBJECT.PET);
-
-    eventBus.on(EVENT.PET_CALL, () => {
-      this.isCall = true;
-    });
-
-    eventBus.on(EVENT.PET_RECALL, () => {
-      this.isCall = false;
-      this.recall();
-    });
   }
 
   move(player: PlayerObject) {
@@ -50,8 +40,8 @@ export class PetObject extends MovableObject {
     const diffX = playerPos.x - current.x;
     const diffY = playerPos.y - current.y;
 
-    if (this.isCall) {
-      this.isCall = false;
+    if (PlayerInfo.getInstance().getIsCallPet()) {
+      PlayerInfo.getInstance().setIsCallPet(false);
       this.setVisible(false);
       this.call(player);
     }
@@ -75,7 +65,7 @@ export class PetObject extends MovableObject {
 
     if (pokemon) {
       overworldKey = getPokemonOverworldKey(pokemon);
-      // this.setVisible(true);
+
       if (pokemon.shiny) {
         if (!this.dummy2?.anims.isPlaying) {
           this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
@@ -219,5 +209,9 @@ export class PetObject extends MovableObject {
 
     this.moveTilePos(posX, posY);
     console.log(this.getTilePos().x, this.getTilePos().y);
+  }
+
+  destroy(): void {
+    super.destroy();
   }
 }

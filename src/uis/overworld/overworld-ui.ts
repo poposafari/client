@@ -288,7 +288,7 @@ export class OverworldPlayer {
     }
 
     this.obj.destroy();
-    this.obj.getPet().destroy();
+    // this.obj.getPet()?.destroy();
     this.obj = null;
     this.scene.cameras.main.stopFollow();
     this.scene.cameras.main.setScroll(0, 0);
@@ -302,7 +302,7 @@ export class OverworldPlayer {
 
     this.movement();
     this.obj.update(delta);
-    this.obj.getPet().update(delta);
+    this.obj.getPet()?.update(delta);
   }
 
   private movement() {
