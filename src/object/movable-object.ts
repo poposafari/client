@@ -18,21 +18,17 @@ interface MovementQueue {
 
 export class MovableObject extends BaseObject {
   private step: number = 0;
-  private stepSpeed: number = 2;
-  private baseSpeed: number = 60;
+  private baseSpeed: number = 100;
   protected currentDirection: DIRECTION = DIRECTION.NONE;
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private tileSizePixelsWalked: number = 0;
-  private pixelsToWalkThisUpdate: number = 0;
   private smoothFrameNumbers: number[] = [];
   private movementFinish: boolean = true;
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
   protected map: Phaser.Tilemaps.Tilemap;
 
-  private movementDirection: {
-    [key in DIRECTION]?: Phaser.Math.Vector2;
-  } = {
+  private movementDirection: { [key in DIRECTION]?: Phaser.Math.Vector2 } = {
     [DIRECTION.UP]: Vector2.UP,
     [DIRECTION.DOWN]: Vector2.DOWN,
     [DIRECTION.LEFT]: Vector2.LEFT,
@@ -42,7 +38,6 @@ export class MovableObject extends BaseObject {
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, objectType: OBJECT) {
     super(scene, texture, x, y, nickname, objectType);
     this.map = map!;
-
     this.stopAnmation(3);
 
     if (this.getType() === OBJECT.POKEMON) {
@@ -52,10 +47,8 @@ export class MovableObject extends BaseObject {
 
   process(direction: DIRECTION, animationKey: ANIMATION | string) {
     if (this.isMoving()) return;
-    this.pixelsToWalkThisUpdate = this.stepSpeed;
     this.currentDirection = direction;
-    this.startAnmation(animationKey);
-    this.setTilePos(this.getTilePos().add(this.movementDirection[this.currentDirection]!));
+    this.startAnmation(animationKey, 8);
   }
 
   processStop() {
@@ -66,28 +59,8 @@ export class MovableObject extends BaseObject {
     return this.movementDirectionQueue;
   }
 
-  private willCrossTileBorderThisUpdate(pixelsToWalkThisUpdate: number): boolean {
-    // console.log(`target : ${this.tileSizePixelsWalked + pixelsToWalkThisUpdate}, TILE_SIZE*MAP_SCALE : ${TILE_SIZE * MAP_SCALE}`);
-    return this.tileSizePixelsWalked + pixelsToWalkThisUpdate >= TILE_SIZE * MAP_SCALE;
-  }
-
-  private moveSprite(pixelsToWalkThisUpdate: number) {
-    const directionVector = this.movementDirection[this.currentDirection]!.clone();
-    const movement = directionVector.scale(pixelsToWalkThisUpdate);
-    const currentPos = this.getPosition();
-    const newPosition = currentPos.add(movement);
-
-    this.setPosition(newPosition);
-    this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
-    this.tileSizePixelsWalked %= 32 * MAP_SCALE;
-
-    if (this.tileSizePixelsWalked >= TILE_SIZE * MAP_SCALE) {
-      const targetTilePos = this.getTilePos();
-      this.setPosition(targetTilePos.scale(TILE_SIZE * MAP_SCALE));
-      this.tileSizePixelsWalked = 0;
-    }
-
-    this.lastDirection = this.currentDirection;
+  getLastDirection() {
+    return this.lastDirection;
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION | string) {
@@ -106,22 +79,51 @@ export class MovableObject extends BaseObject {
 
     if (this.movementFinish && this.movementDirectionQueue.length === 0) {
       this.standStop(this.lastDirection);
+      return;
     }
 
     if (this.movementFinish && this.movementDirectionQueue.length > 0) {
       const temp = this.movementDirectionQueue.shift();
       this.process(temp!.direction, temp!.animationKey);
+      this.setTilePos(this.getTilePos().add(this.movementDirection[this.currentDirection]!));
+      this.movementFinish = false;
     }
+
     if (this.isMoving()) {
-      // this.pixelsToWalkThisUpdate = (this.baseSpeed * delta * this.stepSpeed) / 1000;
-      Math.floor(this.pixelsToWalkThisUpdate);
-      this.moveObject();
+      const pixelsToMove = (this.baseSpeed * delta) / 11;
+      this.moveObject(pixelsToMove);
+    }
+  }
+
+  private moveObject(pixelsToWalkThisUpdate: number) {
+    const directionVector = this.movementDirection[this.currentDirection]!.clone();
+    const movement = directionVector.scale(pixelsToWalkThisUpdate);
+    const currentPos = this.getPosition();
+    const newPosition = currentPos.add(movement);
+
+    this.setPosition(newPosition);
+    this.tileSizePixelsWalked += pixelsToWalkThisUpdate;
+
+    if (this.tileSizePixelsWalked >= TILE_SIZE * MAP_SCALE) {
+      const currentTile = this.getTilePos();
+      const newTile = currentTile;
+      const tileCenterX = newTile.x * TILE_SIZE * MAP_SCALE + (TILE_SIZE * MAP_SCALE) / 2;
+      const tileCenterY = newTile.y * TILE_SIZE * MAP_SCALE + TILE_SIZE * MAP_SCALE;
+      this.setPosition(new Phaser.Math.Vector2(tileCenterX, tileCenterY));
+      this.tileSizePixelsWalked = 0;
+      this.movementFinish = true;
+      this.processStop();
+      this.stopAnmation(this.getStopFrameNumber(this.lastDirection)!);
+      this.getSprite().setDepth(newTile.y);
+      this.updateObjectData();
+      this.step++;
+    } else {
+      this.lastDirection = this.currentDirection;
     }
   }
 
   protected standStop(direction: DIRECTION) {
     let frameNumber = 0;
-
     switch (direction) {
       case DIRECTION.UP:
         frameNumber = 0;
@@ -138,21 +140,6 @@ export class MovableObject extends BaseObject {
     }
 
     this.stopAnmation(frameNumber);
-  }
-
-  private moveObject() {
-    if (this.willCrossTileBorderThisUpdate(this.pixelsToWalkThisUpdate * MAP_SCALE)) {
-      this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
-      this.processStop();
-      this.stopAnmation(this.getStopFrameNumber(this.lastDirection)!);
-      this.step++;
-      this.movementFinish = true;
-      this.getSprite().setDepth(this.getTilePos().y);
-      this.updateObjectData();
-    } else {
-      this.moveSprite(this.pixelsToWalkThisUpdate * MAP_SCALE);
-      this.movementFinish = false;
-    }
   }
 
   isMoving() {
@@ -178,8 +165,102 @@ export class MovableObject extends BaseObject {
     return this.smoothFrameNumbers[idx];
   }
 
-  getLastDirection() {
-    return this.lastDirection;
+  isBlockingDirection(direction: DIRECTION): boolean {
+    const nextTilePos = this.getTilePos().add(this.movementDirection[direction]!);
+
+    if (this.hasStairTile(direction)) return false;
+
+    return (
+      this.hasBlockingTile(nextTilePos) ||
+      this.hasBlockingNpc(nextTilePos) ||
+      this.hasGroundItemObject(nextTilePos) ||
+      this.hasPokemonObject(nextTilePos) ||
+      (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos))
+    );
+  }
+
+  private hasBlockingNpc(pos: Phaser.Math.Vector2): boolean {
+    return OverworldInfo.getInstance()
+      .getNpcs()
+      .some((npc) => npc.getTilePos().equals(pos));
+  }
+
+  private hasPlayerObject(pos: Phaser.Math.Vector2): boolean {
+    const player = PlayerInfo.getInstance();
+    return player.getPosX() === pos.x && player.getPosY() === pos.y;
+  }
+
+  private hasGroundItemObject(pos: Phaser.Math.Vector2): boolean {
+    return OverworldInfo.getInstance()
+      .getGroundItems()
+      .some((item) => item.getTilePos().equals(pos) && !item.getCatch());
+  }
+
+  private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
+    return OverworldInfo.getInstance()
+      .getPokemons()
+      .some((p) => p.getTilePos().equals(pos) && p.getStatus() === POKEMON_STATUS.ROAMING);
+  }
+
+  hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
+    if (this.hasNoTile(pos)) return true;
+    if (this.getType() === OBJECT.PET) return false;
+    return this.map.layers.some((layer) => {
+      const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
+      return tile && tile.properties.collides;
+    });
+  }
+
+  hasStairTile(direction: DIRECTION): boolean {
+    const tiles = this.getTileInfo(direction);
+    return findEventTile(tiles) === 'stair';
+  }
+
+  private hasNoTile(pos: Phaser.Math.Vector2): boolean {
+    return !this.map.layers.some((layer) => this.map.hasTileAt(pos.x, pos.y, layer.name));
+  }
+
+  getTileInfo(direction: DIRECTION): Phaser.Tilemaps.Tile[] {
+    const ret: Phaser.Tilemaps.Tile[] = [];
+    const nextTilePos = this.getTilePos().add(this.movementDirection[direction]!);
+    this.map.layers.forEach((layer) => {
+      const tile = this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name);
+      if (tile) ret.push(tile);
+    });
+    return ret;
+  }
+
+  setSmoothFrames(frames: number[]) {
+    this.smoothFrameNumbers = frames;
+  }
+
+  setSpeed(speed: number) {
+    this.baseSpeed = speed;
+  }
+
+  getStep() {
+    return this.step;
+  }
+
+  resetStep() {
+    this.step = 0;
+  }
+
+  isMovementFinish() {
+    return this.movementFinish;
+  }
+
+  updateObjectData() {
+    if (this.getType() === OBJECT.PLAYER) {
+      const playerData = PlayerInfo.getInstance();
+      const tilePos = this.getTilePos();
+      playerData.setX(tilePos.x);
+      playerData.setY(tilePos.y);
+    }
+  }
+
+  setMap(map: Phaser.Tilemaps.Tilemap) {
+    if (map) this.map = map;
   }
 
   getObjectInFront(direction: DIRECTION) {
@@ -208,140 +289,7 @@ export class MovableObject extends BaseObject {
     }
   }
 
-  isBlockingDirection(direction: DIRECTION): boolean {
-    const nextTilePos = this.tilePosInDirection(direction);
-
-    if (this.hasStairTile(direction)) return false;
-
-    let isBlocked =
-      this.hasBlockingTile(nextTilePos) ||
-      this.hasBlockingNpc(nextTilePos) ||
-      this.hasGroundItemObject(nextTilePos) ||
-      this.hasPokemonObject(nextTilePos) ||
-      (this.getType() !== OBJECT.PET && this.hasPlayerObject(nextTilePos));
-
-    return isBlocked;
-  }
-
   private tilePosInDirection(direction: DIRECTION): Phaser.Math.Vector2 {
     return this.getTilePos().add(this.movementDirection[direction]!);
-  }
-
-  private hasPlayerObject(pos: Phaser.Math.Vector2): boolean {
-    const playerData = PlayerInfo.getInstance();
-    const x = playerData.getPosX();
-    const y = playerData.getPosY();
-
-    if (x === pos.x && y === pos.y) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private hasGroundItemObject(pos: Phaser.Math.Vector2) {
-    for (const groundItem of OverworldInfo.getInstance().getGroundItems()) {
-      const groundTilePos = groundItem.getTilePos();
-      if (groundTilePos.x === pos.x && groundTilePos.y === pos.y && groundItem.getCatch() === false) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private hasPokemonObject(pos: Phaser.Math.Vector2): boolean {
-    for (const pokemon of OverworldInfo.getInstance().getPokemons()) {
-      const pokemonTilePos = pokemon.getTilePos();
-      if (pokemonTilePos.x === pos.x && pokemonTilePos.y === pos.y && pokemon.getStatus() === POKEMON_STATUS.ROAMING) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private hasBlockingNpc(pos: Phaser.Math.Vector2): boolean {
-    const npcs = OverworldInfo.getInstance().getNpcs();
-
-    for (const npc of npcs) {
-      const npcTilePos = npc.getTilePos();
-      if (npcTilePos.x === pos.x && npcTilePos.y === pos.y) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  hasBlockingTile(pos: Phaser.Math.Vector2): boolean {
-    if (this.hasNoTile(pos)) return true;
-    if (this.getType() === OBJECT.PET) return false;
-    return this.map.layers.some((layer) => {
-      const tile = this.map.getTileAt(pos.x, pos.y, false, layer.name);
-      return tile && tile.properties.collides;
-    });
-  }
-
-  hasStairTile(direction: DIRECTION): boolean {
-    const tiles = this.getTileInfo(direction);
-    const ret = findEventTile(tiles);
-
-    if (ret === 'stair') return true;
-
-    return false;
-  }
-
-  getTileInfo(direction: DIRECTION): Phaser.Tilemaps.Tile[] | null {
-    const ret: Phaser.Tilemaps.Tile[] = [];
-    const nextTilePos = this.tilePosInDirection(direction);
-
-    // return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name)).find((tile) => tile !== null && tile.index !== -1) || null;
-    // return this.map.layers.map((layer) => this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name) || null);
-    this.map.layers.map((layer) => {
-      const tile = this.map.getTileAt(nextTilePos.x, nextTilePos.y, false, layer.name);
-
-      if (tile) ret.push(tile!);
-    });
-
-    return ret;
-  }
-
-  private hasNoTile(pos: Phaser.Math.Vector2): boolean {
-    return this.map.layers.some((layer) => {
-      this.map.hasTileAt(pos.x, pos.y, layer.name);
-    });
-  }
-
-  setSmoothFrames(frames: number[]) {
-    this.smoothFrameNumbers = frames;
-  }
-
-  setSpeed(speed: number) {
-    this.stepSpeed = speed;
-  }
-
-  getStep() {
-    return this.step;
-  }
-
-  resetStep() {
-    this.step = 0;
-  }
-
-  isMovementFinish() {
-    return this.movementFinish;
-  }
-
-  updateObjectData() {
-    const type = this.getType();
-
-    if (type === OBJECT.PLAYER) {
-      const playerData = PlayerInfo.getInstance();
-      playerData.setX(this.getTilePos().x);
-      playerData.setY(this.getTilePos().y);
-    }
-  }
-
-  setMap(map: Phaser.Tilemaps.Tilemap) {
-    if (!map) return;
-    this.map = map;
   }
 }
