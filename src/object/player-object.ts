@@ -21,12 +21,14 @@ import { PetObject } from './pet-object';
 export class PlayerObject extends MovableObject {
   private currentStatus!: PLAYER_STATUS;
   private lastStatus!: PLAYER_STATUS;
-  private pet!: PetObject;
+  private pet!: PetObject | null;
   private dummy!: BaseObject;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
     super(scene, texture, x, y, map!, nickname, type);
     this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
+
+    console.log('Create PlayerObject!');
 
     this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '');
     const petSprite = this.pet.getSprite();
@@ -45,19 +47,19 @@ export class PlayerObject extends MovableObject {
     switch (key) {
       case KEY.UP:
         this.ready(DIRECTION.UP, animationKey!);
-        this.pet.move(this);
+        this.pet?.move(this);
         break;
       case KEY.DOWN:
         this.ready(DIRECTION.DOWN, animationKey!);
-        this.pet.move(this);
+        this.pet?.move(this);
         break;
       case KEY.LEFT:
         this.ready(DIRECTION.LEFT, animationKey!);
-        this.pet.move(this);
+        this.pet?.move(this);
         break;
       case KEY.RIGHT:
         this.ready(DIRECTION.RIGHT, animationKey!);
-        this.pet.move(this);
+        this.pet?.move(this);
         break;
     }
 
@@ -348,7 +350,7 @@ export class PlayerObject extends MovableObject {
           this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
         }
 
-        this.pet.setupNewPosAfterRecall(this);
+        this.pet?.setupNewPosAfterRecall(this);
       },
     });
   }
@@ -402,10 +404,17 @@ export class PlayerObject extends MovableObject {
     }
 
     eventBus.emit(EVENT.PET_RECALL, this);
+    this.pet?.recall();
     this.dummy = new BaseObject(this.getScene(), `surf`, x, y, '', OBJECT.PLAYER);
     this.dummy.setSpriteFrame(frame);
     this.dummy.setScale(3.2);
 
     this.jump(HM.SURF);
+  }
+
+  destroy(): void {
+    this.pet?.destroy();
+    this.pet = null;
+    super.destroy();
   }
 }

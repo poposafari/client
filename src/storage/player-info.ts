@@ -23,13 +23,22 @@ export class PlayerInfo {
   private candy!: number;
 
   private pet!: MyPokemon | null;
+  private isCallPet: boolean = false;
   private surfPokemon!: MyPokemon | null;
   private partySlot: (MyPokemon | null)[] = [];
   private itemSlot: (string | null)[] = [];
   private pokeboxBg: PokeBoxBG[] = [];
   private pokeboxBgCopy: PokeBoxBG[] = [];
 
-  constructor() {}
+  constructor() {
+    eventBus.on(EVENT.PET_CALL, () => {
+      this.isCallPet = true;
+    });
+
+    eventBus.on(EVENT.PET_RECALL, () => {
+      this.isCallPet = false;
+    });
+  }
 
   static getInstance(): PlayerInfo {
     if (!PlayerInfo.instance) {
@@ -119,6 +128,14 @@ export class PlayerInfo {
     }
 
     return null;
+  }
+
+  getIsCallPet() {
+    return this.isCallPet;
+  }
+
+  setIsCallPet(onoff: boolean) {
+    this.isCallPet = onoff;
   }
 
   getNickname() {
