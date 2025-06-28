@@ -11,12 +11,28 @@ import { OverworldInfo } from '../storage/overworld-info';
 import { getPokemonOverworldKey, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { ANIMATION } from '../enums/animation';
 import { HM } from '../enums/hidden-move';
-import { MAP_SCALE, TILE_SIZE } from './base-object';
+import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 import { EASE } from '../enums/ease';
+import { eventBus } from '../core/event-bus';
+import { EVENT } from '../enums/event';
+import { delay } from '../uis/ui';
 
 export class PetObject extends MovableObject {
+  private callOrRecallObj!: BaseObject;
+  private lastPet!: string | null;
+  private isCall: boolean = false;
+
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
     super(scene, texture, x, y, map, nickname, OBJECT.PET);
+
+    eventBus.on(EVENT.PET_CALL, () => {
+      this.isCall = true;
+    });
+
+    eventBus.on(EVENT.PET_RECALL, () => {
+      this.isCall = false;
+      this.recall();
+    });
   }
 
   move(player: PlayerObject) {
@@ -33,6 +49,12 @@ export class PetObject extends MovableObject {
 
     const diffX = playerPos.x - current.x;
     const diffY = playerPos.y - current.y;
+
+    if (this.isCall) {
+      this.isCall = false;
+      this.setVisible(false);
+      this.call(player);
+    }
 
     if (diffX > 0) {
       this.ready(DIRECTION.RIGHT, this.getAnimation(KEY.RIGHT)!);
@@ -53,7 +75,7 @@ export class PetObject extends MovableObject {
 
     if (pokemon) {
       overworldKey = getPokemonOverworldKey(pokemon);
-      this.setVisible(true);
+      // this.setVisible(true);
       if (pokemon.shiny) {
         if (!this.dummy2?.anims.isPlaying) {
           this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
@@ -139,5 +161,63 @@ export class PetObject extends MovableObject {
         this.updateObjectData();
       },
     });
+  }
+
+  call(player: PlayerObject) {
+    const animation = ANIMATION.POKEMON_CALL;
+
+    // this.setupNewPosAfterRecall(player);
+
+    this.dummy3.setVisible(true);
+    this.dummy3.anims.play({ key: animation, repeat: 0, frameRate: 10 });
+
+    this.dummy3.once('animationcomplete', async () => {
+      this.dummy3.setVisible(false);
+      this.dummy3.stop();
+      this.setVisible(true);
+    });
+  }
+
+  recall() {
+    const animation = ANIMATION.POKEMON_RECALL;
+
+    this.setVisible(false);
+    this.dummy3.setVisible(true);
+    this.dummy3.anims.play({ key: animation, repeat: 0, frameRate: 10 });
+
+    this.dummy3.once('animationcomplete', async () => {
+      this.dummy3.setVisible(false);
+      this.dummy3.stop();
+    });
+  }
+
+  setupNewPosAfterRecall(player: PlayerObject) {
+    const playerDirection = player.getLastDirection();
+    const playerPos = player.getTilePos();
+
+    let posX = 0;
+    let posY = 0;
+
+    switch (playerDirection) {
+      case DIRECTION.UP:
+        posX = playerPos.x;
+        posY = playerPos.y + 1;
+        break;
+      case DIRECTION.DOWN:
+        posX = playerPos.x;
+        posY = playerPos.y - 1;
+        break;
+      case DIRECTION.LEFT:
+        posX = playerPos.x + 1;
+        posY = playerPos.y;
+        break;
+      case DIRECTION.RIGHT:
+        posX = playerPos.x - 1;
+        posY = playerPos.y;
+        break;
+    }
+
+    this.moveTilePos(posX, posY);
+    console.log(this.getTilePos().x, this.getTilePos().y);
   }
 }

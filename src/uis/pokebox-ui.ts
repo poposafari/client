@@ -1012,6 +1012,7 @@ export class PokeboxPartyUi extends Ui {
       this.pokeboxUi.updatePokemonTint(target.pokedex, target.gender as PokemonGender);
       this.handleKeyInput();
     } else if (ret === i18next.t('menu:follow')) {
+      eventBus.emit(EVENT.PET_CALL);
       this.setPet(target);
     } else if (ret === i18next.t('menu:removeFollow')) {
       PlayerInfo.getInstance().setPet(null);

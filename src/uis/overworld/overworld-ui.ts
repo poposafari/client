@@ -255,6 +255,7 @@ export class OverworldPlayer {
       if (this.obj && this.obj.getStatus() === PLAYER_STATUS.SURF) {
         PlayerInfo.getInstance().setSurfPokemon(null);
         this.obj.jump(HM.NONE);
+        eventBus.emit(EVENT.PET_CALL);
       }
     });
 
