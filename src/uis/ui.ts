@@ -112,11 +112,12 @@ function isRideAnimation(animationKey: string): boolean {
 
   return genders.some((gender) => indices.some((index) => directions.some((direction) => stages.some((stage) => animationKey === `${gender}_${index}_ride_${direction}_${stage}`))));
 }
+
 function getSpriteAnimationFrameRate(animationKey: ANIMATION | string): number {
   let ret = 8;
 
   if (isRideAnimation(animationKey)) {
-    ret = 20;
+    ret = 5;
   }
 
   return ret;
@@ -126,7 +127,7 @@ function getSpriteAnimationDelay(animationKey: ANIMATION | string): number {
   let ret = 8;
 
   if (isRideAnimation(animationKey)) {
-    ret = 1;
+    ret = 8;
   }
 
   return ret;

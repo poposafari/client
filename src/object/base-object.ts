@@ -16,6 +16,7 @@ export class BaseObject {
   private sprite: Phaser.GameObjects.Sprite;
   protected dummy1!: Phaser.GameObjects.Sprite;
   protected dummy2!: Phaser.GameObjects.Sprite;
+  public dummy3!: Phaser.GameObjects.Sprite;
   protected spriteShadow: Phaser.GameObjects.Sprite;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
@@ -28,10 +29,12 @@ export class BaseObject {
     this.sprite = createSprite(scene, texture, 0, 0);
     this.dummy1 = createSprite(scene, TEXTURE.BLANK, 0, 0);
     this.dummy2 = createSprite(scene, TEXTURE.BLANK, 0, 0);
+    this.dummy3 = createSprite(scene, TEXTURE.BLANK, 0, 0);
 
     this.sprite.setOrigin(0.5, 1);
     this.dummy1.setOrigin(0.5, 1);
     this.dummy2.setOrigin(0.5, 1);
+    this.dummy3.setOrigin(0.5, 1).setScale(1.4);
     this.spriteShadow.setOrigin(0.5, 1);
 
     this.type = objectType;
@@ -44,6 +47,7 @@ export class BaseObject {
     this.nickname.setDepth(DEPTH.NICKNAME);
     this.dummy1.setDepth(DEPTH.NICKNAME + 1);
     this.dummy2.setDepth(DEPTH.NICKNAME - 2);
+    this.dummy3.setDepth(DEPTH.NICKNAME);
     this.setDepth(this.tilePos.y);
   }
 
@@ -54,6 +58,7 @@ export class BaseObject {
     this.sprite.setPosition(retX, retY);
     this.dummy1.setPosition(retX, retY - 80);
     this.dummy2.setPosition(retX, retY);
+    this.dummy3.setPosition(retX, retY + 110);
     this.spriteShadow.setPosition(retX, retY);
     this.nickname.setPosition(retX, retY - 100);
   }
@@ -73,10 +78,12 @@ export class BaseObject {
       this.spriteShadow.destroy();
       this.dummy1.destroy();
       this.dummy2.destroy();
+      this.dummy3.destroy();
       this.sprite = null!;
       this.spriteShadow = null!;
       this.dummy1 = null!;
       this.dummy2 = null!;
+      this.dummy3 = null!;
     }
 
     if (this.nickname) {
@@ -93,6 +100,10 @@ export class BaseObject {
     this.dummy2.setVisible(onoff ? true : false);
   }
 
+  setDummy3Visible(onoff: boolean) {
+    this.dummy3.setVisible(onoff ? true : false);
+  }
+
   getSprite() {
     return this.sprite;
   }
@@ -107,6 +118,20 @@ export class BaseObject {
 
   getTilePos(): Phaser.Math.Vector2 {
     return this.tilePos.clone();
+  }
+
+  moveTilePos(x: number, y: number) {
+    this.tilePos.set(x, y);
+
+    const retX = x * TILE_SIZE * MAP_SCALE + this.offsetX * MAP_SCALE;
+    const retY = y * TILE_SIZE * MAP_SCALE + this.offsetY * MAP_SCALE;
+
+    this.sprite.setPosition(retX, retY);
+    this.dummy1.setPosition(retX, retY - 80);
+    this.dummy2.setPosition(retX, retY);
+    this.dummy3.setPosition(retX, retY + 110);
+    this.spriteShadow.setPosition(retX, retY);
+    this.nickname.setPosition(retX, retY - 100);
   }
 
   setTilePos(tilePosition: Phaser.Math.Vector2): void {
@@ -128,6 +153,7 @@ export class BaseObject {
 
     this.dummy1.setPosition(position.x, position.y - 80);
     this.dummy2.setPosition(position.x, position.y - 20);
+    this.dummy3.setPosition(position.x, position.y + 110);
     this.nickname.setPosition(position.x, position.y - 100);
   }
 
@@ -137,7 +163,7 @@ export class BaseObject {
     this.sprite.setFrame(frameKeys[frame]);
   }
 
-  startAnmation(animationKey: ANIMATION | string) {
+  startAnmation(animationKey: ANIMATION | string, frame?: number) {
     if (this.sprite.anims.isPlaying && this.sprite.anims.currentAnim?.key === animationKey) {
       return;
     }
