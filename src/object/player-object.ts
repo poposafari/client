@@ -1,4 +1,5 @@
 import { eventBus } from '../core/event-bus';
+import { ANIMATION } from '../enums/animation';
 import { AUDIO } from '../enums/audio';
 import { DIRECTION } from '../enums/direction';
 import { EASE } from '../enums/ease';
@@ -325,7 +326,6 @@ export class PlayerObject extends MovableObject {
       ease: EASE.LINEAR,
       onStart: () => {
         playSound(this.getScene(), AUDIO.JUMP);
-        this.pet.jump();
       },
       onUpdate: (tween) => {
         this.spriteShadow.setVisible(false);
@@ -347,6 +347,8 @@ export class PlayerObject extends MovableObject {
         } else {
           this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
         }
+
+        this.pet.setupNewPosAfterRecall(this);
       },
     });
   }
@@ -399,6 +401,7 @@ export class PlayerObject extends MovableObject {
         break;
     }
 
+    eventBus.emit(EVENT.PET_RECALL, this);
     this.dummy = new BaseObject(this.getScene(), `surf`, x, y, '', OBJECT.PLAYER);
     this.dummy.setSpriteFrame(frame);
     this.dummy.setScale(3.2);

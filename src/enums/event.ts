@@ -50,6 +50,8 @@ export enum EVENT {
   BATTLE_FINISH,
   RESTORE_BATTLE,
   UPDATE_CATCHRATE,
+  PET_CALL,
+  PET_RECALL,
 }
 
 export function isEvent(data: any): data is EVENT {
