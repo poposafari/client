@@ -9,7 +9,7 @@ import { TEXTSTYLE } from '../enums/textstyle';
 import { TEXTURE } from '../enums/texture';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, createSprite, playSound, Ui } from './ui';
+import { addImage, addText, addWindow, createSprite, delay, playSound, Ui } from './ui';
 import { isMode, MODE } from '../enums/mode';
 import { PlayerInfo } from '../storage/player-info';
 import { Message } from '../types';
@@ -165,6 +165,7 @@ export class MessageUi extends Ui {
     keyboard.setAllowKey([KEY.SELECT]);
 
     const result = await this.showMessage(message);
+    await delay(this.scene, message.endDelay ? message.endDelay : 0);
 
     return new Promise((resolve) => {
       this.showEndMark(true);

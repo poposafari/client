@@ -15,13 +15,14 @@ import { ListUi } from './list-ui';
 import { ListForm, MaxPartySlot, PokeBoxBG } from '../types';
 import { KEY } from '../enums/key';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { getPokeboxApi, movePokemonApi } from '../api';
+import { evolvePokemonApi, getPokeboxApi, movePokemonApi } from '../api';
 import { PlayerInfo } from '../storage/player-info';
-import { getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
+import { getBattlePokemonSpriteKey, getPokemonOverworldOrIconKey, getPokemonSpriteKey, isPokedexShiny, replacePercentSymbol } from '../utils/string-util';
 import { MODE } from '../enums/mode';
 import { PlayerObject } from '../object/player-object';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { AUDIO } from '../enums/audio';
+import { Global } from '../storage/global';
 
 export class PokeboxUi extends Ui {
   private pokeboxMainUi: PokeboxMainUi;
@@ -42,6 +43,10 @@ export class PokeboxUi extends Ui {
     this.pokeboxInfoUi = new PokeboxInfoUi(this.scene);
     this.pokeboxPartyUi = new PokeboxPartyUi(this.scene, this);
     this.pokeboxMainUi = new PokeboxMainUi(this.scene, this);
+
+    eventBus.on(EVENT.RESTORE_POKEBOX_KEYHANDLE, () => {
+      this.pokeboxMainUi.handleKeyInput();
+    });
   }
 
   setup(): void {
@@ -427,6 +432,29 @@ export class PokeboxMainUi extends Ui {
     this.menuBox = new MenuUi(scene);
     this.boxList = new ListUi(scene);
     this.boxBgList = new ListUi(scene);
+
+    eventBus.on(EVENT.CANCEL_EVOLVE, () => {
+      this.handleKeyInput();
+    });
+
+    eventBus.on(EVENT.START_EVOLVE, async () => {
+      let choice = this.lastRow! * this.MaxRow + this.lastCol!;
+      const pokemon = Box.getInstance().getMyPokemons()[choice];
+
+      const result = await evolvePokemonApi({ idx: pokemon.idx, box: this.lastBoxSelect });
+
+      if (result && result.success) {
+        eventBus.emit(EVENT.MOVETO_EVOLVE_MODE);
+
+        if (typeof pokemon.evol.cost === 'number') {
+          PlayerInfo.getInstance().setCandy(PlayerInfo.getInstance().getCandy() - pokemon.evol.cost);
+        }
+
+        this.cleanPage();
+        Box.getInstance().setup(result.data as any);
+        this.showPokemonIcon();
+      }
+    });
   }
 
   setup(): void {
@@ -570,7 +598,7 @@ export class PokeboxMainUi extends Ui {
 
   async handleMenuKeyInput(pokemon: MyPokemon, idx: number) {
     let hasParty = this.hasPartySlot(pokemon);
-
+    let hasNextEvol = pokemon.evol.next;
     if (hasParty) {
       this.menu.updateInfo(i18next.t('menu:addParty'), i18next.t('menu:removeParty'));
     } else {
@@ -578,6 +606,13 @@ export class PokeboxMainUi extends Ui {
     }
 
     this.menu.show();
+
+    if (hasNextEvol) {
+      this.menu.updateInfoColor(i18next.t('menu:evolve'), TEXTSTYLE.MESSAGE_BLACK);
+    } else {
+      this.menu.updateInfoColor(i18next.t('menu:evolve'), TEXTSTYLE.MESSAGE_GRAY);
+    }
+
     const ret = await this.menu.handleKeyInput();
 
     if (ret === i18next.t('menu:addParty')) {
@@ -597,7 +632,25 @@ export class PokeboxMainUi extends Ui {
       this.handleBoxListKeyInput('pokemon', pokemon);
       return;
     } else if (ret === i18next.t('menu:evolve')) {
-      console.log(ret);
+      Global.getInstance().setEvolveData(
+        getPokemonSpriteKey(pokemon),
+        pokemon.pokedex,
+        pokemon.evol.next ? getBattlePokemonSpriteKey(pokemon.evol.next, pokemon.shiny, pokemon.gender) : null,
+        pokemon.evol.next ? pokemon.evol.next : '0000',
+      );
+
+      if (hasNextEvol && typeof pokemon.evol.cost === 'number') {
+        eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
+          {
+            type: 'default',
+            format: 'question',
+            content: replacePercentSymbol(i18next.t(`message:evolve_question`), [pokemon.evol.cost]),
+            speed: 10,
+            questionYes: EVENT.START_EVOLVE,
+            questionNo: EVENT.CANCEL_EVOLVE,
+          },
+        ]);
+      }
     } else if (ret === i18next.t('menu:rename')) {
       console.log(ret);
     }

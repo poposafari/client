@@ -2,16 +2,18 @@ import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, Ui } from './ui';
+import { addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KEY } from '../enums/key';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { eventBus } from '../core/event-bus';
 import { EVENT } from '../enums/event';
+import { AUDIO } from '../enums/audio';
 
 export class MenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private window!: Phaser.GameObjects.NineSlice;
+  private menus: Phaser.GameObjects.Text[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
 
   private info: string[] = [];
@@ -43,11 +45,16 @@ export class MenuUi extends Ui {
     let currentY = -lineHeight * (this.info.length - 1);
     currentY -= 15;
 
+    this.menus.forEach((menu) => {
+      menu.destroy();
+    });
+
     this.dummys.forEach((dummy) => {
       dummy.destroy();
     });
 
     this.dummys = [];
+    this.menus = [];
 
     if (this.container) {
       this.container.removeAll(true);
@@ -64,6 +71,7 @@ export class MenuUi extends Ui {
       const dummy = addImage(this.scene, TEXTURE.BLANK, +20, currentY).setOrigin(0, 1);
       dummy.setScale(1.6);
 
+      this.menus.push(text);
       this.dummys.push(dummy);
 
       this.container.add(text);
@@ -111,11 +119,17 @@ export class MenuUi extends Ui {
               choice = Math.min(end, choice + 1);
               break;
             case KEY.SELECT:
-              this.clean();
-              return resolve(this.info[choice]);
+              if (this.menus[choice].style.color !== '#999999') {
+                this.clean();
+                return resolve(this.info[choice]);
+              }
+              playSound(this.scene, AUDIO.BUZZER);
+              break;
+            // if()
             case KEY.CANCEL:
               this.clean();
               return resolve(i18next.t('menu:cancelMenu'));
+              break;
           }
 
           if (key === KEY.UP || key === KEY.DOWN) {
@@ -142,4 +156,12 @@ export class MenuUi extends Ui {
   }
 
   update(time?: number, delta?: number): void {}
+
+  updateInfoColor(target: string, style: TEXTSTYLE) {
+    for (const menu of this.menus) {
+      if (menu.text === target) {
+        menu.setStyle(getTextStyle(style));
+      }
+    }
+  }
 }
