@@ -20,4 +20,5 @@ export enum UI {
   HIDDEN_MOVE = 'HiddenMoveUi',
   DUMMY = 'DummyUi',
   BATTLE = 'BattleUi',
+  EVOLVE = 'EvolveUi',
 }

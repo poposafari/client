@@ -1,5 +1,5 @@
 import { PokemonGender, PokemonSkill } from '../object/pokemon-object';
-import { PokemonRank } from '../types';
+import { NextEvol, PokemonRank } from '../types';
 
 export interface MyPokemon {
   idx: number;
@@ -10,6 +10,7 @@ export interface MyPokemon {
   count: number;
   skill: PokemonSkill;
   rank: PokemonRank;
+  evol: NextEvol;
   captureDate: string;
   capturePokeball: string;
   captureLocation: string;

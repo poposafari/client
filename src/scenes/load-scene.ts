@@ -218,8 +218,12 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.DISCORD, 'ui', TEXTURE.DISCORD);
 
     this.loadImage(TEXTURE.BG_HIDDEN_MOVE, 'ui', TEXTURE.BG_HIDDEN_MOVE);
+
     this.loadImage(TEXTURE.PARTICLE_HM_0, 'ui/particle', TEXTURE.PARTICLE_HM_0);
     this.loadImage(TEXTURE.PARTICLE_HM_1, 'ui/particle', TEXTURE.PARTICLE_HM_1);
+    this.loadImage(TEXTURE.PARTICLE_EVOL, 'ui/particle', TEXTURE.PARTICLE_EVOL);
+
+    this.loadImage(TEXTURE.BG_EVOLVE, 'ui', TEXTURE.BG_EVOLVE);
 
     this.loadAudio(AUDIO.SELECT_0, 'audio', AUDIO.SELECT_0, 'ogg');
     this.loadAudio(AUDIO.SELECT_1, 'audio', AUDIO.SELECT_1, 'ogg');
@@ -243,6 +247,10 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.REWARD, 'audio', AUDIO.REWARD, 'ogg');
     this.loadAudio(AUDIO.FLEE, 'audio', AUDIO.FLEE, 'ogg');
     this.loadAudio(AUDIO.SHINY, 'audio', AUDIO.SHINY, 'wav');
+    this.loadAudio(AUDIO.EVOL_INTRO, 'audio', AUDIO.EVOL_INTRO, 'ogg');
+    this.loadAudio(AUDIO.EVOL, 'audio', AUDIO.EVOL, 'ogg');
+    this.loadAudio(AUDIO.CONG, 'audio', AUDIO.CONG, 'ogg');
+    this.loadAudio(AUDIO.HATCH, 'audio', AUDIO.HATCH, 'wav');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

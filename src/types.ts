@@ -23,6 +23,7 @@ export type Message = {
   format: 'talk' | 'question';
   content: string;
   speed: number;
+  endDelay?: 1000;
   end?: EVENT;
   questionYes?: EVENT;
   questionNo?: EVENT;
@@ -43,6 +44,16 @@ export type RewardForm = {
   candy: number;
   rewards: Reward[];
 };
+
+export type EvolData = {
+  start: string;
+  next: string;
+};
+
+export interface NextEvol {
+  next: string | null;
+  cost: number | string;
+}
 
 export interface WildPokemonInfo {
   idx: number;

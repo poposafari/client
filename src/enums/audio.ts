@@ -20,4 +20,8 @@ export enum AUDIO {
   REWARD = 'reward',
   SHINY = 'shiny',
   FLEE = 'flee',
+  EVOL_INTRO = 'evol_0',
+  EVOL = 'evol_1',
+  CONG = 'cong',
+  HATCH = 'hatch',
 }

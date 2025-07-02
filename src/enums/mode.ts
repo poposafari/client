@@ -19,6 +19,7 @@ export enum MODE {
   SAFARI_LIST,
   HIDDEN_MOVE,
   BATTLE,
+  EVOLVE,
 }
 
 export function isMode(data: any): data is MODE {
