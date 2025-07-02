@@ -101,7 +101,8 @@ export class BattleBgUi extends Ui {
 
     eventBus.on(EVENT.UPDATE_CATCHRATE, (item?: string, type1?: TYPE, type2?: TYPE) => {
       const symbol = '%';
-      this.rateText.setText(`${this.tempPokemonObject.getCalcCatchRate(item, type1, type2).toFixed(1)}${symbol}`);
+      const rate = item === '001' ? (100.0).toFixed(1) : this.tempPokemonObject.getCalcCatchRate(item, type1, type2).toFixed(1);
+      this.rateText.setText(`${rate}${symbol}`);
     });
   }
 
