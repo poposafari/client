@@ -79,6 +79,7 @@ export const enum TEXTURE {
   GIRL_4_HM = 'girl_4_hm',
   PARTICLE_HM_0 = 'particle_hm_0',
   PARTICLE_HM_1 = 'particle_hm_1',
+  PARTICLE_EVOL = 'particle_evol',
   ARROW = 'arrow',
   ARROW_RED = 'arrow_r',
   BLACK = 'black',
@@ -162,6 +163,7 @@ export const enum TEXTURE {
   GOOGLE = 'google',
   BG_HIDDEN_MOVE = 'bg_hiddenMove',
   PARTICLE_HIDDEN_MOVE = 'particle_hiddenMove',
+  BG_EVOLVE = 'bg_evolve',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {

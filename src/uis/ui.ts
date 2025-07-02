@@ -192,6 +192,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 15;
     case ANIMATION.SPARKLE:
       return 47;
+    case ANIMATION.PARTICLE_EVOL:
+      return 12;
   }
 }
 
@@ -529,6 +531,14 @@ export function playSound(scene: InGameScene, key: AUDIO, volume: number = 1, lo
     volume: volume,
     loop: loop,
   });
+}
+
+export function pauseSound(scene: InGameScene, onoff: boolean) {
+  if (onoff) {
+    scene.sound.pauseAll();
+  } else {
+    scene.sound.resumeAll();
+  }
 }
 
 export function findEventTile(tiles: Phaser.Tilemaps.Tile[] | null) {

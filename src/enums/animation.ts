@@ -70,4 +70,5 @@ export const enum ANIMATION {
   OVERWORLD_SHINY = 'overworld_shiny',
   EMO = 'emo',
   SPARKLE = 'sparkle',
+  PARTICLE_EVOL = 'particle_evol',
 }

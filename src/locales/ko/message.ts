@@ -52,4 +52,7 @@ export const message: TranslationDefault = {
   warn_full_box: '박스가 가득 찼습니다.',
   warn_no_ticket: '티켓이 부족합니다.',
   isBackToPlaza: '마을로 돌아가시겠습니까?',
+  evolve_question: '진화 비용은 사탕 x%입니다.\n진화시키겠습니까?',
+  evolve_0: '...오잉!?\n%의 모습이...!',
+  evolve_1: '축하합니다! %은(는)\n%(으)로 진화했습니다!',
 };

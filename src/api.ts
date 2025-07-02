@@ -48,6 +48,11 @@ type PokeboxRequest = {
   box: number;
 };
 
+type EvolveRequest = {
+  idx: number;
+  box: number;
+};
+
 type MovePokemonRequest = {
   pokedex: string;
   gender: PokemonGender;
@@ -71,6 +76,7 @@ export const getAllItemsApi = () => apiWrap(() => Axios.get('/bag/all'));
 export const buyItemApi = (data: BuyItemRequest) => apiWrap(() => Axios.post('/bag/buy', data));
 export const getPokeboxApi = (data: PokeboxRequest) => apiWrap(() => Axios.post('pokebox/get', data));
 export const movePokemonApi = (data: MovePokemonRequest) => apiWrap(() => Axios.post('pokebox/move', data));
+export const evolvePokemonApi = (data: EvolveRequest) => apiWrap(() => Axios.post('pokebox/evol', data));
 export const moveToOverworldApi = (data: MoveToOverworldReq) => apiWrap(() => Axios.post('/overworld/move', data));
 export const useTicketApi = (data: MoveToOverworldReq) => apiWrap(() => Axios.post('/overworld/ticket', data));
 export const catchGroundItem = (data: CatchSafariObjReq) => apiWrap(() => Axios.post('/overworld/catch/item', data));
