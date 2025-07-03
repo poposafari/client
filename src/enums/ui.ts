@@ -21,4 +21,5 @@ export enum UI {
   DUMMY = 'DummyUi',
   BATTLE = 'BattleUi',
   EVOLVE = 'EvolveUi',
+  INPUT_NICKNAME = 'InputNicknameUi',
 }

@@ -50,6 +50,11 @@ export type EvolData = {
   next: string;
 };
 
+export type InputNicknameData = {
+  type: 'pokemon' | 'box';
+  base: string;
+};
+
 export interface NextEvol {
   next: string | null;
   cost: number | string;
