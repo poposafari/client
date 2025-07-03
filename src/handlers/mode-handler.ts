@@ -5,6 +5,7 @@ import { EVENT } from '../enums/event';
 import { MODE } from '../enums/mode';
 import { Mode } from '../mode';
 import { OverworldMode } from '../modes';
+import { InputNicknameData } from '../types';
 
 export class ModeHandler {
   private registry = new Map<MODE, Mode>();
@@ -26,6 +27,7 @@ export class ModeHandler {
     eventBus.on(EVENT.MOVETO_OVERWORLD_MENU_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU));
     eventBus.on(EVENT.MOVETO_HIDDENMOVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.HIDDEN_MOVE));
     eventBus.on(EVENT.MOVETO_EVOLVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.EVOLVE));
+    eventBus.on(EVENT.MOVETO_INPUT_NICKNAME_MODE, (data: InputNicknameData) => eventBus.emit(EVENT.OVERLAP_MODE, MODE.INPUT_NICKNAME, data));
   }
 
   register(key: MODE, mode: Mode): void {

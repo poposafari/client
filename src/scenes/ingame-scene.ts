@@ -14,6 +14,7 @@ import {
   ConnectMode,
   EvolveMode,
   HiddenMoveMode,
+  InputNicknameMode,
   LoginMode,
   MessageMode,
   NewgameMode,
@@ -60,6 +61,7 @@ import { OverworldInfo } from '../storage/overworld-info';
 import { BattleUi } from '../uis/battle-ui';
 import { EvolveUi } from '../uis/evolve-ui';
 import { Global } from '../storage/global';
+import { InputNicknameUi } from '../uis/input-nickname-ui';
 
 export class InGameScene extends BaseScene {
   private uiHandler = new UiHandler();
@@ -99,6 +101,7 @@ export class InGameScene extends BaseScene {
     this.uiHandler.register(UI.DUMMY, new DummyUi(this));
     this.uiHandler.register(UI.BATTLE, new BattleUi(this));
     this.uiHandler.register(UI.EVOLVE, new EvolveUi(this));
+    this.uiHandler.register(UI.INPUT_NICKNAME, new InputNicknameUi(this));
     this.uiHandler.register('Overworld000', new Overworld000(this));
     this.uiHandler.register('Overworld011', new Overworld011(this));
 
@@ -122,6 +125,7 @@ export class InGameScene extends BaseScene {
     this.modeHandler.register(MODE.HIDDEN_MOVE, new HiddenMoveMode(this));
     this.modeHandler.register(MODE.BATTLE, new BattleMode(this));
     this.modeHandler.register(MODE.EVOLVE, new EvolveMode(this));
+    this.modeHandler.register(MODE.INPUT_NICKNAME, new InputNicknameMode(this));
 
     this.modeHandler.change(MODE.NONE);
   }

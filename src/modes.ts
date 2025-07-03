@@ -11,7 +11,7 @@ import { playSound, runFadeEffect } from './uis/ui';
 import { replacePercentSymbol } from './utils/string-util';
 import { Bag } from './storage/bag';
 import { UI } from './enums/ui';
-import { EvolData, GroundItemInfo, Message, NextEvol, PlayerAvatar, PlayerGender } from './types';
+import { EvolData, GroundItemInfo, InputNicknameData, Message, NextEvol, PlayerAvatar, PlayerGender } from './types';
 import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
 import { PlayerObject } from './object/player-object';
@@ -421,6 +421,22 @@ export class EvolveMode extends Mode {
 
   enter(data?: any): void {
     eventBus.emit(EVENT.OVERLAP_UI, UI.EVOLVE);
+  }
+
+  exit(): void {
+    eventBus.emit(EVENT.POP_UI);
+  }
+
+  update(time?: number, delta?: number): void {}
+}
+
+export class InputNicknameMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  enter(data: InputNicknameData): void {
+    eventBus.emit(EVENT.OVERLAP_UI, UI.INPUT_NICKNAME, data);
   }
 
   exit(): void {

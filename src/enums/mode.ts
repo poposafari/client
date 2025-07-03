@@ -20,6 +20,7 @@ export enum MODE {
   HIDDEN_MOVE,
   BATTLE,
   EVOLVE,
+  INPUT_NICKNAME,
 }
 
 export function isMode(data: any): data is MODE {
