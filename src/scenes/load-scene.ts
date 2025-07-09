@@ -128,12 +128,16 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
     this.loadMap(TEXTURE.OVERWORLD_000, 'ui/map', TEXTURE.OVERWORLD_000);
+    this.loadMap(TEXTURE.OVERWORLD_001, 'ui/map', TEXTURE.OVERWORLD_001);
+    this.loadMap(TEXTURE.OVERWORLD_002, 'ui/map', TEXTURE.OVERWORLD_002);
     this.loadMap(TEXTURE.OVERWORLD_011, 'ui/map', TEXTURE.OVERWORLD_011);
-    this.loadImage(TEXTURE.TILE_FLOOR, 'ui/map', TEXTURE.TILE_FLOOR);
-    this.loadImage(TEXTURE.TILE_EDGE, 'ui/map', TEXTURE.TILE_EDGE);
-    this.loadImage(TEXTURE.TILE_OBJECT, 'ui/map', TEXTURE.TILE_OBJECT);
-    this.loadImage(TEXTURE.TILE_OBJECT_URBAN, 'ui/map', TEXTURE.TILE_OBJECT_URBAN);
-    this.loadImage(TEXTURE.TILE_URBAN, 'ui/map', TEXTURE.TILE_URBAN);
+    this.loadImage(TEXTURE.OUTDOOR_TILE_FLOOR, 'ui/map', TEXTURE.OUTDOOR_TILE_FLOOR);
+    this.loadImage(TEXTURE.OUTDOOR_TILE_EDGE, 'ui/map', TEXTURE.OUTDOOR_TILE_EDGE);
+    this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT);
+    this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT_URBAN);
+    this.loadImage(TEXTURE.OUTDOOR_TILE_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_URBAN);
+    this.loadImage(TEXTURE.INDOOR_TILE_FLOOR, 'ui/map', TEXTURE.INDOOR_TILE_FLOOR);
+    this.loadImage(TEXTURE.INDOOR_TILE_OBJECT, 'ui/map', TEXTURE.INDOOR_TILE_OBJECT);
 
     this.loadImage(TEXTURE.MENU_POKEBOX, 'ui/menu', TEXTURE.MENU_POKEBOX);
     this.loadImage(TEXTURE.MENU_BAG_BOY, 'ui/menu', TEXTURE.MENU_BAG_BOY);
@@ -251,6 +255,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.EVOL, 'audio', AUDIO.EVOL, 'ogg');
     this.loadAudio(AUDIO.CONG, 'audio', AUDIO.CONG, 'ogg');
     this.loadAudio(AUDIO.HATCH, 'audio', AUDIO.HATCH, 'wav');
+    this.loadAudio(AUDIO.DOOR_ENTER, 'audio', AUDIO.DOOR_ENTER, 'ogg');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
