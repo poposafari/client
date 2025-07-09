@@ -89,7 +89,6 @@ export class MenuListUi extends Ui {
   }
 
   clean(data?: any): void {
-    console.log('?? 이거 왜 호출이?..');
     this.container.setVisible(false);
 
     this.lastChoice = 0;

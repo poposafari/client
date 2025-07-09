@@ -167,7 +167,8 @@ export class BaseObject {
     if (this.sprite.anims.isPlaying && this.sprite.anims.currentAnim?.key === animationKey) {
       return;
     }
-    this.sprite.play(animationKey);
+
+    if (animationKey) this.sprite.play(animationKey);
   }
 
   setTexture(texture: TEXTURE | string) {

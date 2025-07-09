@@ -11,6 +11,7 @@ export enum AUDIO {
   JUMP = 'jump',
   REACTION_0 = 'reaction_0',
   THROW = 'throw',
+  DOOR_ENTER = 'enter',
   BALL_CATCH = 'ball_catch',
   BALL_DROP = 'ball_drop',
   BALL_ENTER = 'ball_enter',

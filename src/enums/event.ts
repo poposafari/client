@@ -59,6 +59,7 @@ export enum EVENT {
   START_EVOLVE_ANIMATION,
   FINISH_EVOLVE,
   RESTORE_POKEBOX_KEYHANDLE,
+  ENTER_EXIT,
 }
 
 export function isEvent(data: any): data is EVENT {
