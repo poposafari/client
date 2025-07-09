@@ -11,11 +11,11 @@ import { PlayerObject } from '../../object/player-object';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { OverworldInfo } from '../../storage/overworld-info';
 import { PlayerInfo } from '../../storage/player-info';
-import { addMap, createSprite, findEventTile, playSound, runFadeEffect, Ui } from '../ui';
+import { addMap, createSprite, delay, findEventTile, playSound, runFadeEffect, Ui } from '../ui';
 import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
-import { catchGroundItem, getAvailableTicketApi } from '../../api';
+import { catchGroundItem, getAvailableTicketApi, warpOverworldApi } from '../../api';
 import { Message, PokemonSpawn } from '../../types';
 import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
@@ -264,6 +264,16 @@ export class OverworldPlayer {
       this.obj?.setStatus(this.obj.getLastStatus(), this.obj.getLastDirection());
       eventBus.emit(EVENT.RESTORE_BATTLE);
     });
+
+    eventBus.on(EVENT.ENTER_EXIT, async (tileEvent: string) => {
+      const warpIdx = tileEvent.split('_')[1];
+
+      await delay(this.scene, 100);
+
+      runFadeEffect(this.scene, 2000, 'in');
+      playSound(this.scene, AUDIO.DOOR_ENTER);
+      eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, tileEvent.includes('enter') ? 'enter' : 'exit', warpIdx);
+    });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
@@ -301,19 +311,25 @@ export class OverworldPlayer {
     }
 
     this.movement();
-    this.obj.update(delta);
-    this.obj.getPet()?.update(delta);
+    this.obj?.update(delta);
+    this.obj?.getPet()?.update(delta);
   }
 
   private movement() {
-    if (this.cursorKey.up.isDown && this.obj!.isMovementFinish()) {
+    if (!this.obj) return;
+
+    if (this.cursorKey.up.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
       this.obj!.move(KEY.UP);
-    } else if (this.cursorKey.down.isDown && this.obj!.isMovementFinish()) {
+      this.obj.isEnterOrExit(DIRECTION.UP);
+    } else if (this.cursorKey.down.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
       this.obj!.move(KEY.DOWN);
-    } else if (this.cursorKey.left.isDown && this.obj!.isMovementFinish()) {
+      this.obj.isEnterOrExit(DIRECTION.DOWN);
+    } else if (this.cursorKey.left.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
       this.obj!.move(KEY.LEFT);
-    } else if (this.cursorKey.right.isDown && this.obj!.isMovementFinish()) {
+      this.obj.isEnterOrExit(DIRECTION.LEFT);
+    } else if (this.cursorKey.right.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
       this.obj!.move(KEY.RIGHT);
+      this.obj.isEnterOrExit(DIRECTION.RIGHT);
     }
   }
 

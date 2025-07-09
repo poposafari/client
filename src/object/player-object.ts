@@ -13,7 +13,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
-import { playSound } from '../uis/ui';
+import { findEventTile, playSound, runFadeEffect } from '../uis/ui';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 import { MovableObject } from './movable-object';
 import { PetObject } from './pet-object';
@@ -212,6 +212,10 @@ export class PlayerObject extends MovableObject {
       case PLAYER_STATUS.TALK:
         this.lastStatus = this.currentStatus;
         this.currentStatus = PLAYER_STATUS.TALK;
+        break;
+      case PLAYER_STATUS.WARP:
+        this.lastStatus = this.currentStatus;
+        this.currentStatus = PLAYER_STATUS.WARP;
         break;
     }
 
@@ -416,5 +420,16 @@ export class PlayerObject extends MovableObject {
     this.pet?.destroy();
     this.pet = null;
     super.destroy();
+  }
+
+  isEnterOrExit(direction: DIRECTION) {
+    const tiles = this.getTileInfo(direction);
+    const event = findEventTile(tiles);
+
+    if (event && ['enter', 'exit'].some((keyword) => event.includes(keyword))) {
+      this.setStatus(PLAYER_STATUS.WARP, this.getLastDirection());
+
+      eventBus.emit(EVENT.ENTER_EXIT, event);
+    }
   }
 }

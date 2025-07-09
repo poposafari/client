@@ -50,6 +50,11 @@ export type EvolData = {
   next: string;
 };
 
+export type MoveToOverworld = {
+  type: 'direct' | 'enter' | 'exit';
+  idx: string;
+};
+
 export type InputNicknameData = {
   type: 'pokemon' | 'box';
   base: string;

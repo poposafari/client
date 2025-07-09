@@ -576,7 +576,7 @@ export class PokeboxMainUi extends Ui {
             this.dummys[choice].setTexture(TEXTURE.BLANK);
             this.pokeboxUi.clean();
             eventBus.emit(EVENT.POP_MODE);
-            return;
+            break;
         }
 
         choice = row * this.MaxRow + col;
@@ -606,6 +606,7 @@ export class PokeboxMainUi extends Ui {
     }
 
     this.menu.show();
+    this.menu.updateInfoColor(i18next.t('menu:rename'), TEXTSTYLE.MESSAGE_GRAY);
 
     if (hasNextEvol) {
       this.menu.updateInfoColor(i18next.t('menu:evolve'), TEXTSTYLE.MESSAGE_BLACK);
@@ -652,7 +653,9 @@ export class PokeboxMainUi extends Ui {
         ]);
       }
     } else if (ret === i18next.t('menu:rename')) {
-      console.log(ret);
+      // eventBus.emit(EVENT.MOVETO_INPUT_NICKNAME_MODE, { type: 'pokemon', base: i18next.t(`pokemon:${pokemon.pokedex}.name`) });
+      // return;
+      playSound(this.scene, AUDIO.BUZZER);
     }
 
     this.menu.clean();
@@ -707,6 +710,8 @@ export class PokeboxMainUi extends Ui {
 
   async handleBoxMenuKeyInput() {
     this.menuBox.show();
+    this.menuBox.updateInfoColor(i18next.t('menu:rename'), TEXTSTYLE.MESSAGE_GRAY);
+
     const ret = await this.menuBox.handleKeyInput();
 
     if (ret === i18next.t('menu:boxJump')) {
@@ -716,6 +721,7 @@ export class PokeboxMainUi extends Ui {
       this.handleBoxBgListKeyInput();
       return;
     } else if (ret === i18next.t('menu:rename')) {
+      playSound(this.scene, AUDIO.BUZZER);
     }
 
     this.handleBoxSelectKeyInput();

@@ -93,7 +93,8 @@ export const menu: TranslationDefault = {
   key: '중요한 도구',
   itemEmpty: '아이템이 없습니다.',
   use: '사용하기',
-  cancel: '취소하기',
+  cancel: '취소',
+  change: '변경',
   cancelMenu: '그만둔다',
   registerSlot: '등록하기',
   registerCancel: '등록 해제',
@@ -140,4 +141,6 @@ export const menu: TranslationDefault = {
   battleRewardTitle2: '보상',
   battleRewardTitle3: 'X 키를 눌러주세요.',
   battleCaptureRateTitle: '포획률 : ',
+  changePokemonName: '포켓몬의 닉네임은?',
+  changeBoxName: '박스 이름은?',
 };
