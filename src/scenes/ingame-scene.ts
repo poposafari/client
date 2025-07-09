@@ -62,6 +62,8 @@ import { BattleUi } from '../uis/battle-ui';
 import { EvolveUi } from '../uis/evolve-ui';
 import { Global } from '../storage/global';
 import { InputNicknameUi } from '../uis/input-nickname-ui';
+import { Overworld001 } from '../uis/overworld/overworld-001';
+import { Overworld002 } from '../uis/overworld/overworld-002';
 
 export class InGameScene extends BaseScene {
   private uiHandler = new UiHandler();
@@ -103,6 +105,8 @@ export class InGameScene extends BaseScene {
     this.uiHandler.register(UI.EVOLVE, new EvolveUi(this));
     this.uiHandler.register(UI.INPUT_NICKNAME, new InputNicknameUi(this));
     this.uiHandler.register('Overworld000', new Overworld000(this));
+    this.uiHandler.register('Overworld001', new Overworld001(this));
+    this.uiHandler.register('Overworld002', new Overworld002(this));
     this.uiHandler.register('Overworld011', new Overworld011(this));
 
     this.modeHandler.register(MODE.NONE, new NoneMode(this));
