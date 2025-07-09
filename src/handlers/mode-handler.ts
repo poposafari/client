@@ -23,7 +23,7 @@ export class ModeHandler {
     eventBus.on(EVENT.MOVETO_TITLE_MODE, () => eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE));
     eventBus.on(EVENT.MOVETO_SHOP_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.SHOP));
     eventBus.on(EVENT.MOVETO_SAFARI_LIST_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.SAFARI_LIST));
-    eventBus.on(EVENT.MOVETO_OVERWORLD_MODE, (overworld: string) => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_CONNECTING, overworld));
+    eventBus.on(EVENT.MOVETO_OVERWORLD_MODE, (type: 'enter' | 'exit' | 'direct' = 'direct', idx: string) => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_CONNECTING, { type: type, idx: idx }));
     eventBus.on(EVENT.MOVETO_OVERWORLD_MENU_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU));
     eventBus.on(EVENT.MOVETO_HIDDENMOVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.HIDDEN_MOVE));
     eventBus.on(EVENT.MOVETO_EVOLVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.EVOLVE));

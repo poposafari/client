@@ -1,5 +1,17 @@
 import i18next from 'i18next';
-import { autoLoginApi, buyItemApi, deleteAccountApi, getIngameApi, ingameRegisterApi, loginApi, moveToOverworldApi, receiveAvailableTicketApi, registerApi } from './api';
+import {
+  autoLoginApi,
+  buyItemApi,
+  deleteAccountApi,
+  enterOverworldApi,
+  exitOverworldApi,
+  getIngameApi,
+  ingameRegisterApi,
+  loginApi,
+  moveToOverworldApi,
+  receiveAvailableTicketApi,
+  registerApi,
+} from './api';
 import { eventBus } from './core/event-bus';
 import { EVENT } from './enums/event';
 import { MODE } from './enums/mode';
@@ -11,7 +23,7 @@ import { playSound, runFadeEffect } from './uis/ui';
 import { replacePercentSymbol } from './utils/string-util';
 import { Bag } from './storage/bag';
 import { UI } from './enums/ui';
-import { EvolData, GroundItemInfo, InputNicknameData, Message, NextEvol, PlayerAvatar, PlayerGender } from './types';
+import { EvolData, GroundItemInfo, InputNicknameData, Message, MoveToOverworld, NextEvol, PlayerAvatar, PlayerGender } from './types';
 import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
 import { PlayerObject } from './object/player-object';
@@ -262,25 +274,33 @@ export class OverworldConnectingMode extends Mode {
     super(scene);
   }
 
-  async enter(data?: any): Promise<void> {
+  async enter(data: MoveToOverworld): Promise<void> {
     const overworld = data;
+    let result;
 
     if (!overworld) console.error('not found overworld key on OverworldConnectingMode');
 
     eventBus.emit(EVENT.CHANGE_UI, UI.OVERWORLD_CONNECTING);
 
-    const result = await moveToOverworldApi({ overworld: overworld });
+    if (data.type === 'direct') {
+      result = await moveToOverworldApi({ overworld: data.idx });
+    } else if (data.type === 'enter') {
+      result = await enterOverworldApi({ idx: data.idx });
+    } else if (data.type === 'exit') {
+      result = await exitOverworldApi({ idx: data.idx });
+    }
+
     if (result && result.data) {
       console.log(result.data);
 
       PlayerInfo.getInstance().setX(result.data.entryX);
       PlayerInfo.getInstance().setY(result.data.entryY);
-      PlayerInfo.getInstance().setLocation(overworld);
+      PlayerInfo.getInstance().setLocation(result.data.overworld);
 
       if (result.data.pokemons) OverworldInfo.getInstance().setupWildPokemonInfo(result.data.pokemons);
       if (result.data.items) OverworldInfo.getInstance().setupGroundItemInfo(result.data.items);
 
-      eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD, overworld);
+      eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD, result.data.overworld);
     }
   }
 

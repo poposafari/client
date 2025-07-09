@@ -25,6 +25,18 @@ const initialPlaza: Record<string, PlazaData> = {
       y: 10,
     },
   },
+  '001': {
+    entryPos: {
+      x: 0,
+      y: 0,
+    },
+  },
+  '002': {
+    entryPos: {
+      x: 0,
+      y: 0,
+    },
+  },
 };
 
 const initialSafari: Record<string, SafariData> = {
