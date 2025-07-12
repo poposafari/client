@@ -105,7 +105,7 @@ export class TitleUi extends Ui {
             break;
           case KEY.SELECT:
             if (choice === 0) {
-              eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD_CONNECTING, { type: 'direct', idx: PlayerInfo.getInstance().getLocation() });
+              eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD_CONNECTING, { type: 'enter', idx: PlayerInfo.getInstance().getLocation() });
             } else if (choice === 1) {
               eventBus.emit(EVENT.CHANGE_MODE, MODE.ACCOUNT_DELETE);
             } else if (choice === 2) {
