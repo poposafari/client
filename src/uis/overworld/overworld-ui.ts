@@ -15,7 +15,7 @@ import { addMap, createSprite, delay, findEventTile, playSound, runFadeEffect, U
 import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
-import { catchGroundItem, getAvailableTicketApi, warpOverworldApi } from '../../api';
+import { catchGroundItem, getAvailableTicketApi } from '../../api';
 import { Message, PokemonSpawn } from '../../types';
 import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
@@ -265,15 +265,7 @@ export class OverworldPlayer {
       eventBus.emit(EVENT.RESTORE_BATTLE);
     });
 
-    eventBus.on(EVENT.ENTER_EXIT, async (tileEvent: string) => {
-      const warpIdx = tileEvent.split('_')[1];
-
-      await delay(this.scene, 100);
-
-      runFadeEffect(this.scene, 2000, 'in');
-      playSound(this.scene, AUDIO.DOOR_ENTER);
-      eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, tileEvent.includes('enter') ? 'enter' : 'exit', warpIdx);
-    });
+    eventBus.on(EVENT.ENTER_EXIT, async (tileEvent: string) => {});
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
@@ -315,21 +307,33 @@ export class OverworldPlayer {
     this.obj?.getPet()?.update(delta);
   }
 
+  private async enterOrExit(event: string | null) {
+    if (!event) return;
+
+    const warpIdx = event.split('_')[1];
+
+    await delay(this.scene, 100);
+
+    runFadeEffect(this.scene, 2000, 'in');
+    playSound(this.scene, AUDIO.DOOR_ENTER);
+    eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, event.includes('enter') ? 'enter' : 'exit', warpIdx);
+  }
+
   private movement() {
     if (!this.obj) return;
 
-    if (this.cursorKey.up.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
+    if (this.cursorKey.up.isDown && this.obj!.isMovementFinish()) {
       this.obj!.move(KEY.UP);
-      this.obj.isEnterOrExit(DIRECTION.UP);
-    } else if (this.cursorKey.down.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
+      this.enterOrExit(this.obj.isEnterOrExit(DIRECTION.UP)!);
+    } else if (this.cursorKey.down.isDown && this.obj!.isMovementFinish()) {
       this.obj!.move(KEY.DOWN);
-      this.obj.isEnterOrExit(DIRECTION.DOWN);
-    } else if (this.cursorKey.left.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
+      this.enterOrExit(this.obj.isEnterOrExit(DIRECTION.DOWN)!);
+    } else if (this.cursorKey.left.isDown && this.obj!.isMovementFinish()) {
       this.obj!.move(KEY.LEFT);
-      this.obj.isEnterOrExit(DIRECTION.LEFT);
-    } else if (this.cursorKey.right.isDown && this.obj!.isMovementFinish() && this.obj.getStatus() !== PLAYER_STATUS.WARP) {
+      this.enterOrExit(this.obj.isEnterOrExit(DIRECTION.LEFT)!);
+    } else if (this.cursorKey.right.isDown && this.obj!.isMovementFinish()) {
       this.obj!.move(KEY.RIGHT);
-      this.obj.isEnterOrExit(DIRECTION.RIGHT);
+      this.enterOrExit(this.obj.isEnterOrExit(DIRECTION.RIGHT)!);
     }
   }
 
@@ -551,27 +555,29 @@ export class OverworldSafari {
 
       if (info.catch) continue;
 
-      const pokemon = new PokemonObject(
-        this.scene,
-        `pokemon_overworld${info.pokedex}${info.shiny ? 's' : ''}`,
-        info.idx,
-        info.pokedex,
-        info.gender,
-        info.skills,
-        info.spawns,
-        info.shiny,
-        info.eaten_berry,
-        info.baseRate,
-        info.rank,
-        pos[0],
-        pos[1],
-        map,
-        i18next.t(`pokemon:${info.pokedex}.name`),
-      );
+      if (pos) {
+        const pokemon = new PokemonObject(
+          this.scene,
+          `pokemon_overworld${info.pokedex}${info.shiny ? 's' : ''}`,
+          info.idx,
+          info.pokedex,
+          info.gender,
+          info.skills,
+          info.spawns,
+          info.shiny,
+          info.eaten_berry,
+          info.baseRate,
+          info.rank,
+          pos[0],
+          pos[1],
+          map,
+          i18next.t(`pokemon:${info.pokedex}.name`),
+        );
 
-      pokemon.updateShadowType(info.spawns);
+        pokemon.updateShadowType(info.spawns);
 
-      OverworldInfo.getInstance().addPokemon(pokemon);
+        OverworldInfo.getInstance().addPokemon(pokemon);
+      }
     }
   }
 
@@ -585,9 +591,11 @@ export class OverworldSafari {
 
       if (info.catch) continue;
 
-      const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], map, OBJECT.ITEM_GROUND, info.idx, info.stock, info.item, info.catch);
+      if (pos) {
+        const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], map, OBJECT.ITEM_GROUND, info.idx, info.stock, info.item, info.catch);
 
-      OverworldInfo.getInstance().addGroundItem(groundItem);
+        OverworldInfo.getInstance().addGroundItem(groundItem);
+      }
     }
   }
 
