@@ -91,6 +91,7 @@ export const enum TEXTURE {
   OVERWORLD_001 = 'overworld-001',
   OVERWORLD_002 = 'overworld-002',
   OVERWORLD_011 = 'overworld-011',
+  OVERWORLD_021 = 'overworld-021',
   OUTDOOR_TILE_FLOOR = 'outdoor_floor',
   OUTDOOR_TILE_EDGE = 'outdoor_edge',
   OUTDOOR_TILE_OBJECT = 'outdoor_object',

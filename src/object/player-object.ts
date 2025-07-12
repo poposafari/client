@@ -423,13 +423,18 @@ export class PlayerObject extends MovableObject {
   }
 
   isEnterOrExit(direction: DIRECTION) {
+    if (this.getStatus() === PLAYER_STATUS.WARP) return;
+
     const tiles = this.getTileInfo(direction);
     const event = findEventTile(tiles);
 
     if (event && ['enter', 'exit'].some((keyword) => event.includes(keyword))) {
-      this.setStatus(PLAYER_STATUS.WARP, this.getLastDirection());
+      if (event.includes('none')) return null;
 
-      eventBus.emit(EVENT.ENTER_EXIT, event);
+      this.setStatus(PLAYER_STATUS.WARP, direction);
+      return event;
     }
+
+    return null;
   }
 }
