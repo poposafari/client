@@ -6,6 +6,7 @@ import { MODE } from '../enums/mode';
 import { Mode } from '../mode';
 import { OverworldMode } from '../modes';
 import { InputNicknameData } from '../types';
+import { SocketHandler } from './socket-handler';
 
 export class ModeHandler {
   private registry = new Map<MODE, Mode>();
@@ -23,7 +24,9 @@ export class ModeHandler {
     eventBus.on(EVENT.MOVETO_TITLE_MODE, () => eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE));
     eventBus.on(EVENT.MOVETO_SHOP_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.SHOP));
     eventBus.on(EVENT.MOVETO_SAFARI_LIST_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.SAFARI_LIST));
-    eventBus.on(EVENT.MOVETO_OVERWORLD_MODE, (type: 'enter' | 'exit' | 'direct' = 'direct', idx: string) => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_CONNECTING, { type: type, idx: idx }));
+    eventBus.on(EVENT.MOVETO_OVERWORLD_MODE, (type: 'enter' | 'exit' | 'direct' = 'direct', idx: string) => {
+      eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_CONNECTING, { type: type, idx: idx });
+    });
     eventBus.on(EVENT.MOVETO_OVERWORLD_MENU_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.OVERWORLD_MENU));
     eventBus.on(EVENT.MOVETO_HIDDENMOVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.HIDDEN_MOVE));
     eventBus.on(EVENT.MOVETO_EVOLVE_MODE, () => eventBus.emit(EVENT.OVERLAP_MODE, MODE.EVOLVE));
@@ -43,8 +46,6 @@ export class ModeHandler {
 
     nextMode.enter(data);
     this.stack.push(nextMode);
-
-    // eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   overlap(key: MODE, data?: any) {
@@ -64,8 +65,6 @@ export class ModeHandler {
     const top = this.stack.pop();
 
     if (top) top.exit();
-
-    // eventBus.emit(EVENT.SHOW_MODE_STACK);
   }
 
   getCurrent(): Mode {
@@ -76,8 +75,6 @@ export class ModeHandler {
     const mode = this.stack[this.stack.length - 1];
 
     if (mode) return mode;
-
-    // console.log('Mode stack is empty');
 
     return null;
   }

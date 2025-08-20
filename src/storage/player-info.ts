@@ -14,6 +14,7 @@ export interface Location {
 export class PlayerInfo {
   private static instance: PlayerInfo;
 
+  private id!: string;
   private nickname!: string;
   private gender!: PlayerGender;
   private avatar!: PlayerAvatar;
@@ -49,6 +50,7 @@ export class PlayerInfo {
 
   get() {
     return {
+      id: this.id,
       nickname: this.nickname,
       x: this.x,
       y: this.y,
@@ -67,6 +69,7 @@ export class PlayerInfo {
 
     // console.log(data);
 
+    this.id = data.account_id;
     this.nickname = data.nickname;
     this.gender = data.gender;
     this.avatar = data.avatar;
@@ -104,6 +107,10 @@ export class PlayerInfo {
 
   getItemSlot() {
     return this.itemSlot;
+  }
+
+  getId() {
+    return this.id;
   }
 
   setItemSlot(slot: number, item: string | null) {

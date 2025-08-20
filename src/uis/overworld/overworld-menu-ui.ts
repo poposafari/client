@@ -47,7 +47,7 @@ export class OverworldMenuUi extends Ui {
       this.renderIconsTint();
       this.lastStart = 0;
 
-      eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, '000');
+      eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, 'enter', '002');
     });
 
     eventBus.on(EVENT.REJECT_BACKTO_PLAZA, () => {

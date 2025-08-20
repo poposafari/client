@@ -7,10 +7,19 @@ import { AUDIO } from '../enums/audio';
 import { TEXTURE } from '../enums/texture';
 import { TIME } from '../enums/time';
 import { initI18n } from '../i18n';
+import { addBackground, addImage } from '../uis/ui';
 import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 
 export class LoadingScene extends BaseScene {
+  private bg!: Phaser.GameObjects.Image;
+  private title!: Phaser.GameObjects.Image;
+
+  private progressBar!: Phaser.GameObjects.Graphics;
+  private progressBox!: Phaser.GameObjects.Graphics;
+  private percentText!: Phaser.GameObjects.Text;
+  private assetText!: Phaser.GameObjects.Text;
+
   constructor() {
     super('LoadingScene');
   }
@@ -21,6 +30,9 @@ export class LoadingScene extends BaseScene {
     await initI18n();
 
     this.loadImage(TEXTURE.INFO_BOX, 'ui', TEXTURE.INFO_BOX);
+
+    this.loadImage(TEXTURE.LOGO_0, 'ui', TEXTURE.LOGO_0);
+    this.loadImage(TEXTURE.BG_LOAD, 'ui', TEXTURE.BG_LOAD);
 
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
@@ -127,10 +139,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.SEASON_2, 'ui', TEXTURE.SEASON_2);
     this.loadImage(TEXTURE.SEASON_3, 'ui', TEXTURE.SEASON_3);
 
-    this.loadMap(TEXTURE.OVERWORLD_000, 'ui/map', TEXTURE.OVERWORLD_000);
     this.loadMap(TEXTURE.OVERWORLD_001, 'ui/map', TEXTURE.OVERWORLD_001);
     this.loadMap(TEXTURE.OVERWORLD_002, 'ui/map', TEXTURE.OVERWORLD_002);
-    this.loadMap(TEXTURE.OVERWORLD_011, 'ui/map', TEXTURE.OVERWORLD_011);
+    this.loadMap(TEXTURE.OVERWORLD_003, 'ui/map', TEXTURE.OVERWORLD_003);
     this.loadMap(TEXTURE.OVERWORLD_021, 'ui/map', TEXTURE.OVERWORLD_021);
     this.loadImage(TEXTURE.OUTDOOR_TILE_FLOOR, 'ui/map', TEXTURE.OUTDOOR_TILE_FLOOR);
     this.loadImage(TEXTURE.OUTDOOR_TILE_EDGE, 'ui/map', TEXTURE.OUTDOOR_TILE_EDGE);
@@ -304,6 +315,28 @@ export class LoadingScene extends BaseScene {
       });
     });
 
+    this.createLoadingBar();
+
+    this.load.on('filecomplete', (key: string) => {
+      if (key === TEXTURE.BG_LOAD) {
+        this.createBg();
+        this.children.sendToBack(this.bg);
+      }
+
+      if (key === TEXTURE.LOGO_0) {
+        this.createTitle();
+        this.children.sendToBack(this.bg);
+      }
+    });
+
+    this.load.on('progress', (value: number) => {
+      this.percentText.setText(`${parseInt(String(value * 100), 10)}%`);
+    });
+
+    this.load.on('fileprogress', (file: Phaser.Loader.File) => {
+      this.assetText.setText(`Loading asset: ${file.key}`);
+    });
+
     this.load.on('complete', () => {
       this.startInGameScene();
     });
@@ -313,5 +346,42 @@ export class LoadingScene extends BaseScene {
 
   private startInGameScene() {
     this.scene.start('InGameScene');
+  }
+
+  private createBg() {
+    this.bg = addBackground(this, TEXTURE.BG_LOAD);
+  }
+
+  private createTitle() {
+    const { width, height } = this.cameras.main;
+
+    this.title = addImage(this, TEXTURE.LOGO_0, width / 2, height / 2 - 100);
+    this.title.setScale(2.4);
+  }
+
+  private createLoadingBar() {
+    const { width, height } = this.cameras.main;
+
+    this.percentText = this.make.text({
+      x: width / 2,
+      y: height / 2 + 30,
+      text: '0%',
+      style: {
+        font: '100px font_4',
+        color: '#ffffff',
+      },
+    });
+    this.percentText.setOrigin(0.5, 0.5);
+
+    this.assetText = this.make.text({
+      x: width / 2,
+      y: height / 2 + 110,
+      text: 'ASSET_0',
+      style: {
+        font: '60px font_4',
+        color: '#ffffff',
+      },
+    });
+    this.assetText.setOrigin(0.5, 0.5);
   }
 }

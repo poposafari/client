@@ -8,7 +8,7 @@ import { PLAYER_STATUS } from '../enums/player-status';
 import { OBJECT } from '../enums/object-type';
 import { PlayerInfo } from '../storage/player-info';
 import { OverworldInfo } from '../storage/overworld-info';
-import { getPokemonOverworldKey, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
+import { createZeroPad, getPokemonOverworldKey, getPokemonOverworldOrIconKey, isPokedexShiny } from '../utils/string-util';
 import { ANIMATION } from '../enums/animation';
 import { HM } from '../enums/hidden-move';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
@@ -18,17 +18,31 @@ import { EVENT } from '../enums/event';
 import { delay } from '../uis/ui';
 
 export class PetObject extends MovableObject {
-  private callOrRecallObj!: BaseObject;
-  private lastPet!: string | null;
+  private objectType!: OBJECT.OTHER_PLAYER | OBJECT.PLAYER;
+  private petIdx!: string | null;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string) {
+  constructor(scene: InGameScene, texture: TEXTURE | string, idx: string | null, x: number, y: number, map: Phaser.Tilemaps.Tilemap, nickname: string, owner: OBJECT.OTHER_PLAYER | OBJECT.PLAYER) {
     super(scene, texture, x, y, map, nickname, OBJECT.PET);
+
+    this.objectType = owner;
+    this.petIdx = idx;
+
+    this.setVisible(this.petIdx ? true : false);
+
+    const petSprite = this.getSprite();
+    petSprite.setScale(1.5);
   }
 
   move(player: PlayerObject) {
     this.movementStop = false;
     this.setMovement(player.getStatus());
     this.followReady(player);
+  }
+
+  setPetIdx(idx: string | null) {
+    this.setVisible(idx ? true : false);
+
+    this.petIdx = idx;
   }
 
   followReady(player: PlayerObject) {
@@ -40,7 +54,7 @@ export class PetObject extends MovableObject {
     const diffX = playerPos.x - current.x;
     const diffY = playerPos.y - current.y;
 
-    if (PlayerInfo.getInstance().getIsCallPet()) {
+    if (PlayerInfo.getInstance().getIsCallPet() && this.objectType === OBJECT.PLAYER) {
       PlayerInfo.getInstance().setIsCallPet(false);
       this.setVisible(false);
       this.call(player);
@@ -60,24 +74,24 @@ export class PetObject extends MovableObject {
   private getAnimation(key: KEY) {
     const playerData = PlayerInfo.getInstance();
 
-    let pokemon = playerData.getPet();
+    let pokemon = this.objectType === OBJECT.PLAYER ? playerData.getPet() : this.petIdx;
     let overworldKey = '000';
 
-    if (pokemon) {
-      overworldKey = getPokemonOverworldKey(pokemon);
+    if (this.objectType === OBJECT.PLAYER) {
+      overworldKey = getPokemonOverworldKey(playerData.getPet());
+    } else if (this.objectType === OBJECT.OTHER_PLAYER) {
+      overworldKey = this.petIdx ? this.petIdx : '000';
+    }
 
-      if (pokemon.shiny) {
-        if (!this.dummy2?.anims.isPlaying) {
-          this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
-          this.dummy2?.setTexture(TEXTURE.OVERWORLD_SHINY);
-        }
-        this.dummy2?.setScale(2.4);
-      } else {
-        this.dummy2?.setTexture(TEXTURE.BLANK);
-        this.dummy2?.stop();
+    if ((this.objectType === OBJECT.PLAYER && playerData.getPet()?.shiny) || (this.objectType === OBJECT.OTHER_PLAYER && isPokedexShiny(overworldKey))) {
+      if (!this.dummy2?.anims.isPlaying) {
+        this.dummy2?.play(ANIMATION.OVERWORLD_SHINY);
+        this.dummy2?.setTexture(TEXTURE.OVERWORLD_SHINY);
       }
+      this.dummy2?.setScale(2.4);
     } else {
-      this.setVisible(false);
+      this.dummy2?.setTexture(TEXTURE.BLANK);
+      this.dummy2?.stop();
     }
 
     switch (key) {

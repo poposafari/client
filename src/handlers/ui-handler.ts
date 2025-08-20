@@ -50,7 +50,7 @@ export class UiHandler {
     });
 
     eventBus.on(EVENT.WILD_MOVEMENT_UPDATE, (delta: number) => {
-      const ui = this.findOnStack(`Overworld${OverworldInfo.getInstance().getKey()}`);
+      const ui = this.findOnStack(`OverworldUi`);
 
       if (ui instanceof OverworldUi) {
         ui.updateWildPokemon(delta);

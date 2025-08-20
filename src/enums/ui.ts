@@ -8,6 +8,7 @@ export enum UI {
   NEWGAME = 'NewgameUi',
   ACCOUNT_DELETE = 'AccountDeleteUi',
   CONNECT_ACCOUNT_DELETE = 'ConnectAccountDeleteUi',
+  OVERWORLD = 'OverworldUi',
   OVERWORLD_HUD = 'OverworldHUDUi',
   OVERWORLD_MENU = 'OverworldMenuUi',
   OVERWORLD_CONNECTING = 'OverworldConnectingUi',

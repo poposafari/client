@@ -6,6 +6,7 @@ import { ANIMATION } from '../enums/animation';
 import { EASE } from '../enums/ease';
 import { PIPELINES } from '../enums/pipelines';
 import { AUDIO } from '../enums/audio';
+import { LoadingScene } from '../scenes/load-scene';
 
 export function addWindow(
   scene: InGameScene,
@@ -25,13 +26,13 @@ export function addWindow(
   return ret;
 }
 
-export function addImage(scene: InGameScene, texture: TEXTURE | string, x: number, y: number) {
+export function addImage(scene: InGameScene | LoadingScene, texture: TEXTURE | string, x: number, y: number) {
   const ret = scene.add.image(x, y, texture).setOrigin(0.5, 0.5);
 
   return ret;
 }
 
-export function addBackground(scene: InGameScene, texture: TEXTURE | string) {
+export function addBackground(scene: InGameScene | LoadingScene, texture: TEXTURE | string) {
   const { width, height } = scene.scale;
   const bg = scene.add.image(0, 0, texture).setOrigin(0);
   bg.setDisplaySize(width, height);
