@@ -1,8 +1,10 @@
 import { ANIMATION } from '../enums/animation';
 import { DIRECTION } from '../enums/direction';
 import { OBJECT } from '../enums/object-type';
+import { PLAYER_STATUS } from '../enums/player-status';
 import { POKEMON_STATUS } from '../enums/pokemon-status';
 import { TEXTURE } from '../enums/texture';
+import { SocketHandler } from '../handlers/socket-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
@@ -26,6 +28,7 @@ export class MovableObject extends BaseObject {
   private movementFinish: boolean = true;
   protected movementStop: boolean = true;
   private movementDirectionQueue: Array<MovementQueue> = [];
+  private status: PLAYER_STATUS | null;
   protected map: Phaser.Tilemaps.Tilemap;
 
   private movementDirection: { [key in DIRECTION]?: Phaser.Math.Vector2 } = {
@@ -43,6 +46,8 @@ export class MovableObject extends BaseObject {
     if (this.getType() === OBJECT.POKEMON) {
       this.startAnmation(`${texture}_down`);
     }
+
+    this.status = null;
   }
 
   process(direction: DIRECTION, animationKey: ANIMATION | string) {
@@ -63,7 +68,7 @@ export class MovableObject extends BaseObject {
     return this.lastDirection;
   }
 
-  ready(direction: DIRECTION, animationKey: ANIMATION | string) {
+  ready(direction: DIRECTION, animationKey: ANIMATION | string, status?: PLAYER_STATUS) {
     if (this.isBlockingDirection(direction)) {
       this.startAnmation(animationKey);
       this.lastDirection = direction;
@@ -71,6 +76,7 @@ export class MovableObject extends BaseObject {
       return;
     }
 
+    if (status) this.status = status;
     this.movementDirectionQueue.push({ direction: direction, animationKey: animationKey });
   }
 
@@ -117,6 +123,10 @@ export class MovableObject extends BaseObject {
       this.getSprite().setDepth(newTile.y);
       this.updateObjectData();
       this.step++;
+      if (this.getType() === OBJECT.PLAYER && this.status) {
+        SocketHandler.getInstance().move({ overworld: OverworldInfo.getInstance().getKey(), x: this.getTilePos().x, y: this.getTilePos().y, direction: this.lastDirection, status: this.status });
+        this.status = null;
+      }
     } else {
       this.lastDirection = this.currentDirection;
     }
@@ -169,6 +179,7 @@ export class MovableObject extends BaseObject {
     const nextTilePos = this.getTilePos().add(this.movementDirection[direction]!);
 
     if (this.hasStairTile(direction)) return false;
+    if (this.getType() === OBJECT.OTHER_PLAYER) return false;
 
     return (
       this.hasBlockingTile(nextTilePos) ||

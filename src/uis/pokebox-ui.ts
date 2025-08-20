@@ -23,6 +23,8 @@ import { PlayerObject } from '../object/player-object';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { AUDIO } from '../enums/audio';
 import { Global } from '../storage/global';
+import { SocketHandler } from '../handlers/socket-handler';
+import { OverworldInfo } from '../storage/overworld-info';
 
 export class PokeboxUi extends Ui {
   private pokeboxMainUi: PokeboxMainUi;
@@ -1072,6 +1074,7 @@ export class PokeboxPartyUi extends Ui {
       this.handleKeyInput();
     } else if (ret === i18next.t('menu:follow')) {
       eventBus.emit(EVENT.PET_CALL);
+
       this.setPet(target);
     } else if (ret === i18next.t('menu:removeFollow')) {
       PlayerInfo.getInstance().setPet(null);
@@ -1165,6 +1168,7 @@ export class PokeboxPartyUi extends Ui {
 
   private setPet(pet: MyPokemon | null) {
     PlayerInfo.getInstance().setPet(pet);
+    SocketHandler.getInstance().changePet({ overworld: OverworldInfo.getInstance().getKey(), pet: `${pet?.pokedex}${pet?.shiny ? 's' : ''}` });
     this.updatePetIcon();
   }
 }

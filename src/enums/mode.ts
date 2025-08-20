@@ -1,5 +1,6 @@
 export enum MODE {
   NONE,
+  AUTO_LOGIN,
   CONNECT,
   MESSAGE,
   LOGIN,

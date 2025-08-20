@@ -20,11 +20,13 @@ export class BaseObject {
   protected spriteShadow: Phaser.GameObjects.Sprite;
   private nickname: Phaser.GameObjects.Text;
   private type!: OBJECT;
+  private texture!: TEXTURE | string;
   private readonly offsetX = TILE_SIZE / 2;
   private readonly offsetY = TILE_SIZE;
 
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, nickname: string, objectType: OBJECT) {
     this.scene = scene;
+    this.texture = texture;
     this.spriteShadow = createSprite(scene, TEXTURE.SHADOW, 0, 0).setScale(2.8);
     this.sprite = createSprite(scene, texture, 0, 0);
     this.dummy1 = createSprite(scene, TEXTURE.BLANK, 0, 0);
@@ -69,6 +71,10 @@ export class BaseObject {
 
   getType() {
     return this.type;
+  }
+
+  getTexture() {
+    return this.texture;
   }
 
   destroy() {

@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { DEPTH } from '../enums/depth';
 import { TEXTURE } from '../enums/texture';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addText, addWindow, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, runFadeEffect, Ui } from './ui';
 import { TEXTSTYLE } from '../enums/textstyle';
 import { KEY } from '../enums/key';
 import { PlayerInfo } from '../storage/player-info';
@@ -11,12 +11,15 @@ import { logoutApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { EVENT } from '../enums/event';
 import { MODE } from '../enums/mode';
+import { SocketHandler } from '../handlers/socket-handler';
+import { getPokemonOverworldOrIconKey } from '../utils/string-util';
 
 export class TitleUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private windowContainer!: Phaser.GameObjects.Container;
 
   private bg!: Phaser.GameObjects.Image;
+  private title!: Phaser.GameObjects.Image;
   private windows: Phaser.GameObjects.NineSlice[] = [];
   private texts: Phaser.GameObjects.Text[] = [];
   private continueName!: Phaser.GameObjects.Text;
@@ -40,8 +43,8 @@ export class TitleUi extends Ui {
     this.container = this.createContainer(width / 2, height / 2);
 
     this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
-
     this.windowContainer = this.createContainer(width / 2, height / 2 + 160);
+    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, -525).setScale(4);
 
     this.createContinue();
     this.createMenus();
@@ -51,6 +54,8 @@ export class TitleUi extends Ui {
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.TITLE - 1);
     this.container.setScrollFactor(0);
+
+    this.windowContainer.add(this.title);
 
     this.windowContainer.setVisible(false);
     this.windowContainer.setDepth(DEPTH.TITLE);
@@ -105,6 +110,7 @@ export class TitleUi extends Ui {
             break;
           case KEY.SELECT:
             if (choice === 0) {
+              const playerInfo = PlayerInfo.getInstance();
               eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD_CONNECTING, { type: 'enter', idx: PlayerInfo.getInstance().getLocation() });
             } else if (choice === 1) {
               eventBus.emit(EVENT.CHANGE_MODE, MODE.ACCOUNT_DELETE);

@@ -26,7 +26,7 @@ export class SafariListUi extends Ui {
       const result = await useTicketApi({ overworld: this.targetSafari });
 
       if (result && result.data) {
-        eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, 'direct', this.targetSafari);
+        eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, 'enter', this.targetSafari);
       }
     });
   }

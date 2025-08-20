@@ -1,5 +1,8 @@
+import { ANIMATION } from './enums/animation';
+import { DIRECTION } from './enums/direction';
 import { EVENT } from './enums/event';
 import { MODE } from './enums/mode';
+import { PLAYER_STATUS } from './enums/player-status';
 import { TEXTURE } from './enums/texture';
 import { ItemCategory } from './storage/bag';
 
@@ -53,6 +56,40 @@ export type EvolData = {
 export type MoveToOverworld = {
   type: 'direct' | 'enter' | 'exit';
   idx: string;
+};
+
+export type Otherplayer = {
+  overworld: string | null;
+  x: number | null;
+  y: number | null;
+  gender: PlayerGender;
+  avatar: PlayerAvatar;
+  nickname: string | null;
+  pet: string | null;
+};
+
+export type OtherObjectMovementQueue = {
+  id: number;
+  direction: DIRECTION;
+  status: PLAYER_STATUS;
+};
+
+export type OtherObjectStartSurf = {
+  id: number;
+  direction: DIRECTION;
+};
+
+export type PlayerMove = {
+  overworld: string;
+  x: number;
+  y: number;
+  direction: string;
+  status: string;
+};
+
+export type PlayerPet = {
+  id: number;
+  pet: string | null;
 };
 
 export type InputNicknameData = {
