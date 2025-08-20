@@ -8,6 +8,7 @@ import {
   getIngameApi,
   ingameRegisterApi,
   loginApi,
+  loginGoogleApi,
   moveToOverworldApi,
   receiveAvailableTicketApi,
   registerApi,
@@ -20,7 +21,7 @@ import { Mode } from './mode';
 import { PlayerInfo } from './storage/player-info';
 import { OverworldUi } from './uis/overworld/overworld-ui';
 import { playSound, runFadeEffect } from './uis/ui';
-import { replacePercentSymbol } from './utils/string-util';
+import { getPokemonOverworldOrIconKey, replacePercentSymbol } from './utils/string-util';
 import { Bag } from './storage/bag';
 import { UI } from './enums/ui';
 import { EvolData, GroundItemInfo, InputNicknameData, Message, MoveToOverworld, NextEvol, PlayerAvatar, PlayerGender } from './types';
@@ -28,10 +29,27 @@ import { InGameScene } from './scenes/ingame-scene';
 import { AUDIO } from './enums/audio';
 import { PlayerObject } from './object/player-object';
 import { OverworldInfo } from './storage/overworld-info';
-import { Battle } from './storage/battle';
 import { PokemonObject } from './object/pokemon-object';
+import { SocketHandler } from './handlers/socket-handler';
 
 export class NoneMode extends Mode {
+  constructor(scene: InGameScene) {
+    super(scene);
+  }
+
+  async enter(): Promise<void> {
+    const result = await autoLoginApi();
+    if (result && result.data) {
+      eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE, result.data);
+    }
+  }
+
+  exit(): void {}
+
+  update(): void {}
+}
+
+export class AutologinMode extends Mode {
   constructor(scene: InGameScene) {
     super(scene);
   }
@@ -90,6 +108,14 @@ export class LoginMode extends Mode {
         eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE);
       }
     });
+
+    eventBus.on(EVENT.SUBMIT_GOOGLE, async () => {
+      // const result = await loginGoogleApi();
+      // if (result) {
+      //   eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE);
+      // }
+      window.location.href = 'https://poposafari.net/api/account/google';
+    });
   }
 
   enter(): void {
@@ -99,6 +125,13 @@ export class LoginMode extends Mode {
   exit(): void {}
 
   update(): void {}
+
+  async submit(username: string, pw: string): Promise<void> {
+    const result = await loginApi({ username: username, password: pw });
+    if (result) {
+      eventBus.emit(EVENT.CHANGE_MODE, MODE.TITLE);
+    }
+  }
 }
 
 export class RegisterMode extends Mode {
@@ -168,18 +201,38 @@ export class TitleMode extends Mode {
 
   async enter(data: any): Promise<void> {
     const result = await getIngameApi();
-    const playerInfo = result?.data;
 
-    console.log(playerInfo);
+    if (result && result.data) {
+      const playerInfo = result.data;
 
-    PlayerInfo.getInstance().setup(playerInfo);
-    Bag.getInstance().setup(playerInfo.items);
+      console.log(playerInfo);
 
-    eventBus.emit(EVENT.CHANGE_UI, UI.TITLE);
+      PlayerInfo.getInstance().setup(playerInfo);
+      Bag.getInstance().setup(playerInfo.items);
+
+      eventBus.emit(EVENT.CHANGE_UI, UI.TITLE);
+      SocketHandler.getInstance().connect(this.scene);
+
+      const playerData = PlayerInfo.getInstance();
+      SocketHandler.getInstance().init({
+        overworld: playerData.getLocation(),
+        x: playerData.getPosX(),
+        y: playerData.getPosY(),
+        nickname: playerData.getNickname(),
+        gender: playerData.getGender(),
+        avatar: playerData.getAvatar(),
+        pet: getPokemonOverworldOrIconKey(playerData.getPet()),
+      });
+    }
   }
 
   exit(): void {}
+
   update(): void {}
+
+  async getIngameData() {
+    const result = await getIngameApi();
+  }
 }
 
 export class AccountDeleteMode extends Mode {
@@ -250,7 +303,8 @@ export class OverworldMode extends Mode {
     runFadeEffect(this.scene, 700, 'in');
 
     eventBus.emit(EVENT.CHANGE_UI, UI.OVERWORLD_HUD);
-    eventBus.emit(EVENT.OVERLAP_UI, `Overworld${overworld}`);
+    OverworldInfo.getInstance().getMap(overworld)?.setup();
+    eventBus.emit(EVENT.OVERLAP_UI, UI.OVERWORLD);
 
     eventBus.emit(EVENT.HUD_SHOW_OVERWORLD);
   }
@@ -262,10 +316,6 @@ export class OverworldMode extends Mode {
     eventBus.emit(EVENT.HUD_CANDY_UPDATE);
     eventBus.emit(EVENT.PLAYER_MOVEMENT_UPDATE, delta);
     eventBus.emit(EVENT.WILD_MOVEMENT_UPDATE, delta);
-
-    // console.log('----------CURRENT_STACK-----------');
-    // eventBus.emit(EVENT.SHOW_MODE_STACK);
-    // eventBus.emit(EVENT.SHOW_UI_STACK);
   }
 }
 
@@ -291,7 +341,7 @@ export class OverworldConnectingMode extends Mode {
     }
 
     if (result && result.data) {
-      console.log(result.data);
+      SocketHandler.getInstance().enterOverworld({ overworld: result?.data.overworld, x: result.data.entryX, y: result.data.entryY });
 
       PlayerInfo.getInstance().setX(result.data.entryX);
       PlayerInfo.getInstance().setY(result.data.entryY);

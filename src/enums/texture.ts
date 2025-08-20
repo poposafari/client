@@ -1,4 +1,6 @@
 export const enum TEXTURE {
+  LOGO_0 = 'logo_0',
+  BG_LOAD = 'bg_load',
   WINDOW_0 = 'window0',
   WINDOW_1 = 'window1',
   WINDOW_2 = 'window2',
@@ -90,6 +92,7 @@ export const enum TEXTURE {
   OVERWORLD_000 = 'overworld-000',
   OVERWORLD_001 = 'overworld-001',
   OVERWORLD_002 = 'overworld-002',
+  OVERWORLD_003 = 'overworld-003',
   OVERWORLD_011 = 'overworld-011',
   OVERWORLD_021 = 'overworld-021',
   OUTDOOR_TILE_FLOOR = 'outdoor_floor',

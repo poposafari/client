@@ -16,7 +16,7 @@ import { KeyboardHandler } from '../../handlers/keyboard-handler';
 import { eventBus } from '../../core/event-bus';
 import { EVENT } from '../../enums/event';
 import { catchGroundItem, getAvailableTicketApi } from '../../api';
-import { Message, PokemonSpawn } from '../../types';
+import { Message, OtherObjectMovementQueue, OtherObjectStartSurf, Otherplayer, PlayerPet, PokemonSpawn } from '../../types';
 import { replacePercentSymbol } from '../../utils/string-util';
 import { OverworldHUDUi } from './overworld-hud-ui';
 import { MODE } from '../../enums/mode';
@@ -60,17 +60,15 @@ type PlayerInitPos = {
 };
 
 export class OverworldUi extends Ui {
-  private type: OVERWORLD_TYPE;
+  private type!: OVERWORLD_TYPE;
 
   protected map: OverworldMap;
   protected player: OverworldPlayer;
   protected npc: OverworldNpc;
   protected safari: OverworldSafari;
 
-  constructor(scene: InGameScene, type: OVERWORLD_TYPE) {
+  constructor(scene: InGameScene) {
     super(scene);
-
-    this.type = type;
 
     this.map = new OverworldMap(scene);
     this.npc = new OverworldNpc(scene);
@@ -113,6 +111,18 @@ export class OverworldUi extends Ui {
   updateWildPokemon(delta: number) {
     this.safari.updateWildPokemon(delta);
   }
+
+  getMap() {
+    return this.map;
+  }
+
+  getNpc() {
+    return this.npc;
+  }
+
+  setType(type: OVERWORLD_TYPE) {
+    this.type = type;
+  }
 }
 
 export class OverworldMap {
@@ -152,6 +162,7 @@ export class OverworldMap {
     this.foregroundContainer.setDepth(DEPTH.FOREGROND);
 
     this.mapInfo.texture = texture;
+    this.mapInfo.tilesets = [];
     for (const tileset of tilesets) {
       this.mapInfo.tilesets.push(tileset);
     }
@@ -230,7 +241,10 @@ export class OverworldPlayer {
   private npc: OverworldNpc;
   private safari: OverworldSafari;
 
+  private map!: Phaser.Tilemaps.Tilemap;
   private obj!: PlayerObject | null;
+  private otherObj!: Map<number, PlayerObject>;
+  private otherObjMovementQueue: Array<OtherObjectMovementQueue> = [];
   private dummy!: BaseObject;
 
   private readonly scale: number = 3;
@@ -240,6 +254,46 @@ export class OverworldPlayer {
     this.cursorKey = this.scene.input.keyboard!.createCursorKeys();
     this.npc = npc;
     this.safari = safari;
+    this.otherObj = new Map<number, PlayerObject>();
+
+    eventBus.on(EVENT.CREATE_OTHER_PLAYER, (id: number, data: Otherplayer) => {
+      if (!data) return;
+
+      console.log(data);
+
+      this.otherObj.set(id, new PlayerObject(this.scene, data.gender, data.avatar, data.pet, data.x!, data.y!, this.map, data.nickname!, OBJECT.OTHER_PLAYER));
+      this.otherObj.get(id)!.setScale(this.scale);
+
+      console.log('create other player ', this.otherObj.get(id)!);
+    });
+
+    eventBus.on(EVENT.DELETE_OTHER_PLAYER, (id: number) => {
+      const obj = this.otherObj.get(id)!;
+      if (!obj) return;
+
+      obj.destroy();
+      this.otherObj.delete(id);
+    });
+
+    eventBus.on(EVENT.DELETE_ALL_OTHER_PLAYER, () => {
+      for (const [key, value] of this.otherObj.entries()) {
+        value.destroy();
+      }
+
+      this.otherObj.clear();
+    });
+
+    eventBus.on(EVENT.MOVE_OTHER_PLAYER, (movement: OtherObjectMovementQueue) => {
+      this.otherObjMovementQueue.push(movement);
+    });
+
+    eventBus.on(EVENT.CHANGE_PET, (data: PlayerPet) => {
+      console.log(data);
+      const obj = this.otherObj.get(data.id);
+      if (!obj) return;
+
+      obj.setPet(data.pet as string | null);
+    });
 
     eventBus.on(EVENT.FINISH_TALK, () => {
       this.obj?.setStatus(this.obj.getLastStatus(), this.obj.getLastDirection());
@@ -264,19 +318,17 @@ export class OverworldPlayer {
       this.obj?.setStatus(this.obj.getLastStatus(), this.obj.getLastDirection());
       eventBus.emit(EVENT.RESTORE_BATTLE);
     });
-
-    eventBus.on(EVENT.ENTER_EXIT, async (tileEvent: string) => {});
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
     const playerData = PlayerInfo.getInstance();
 
-    const texture = `${playerData?.getGender()}_${playerData?.getAvatar()}_movement`;
     const nickname = playerData.getNickname();
     const px = playerData.getPosX();
     const py = playerData.getPosY();
 
-    this.obj = new PlayerObject(this.scene, texture, px, py, map, nickname, OBJECT.PLAYER);
+    this.map = map;
+    this.obj = new PlayerObject(this.scene, playerData?.getGender(), playerData?.getAvatar(), null, px, py, this.map, nickname, OBJECT.PLAYER);
     this.obj.setScale(this.scale);
     this.scene.cameras.main.startFollow(this.obj.getSprite(), true, 0.5, 0.5);
 
@@ -305,6 +357,94 @@ export class OverworldPlayer {
     this.movement();
     this.obj?.update(delta);
     this.obj?.getPet()?.update(delta);
+
+    if (this.otherObjMovementQueue.length > 0) {
+      const next = this.otherObjMovementQueue.shift();
+
+      console.log('check1 ', next);
+
+      if (next) {
+        const other = this.otherObj.get(next.id);
+
+        console.log('check2 ', other);
+
+        other?.setStatus(this.changeStatus(next.status)!, next.direction);
+
+        if (next.status === PLAYER_STATUS.JUMP) {
+          other?.startSurfAnimation(this.changeDirection(next.direction)!);
+        } else {
+          other?.move(this.changeDirectionToKey(next.direction)!);
+        }
+      }
+    }
+
+    for (const [key, value] of this.otherObj.entries()) {
+      value.update(delta);
+      value.getPet()?.update(delta);
+    }
+  }
+
+  private changeDirectionToKey(direction: string) {
+    let ret;
+
+    switch (direction) {
+      case 'up':
+        ret = KEY.UP;
+        break;
+      case 'down':
+        ret = KEY.DOWN;
+        break;
+      case 'left':
+        ret = KEY.LEFT;
+        break;
+      case 'right':
+        ret = KEY.RIGHT;
+        break;
+    }
+
+    return ret;
+  }
+
+  private changeDirection(direction: string) {
+    let ret;
+
+    switch (direction) {
+      case 'up':
+        ret = DIRECTION.UP;
+        break;
+      case 'down':
+        ret = DIRECTION.DOWN;
+        break;
+      case 'left':
+        ret = DIRECTION.LEFT;
+        break;
+      case 'right':
+        ret = DIRECTION.RIGHT;
+        break;
+    }
+
+    return ret;
+  }
+
+  private changeStatus(value: string) {
+    let ret;
+
+    switch (value) {
+      case 'walk':
+        ret = PLAYER_STATUS.WALK;
+        break;
+      case 'running':
+        ret = PLAYER_STATUS.RUNNING;
+        break;
+      case 'surf':
+        ret = PLAYER_STATUS.SURF;
+        break;
+      case 'ride':
+        ret = PLAYER_STATUS.RIDE;
+        break;
+    }
+
+    return ret;
   }
 
   private async enterOrExit(event: string | null) {

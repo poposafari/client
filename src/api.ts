@@ -69,8 +69,11 @@ type BuyItemRequest = {
   stock: number;
 };
 
-export const registerApi = (data: AccountRequest) => apiWrap(() => Axios.post('/account/register', data));
+type NullResponse = Promise<ApiResponse<null> | null>;
+
+export const registerApi = (data: AccountRequest): NullResponse => apiWrap(() => Axios.post('/account/register', data));
 export const loginApi = (data: AccountRequest) => apiWrap(() => Axios.post('/account/login', data));
+export const loginGoogleApi = () => apiWrap(() => Axios.get('/account/google'));
 export const autoLoginApi = () => apiWrap(() => Axios.get('/account/auto-login'));
 export const logoutApi = () => apiWrap(() => Axios.get('/account/logout'));
 export const deleteAccountApi = () => apiWrap(() => Axios.get('/account/delete'));

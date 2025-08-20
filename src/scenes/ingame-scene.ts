@@ -46,7 +46,6 @@ import { WelcomeUi } from '../uis/welcome-ui';
 import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
-import { Overworld000 } from '../uis/overworld/overworld-000';
 import { OverworldMenuUi } from '../uis/overworld/overworld-menu-ui';
 import { BagMenuUi, BagRegisterUi, BagUi } from '../uis/bag-ui';
 import { PokeboxUi } from '../uis/pokebox-ui';
@@ -54,7 +53,6 @@ import { ShopUi } from '../uis/shop-ui';
 import { UI } from '../enums/ui';
 import { ConnectAccountDeleteUi } from '../uis/connect-account-delete-ui';
 import { SafariListUi } from '../uis/safari-list-ui';
-import { Overworld011 } from '../uis/overworld/overworld-011';
 import { HiddenMoveUi } from '../uis/hidden-move-ui';
 import { DummyUi } from '../uis/dummy-ui';
 import { OverworldInfo } from '../storage/overworld-info';
@@ -62,9 +60,12 @@ import { BattleUi } from '../uis/battle-ui';
 import { EvolveUi } from '../uis/evolve-ui';
 import { Global } from '../storage/global';
 import { InputNicknameUi } from '../uis/input-nickname-ui';
+import { Overworld021 } from '../uis/overworld/overworld-021';
+import { SocketHandler } from '../handlers/socket-handler';
 import { Overworld001 } from '../uis/overworld/overworld-001';
 import { Overworld002 } from '../uis/overworld/overworld-002';
-import { Overworld021 } from '../uis/overworld/overworld-021';
+import { OverworldUi } from '../uis/overworld/overworld-ui';
+import { Overworld003 } from '../uis/overworld/overworld-003';
 
 export class InGameScene extends BaseScene {
   private uiHandler = new UiHandler();
@@ -75,6 +76,7 @@ export class InGameScene extends BaseScene {
   }
 
   create() {
+    const overworldUi = new OverworldUi(this);
     this.initAnimation();
     this.initAudio();
     this.initStorage();
@@ -91,6 +93,7 @@ export class InGameScene extends BaseScene {
     this.uiHandler.register(UI.TITLE, new TitleUi(this));
     this.uiHandler.register(UI.ACCOUNT_DELETE, new AccountDeleteUi(this));
     this.uiHandler.register(UI.CONNECT_ACCOUNT_DELETE, new ConnectAccountDeleteUi(this));
+    this.uiHandler.register(UI.OVERWORLD, overworldUi);
     this.uiHandler.register(UI.OVERWORLD_HUD, new OverworldHUDUi(this));
     this.uiHandler.register(UI.OVERWORLD_MENU, new OverworldMenuUi(this));
     this.uiHandler.register(UI.OVERWORLD_CONNECTING, new OverworldConnectingUi(this));
@@ -105,11 +108,17 @@ export class InGameScene extends BaseScene {
     this.uiHandler.register(UI.BATTLE, new BattleUi(this));
     this.uiHandler.register(UI.EVOLVE, new EvolveUi(this));
     this.uiHandler.register(UI.INPUT_NICKNAME, new InputNicknameUi(this));
-    this.uiHandler.register('Overworld000', new Overworld000(this));
-    this.uiHandler.register('Overworld001', new Overworld001(this));
-    this.uiHandler.register('Overworld002', new Overworld002(this));
-    this.uiHandler.register('Overworld011', new Overworld011(this));
-    this.uiHandler.register('Overworld021', new Overworld021(this));
+
+    const overworldInfo = OverworldInfo.getInstance();
+    overworldInfo.registerMap('001', new Overworld001(overworldUi));
+    overworldInfo.registerMap('002', new Overworld002(overworldUi));
+    overworldInfo.registerMap('003', new Overworld003(overworldUi));
+    overworldInfo.registerMap('021', new Overworld021(overworldUi));
+
+    // overworldInfo.registerMap('002', new Overworld002());
+    // this.uiHandler.register('Overworld001', new Overworld001(this));
+    // this.uiHandler.register('Overworld002', new Overworld002(this));
+    // this.uiHandler.register('Overworld021', new Overworld021(this));
 
     this.modeHandler.register(MODE.NONE, new NoneMode(this));
     this.modeHandler.register(MODE.CONNECT, new ConnectMode(this));

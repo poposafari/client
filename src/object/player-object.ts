@@ -9,10 +9,12 @@ import { KEY } from '../enums/key';
 import { OBJECT } from '../enums/object-type';
 import { PLAYER_STATUS } from '../enums/player-status';
 import { TEXTURE } from '../enums/texture';
+import { SocketHandler } from '../handlers/socket-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Bag } from '../storage/bag';
 import { OverworldInfo } from '../storage/overworld-info';
 import { PlayerInfo } from '../storage/player-info';
+import { PlayerAvatar, PlayerGender } from '../types';
 import { findEventTile, playSound, runFadeEffect } from '../uis/ui';
 import { BaseObject, MAP_SCALE, TILE_SIZE } from './base-object';
 import { MovableObject } from './movable-object';
@@ -24,20 +26,33 @@ export class PlayerObject extends MovableObject {
   private pet!: PetObject | null;
   private dummy!: BaseObject;
 
-  constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
+  private gender: PlayerGender;
+  private avatar: PlayerAvatar;
+  private petIdx: string | null;
+
+  constructor(scene: InGameScene, gender: PlayerGender, avatar: PlayerAvatar, pet: string | null, x: number, y: number, map: Phaser.Tilemaps.Tilemap | null, nickname: string, type: OBJECT) {
+    const texture = `${gender}_${avatar}_movement`;
     super(scene, texture, x, y, map!, nickname, type);
+
+    this.gender = gender;
+    this.avatar = avatar;
+    this.petIdx = null;
+
     this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
 
-    console.log('Create PlayerObject!');
+    const petTexture = pet ? `pokemon_overworld${pet}` : `pokemon_overworld000`;
 
-    this.pet = new PetObject(scene, `pokemon_overworld${this.getPlayerData().getPet()}`, x, y - 1, map!, '');
-    const petSprite = this.pet.getSprite();
-    this.pet.setVisible(this.getPlayerData().getPet() ? true : false);
-    petSprite.setScale(1.5);
+    console.log(petTexture);
+
+    this.pet = new PetObject(scene, petTexture, pet, x, y - 1, map!, '', type as OBJECT.PLAYER | OBJECT.OTHER_PLAYER);
   }
 
   getPet() {
     return this.pet;
+  }
+
+  setPet(pokedex: string | null) {
+    this.pet?.setPetIdx(pokedex);
   }
 
   move(key: KEY) {
@@ -46,19 +61,19 @@ export class PlayerObject extends MovableObject {
 
     switch (key) {
       case KEY.UP:
-        this.ready(DIRECTION.UP, animationKey!);
+        this.ready(DIRECTION.UP, animationKey!, this.getStatus());
         this.pet?.move(this);
         break;
       case KEY.DOWN:
-        this.ready(DIRECTION.DOWN, animationKey!);
+        this.ready(DIRECTION.DOWN, animationKey!, this.getStatus());
         this.pet?.move(this);
         break;
       case KEY.LEFT:
-        this.ready(DIRECTION.LEFT, animationKey!);
+        this.ready(DIRECTION.LEFT, animationKey!, this.getStatus());
         this.pet?.move(this);
         break;
       case KEY.RIGHT:
-        this.ready(DIRECTION.RIGHT, animationKey!);
+        this.ready(DIRECTION.RIGHT, animationKey!, this.getStatus());
         this.pet?.move(this);
         break;
     }
@@ -91,7 +106,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 2) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement_walk_`;
+    const animationKey = `${this.gender}_${this.avatar}_movement_walk_`;
 
     switch (key) {
       case KEY.UP:
@@ -113,7 +128,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 3) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement_run_`;
+    const animationKey = `${this.gender}_${this.avatar}_movement_run_`;
 
     switch (key) {
       case KEY.UP:
@@ -139,7 +154,7 @@ export class PlayerObject extends MovableObject {
     if (this.getStep() >= 5) this.resetStep();
 
     const step = this.getStep();
-    const animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_ride_`;
+    const animationKey = `${this.gender}_${this.avatar}_ride_`;
 
     switch (key) {
       case KEY.UP:
@@ -188,20 +203,23 @@ export class PlayerObject extends MovableObject {
     }
   }
 
-  setStatus(status: PLAYER_STATUS, direction: DIRECTION) {
+  setStatus(status: PLAYER_STATUS, direction: DIRECTION, texture?: TEXTURE | string) {
     switch (status) {
       case PLAYER_STATUS.WALK:
         this.currentStatus = PLAYER_STATUS.WALK;
-        this.setTexture(`${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_movement`);
+        this.setTexture(texture ? texture : this.getTexture());
+        // this.setTexture(`${this.gender}_${this.avatar}_movement`);
         this.setSpriteFrameNow(direction, 0, 3, 6, 9);
         break;
       case PLAYER_STATUS.RUNNING:
         if (this.currentStatus === PLAYER_STATUS.RIDE) return;
         this.currentStatus = this.currentStatus === PLAYER_STATUS.RUNNING ? PLAYER_STATUS.WALK : PLAYER_STATUS.RUNNING;
+        if (this.getType() === OBJECT.OTHER_PLAYER) this.currentStatus = PLAYER_STATUS.RUNNING;
         break;
       case PLAYER_STATUS.RIDE:
         this.currentStatus = this.currentStatus === PLAYER_STATUS.RIDE ? PLAYER_STATUS.WALK : PLAYER_STATUS.RIDE;
         this.setSpriteFrameNow(direction, 0, 3, 6, 9);
+        if (this.getType() === OBJECT.OTHER_PLAYER) this.currentStatus = PLAYER_STATUS.RIDE;
         break;
       case PLAYER_STATUS.SURF:
         this.currentStatus = PLAYER_STATUS.SURF;
@@ -279,7 +297,7 @@ export class PlayerObject extends MovableObject {
   private moveSurfDeco(key: KEY) {
     if (this.currentStatus !== PLAYER_STATUS.SURF) return;
 
-    let animationKey = `${this.getPlayerData().getGender()}_${this.getPlayerData().getAvatar()}_surf_`;
+    let animationKey = `${this.gender}_${this.avatar}_surf_`;
 
     switch (key) {
       case KEY.UP:
@@ -305,7 +323,7 @@ export class PlayerObject extends MovableObject {
     return PlayerInfo.getInstance();
   }
 
-  jump(hm: HM) {
+  jump(hm: HM, directionTemp?: DIRECTION) {
     if (this.isMoving() || !this.isMovementFinish()) return;
     if (hm === HM.NONE) {
       this.dummy2.setTexture(TEXTURE.BLANK);
@@ -313,7 +331,7 @@ export class PlayerObject extends MovableObject {
       this.setStatus(PLAYER_STATUS.WALK, this.getLastDirection());
     }
 
-    const direction = this.getLastDirection();
+    const direction = directionTemp ? directionTemp : this.getLastDirection();
     const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
     const tileSize = TILE_SIZE * MAP_SCALE;
     const sprite = this.getSprite();
@@ -380,9 +398,9 @@ export class PlayerObject extends MovableObject {
     }
   }
 
-  startSurfAnimation() {
+  startSurfAnimation(direction?: DIRECTION) {
     const pos = this.getTilePos();
-    const lastDirection = this.getLastDirection();
+    const lastDirection = direction ? direction : this.getLastDirection();
 
     let x = pos.x;
     let y = pos.y;
@@ -413,7 +431,7 @@ export class PlayerObject extends MovableObject {
     this.dummy.setSpriteFrame(frame);
     this.dummy.setScale(3.2);
 
-    this.jump(HM.SURF);
+    this.jump(HM.SURF, lastDirection);
   }
 
   destroy(): void {

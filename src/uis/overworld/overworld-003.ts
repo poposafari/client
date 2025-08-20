@@ -8,16 +8,16 @@ import { OverworldInfo } from '../../storage/overworld-info';
 import { Overworld } from './overworld';
 import { OverworldUi } from './overworld-ui';
 
-export class Overworld002 extends Overworld {
+export class Overworld003 extends Overworld {
   constructor(ui: OverworldUi) {
     super(ui);
   }
 
   setup(): void {
     this.ui.setType(OVERWORLD_TYPE.PLAZA);
-    OverworldInfo.getInstance().setKey('002');
+    OverworldInfo.getInstance().setKey('003');
 
-    this.ui.getMap().setup(TEXTURE.OVERWORLD_002, [TEXTURE.INDOOR_TILE_FLOOR, TEXTURE.INDOOR_TILE_OBJECT]);
+    this.ui.getMap().setup(TEXTURE.OVERWORLD_003, [TEXTURE.INDOOR_TILE_FLOOR, TEXTURE.INDOOR_TILE_OBJECT]);
     this.ui.getMap().setLayer(0, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
     this.ui.getMap().setLayer(1, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
     this.ui.getMap().setLayer(2, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);

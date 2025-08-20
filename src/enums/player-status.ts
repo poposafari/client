@@ -1,9 +1,10 @@
 export const enum PLAYER_STATUS {
   WALK = 'walk',
   RUNNING = 'running',
-  RIDE = 'RIDE',
+  RIDE = 'ride',
   SURF = 'surf',
-  FISHING = 'FISHING',
+  FISHING = 'fishing',
   TALK = 'talk',
   WARP = 'warp',
+  JUMP = 'jump',
 }

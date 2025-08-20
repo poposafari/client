@@ -237,6 +237,7 @@ export class LoginUi extends ModalFormUi {
       eventBus.emit(EVENT.CHANGE_MODE, MODE.REGISTER);
     });
     this.btnOthers[0].on('pointerup', () => {
+      eventBus.emit(EVENT.SUBMIT_GOOGLE);
       console.log('OAuth Google');
     });
     this.btnOthers[1].on('pointerup', () => {
