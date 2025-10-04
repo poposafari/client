@@ -1,14 +1,6 @@
-import { eventBus } from '../core/event-bus';
-import { ANIMATION } from '../enums/animation';
-import { DEPTH } from '../enums/depth';
-import { EASE } from '../enums/ease';
-import { EVENT } from '../enums/event';
-import { HM } from '../enums/hidden-move';
-import { KEY } from '../enums/key';
-import { TEXTURE } from '../enums/texture';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { GM } from '../core/game-manager';
+import { DEPTH, EASE, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PlayerInfo } from '../storage/player-info';
 import { getPokemonSpriteKey } from '../utils/string-util';
 import { addImage, createSprite, Ui } from './ui';
 
@@ -29,7 +21,7 @@ export class HiddenMoveUi extends Ui {
     const height = this.getHeight();
 
     this.container = this.createContainer(width / 2, height / 2);
-    this.bg = addImage(this.scene, TEXTURE.BG_HIDDEN_MOVE, 0, 0);
+    this.bg = addImage(this.scene, TEXTURE.BG_HM, 0, 0);
     this.pokemon = addImage(this.scene, `pokemon_sprite0000`, 0, 0).setScale(4.8);
     this.player = createSprite(this.scene, TEXTURE.BLANK, -80, -80);
     this.player.setScale(4.4);
@@ -43,14 +35,15 @@ export class HiddenMoveUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
-    const playerInfo = PlayerInfo.getInstance();
-    const playerKey = `${playerInfo.getGender()}_${playerInfo.getAvatar()}_hm`;
-    const targetPokemon = playerInfo.hasSurfInParty();
+  async show(data: 'surf'): Promise<void> {
+    const userData = GM.getUserData();
+    const targetPokemon = GM.findSkillsInParty(data);
 
-    console.log(getPokemonSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
-    this.pokemon.setTexture(getPokemonSpriteKey(playerInfo.getPartySlot()[targetPokemon]!));
-    playerInfo.setSurfPokemon(playerInfo.getPartySlot()[targetPokemon]!);
+    if (!userData) return;
+    if (!targetPokemon) return;
+
+    const playerKey = `${userData.gender}_${userData.avatar}_hm`;
+    this.pokemon.setTexture(getPokemonSpriteKey(targetPokemon));
 
     this.container.setVisible(true);
 
@@ -60,74 +53,74 @@ export class HiddenMoveUi extends Ui {
 
     this.bg.setDisplaySize(startWidth, 7);
     this.bg.setX(screenWidth);
-    this.scene.tweens.add({
-      targets: this.bg,
-      displayWidth: targetWidth,
-      x: screenWidth - targetWidth,
-      duration: 150,
-      ease: EASE.LINEAR,
-      delay: 0,
-    });
 
-    this.scene.tweens.add({
-      targets: this.bg,
-      displayHeight: 500,
-      duration: 200,
-      ease: EASE.LINEAR,
-      delay: 200,
-    });
+    return new Promise((resolve) => {
+      this.scene.tweens.add({
+        targets: this.bg,
+        displayWidth: targetWidth,
+        x: screenWidth - targetWidth,
+        duration: 150,
+        ease: EASE.LINEAR,
+        delay: 0,
+      });
 
-    // 3. 플레이어 등장
-    this.scene.time.delayedCall(300, () => {
-      this.player.setTexture(playerKey);
-      this.player.anims.play({
-        key: playerKey,
-        repeat: 0,
-        frameRate: 10,
+      this.scene.tweens.add({
+        targets: this.bg,
+        displayHeight: 500,
+        duration: 200,
+        ease: EASE.LINEAR,
+        delay: 200,
+      });
+
+      // 3. 플레이어 등장
+      this.scene.time.delayedCall(300, () => {
+        this.player.setTexture(playerKey);
+        this.player.anims.play({
+          key: playerKey,
+          repeat: 0,
+          frameRate: 10,
+        });
+      });
+
+      this.showParticle();
+
+      // 4. 포켓몬 등장
+      this.pokemon.setX(1500);
+      this.scene.tweens.add({
+        targets: this.pokemon,
+        x: 0,
+        duration: 400,
+        ease: EASE.QUINT_EASEOUT,
+        delay: 800,
+      });
+
+      // 5. 포켓몬 퇴장
+      this.scene.tweens.add({
+        targets: this.pokemon,
+        x: -1500,
+        duration: 400,
+        ease: EASE.QUINT_EASEIN,
+        delay: 1300,
+        onComplete: () => {
+          this.stopParticle();
+        },
+      });
+
+      // 6. 배경 축소 및 종료 (1400ms 이후)
+      this.scene.tweens.add({
+        targets: this.bg,
+        displayHeight: 30,
+        duration: 200,
+        ease: EASE.LINEAR,
+        delay: 1600,
+        onComplete: () => {
+          this.player.setTexture(TEXTURE.BLANK);
+          this.player.stop();
+          this.bg.setDisplaySize(startWidth, 0);
+          resolve();
+        },
       });
     });
-
-    this.showParticle();
-
-    // 4. 포켓몬 등장
-    this.pokemon.setX(1500);
-    this.scene.tweens.add({
-      targets: this.pokemon,
-      x: 0,
-      duration: 400,
-      ease: EASE.QUINT_EASEOUT,
-      delay: 800,
-    });
-
-    // 5. 포켓몬 퇴장
-    this.scene.tweens.add({
-      targets: this.pokemon,
-      x: -1500,
-      duration: 400,
-      ease: EASE.QUINT_EASEIN,
-      delay: 1300,
-      onComplete: () => {
-        this.stopParticle();
-      },
-    });
-
-    // 6. 배경 축소 및 종료 (1400ms 이후)
-    this.scene.tweens.add({
-      targets: this.bg,
-      displayHeight: 30,
-      duration: 200,
-      ease: EASE.LINEAR,
-      delay: 1600,
-      onComplete: () => {
-        this.player.setTexture(TEXTURE.BLANK);
-        this.player.stop();
-        this.bg.setDisplaySize(startWidth, 0);
-
-        eventBus.emit(EVENT.CHECK_HIDDEN_MOVE);
-      },
-    });
-
-    this.handleKeyInput();
   }
 
   clean(data?: any): void {
@@ -136,13 +129,7 @@ export class HiddenMoveUi extends Ui {
 
   pause(onoff: boolean, data?: any): void {}
 
-  handleKeyInput(...data: any[]) {
-    const keyboard = KeyboardHandler.getInstance();
-    const keys = [KEY.SELECT];
-
-    keyboard.setAllowKey(keys);
-    keyboard.setKeyDownCallback((key) => {});
-  }
+  handleKeyInput(...data: any[]) {}
 
   update(time?: number, delta?: number): void {}
 

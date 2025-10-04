@@ -1,12 +1,8 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
-import { TEXTURE } from '../enums/texture';
+import { ANIMATION, AUDIO, EASE, PIPELINES, TEXTSTYLE, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { ANIMATION } from '../enums/animation';
-import { EASE } from '../enums/ease';
-import { PIPELINES } from '../enums/pipelines';
-import { AUDIO } from '../enums/audio';
 import { LoadingScene } from '../scenes/load-scene';
+import { GM } from '../core/game-manager';
 
 export function addWindow(
   scene: InGameScene,
@@ -145,11 +141,11 @@ function isNagativeNumber(targetNumber: number) {
 
 function getAnimationSize(key: ANIMATION | string) {
   switch (key) {
-    case ANIMATION.SHADOW:
+    case ANIMATION.OVERWORLD_SHADOW:
       return 1;
     case ANIMATION.PAUSE:
-    case ANIMATION.PAUSE_BLACK:
-    case ANIMATION.PAUSE_WHITE:
+    case ANIMATION.PAUSE_B:
+    case ANIMATION.PAUSE_W:
       return 3;
     case ANIMATION.PLAYER_MOVEMENT:
       return 23;
@@ -168,12 +164,10 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.NPC_MOVEMENT:
     case ANIMATION.POKEMON_OVERWORLD:
       return 15;
-    case ANIMATION.BAG1:
-    case ANIMATION.BAG2:
-    case ANIMATION.BAG3:
-    case ANIMATION.BAG4:
-      return 2;
-    case ANIMATION.EMOTION_0:
+    case ANIMATION.BAG_POCKET_BALL:
+    case ANIMATION.BAG_POCKET_ETC:
+    case ANIMATION.BAG_POCKET_BERRY:
+    case ANIMATION.BAG_POCKET_KEY:
       return 2;
     case ANIMATION.BOY_1_BACK:
     case ANIMATION.BOY_2_BACK:
@@ -186,7 +180,7 @@ function getAnimationSize(key: ANIMATION | string) {
       return 4;
     case ANIMATION.POKEBALL:
       return 39;
-    case ANIMATION.SHADOW_WATER:
+    case ANIMATION.OVERWORLD_SHADOW_WATER:
     case ANIMATION.OVERWORLD_SHINY:
       return 2;
     case ANIMATION.EMO:
@@ -195,6 +189,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 47;
     case ANIMATION.PARTICLE_EVOL:
       return 12;
+    case 'door_1':
+      return 7;
   }
 }
 
@@ -202,8 +198,6 @@ export function getTextShadow(style: TEXTSTYLE) {
   switch (style) {
     case TEXTSTYLE.TITLE_MODAL:
       return [8, 4, '#266c58'];
-    case TEXTSTYLE.LOADING:
-      return [8, 4, '#91919a'];
     case TEXTSTYLE.DEFAULT_BLACK:
       return [5, 3, '#91919a'];
     case TEXTSTYLE.SPECIAL:
@@ -211,31 +205,19 @@ export function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.MESSAGE_WHITE:
     case TEXTSTYLE.MESSAGE_GRAY:
       return [3, 2, '#777777'];
-    case TEXTSTYLE.ITEM_STOCK:
-    case TEXTSTYLE.BOX_DEFAULT:
+    case TEXTSTYLE.SPRING:
+    case TEXTSTYLE.SUMMER:
+    case TEXTSTYLE.FALL:
+    case TEXTSTYLE.WINTER:
+    case TEXTSTYLE.SEASON_SYMBOL:
+      return [0, 0, 0];
     case TEXTSTYLE.BOX_NAME:
-    // case TEXTSTYLE.BOX_POKEDEX:
     case TEXTSTYLE.CHOICE_DEFAULT:
-    case TEXTSTYLE.ITEM_TITLE:
     case TEXTSTYLE.MESSAGE_BLACK:
-    case TEXTSTYLE.LOBBY_DEFAULT:
-    case TEXTSTYLE.BATTLE_MENU:
-    case TEXTSTYLE.BATTLE_MESSAGE:
-    case TEXTSTYLE.OVERWORLD_DESC:
     case TEXTSTYLE.ITEM_NOTICE:
-    case TEXTSTYLE.ITEM_LIST:
-    case TEXTSTYLE.OVERWORLD_LIST:
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
-    case TEXTSTYLE.BOX_CAPTURE_VALUE:
-    case TEXTSTYLE.BATTLE_NAME:
     case TEXTSTYLE.DEFAULT:
       return [3, 2, '#91919a'];
-    case TEXTSTYLE.MENU:
-      return [2, 1, '#91919a'];
-    case TEXTSTYLE.LOBBY_TITLE:
-      return [3, 2, '#2CC295'];
-    case TEXTSTYLE.SHINY:
-      return [3, 2, '#EC7D10'];
   }
 
   return [0, 0, 0];
@@ -257,38 +239,61 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.fontSize = '80px';
       config.color = '#999999';
       break;
-    case TEXTSTYLE.LOBBY_TITLE:
+    case TEXTSTYLE.MESSAGE_WHITE:
       config.fontSize = '80px';
-      config.color = '#00DF81';
+      config.color = '#ffffff';
       break;
-    case TEXTSTYLE.LOBBY_DEFAULT:
-      config.fontSize = '30px';
+    case TEXTSTYLE.MESSAGE_BLUE:
+      config.fontSize = '80px';
+      config.color = '#236df3';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.SPECIAL:
+      config.fontSize = '100px';
+      config.color = '#236df3';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.SPRING:
+      config.fontFamily = 'sans-serif';
+      config.color = '#bafa67';
+      config.fontStyle = 'bold';
+      config.fontSize = '80px';
+      break;
+    case TEXTSTYLE.SUMMER:
+      config.fontFamily = 'sans-serif';
+      config.color = '#7dcffb';
+      config.fontStyle = 'bold';
+      config.fontSize = '80px';
+      break;
+    case TEXTSTYLE.FALL:
+      config.fontFamily = 'sans-serif';
+      config.color = '#f69f76';
+      config.fontStyle = 'bold';
+      config.fontSize = '80px';
+      break;
+    case TEXTSTYLE.WINTER:
+      config.fontFamily = 'sans-serif';
+      config.color = '#f2dbfc';
+      config.fontStyle = 'bold';
+      config.fontSize = '80px';
+      break;
+    case TEXTSTYLE.SEASON_SYMBOL:
+      config.fontSize = '80px';
+      config.fontStyle = 'bold';
       config.color = '#ffffff';
       break;
     case TEXTSTYLE.LOBBY_INPUT:
       config.fontSize = '13px';
       config.color = '#4b4b4b';
       break;
-    case TEXTSTYLE.MESSAGE_WHITE:
-      config.fontSize = '68px';
-      config.color = '#ffffff';
-      break;
     case TEXTSTYLE.BAG_DESC:
       config.fontSize = '55px';
       config.color = '#ffffff';
       break;
     case TEXTSTYLE.BAG_REGISTER:
-      config.fontSize = '68px';
+      config.fontSize = '80px';
       config.color = '#53a8fc';
       config.fontStyle = 'bold';
-      break;
-    case TEXTSTYLE.TITLE_DEFAULT:
-      config.fontSize = '36px';
-      config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.ITEM_TITLE:
-      config.fontSize = '40px';
-      config.color = '#ffffff';
       break;
     case TEXTSTYLE.ITEM_NOTICE:
       config.fontSize = '100px';
@@ -301,56 +306,14 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.BOX_POKEDEX:
       config.fontSize = '50px';
       config.color = '#ffffff';
-      // config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.BOX_NAME:
-      config.fontSize = '80px';
-      config.color = '#4b4b4b';
-      break;
-    case TEXTSTYLE.SHINY:
-      config.fontSize = '80px';
-      config.color = '#FFBC0A';
-      break;
-    case TEXTSTYLE.BOX_DEFAULT:
-      config.fontSize = '50px';
-      config.color = '#4b4b4b';
-      break;
-    case TEXTSTYLE.ITEM_STOCK:
-      config.fontSize = '50px';
-      config.color = '#ffffff';
-      config.fontStyle = 'bold';
-      break;
-    case TEXTSTYLE.OVERWORLD_LIST:
-      config.fontSize = '80px';
-      config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.ITEM_LIST:
       config.fontSize = '80px';
       config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.INPUT_GUIDE_WHITE:
       config.fontSize = '50px';
       config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.INPUT_GUIDE_BLACK:
-      config.fontSize = '50px';
-      config.color = '#4b4b4b';
-      break;
-    case TEXTSTYLE.MENU:
-      config.fontSize = '30px';
-      config.color = '#4b4b4b';
-      break;
-    case TEXTSTYLE.BATTLE_MESSAGE:
-      config.fontSize = '68px';
-      config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.BATTLE_MENU:
-      config.fontSize = '90px';
-      config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.BATTLE_NAME:
-      config.fontSize = '90px';
-      config.color = '#4b4b4b';
       break;
     case TEXTSTYLE.GENDER_0:
       config.fontSize = '80px';
@@ -365,11 +328,6 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
       config.fontSize = '80px';
       config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.BOX_CAPTURE_VALUE:
-      config.fontSize = '60px';
-      config.color = '#284ffc';
-      config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.DEFAULT:
       config.fontSize = '80px';
@@ -388,15 +346,6 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.TITLE_MODAL:
       config.fontSize = '150px';
       config.color = '#40a174';
-      config.fontStyle = 'bold';
-      break;
-    case TEXTSTYLE.LOADING:
-      config.fontSize = '150px';
-      config.color = '#ffffff';
-      break;
-    case TEXTSTYLE.SPECIAL:
-      config.fontSize = '100px';
-      config.color = '#236df3';
       config.fontStyle = 'bold';
       break;
   }
@@ -527,7 +476,7 @@ export function startModalAnimation(scene: InGameScene, target: any, duration: n
   });
 }
 
-export function playSound(scene: InGameScene, key: AUDIO, volume: number = 1, loop: boolean = false) {
+export function playSound(scene: InGameScene | LoadingScene, key: AUDIO, volume: number = 1, loop: boolean = false) {
   scene.sound.play(key, {
     volume: volume,
     loop: loop,
@@ -556,6 +505,24 @@ export function findEventTile(tiles: Phaser.Tilemaps.Tile[] | null) {
 
   return ret;
 }
+
+export const shakeEffect = (scene: InGameScene | LoadingScene, container: Phaser.GameObjects.Container, intensity = 10, duration = 50): void => {
+  const originalX = container.x;
+
+  playSound(scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+
+  scene.tweens.add({
+    targets: container,
+    x: originalX - intensity,
+    duration,
+    ease: EASE.POWER1,
+    yoyo: true,
+    repeat: 3,
+    onComplete: () => {
+      container.setX(originalX);
+    },
+  });
+};
 
 export abstract class Ui {
   protected scene: InGameScene;

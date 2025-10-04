@@ -1,6 +1,6 @@
-import { getPokemonInfo } from '../data/pokemon';
-import { MyPokemon } from '../storage/box';
-import { PokemonGender } from '../types';
+import { SafariData } from '../data';
+import { DIRECTION, KEY, Season, TYPE } from '../enums';
+import { PlayerPokemon } from '../obj/player-pokemon';
 
 export function createZeroPad(value: number): string {
   return value.toString().padStart(4, '0');
@@ -24,61 +24,6 @@ export function getGenderAndShinyInfo(key: string) {
 
 export function trimLastChar(pokedex: string) {
   return pokedex.slice(0, -1);
-}
-
-export function getPartyKey(pokemon: MyPokemon | null) {
-  if (!pokemon) return null;
-
-  const pokedex = pokemon.pokedex;
-  const shiny = pokemon.shiny ? 's' : '';
-  const gender = pokemon.gender;
-  const skills = pokemon.skill;
-  // const form = pokemon.form;
-
-  return `${pokedex}${shiny}_${gender}_${skills}`;
-}
-
-export function getPokemonOverworldOrIconKey(pokemon: MyPokemon | null) {
-  if (!pokemon) return null;
-
-  let ret = '000';
-
-  const pokedex = pokemon.pokedex;
-  const shiny = pokemon.shiny ? 's' : '';
-  const gender = pokemon.gender;
-
-  ret = `${pokedex}${shiny}`;
-
-  return ret;
-}
-
-export function getPokemonOverworldKey(pokemon: MyPokemon | null) {
-  if (!pokemon) return `000`;
-
-  const shiny = pokemon.shiny ? 's' : '';
-
-  return `${pokemon?.pokedex}${shiny}`;
-}
-
-export function getPokemonSpriteKey(pokemon: MyPokemon) {
-  const shiny = pokemon.shiny ? 's' : '';
-  let gender = pokemon.gender === 'male' ? 'm' : pokemon.gender === 'female' ? 'f' : '';
-
-  return `pokemon_sprite${pokemon.pokedex}_${gender}${shiny}`;
-}
-
-export function getBattlePokemonSpriteKey(pokedex: string, shiny: boolean, gender: PokemonGender) {
-  const isShiny = shiny ? 's' : '';
-  const isGender = gender === 'male' ? 'm' : gender === 'female' ? 'f' : '';
-
-  return `pokemon_sprite${pokedex}_${isGender}${isShiny}`;
-}
-
-export function getPokemonType(pokedex: string) {
-  const type1 = getPokemonInfo(Number(pokedex))?.type1;
-  const type2 = getPokemonInfo(Number(pokedex))?.type2;
-
-  return [type1, type2];
 }
 
 export function isValidUsername(username: string): boolean {
@@ -109,4 +54,126 @@ export function replacePercentSymbol(input: string, replacement: any[]): string 
     }
     return match;
   });
+}
+
+export function getPokemonSpriteKey(pokemon: PlayerPokemon, temp?: string) {
+  const shiny = pokemon.getShiny() ? 's' : '';
+  let gender = pokemon.getGender() === 'male' ? 'm' : pokemon.getGender() === 'female' ? 'f' : '';
+  let pokedex = temp ? temp : pokemon.getPokedex();
+
+  return `pokemon_sprite${pokedex}_${gender}${shiny}`;
+}
+
+export function getOverworldPokemonTexture(pokemon: PlayerPokemon | null) {
+  if (!pokemon) return `pokemon_overworld000`;
+
+  const pokedex = pokemon.getPokedex();
+  const shiny = pokemon.getShiny() ? 's' : '';
+
+  return `pokemon_overworld${pokedex}${shiny}`;
+}
+
+export function getPokemonType(type: string | null) {
+  if (!type) return null;
+
+  switch (type) {
+    case 'fire':
+      return TYPE.FIRE;
+    case 'water':
+      return TYPE.WATER;
+    case 'electric':
+      return TYPE.ELECTRIC;
+    case 'grass':
+      return TYPE.GRASS;
+    case 'ice':
+      return TYPE.ICE;
+    case 'fighting':
+      return TYPE.FIGHT;
+    case 'poison':
+      return TYPE.POISON;
+    case 'ground':
+      return TYPE.GROUND;
+    case 'flying':
+      return TYPE.FLYING;
+    case 'psychic':
+      return TYPE.PSYCHIC;
+    case 'bug':
+      return TYPE.BUG;
+    case 'rock':
+      return TYPE.ROCK;
+    case 'ghost':
+      return TYPE.GHOST;
+    case 'dragon':
+      return TYPE.DRAGON;
+    case 'dark':
+      return TYPE.DARK;
+    case 'steel':
+      return TYPE.STEEL;
+    case 'fairy':
+      return TYPE.FAIRY;
+    case 'normal':
+      return TYPE.NORMAL;
+  }
+}
+
+export function formatDateTime(isoString: string) {
+  if (!isoString) return '';
+
+  const date = new Date(isoString);
+  const formatter = new Intl.DateTimeFormat(navigator.language, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  });
+
+  return formatter.format(date);
+}
+
+export function getCurrentSeason(): Season {
+  const now = new Date();
+  const month = now.getMonth(); // 0 (1월) ~ 11 (12월)
+
+  if (month >= 2 && month <= 4) {
+    return Season.SPRING;
+  }
+  if (month >= 5 && month <= 7) {
+    return Season.SUMMER;
+  }
+  if (month >= 8 && month <= 10) {
+    return Season.FALL;
+  }
+  return Season.WINTER;
+}
+
+export function isSafariData(obj: any): obj is SafariData {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'key' in obj &&
+    typeof obj.key === 'string' &&
+    'cost' in obj &&
+    typeof obj.cost === 'number' &&
+    'x' in obj &&
+    typeof obj.x === 'number' &&
+    'y' in obj &&
+    typeof obj.y === 'number'
+  );
+}
+
+export function changeDirectionToKey(direction: DIRECTION) {
+  switch (direction) {
+    case DIRECTION.UP:
+      return KEY.UP;
+    case DIRECTION.DOWN:
+      return KEY.DOWN;
+    case DIRECTION.LEFT:
+      return KEY.LEFT;
+    case DIRECTION.RIGHT:
+      return KEY.RIGHT;
+  }
+
+  return KEY.UP;
 }

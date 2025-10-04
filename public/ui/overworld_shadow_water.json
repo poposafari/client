@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "overworld_shadow_water-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "sourceSize": {
+        "w": 69,
+        "h": 23
+      }
+    },
+    "overworld_shadow_water-1": {
+      "frame": {
+        "x": 23,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 23,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "sourceSize": {
+        "w": 69,
+        "h": 23
+      }
+    },
+    "overworld_shadow_water-2": {
+      "frame": {
+        "x": 46,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 0,
+        "w": 23,
+        "h": 23
+      },
+      "sourceSize": {
+        "w": 69,
+        "h": 23
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "overworld_shadow_water.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 69,
+      "h": 23
+    },
+    "scale": "1"
+  }
+}

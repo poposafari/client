@@ -1,49 +1,53 @@
-import i18next from 'i18next';
-import { TEXTURE } from '../enums/texture';
-import { addBackground, addText, Ui } from './ui';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { DEPTH } from '../enums/depth';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { GM } from '../core/game-manager';
+import { DEPTH, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import i18next from '../i18n';
+import { InGameScene } from '../scenes/ingame-scene';
+import { ConnectAccountDeleteUi } from './connect-account-delete-ui';
+import { ConnectBaseUi } from './connect-base-ui';
+import { ConnectSafariUi } from './connect-safari-ui';
+import { addText, addWindow, Ui } from './ui';
 
 export class ConnectUi extends Ui {
   private container!: Phaser.GameObjects.Container;
-  private contentContainer!: Phaser.GameObjects.Container;
+
+  private baseUi: ConnectBaseUi;
+  private accountDeleteUi: ConnectAccountDeleteUi;
+  private safariUi: ConnectSafariUi;
+
+  constructor(scene: InGameScene) {
+    super(scene);
+
+    this.baseUi = new ConnectBaseUi(scene);
+    this.accountDeleteUi = new ConnectAccountDeleteUi(scene);
+    this.safariUi = new ConnectSafariUi(scene);
+  }
 
   setup(): void {
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    this.container = this.createContainer(width / 2, height / 2);
-    this.contentContainer = this.createContainer(width / 2, height / 2);
-
-    const bg = addBackground(this.scene, TEXTURE.BLACK).setOrigin(0.5, 0.5);
-    bg.setAlpha(0.5);
-
-    const text = addText(this.scene, 0, 0, i18next.t('menu:connecting'), TEXTSTYLE.LOADING);
-
-    this.container.add(bg);
-    this.contentContainer.add(text);
-
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.TOP);
-    this.container.setScrollFactor(0);
-
-    this.contentContainer.setScale(1);
-    this.contentContainer.setVisible(false);
-    this.contentContainer.setDepth(DEPTH.TOP + 1);
-    this.contentContainer.setScrollFactor(0);
+    this.baseUi.setup();
+    this.accountDeleteUi.setup();
+    this.safariUi.setup();
   }
 
   show(data?: any): void {
-    this.container.setVisible(true);
-    this.contentContainer.setVisible(true);
+    const mode = GM.getPreviousMode();
 
-    this.handleKeyInput();
+    switch (mode) {
+      case MODE.CONNECT_SAFARI:
+        this.safariUi.show();
+        break;
+      case MODE.CONNECT_ACCOUNT_DELETE:
+        this.accountDeleteUi.show();
+        break;
+      default:
+        this.baseUi.show();
+        break;
+    }
   }
 
   clean(data?: any): void {
-    this.container.setVisible(false);
-    this.contentContainer.setVisible(false);
+    this.safariUi.clean();
+    this.accountDeleteUi.clean();
+    this.baseUi.clean();
   }
 
   pause(data?: any): void {}

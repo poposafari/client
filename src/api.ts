@@ -1,8 +1,24 @@
-import axios from 'axios';
-import { ApiResponse, apiWrap } from './core/api-wrap';
-import { PokemonGender } from './object/pokemon-object';
-import { MyPokemon } from './storage/box';
-import { PlayerAvatar, PlayerGender } from './types';
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import {
+  AccountReq,
+  ApiErrorResponse,
+  ApiResponse,
+  BuyItemReq,
+  BuyItemRes,
+  EnterSafariReq,
+  EnterSafariRes,
+  EvolPcReq,
+  GetIngameRes,
+  GetItemRes,
+  GetPcReq,
+  GetPcRes,
+  LoginRes,
+  MovePcReq,
+  RegisterIngameReq,
+  UseItemReq,
+} from './types';
+import { HttpErrorCode, MODE } from './enums';
+import { GM } from './core/game-manager';
 
 const Axios = axios.create({
   baseURL: 'https://poposafari.net/api',
@@ -13,83 +29,90 @@ const Axios = axios.create({
   withCredentials: true,
 });
 
-type AccountRequest = {
-  username: string;
-  password: string;
-};
+Axios.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem('access_token');
 
-type IngameRegisterReq = {
-  nickname: string;
-  gender: PlayerGender;
-  avatar: PlayerAvatar;
-};
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
 
-type MoveToOverworldReq = {
-  overworld: string;
-};
+  return config;
+});
 
-type WarpReq = {
-  idx: string;
-};
+Axios.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originReq = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const code = error.response.data.data;
 
-type CatchSafariObjReq = {
-  idx: number;
-};
+    if (!originReq._retry) {
+      originReq._retry = true;
+      if (code === HttpErrorCode.NOT_FOUND_ACCESS_TOKEN || code === HttpErrorCode.INVALID_ACCESS_TOKEN) {
+        try {
+          const res = await checkRefreshApi();
+          const newAccessToken = res.data.data;
 
-type CatchSafariWildPokemonReq = {
-  idx: number;
-  ball: string;
-  berry: string | null;
-  parties: (number | null)[];
-};
+          localStorage.setItem('access_token', newAccessToken);
 
-type FeedBerryReq = {
-  idx: number;
-  berry: string | null;
-};
+          if (originReq.headers) originReq.headers.Authorization = `Bearer ${newAccessToken}`;
 
-type PokeboxRequest = {
-  box: number;
-};
+          return Axios(originReq);
+        } catch (errRefresh) {
+          localStorage.removeItem('access_token');
+          GM.changeMode(MODE.LOGIN);
+          return Promise.reject(errRefresh);
+        }
+      } else if (code === HttpErrorCode.NOT_FOUND_REFRESH_TOKEN || code === HttpErrorCode.INVALID_REFRESH_TOKEN) {
+        GM.changeMode(MODE.LOGIN);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
-type EvolveRequest = {
-  idx: number;
-  box: number;
-};
+export async function apiWrap<T>(api: () => Promise<{ data: any }>): Promise<ApiResponse<T> | ApiErrorResponse> {
+  try {
+    GM.changeMode(MODE.CONNECT);
 
-type MovePokemonRequest = {
-  pokedex: string;
-  gender: PokemonGender;
-  from: number;
-  to: number;
-};
+    const res = await api();
 
-type BuyItemRequest = {
-  item: string;
-  stock: number;
-};
+    const responseData = res.data;
 
-type NullResponse = Promise<ApiResponse<null> | null>;
+    if (typeof responseData === 'object' && responseData !== null && 'result' in responseData && 'data' in responseData) {
+      GM.popUi();
+      return responseData as ApiResponse<T>;
+    }
+    const successResponse: ApiResponse<T> = { result: true, data: responseData };
+    return successResponse;
+  } catch (err: any) {
+    GM.popUi();
 
-export const registerApi = (data: AccountRequest): NullResponse => apiWrap(() => Axios.post('/account/register', data));
-export const loginApi = (data: AccountRequest) => apiWrap(() => Axios.post('/account/login', data));
-export const loginGoogleApi = () => apiWrap(() => Axios.get('/account/google'));
-export const autoLoginApi = () => apiWrap(() => Axios.get('/account/auto-login'));
-export const logoutApi = () => apiWrap(() => Axios.get('/account/logout'));
-export const deleteAccountApi = () => apiWrap(() => Axios.get('/account/delete'));
-export const getIngameApi = () => apiWrap(() => Axios.get('/ingame/userdata'));
-export const ingameRegisterApi = (data: IngameRegisterReq) => apiWrap(() => Axios.post('/ingame/register', data));
-export const getAllItemsApi = () => apiWrap(() => Axios.get('/bag/all'));
-export const buyItemApi = (data: BuyItemRequest) => apiWrap(() => Axios.post('/bag/buy', data));
-export const getPokeboxApi = (data: PokeboxRequest) => apiWrap(() => Axios.post('pokebox/get', data));
-export const movePokemonApi = (data: MovePokemonRequest) => apiWrap(() => Axios.post('pokebox/move', data));
-export const evolvePokemonApi = (data: EvolveRequest) => apiWrap(() => Axios.post('pokebox/evol', data));
-export const moveToOverworldApi = (data: MoveToOverworldReq) => apiWrap(() => Axios.post('/overworld/move', data));
-export const enterOverworldApi = (data: WarpReq) => apiWrap(() => Axios.post('/overworld/enter', data));
-export const exitOverworldApi = (data: WarpReq) => apiWrap(() => Axios.post('/overworld/exit', data));
-export const useTicketApi = (data: MoveToOverworldReq) => apiWrap(() => Axios.post('/overworld/ticket', data));
-export const catchGroundItem = (data: CatchSafariObjReq) => apiWrap(() => Axios.post('/overworld/catch/item', data));
-export const catchWildPokemon = (data: CatchSafariWildPokemonReq) => apiWrap(() => Axios.post('/overworld/catch/pokemon', data));
-export const feedBerryApi = (data: FeedBerryReq) => apiWrap(() => Axios.post('/overworld/feed/berry', data));
-export const getAvailableTicketApi = () => apiWrap(() => Axios.get('/ticket/get'));
-export const receiveAvailableTicketApi = () => apiWrap(() => Axios.get('/ticket/receive'));
+    if (axios.isAxiosError(err) && err.response) {
+      return err.response.data as ApiErrorResponse;
+    }
+
+    return {
+      result: false,
+      data: HttpErrorCode.NETWORK_ERROR,
+    };
+  }
+}
+
+export const registerApi = (data: AccountReq) => apiWrap<unknown>(() => Axios.post('/account/register', data));
+export const loginLocalApi = (data: AccountReq) => apiWrap<LoginRes>(() => Axios.post('/account/login/local', data));
+export const autoLoginApi = () => apiWrap<unknown>(() => Axios.get('/account/login/auto'));
+export const checkRefreshApi = () => Axios.get('account/auth/refresh');
+export const logoutApi = () => apiWrap<unknown>(() => Axios.get('/account/logout'));
+export const deleteAccountApi = () => apiWrap<unknown>(() => Axios.get('/account/delete'));
+export const restoreDeleteAccountApi = () => apiWrap<unknown>(() => Axios.get('/account/delete/restore'));
+export const getIngameApi = () => apiWrap<GetIngameRes>(() => Axios.get('/ingame/get'));
+export const registerIngameApi = (data: RegisterIngameReq) => apiWrap(() => Axios.post('/ingame/register', data));
+export const getItemsApi = () => apiWrap<GetItemRes[]>(() => Axios.get('/bag/get'));
+export const getPcApi = (data: GetPcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/get', data));
+export const MovePcApi = (data: MovePcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/move', data));
+export const EvolvePcApi = (data: EvolPcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/evol', data));
+export const buyItemApi = (data: BuyItemReq) => apiWrap<BuyItemRes>(() => Axios.post('/bag/buy', data));
+export const getAvailableTicketApi = () => apiWrap<number>(() => Axios.get('ingame/ticket/get'));
+export const receiveAvailableTicketApi = () => apiWrap<GetItemRes>(() => Axios.get('ingame/ticket/receive'));
+export const useSafariTicketApi = (data: UseItemReq) => apiWrap<BuyItemRes>(() => Axios.post('bag/ticket/use', data));
+export const enterSafariZoneApi = (data: EnterSafariReq) => apiWrap<EnterSafariRes>(() => Axios.post('safari/enter', data));

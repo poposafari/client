@@ -1,75 +1,33 @@
-import { npcData } from '../data/npc';
-import { PokemonData } from '../data/pokemon';
-import { ANIMATION } from '../enums/animation';
-import { MODE } from '../enums/mode';
-import { TEXTURE } from '../enums/texture';
+import { GM } from '../core/game-manager';
+import { npcData, PokemonData } from '../data';
+import { ANIMATION, MODE, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { ModeHandler } from '../handlers/mode-handler';
-import { UiHandler } from '../handlers/ui-handler';
-import {
-  AccountDeleteMode,
-  BagMode,
-  BattleMode,
-  ConnectAccountDeleteMode,
-  ConnectMode,
-  EvolveMode,
-  HiddenMoveMode,
-  InputNicknameMode,
-  LoginMode,
-  MessageMode,
-  NewgameMode,
-  NoneMode,
-  OverworldConnectingMode,
-  OverworldMenuMode,
-  OverworldMode,
-  PokeboxMode,
-  RegisterMode,
-  SafariListMode,
-  ShopMode,
-  TitleMode,
-  WelcomeMode,
-} from '../modes';
-import { Bag } from '../storage/bag';
-import { Box } from '../storage/box';
-import { PlayerInfo } from '../storage/player-info';
-import { OverworldHUDUi, OverworldOverlayUi } from '../uis/overworld/overworld-hud-ui';
+import { BagStorage, OverworldStorage } from '../storage';
+import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
 import { AccountDeleteUi } from '../uis/account-delete-ui';
+import { BagUi } from '../uis/bag-ui';
+import { BlackScreenUi } from '../uis/black-screen-ui';
 import { ConnectUi } from '../uis/connect-ui';
 import { LoginUi } from '../uis/login-ui';
-import { MessageUi } from '../uis/message-ui';
 import { NewgameUi } from '../uis/newgame-ui';
-import { OverworldConnectingUi } from '../uis/overworld/overworld-connecting-ui';
+import { OptionUi } from '../uis/option-ui';
+import { Overworld001, Overworld002, Overworld003, Overworld004, Overworld005, Overworld021 } from '../uis/overworld';
+import { OverworldHUDUi } from '../uis/overworld-hud-ui';
+import { OverworldMenuUi } from '../uis/overworld-menu-ui';
+import { OverworldUi } from '../uis/overworld-ui';
+import { PcUi } from '../uis/pc-ui';
 import { RegisterUi } from '../uis/register-ui';
+import { StarterUi } from '../uis/starter-ui';
 import { TitleUi } from '../uis/title-ui';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
 import { WelcomeUi } from '../uis/welcome-ui';
 import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
-import { OverworldMenuUi } from '../uis/overworld/overworld-menu-ui';
-import { BagMenuUi, BagRegisterUi, BagUi } from '../uis/bag-ui';
-import { PokeboxUi } from '../uis/pokebox-ui';
-import { ShopUi } from '../uis/shop-ui';
-import { UI } from '../enums/ui';
-import { ConnectAccountDeleteUi } from '../uis/connect-account-delete-ui';
-import { SafariListUi } from '../uis/safari-list-ui';
-import { HiddenMoveUi } from '../uis/hidden-move-ui';
-import { DummyUi } from '../uis/dummy-ui';
-import { OverworldInfo } from '../storage/overworld-info';
-import { BattleUi } from '../uis/battle-ui';
-import { EvolveUi } from '../uis/evolve-ui';
-import { Global } from '../storage/global';
-import { InputNicknameUi } from '../uis/input-nickname-ui';
-import { Overworld021 } from '../uis/overworld/overworld-021';
-import { SocketHandler } from '../handlers/socket-handler';
-import { Overworld001 } from '../uis/overworld/overworld-001';
-import { Overworld002 } from '../uis/overworld/overworld-002';
-import { OverworldUi } from '../uis/overworld/overworld-ui';
-import { Overworld003 } from '../uis/overworld/overworld-003';
 
 export class InGameScene extends BaseScene {
-  private uiHandler = new UiHandler();
-  private modeHandler = new ModeHandler();
+  // private uiHandler = new UiHandler();
+  // private modeHandler = new ModeHandler();
 
   constructor() {
     super('InGameScene');
@@ -79,101 +37,63 @@ export class InGameScene extends BaseScene {
     const overworldUi = new OverworldUi(this);
     this.initAnimation();
     this.initAudio();
-    this.initStorage();
+    BagStorage.getInstance();
 
     const keyboard = KeyboardHandler.getInstance();
     keyboard.init(this);
 
-    this.uiHandler.register(UI.MESSAGE, new MessageUi(this));
-    this.uiHandler.register(UI.CONNECT, new ConnectUi(this));
-    this.uiHandler.register(UI.LOGIN, new LoginUi(this));
-    this.uiHandler.register(UI.REGISTER, new RegisterUi(this));
-    this.uiHandler.register(UI.WELCOME, new WelcomeUi(this));
-    this.uiHandler.register(UI.NEWGAME, new NewgameUi(this));
-    this.uiHandler.register(UI.TITLE, new TitleUi(this));
-    this.uiHandler.register(UI.ACCOUNT_DELETE, new AccountDeleteUi(this));
-    this.uiHandler.register(UI.CONNECT_ACCOUNT_DELETE, new ConnectAccountDeleteUi(this));
-    this.uiHandler.register(UI.OVERWORLD, overworldUi);
-    this.uiHandler.register(UI.OVERWORLD_HUD, new OverworldHUDUi(this));
-    this.uiHandler.register(UI.OVERWORLD_MENU, new OverworldMenuUi(this));
-    this.uiHandler.register(UI.OVERWORLD_CONNECTING, new OverworldConnectingUi(this));
-    this.uiHandler.register(UI.BAG, new BagUi(this));
-    this.uiHandler.register(UI.BAG_MENU, new BagMenuUi(this));
-    this.uiHandler.register(UI.BAG_REGISTER, new BagRegisterUi(this));
-    this.uiHandler.register(UI.SHOP, new ShopUi(this));
-    this.uiHandler.register(UI.POKEBOX, new PokeboxUi(this));
-    this.uiHandler.register(UI.SAFARI_LIST, new SafariListUi(this));
-    this.uiHandler.register(UI.HIDDEN_MOVE, new HiddenMoveUi(this));
-    this.uiHandler.register(UI.DUMMY, new DummyUi(this));
-    this.uiHandler.register(UI.BATTLE, new BattleUi(this));
-    this.uiHandler.register(UI.EVOLVE, new EvolveUi(this));
-    this.uiHandler.register(UI.INPUT_NICKNAME, new InputNicknameUi(this));
+    GM.setVolume('bg');
+    GM.setVolume('effect');
+    GM.setMessageSpeed(10);
+    GM.setMsgWindow(TEXTURE.WINDOW_MENU);
 
-    const overworldInfo = OverworldInfo.getInstance();
+    GM.registerUi(UI.CONNECT, new ConnectUi(this));
+    GM.registerUi(UI.LOGIN, new LoginUi(this));
+    GM.registerUi(UI.REGISTER, new RegisterUi(this));
+    GM.registerUi(UI.ACCOUNT_DELETE, new AccountDeleteUi(this));
+    GM.registerUi(UI.ACCOUNT_DELETE_RESTORE, new AccountDeleteRestoreUi(this));
+    GM.registerUi(UI.TITLE, new TitleUi(this));
+    GM.registerUi(UI.NEWGAME, new NewgameUi(this));
+    GM.registerUi(UI.WELCOME, new WelcomeUi(this));
+    GM.registerUi(UI.STARTER, new StarterUi(this));
+    GM.registerUi(UI.OVERWORLD_MENU, new OverworldMenuUi(this));
+    GM.registerUi(UI.OVERWORLD_HUD, new OverworldHUDUi(this));
+    GM.registerUi(UI.BAG, new BagUi(this));
+    GM.registerUi(UI.PC, new PcUi(this));
+    GM.registerUi(UI.OPTION, new OptionUi(this));
+    GM.registerUi(UI.BLACK_SCREEN, new BlackScreenUi(this));
+    GM.registerUi(UI.OVERWORLD, overworldUi);
+
+    const overworldInfo = OverworldStorage.getInstance();
     overworldInfo.registerMap('001', new Overworld001(overworldUi));
     overworldInfo.registerMap('002', new Overworld002(overworldUi));
     overworldInfo.registerMap('003', new Overworld003(overworldUi));
+    overworldInfo.registerMap('004', new Overworld004(overworldUi));
+    overworldInfo.registerMap('005', new Overworld005(overworldUi));
     overworldInfo.registerMap('021', new Overworld021(overworldUi));
 
-    // overworldInfo.registerMap('002', new Overworld002());
-    // this.uiHandler.register('Overworld001', new Overworld001(this));
-    // this.uiHandler.register('Overworld002', new Overworld002(this));
-    // this.uiHandler.register('Overworld021', new Overworld021(this));
-
-    this.modeHandler.register(MODE.NONE, new NoneMode(this));
-    this.modeHandler.register(MODE.CONNECT, new ConnectMode(this));
-    this.modeHandler.register(MODE.MESSAGE, new MessageMode(this));
-    this.modeHandler.register(MODE.LOGIN, new LoginMode(this));
-    this.modeHandler.register(MODE.REGISTER, new RegisterMode(this));
-    this.modeHandler.register(MODE.WELCOME, new WelcomeMode(this));
-    this.modeHandler.register(MODE.NEWGAME, new NewgameMode(this));
-    this.modeHandler.register(MODE.TITLE, new TitleMode(this));
-    this.modeHandler.register(MODE.ACCOUNT_DELETE, new AccountDeleteMode(this));
-    this.modeHandler.register(MODE.CONNECT_ACCOUNT_DELETE, new ConnectAccountDeleteMode(this));
-    this.modeHandler.register(MODE.OVERWORLD, new OverworldMode(this));
-    this.modeHandler.register(MODE.OVERWORLD_MENU, new OverworldMenuMode(this));
-    this.modeHandler.register(MODE.OVERWORLD_CONNECTING, new OverworldConnectingMode(this));
-    this.modeHandler.register(MODE.BAG, new BagMode(this));
-    this.modeHandler.register(MODE.SHOP, new ShopMode(this));
-    this.modeHandler.register(MODE.POKEBOX, new PokeboxMode(this));
-    this.modeHandler.register(MODE.SAFARI_LIST, new SafariListMode(this));
-    this.modeHandler.register(MODE.HIDDEN_MOVE, new HiddenMoveMode(this));
-    this.modeHandler.register(MODE.BATTLE, new BattleMode(this));
-    this.modeHandler.register(MODE.EVOLVE, new EvolveMode(this));
-    this.modeHandler.register(MODE.INPUT_NICKNAME, new InputNicknameMode(this));
-
-    this.modeHandler.change(MODE.NONE);
+    GM.changeMode(MODE.AUTO_LOGIN);
   }
 
   update(time: number, delta: number): void {
-    const mode = this.modeHandler.findOverworldMode();
+    const overworldUi = GM.findUiOnStack(UI.OVERWORLD);
 
-    if (mode && this.modeHandler.findOverworldMode()) {
-      mode.update(time, delta);
+    if (overworldUi && overworldUi instanceof OverworldUi) {
+      overworldUi.update(time, delta);
     }
-  }
-
-  private initStorage() {
-    PlayerInfo.getInstance();
-    Bag.getInstance();
-    Box.getInstance();
-    OverworldInfo.getInstance();
-    Global.getInstance();
   }
 
   private initAnimation() {
     createSpriteAnimation(this, TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
     createSpriteAnimation(this, TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);
 
-    createSpriteAnimation(this, TEXTURE.BAG1, ANIMATION.BAG1);
-    createSpriteAnimation(this, TEXTURE.BAG2, ANIMATION.BAG2);
-    createSpriteAnimation(this, TEXTURE.BAG3, ANIMATION.BAG3);
-    createSpriteAnimation(this, TEXTURE.BAG4, ANIMATION.BAG4);
+    createSpriteAnimation(this, TEXTURE.BAG_POCKET_BALL, ANIMATION.BAG_POCKET_BALL);
+    createSpriteAnimation(this, TEXTURE.BAG_POCKET_ETC, ANIMATION.BAG_POCKET_ETC);
+    createSpriteAnimation(this, TEXTURE.BAG_POCKET_BERRY, ANIMATION.BAG_POCKET_BERRY);
+    createSpriteAnimation(this, TEXTURE.BAG_POCKET_KEY, ANIMATION.BAG_POCKET_KEY);
 
-    createSpriteAnimation(this, TEXTURE.PAUSE_BLACK, ANIMATION.PAUSE_BLACK);
-    createSpriteAnimation(this, TEXTURE.PAUSE_WHITE, ANIMATION.PAUSE_WHITE);
-
-    createSpriteAnimation(this, TEXTURE.EMOTION_0, ANIMATION.EMOTION_0);
+    createSpriteAnimation(this, TEXTURE.PAUSE_B, ANIMATION.PAUSE_B);
+    createSpriteAnimation(this, TEXTURE.PAUSE_W, ANIMATION.PAUSE_W);
 
     createSpriteAnimation(this, TEXTURE.BOY_1_BACK, ANIMATION.BOY_1_BACK);
     createSpriteAnimation(this, TEXTURE.BOY_2_BACK, ANIMATION.BOY_2_BACK);
@@ -189,8 +109,10 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.EMO, ANIMATION.EMO);
     createSpriteAnimation(this, TEXTURE.SPARKLE, ANIMATION.SPARKLE);
 
-    createSpriteAnimation(this, TEXTURE.SHADOW, ANIMATION.SHADOW);
-    createSpriteAnimation(this, TEXTURE.SHADOW_WATER, ANIMATION.SHADOW_WATER);
+    createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW, ANIMATION.OVERWORLD_SHADOW);
+    createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW_WATER, ANIMATION.OVERWORLD_SHADOW_WATER);
+
+    createSpriteAnimation(this, 'door_1', 'door_1');
 
     // this.initNpcAnimation();
     this.initPlayerAnimation();

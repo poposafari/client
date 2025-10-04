@@ -1,18 +1,186 @@
-import { ANIMATION } from './enums/animation';
-import { DIRECTION } from './enums/direction';
-import { EVENT } from './enums/event';
-import { MODE } from './enums/mode';
-import { PLAYER_STATUS } from './enums/player-status';
-import { TEXTURE } from './enums/texture';
-import { ItemCategory } from './storage/bag';
+import { DEPTH, DIRECTION, HttpErrorCode, ItemCategory, OBJECT, PLAYER_STATUS, TEXTURE } from './enums';
+import { PlayerItem } from './obj/player-item';
+import { PlayerOption } from './obj/player-option';
+import { PlayerPokemon } from './obj/player-pokemon';
+import { PostCheckoutOverworldObj } from './obj/post-checkout-overworld-obj';
+import { ShopCheckoutOverworldObj } from './obj/shop-checkout-overworld-obj';
 
-export const MaxItemSlot = 9;
-export const MaxPartySlot = 6;
-export const MaxPokeboxBgSlot = 33;
+export type TranslationDefault = {
+  [key: string]: string;
+};
 
+export type TranslationItemInfo = {
+  name: string;
+  description: string;
+};
+
+export type TranslationNpcInfo = {
+  name: string;
+  scripts: string[];
+};
+
+export type TranslationItem = {
+  [key: string]: TranslationItemInfo;
+};
+
+export type TranslationNpc = {
+  [key: string]: TranslationNpcInfo;
+};
+
+export type TranslationPokemonInfo = {
+  name: string;
+  description: string;
+};
+
+export type TranslationPokemon = {
+  [key: string]: TranslationPokemonInfo;
+};
+
+export type PokemonGender = 'male' | 'female' | 'none';
+export type PokemonHabitat = 'land' | 'lake' | 'mt';
+export type PokemonSpawn = 'land' | 'water';
+export type PokemonSkill = 'none' | 'surf' | 'dark_eyes';
+export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
 export type PlayerGender = 'boy' | 'girl';
 export type PlayerAvatar = '1' | '2' | '3' | '4';
 export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
+export type OverworldStatue = ShopCheckoutOverworldObj | PostCheckoutOverworldObj;
+
+export type ApiResponse<T> = {
+  result: true;
+  data: T;
+};
+
+export type ApiErrorResponse = {
+  result: false;
+  data: HttpErrorCode;
+};
+
+export type AccountReq = {
+  username: string;
+  password: string;
+};
+
+export type RegisterIngameReq = {
+  nickname: string;
+  gender: PlayerGender;
+  avatar: PlayerAvatar;
+};
+
+export type LoginRes = {
+  token: string;
+  isDelete: boolean;
+  isDeleteAt: string;
+};
+
+export type GetIngameRes = {
+  pet: GetPcRes | null;
+  pcBg: number[];
+  y: number;
+  x: number;
+  candy: number;
+  pcName: string[];
+  isStarter: boolean;
+  location: string;
+  nickname: string;
+  gender: PlayerGender;
+  avatar: number;
+  party: GetPcRes[];
+  slotItem: (GetItemRes | null)[];
+  createdAt: Date;
+  updatedAt: Date;
+  bag: GetItemRes[];
+  option: IngameOption;
+};
+
+export type GetItemRes = {
+  idx: number;
+  item: string;
+  category: ItemCategory;
+  stock: number;
+};
+
+export type GetPcReq = {
+  box: number;
+};
+
+export type GetPcRes = {
+  idx: number;
+  pokedex: string;
+  gender: PokemonGender;
+  shiny: boolean;
+  form: string;
+  count: number;
+  skill: PokemonSkill[];
+  nickname: string | null;
+  createdLocation: string;
+  createdAt: string;
+  createdBall: string;
+  rank: PokemonRank;
+  evol: PokemonEvol;
+  type_1: string;
+  type_2: string;
+};
+
+export type MovePcReq = {
+  target: number;
+  from: number;
+  to: number;
+};
+
+export type EvolPcReq = {
+  target: number;
+};
+
+export type BuyItemReq = {
+  item: string;
+  stock: number;
+};
+
+export type BuyItemRes = {
+  idx: number;
+  item: string;
+  category: ItemCategory;
+  stock: number;
+  candy: number;
+};
+
+export type UseItemReq = {
+  item: string;
+  cost: number;
+};
+
+export type EnterSafariReq = {
+  overworld: string;
+};
+
+export type EnterSafariRes = {
+  wilds: WildRes[];
+  groundItems: GroundItemRes[];
+};
+
+export type WildRes = {
+  idx: number;
+  pokedex: string;
+  gender: PokemonGender;
+  shiny: boolean;
+  skills: PokemonSkill[];
+  form: string;
+  catch: boolean;
+  eaten_berry: string | null;
+  baseRate: number;
+  type1: string;
+  type2: string;
+  rank: PokemonRank;
+  spawn: PokemonSpawn;
+};
+
+export type GroundItemRes = {
+  idx: number;
+  item: string;
+  stock: number;
+  catch: boolean;
+};
 
 export type ListForm = {
   name: string;
@@ -27,9 +195,34 @@ export type Message = {
   content: string;
   speed: number;
   endDelay?: 1000;
-  end?: EVENT;
-  questionYes?: EVENT;
-  questionNo?: EVENT;
+  end?: () => void;
+  questionYes?: () => void;
+  questionNo?: () => void;
+};
+
+export type Question = {
+  type: 'sys' | 'default';
+  content: string;
+  speed: number;
+  yes: () => Promise<void>;
+  no: () => Promise<void>;
+  end?: () => void;
+};
+
+export type Talk = {
+  type: 'sys' | 'default';
+  content: string;
+  speed: number;
+  end?: () => void;
+};
+
+export type Notice = {
+  content: string;
+};
+
+export type InputNickname = {
+  content: string;
+  title: string;
 };
 
 export type Reward = {
@@ -92,15 +285,27 @@ export type PlayerPet = {
   pet: string | null;
 };
 
-export type InputNicknameData = {
-  type: 'pokemon' | 'box';
-  base: string;
-};
-
 export interface NextEvol {
   next: string | null;
   cost: number | string;
 }
+
+export type PlayerPokemonDto = {
+  idx: number;
+  pokedex: string;
+  count: number;
+  shiny: boolean;
+  form: string;
+  created_at: Date;
+  updated_at: Date;
+  created_location: string;
+  updated_location: string;
+  created_ball: string;
+  updated_ball: string;
+  nickname: string;
+  gender: PokemonGender;
+  skill: PokemonSkill[];
+};
 
 export interface WildPokemonInfo {
   idx: number;
@@ -116,15 +321,107 @@ export interface WildPokemonInfo {
   spawns: PokemonSpawn;
 }
 
-export interface GroundItemInfo {
+export type GroundItemInfo = {
   idx: number;
   catch: boolean;
   item: string;
   stock: number;
+};
+
+export type PokemonEvol = {
+  next: string | null;
+  cost: number;
+};
+
+export enum ShopType {
+  SHOP_0 = 'shop_0',
+  SHOP_1 = 'shop_1',
 }
 
-export type PokemonGender = 'male' | 'female' | 'none';
-export type PokemonHabitat = 'land' | 'lake' | 'mt';
-export type PokemonSpawn = 'land' | 'water';
-export type PokemonSkill = 'none' | 'surf' | 'darkeyes';
-export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
+export enum PostOfficeType {
+  POST_0 = 'post_0',
+  POST_1 = 'post_1',
+}
+
+export type MenuListSetting = {
+  scale: number;
+  etcScale: number;
+  windowWidth: number;
+  offsetX: number;
+  offsetY: number;
+  depth: number;
+  per: number;
+  info: ListForm[];
+  window: TEXTURE | string;
+};
+
+export type MapInfo = {
+  texture: TEXTURE;
+  tilesets: TEXTURE[];
+};
+
+export type Layer = {
+  idx: number;
+  texture: TEXTURE;
+  depth: DEPTH;
+};
+
+export type ForegroundLayer = {
+  idx: number;
+  texture: TEXTURE[];
+  depth: DEPTH;
+};
+
+export type NpcInfo = {
+  key: string;
+  x: number;
+  y: number;
+};
+
+export type DoorInfo = {
+  texture: TEXTURE | string;
+  x: number;
+  y: number;
+  offsetY: number;
+  displayWidth: number;
+  displayHeight: number;
+  goal: {
+    location: string;
+    x: number;
+    y: number;
+  };
+};
+
+export type StatueInfo = {
+  texture: TEXTURE | string;
+  x: number;
+  y: number;
+  type: OBJECT.STATUE | OBJECT.SHOP_CHECKOUT | OBJECT.POST_CHECKOUT;
+  statueType: ShopType | PostOfficeType;
+};
+
+export type IngameOption = {
+  textSpeed: number;
+  backgroundVolume: number;
+  effectVolume: number;
+  frame: number;
+};
+
+export type IngameData = {
+  avatar: number;
+  candy: number;
+  createdAt: Date;
+  gender: PlayerGender;
+  isStarter: boolean;
+  location: string;
+  nickname: string;
+  party: (PlayerPokemon | null)[];
+  pcBg: number[];
+  pcName: string[];
+  pet: PlayerPokemon | null;
+  slotItem: (PlayerItem | null)[];
+  updatedAt: Date;
+  x: number;
+  y: number;
+  option: PlayerOption;
+};

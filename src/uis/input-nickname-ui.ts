@@ -1,29 +1,24 @@
-import InputText from 'phaser3-rex-plugins/plugins/inputtext';
-import { DEPTH } from '../enums/depth';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { TEXTURE } from '../enums/texture';
+import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
+import { addText, addTextInput, addWindow, Ui } from './ui';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addText, addTextInput, addWindow, Ui } from './ui';
+import { DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import i18next from '../i18n';
+import { InputNickname } from '../types';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { KEY } from '../enums/key';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import i18next from 'i18next';
-import { InputNicknameData } from '../types';
 
 export class InputNicknameUi extends Ui {
   private container!: Phaser.GameObjects.Container;
-  private bgContainer!: Phaser.GameObjects.Container;
+  private btnContainer!: Phaser.GameObjects.Container;
   private title!: Phaser.GameObjects.Text;
   private input!: InputText;
-  private submitBtn!: Phaser.GameObjects.NineSlice;
-  private cancelBtn!: Phaser.GameObjects.NineSlice;
+  private btnWindows: Phaser.GameObjects.NineSlice[] = [];
+  private btnTitles: Phaser.GameObjects.Text[] = [];
 
-  private readonly windowWidth: number = 1100;
-  private readonly windowHeight: number = 420;
-  private readonly scale: number = 4;
-  private readonly inputScale: number = 2;
-  private readonly btnScale: number = 2;
+  private readonly windowWidth: number = 1000;
+  private readonly windowHeight: number = 410;
+  private readonly scale: number = 6;
+  private readonly inputScale: number = 4;
+  private readonly btnScale: number = 4;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -34,99 +29,140 @@ export class InputNicknameUi extends Ui {
     const height = this.getHeight();
 
     this.container = this.createContainer(width / 2, height / 2);
-    this.bgContainer = this.createContainer(width / 2, height / 2);
+    this.btnContainer = this.createContainer(width / 2, height / 2 + 110);
 
-    const bg = addBackground(this.scene, TEXTURE.BLACK).setOrigin(0.5, 0.5);
-    bg.setAlpha(0.5);
+    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.scale, this.windowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
+    this.title = addText(this.scene, 0, -110, '', TEXTSTYLE.MESSAGE_BLACK).setScale(1);
+    const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, (this.windowWidth - 400) / this.inputScale, 100 / this.inputScale, 16, 16, 16, 16).setScale(this.inputScale);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, this.windowWidth / this.scale, this.windowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
-    this.title = addText(this.scene, 0, -110, '', TEXTSTYLE.MESSAGE_BLACK);
-    this.title.setScale(1);
-    const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, (this.windowWidth - 400) / this.inputScale, 50, 16, 16, 16, 16).setScale(this.inputScale);
-
-    this.input = addTextInput(this.scene, -320, 0, 1300, 600, TEXTSTYLE.MESSAGE_BLACK, {
+    this.input = addTextInput(this.scene, -260, 0, 1300, 200, TEXTSTYLE.MESSAGE_BLACK, {
       type: 'text',
       minLength: 1,
-      maxLength: 20,
+      maxLength: 16,
       placeholder: i18next.t('menu:nickname'),
-    });
+    })
+      .setScale(0.5)
+      .setOrigin(0, 0.5);
 
-    this.submitBtn = addWindow(this.scene, TEXTURE.WINDOW_2, -170, 115, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16).setScale(this.btnScale);
-    this.cancelBtn = addWindow(this.scene, TEXTURE.WINDOW_2, +170, 115, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16).setScale(this.btnScale);
+    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_MENU, -170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
+      .setScale(this.btnScale)
+      .setInteractive({ cursor: 'pointer' });
+    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_MENU, +170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
+      .setScale(this.btnScale)
+      .setInteractive({ cursor: 'pointer' });
 
-    const submitBtnTitle = addText(this.scene, -170, 115, i18next.t('menu:change'), TEXTSTYLE.MESSAGE_BLACK);
-    const cancelBtnTitle = addText(this.scene, +170, 115, i18next.t('menu:cancel'), TEXTSTYLE.MESSAGE_BLACK);
-    submitBtnTitle.setScale(0.7);
-    cancelBtnTitle.setScale(0.7);
-    this.input.setScale(0.6);
-    this.input.setOrigin(0, 0.5);
+    this.btnTitles[0] = addText(this.scene, -170, 0, i18next.t('menu:change'), TEXTSTYLE.MESSAGE_BLACK);
+    this.btnTitles[1] = addText(this.scene, +170, 0, i18next.t('menu:cancel'), TEXTSTYLE.MESSAGE_BLACK);
+    this.btnTitles[0].setScale(0.7);
+    this.btnTitles[1].setScale(0.7);
 
     this.container.add(window);
     this.container.add(this.title);
     this.container.add(inputWindow);
     this.container.add(this.input);
-    this.container.add(this.submitBtn);
-    this.container.add(this.cancelBtn);
-    this.container.add(submitBtnTitle);
-    this.container.add(cancelBtnTitle);
-
-    this.bgContainer.add(bg);
-
-    this.bgContainer.setVisible(false);
-    this.bgContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
-    this.bgContainer.setScrollFactor(0);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 3);
     this.container.setScrollFactor(0);
+
+    this.btnContainer.add(this.btnWindows[0]);
+    this.btnContainer.add(this.btnWindows[1]);
+    this.btnContainer.add(this.btnTitles[0]);
+    this.btnContainer.add(this.btnTitles[1]);
+
+    this.btnContainer.setVisible(false);
+    this.btnContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 3);
+    this.btnContainer.setScrollFactor(0);
+
+    this.handleMouseBtn();
   }
 
-  show(data: InputNicknameData): void {
-    this.bgContainer.setVisible(true);
+  async show(data: InputNickname): Promise<string> {
+    this.btnContainer.setVisible(true);
     this.container.setVisible(true);
 
-    this.input.pointerEvents = 'auto';
+    this.title.setText(data.title);
 
-    if (data.type === 'pokemon') {
-      this.title.setText(i18next.t('menu:changePokemonName'));
-    } else if (data.type === 'box') {
-      this.title.setText(i18next.t('menu:changeBoxName'));
-    }
-    this.input.text = data.base;
+    this.input.text = data.content;
 
-    eventBus.emit(EVENT.SHOW_MODE_STACK);
-    this.handleKeyInput();
-    this.scene.input.keyboard?.disableGlobalCapture();
-  }
+    this.pause(false);
 
-  clean(data?: any): void {
-    this.scene.input.keyboard?.enableGlobalCapture();
+    return new Promise((resolve) => {
+      const keyboard = KeyboardHandler.getInstance();
+      const keys = [KEY.ENTER, KEY.CANCEL];
+      keyboard.setAllowKey(keys);
+      keyboard.setKeyDownCallback((key) => {
+        switch (key) {
+          case KEY.CANCEL:
+            this.clean();
+            resolve(i18next.t('menu:cancel'));
+            break;
+          case KEY.ENTER:
+            this.clean();
+            resolve(this.input.text);
+            break;
+        }
+      });
 
-    this.input.setBlur();
-    this.input.pointerEvents = 'none';
-    this.input.text = '';
+      this.btnWindows[0].on('pointerover', () => {
+        this.btnWindows[0].setTint(0xcccccc);
+      });
+      this.btnWindows[1].on('pointerover', () => {
+        this.btnWindows[1].setTint(0xcccccc);
+      });
 
-    this.bgContainer.setVisible(false);
-    this.container.setVisible(false);
-  }
+      this.btnWindows[0].on('pointerout', () => {
+        this.btnWindows[0].clearTint();
+      });
+      this.btnWindows[1].on('pointerout', () => {
+        this.btnWindows[1].clearTint();
+      });
 
-  pause(onoff: boolean, data?: any): void {}
-
-  handleKeyInput(...data: any[]) {
-    const keyboard = KeyboardHandler.getInstance();
-    const keys = [KEY.ENTER, KEY.CANCEL];
-
-    keyboard.setAllowKey(keys);
-    keyboard.setKeyDownCallback((key) => {
-      switch (key) {
-        case KEY.CANCEL:
-          this.clean();
-          eventBus.emit(EVENT.POP_MODE);
-          eventBus.emit(EVENT.RESTORE_POKEBOX_KEYHANDLE);
-          break;
-      }
+      this.btnWindows[0].on('pointerup', () => {
+        this.clean();
+        resolve(this.input.text);
+      });
+      this.btnWindows[1].on('pointerup', () => {
+        console.log('?');
+        this.clean();
+        resolve(i18next.t('menu:cancel'));
+      });
     });
   }
 
+  clean(data?: any): void {
+    this.pause(true);
+
+    for (const btn of this.btnWindows) {
+      btn.removeAllListeners();
+    }
+
+    this.btnContainer.setVisible(false);
+    this.container.setVisible(false);
+  }
+
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
+
+  handleKeyInput(...data: any[]) {}
+
   update(time?: number, delta?: number): void {}
+
+  private block() {
+    for (const btn of this.btnWindows) {
+      btn.disableInteractive();
+    }
+    this.input.setBlur();
+    this.input.pointerEvents = 'none';
+  }
+
+  private unblock() {
+    for (const btn of this.btnWindows) {
+      btn.setInteractive().setScrollFactor(0);
+    }
+    this.input.pointerEvents = 'auto';
+  }
+
+  private handleMouseBtn() {}
 }

@@ -1,11 +1,8 @@
 import { eventBus } from '../core/event-bus';
-import { AUDIO } from '../enums/audio';
-import { DEPTH } from '../enums/depth';
-import { EVENT } from '../enums/event';
-import { KEY } from '../enums/key';
-import { TEXTURE } from '../enums/texture';
+import { GM } from '../core/game-manager';
+import { AUDIO, DEPTH, EVENT, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addWindow, playSound, Ui } from './ui';
+import { addWindow, playSound, shakeEffect, Ui } from './ui';
 
 export class ModalFormUi extends Ui {
   private modalContainer!: Phaser.GameObjects.Container;
@@ -41,6 +38,11 @@ export class ModalFormUi extends Ui {
   handleKeyInput(data?: any): void {}
 
   update(time: number, delta: number): void {}
+
+  shake() {
+    playSound(this.scene, AUDIO.BUZZER, GM.getVolume('bg'));
+    shakeEffect(this.scene, this.modalContainer);
+  }
 
   protected setModalSize(texture: TEXTURE, width: number, height: number, scale: number) {
     this.window.setTexture(texture);
