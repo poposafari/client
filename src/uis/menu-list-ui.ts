@@ -1,25 +1,11 @@
-import i18next from 'i18next';
-import { DEPTH } from '../enums/depth';
-import { TEXTURE } from '../enums/texture';
-import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, Ui } from './ui';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { KEY } from '../enums/key';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { ListForm } from '../types';
-
-interface MenuListSetting {
-  scale: number;
-  etcScale: number;
-  windowWidth: number;
-  offsetX: number;
-  offsetY: number;
-  depth: number;
-  per: number;
-  info: ListForm[];
-}
+import { GM } from '../core/game-manager';
+import { AUDIO, EVENT, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import { KeyboardHandler } from '../handlers/keyboard-handler';
+import i18next from '../i18n';
+import { InGameScene } from '../scenes/ingame-scene';
+import { ListForm, MenuListSetting } from '../types';
+import { addImage, addText, addWindow, playSound, Ui } from './ui';
 
 export class MenuListUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -55,7 +41,6 @@ export class MenuListUi extends Ui {
     const height = this.getHeight();
 
     this.info = data.info;
-    this.addCancel();
     this.lastChoice = null;
     this.lastStart = null;
 
@@ -66,7 +51,7 @@ export class MenuListUi extends Ui {
 
     this.container = this.createContainer(width / 2 + data.offsetX, height / 2 + data.offsetY);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, this.contentHeight + this.spacing + this.spacing, 0, 0, 16, 16, 16, 16);
+    this.window = addWindow(this.scene, data.window, 0, this.contentHeight + this.spacing + this.spacing, 0, 0, 16, 16, 16, 16);
     this.window.setOrigin(0, 1);
     this.window.setScale(this.scale);
 
@@ -114,7 +99,7 @@ export class MenuListUi extends Ui {
 
     this.show();
 
-    this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+    this.dummys[choice].setTexture(TEXTURE.ARROW_B);
 
     return new Promise((resolve) => {
       keyboard.setAllowKey(keys);
@@ -132,7 +117,7 @@ export class MenuListUi extends Ui {
                 prevChoice = 1;
                 this.start--;
                 this.renderList();
-                this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
               }
               break;
             case KEY.DOWN:
@@ -143,10 +128,12 @@ export class MenuListUi extends Ui {
                 prevChoice = 5;
                 this.start++;
                 this.renderList();
-                this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
               }
               break;
             case KEY.SELECT:
+              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+
               this.lastChoice = choice;
               this.lastStart = this.start;
 
@@ -165,8 +152,12 @@ export class MenuListUi extends Ui {
 
           if (key === KEY.UP || key === KEY.DOWN) {
             if (choice !== prevChoice) {
+              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+
               this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-              this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+
+              this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+              this.dummys[choice].setTexture(TEXTURE.ARROW_B);
 
               if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
             }
@@ -183,6 +174,7 @@ export class MenuListUi extends Ui {
   updateInfo(info: ListForm[]) {
     this.info = [];
     this.info.push(...info);
+    this.addCancel();
   }
 
   private addCancel() {
@@ -208,19 +200,8 @@ export class MenuListUi extends Ui {
     const lineHeight = this.contentHeight + this.spacing;
     const items = this.info;
     const visibleItems = items.slice(this.start, this.start + this.perList);
-    const beforeItem = items[this.start - 1];
-    const afterItem = items[this.start + this.perList];
 
     let currentY = -lineHeight * (this.perList - 2);
-
-    // if (beforeItem) {
-    //   const [text, textImage, etcText, etcImage, dummy] = this.createContent(beforeItem, currentY - lineHeight);
-    //   this.listContainer.add(text);
-    //   this.listContainer.add(textImage);
-    //   this.listContainer.add(etcText);
-    //   this.listContainer.add(etcImage);
-    //   this.listContainer.add(dummy);
-    // }
 
     for (const item of visibleItems) {
       if (item) {
@@ -247,15 +228,6 @@ export class MenuListUi extends Ui {
         currentY += this.contentHeight + this.spacing;
       }
     }
-
-    // if (afterItem) {
-    //   const [text, textImage, etcText, etcImage, dummy] = this.createContent(afterItem, currentY);
-    //   this.listContainer.add(text);
-    //   this.listContainer.add(textImage);
-    //   this.listContainer.add(etcText);
-    //   this.listContainer.add(etcImage);
-    //   this.listContainer.add(dummy);
-    // }
   }
 
   private createContent(target: ListForm, y: number) {

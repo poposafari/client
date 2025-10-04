@@ -1,4 +1,0 @@
-export enum POKEMON_STATUS {
-  CAPTURED,
-  ROAMING,
-}

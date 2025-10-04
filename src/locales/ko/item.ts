@@ -94,7 +94,7 @@ export const item: TranslationItem = {
     description: '모든타입 포켓몬이 좋아하는 열매.',
   },
   '030': {
-    name: '티켓',
+    name: '사파리 티켓',
     description: '야생 포켓몬이 등장하는 월드에\n입장할 수 있는 입장권이다.',
   },
   '032': {

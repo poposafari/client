@@ -1,0 +1,35 @@
+{
+  "frames": {
+    "overworld_shadow-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 8
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 8
+      },
+      "sourceSize": {
+        "w": 14,
+        "h": 8
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "overworld_shadow.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 14,
+      "h": 8
+    },
+    "scale": "1"
+  }
+}

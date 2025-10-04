@@ -1,20 +1,18 @@
-import i18next from 'i18next';
-import { DEPTH } from '../enums/depth';
-import { TEXTURE } from '../enums/texture';
+import { eventBus } from '../core/event-bus';
+import { GM } from '../core/game-manager';
+import { AUDIO, DEPTH, EVENT, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import { KeyboardHandler } from '../handlers/keyboard-handler';
+import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { KEY } from '../enums/key';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { AUDIO } from '../enums/audio';
 
 export class MenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private window!: Phaser.GameObjects.NineSlice;
   private menus: Phaser.GameObjects.Text[] = [];
   private dummys: Phaser.GameObjects.Image[] = [];
+  private etcImgs: Phaser.GameObjects.Image[] = [];
+  private etcTexts: Phaser.GameObjects.Text[] = [];
 
   private info: string[] = [];
   private readonly contentHeight: number = 30;
@@ -53,14 +51,24 @@ export class MenuUi extends Ui {
       dummy.destroy();
     });
 
+    this.etcImgs.forEach((img) => {
+      img.destroy();
+    });
+
+    this.etcTexts.forEach((text) => {
+      text.destroy();
+    });
+
     this.dummys = [];
     this.menus = [];
+    this.etcImgs = [];
+    this.etcTexts = [];
 
     if (this.container) {
       this.container.removeAll(true);
     }
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, 0, 0, 16, 16, 16, 16);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, 0, 0, 16, 16, 16, 16);
     this.window.setOrigin(0, 1);
     this.window.setScale(this.scale);
 
@@ -69,13 +77,20 @@ export class MenuUi extends Ui {
     for (const info of this.info) {
       const text = addText(this.scene, +40, currentY, info, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
       const dummy = addImage(this.scene, TEXTURE.BLANK, +20, currentY).setOrigin(0, 1);
+      const etcTexts = addText(this.scene, text.displayWidth + text.x + 33, currentY - 5, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
+      const etcImgs = addImage(this.scene, TEXTURE.BLANK, text.displayWidth + text.x + 10, currentY - 8).setOrigin(0, 1);
+
       dummy.setScale(1.6);
 
       this.menus.push(text);
       this.dummys.push(dummy);
+      this.etcTexts.push(etcTexts);
+      this.etcImgs.push(etcImgs);
 
       this.container.add(text);
       this.container.add(dummy);
+      this.container.add(etcTexts);
+      this.container.add(etcImgs);
 
       currentY += lineHeight;
     }
@@ -101,7 +116,7 @@ export class MenuUi extends Ui {
     let end = this.info.length - 1;
     let choice = start;
 
-    this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+    this.dummys[choice].setTexture(TEXTURE.ARROW_B);
 
     return new Promise((resolve) => {
       keyboard.setAllowKey(keys);
@@ -123,19 +138,21 @@ export class MenuUi extends Ui {
                 this.clean();
                 return resolve(this.info[choice]);
               }
-              playSound(this.scene, AUDIO.BUZZER);
+              playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+
               break;
             // if()
             case KEY.CANCEL:
               this.clean();
               return resolve(i18next.t('menu:cancelMenu'));
-              break;
           }
 
           if (key === KEY.UP || key === KEY.DOWN) {
             if (choice !== prevChoice) {
+              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+
               this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-              this.dummys[choice].setTexture(TEXTURE.ARROW_B_R);
+              this.dummys[choice].setTexture(TEXTURE.ARROW_B);
             }
           }
         } catch (error) {
@@ -162,6 +179,18 @@ export class MenuUi extends Ui {
       if (menu.text === target) {
         menu.setStyle(getTextStyle(style));
       }
+    }
+  }
+
+  updateEtc(target: string, texture: TEXTURE, text: string, scaleImg: number = 1, scaleText: number = 1) {
+    let i = 0;
+    for (const menu of this.menus) {
+      if (menu.text === target) {
+        console.log();
+        this.etcImgs[i].setTexture(texture).setScale(scaleImg);
+        this.etcTexts[i].setText(text).setScale(scaleText);
+      }
+      i++;
     }
   }
 }
