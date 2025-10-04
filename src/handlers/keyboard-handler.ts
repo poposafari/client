@@ -1,7 +1,5 @@
-import { AUDIO } from '../enums/audio';
-import { KEY } from '../enums/key';
+import { KEY } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { playSound } from '../uis/ui';
 
 type KeyCallback = (key: KEY) => void;
 

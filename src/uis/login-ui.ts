@@ -1,20 +1,18 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
-import i18next from 'i18next';
-import { DEPTH } from '../enums/depth';
-import { TEXTURE } from '../enums/texture';
-import { InGameScene } from '../scenes/ingame-scene';
-import { TEXTSTYLE } from '../enums/textstyle';
 import { ModalFormUi } from './modal-form-ui';
-import { addBackground, addImage, addText, addTextInput, addWindow, startModalAnimation } from './ui';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { MODE } from '../enums/mode';
-import { loginApi } from '../api';
+import { InGameScene } from '../scenes/ingame-scene';
+import { AUDIO, DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { addBackground, addImage, addText, addTextInput, addWindow, playSound, startModalAnimation } from './ui';
+import i18next from '../i18n';
+import { loginLocalApi } from '../api';
+import { GM } from '../core/game-manager';
 
 export class LoginUi extends ModalFormUi {
   private bg!: Phaser.GameObjects.Image;
 
-  private loginTitle!: Phaser.GameObjects.Text;
+  // private loginTitle!: Phaser.GameObjects.Text;
+  private title!: Phaser.GameObjects.Image;
+  private errTexts!: Phaser.GameObjects.Text;
 
   private inputWindows: Phaser.GameObjects.NineSlice[] = [];
   private inputs: InputText[] = [];
@@ -28,6 +26,7 @@ export class LoginUi extends ModalFormUi {
   private inputContainer!: Phaser.GameObjects.Container;
   private btnContainer!: Phaser.GameObjects.Container;
   private titleContainer!: Phaser.GameObjects.Container;
+  private mixContainer!: Phaser.GameObjects.Container;
 
   private targetContainers!: Phaser.GameObjects.Container[];
   private restorePosY!: number[];
@@ -41,11 +40,12 @@ export class LoginUi extends ModalFormUi {
     const height = this.getHeight();
 
     super.setup();
-    this.setModalSize(TEXTURE.WINDOW_2, 160, 145, 4);
+    this.setModalSize(TEXTURE.WINDOW_0, 180, 190, 4);
 
     this.container = this.createContainer(width / 2, height / 2);
+    this.mixContainer = this.createContainer(width / 2, height / 2);
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
+    this.bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
     this.setUpTitles(width, height);
     this.setUpInput(width, height);
     this.setUpBtn(width, height);
@@ -63,9 +63,11 @@ export class LoginUi extends ModalFormUi {
   }
 
   show(data?: any): void {
+    playSound(this.scene, AUDIO.OPEN_0, GM.getUserOption()?.getEffectVolume());
     super.show();
     this.inputs[0].text = '';
     this.inputs[1].text = '';
+    this.errTexts.text = '';
 
     this.container.setVisible(true);
 
@@ -135,10 +137,11 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpInput(width: number, height: number) {
-    this.inputContainer = this.createContainer(width / 2, height / 2 - 100);
+    this.inputContainer = this.createContainer(width / 2, height / 2 - 110);
 
-    this.inputWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_1, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.inputWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_1, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.errTexts = addText(this.scene, 0, +195, '', TEXTSTYLE.GENDER_1);
 
     this.inputs[0] = addTextInput(this.scene, -200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'text',
@@ -158,6 +161,7 @@ export class LoginUi extends ModalFormUi {
     this.inputContainer.add(this.inputWindows[1]);
     this.inputContainer.add(this.inputs[0]);
     this.inputContainer.add(this.inputs[1]);
+    this.inputContainer.add(this.errTexts);
 
     this.inputContainer.setVisible(false);
     this.inputContainer.setDepth(DEPTH.TITLE + 2);
@@ -165,15 +169,15 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpBtn(width: number, height: number) {
-    this.btnContainer = this.createContainer(width / 2, height / 2 + 100);
+    this.btnContainer = this.createContainer(width / 2, height / 2 + 150);
 
-    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_2, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
-    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_2, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_0, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_0, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
     this.btnTexts[0] = addText(this.scene, -125, 0, i18next.t('menu:login'), TEXTSTYLE.DEFAULT);
     this.btnTexts[1] = addText(this.scene, +125, 0, i18next.t('menu:register'), TEXTSTYLE.DEFAULT);
-    this.btnOthers[0] = addImage(this.scene, TEXTURE.GOOGLE, -40, +115).setInteractive({ cursor: 'pointer' });
-    this.btnOthers[1] = addImage(this.scene, TEXTURE.DISCORD, +40, +115).setInteractive({ cursor: 'pointer' });
-    this.orText = addText(this.scene, 0, +60, i18next.t('menu:or'), TEXTSTYLE.DEFAULT_GRAY);
+    this.btnOthers[0] = addImage(this.scene, TEXTURE.BLANK, -40, +115).setInteractive({ cursor: 'pointer' }); //google
+    this.btnOthers[1] = addImage(this.scene, TEXTURE.BLANK, +40, +115).setInteractive({ cursor: 'pointer' }); //discord
+    this.orText = addText(this.scene, 0, +60, '', TEXTSTYLE.DEFAULT_GRAY); //i18next.t('menu:or')
 
     this.btnContainer.add(this.btnWindows[0]);
     this.btnContainer.add(this.btnWindows[1]);
@@ -189,11 +193,12 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpTitles(width: number, height: number) {
-    this.titleContainer = this.createContainer(width / 2, height / 2 - 205);
+    this.titleContainer = this.createContainer(width / 2, height / 2 - 250);
 
-    this.loginTitle = addText(this.scene, 0, 0, i18next.t('menu:login'), TEXTSTYLE.TITLE_MODAL);
-
-    this.titleContainer.add(this.loginTitle);
+    // this.loginTitle = addText(this.scene, 0, 0, i18next.t('menu:login'), TEXTSTYLE.TITLE_MODAL);
+    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, 0).setScale(2.4);
+    // this.titleContainer.add(this.loginTitle);
+    this.titleContainer.add(this.title);
 
     this.titleContainer.setVisible(false);
     this.titleContainer.setDepth(DEPTH.TITLE + 3);
@@ -227,17 +232,31 @@ export class LoginUi extends ModalFormUi {
       this.btnOthers[1].clearTint();
     });
 
-    this.btnWindows[0].on('pointerup', () => {
+    this.btnWindows[0].on('pointerup', async () => {
       if (this.validate(this.inputs[0].text, this.inputs[1].text)) {
         this.pause(true);
-        eventBus.emit(EVENT.SUBMIT_LOGIN, this.inputs[0].text, this.inputs[1].text);
+        const res = await loginLocalApi({ username: this.inputs[0].text, password: this.inputs[1].text });
+
+        if (res!.result) {
+          localStorage.setItem('access_token', String(res!.data.token));
+
+          if (res!.data.isDelete) {
+            GM.changeMode(MODE.ACCOUNT_DELETE_RESTORE, res!.data.isDeleteAt);
+          } else {
+            GM.changeMode(MODE.TITLE);
+          }
+        } else {
+          if (res!.data === HttpErrorCode.LOGIN_FAIL) {
+            this.shake();
+            this.errTexts.setText(i18next.t('message:invalidUsernameOrPassword'));
+          }
+        }
       }
     });
     this.btnWindows[1].on('pointerup', () => {
-      eventBus.emit(EVENT.CHANGE_MODE, MODE.REGISTER);
+      GM.changeMode(MODE.REGISTER);
     });
     this.btnOthers[0].on('pointerup', () => {
-      eventBus.emit(EVENT.SUBMIT_GOOGLE);
       console.log('OAuth Google');
     });
     this.btnOthers[1].on('pointerup', () => {
@@ -247,14 +266,14 @@ export class LoginUi extends ModalFormUi {
 
   private validate(username: string, password: string) {
     if (username.length <= 0) {
-      this.pause(true);
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'talk', content: i18next.t('message:emptyUsername'), speed: 10 }]);
+      this.shake();
+      this.errTexts.setText(i18next.t('message:emptyUsername'));
       return false;
     }
 
     if (password.length <= 0) {
-      this.pause(true);
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [{ type: 'sys', format: 'talk', content: i18next.t('message:emptyPassword'), speed: 10 }]);
+      this.shake();
+      this.errTexts.setText(i18next.t('message:emptyPassword'));
       return false;
     }
 

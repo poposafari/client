@@ -1,36 +1,36 @@
-import i18next from 'i18next';
-import { DEPTH } from '../enums/depth';
-import { TEXTURE } from '../enums/texture';
-import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addWindow, runFadeEffect, Ui } from './ui';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { KEY } from '../enums/key';
-import { PlayerInfo } from '../storage/player-info';
+import { getIngameApi } from '../api';
+import { MAX_ITEM_SLOT, MAX_PARTY_SLOT } from '../constants';
+import { GM } from '../core/game-manager';
+import { AUDIO, DEPTH, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { logoutApi } from '../api';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { MODE } from '../enums/mode';
-import { SocketHandler } from '../handlers/socket-handler';
-import { getPokemonOverworldOrIconKey } from '../utils/string-util';
+import i18next from '../i18n';
+import { PlayerItem } from '../obj/player-item';
+import { PlayerPokemon } from '../obj/player-pokemon';
+import { InGameScene } from '../scenes/ingame-scene';
+import { BagStorage } from '../storage';
+import { GetItemRes, PlayerGender } from '../types';
+import { getPokemonType } from '../utils/string-util';
+import { addBackground, addImage, addText, addWindow, playSound, runFadeEffect, Ui } from './ui';
 
 export class TitleUi extends Ui {
-  private container!: Phaser.GameObjects.Container;
+  private bgContainer!: Phaser.GameObjects.Container;
   private windowContainer!: Phaser.GameObjects.Container;
 
   private bg!: Phaser.GameObjects.Image;
   private title!: Phaser.GameObjects.Image;
   private windows: Phaser.GameObjects.NineSlice[] = [];
   private texts: Phaser.GameObjects.Text[] = [];
-  private continueName!: Phaser.GameObjects.Text;
-  private continueLocation!: Phaser.GameObjects.Text;
-  private continuePlaytime!: Phaser.GameObjects.Text;
+
+  private choice: number = 0;
+
   private continueParties: Phaser.GameObjects.Image[] = [];
 
+  private readonly windowWidth: number = 240;
+  private readonly contentPosY: number = -370;
   private readonly contentHeight: number = 100;
   private readonly contentSpacing: number = 15;
   private readonly scale: number = 3.4;
-  private readonly menus = [i18next.t('menu:newgame'), i18next.t('menu:mysteryGift'), i18next.t('menu:logout')];
+  private menus = [i18next.t('menu:newgame'), i18next.t('menu:option'), i18next.t('menu:logout')];
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -40,44 +40,41 @@ export class TitleUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2, height / 2);
-
-    this.bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
+    this.bgContainer = this.createContainer(width / 2, height / 2);
     this.windowContainer = this.createContainer(width / 2, height / 2 + 160);
-    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, -525).setScale(4);
 
-    this.createContinue();
-    this.createMenus();
+    this.bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, -370).setScale(4);
 
-    this.container.add(this.bg);
+    this.bgContainer.add(this.bg);
+    this.bgContainer.add(this.title);
 
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.TITLE - 1);
-    this.container.setScrollFactor(0);
-
-    this.windowContainer.add(this.title);
+    this.bgContainer.setVisible(false);
+    this.bgContainer.setDepth(DEPTH.TITLE - 1);
+    this.bgContainer.setScrollFactor(0);
 
     this.windowContainer.setVisible(false);
     this.windowContainer.setDepth(DEPTH.TITLE);
     this.windowContainer.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  async show(data?: any): Promise<void> {
     runFadeEffect(this.scene, 1000, 'in');
 
-    const playerData = PlayerInfo.getInstance();
+    this.restoreContinue();
+    this.removeMenus();
+    this.createMenus();
 
-    this.continueName.setText(playerData.getNickname());
-    this.continueLocation.setText(i18next.t(`menu:overworld_${playerData.getLocation()}`));
+    await this.getIngame();
 
-    this.container.setVisible(true);
+    this.bgContainer.setVisible(true);
     this.windowContainer.setVisible(true);
 
     this.handleKeyInput();
   }
 
   clean(data?: any): void {
-    this.container.setVisible(false);
+    this.bgContainer.setVisible(false);
     this.windowContainer.setVisible(false);
   }
 
@@ -87,14 +84,13 @@ export class TitleUi extends Ui {
     const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
     const keyboard = KeyboardHandler.getInstance();
 
-    let choice = 0;
+    let choice = this.choice ? this.choice : 0;
 
-    this.windows[choice].setTexture(TEXTURE.WINDOW_4);
+    this.renderWindowTexture();
 
     keyboard.setAllowKey(keys);
     keyboard.setKeyDownCallback(async (key) => {
       let prevChoice = choice;
-      eventBus.emit(EVENT.PLAY_SOUND, this.scene, key);
 
       try {
         switch (key) {
@@ -109,27 +105,38 @@ export class TitleUi extends Ui {
             }
             break;
           case KEY.SELECT:
-            if (choice === 0) {
-              const playerInfo = PlayerInfo.getInstance();
-              eventBus.emit(EVENT.CHANGE_MODE, MODE.OVERWORLD_CONNECTING, { type: 'enter', idx: PlayerInfo.getInstance().getLocation() });
-            } else if (choice === 1) {
-              eventBus.emit(EVENT.CHANGE_MODE, MODE.ACCOUNT_DELETE);
-            } else if (choice === 2) {
-              console.log('이상한 소포');
-            } else if (choice === 3) {
-              const result = await logoutApi();
-              if (result) {
-                eventBus.emit(EVENT.CHANGE_MODE, MODE.LOGIN);
+            const target = this.menus[choice];
+
+            if (target === i18next.t('menu:newgame')) {
+              if (!GM.getUserData()) {
+                GM.changeMode(MODE.STARTER);
+              } else {
+                GM.changeMode(MODE.ACCOUNT_DELETE);
               }
+            } else if (target === i18next.t('menu:logout')) {
+              GM.changeMode(MODE.LOGOUT);
+            } else if (target === i18next.t('menu:continue')) {
+              if (GM.getUserData()?.isStarter) {
+                GM.changeMode(MODE.BLACK_SCREEN);
+              }
+            } else if (target === i18next.t('menu:option')) {
+              GM.changeMode(MODE.OPTION);
             }
-            this.windows[choice].setTexture(TEXTURE.WINDOW_5);
+
+            this.windows[choice].setTexture(TEXTURE.WINDOW_MENU);
+            this.choice = 0;
+
             break;
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
-            this.windows[prevChoice].setTexture(TEXTURE.WINDOW_5);
-            this.windows[choice].setTexture(TEXTURE.WINDOW_4);
+            this.choice = choice;
+
+            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+
+            this.windows[prevChoice].setTexture(TEXTURE.WINDOW_MENU);
+            this.windows[choice].setTexture(TEXTURE.WINDOW_MENU_S);
           }
         }
       } catch (error) {
@@ -144,35 +151,88 @@ export class TitleUi extends Ui {
 
   private unblock() {}
 
-  private createContinue() {
-    const window = addWindow(this.scene, TEXTURE.WINDOW_5, 0, -195, 210, 75, 16, 16, 16, 16).setScale(this.scale);
-    const text = addText(this.scene, -320, -275, i18next.t('menu:continue'), TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
-    const labelName = addText(this.scene, -320, -230, i18next.t('menu:continueName'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const labelLocation = addText(this.scene, -320, -190, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const labelPlaytime = addText(this.scene, -320, -150, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+  private renderWindowTexture() {
+    for (const window of this.windows) {
+      window.setTexture(TEXTURE.WINDOW_MENU);
+    }
 
-    this.continueName = addText(this.scene, -60, -230, '', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    this.continueLocation = addText(this.scene, -60, -190, '', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    this.continuePlaytime = addText(this.scene, -60, -150, '00:00', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    this.windows[this.choice].setTexture(TEXTURE.WINDOW_MENU_S);
+  }
 
-    this.windowContainer.add(window);
-    this.windowContainer.add(text);
-    this.windowContainer.add(labelName);
-    this.windowContainer.add(labelLocation);
-    this.windowContainer.add(labelPlaytime);
-    this.windowContainer.add(this.continueName);
-    this.windowContainer.add(this.continueLocation);
-    this.windowContainer.add(this.continuePlaytime);
+  private createContinue(nickname: string, location: string, gender: PlayerGender, avatar: number, party: (PlayerPokemon | null)[]) {
+    const continueWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, -230, this.windowWidth, 95, 16, 16, 16, 16).setScale(this.scale);
+    const continueTitle = addText(this.scene, this.contentPosY, -340, i18next.t('menu:continue'), TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+    const continueTitleName = addText(this.scene, this.contentPosY, -290, i18next.t('menu:continueName'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueTitleLocation = addText(this.scene, this.contentPosY, -245, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueTitlePlaytime = addText(this.scene, this.contentPosY, -200, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueName = addText(this.scene, -60, -290, nickname, TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueLocation = addText(this.scene, -60, -245, i18next.t(`menu:overworld_${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continuePlaytime = addText(this.scene, -60, -200, '00:00', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
 
-    this.windows.unshift(window);
+    const statue = addImage(this.scene, `${gender}_${avatar}_statue`, -335, -140).setScale(3.4);
+
+    this.windowContainer.add(continueWindow);
+    this.windowContainer.add(continueTitle);
+    this.windowContainer.add(continueTitleName);
+    this.windowContainer.add(continueTitleLocation);
+    this.windowContainer.add(continueTitlePlaytime);
+    this.windowContainer.add(continueName);
+    this.windowContainer.add(continueLocation);
+    this.windowContainer.add(continuePlaytime);
+    this.windowContainer.add(statue);
+
+    const contentWidth = 80;
+    const spacing = 10;
+    let currentX = -200;
+
+    party.forEach((pokemon) => {
+      const icon = addImage(this.scene, `pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}`, currentX, -140);
+      const shiny = addImage(this.scene, TEXTURE.BLANK, currentX, -140);
+
+      icon.setScale(1.4);
+      shiny.setScale(1.4);
+
+      this.windowContainer.add(icon);
+      this.windowContainer.add(shiny);
+
+      currentX += contentWidth + spacing;
+    });
+
+    this.windows.unshift(continueWindow);
+    this.menus.unshift(i18next.t('menu:continue'));
+  }
+
+  private restoreContinue() {
+    for (let i = 0; i < this.menus.length; i++) {
+      if (this.menus[i] === i18next.t('menu:continue')) {
+        this.windows[i].destroy();
+        this.menus.splice(i, 1);
+        this.windows.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  private removeMenus() {
+    if (this.windowContainer) {
+      this.windowContainer.removeAll(true);
+    }
+
+    this.windows.forEach((window) => window.destroy());
+    this.texts.forEach((text) => text.destroy());
+    this.continueParties.forEach((image) => image.destroy());
+
+    this.windows = [];
+    this.texts = [];
+    this.continueParties = [];
   }
 
   private createMenus() {
     let currentY = 0;
 
     for (const target of this.menus) {
-      const window = addWindow(this.scene, TEXTURE.WINDOW_5, 0, currentY, 210, 30, 16, 16, 16, 16).setScale(this.scale);
-      const text = addText(this.scene, -320, currentY, target, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+      const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, currentY, this.windowWidth, 30, 16, 16, 16, 16).setScale(this.scale);
+      const text = addText(this.scene, this.contentPosY, currentY, target, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
 
       this.windows.push(window);
       this.texts.push(text);
@@ -181,6 +241,20 @@ export class TitleUi extends Ui {
       this.windowContainer.add(text);
 
       currentY += this.contentHeight + this.contentSpacing;
+    }
+  }
+
+  private async getIngame() {
+    const ret = await getIngameApi();
+
+    if (ret.result) {
+      GM.initUserData(ret.data);
+
+      const data = GM.getUserData()!;
+
+      this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
+    } else {
+      GM.setUserData(null);
     }
   }
 }

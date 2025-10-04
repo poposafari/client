@@ -1,10 +1,5 @@
-import i18next from 'i18next';
-import { eventBus } from '../core/event-bus';
-import { DEPTH } from '../enums/depth';
-import { EVENT } from '../enums/event';
-import { TEXTURE } from '../enums/texture';
+import { DEPTH, TEXTURE } from '../enums';
 import { addBackground, Ui } from './ui';
-import { MODE } from '../enums/mode';
 
 export class WelcomeUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -15,7 +10,7 @@ export class WelcomeUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_LOBBY).setOrigin(0.5, 0.5);
+    const bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
 
     this.container.add(bg);
 
@@ -25,13 +20,6 @@ export class WelcomeUi extends Ui {
   }
 
   show(data?: any): void {
-    eventBus.emit(EVENT.CHANGE_MODE, MODE.MESSAGE, [
-      { type: 'sys', format: 'talk', content: i18next.t('message:introNewgame1'), speed: 10 },
-      { type: 'sys', format: 'talk', content: i18next.t('message:introNewgame2'), speed: 10 },
-      { type: 'sys', format: 'talk', content: i18next.t('message:introNewgame3'), speed: 10 },
-      { type: 'sys', format: 'talk', content: i18next.t('message:introNewgame4'), speed: 10, end: EVENT.MOVETO_NEWGAME_MODE },
-    ]);
-
     this.container.setVisible(true);
   }
 

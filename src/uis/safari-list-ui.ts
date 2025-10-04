@@ -1,93 +1,124 @@
-import i18next from 'i18next';
-import { getAllSafaris, SafariData } from '../data/overworld';
+import { useSafariTicketApi } from '../api';
+import { GM } from '../core/game-manager';
+import { getAllSafaris, SafariData } from '../data';
+import { DEPTH, HttpErrorCode, TEXTURE } from '../enums';
+import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
-import { ListForm } from '../types';
-import { ListUi } from './list-ui';
-import { Ui } from './ui';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { MODE } from '../enums/mode';
+import { BagStorage } from '../storage';
+import { GetItemRes, ListForm } from '../types';
 import { replacePercentSymbol } from '../utils/string-util';
-import { useTicketApi } from '../api';
-import { DummyUi } from './dummy-ui';
+import { MenuListUi } from './menu-list-ui';
+import { QuestionMessageUi } from './question-message-ui';
+import { TalkMessageUi } from './talk-message-ui';
+import { Ui } from './ui';
 
 export class SafariListUi extends Ui {
-  private list: ListUi;
-  private safaris!: SafariData[];
+  private container!: Phaser.GameObjects.Container;
 
-  private targetSafari!: any;
+  private list: MenuListUi;
+  private talkMessageUi: TalkMessageUi;
+  private questionMessageUi: QuestionMessageUi;
+
+  private safaris!: SafariData[];
 
   constructor(scene: InGameScene) {
     super(scene);
 
-    this.list = new ListUi(scene, new DummyUi(scene));
-
-    eventBus.on(EVENT.READY_TO_SAFARI, async () => {
-      const result = await useTicketApi({ overworld: this.targetSafari });
-
-      if (result && result.data) {
-        eventBus.emit(EVENT.MOVETO_OVERWORLD_MODE, 'enter', this.targetSafari);
-      }
-    });
+    this.list = new MenuListUi(scene);
+    this.talkMessageUi = new TalkMessageUi(scene);
+    this.questionMessageUi = new QuestionMessageUi(scene);
   }
 
-  setup(data?: any): void {
+  setup(): void {
+    const width = this.getWidth();
+    const height = this.getHeight();
+
+    this.talkMessageUi.setup();
+    this.questionMessageUi.setup();
+
+    this.list.setup({ scale: 1.6, etcScale: 0.9, windowWidth: 400, offsetX: +100, offsetY: +250, depth: DEPTH.MENU + 1, per: 10, info: [], window: TEXTURE.WINDOW_MENU });
+
+    this.container = this.createContainer(width / 2, height / 2);
+
+    this.container.setVisible(false);
+    this.container.setScrollFactor(0);
+  }
+
+  async show(data?: any): Promise<'cancel' | 'use' | SafariData> {
     this.safaris = getAllSafaris();
-    this.list.setupInfo(350, +45, +350, this.createListForm(), 12, 385, 1.4, 0.8);
-  }
+    this.list.updateInfo(this.createListForm());
 
-  show(data?: any): void {
-    this.list.show();
+    while (true) {
+      const selectedIndex = await this.list.handleKeyInput();
 
-    this.handleKeyInput();
+      if (typeof selectedIndex !== 'number' || selectedIndex < 0) break;
+
+      const targetSafari = this.safaris[selectedIndex];
+      const result = await this.promptForSafariTicket(targetSafari);
+
+      if (result === 'use') return targetSafari;
+    }
+
+    return 'cancel';
   }
 
   clean(data?: any): void {
-    this.list.clean();
+    this.container.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}
 
-  async handleKeyInput(...data: any[]) {
-    const ret = await this.list.handleKeyInput();
+  handleKeyInput(data?: any): void {}
 
-    if (typeof ret === 'number' && ret >= 0) {
-      this.targetSafari = this.safaris[ret].key;
+  update(time: number, delta: number): void {}
 
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-        {
-          type: 'default',
-          format: 'question',
-          content: replacePercentSymbol(i18next.t(`npc:npc000_2`), [i18next.t(`menu:overworld_${this.targetSafari}`)]),
-          speed: 10,
-          questionYes: EVENT.READY_TO_SAFARI,
+  private async promptForSafariTicket(safari: SafariData): Promise<'use' | 'cancel'> {
+    return new Promise(async (resolve) => {
+      await this.questionMessageUi.show({
+        type: 'default',
+        content: replacePercentSymbol(i18next.t('npc:npc000_2'), [i18next.t(`menu:overworld_${safari.key}`)]),
+        speed: GM.getUserOption()?.getTextSpeed()!,
+        yes: async () => {
+          const res = await useSafariTicketApi({ item: '030', cost: safari.cost });
+
+          if (res.result) {
+            const data = res.data as GetItemRes;
+
+            if (data.stock === 0) {
+              BagStorage.getInstance().removeItem('030');
+            } else {
+              BagStorage.getInstance().addItems(data.idx, data.item, data.stock, data.category);
+            }
+
+            resolve('use');
+          } else {
+            if (res.data === HttpErrorCode.INGAME_ITEM_STOCK_LIMIT_EXCEEDED || res.data === HttpErrorCode.NOT_FOUND_INGAME_ITEM) {
+              await this.talkMessageUi.show({
+                type: 'default',
+                content: i18next.t('npc:npc000_3'),
+                speed: GM.getUserOption()?.getTextSpeed()!,
+              });
+            }
+            resolve('cancel');
+          }
         },
-      ]);
-    } else if (ret === i18next.t('menu:cancelMenu')) {
-      eventBus.emit(EVENT.POP_MODE);
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-        {
-          type: 'default',
-          format: 'talk',
-          content: i18next.t('npc:npc002_4'),
-          speed: 10,
+        no: async () => {
+          resolve('cancel');
         },
-      ]);
-      eventBus.emit(EVENT.FINISH_TALK);
-    }
+      });
+    });
   }
 
-  update(time?: number, delta?: number): void {}
-
-  private createListForm() {
+  private createListForm(): ListForm[] {
     const ret: ListForm[] = [];
+    const ticketIcon = 'item030';
 
     for (const safari of this.safaris) {
       ret.push({
         name: i18next.t(`menu:overworld_${safari.key}`),
         nameImg: '',
         etc: `x${safari.cost}`,
-        etcImg: 'item030',
+        etcImg: ticketIcon,
       });
     }
 

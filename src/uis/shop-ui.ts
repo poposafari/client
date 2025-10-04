@@ -1,33 +1,34 @@
-import i18next from 'i18next';
-import { getAllItems, Item } from '../data/items';
-import { DEPTH } from '../enums/depth';
-import { TEXTSTYLE } from '../enums/textstyle';
-import { TEXTURE } from '../enums/texture';
-import { InGameScene } from '../scenes/ingame-scene';
-import { ListForm } from '../types';
-import { ListUi } from './list-ui';
-import { addImage, addText, addWindow, Ui } from './ui';
-import { KEY } from '../enums/key';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { Bag } from '../storage/bag';
-import { eventBus } from '../core/event-bus';
-import { EVENT } from '../enums/event';
-import { replacePercentSymbol } from '../utils/string-util';
 import { buyItemApi } from '../api';
-import { PlayerInfo } from '../storage/player-info';
-import { MODE } from '../enums/mode';
+import { eventBus } from '../core/event-bus';
+import { GM } from '../core/game-manager';
+import { getAllItems } from '../data';
+import { DEPTH, EVENT, HttpErrorCode, ItemData, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import { KeyboardHandler } from '../handlers/keyboard-handler';
+import i18next from '../i18n';
+import { InGameScene } from '../scenes/ingame-scene';
+import { BagStorage } from '../storage';
+import { BuyItemRes, ListForm } from '../types';
+import { replacePercentSymbol } from '../utils/string-util';
+import { MenuListUi } from './menu-list-ui';
+import { NoticeUi } from './notice-ui';
+import { QuestionMessageUi } from './question-message-ui';
+import { TalkMessageUi } from './talk-message-ui';
+import { addImage, addText, addWindow, Ui } from './ui';
 
 export class ShopUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private menuContainer!: Phaser.GameObjects.Container;
 
-  private list: ListUi;
+  private list: MenuListUi;
   private descUi: ShopDescUi;
-  private targetItem!: Item;
+  private talkMessageUi: TalkMessageUi;
+  private questionMessageUi: QuestionMessageUi;
+  private noticeUi: NoticeUi;
+  private targetItem!: ItemData;
   private buy!: number;
   private cost!: number;
   private inBag!: number;
-  private items: Item[] = [];
+  private items: ItemData[] = [];
 
   private inBagText!: Phaser.GameObjects.Text;
   private buyText!: Phaser.GameObjects.Text;
@@ -42,60 +43,26 @@ export class ShopUi extends Ui {
   constructor(scene: InGameScene) {
     super(scene);
     this.descUi = new ShopDescUi(scene);
-    this.list = new ListUi(scene, this.descUi);
-
-    eventBus.on(EVENT.PURCHASE_NO_ITEM, () => {
-      this.handleKeyInput();
-    });
-
-    eventBus.on(EVENT.PURCHASE_YES_ITEM, async () => {
-      const ret = await buyItemApi({ item: this.targetItem.key, stock: this.buy });
-
-      if (ret?.success) {
-        const playerInfo = PlayerInfo.getInstance();
-        const bag = Bag.getInstance();
-
-        playerInfo.setCandy(ret.data.candy);
-        bag.addItems(ret.data.item, ret.data.stock, ret.data.category);
-
-        eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-          {
-            type: 'default',
-            format: 'talk',
-            content: i18next.t(`npc:npc002_2`),
-            speed: 10,
-          },
-          {
-            type: 'default',
-            format: 'talk',
-            content: replacePercentSymbol(i18next.t(`message:putPocket`), [
-              PlayerInfo.getInstance().getNickname(),
-              i18next.t(`item:${this.targetItem.key}.name`),
-              i18next.t(`menu:${ret.data.category}`),
-            ]),
-            speed: 10,
-            end: EVENT.PURCHASE_SUCCESS_ITEM,
-          },
-        ]);
-      }
-    });
-
-    eventBus.on(EVENT.PURCHASE_SUCCESS_ITEM, () => {
-      this.handleKeyInput();
-      eventBus.emit(EVENT.HUD_CANDY_UPDATE);
-    });
+    this.list = new MenuListUi(scene, this.descUi);
+    this.talkMessageUi = new TalkMessageUi(scene);
+    this.questionMessageUi = new QuestionMessageUi(scene);
+    this.noticeUi = new NoticeUi(scene);
   }
 
-  setup(data?: any): void {
+  setup(data: string[]): void {
     const width = this.getWidth();
     const height = this.getHeight();
+
+    this.talkMessageUi.setup();
+    this.questionMessageUi.setup();
+    this.noticeUi.setup();
 
     this.inBag = 0;
     this.buy = this.minBuy;
     this.cost = 0;
-    this.items = this.getPurchasableItems();
+    this.items = this.getPurchasableItems(data);
 
-    this.list.setupInfo(400, +35, +315, this.createListForm(), 12, 385, 1.5);
+    this.list.setup({ scale: 1.5, etcScale: 2, windowWidth: 355, offsetX: +100, offsetY: +240, depth: DEPTH.MENU + 1, per: 12, info: [], window: TEXTURE.WINDOW_MENU });
 
     this.descUi.setup(this.items);
     this.setupMenu(width, height);
@@ -105,55 +72,40 @@ export class ShopUi extends Ui {
     this.menuContainer.setScrollFactor(0);
   }
 
-  show(data?: any): void {
-    this.list.show();
+  async show(data?: any): Promise<'cancel'> {
     this.descUi.show();
+    this.list.updateInfo(this.createListForm());
 
-    this.handleKeyInput();
-  }
+    while (true) {
+      const selectedItemIndex = await this.list.handleKeyInput();
 
-  clean(data?: any): void {}
+      if (typeof selectedItemIndex !== 'number' || selectedItemIndex < 0) {
+        break;
+      }
 
-  pause(onoff: boolean, data?: any): void {}
+      const selectedItem = this.items[selectedItemIndex];
 
-  async handleKeyInput(data?: any) {
-    const ret = await this.list.handleKeyInput();
-
-    if (typeof ret === 'number' && ret >= 0) {
-      this.handleMenuKeyInput(this.items[ret]);
-    } else if (ret === i18next.t('menu:cancelMenu')) {
-      this.descUi.clean();
-      eventBus.emit(EVENT.POP_MODE);
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-        {
-          type: 'default',
-          format: 'talk',
-          content: i18next.t('npc:npc002_4'),
-          speed: 10,
-        },
-      ]);
-      eventBus.emit(EVENT.FINISH_TALK);
+      const buyResult = await this.promptForQuantity(selectedItem);
     }
+
+    this.descUi.clean();
+    return 'cancel';
   }
 
-  private handleMenuKeyInput(item: Item) {
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
-    const keyboard = KeyboardHandler.getInstance();
-    const bag = Bag.getInstance().getItem(item.key);
-    this.targetItem = item;
+  private promptForQuantity(item: ItemData): Promise<'purchased' | 'cancel'> {
+    return new Promise((resolve) => {
+      const keyboard = KeyboardHandler.getInstance();
+      const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
 
-    this.buy = this.minBuy;
-    this.cost = this.buy * item.price;
+      const bag = BagStorage.getInstance().getItem(item.key);
+      this.buy = this.minBuy;
 
-    if (bag) this.inBagText.setText(bag.getStock().toString());
-    else this.inBagText.setText('0');
+      this.inBagText.setText(bag ? bag.getStock().toString() : '0');
+      this.menuContainer.setVisible(true);
+      this.renderMenu(item);
 
-    this.menuContainer.setVisible(true);
-    this.renderMenu();
-
-    keyboard.setAllowKey(keys);
-    keyboard.setKeyDownCallback(async (key) => {
-      try {
+      keyboard.setAllowKey(keys);
+      keyboard.setKeyDownCallback(async (key) => {
         switch (key) {
           case KEY.UP:
             this.changeBuy(1);
@@ -169,46 +121,92 @@ export class ShopUi extends Ui {
             break;
           case KEY.SELECT:
             this.menuContainer.setVisible(false);
-            eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-              {
-                type: 'default',
-                format: 'question',
-                content: replacePercentSymbol(i18next.t(`npc:npc002_1`), [i18next.t(`item:${item.key}.name`), this.buy, this.cost]),
-                speed: 10,
-                questionYes: EVENT.PURCHASE_YES_ITEM,
-                questionNo: EVENT.PURCHASE_NO_ITEM,
+            await this.questionMessageUi.show({
+              type: 'default',
+              content: replacePercentSymbol(i18next.t(`npc:npc002_1`), [i18next.t(`item:${item.key}.name`), this.buy, item.price * this.buy]),
+              speed: GM.getUserOption()?.getTextSpeed()!,
+              yes: async () => {
+                const ret = await buyItemApi({ item: item.key, stock: this.buy });
+
+                console.log(ret);
+
+                if (ret?.result) {
+                  const data = ret.data as BuyItemRes;
+
+                  GM.updateUserData({ candy: data.candy });
+                  eventBus.emit(EVENT.HUD_CANDY_UPDATE);
+                  BagStorage.getInstance().addItems(data.idx, data.item, data.stock, data.category);
+
+                  await this.talkMessageUi.show({
+                    type: 'default',
+                    content: i18next.t('npc:npc002_2'),
+                    speed: GM.getUserOption()?.getTextSpeed()!,
+                  });
+
+                  console.log('??');
+
+                  resolve('purchased');
+                } else {
+                  if (ret?.data === HttpErrorCode.NOT_ENOUGH_CANDY) {
+                    await this.talkMessageUi.show({
+                      type: 'default',
+                      content: i18next.t('npc:npc002_3'),
+                      speed: GM.getUserOption()?.getTextSpeed()!,
+                    });
+                  } else if (ret?.data === HttpErrorCode.INGAME_ITEM_STOCK_LIMIT_EXCEEDED) {
+                    await this.noticeUi.show([{ content: i18next.t('message:warn_max_stock') }]);
+                  } else if (ret?.data === HttpErrorCode.NOT_PURCHASABLE_INGAME_ITEM) {
+                    await this.noticeUi.show([{ content: i18next.t('message:warn_not_purchasable_item') }]);
+                  }
+                  resolve('cancel');
+                }
               },
-            ]);
+              no: async () => {
+                resolve('cancel');
+              },
+            });
             break;
           case KEY.CANCEL:
             this.menuContainer.setVisible(false);
-            this.handleKeyInput();
+            resolve('cancel');
             break;
         }
-      } catch (error) {
-        console.error(`Error handling key input: ${error}`);
-      }
+        if ([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT].includes(key)) {
+          this.renderMenu(item);
+        }
+      });
     });
   }
+
+  clean(data?: any): void {
+    this.talkMessageUi.clean();
+    this.questionMessageUi.clean();
+    this.noticeUi.clean();
+    this.list.clean();
+  }
+
+  pause(onoff: boolean, data?: any): void {}
+
+  handleKeyInput(...data: any[]) {}
 
   update(time?: number, delta?: number): void {}
 
   private setupMenu(width: number, height: number) {
     this.menuContainer = this.scene.add.container(width / 2 - 55, height / 2 + 255);
 
-    const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_2, -435, 0, 280 / this.scale, 120 / this.scale, 16, 16, 16, 16);
+    const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, -435, 0, 280 / this.scale, 120 / this.scale, 16, 16, 16, 16);
     inBagWindow.setScale(this.scale);
-    const inBagIcon = addImage(this.scene, TEXTURE.MENU_BAG_BOY, -490, 0);
+    const inBagIcon = addImage(this.scene, TEXTURE.ICON_BAG_M, -490, 0);
     inBagIcon.setScale(3);
     const inBagTextSymbol = addText(this.scene, -440, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
     this.inBagText = addText(this.scene, -420, 0, `${this.inBag}`, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
-    const costWindow = addWindow(this.scene, TEXTURE.WINDOW_2, -105, 0, 345 / this.scale, 120 / this.scale, 16, 16, 16, 16);
+    const costWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, -105, 0, 345 / this.scale, 120 / this.scale, 16, 16, 16, 16);
     costWindow.setScale(this.scale);
     const buySymbol = addText(this.scene, -225, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
     this.buyText = addText(this.scene, -190, 0, `${this.buy}`, TEXTSTYLE.DEFAULT_BLACK);
-    const buyArrowDown = addImage(this.scene, TEXTURE.ARROW_RED, -190, -30).setFlipY(true);
-    const buyArrowUp = addImage(this.scene, TEXTURE.ARROW_RED, -190, 30);
-    const costIcon = addImage(this.scene, TEXTURE.MENU_CANDY, -110, 0).setScale(2.4);
+    const buyArrowDown = addImage(this.scene, TEXTURE.ARROW_R, -190, -30).setFlipY(true);
+    const buyArrowUp = addImage(this.scene, TEXTURE.ARROW_R, -190, 30);
+    const costIcon = addImage(this.scene, TEXTURE.ICON_CANDY, -110, 0).setScale(2.4);
     const costSymbol = addText(this.scene, -70, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
     this.costText = addText(this.scene, -50, 0, `${this.cost}`, TEXTSTYLE.DEFAULT_BLACK);
     this.costText.setOrigin(0, 0.5);
@@ -227,13 +225,13 @@ export class ShopUi extends Ui {
     this.menuContainer.add(this.costText);
   }
 
-  private getPurchasableItems(): Item[] {
-    return getAllItems().filter((item) => item.purchasable);
+  private getPurchasableItems(targets: string[]): ItemData[] {
+    return getAllItems().filter((item) => targets.includes(item.key) && item.purchasable);
   }
 
   private createListForm(): ListForm[] {
     const ret: ListForm[] = [];
-    const candyIcon = TEXTURE.MENU_CANDY;
+    const candyIcon = TEXTURE.ICON_CANDY;
 
     for (const item of this.items) {
       ret.push({
@@ -247,31 +245,22 @@ export class ShopUi extends Ui {
     return ret;
   }
 
-  private renderMenu() {
+  private renderMenu(item: ItemData) {
     this.buyText.setText(this.buy.toString());
-    this.costText.setText((this.buy * this.cost).toString());
+    this.costText.setText((this.buy * item.price).toString());
   }
 
   private changeBuy(amount: number) {
     let newBuy = this.buy + amount;
-
-    if (newBuy < this.minBuy) {
-      newBuy = this.minBuy;
-    } else if (newBuy > this.maxBuy) {
-      newBuy = this.maxBuy;
-    }
-
-    if (this.buy !== newBuy) {
-      this.buy = newBuy;
-      this.renderMenu();
-    }
+    newBuy = Math.max(this.minBuy, Math.min(newBuy, this.maxBuy));
+    this.buy = newBuy;
   }
 }
 
 export class ShopDescUi extends Ui {
   private container!: Phaser.GameObjects.Container;
 
-  private items: Item[] = [];
+  private items: ItemData[] = [];
   private icon!: Phaser.GameObjects.Image;
   private text!: Phaser.GameObjects.Text;
 
@@ -291,7 +280,7 @@ export class ShopDescUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2 + 420);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_2, 0, 0, this.descWindowWidth / this.scale, this.descWindowHeight / this.scale, 16, 16, 16, 16);
+    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.descWindowWidth / this.scale, this.descWindowHeight / this.scale, 16, 16, 16, 16);
     window.setScale(this.scale);
     this.icon = addImage(this.scene, `item000`, -520, 0);
     this.text = addText(this.scene, -440, -55, '', TEXTSTYLE.MESSAGE_BLACK);
@@ -322,6 +311,8 @@ export class ShopDescUi extends Ui {
 
   handleKeyInput(data?: any) {
     const item = this.items[data];
+
+    if (!item) return;
 
     this.icon.setTexture(`item${item.key}`);
     this.text.setText(i18next.t(`item:${item.key}.description`));
