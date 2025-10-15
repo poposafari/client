@@ -5,7 +5,7 @@ import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { ListForm, MenuListSetting } from '../types';
-import { addImage, addText, addWindow, playSound, Ui } from './ui';
+import { addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
 
 export class MenuListUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -26,6 +26,7 @@ export class MenuListUi extends Ui {
   private start!: number;
   private lastStart!: number | null;
   private lastChoice!: number | null;
+  private isAllowLRCancel: boolean = false;
 
   private readonly contentHeight: number = 30;
   private readonly spacing: number = 10;
@@ -43,6 +44,7 @@ export class MenuListUi extends Ui {
     this.info = data.info;
     this.lastChoice = null;
     this.lastStart = null;
+    this.isAllowLRCancel = data.isAllowLRCancel || false;
 
     this.windowWidth = data.windowWidth;
     this.perList = data.per;
@@ -89,7 +91,7 @@ export class MenuListUi extends Ui {
   }
 
   async handleKeyInput(data?: ListForm[]): Promise<string | number> {
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.CANCEL];
+    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.LEFT, KEY.RIGHT, KEY.CANCEL];
     const keyboard = KeyboardHandler.getInstance();
 
     let choice = this.lastChoice ? this.lastChoice : 0;
@@ -105,8 +107,6 @@ export class MenuListUi extends Ui {
       keyboard.setAllowKey(keys);
       keyboard.setKeyDownCallback((key) => {
         let prevChoice = choice;
-
-        eventBus.emit(EVENT.PLAY_SOUND, this.scene, key);
 
         try {
           switch (key) {
@@ -131,6 +131,20 @@ export class MenuListUi extends Ui {
                 this.dummys[choice].setTexture(TEXTURE.ARROW_B);
               }
               break;
+            case KEY.LEFT:
+              if (this.isAllowLRCancel) {
+                this.clean();
+                keyboard.setKeyDownCallback(() => {});
+                return resolve('cancelL');
+              }
+              break;
+            case KEY.RIGHT:
+              if (this.isAllowLRCancel) {
+                this.clean();
+                keyboard.setKeyDownCallback(() => {});
+                return resolve('cancelR');
+              }
+              break;
             case KEY.SELECT:
               playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
 
@@ -139,14 +153,16 @@ export class MenuListUi extends Ui {
 
               if (choice + this.start === this.info.length - 1) {
                 this.clean();
+                keyboard.setKeyDownCallback(() => {});
                 return resolve(i18next.t('menu:cancelMenu'));
               }
 
               if (!this.etcUi) this.clean();
-
+              keyboard.setKeyDownCallback(() => {});
               return resolve(choice + this.start);
             case KEY.CANCEL:
               this.clean();
+              keyboard.setKeyDownCallback(() => {});
               return resolve(i18next.t('menu:cancelMenu'));
           }
 
@@ -175,6 +191,17 @@ export class MenuListUi extends Ui {
     this.info = [];
     this.info.push(...info);
     this.addCancel();
+  }
+
+  updateWindow(texture: TEXTURE | string) {
+    this.window.setTexture(texture);
+  }
+
+  updateContentColor(target: string, color: TEXTSTYLE) {
+    const findIdx = this.info.findIndex((item) => item.name === target);
+
+    this.texts[findIdx].setStyle(getTextStyle(color));
+    this.etcTexts[findIdx].setStyle(getTextStyle(color));
   }
 
   private addCancel() {

@@ -189,6 +189,16 @@ function getAnimationSize(key: ANIMATION | string) {
       return 47;
     case ANIMATION.PARTICLE_EVOL:
       return 12;
+    case ANIMATION.BATTLE_BALL_0:
+      return 31;
+    case ANIMATION.BATTLE_BALL_1:
+      return 3;
+    case ANIMATION.PARTICLE_ENTER_BALL:
+      return 1;
+    case ANIMATION.GROUND_ITEM:
+      return 3;
+    case 'ball_001_launch':
+      return 7;
     case 'door_1':
       return 7;
   }
@@ -202,6 +212,8 @@ export function getTextShadow(style: TEXTSTYLE) {
       return [5, 3, '#91919a'];
     case TEXTSTYLE.SPECIAL:
       return [5, 3, '#53a8fc'];
+    case TEXTSTYLE.MESSAGE_BLUE:
+      return [3, 2, '#53a8fc'];
     case TEXTSTYLE.MESSAGE_WHITE:
     case TEXTSTYLE.MESSAGE_GRAY:
       return [3, 2, '#777777'];
@@ -210,6 +222,7 @@ export function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.FALL:
     case TEXTSTYLE.WINTER:
     case TEXTSTYLE.SEASON_SYMBOL:
+    case TEXTSTYLE.ONLY_WHITE:
       return [0, 0, 0];
     case TEXTSTYLE.BOX_NAME:
     case TEXTSTYLE.CHOICE_DEFAULT:
@@ -347,6 +360,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.fontSize = '150px';
       config.color = '#40a174';
       config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.ONLY_WHITE:
+      config.fontSize = '80px';
+      config.color = '#ffffff';
       break;
   }
 

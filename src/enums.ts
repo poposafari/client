@@ -33,6 +33,7 @@ export const enum TEXTURE {
   BG_EVOLVE = 'bg_evolve',
   BG_BLACK = 'bg_black',
   BG_STARTER = 'bg_starter',
+  BG_STARTER_POKEMON = 'bg_starter_pokemon',
 
   //maps
   INDOOR_TILE_FLOOR = 'indoor_floor',
@@ -56,7 +57,8 @@ export const enum TEXTURE {
   ICON_BAG_M = 'icon_bag_m',
   ICON_BAG_G = 'icon_bag_g',
   ICON_PROFILE = 'icon_profile',
-  ICON_EXIT = 'icon_exit',
+  ICON_EXIT_0 = 'icon_exit_0',
+  ICON_EXIT_1 = 'icon_exit_1',
   ICON_RUNNING = 'icon_running',
   ICON_LOCATION = 'icon_location',
   ICON_CANDY = 'icon_candy',
@@ -66,6 +68,9 @@ export const enum TEXTURE {
   ICON_OWNED = 'icon_owned',
   ICON_XY = 'icon_xy',
   ICON_FOLLOW = 'icon_follow',
+  ICON_CANCEL = 'icon_cancel',
+  ICON_REG = 'icon_reg',
+  ICON_TALK = 'icon_talk',
 
   //etc
   LOGO_0 = 'logo_0',
@@ -78,8 +83,6 @@ export const enum TEXTURE {
   PC_BALL_002 = 'pc_ball_002',
   PC_BALL_003 = 'pc_ball_003',
   PC_BALL_004 = 'pc_ball_004',
-  REWARD = 'reward',
-  REWARD_OVERLAY_0 = 'reward_overlay_0',
   BATTLE_BAR = 'battle_bar',
   GENDER_0 = 'gender_0',
   GENDER_1 = 'gender_1',
@@ -142,6 +145,11 @@ export const enum TEXTURE {
   PARTICLE_HM_0 = 'particle_hm_0',
   PARTICLE_HM_1 = 'particle_hm_1',
   PARTICLE_EVOL = 'particle_evol',
+  PARTICLE_BALL_0 = 'particle_ball_0',
+  PARTICLE_BALL_1 = 'particle_ball_1',
+  PARTICLE_ENTER_BALL = 'particle_enter_ball',
+  PARTICLE_BALL_BG = 'particle_ball_bg',
+  PARTICLE_STAR = 'particle_star',
   BAG_POCKET_BALL = 'bag_pocket_ball',
   BAG_POCKET_ETC = 'bag_pocket_etc',
   BAG_POCKET_BERRY = 'bag_pocket_berry',
@@ -166,6 +174,16 @@ export const enum TEXTURE {
   EMO = 'emo',
   SPARKLE = 'sparkle',
   PROFESSOR = 'professor',
+  BATTLE_BALL_0 = 'battle_ball_0',
+  BATTLE_BALL_1 = 'battle_ball_1',
+  REWARD_WINDOW = 'reward_window',
+  REWARD_OVERLAY_0 = 'reward_overlay_0',
+  REWARD_OVERLAY_1 = 'reward_overlay_1',
+  REWARD_OVERLAY_2 = 'reward_overlay_2',
+  REWARD_OVERLAY_3 = 'reward_overlay_3',
+  RIBBON = 'ribbon',
+  GROUND_ITEM = 'ground_item',
+  SHOP_SCREEN = 'shop_screen',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
@@ -261,6 +279,10 @@ export const enum ANIMATION {
   EMO = 'emo',
   SPARKLE = 'sparkle',
   PARTICLE_EVOL = 'particle_evol',
+  BATTLE_BALL_0 = 'battle_ball_0',
+  BATTLE_BALL_1 = 'battle_ball_1',
+  PARTICLE_ENTER_BALL = 'particle_enter_ball',
+  GROUND_ITEM = 'ground_item',
 }
 
 export const enum EASE {
@@ -383,6 +405,7 @@ export const enum KEY {
   USE_7 = 55,
   USE_8 = 56,
   USE_9 = 57,
+  QUICK_SLOT = 65, //A
 }
 
 export enum UI {
@@ -415,6 +438,7 @@ export enum UI {
   OPTION = 'OptionUi',
   BLACK_SCREEN = 'BlackScreenUi',
   ACCOUNT_DELETE_RESTORE = 'AccountDeleteRestoreUi',
+  QUICK_SLOT_ITEM = 'QuickSlotItemUi',
 }
 
 export const enum POKEMON_TYPE {
@@ -449,7 +473,7 @@ export const enum OBJECT {
   DOOR = 'door',
   NPC = 'npc',
   ITEM_THROW = 'item-throw',
-  ITEM_GROUND = 'item-ground',
+  GROUND_ITEM = 'item-ground',
   STATUE = 'statue',
   SHOP_CHECKOUT = 'shop-checkout',
   POST_CHECKOUT = 'post-checkout',
@@ -489,6 +513,8 @@ export enum MODE {
   PC,
   OPTION,
   BLACK_SCREEN,
+  BATTLE,
+  QUICK_SLOT_ITEM,
 }
 
 export function isMode(data: any): data is MODE {
@@ -496,78 +522,18 @@ export function isMode(data: any): data is MODE {
 }
 
 export enum EVENT {
-  EVOLVE_FINISH_IN_PC,
-
-  SHOW_MODE_STACK,
-  CHANGE_MODE,
-  OVERLAP_MODE,
-  POP_MODE,
-  SHOW_UI_STACK,
-  CHANGE_UI,
-  OVERLAP_UI,
-  POP_UI,
-  PLAY_SOUND,
-  SUBMIT_LOGIN,
-  SUBMIT_GOOGLE,
-  SUBMIT_REGISTER,
-  SUBMIT_INGAME,
-  ACCOUNT_DELETE,
-  PLAYER_MOVEMENT_UPDATE,
-  WILD_MOVEMENT_UPDATE,
   HUD_LOCATION_UPDATE,
   HUD_ITEMSLOT_UPDATE,
   HUD_PARTY_UPDATE,
   HUD_CANDY_UPDATE,
   HUD_SHOW_OVERWORLD,
-  FINISH_TALK,
-  RECEIVE_AVAILABLE_TICKET,
-  MOVETO_LOGIN_MODE,
-  MOVETO_CONNECT_ACCOUNT_DELETE_MODE,
-  MOVETO_NEWGAME_MODE,
-  MOVETO_TITLE_MODE,
-  MOVETO_SHOP_MODE,
-  MOVETO_SAFARI_LIST_MODE,
-  MOVETO_OVERWORLD_MODE,
-  MOVETO_OVERWORLD_MENU_MODE,
-  MOVETO_HIDDENMOVE_MODE,
-  MOVETO_EVOLVE_MODE,
-  MOVETO_INPUT_NICKNAME_MODE,
-  REG_ITEM_VISUAL,
-  PURCHASE_YES_ITEM,
-  PURCHASE_NO_ITEM,
-  PURCHASE_SUCCESS_ITEM,
-  READY_TO_SAFARI,
-  UPDATE_OVERWORLD_MENU,
-  ACCEPT_BACKTO_PLAZA,
-  REJECT_BACKTO_PLAZA,
-  CHECK_HIDDEN_MOVE,
-  FINISH_SURF,
-  BACKTO_POKEBOX_PARTYUI,
-  START_PLAYER_THROW,
-  POKEMON_CATCH_SUCCESS,
-  POKEMON_CATCH_FAIL,
-  POKEMON_CATCH_CHECK,
-  POKEMON_ESCAPE,
-  POKEMON_BERRY,
+  UPDATE_OVERWORLD_ICON_TINT,
   BATTLE_FINISH,
-  RESTORE_BATTLE,
+  BATTLE_UI_FINISH,
+  SHOW_BATTLE_MENU,
+  FORCE_CHANGE_BATTLE_MESSAGE,
+  EVOLVE_FINISH_IN_PC,
   UPDATE_CATCHRATE,
-  PET_CALL,
-  PET_RECALL,
-  CANCEL_EVOLVE,
-  START_EVOLVE,
-  START_EVOLVE_ANIMATION,
-  FINISH_EVOLVE,
-  RESTORE_POKEBOX_KEYHANDLE,
-  ENTER_EXIT,
-  CREATE_OTHER_PLAYER,
-  DELETE_OTHER_PLAYER,
-  DELETE_ALL_OTHER_PLAYER,
-  MOVE_OTHER_PLAYER,
-  SURF_OTHER_PLAYER,
-  CHANGE_PET,
-  UPDATE_OVERWORLD_MENU_TINT,
-  UPDATE_OVERWORLD_RUNNING_TINT,
 }
 
 export function isEvent(data: any): data is EVENT {
@@ -610,6 +576,7 @@ export const enum TEXTSTYLE {
   FALL,
   WINTER,
   SEASON_SYMBOL,
+  ONLY_WHITE,
 }
 
 export const enum OVERWORLD_TYPE {
@@ -672,6 +639,7 @@ export type ItemData = {
   key: string;
   usable: boolean;
   purchasable: boolean;
+  registerable: boolean;
   price: number;
 };
 

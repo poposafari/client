@@ -1,6 +1,6 @@
 import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
-import { MAX_ITEM_SLOT, MAX_PARTY_SLOT } from '../constants';
-import { EVENT, HttpErrorCode, MODE, TEXTURE, UI } from '../enums';
+import { MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
+import { EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
 import { PlayerItem } from '../obj/player-item';
 import { PlayerOption } from '../obj/player-option';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
@@ -20,16 +20,9 @@ export class GameManager {
   private currenctMode: MODE = MODE.NONE;
   private user!: IngameData | null;
   private userPokemonNicknames = new Map<number, string>();
-
+  private currentOverworldType!: OVERWORLD_TYPE;
   private token!: string;
-
-  private effectVolume: number = 0.1;
-  private bgVolume: number = 0.1;
-  private messageSpeed: number = 1000;
-  private msgWindow!: TEXTURE;
-
   private isRegisterPet!: boolean;
-
   private tempPlayerObj!: PlayerOverworldObj;
   private tempRunningToggle!: boolean;
 
@@ -167,7 +160,7 @@ export class GameManager {
         GM.changeMode(MODE.OVERWORLD);
         break;
       case MODE.TITLE:
-        this.showUi(UI.TITLE);
+        this.showUi(UI.TITLE, data);
         break;
       case MODE.NEWGAME:
         this.showUi(UI.NEWGAME);
@@ -200,6 +193,12 @@ export class GameManager {
       case MODE.BLACK_SCREEN:
         this.showUi(UI.BLACK_SCREEN);
         break;
+      case MODE.BATTLE:
+        this.overlapUi(UI.BATTLE, data);
+        break;
+      case MODE.QUICK_SLOT_ITEM:
+        this.overlapUi(UI.QUICK_SLOT_ITEM);
+        break;
     }
   }
 
@@ -220,28 +219,12 @@ export class GameManager {
     return this.token;
   }
 
-  setVolume(type: 'bg' | 'effect', volume: number = 0.1) {
-    if (type === 'bg') {
-      this.bgVolume = volume;
-    } else if (type === 'effect') {
-      this.effectVolume = volume;
-    }
+  setCurrentOverworldType(type: OVERWORLD_TYPE) {
+    this.currentOverworldType = type;
   }
 
-  getVolume(type: 'bg' | 'effect') {
-    if (type === 'bg') {
-      return this.bgVolume;
-    } else if (type === 'effect') {
-      return this.effectVolume;
-    }
-  }
-
-  setMessageSpeed(value: number) {
-    this.messageSpeed = value;
-  }
-
-  getMessageSpeed() {
-    return this.messageSpeed;
+  getCurrentOverworldType() {
+    return this.currentOverworldType;
   }
 
   setUserData(data: IngameData | null) {
@@ -301,7 +284,7 @@ export class GameManager {
       : null;
 
     const slotItem: (PlayerItem | null)[] = [];
-    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+    for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
       const item = data.slotItem[i];
       if (item) {
         slotItem.push(new PlayerItem(item.idx, item.item, item.stock));
@@ -338,14 +321,6 @@ export class GameManager {
     return this.user?.option;
   }
 
-  setMsgWindow(texture: TEXTURE) {
-    this.msgWindow = texture;
-  }
-
-  getMsgWindow() {
-    return this.msgWindow;
-  }
-
   updateUserData(data: Partial<IngameData>) {
     if (this.user) {
       this.user = {
@@ -357,7 +332,7 @@ export class GameManager {
 
   findSlotItem(item: PlayerItem) {
     if (this.user) {
-      for (let i = 0; i < MAX_ITEM_SLOT; i++) {
+      for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
         const slot = this.user.slotItem[i];
         if (slot && slot.getKey() === item.getKey()) {
           return [slot, i];
@@ -374,8 +349,8 @@ export class GameManager {
       return;
     }
 
-    if (idx < 0 || idx >= MAX_ITEM_SLOT) {
-      console.error(`Invalid slot index: ${idx}. Index must be between 0 and ${MAX_ITEM_SLOT - 1}.`);
+    if (idx < 0 || idx >= MAX_QUICK_ITEM_SLOT) {
+      console.error(`Invalid slot index: ${idx}. Index must be between 0 and ${MAX_QUICK_ITEM_SLOT - 1}.`);
       return;
     }
 

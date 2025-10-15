@@ -1,10 +1,11 @@
-import { getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
+import { catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { DoorOverworldObj } from '../obj/door-overworld-obj';
+import { GroundItemOverworldObj } from '../obj/ground-item-overworld-obj';
 import { NpcOverworldObj } from '../obj/npc-overworld-obj';
 import { OverworldObj } from '../obj/overworld-obj';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
@@ -21,6 +22,7 @@ import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
 import { SafariListUi } from './safari-list-ui';
 import { ShopUi } from './shop-ui';
+import { StarterPokemonUi } from './starter-pokemon-ui';
 import { TalkMessageUi } from './talk-message-ui';
 import { addMap, runFadeEffect, Ui } from './ui';
 
@@ -99,6 +101,7 @@ export class OverworldUi extends Ui {
   }
 
   setType(type: OVERWORLD_TYPE) {
+    GM.setCurrentOverworldType(type);
     this.type = type;
   }
 }
@@ -253,13 +256,16 @@ export class OverworldPlayer {
   private shopUi_0: ShopUi;
   private shopUi_1: ShopUi;
   private safariListUi: SafariListUi;
-  private battleUi: BattleUi;
+  private starterPokemonUi: StarterPokemonUi;
 
   private map!: Phaser.Tilemaps.Tilemap;
   private obj!: PlayerOverworldObj | null;
   private uiInitCnt: boolean = false;
   // private otherObj!: Map<number, PlayerOverworldObj>;
   private otherObjMovementQueue: Array<OtherObjectMovementQueue> = [];
+
+  private keyPressStartTime: { [key: string]: number } = {};
+  private readonly SHORT_KEY_THRESHOLD: number = 30;
 
   private readonly scale: number = 3;
 
@@ -276,9 +282,13 @@ export class OverworldPlayer {
     this.shopUi_0 = new ShopUi(scene);
     this.shopUi_1 = new ShopUi(scene);
     this.safariListUi = new SafariListUi(scene);
-    this.battleUi = new BattleUi(scene);
+    this.starterPokemonUi = new StarterPokemonUi(scene);
 
     // this.otherObj = new Map<number, PlayerObject>();
+
+    eventBus.on(EVENT.BATTLE_FINISH, () => {
+      this.obj?.setIsEvent(false);
+    });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
@@ -290,7 +300,6 @@ export class OverworldPlayer {
       this.shopUi_0.setup(['002', '003', '004']);
       this.shopUi_1.setup(['011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021', '022', '023', '024', '025', '026', '027', '028', '029']);
       this.safariListUi.setup();
-      this.battleUi.setup();
       this.uiInitCnt = true;
     }
 
@@ -330,6 +339,14 @@ export class OverworldPlayer {
       this.movement();
       this.obj?.update(delta);
       this.obj?.getPet()?.update(delta);
+
+      const objInFront = this.obj?.getObjectInFront(this.obj?.getLastDirection());
+
+      if (objInFront && objInFront.getObjType() !== OBJECT.DOOR) {
+        eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_TALK, true);
+      } else {
+        eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_TALK, false);
+      }
     }
 
     // if (this.otherObjMovementQueue.length > 0) {
@@ -361,24 +378,58 @@ export class OverworldPlayer {
   private movement() {
     if (!this.obj) return;
 
+    if (this.cursorKey.up.isDown && !this.keyPressStartTime['up']) {
+      this.keyPressStartTime['up'] = this.scene.time.now;
+    }
+    if (this.cursorKey.down.isDown && !this.keyPressStartTime['down']) {
+      this.keyPressStartTime['down'] = this.scene.time.now;
+    }
+    if (this.cursorKey.left.isDown && !this.keyPressStartTime['left']) {
+      this.keyPressStartTime['left'] = this.scene.time.now;
+    }
+    if (this.cursorKey.right.isDown && !this.keyPressStartTime['right']) {
+      this.keyPressStartTime['right'] = this.scene.time.now;
+    }
+
     if (this.cursorKey.up.isDown && this.obj!.isMovementFinish()) {
-      this.obj!.isDoorInFront(DIRECTION.UP);
-      this.obj!.move(DIRECTION.UP);
+      this.handleDirectionInput('up', DIRECTION.UP);
     } else if (this.cursorKey.down.isDown && this.obj!.isMovementFinish()) {
-      this.obj!.isDoorInFront(DIRECTION.DOWN);
-      this.obj!.move(DIRECTION.DOWN);
+      this.handleDirectionInput('down', DIRECTION.DOWN);
     } else if (this.cursorKey.left.isDown && this.obj!.isMovementFinish()) {
-      this.obj!.isDoorInFront(DIRECTION.LEFT);
-      this.obj!.move(DIRECTION.LEFT);
+      this.handleDirectionInput('left', DIRECTION.LEFT);
     } else if (this.cursorKey.right.isDown && this.obj!.isMovementFinish()) {
-      this.obj!.isDoorInFront(DIRECTION.RIGHT);
-      this.obj!.move(DIRECTION.RIGHT);
+      this.handleDirectionInput('right', DIRECTION.RIGHT);
+    }
+
+    if (!this.cursorKey.up.isDown && this.keyPressStartTime['up']) {
+      delete this.keyPressStartTime['up'];
+    }
+    if (!this.cursorKey.down.isDown && this.keyPressStartTime['down']) {
+      delete this.keyPressStartTime['down'];
+    }
+    if (!this.cursorKey.left.isDown && this.keyPressStartTime['left']) {
+      delete this.keyPressStartTime['left'];
+    }
+    if (!this.cursorKey.right.isDown && this.keyPressStartTime['right']) {
+      delete this.keyPressStartTime['right'];
+    }
+  }
+
+  private handleDirectionInput(keyName: string, direction: DIRECTION) {
+    const currentTime = this.scene.time.now;
+    const keyPressDuration = currentTime - (this.keyPressStartTime[keyName] || currentTime);
+
+    if (keyPressDuration <= this.SHORT_KEY_THRESHOLD) {
+      this.obj!.changeDirectionOnly(direction);
+    } else {
+      this.obj!.isDoorInFront(direction);
+      this.obj!.move(direction);
     }
   }
 
   handleKeyInput() {
     const keyboard = KeyboardHandler.getInstance();
-    const keys = [KEY.SELECT, KEY.RUNNING, KEY.MENU, KEY.USE_1, KEY.USE_2, KEY.USE_3, KEY.USE_4, KEY.USE_5, KEY.USE_6, KEY.USE_7, KEY.USE_8, KEY.USE_9];
+    const keys = [KEY.SELECT, KEY.RUNNING, KEY.MENU, KEY.QUICK_SLOT];
 
     const keydownCallback = async (key: KEY) => {
       try {
@@ -422,50 +473,55 @@ export class OverworldPlayer {
               } else if (event instanceof WildOverworldObj) {
                 this.obj.setIsEvent(true);
                 await event.reaction(this.obj.getLastDirection());
-                this.battleUi.show(event);
-                // this.obj.setIsEvent(false);
+                GM.changeMode(MODE.BATTLE, event);
+              } else if (event instanceof GroundItemOverworldObj) {
+                this.obj.setIsEvent(true);
+
+                const groundItemData = event.reaction();
+                const res = await catchGroundItemApi({ idx: groundItemData.idx });
+
+                event.caught();
+
+                if (res.result) {
+                  await this.talkMessageUi.show({
+                    type: 'default',
+                    content: replacePercentSymbol(i18next.t(`message:catch_item`), [GM.getUserData()?.nickname, i18next.t(`item:${groundItemData.item}.name`)]),
+                    speed: GM.getUserOption()?.getTextSpeed()!,
+                  });
+                  await this.talkMessageUi.show({
+                    type: 'default',
+                    content: replacePercentSymbol(i18next.t(`message:put_item`), [
+                      GM.getUserData()?.nickname,
+                      i18next.t(`item:${groundItemData.item}.name`),
+                      i18next.t(`menu:pocket_${res.data.category}`),
+                    ]),
+                    speed: GM.getUserOption()?.getTextSpeed()!,
+                  });
+                  this.obj.setIsEvent(false);
+                  keyboard.setAllowKey(keys);
+                  keyboard.setKeyDownCallback(keydownCallback);
+                }
               }
             }
             break;
           case KEY.MENU:
             if (this.obj && this.obj.isMovementFinish() && !this.obj.isEvent) {
               GM.changeMode(MODE.OVERWORLD_MENU);
-              eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU_TINT);
+              eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_MENU, true);
             }
             break;
           case KEY.RUNNING:
             if (this.obj && this.obj.isMovementFinish() && !this.obj.isEvent) {
               this.obj.setRunningToggle();
               this.obj.setMovement(PLAYER_STATUS.RUNNING);
-              eventBus.emit(EVENT.UPDATE_OVERWORLD_RUNNING_TINT);
+              eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, true);
             }
             break;
-          case KEY.USE_1:
-            this.useItem(1);
-            break;
-          case KEY.USE_2:
-            this.useItem(2);
-            break;
-          case KEY.USE_3:
-            this.useItem(3);
-            break;
-          case KEY.USE_4:
-            this.useItem(4);
-            break;
-          case KEY.USE_5:
-            this.useItem(5);
-            break;
-          case KEY.USE_6:
-            this.useItem(6);
-            break;
-          case KEY.USE_7:
-            this.useItem(7);
-            break;
-          case KEY.USE_8:
-            this.useItem(8);
-            break;
-          case KEY.USE_9:
-            this.useItem(9);
+          case KEY.QUICK_SLOT:
+            if (this.obj && this.obj.isMovementFinish() && !this.obj.isEvent) {
+              GM.changeMode(MODE.QUICK_SLOT_ITEM);
+              eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_REG, true);
+            }
             break;
         }
       } catch (err: any) {
@@ -476,10 +532,6 @@ export class OverworldPlayer {
 
     keyboard.setAllowKey(keys);
     keyboard.setKeyDownCallback(keydownCallback);
-  }
-
-  private useItem(slotIdx: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
-    if (this.obj?.isMovementFinish() && !this.obj.isEvent) this.obj!.readyUseItem(slotIdx);
   }
 
   private async showSurfMessage(): Promise<void> {
@@ -725,22 +777,10 @@ export class OverworldSafari {
     storage.resetWilds();
 
     for (const groundItem of storage.getGroundItems()) {
+      groundItem.destroy();
     }
     storage.resetGroundItems();
   }
-
-  // clean() {
-  //   for (const target of OverworldStorage.getInstance().getPokemons()) {
-  //     target.stopMovement();
-  //     target.destroy();
-  //   }
-  //   OverworldStorage.getInstance().resetPokemons();
-
-  //   for (const target of OverworldStorage.getInstance().getGroundItems()) {
-  //     target.destroy();
-  //   }
-  //   OverworldStorage.getInstance().resetGroundItem();
-  // }
 
   updateWilds(delta: number) {
     for (const wild of OverworldStorage.getInstance().getWilds()) {
@@ -749,16 +789,6 @@ export class OverworldSafari {
       wild.update(delta);
     }
   }
-
-  // updateWilds(delta: number) {
-  //   for (const pokemon of OverworldStorage.getInstance().getPokemons()) {
-  //     if (pokemon.isMovementFinish()) {
-  //       pokemon.move();
-  //     }
-
-  //     pokemon.update(delta);
-  //   }
-  // }
 
   private addWildObj(map: Phaser.Tilemaps.Tilemap) {
     OverworldStorage.getInstance().resetWilds();
@@ -776,25 +806,22 @@ export class OverworldSafari {
     }
   }
 
-  private addGroundItemObj(map: Phaser.Tilemaps.Tilemap) {}
+  private addGroundItemObj(map: Phaser.Tilemaps.Tilemap) {
+    OverworldStorage.getInstance().resetGroundItems();
 
-  // private addGroundItems(map: Phaser.Tilemaps.Tilemap) {
-  //   OverworldStorage.getInstance().resetGroundItem();
+    const validPos = this.doScanSpawnTile(map);
 
-  //   const validPosition = this.doScanSpawnTile(map);
+    for (const data of OverworldStorage.getInstance().getGroundItemData()) {
+      const randPos = this.getRandomSpawnTilePos(validPos, 'land');
 
-  //   for (const info of OverworldStorage.getInstance().getGroundItemInfo()) {
-  //     const pos = this.getRandomSpawnTilePos(validPosition, 'land');
+      if (data.catch) continue;
 
-  //     if (info.catch) continue;
-
-  //     if (pos) {
-  //       const groundItem = new GroundItemObject(this.scene, TEXTURE.POKEBALL_GROUND, pos[0], pos[1], map, OBJECT.ITEM_GROUND, info.idx, info.stock, info.item, info.catch);
-
-  //       OverworldStorage.getInstance().addGroundItem(groundItem);
-  //     }
-  //   }
-  // }
+      if (randPos) {
+        const groundItem = new GroundItemOverworldObj(this.scene, data, randPos[0], randPos[1]);
+        OverworldStorage.getInstance().addGroundItem(groundItem);
+      }
+    }
+  }
 
   private doScanSpawnTile(map: Phaser.Tilemaps.Tilemap) {
     const validPositions: [number, number, PokemonSpawn][] = [];

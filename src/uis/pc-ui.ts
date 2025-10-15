@@ -413,7 +413,7 @@ export class PcBoxUi extends Ui {
       }
     } else if (ret === i18next.t('menu:evolve')) {
       await this.questionUi.show({
-        type: 'sys',
+        type: 'default',
         content: replacePercentSymbol(i18next.t('message:evolve_question'), [i18next.t(`pokemon:${pokemon.getPokedex()}.name`), i18next.t(`pokemon:${pokemon.getEvol().next!}.name`)]),
         speed: GM.getUserOption()?.getTextSpeed()!,
         yes: async () => {
@@ -623,7 +623,7 @@ export class PcBoxUi extends Ui {
       for (let j = 0; j < this.MaxRow; j++) {
         const icon = addImage(this.scene, TEXTURE.BLANK, currentX, currentY);
         const dummy = addImage(this.scene, TEXTURE.BLANK, currentX + 20, currentY + 50);
-        const shiny = addImage(this.scene, TEXTURE.BLANK, currentX - 50, currentY - 30).setScale(2);
+        const shiny = addImage(this.scene, TEXTURE.BLANK, currentX - 50, currentY - 30).setScale(2.8);
 
         icon.setScale(2.4);
         dummy.setScale(3);
@@ -833,8 +833,8 @@ export class PcSummaryUi extends Ui {
     const topWindow = addImage(this.scene, TEXTURE.PC_NAME, 0, -390).setScale(2.8);
     const bottomWindow = addImage(this.scene, TEXTURE.PC_DESC, -10, +410).setScale(2.8);
     this.sprite = addImage(this.scene, `pokemon_sprite000`, 0, 0).setScale(5);
-    this.shiny = addImage(this.scene, TEXTURE.BLANK, -255, -390).setScale(2.2);
-    this.name = addText(this.scene, -240, -355, '', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
+    this.shiny = addImage(this.scene, TEXTURE.BLANK, +250, -260).setScale(2.8);
+    this.name = addText(this.scene, -230, -355, '', TEXTSTYLE.BOX_NAME).setOrigin(0, 0.5).setScale(1);
     this.gender = addText(this.scene, this.name.x + this.name.displayWidth, -350, '', TEXTSTYLE.GENDER_0)
       .setOrigin(0, 0.5)
       .setScale(0.8);

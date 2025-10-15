@@ -7,7 +7,6 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, runFadeEffect, Ui } from './ui';
 
 export class OverworldHUDUi extends Ui {
-  private overworldItemSlotUi: OverworldItemSlotUi;
   private overworldPokemonSlotUi: OverworldPokemonSlotUi;
   private overworldInfoUi: OverworldInfoUi;
   private overworldIconUi: OverworldIconUi;
@@ -16,21 +15,18 @@ export class OverworldHUDUi extends Ui {
   constructor(scene: InGameScene) {
     super(scene);
 
-    this.overworldItemSlotUi = new OverworldItemSlotUi(scene);
     this.overworldPokemonSlotUi = new OverworldPokemonSlotUi(scene);
     this.overworldInfoUi = new OverworldInfoUi(scene);
     this.overworldIconUi = new OverworldIconUi(scene);
     this.overworldLocationUi = new OverworldLocationUi(scene);
 
     eventBus.on(EVENT.HUD_LOCATION_UPDATE, () => this.updateLocationUi());
-    eventBus.on(EVENT.HUD_ITEMSLOT_UPDATE, () => this.updateItemSlotUi());
     eventBus.on(EVENT.HUD_CANDY_UPDATE, () => this.updateCandyUi());
     eventBus.on(EVENT.HUD_SHOW_OVERWORLD, () => this.showLocationUi());
     eventBus.on(EVENT.HUD_PARTY_UPDATE, () => this.updatePokemonSlotUi());
   }
 
   setup(): void {
-    this.overworldItemSlotUi.setup();
     this.overworldPokemonSlotUi.setup();
     this.overworldInfoUi.setup();
     this.overworldIconUi.setup();
@@ -38,14 +34,12 @@ export class OverworldHUDUi extends Ui {
   }
 
   show(data?: any): void {
-    this.overworldItemSlotUi.show();
     this.overworldPokemonSlotUi.show();
     this.overworldInfoUi.show();
     this.overworldIconUi.show();
   }
 
   clean(data?: any): void {
-    this.overworldItemSlotUi.clean();
     this.overworldPokemonSlotUi.clean();
     this.overworldInfoUi.clean();
     this.overworldIconUi.clean();
@@ -58,10 +52,6 @@ export class OverworldHUDUi extends Ui {
   handleKeyInput(data?: any): void {}
 
   update(time: number, delta: number): void {}
-
-  updateItemSlotUi() {
-    this.overworldItemSlotUi.update();
-  }
 
   updatePokemonSlotUi() {
     this.overworldPokemonSlotUi.update();
@@ -81,13 +71,11 @@ export class OverworldHUDUi extends Ui {
   }
 
   private block() {
-    this.overworldItemSlotUi.pause(true);
     this.overworldPokemonSlotUi.pause(true);
     this.overworldInfoUi.pause(true);
   }
 
   private unblock() {
-    this.overworldItemSlotUi.pause(false);
     this.overworldPokemonSlotUi.pause(false);
     this.overworldInfoUi.pause(false);
   }
@@ -99,18 +87,15 @@ export class OverworldIconUi extends Ui {
   private iconTitles: Phaser.GameObjects.Text[] = [];
   private iconToggle: boolean[] = [];
 
-  private readonly contents: string[] = [TEXTURE.ICON_RUNNING, TEXTURE.ICON_MENU];
-  private readonly guides: string[] = [TEXTURE.BLANK, TEXTURE.BLANK];
-  private readonly guideTexts: string[] = [i18next.t('menu:guide_runningshoes'), i18next.t('menu:guide_menu')];
+  private readonly contents: string[] = [TEXTURE.ICON_TALK, TEXTURE.ICON_REG, TEXTURE.ICON_RUNNING, TEXTURE.ICON_MENU];
+  private readonly guides: string[] = [TEXTURE.BLANK, TEXTURE.BLANK, TEXTURE.BLANK, TEXTURE.BLANK];
+  private readonly guideTexts: string[] = [i18next.t('menu:guide_talk'), i18next.t('menu:guide_reg'), i18next.t('menu:guide_runningshoes'), i18next.t('menu:guide_menu')];
 
   constructor(scene: InGameScene) {
     super(scene);
 
-    eventBus.on(EVENT.UPDATE_OVERWORLD_RUNNING_TINT, () => {
-      this.updateRunningToggle();
-    });
-    eventBus.on(EVENT.UPDATE_OVERWORLD_MENU_TINT, () => {
-      this.updateToggle(1);
+    eventBus.on(EVENT.UPDATE_OVERWORLD_ICON_TINT, (icon: TEXTURE, onoff: boolean) => {
+      this.updateToggle(icon, onoff);
     });
   }
 
@@ -121,15 +106,15 @@ export class OverworldIconUi extends Ui {
     const slotSize = 55;
     const slotSpacing = 5;
 
-    this.container = this.scene.add.container(width / 2, height / 2 + 507);
+    this.container = this.scene.add.container(width / 2 + 750, height / 2 + 507);
 
     this.contents.forEach((key, index) => {
       const xPosition = index * (slotSize + slotSpacing);
       const yPosition = 0;
 
-      const icon = addImage(this.scene, key, xPosition + 860, yPosition).setScale(2);
-      const guideText = addImage(this.scene, this.guides[index], xPosition + 840, yPosition - 20);
-      const guideTitle = addText(this.scene, xPosition + 860, yPosition - 45, this.guideTexts[index], TEXTSTYLE.INPUT_GUIDE_WHITE).setScale(0.5);
+      const icon = addImage(this.scene, key, xPosition, yPosition).setScale(2);
+      const guideText = addImage(this.scene, this.guides[index], xPosition, yPosition - 20);
+      const guideTitle = addText(this.scene, xPosition, yPosition - 45, this.guideTexts[index], TEXTSTYLE.INPUT_GUIDE_WHITE).setScale(0.5);
 
       icon.setInteractive();
       guideTitle.setVisible(false);
@@ -177,20 +162,24 @@ export class OverworldIconUi extends Ui {
 
   update(time: number, delta: number): void {}
 
-  updateToggle(idx: number) {
-    this.iconToggle[idx] = !this.iconToggle[idx];
-    if (this.iconToggle[idx]) {
-      this.icons[idx].setTint(0xffffff);
-    } else {
-      this.icons[idx].setTint(0x7f7f7f);
+  updateToggle(icon: TEXTURE, onoff: boolean) {
+    if (icon === TEXTURE.ICON_RUNNING) {
+      if (GM.getRunningToggle()) {
+        onoff = true;
+      } else {
+        onoff = false;
+      }
     }
-  }
 
-  updateRunningToggle() {
-    if (GM.getRunningToggle()) {
-      this.icons[0].setTint(0xffffff);
-    } else {
-      this.icons[0].setTint(0x7f7f7f);
+    for (let i = 0; i < this.icons.length; i++) {
+      if (this.icons[i].texture.key === icon) {
+        this.iconToggle[i] = onoff;
+        if (onoff) {
+          this.icons[i].setTint(0xffffff);
+        } else {
+          this.icons[i].setTint(0x7f7f7f);
+        }
+      }
     }
   }
 }
@@ -274,85 +263,6 @@ export class OverworldInfoUi extends Ui {
       this.texts.push(text);
 
       currentY += contentHeight + spacing;
-    }
-  }
-}
-
-export class OverworldItemSlotUi extends Ui {
-  private container!: Phaser.GameObjects.Container;
-
-  protected slotWindows: Phaser.GameObjects.NineSlice[] = [];
-  protected slotIcons: Phaser.GameObjects.Image[] = [];
-  protected slotNumbers: Phaser.GameObjects.Text[] = [];
-
-  constructor(scene: InGameScene) {
-    super(scene);
-  }
-
-  setup(): void {
-    const width = this.getWidth();
-    const height = this.getHeight();
-    const contentHeight = 50;
-    const spacing = 5;
-
-    let currentX = 0;
-
-    this.container = this.scene.add.container(width / 2 - 500, height / 2 - 500);
-
-    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-      const window = addWindow(this.scene, TEXTURE.WINDOW_OPACITY, currentX, 0, contentHeight, contentHeight, 8, 8, 8, 8);
-      const icon = addImage(this.scene, '', currentX, 0).setScale(1);
-      const num = addText(this.scene, currentX - 18, 0 - 12, (i + 1).toString(), TEXTSTYLE.CHOICE_DEFAULT);
-      const stock = addText(this.scene, currentX + 10, +15, '', TEXTSTYLE.CHOICE_DEFAULT);
-
-      this.container.add(window);
-      this.container.add(icon);
-      this.container.add(num);
-      this.container.add(stock);
-
-      this.slotWindows.push(window);
-      this.slotIcons.push(icon);
-      this.slotNumbers.push(num);
-      // this.slotStock.push(stock);
-
-      currentX += contentHeight + spacing;
-    }
-
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.OVERWORLD_UI);
-    this.container.setScrollFactor(0);
-  }
-
-  show(data?: any): void {
-    this.container.setVisible(true);
-    this.pause(false);
-  }
-
-  clean(data?: any): void {
-    this.container.setVisible(false);
-    this.pause(true);
-  }
-
-  pause(onoff: boolean, data?: any): void {
-    onoff ? this.block() : this.unblock();
-  }
-
-  handleKeyInput(data?: any): void {}
-
-  private block() {}
-
-  private unblock() {
-    this.update();
-  }
-
-  update(): void {
-    for (let i = 0; i < MAX_ITEM_SLOT; i++) {
-      const item = GM.getUserData()?.slotItem[i];
-      if (item) {
-        this.slotIcons[i].setTexture(`item${item.getKey()}`);
-      } else {
-        this.slotIcons[i].setTexture(TEXTURE.BLANK);
-      }
     }
   }
 }
@@ -449,7 +359,7 @@ export class OverworldPokemonSlotUi extends Ui {
     for (let i = 0; i < this.MaxSlot; i++) {
       const window = addWindow(this.scene, TEXTURE.WINDOW_OPACITY, 0, currentY, contentHeight, contentHeight, 8, 8, 8, 8);
       const icon = addImage(this.scene, 'pokemon_icon000', 0, currentY);
-      const shiny = addImage(this.scene, TEXTURE.BLANK, -25, currentY - 15).setScale(1);
+      const shiny = addImage(this.scene, TEXTURE.BLANK, -25, currentY - 15).setScale(1.4);
 
       this.container.add(window);
       this.container.add(icon);

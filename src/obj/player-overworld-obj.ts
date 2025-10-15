@@ -14,6 +14,7 @@ import { DIRECTION, EASE, EVENT, MODE, OBJECT, PLAYER_STATUS, TEXTURE } from '..
 import { GM } from '../core/game-manager';
 import { NpcOverworldObj } from './npc-overworld-obj';
 import { WildOverworldObj } from './wild-overworld-obj';
+import { GroundItemOverworldObj } from './ground-item-overworld-obj';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -52,7 +53,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     this.currentStatus = PLAYER_STATUS.WALK;
     this.setMovement(PLAYER_STATUS.WALK);
     GM.setRunningToggle(false);
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_RUNNING_TINT);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
     this.setSpriteScale(this.spriteScale);
   }
 
@@ -144,6 +145,17 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
+  changeDirectionOnly(direction: DIRECTION) {
+    // 방향만 변경하고 실제 이동은 하지 않음
+    this.lastDirection = direction;
+
+    // 해당 방향의 정지 애니메이션 프레임으로 변경
+    const stopFrameNumber = this.getStopFrameNumberFromDirection(direction);
+    if (stopFrameNumber !== undefined) {
+      this.stopSpriteAnimation(stopFrameNumber);
+    }
+  }
+
   getCurrentStatus() {
     return this.currentStatus;
   }
@@ -152,13 +164,9 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     return this.pet;
   }
 
-  readyUseItem(itemSlot: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
+  readyUseItem(item: PlayerItem) {
     if (!this.isMovementFinish()) return;
-    const found = GM.getUserData()?.slotItem[itemSlot - 1];
-
-    if (!found) return;
-
-    this.useItem(found);
+    this.useItem(item);
   }
 
   useItem(item: PlayerItem) {
@@ -168,7 +176,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
-  getEvent(): 'surf' | ShopCheckoutOverworldObj | PostCheckoutOverworldObj | NpcOverworldObj | WildOverworldObj | null {
+  getEvent(): 'surf' | ShopCheckoutOverworldObj | PostCheckoutOverworldObj | NpcOverworldObj | WildOverworldObj | GroundItemOverworldObj | null {
     const tiles = this.getTileInfo(this.lastDirection);
     const obj = this.getObjectInFront(this.lastDirection);
     const event = findEventTile(tiles);
@@ -177,6 +185,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     if (obj instanceof PostCheckoutOverworldObj) return obj;
     if (obj instanceof NpcOverworldObj) return obj;
     if (obj instanceof WildOverworldObj) return obj;
+    if (obj instanceof GroundItemOverworldObj) return obj;
     if (event === 'surf' && GM.findSkillsInParty('surf')) return 'surf';
 
     return null;

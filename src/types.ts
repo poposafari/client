@@ -29,6 +29,7 @@ export type TranslationNpc = {
 
 export type TranslationPokemonInfo = {
   name: string;
+  species: string;
   description: string;
 };
 
@@ -41,6 +42,7 @@ export type PokemonHabitat = 'land' | 'lake' | 'mt';
 export type PokemonSpawn = 'land' | 'water';
 export type PokemonSkill = 'none' | 'surf' | 'dark_eyes';
 export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
+export type ItemRank = 'common' | 'rare' | 'epic' | 'legendary';
 export type PlayerGender = 'boy' | 'girl';
 export type PlayerAvatar = '1' | '2' | '3' | '4';
 export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
@@ -159,6 +161,36 @@ export type EnterSafariRes = {
   groundItems: GroundItemRes[];
 };
 
+export type CatchWildReq = {
+  idx: number;
+  ball: string;
+  berry: string | null;
+  parties: number[];
+};
+
+export type CatchGroundItemReq = {
+  idx: number;
+};
+
+export type CatchRewardRes = {
+  item: string;
+  stock: number;
+  category: ItemCategory;
+};
+
+export type CatchWildSuccessRes = {
+  catch: boolean;
+  rewards: {
+    candy: number;
+    items: CatchRewardRes[];
+  };
+};
+
+export type CatchWildFailRes = {
+  catch: boolean;
+  flee: boolean;
+};
+
 export type WildRes = {
   idx: number;
   pokedex: string;
@@ -180,6 +212,7 @@ export type GroundItemRes = {
   item: string;
   stock: number;
   catch: boolean;
+  rank: ItemRank;
 };
 
 export type ListForm = {
@@ -353,6 +386,7 @@ export type MenuListSetting = {
   per: number;
   info: ListForm[];
   window: TEXTURE | string;
+  isAllowLRCancel?: boolean;
 };
 
 export type MapInfo = {

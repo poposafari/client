@@ -338,6 +338,9 @@ export class OptionTextSpeedUi extends Ui {
       case TextSpeed.FAST:
         this.choice = 2;
         break;
+      default:
+        this.choice = 1;
+        break;
     }
 
     for (const text of this.texts) {
@@ -445,7 +448,7 @@ export class OptionWindowTypeUi extends Ui {
   }
 
   updateValue() {
-    this.choice = GM.getUserOption()?.getFrame('number') as number;
+    this.choice = GM.getUserOption() ? (GM.getUserOption()?.getFrame('number') as number) : 0;
 
     this.text.setText(i18next.t('menu:optionWindow') + `${this.choice}`);
   }
@@ -548,7 +551,7 @@ export class OptionBackgroundSoundUi extends Ui {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
 
-    this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    this.texts[this.choice ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
   }
 }
 
@@ -649,7 +652,7 @@ export class OptionEffectSoundUi extends Ui {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
 
-    this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    this.texts[this.choice ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
   }
 }
 
