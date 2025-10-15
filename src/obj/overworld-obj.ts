@@ -35,8 +35,8 @@ export class OverworldObj {
 
     this.name.setDepth(DEPTH.NICKNAME);
     this.effect.setDepth(this.tilePos.y);
-    this.emotion.setDepth(this.tilePos.y);
-    this.dummy.setDepth(this.tilePos.y);
+    this.emotion.setDepth(DEPTH.MENU);
+    this.dummy.setDepth(this.tilePos.y + 1);
     this.sprite.setDepth(this.tilePos.y);
   }
 
@@ -163,13 +163,24 @@ export class OverworldObj {
   }
 
   setEmotion(texture: TEXTURE | string, animation: ANIMATION | string, repeat: number = 0, frame: number = 7, scale: number = 1.5) {
-    animation !== ANIMATION.NONE ? this.emotion.play({ key: animation, repeat: repeat, frameRate: frame }) : this.emotion.stop();
+    this.emotion.stop();
+    this.emotion.removeAllListeners('animationcomplete');
+    this.scene.tweens.killTweensOf(this.emotion);
 
-    if (texture !== TEXTURE.NONE) this.emotion.setTexture(texture);
+    this.emotion.setTexture(TEXTURE.BLANK);
+
     this.emotion.setScale(scale);
+    this.emotion.setVisible(true);
+
+    if (animation !== ANIMATION.NONE) {
+      this.emotion.play({ key: animation, repeat: repeat, frameRate: frame });
+    } else {
+      this.emotion.stop();
+    }
 
     this.emotion.once('animationcomplete', () => {
       this.emotion.setTexture(TEXTURE.BLANK);
+      this.emotion.setVisible(false);
     });
   }
 

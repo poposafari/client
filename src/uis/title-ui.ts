@@ -58,14 +58,14 @@ export class TitleUi extends Ui {
     this.windowContainer.setScrollFactor(0);
   }
 
-  async show(data?: any): Promise<void> {
+  async show(isInit: boolean = true): Promise<void> {
     runFadeEffect(this.scene, 1000, 'in');
 
     this.restoreContinue();
     this.removeMenus();
     this.createMenus();
 
-    await this.getIngame();
+    await this.getIngame(isInit);
 
     this.bgContainer.setVisible(true);
     this.windowContainer.setVisible(true);
@@ -107,6 +107,8 @@ export class TitleUi extends Ui {
           case KEY.SELECT:
             const target = this.menus[choice];
 
+            keyboard.clearCallbacks();
+
             if (target === i18next.t('menu:newgame')) {
               if (!GM.getUserData()) {
                 GM.changeMode(MODE.STARTER);
@@ -114,11 +116,11 @@ export class TitleUi extends Ui {
                 GM.changeMode(MODE.ACCOUNT_DELETE);
               }
             } else if (target === i18next.t('menu:logout')) {
+              keyboard.clearCallbacks();
+              GM.setUserData(null);
               GM.changeMode(MODE.LOGOUT);
             } else if (target === i18next.t('menu:continue')) {
-              if (GM.getUserData()?.isStarter) {
-                GM.changeMode(MODE.BLACK_SCREEN);
-              }
+              GM.changeMode(MODE.BLACK_SCREEN);
             } else if (target === i18next.t('menu:option')) {
               GM.changeMode(MODE.OPTION);
             }
@@ -186,8 +188,8 @@ export class TitleUi extends Ui {
     let currentX = -200;
 
     party.forEach((pokemon) => {
-      const icon = addImage(this.scene, `pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}`, currentX, -140);
-      const shiny = addImage(this.scene, TEXTURE.BLANK, currentX, -140);
+      const icon = addImage(this.scene, `pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}${pokemon?.getShiny() ? 's' : ''}`, currentX, -140);
+      const shiny = addImage(this.scene, pokemon?.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK, currentX - 40, -160).setScale(1.4);
 
       icon.setScale(1.4);
       shiny.setScale(1.4);
@@ -244,17 +246,23 @@ export class TitleUi extends Ui {
     }
   }
 
-  private async getIngame() {
-    const ret = await getIngameApi();
+  private async getIngame(isInit: boolean) {
+    if (isInit) {
+      const ret = await getIngameApi();
 
-    if (ret.result) {
-      GM.initUserData(ret.data);
+      if (ret.result) {
+        GM.initUserData(ret.data);
 
+        const data = GM.getUserData()!;
+
+        this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
+      } else {
+        GM.setUserData(null);
+      }
+    } else {
       const data = GM.getUserData()!;
 
       this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
-    } else {
-      GM.setUserData(null);
     }
   }
 }

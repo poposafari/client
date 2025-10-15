@@ -21,7 +21,7 @@ export class BlackScreenUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    const bg = addBackground(this.scene, TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
+    const bg = addBackground(this.scene, TEXTURE.BG_BLACK).setOrigin(0.5, 0.5).setAlpha(0);
 
     const season = getCurrentSeason();
 
@@ -42,12 +42,14 @@ export class BlackScreenUi extends Ui {
   }
 
   async show(data?: any): Promise<void> {
-    const elementsToAnimate = [this.seasonSymbol, this.seasonText0, this.seasonText1];
+    const bg = this.container.list[0] as Phaser.GameObjects.Image;
+    const elementsToAnimate = [bg, this.seasonSymbol, this.seasonText0, this.seasonText1];
 
     this.handleKeyInput();
 
     elementsToAnimate.forEach((el) => el.setAlpha(0));
     this.container.setVisible(true);
+
     return new Promise((resolve) => {
       this.scene.tweens.add({
         targets: elementsToAnimate,

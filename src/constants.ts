@@ -2,6 +2,7 @@ export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
 export const PLAYER_SCALE = 3;
 export const MAX_ITEM_SLOT = 9;
+export const MAX_QUICK_ITEM_SLOT = 5;
 export const MAX_PARTY_SLOT = 6;
 export const MAX_PC_SLOT = 33;
 export const MAX_PC_BG = 15;

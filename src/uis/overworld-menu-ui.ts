@@ -1,13 +1,17 @@
+import { exitSafariZoneApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
-import { AUDIO, DEPTH, EVENT, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, EVENT, KEY, MODE, OVERWORLD_TYPE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
+import { QuestionMessageUi } from './question-message-ui';
 import { addImage, addText, addWindow, playSound, Ui } from './ui';
 
 export class OverworldMenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
+
+  private questionMessageUi: QuestionMessageUi;
 
   private lastStart!: number;
 
@@ -16,17 +20,28 @@ export class OverworldMenuUi extends Ui {
   private icons: Phaser.GameObjects.Image[] = [];
   private texts: Phaser.GameObjects.Text[] = [];
 
-  private readonly ListIcons = [TEXTURE.ICON_PC, TEXTURE.ICON_BAG_M, TEXTURE.ICON_PROFILE, TEXTURE.ICON_OPTION, TEXTURE.ICON_EXIT];
-  private ListTexts = [i18next.t('menu:menuPokebox'), i18next.t('menu:menuBag'), i18next.t('menu:menuProfile'), i18next.t('menu:menuOption'), i18next.t('menu:menuBackToTitle')];
+  private readonly ListIcons = [TEXTURE.ICON_PC, TEXTURE.ICON_BAG_M, TEXTURE.ICON_PROFILE, TEXTURE.ICON_OPTION, TEXTURE.ICON_EXIT_0, TEXTURE.ICON_CANCEL];
+  private ListTexts = [
+    i18next.t('menu:menuPokebox'),
+    i18next.t('menu:menuBag'),
+    i18next.t('menu:menuProfile'),
+    i18next.t('menu:menuOption'),
+    i18next.t('menu:menuBackToTitle'),
+    i18next.t('menu:menuCancel'),
+  ];
   private readonly scale: number = 2;
 
   constructor(scene: InGameScene) {
     super(scene);
+
+    this.questionMessageUi = new QuestionMessageUi(scene);
   }
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
+
+    this.questionMessageUi.setup();
 
     this.lastStart = 0;
 
@@ -73,6 +88,8 @@ export class OverworldMenuUi extends Ui {
 
     this.dummys[choice].setTexture(TEXTURE.WINDOW_RED);
 
+    this.updateBackToText();
+
     keyboard.setAllowKey(keys);
     keyboard.setKeyDownCallback((key) => {
       const prevChoice = choice;
@@ -90,13 +107,8 @@ export class OverworldMenuUi extends Ui {
             this.selectMenu(choice);
             break;
           case KEY.CANCEL:
+            this.cancelMenu(choice);
             playSound(this.scene, AUDIO.CANCEL_0, GM.getUserOption()?.getEffectVolume());
-            this.clean();
-            this.lastStart = 0;
-            this.renderIconsTint();
-            this.dummys[choice].setTexture(TEXTURE.BLANK);
-            GM.popUi();
-            eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU_TINT);
             break;
         }
 
@@ -165,10 +177,60 @@ export class OverworldMenuUi extends Ui {
       GM.changeMode(MODE.OPTION);
     } else if (target === i18next.t('menu:menuBackToTitle')) {
       //back to title
+      this.questionMessageUi.show({
+        type: 'default',
+        content: i18next.t('message:is_back_to_title'),
+        speed: GM.getUserOption()?.getTextSpeed()!,
+        yes: async () => {
+          this.cancelMenu(choice);
+          GM.changeMode(MODE.TITLE, false);
+        },
+        no: async () => {
+          this.handleKeyInput();
+        },
+      });
     } else if (target === i18next.t('menu:menuBackToPlaza')) {
-      eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-        { type: 'sys', format: 'question', content: i18next.t('message:isBackToPlaza'), speed: 10, questionYes: EVENT.ACCEPT_BACKTO_PLAZA, questionNo: EVENT.REJECT_BACKTO_PLAZA },
-      ]);
+      this.questionMessageUi.show({
+        type: 'default',
+        content: i18next.t('message:is_back_to_plaza'),
+        speed: GM.getUserOption()?.getTextSpeed()!,
+        yes: async () => {
+          this.cancelMenu(choice);
+          const res = await exitSafariZoneApi();
+          if (res.result) {
+            GM.updateUserData({ location: '005', x: 39, y: 41 });
+            GM.changeMode(MODE.OVERWORLD);
+          }
+        },
+        no: async () => {
+          this.handleKeyInput();
+        },
+      });
+    } else if (target === i18next.t('menu:menuCancel')) {
+      //cancel
+      this.cancelMenu(choice);
+      playSound(this.scene, AUDIO.CANCEL_0, GM.getUserOption()?.getEffectVolume());
+    }
+  }
+
+  private cancelMenu(choice: number) {
+    this.clean();
+    this.lastStart = 0;
+    this.renderIconsTint();
+    this.dummys[choice].setTexture(TEXTURE.BLANK);
+    GM.popUi();
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_MENU, false);
+  }
+
+  private updateBackToText() {
+    if (GM.getCurrentOverworldType() === OVERWORLD_TYPE.SAFARI) {
+      this.texts[4].setText(i18next.t('menu:menuBackToPlaza'));
+      this.icons[4].setTexture(TEXTURE.ICON_EXIT_1);
+      this.ListTexts[4] = i18next.t('menu:menuBackToPlaza');
+    } else {
+      this.texts[4].setText(i18next.t('menu:menuBackToTitle'));
+      this.icons[4].setTexture(TEXTURE.ICON_EXIT_0);
+      this.ListTexts[4] = i18next.t('menu:menuBackToTitle');
     }
   }
 }

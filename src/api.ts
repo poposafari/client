@@ -5,6 +5,10 @@ import {
   ApiResponse,
   BuyItemReq,
   BuyItemRes,
+  CatchGroundItemReq,
+  CatchWildFailRes,
+  CatchWildReq,
+  CatchWildSuccessRes,
   EnterSafariReq,
   EnterSafariRes,
   EvolPcReq,
@@ -116,3 +120,6 @@ export const getAvailableTicketApi = () => apiWrap<number>(() => Axios.get('inga
 export const receiveAvailableTicketApi = () => apiWrap<GetItemRes>(() => Axios.get('ingame/ticket/receive'));
 export const useSafariTicketApi = (data: UseItemReq) => apiWrap<BuyItemRes>(() => Axios.post('bag/ticket/use', data));
 export const enterSafariZoneApi = (data: EnterSafariReq) => apiWrap<EnterSafariRes>(() => Axios.post('safari/enter', data));
+export const exitSafariZoneApi = () => apiWrap<unknown>(() => Axios.get('safari/exit'));
+export const catchWildApi = (data: CatchWildReq) => apiWrap<CatchWildSuccessRes | CatchWildFailRes>(() => Axios.post('safari/wild/catch', data));
+export const catchGroundItemApi = (data: CatchGroundItemReq) => apiWrap<GetItemRes>(() => Axios.post('safari/grounditem/catch', data));

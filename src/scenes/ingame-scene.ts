@@ -6,6 +6,7 @@ import { BagStorage, OverworldStorage } from '../storage';
 import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
 import { AccountDeleteUi } from '../uis/account-delete-ui';
 import { BagUi } from '../uis/bag-ui';
+import { BattleUi } from '../uis/battle-ui';
 import { BlackScreenUi } from '../uis/black-screen-ui';
 import { ConnectUi } from '../uis/connect-ui';
 import { LoginUi } from '../uis/login-ui';
@@ -16,7 +17,9 @@ import { OverworldHUDUi } from '../uis/overworld-hud-ui';
 import { OverworldMenuUi } from '../uis/overworld-menu-ui';
 import { OverworldUi } from '../uis/overworld-ui';
 import { PcUi } from '../uis/pc-ui';
+import { QuickSlotItemUi } from '../uis/quick-slot-item-ui';
 import { RegisterUi } from '../uis/register-ui';
+import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
 import { StarterUi } from '../uis/starter-ui';
 import { TitleUi } from '../uis/title-ui';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
@@ -42,11 +45,6 @@ export class InGameScene extends BaseScene {
     const keyboard = KeyboardHandler.getInstance();
     keyboard.init(this);
 
-    GM.setVolume('bg');
-    GM.setVolume('effect');
-    GM.setMessageSpeed(10);
-    GM.setMsgWindow(TEXTURE.WINDOW_MENU);
-
     GM.registerUi(UI.CONNECT, new ConnectUi(this));
     GM.registerUi(UI.LOGIN, new LoginUi(this));
     GM.registerUi(UI.REGISTER, new RegisterUi(this));
@@ -62,6 +60,8 @@ export class InGameScene extends BaseScene {
     GM.registerUi(UI.PC, new PcUi(this));
     GM.registerUi(UI.OPTION, new OptionUi(this));
     GM.registerUi(UI.BLACK_SCREEN, new BlackScreenUi(this));
+    GM.registerUi(UI.BATTLE, new BattleUi(this));
+    GM.registerUi(UI.QUICK_SLOT_ITEM, new QuickSlotItemUi(this));
     GM.registerUi(UI.OVERWORLD, overworldUi);
 
     const overworldInfo = OverworldStorage.getInstance();
@@ -112,12 +112,16 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW, ANIMATION.OVERWORLD_SHADOW);
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW_WATER, ANIMATION.OVERWORLD_SHADOW_WATER);
 
+    createSpriteAnimation(this, TEXTURE.PARTICLE_ENTER_BALL, ANIMATION.PARTICLE_ENTER_BALL);
+
+    createSpriteAnimation(this, TEXTURE.GROUND_ITEM, ANIMATION.GROUND_ITEM);
+
     createSpriteAnimation(this, 'door_1', 'door_1');
 
     // this.initNpcAnimation();
     this.initPlayerAnimation();
     this.initPokemonAnimation();
-    this.initPokeballAnimation();
+    this.initBattleBallAnimation();
     this.initEmotionAnimation();
     this.initSurfAnimation();
     this.initShader();
@@ -127,7 +131,7 @@ export class InGameScene extends BaseScene {
     const texture = getSpriteFrames(this, TEXTURE.EMO, ANIMATION.EMO);
     const line = 4;
     for (let i = 1; i <= 4; i++) {
-      const emotionTexture = `emo_${i}`;
+      const emotionTexture = `emo_${i - 1}`;
       const emo = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 1], texture[line * (i - 1) + 2], texture[line * (i - 1) + 3]]];
 
       createSpriteAnimation(this, emotionTexture, emotionTexture, emo[0]);
@@ -190,39 +194,69 @@ export class InGameScene extends BaseScene {
     }
   }
 
-  private initPokeballAnimation() {
-    const texture = getSpriteFrames(this, TEXTURE.POKEBALL, ANIMATION.POKEBALL);
-    const line = 10;
+  // private initPokeballAnimation() {
+  //   const texture = getSpriteFrames(this, TEXTURE.POKEBALL, ANIMATION.POKEBALL);
+  //   const line = 10;
+  //   for (let i = 1; i <= 4; i++) {
+  //     const pokeballLaunchTexture = `00${i}_launch`;
+  //     const pokeballEnterTexture = `00${i}_enter`;
+  //     const pokeballDropTexture = `00${i}_drop`;
+  //     const pokeballExitTexture = `00${i}_exit`;
+  //     const pokeballShake = `00${i}_shake`;
+
+  //     const launch = [
+  //       [
+  //         texture[line * (i - 1) + 0],
+  //         texture[line * (i - 1) + 1],
+  //         texture[line * (i - 1) + 2],
+  //         texture[line * (i - 1) + 3],
+  //         texture[line * (i - 1) + 4],
+  //         texture[line * (i - 1) + 5],
+  //         texture[line * (i - 1) + 6],
+  //         texture[line * (i - 1) + 7],
+  //         texture[line * (i - 1) + 8],
+  //       ],
+  //     ];
+  //     const enter = [[texture[line * (i - 1) + 8], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
+  //     const drop = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
+  //     const exit = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
+  //     const shake = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
+
+  //     createSpriteAnimation(this, pokeballLaunchTexture, pokeballLaunchTexture, launch[0]);
+  //     createSpriteAnimation(this, pokeballEnterTexture, pokeballEnterTexture, enter[0]);
+  //     createSpriteAnimation(this, pokeballDropTexture, pokeballDropTexture, drop[0]);
+  //     createSpriteAnimation(this, pokeballExitTexture, pokeballExitTexture, exit[0]);
+  //     createSpriteAnimation(this, pokeballShake, pokeballShake, shake[0]);
+  //   }
+  // }
+
+  private initBattleBallAnimation() {
+    const texture0 = getSpriteFrames(this, TEXTURE.BATTLE_BALL_0, ANIMATION.BATTLE_BALL_0);
+    const texture1 = getSpriteFrames(this, TEXTURE.BATTLE_BALL_1, ANIMATION.BATTLE_BALL_1);
+
+    const texture0Per = 8;
+
     for (let i = 1; i <= 4; i++) {
-      const pokeballLaunchTexture = `00${i}_launch`;
-      const pokeballEnterTexture = `00${i}_enter`;
-      const pokeballDropTexture = `00${i}_drop`;
-      const pokeballExitTexture = `00${i}_exit`;
-      const pokeballShake = `00${i}_shake`;
+      const ballLaunchTexture = `ball_00${i}_launch`;
+      const ballEnterTexture = `ball_00${i}_enter`;
 
       const launch = [
         [
-          texture[line * (i - 1) + 0],
-          texture[line * (i - 1) + 1],
-          texture[line * (i - 1) + 2],
-          texture[line * (i - 1) + 3],
-          texture[line * (i - 1) + 4],
-          texture[line * (i - 1) + 5],
-          texture[line * (i - 1) + 6],
-          texture[line * (i - 1) + 7],
-          texture[line * (i - 1) + 8],
+          texture0[texture0Per * (i - 1) + 0],
+          texture0[texture0Per * (i - 1) + 1],
+          texture0[texture0Per * (i - 1) + 2],
+          texture0[texture0Per * (i - 1) + 3],
+          texture0[texture0Per * (i - 1) + 4],
+          texture0[texture0Per * (i - 1) + 5],
+          texture0[texture0Per * (i - 1) + 6],
+          texture0[texture0Per * (i - 1) + 7],
         ],
       ];
-      const enter = [[texture[line * (i - 1) + 8], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
-      const drop = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
-      const exit = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 8], texture[line * (i - 1) + 9]]];
-      const shake = [[texture[line * (i - 1) + 0], texture[line * (i - 1) + 0]]];
 
-      createSpriteAnimation(this, pokeballLaunchTexture, pokeballLaunchTexture, launch[0]);
-      createSpriteAnimation(this, pokeballEnterTexture, pokeballEnterTexture, enter[0]);
-      createSpriteAnimation(this, pokeballDropTexture, pokeballDropTexture, drop[0]);
-      createSpriteAnimation(this, pokeballExitTexture, pokeballExitTexture, exit[0]);
-      createSpriteAnimation(this, pokeballShake, pokeballShake, shake[0]);
+      const enter = [[texture1[i - 1]]];
+
+      createSpriteAnimation(this, ballLaunchTexture, ballLaunchTexture, launch[0]);
+      createSpriteAnimation(this, ballEnterTexture, ballEnterTexture, enter[0]);
     }
   }
 

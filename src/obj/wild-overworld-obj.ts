@@ -35,6 +35,15 @@ export class WildOverworldObj extends MovableOverworldObj {
     this.scheduleRandomMovement();
   }
 
+  updateData(data: Partial<WildRes>) {
+    if (this.data) {
+      this.data = {
+        ...this.data,
+        ...data,
+      };
+    }
+  }
+
   getData() {
     return this.data;
   }
@@ -61,6 +70,15 @@ export class WildOverworldObj extends MovableOverworldObj {
     }
   }
 
+  caught() {
+    this.destroy();
+    this.data.catch = true;
+  }
+
+  isCatchable() {
+    return this.data.catch;
+  }
+
   async reaction(direction: DIRECTION) {
     const pokedex = this.data.pokedex;
     const shiny = this.data.shiny ? 's' : '';
@@ -82,7 +100,7 @@ export class WildOverworldObj extends MovableOverworldObj {
         break;
     }
 
-    this.setEmotion('emo_1', 'emo_1');
+    this.setEmotion('emo_0', 'emo_0');
   }
 
   private moveInSteps(directionIndex: number, steps: number) {

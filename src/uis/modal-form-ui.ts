@@ -27,9 +27,7 @@ export class ModalFormUi extends Ui {
     this.modalContainer.setScrollFactor(0);
   }
 
-  show(): void {
-    eventBus.emit(EVENT.PLAY_SOUND, this.scene);
-  }
+  show(): void {}
 
   clean(data?: any): void {}
 
@@ -40,7 +38,7 @@ export class ModalFormUi extends Ui {
   update(time: number, delta: number): void {}
 
   shake() {
-    playSound(this.scene, AUDIO.BUZZER, GM.getVolume('bg'));
+    playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
     shakeEffect(this.scene, this.modalContainer);
   }
 

@@ -25,10 +25,13 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_MENU, 'ui/windows', TEXTURE.WINDOW_MENU);
     this.loadImage(TEXTURE.WINDOW_MENU_S, 'ui/windows', TEXTURE.WINDOW_MENU_S);
     this.loadImage(TEXTURE.WINDOW_RED, 'ui/windows', TEXTURE.WINDOW_RED);
-    this.loadImage(TEXTURE.WINDOW_REWARD, 'ui/windows', TEXTURE.WINDOW_REWARD);
-    this.loadImage(TEXTURE.WINDOW_REWARD_0, 'ui/windows', TEXTURE.WINDOW_REWARD_0);
     this.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', TEXTURE.WINDOW_WHITE);
     this.loadImage(TEXTURE.WINDOW_OPACITY, 'ui/windows', TEXTURE.WINDOW_OPACITY);
+    this.loadImage(TEXTURE.REWARD_WINDOW, 'ui/windows', TEXTURE.REWARD_WINDOW);
+    this.loadImage(TEXTURE.REWARD_OVERLAY_0, 'ui/windows', TEXTURE.REWARD_OVERLAY_0);
+    this.loadImage(TEXTURE.REWARD_OVERLAY_1, 'ui/windows', TEXTURE.REWARD_OVERLAY_1);
+    this.loadImage(TEXTURE.REWARD_OVERLAY_2, 'ui/windows', TEXTURE.REWARD_OVERLAY_2);
+    this.loadImage(TEXTURE.REWARD_OVERLAY_3, 'ui/windows', TEXTURE.REWARD_OVERLAY_3);
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
     this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
@@ -44,6 +47,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.BG_EVOLVE, 'ui/bg', TEXTURE.BG_EVOLVE);
     this.loadImage(TEXTURE.BG_BLACK, 'ui/bg', TEXTURE.BG_BLACK);
     this.loadImage(TEXTURE.BG_STARTER, 'ui/bg', TEXTURE.BG_STARTER);
+    this.loadImage(TEXTURE.BG_STARTER_POKEMON, 'ui/bg', TEXTURE.BG_STARTER_POKEMON);
 
     //maps
     this.loadImage(TEXTURE.INDOOR_TILE_FLOOR, 'ui/map', TEXTURE.INDOOR_TILE_FLOOR);
@@ -65,7 +69,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ICON_BAG_M, 'ui/icon', TEXTURE.ICON_BAG_M);
     this.loadImage(TEXTURE.ICON_BAG_G, 'ui/icon', TEXTURE.ICON_BAG_G);
     this.loadImage(TEXTURE.ICON_PROFILE, 'ui/icon', TEXTURE.ICON_PROFILE);
-    this.loadImage(TEXTURE.ICON_EXIT, 'ui/icon', TEXTURE.ICON_EXIT);
+    this.loadImage(TEXTURE.ICON_EXIT_0, 'ui/icon', TEXTURE.ICON_EXIT_0);
+    this.loadImage(TEXTURE.ICON_EXIT_1, 'ui/icon', TEXTURE.ICON_EXIT_1);
     this.loadImage(TEXTURE.ICON_RUNNING, 'ui/icon', TEXTURE.ICON_RUNNING);
     this.loadImage(TEXTURE.ICON_LOCATION, 'ui/icon', TEXTURE.ICON_LOCATION);
     this.loadImage(TEXTURE.ICON_CANDY, 'ui/icon', TEXTURE.ICON_CANDY);
@@ -75,6 +80,9 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ICON_OWNED, 'ui/icon', TEXTURE.ICON_OWNED);
     this.loadImage(TEXTURE.ICON_XY, 'ui/icon', TEXTURE.ICON_XY);
     this.loadImage(TEXTURE.ICON_FOLLOW, 'ui/icon', TEXTURE.ICON_FOLLOW);
+    this.loadImage(TEXTURE.ICON_CANCEL, 'ui/icon', TEXTURE.ICON_CANCEL);
+    this.loadImage(TEXTURE.ICON_REG, 'ui/icon', TEXTURE.ICON_REG);
+    this.loadImage(TEXTURE.ICON_TALK, 'ui/icon', TEXTURE.ICON_TALK);
 
     //doors
     this.loadAtlas('door_1', 'ui/door', 'door_1', 'door_1');
@@ -90,8 +98,6 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.PC_BALL_002, 'ui/pc', TEXTURE.PC_BALL_002);
     this.loadImage(TEXTURE.PC_BALL_003, 'ui/pc', TEXTURE.PC_BALL_003);
     this.loadImage(TEXTURE.PC_BALL_004, 'ui/pc', TEXTURE.PC_BALL_004);
-    this.loadImage(TEXTURE.REWARD, 'ui', TEXTURE.REWARD);
-    this.loadImage(TEXTURE.REWARD_OVERLAY_0, 'ui', TEXTURE.REWARD_OVERLAY_0);
     this.loadImage(TEXTURE.BATTLE_BAR, 'ui/battle', TEXTURE.BATTLE_BAR);
     this.loadImage(TEXTURE.GENDER_0, 'ui', TEXTURE.GENDER_0);
     this.loadImage(TEXTURE.GENDER_1, 'ui', TEXTURE.GENDER_1);
@@ -154,6 +160,11 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.PARTICLE_HM_0, 'ui/particle', TEXTURE.PARTICLE_HM_0);
     this.loadImage(TEXTURE.PARTICLE_HM_1, 'ui/particle', TEXTURE.PARTICLE_HM_1);
     this.loadImage(TEXTURE.PARTICLE_EVOL, 'ui/particle', TEXTURE.PARTICLE_EVOL);
+    this.loadImage(TEXTURE.PARTICLE_BALL_0, 'ui/particle', TEXTURE.PARTICLE_BALL_0);
+    this.loadImage(TEXTURE.PARTICLE_BALL_1, 'ui/particle', TEXTURE.PARTICLE_BALL_1);
+    this.loadImage(TEXTURE.PARTICLE_BALL_BG, 'ui/particle', TEXTURE.PARTICLE_BALL_BG);
+    this.loadImage(TEXTURE.PARTICLE_STAR, 'ui/particle', TEXTURE.PARTICLE_STAR);
+    this.loadAtlas(TEXTURE.PARTICLE_ENTER_BALL, 'ui/particle', TEXTURE.PARTICLE_ENTER_BALL, ANIMATION.PARTICLE_ENTER_BALL);
     this.loadAtlas(TEXTURE.BAG_POCKET_BALL, 'ui', TEXTURE.BAG_POCKET_BALL, ANIMATION.BAG_POCKET_BALL);
     this.loadAtlas(TEXTURE.BAG_POCKET_ETC, 'ui', TEXTURE.BAG_POCKET_ETC, ANIMATION.BAG_POCKET_ETC);
     this.loadAtlas(TEXTURE.BAG_POCKET_BERRY, 'ui', TEXTURE.BAG_POCKET_BERRY, ANIMATION.BAG_POCKET_BERRY);
@@ -176,6 +187,15 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.BG_OVERLAY_0, 'ui', TEXTURE.BG_OVERLAY_0);
     this.loadAtlas(TEXTURE.SPARKLE, 'ui', TEXTURE.SPARKLE, ANIMATION.SPARKLE);
     this.loadImage(TEXTURE.PROFESSOR, 'ui', TEXTURE.PROFESSOR);
+    this.loadAtlas(TEXTURE.BATTLE_BALL_0, 'ui', TEXTURE.BATTLE_BALL_0, ANIMATION.BATTLE_BALL_0);
+    this.loadAtlas(TEXTURE.BATTLE_BALL_1, 'ui', TEXTURE.BATTLE_BALL_1, ANIMATION.BATTLE_BALL_1);
+    this.loadImage(TEXTURE.RIBBON, 'ui', TEXTURE.RIBBON);
+    this.loadAtlas(TEXTURE.SPARKLE, 'ui', TEXTURE.SPARKLE, ANIMATION.SPARKLE);
+    this.loadAtlas(TEXTURE.GROUND_ITEM, 'ui', TEXTURE.GROUND_ITEM, ANIMATION.GROUND_ITEM);
+    this.loadImage(TEXTURE.SHOP_SCREEN, 'ui', TEXTURE.SHOP_SCREEN);
+    this.loadImage('battle_shadow_0', 'ui/battle', 'battle_shadow_0');
+    this.loadImage('battle_shadow_1', 'ui/battle', 'battle_shadow_1');
+    this.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

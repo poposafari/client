@@ -123,8 +123,6 @@ export class MenuUi extends Ui {
       keyboard.setKeyDownCallback(async (key) => {
         const prevChoice = choice;
 
-        eventBus.emit(EVENT.PLAY_SOUND, this.scene, key);
-
         try {
           switch (key) {
             case KEY.UP:

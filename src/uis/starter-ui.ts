@@ -2,7 +2,7 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { PlayerAvatar, PlayerGender } from '../types';
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow, runFadeEffect, startModalAnimation } from './ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, delay, runFadeEffect, startModalAnimation } from './ui';
 import { DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { getIngameApi, registerIngameApi } from '../api';
@@ -124,7 +124,7 @@ export class StarterUi extends ModalFormUi {
     this.avatar = '1';
 
     super.setup();
-    this.setModalSize(GM.getMsgWindow(), 110, 120, 6);
+    this.setModalSize(TEXTURE.WINDOW_MENU, 110, 120, 6);
 
     this.titleContainer = this.createContainer(width / 2, height / 2 - 260);
 
@@ -193,7 +193,7 @@ export class StarterUi extends ModalFormUi {
       maxLength: 10,
     }).setScale(2);
 
-    this.btnWindow = addWindow(this.scene, GM.getMsgWindow(), 0, 0, 150 / btnScale, 65 / btnScale, 16, 16, 16, 16).setScale(btnScale);
+    this.btnWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, 150 / btnScale, 65 / btnScale, 16, 16, 16, 16).setScale(btnScale);
     this.btnText = addText(this.scene, 0, 0, i18next.t('menu:create'), TEXTSTYLE.DEFAULT);
 
     this.inputContainer.add(this.inputWindow);
@@ -354,8 +354,6 @@ export class StarterUi extends ModalFormUi {
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame19'), speed: this.professorMsgSpeed });
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame20'), speed: this.professorMsgSpeed });
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame21'), speed: this.professorMsgSpeed });
-
-    await runFadeEffect(this.scene, 2000, 'out');
 
     const res = await getIngameApi();
 

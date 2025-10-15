@@ -56,12 +56,12 @@ export class AccountDeleteUi extends Ui {
             await this.deleteAccount();
           },
           no: async () => {
-            GM.changeMode(MODE.TITLE);
+            GM.changeMode(MODE.TITLE, false);
           },
         });
       },
       no: async () => {
-        GM.changeMode(MODE.TITLE);
+        GM.changeMode(MODE.TITLE, false);
       },
     });
   }

@@ -1,6 +1,7 @@
 import { SafariData } from '../data';
 import { DIRECTION, KEY, Season, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
+import { ItemRank } from '../types';
 
 export function createZeroPad(value: number): string {
   return value.toString().padStart(4, '0');
@@ -177,3 +178,107 @@ export function changeDirectionToKey(direction: DIRECTION) {
 
   return KEY.UP;
 }
+
+export const matchTypeWithBerryRate = (berry: string | null, type1: string, type2: string | null) => {
+  if (!berry) return 1.0;
+
+  switch (berry) {
+    case '011':
+      if ([type1, type2].includes('fire')) return 1.2;
+      break;
+    case '012':
+      if ([type1, type2].includes('water')) return 1.2;
+      break;
+    case '013':
+      if ([type1, type2].includes('electric')) return 1.2;
+      break;
+    case '014':
+      if ([type1, type2].includes('grass')) return 1.2;
+      break;
+    case '015':
+      if ([type1, type2].includes('ice')) return 1.2;
+      break;
+    case '016':
+      if ([type1, type2].includes('fighting')) return 1.2;
+      break;
+    case '017':
+      if ([type1, type2].includes('poison')) return 1.2;
+      break;
+    case '018':
+      if ([type1, type2].includes('ground')) return 1.2;
+      break;
+    case '019':
+      if ([type1, type2].includes('flying')) return 1.2;
+      break;
+    case '020':
+      if ([type1, type2].includes('psychic')) return 1.2;
+      break;
+    case '021':
+      if ([type1, type2].includes('bug')) return 1.2;
+      break;
+    case '022':
+      if ([type1, type2].includes('rock')) return 1.2;
+      break;
+    case '023':
+      if ([type1, type2].includes('ghost')) return 1.2;
+      break;
+    case '024':
+      if ([type1, type2].includes('dragon')) return 1.2;
+      break;
+    case '025':
+      if ([type1, type2].includes('dark')) return 1.2;
+      break;
+    case '026':
+      if ([type1, type2].includes('steel')) return 1.2;
+      break;
+    case '027':
+      if ([type1, type2].includes('fairy')) return 1.2;
+      break;
+    case '028':
+      if ([type1, type2].includes('normal')) return 1.2;
+      break;
+    case '029':
+      return 1.2;
+  }
+
+  return 1.0;
+};
+
+export const matchPokemonWithRarityRate = (rank: string) => {
+  let rate = 0;
+
+  switch (rank) {
+    case 'rare':
+      rate = 0.02;
+      break;
+    case 'epic':
+      rate = 0.04;
+      break;
+    case 'legendary':
+      rate = 0.06;
+      break;
+  }
+
+  return rate;
+};
+
+export const matchItemRank = (rank: string) => {
+  let rate = 0;
+
+  switch (rank) {
+    case 'common':
+      rate = 0;
+      break;
+    case 'rare':
+      rate = 1;
+      break;
+    case 'epic':
+      rate = 2;
+      break;
+    case 'legendary':
+      rate = 3;
+      break;
+  }
+
+  return rate;
+};

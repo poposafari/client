@@ -16,10 +16,11 @@ export class QuestionMessageUi extends Ui {
   private dummys: Phaser.GameObjects.Image[] = [];
   private questionTexts: Phaser.GameObjects.Text[] = [];
   private arrowTexture!: TEXTURE | string;
+  private textObjects: Phaser.GameObjects.Text[] = [];
 
   private readonly scale: number = 2;
-  private readonly messageWindowWidth: number = 950;
-  private readonly messageWindowHeight: number = 120;
+  private readonly messageWindowWidth: number = 960;
+  private readonly messageWindowHeight: number = 130;
   private readonly questionWindowWidth: number = 160;
   private readonly questionWindowHeight: number = 120;
 
@@ -35,7 +36,7 @@ export class QuestionMessageUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2 + 410);
 
-    this.window = addWindow(this.scene, GM.getMsgWindow(), 0, 0, this.messageWindowWidth / this.scale, this.messageWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.messageWindowWidth / this.scale, this.messageWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
     this.text = addText(this.scene, -440, -35, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0);
 
     this.container.add(this.window);
@@ -46,7 +47,7 @@ export class QuestionMessageUi extends Ui {
     this.container.setDepth(DEPTH.MESSAGE);
     this.container.setScrollFactor(0);
 
-    this.questionContainer = this.createContainer(width / 2 + 787, height / 2 + 155);
+    this.questionContainer = this.createContainer(width / 2 + 790, height / 2 + 150);
     this.questionWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, this.questionWindowWidth / this.scale, this.questionWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
     this.questionContainer.add(this.questionWindow);
 
@@ -137,9 +138,11 @@ export class QuestionMessageUi extends Ui {
 
   clean(data?: any): void {
     this.text.text = '';
+    this.textObjects.forEach((obj) => obj.destroy());
+    this.textObjects = [];
+
     this.container.setVisible(false);
     this.questionContainer.setVisible(false);
-    // 선택 화살표 초기화
     this.dummys.forEach((d) => d.setTexture(TEXTURE.BLANK));
   }
 
@@ -150,22 +153,91 @@ export class QuestionMessageUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   private async showText(question: Question) {
-    const text = question.content.split('');
-    let index = 0;
-    let speed = question.speed;
+    const content = question.content;
+    const speed = question.speed;
+    const segments = this.parseBBCode(content);
+
+    let currentX = -440;
+    let currentY = -35;
+    const startX = -440;
+    const lineHeight = 35;
 
     return new Promise((resolve) => {
+      let segmentIndex = 0;
+      let charIndex = 0;
+
       const addNextChar = () => {
-        if (index < text.length) {
-          this.text.text += text[index];
-          index++;
-          this.scene.time.delayedCall(speed, addNextChar, [], this);
-        } else {
+        if (segmentIndex >= segments.length) {
           resolve(true);
+          return;
         }
+
+        const segment = segments[segmentIndex];
+
+        if (charIndex === 0) {
+          const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
+          const textObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
+          this.container.add(textObj);
+          this.textObjects.push(textObj);
+        }
+
+        const currentTextObj = this.textObjects[this.textObjects.length - 1];
+        const char = segment.text[charIndex];
+
+        if (char === '\n') {
+          currentY += lineHeight;
+          currentX = startX;
+          charIndex++;
+
+          if (charIndex < segment.text.length) {
+            const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
+            const newTextObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
+            this.container.add(newTextObj);
+            this.textObjects.push(newTextObj);
+          }
+        } else {
+          currentTextObj.text += char;
+          charIndex++;
+        }
+
+        if (charIndex >= segment.text.length) {
+          if (!segment.text.endsWith('\n')) {
+            currentX += currentTextObj.displayWidth;
+          }
+          segmentIndex++;
+          charIndex = 0;
+        }
+
+        this.scene.time.delayedCall(speed, addNextChar, [], this);
       };
+
       addNextChar();
     });
+  }
+
+  private parseBBCode(content: string): { text: string; isSpecial: boolean }[] {
+    const segments: { text: string; isSpecial: boolean }[] = [];
+    const regex = /\[blue\](.*?)\[\/blue\]/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        const normalText = content.substring(lastIndex, match.index);
+        segments.push({ text: normalText, isSpecial: false });
+      }
+
+      segments.push({ text: match[1], isSpecial: true });
+
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < content.length) {
+      segments.push({ text: content.substring(lastIndex), isSpecial: false });
+    }
+
+    return segments;
   }
 
   private showQuestion(onoff: boolean) {

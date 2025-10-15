@@ -62,7 +62,7 @@ export class Overworld001 extends Overworld {
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 48, 16, +3, 142, 98, '005', 45, 58);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 49, 16, +3, 142, 98, '005', 46, 58);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
 
@@ -82,7 +82,7 @@ export class Overworld002 extends Overworld {
     this.ui.getMap().setLayer(3, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
     this.ui.getMap().setForegroundLayer(4, [TEXTURE.INDOOR_TILE_OBJECT], DEPTH.FOREGROND);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
 
@@ -110,7 +110,7 @@ export class Overworld003 extends Overworld {
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 2, 7, OBJECT.SHOP_CHECKOUT, ShopType.SHOP_0);
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 7, 7, OBJECT.SHOP_CHECKOUT, ShopType.SHOP_1);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
 
@@ -137,7 +137,7 @@ export class Overworld004 extends Overworld {
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 11, 24, +3, 142, 98, '001', 70, 44);
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 5, 11, OBJECT.POST_CHECKOUT, PostOfficeType.POST_0);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
 
@@ -177,7 +177,7 @@ export class Overworld005 extends Overworld {
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 45, 58, +3, 142, 98, '001', 48, 17);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 46, 58, +3, 142, 98, '001', 49, 17);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, false);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
 
@@ -199,6 +199,6 @@ export class Overworld021 extends Overworld {
     this.ui.getMap().setLayer(5, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 5);
     this.ui.getMap().setForegroundLayer(6, [TEXTURE.OUTDOOR_TILE_OBJECT], DEPTH.FOREGROND);
 
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_MENU, true);
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }

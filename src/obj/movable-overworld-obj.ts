@@ -151,16 +151,44 @@ export class MovableOverworldObj extends OverworldObj {
     for (const wild of storage.getWilds()) {
       const wildTilePos = wild.getTilePos();
 
-      if (wildTilePos.x === nextTilePos.x && wildTilePos.y === nextTilePos.y) {
+      if (wildTilePos.x === nextTilePos.x && wildTilePos.y === nextTilePos.y && !wild.isCatchable()) {
         return wild;
       }
     }
+
+    for (const groundItem of storage.getGroundItems()) {
+      const groundItemTilePos = groundItem.getTilePos();
+
+      if (groundItemTilePos.x === nextTilePos.x && groundItemTilePos.y === nextTilePos.y && !groundItem.isCatchable()) {
+        return groundItem;
+      }
+    }
+
+    return null;
   }
 
   hasWild(pos: Phaser.Math.Vector2): boolean {
-    return OverworldStorage.getInstance()
+    const wildAtPosition = OverworldStorage.getInstance()
       .getWilds()
-      .some((wild) => wild.getTilePos().equals(pos));
+      .find((wild) => wild.getTilePos().equals(pos));
+
+    if (wildAtPosition && wildAtPosition.isCatchable()) {
+      return false;
+    }
+
+    return !!wildAtPosition;
+  }
+
+  hasGroundItem(pos: Phaser.Math.Vector2): boolean {
+    const groundItemAtPosition = OverworldStorage.getInstance()
+      .getGroundItems()
+      .find((groundItem) => groundItem.getTilePos().equals(pos));
+
+    if (groundItemAtPosition && groundItemAtPosition.isCatchable()) {
+      return false;
+    }
+
+    return !!groundItemAtPosition;
   }
 
   hasDoor(pos: Phaser.Math.Vector2): boolean {
@@ -210,6 +238,7 @@ export class MovableOverworldObj extends OverworldObj {
     if (this.hasNpc(pos)) return true;
     if (this.hasDoor(pos)) return true;
     if (this.hasWild(pos)) return true;
+    if (this.hasGroundItem(pos)) return true;
 
     return false;
   }

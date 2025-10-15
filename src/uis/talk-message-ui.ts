@@ -13,10 +13,11 @@ export class TalkMessageUi extends Ui {
   private text!: Phaser.GameObjects.Text;
   private endMark!: Phaser.GameObjects.Sprite;
   private endMarkTexture!: TEXTURE | string;
+  private textObjects: Phaser.GameObjects.Text[] = [];
 
   private readonly scale: number = 2;
-  private readonly messageWindowWidth: number = 950;
-  private readonly messageWindowHeight: number = 120;
+  private readonly messageWindowWidth: number = 960;
+  private readonly messageWindowHeight: number = 130;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -28,7 +29,7 @@ export class TalkMessageUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2 + 410);
 
-    this.window = addWindow(this.scene, GM.getMsgWindow(), 0, 0, this.messageWindowWidth / this.scale, this.messageWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
+    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.messageWindowWidth / this.scale, this.messageWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
     this.text = addText(this.scene, -440, -35, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0);
 
     this.container.add(this.window);
@@ -86,6 +87,10 @@ export class TalkMessageUi extends Ui {
   clean(data?: any): void {
     this.text.text = '';
 
+    // BBCode 텍스트 객체들 정리
+    this.textObjects.forEach((obj) => obj.destroy());
+    this.textObjects = [];
+
     this.container.setVisible(false);
     this.endMarkContainer.setVisible(false);
   }
@@ -97,22 +102,93 @@ export class TalkMessageUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   private async showText(talk: Talk) {
-    const text = talk.content.split('');
-    let index = 0;
-    let speed = talk.speed;
+    const content = talk.content;
+    const speed = talk.speed;
+
+    const segments = this.parseBBCode(content);
+
+    let currentX = -440;
+    let currentY = -37;
+    const startX = -440;
+    const lineHeight = 35;
+    const currentStyle = this.text.style.color;
 
     return new Promise((resolve) => {
+      let segmentIndex = 0;
+      let charIndex = 0;
+
       const addNextChar = () => {
-        if (index < text.length) {
-          this.text.text += text[index];
-          index++;
-          this.scene.time.delayedCall(speed, addNextChar, [], this);
-        } else {
+        if (segmentIndex >= segments.length) {
           resolve(true);
+          return;
         }
+
+        const segment = segments[segmentIndex];
+
+        if (charIndex === 0) {
+          const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
+          const textObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
+          this.container.add(textObj);
+          this.textObjects.push(textObj);
+        }
+
+        const currentTextObj = this.textObjects[this.textObjects.length - 1];
+        const char = segment.text[charIndex];
+
+        if (char === '\n') {
+          currentY += lineHeight;
+          currentX = startX;
+          charIndex++;
+
+          if (charIndex < segment.text.length) {
+            const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
+            const newTextObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
+            this.container.add(newTextObj);
+            this.textObjects.push(newTextObj);
+          }
+        } else {
+          currentTextObj.text += char;
+          charIndex++;
+        }
+
+        if (charIndex >= segment.text.length) {
+          if (!segment.text.endsWith('\n')) {
+            currentX += currentTextObj.displayWidth;
+          }
+          segmentIndex++;
+          charIndex = 0;
+        }
+
+        this.scene.time.delayedCall(speed, addNextChar, [], this);
       };
+
       addNextChar();
     });
+  }
+
+  private parseBBCode(content: string): { text: string; isSpecial: boolean }[] {
+    const segments: { text: string; isSpecial: boolean }[] = [];
+    const regex = /\[blue\](.*?)\[\/blue\]/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        const normalText = content.substring(lastIndex, match.index);
+        segments.push({ text: normalText, isSpecial: false });
+      }
+
+      segments.push({ text: match[1], isSpecial: true });
+
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < content.length) {
+      segments.push({ text: content.substring(lastIndex), isSpecial: false });
+    }
+
+    return segments;
   }
 
   private showEndMark(onoff: boolean) {

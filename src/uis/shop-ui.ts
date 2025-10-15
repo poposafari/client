@@ -29,6 +29,7 @@ export class ShopUi extends Ui {
   private cost!: number;
   private inBag!: number;
   private items: ItemData[] = [];
+  private screen!: Phaser.GameObjects.Image;
 
   private inBagText!: Phaser.GameObjects.Text;
   private buyText!: Phaser.GameObjects.Text;
@@ -62,24 +63,37 @@ export class ShopUi extends Ui {
     this.cost = 0;
     this.items = this.getPurchasableItems(data);
 
-    this.list.setup({ scale: 1.5, etcScale: 2, windowWidth: 355, offsetX: +100, offsetY: +240, depth: DEPTH.MENU + 1, per: 12, info: [], window: TEXTURE.WINDOW_MENU });
+    this.container = this.createContainer(width / 2, height / 2);
+
+    this.list.setup({ scale: 1.5, etcScale: 2, windowWidth: 550, offsetX: +100, offsetY: +100, depth: DEPTH.MENU + 1, per: 10, info: [], window: TEXTURE.BLANK });
+
+    this.screen = addImage(this.scene, TEXTURE.SHOP_SCREEN, +120, 0);
+    this.screen.setScale(2.8);
 
     this.descUi.setup(this.items);
     this.setupMenu(width, height);
 
+    this.container.add(this.screen);
+
     this.menuContainer.setVisible(false);
     this.menuContainer.setDepth(DEPTH.MENU + 1);
     this.menuContainer.setScrollFactor(0);
+
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.MENU);
+    this.container.setScrollFactor(0);
   }
 
   async show(data?: any): Promise<'cancel'> {
     this.descUi.show();
+    this.container.setVisible(true);
     this.list.updateInfo(this.createListForm());
 
     while (true) {
       const selectedItemIndex = await this.list.handleKeyInput();
 
       if (typeof selectedItemIndex !== 'number' || selectedItemIndex < 0) {
+        this.container.setVisible(false);
         break;
       }
 
@@ -183,6 +197,7 @@ export class ShopUi extends Ui {
     this.questionMessageUi.clean();
     this.noticeUi.clean();
     this.list.clean();
+    this.container.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -192,7 +207,7 @@ export class ShopUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   private setupMenu(width: number, height: number) {
-    this.menuContainer = this.scene.add.container(width / 2 - 55, height / 2 + 255);
+    this.menuContainer = this.scene.add.container(width / 2 - 35, height / 2 + 165);
 
     const inBagWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, -435, 0, 280 / this.scale, 120 / this.scale, 16, 16, 16, 16);
     inBagWindow.setScale(this.scale);
@@ -278,18 +293,15 @@ export class ShopDescUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2, height / 2 + 420);
+    this.container = this.createContainer(width / 2 - 200, height / 2 + 400);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.descWindowWidth / this.scale, this.descWindowHeight / this.scale, 16, 16, 16, 16);
-    window.setScale(this.scale);
-    this.icon = addImage(this.scene, `item000`, -520, 0);
-    this.text = addText(this.scene, -440, -55, '', TEXTSTYLE.MESSAGE_BLACK);
+    this.icon = addImage(this.scene, `item000`, -365, 0);
+    this.text = addText(this.scene, -250, -65, '', TEXTSTYLE.MESSAGE_WHITE);
 
     this.icon.setScale(2);
     this.text.setOrigin(0, 0);
-    this.text.setScale(0.8);
+    this.text.setScale(1);
 
-    this.container.add(window);
     this.container.add(this.icon);
     this.container.add(this.text);
 
