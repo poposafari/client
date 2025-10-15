@@ -1,5 +1,5 @@
 import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
-import { MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
+import { MAX_ITEM_SLOT, MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
 import { EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
 import { PlayerItem } from '../obj/player-item';
 import { PlayerOption } from '../obj/player-option';
@@ -23,6 +23,11 @@ export class GameManager {
   private currentOverworldType!: OVERWORLD_TYPE;
   private token!: string;
   private isRegisterPet!: boolean;
+
+  private effectVolume: number = 0.1;
+  private bgVolume: number = 0.1;
+  private messageSpeed: number = 1000;
+  private msgWindow!: TEXTURE;
   private tempPlayerObj!: PlayerOverworldObj;
   private tempRunningToggle!: boolean;
 
@@ -227,6 +232,30 @@ export class GameManager {
     return this.currentOverworldType;
   }
 
+  setVolume(type: 'bg' | 'effect', volume: number = 0.1) {
+    if (type === 'bg') {
+      this.bgVolume = volume;
+    } else if (type === 'effect') {
+      this.effectVolume = volume;
+    }
+  }
+
+  getVolume(type: 'bg' | 'effect') {
+    if (type === 'bg') {
+      return this.bgVolume;
+    } else if (type === 'effect') {
+      return this.effectVolume;
+    }
+  }
+
+  setMessageSpeed(value: number) {
+    this.messageSpeed = value;
+  }
+
+  getMessageSpeed() {
+    return this.messageSpeed;
+  }
+
   setUserData(data: IngameData | null) {
     this.user = null;
     this.user = data;
@@ -320,6 +349,15 @@ export class GameManager {
   getUserOption() {
     return this.user?.option;
   }
+
+  setMsgWindow(texture: TEXTURE) {
+    this.msgWindow = texture;
+  }
+
+  getMsgWindow() {
+    return this.msgWindow;
+  }
+
 
   updateUserData(data: Partial<IngameData>) {
     if (this.user) {
