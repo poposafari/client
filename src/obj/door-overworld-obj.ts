@@ -36,7 +36,7 @@ export class DoorOverworldObj extends OverworldObj {
       doorSprite.once('animationcomplete', () => {
         resolve();
       });
-      doorSprite.play({ key: this.texture, repeat: 0, frameRate: 20 });
+      doorSprite.play({ key: this.texture, repeat: 0, frameRate: 10 });
     });
   }
 

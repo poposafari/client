@@ -6,6 +6,7 @@ import {
   BuyItemReq,
   BuyItemRes,
   CatchGroundItemReq,
+  CatchStarterPokemonReq,
   CatchWildFailRes,
   CatchWildReq,
   CatchWildSuccessRes,
@@ -121,5 +122,6 @@ export const receiveAvailableTicketApi = () => apiWrap<GetItemRes>(() => Axios.g
 export const useSafariTicketApi = (data: UseItemReq) => apiWrap<BuyItemRes>(() => Axios.post('bag/ticket/use', data));
 export const enterSafariZoneApi = (data: EnterSafariReq) => apiWrap<EnterSafariRes>(() => Axios.post('safari/enter', data));
 export const exitSafariZoneApi = () => apiWrap<unknown>(() => Axios.get('safari/exit'));
-export const catchWildApi = (data: CatchWildReq) => apiWrap<CatchWildSuccessRes | CatchWildFailRes>(() => Axios.post('safari/wild/catch', data));
-export const catchGroundItemApi = (data: CatchGroundItemReq) => apiWrap<GetItemRes>(() => Axios.post('safari/grounditem/catch', data));
+export const catchWildApi = (data: CatchWildReq) => apiWrap<CatchWildSuccessRes | CatchWildFailRes>(() => Axios.post('safari/catch/wild', data));
+export const catchGroundItemApi = (data: CatchGroundItemReq) => apiWrap<GetItemRes>(() => Axios.post('safari/catch/grounditem', data));
+export const catchStarterPokemonApi = (data: CatchStarterPokemonReq) => apiWrap<GetItemRes>(() => Axios.post('safari/catch/starter', data));

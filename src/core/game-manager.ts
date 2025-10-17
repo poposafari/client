@@ -1,6 +1,7 @@
 import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
 import { MAX_ITEM_SLOT, MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
 import { EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
+import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { PlayerItem } from '../obj/player-item';
 import { PlayerOption } from '../obj/player-option';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
@@ -29,6 +30,7 @@ export class GameManager {
   private messageSpeed: number = 1000;
   private msgWindow!: TEXTURE;
   private tempPlayerObj!: PlayerOverworldObj;
+  private currentDoorObj: DoorOverworldObj | null = null;
   private tempRunningToggle!: boolean;
 
   static get(): GameManager {
@@ -327,6 +329,7 @@ export class GameManager {
       candy: data.candy,
       gender: data.gender,
       isStarter: data.isStarter,
+      isTutorial: data.isTutorial,
       location: data.location,
       nickname: data.nickname,
       party: party,
@@ -357,7 +360,6 @@ export class GameManager {
   getMsgWindow() {
     return this.msgWindow;
   }
-
 
   updateUserData(data: Partial<IngameData>) {
     if (this.user) {

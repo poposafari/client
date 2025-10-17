@@ -12,7 +12,7 @@ import { ConnectUi } from '../uis/connect-ui';
 import { LoginUi } from '../uis/login-ui';
 import { NewgameUi } from '../uis/newgame-ui';
 import { OptionUi } from '../uis/option-ui';
-import { Overworld001, Overworld002, Overworld003, Overworld004, Overworld005, Overworld021 } from '../uis/overworld';
+import { Overworld001, Overworld002, Overworld003, Overworld004, Overworld005, Overworld021, Overworld022 } from '../uis/overworld';
 import { OverworldHUDUi } from '../uis/overworld-hud-ui';
 import { OverworldMenuUi } from '../uis/overworld-menu-ui';
 import { OverworldUi } from '../uis/overworld-ui';
@@ -71,6 +71,7 @@ export class InGameScene extends BaseScene {
     overworldInfo.registerMap('004', new Overworld004(overworldUi));
     overworldInfo.registerMap('005', new Overworld005(overworldUi));
     overworldInfo.registerMap('021', new Overworld021(overworldUi));
+    overworldInfo.registerMap('022', new Overworld022(overworldUi));
 
     GM.changeMode(MODE.AUTO_LOGIN);
   }
@@ -116,7 +117,10 @@ export class InGameScene extends BaseScene {
 
     createSpriteAnimation(this, TEXTURE.GROUND_ITEM, ANIMATION.GROUND_ITEM);
 
-    createSpriteAnimation(this, 'door_1', 'door_1');
+    createSpriteAnimation(this, TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
+    createSpriteAnimation(this, TEXTURE.TUTORIAL_CHOICE_FINGER, ANIMATION.TUTORIAL_CHOICE_FINGER);
+
+    this.initDoorAnimation();
 
     // this.initNpcAnimation();
     this.initPlayerAnimation();
@@ -125,6 +129,14 @@ export class InGameScene extends BaseScene {
     this.initEmotionAnimation();
     this.initSurfAnimation();
     this.initShader();
+  }
+
+  private initDoorAnimation() {
+    for (let i = 1; i <= 22; i++) {
+      const frames = getSpriteFrames(this, `door_${i}`, `door`);
+
+      createSpriteAnimation(this, `door_${i}`, `door_${i}`, frames);
+    }
   }
 
   private initEmotionAnimation() {

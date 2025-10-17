@@ -83,6 +83,7 @@ export type GetIngameRes = {
   candy: number;
   pcName: string[];
   isStarter: boolean;
+  isTutorial: boolean;
   location: string;
   nickname: string;
   gender: PlayerGender;
@@ -169,6 +170,10 @@ export type CatchWildReq = {
 };
 
 export type CatchGroundItemReq = {
+  idx: number;
+};
+
+export type CatchStarterPokemonReq = {
   idx: number;
 };
 
@@ -447,6 +452,7 @@ export type IngameData = {
   createdAt: Date;
   gender: PlayerGender;
   isStarter: boolean;
+  isTutorial: boolean;
   location: string;
   nickname: string;
   party: (PlayerPokemon | null)[];

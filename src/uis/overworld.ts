@@ -48,8 +48,10 @@ export class Overworld001 extends Overworld {
     this.ui.getMap().setForeground1Layer(11, [TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_URBAN], DEPTH.FOREGROND);
 
     this.ui.getStatue().setupDoor('door_1', 83, 54, +3, 142, 98, '003', 9, 18);
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 69, 43, +3, 142, 98, '004', 10, 23);
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 70, 43, +3, 142, 98, '004', 11, 23);
+    this.ui.getStatue().setupDoor('door_22', 98, 78, +3, 142, 98, '002', 11, 22);
+
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 69, 43, +3, 142, 98, '004', 10, 24);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 70, 43, +3, 142, 98, '004', 11, 24);
 
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 40, 16, +3, 142, 98, '005', 37, 58);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 41, 16, +3, 142, 98, '005', 38, 58);
@@ -82,6 +84,10 @@ export class Overworld002 extends Overworld {
     this.ui.getMap().setLayer(3, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
     this.ui.getMap().setForegroundLayer(4, [TEXTURE.INDOOR_TILE_OBJECT], DEPTH.FOREGROND);
 
+    this.ui.getNpc().setup('npc003', 9, 4);
+
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 11, 23, +3, 142, 98, '001', 98, 78);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 12, 23, +3, 142, 98, '001', 98, 78);
     eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
@@ -105,8 +111,8 @@ export class Overworld003 extends Overworld {
     this.ui.getNpc().setup('npc002', 2, 6);
     this.ui.getNpc().setup('npc002', 7, 6);
 
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 9, 19, +3, 142, 98, '001', 83, 55);
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 10, 19, +3, 142, 98, '001', 83, 55);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 9, 19, +3, 142, 98, '001', 83, 54);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 10, 19, +3, 142, 98, '001', 83, 54);
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 2, 7, OBJECT.SHOP_CHECKOUT, ShopType.SHOP_0);
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 7, 7, OBJECT.SHOP_CHECKOUT, ShopType.SHOP_1);
 
@@ -133,8 +139,8 @@ export class Overworld004 extends Overworld {
     this.ui.getNpc().setup('npc001', 5, 10);
     this.ui.getNpc().setup('npc001', 16, 10);
 
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 10, 24, +3, 142, 98, '001', 69, 44);
-    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 11, 24, +3, 142, 98, '001', 70, 44);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 10, 24, +3, 142, 98, '001', 69, 43);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 11, 24, +3, 142, 98, '001', 70, 43);
     this.ui.getStatue().setupStatue(TEXTURE.BLANK, 5, 11, OBJECT.POST_CHECKOUT, PostOfficeType.POST_0);
 
     eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);

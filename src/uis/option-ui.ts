@@ -551,7 +551,7 @@ export class OptionBackgroundSoundUi extends Ui {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
 
-    this.texts[this.choice ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    this.texts[this.choice >= 0 ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
   }
 }
 
@@ -652,7 +652,7 @@ export class OptionEffectSoundUi extends Ui {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
 
-    this.texts[this.choice ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    this.texts[this.choice >= 0 ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
   }
 }
 

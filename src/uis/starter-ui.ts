@@ -349,11 +349,6 @@ export class StarterUi extends ModalFormUi {
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame14'), speed: this.professorMsgSpeed });
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame15'), speed: this.professorMsgSpeed });
     await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame16'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame17'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame18'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame19'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame20'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame21'), speed: this.professorMsgSpeed });
 
     const res = await getIngameApi();
 

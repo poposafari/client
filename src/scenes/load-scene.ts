@@ -47,7 +47,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.BG_EVOLVE, 'ui/bg', TEXTURE.BG_EVOLVE);
     this.loadImage(TEXTURE.BG_BLACK, 'ui/bg', TEXTURE.BG_BLACK);
     this.loadImage(TEXTURE.BG_STARTER, 'ui/bg', TEXTURE.BG_STARTER);
-    this.loadImage(TEXTURE.BG_STARTER_POKEMON, 'ui/bg', TEXTURE.BG_STARTER_POKEMON);
+    this.loadImage(TEXTURE.BG_TUTORIAL_CHOICE, 'ui/bg', TEXTURE.BG_TUTORIAL_CHOICE);
 
     //maps
     this.loadImage(TEXTURE.INDOOR_TILE_FLOOR, 'ui/map', TEXTURE.INDOOR_TILE_FLOOR);
@@ -63,6 +63,12 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.OVERWORLD_004, 'ui/map', TEXTURE.OVERWORLD_004);
     this.loadMap(TEXTURE.OVERWORLD_005, 'ui/map', TEXTURE.OVERWORLD_005);
     this.loadMap(TEXTURE.OVERWORLD_021, 'ui/map', TEXTURE.OVERWORLD_021);
+    this.loadMap(TEXTURE.OVERWORLD_022, 'ui/map', TEXTURE.OVERWORLD_022);
+
+    //tutorial
+    this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_BALL, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
+    this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_FINGER, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_FINGER, ANIMATION.TUTORIAL_CHOICE_FINGER);
+    this.loadImage(TEXTURE.TUTORIAL_CHOICE_INFO, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_INFO);
 
     //icons
     this.loadImage(TEXTURE.ICON_PC, 'ui/icon', TEXTURE.ICON_PC);
@@ -85,7 +91,28 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ICON_TALK, 'ui/icon', TEXTURE.ICON_TALK);
 
     //doors
-    this.loadAtlas('door_1', 'ui/door', 'door_1', 'door_1');
+    this.loadAtlas('door_1', 'ui/door', 'door_1', 'door');
+    this.loadAtlas('door_2', 'ui/door', 'door_2', 'door');
+    this.loadAtlas('door_3', 'ui/door', 'door_3', 'door');
+    this.loadAtlas('door_4', 'ui/door', 'door_4', 'door');
+    this.loadAtlas('door_5', 'ui/door', 'door_5', 'door');
+    this.loadAtlas('door_6', 'ui/door', 'door_6', 'door');
+    this.loadAtlas('door_7', 'ui/door', 'door_7', 'door');
+    this.loadAtlas('door_8', 'ui/door', 'door_8', 'door');
+    this.loadAtlas('door_9', 'ui/door', 'door_9', 'door');
+    this.loadAtlas('door_10', 'ui/door', 'door_10', 'door');
+    this.loadAtlas('door_11', 'ui/door', 'door_11', 'door');
+    this.loadAtlas('door_12', 'ui/door', 'door_12', 'door');
+    this.loadAtlas('door_13', 'ui/door', 'door_13', 'door');
+    this.loadAtlas('door_14', 'ui/door', 'door_14', 'door');
+    this.loadAtlas('door_15', 'ui/door', 'door_15', 'door');
+    this.loadAtlas('door_16', 'ui/door', 'door_16', 'door');
+    this.loadAtlas('door_17', 'ui/door', 'door_17', 'door');
+    this.loadAtlas('door_18', 'ui/door', 'door_18', 'door');
+    this.loadAtlas('door_19', 'ui/door', 'door_19', 'door');
+    this.loadAtlas('door_20', 'ui/door', 'door_20', 'door');
+    this.loadAtlas('door_21', 'ui/door', 'door_21', 'door');
+    this.loadAtlas('door_22', 'ui/door', 'door_22', 'door');
 
     //etc
     this.loadImage(TEXTURE.LOGO_0, 'ui', TEXTURE.LOGO_0);

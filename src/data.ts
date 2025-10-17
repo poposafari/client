@@ -261,6 +261,9 @@ const initialNpcData: Record<string, NpcData> = {
   npc002: {
     movable: false,
   },
+  npc003: {
+    movable: false,
+  },
 };
 
 export const npcData = new Proxy(initialNpcData, {
@@ -463,13 +466,6 @@ const initialSafariData: Record<string, SafariData> = {
   },
   '022': {
     key: '022',
-    cost: 1,
-    x: 0,
-    y: 0,
-    area: BATTLE_AREA.FIELD,
-  },
-  '023': {
-    key: '023',
     cost: 1,
     x: 0,
     y: 0,

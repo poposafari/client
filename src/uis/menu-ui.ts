@@ -139,7 +139,6 @@ export class MenuUi extends Ui {
               playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
 
               break;
-            // if()
             case KEY.CANCEL:
               this.clean();
               return resolve(i18next.t('menu:cancelMenu'));
