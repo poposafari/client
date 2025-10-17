@@ -4,7 +4,7 @@ import { PlayerGender } from '../types';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { PetOverworldObj } from './pet-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
-import { findEventTile, runFadeEffect } from '../uis/ui';
+import { findEventTile, runFadeEffect, delay } from '../uis/ui';
 import { OverworldObj } from './overworld-obj';
 import { DoorOverworldObj } from './door-overworld-obj';
 import { ShopCheckoutOverworldObj } from './shop-checkout-overworld-obj';
@@ -13,6 +13,7 @@ import { PostCheckoutOverworldObj } from './post-checkout-overworld-obj';
 import { DIRECTION, EASE, EVENT, MODE, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { GM } from '../core/game-manager';
 import { NpcOverworldObj } from './npc-overworld-obj';
+import { OverworldStorage } from '../storage';
 import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
 
@@ -294,15 +295,16 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     return new Promise(async (resolve) => {
       const goal = door.getGoal();
 
+      this.setIsEvent(true);
       if (door.getTexture() !== TEXTURE.BLANK) {
         await door.reaction();
         await this.forceMoveForward(direction, 200);
       }
-
       runFadeEffect(this.getScene(), 800, 'in');
       GM.updateUserData({ location: goal.location, x: goal.x, y: goal.y });
-      this.setIsEvent(false);
       GM.changeMode(MODE.OVERWORLD);
+
+      this.setIsEvent(false);
       resolve();
     });
   }

@@ -1,4 +1,4 @@
-import { EVENT } from '../enums/event';
+import { EVENT } from '../enums';
 
 type EventCallback = (...args: any[]) => void;
 

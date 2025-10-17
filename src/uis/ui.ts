@@ -197,9 +197,35 @@ function getAnimationSize(key: ANIMATION | string) {
       return 1;
     case ANIMATION.GROUND_ITEM:
       return 3;
+    case ANIMATION.TUTORIAL_CHOICE_BALL:
+      return 3;
+    case ANIMATION.TUTORIAL_CHOICE_FINGER:
+      return 3;
     case 'ball_001_launch':
       return 7;
+    case 'door':
     case 'door_1':
+    case 'door_2':
+    case 'door_3':
+    case 'door_4':
+    case 'door_5':
+    case 'door_6':
+    case 'door_7':
+    case 'door_8':
+    case 'door_9':
+    case 'door_10':
+    case 'door_11':
+    case 'door_12':
+    case 'door_13':
+    case 'door_14':
+    case 'door_15':
+    case 'door_16':
+    case 'door_17':
+    case 'door_18':
+    case 'door_19':
+    case 'door_20':
+    case 'door_21':
+    case 'door_22':
       return 7;
   }
 }
@@ -217,6 +243,42 @@ export function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.MESSAGE_WHITE:
     case TEXTSTYLE.MESSAGE_GRAY:
       return [3, 2, '#777777'];
+    case TEXTSTYLE.TYPE_FIRE:
+      return [3, 2, '#F4C948'];
+    case TEXTSTYLE.TYPE_WATER:
+      return [3, 2, '#97D0D2'];
+    case TEXTSTYLE.TYPE_ELECTRIC:
+      return [3, 2, '#F9F57E'];
+    case TEXTSTYLE.TYPE_GRASS:
+      return [3, 2, '#C3F26A'];
+    case TEXTSTYLE.TYPE_ICE:
+      return [3, 2, '#D0F5E6'];
+    case TEXTSTYLE.TYPE_FIGHTING:
+      return [3, 2, '#E47A3A'];
+    case TEXTSTYLE.TYPE_POISON:
+      return [3, 2, '#C97BAC'];
+    case TEXTSTYLE.TYPE_GROUND:
+      return [3, 2, '#F9F57E'];
+    case TEXTSTYLE.TYPE_FLYING:
+      return [3, 2, '#BFBAF2'];
+    case TEXTSTYLE.TYPE_PSYCHIC:
+      return [3, 2, '#F1BAA9'];
+    case TEXTSTYLE.TYPE_BUG:
+      return [3, 2, '#D5D94A'];
+    case TEXTSTYLE.TYPE_ROCK:
+      return [3, 2, '#D9B869'];
+    case TEXTSTYLE.TYPE_GHOST:
+      return [3, 2, '#9989E7'];
+    case TEXTSTYLE.TYPE_DRAGON:
+      return [3, 2, '#AB99F0'];
+    case TEXTSTYLE.TYPE_DARK:
+      return [3, 2, '#9F9D72'];
+    case TEXTSTYLE.TYPE_STEEL:
+      return [3, 2, '#D3D2BA'];
+    case TEXTSTYLE.TYPE_FAIRY:
+      return [3, 2, '#F3D4DB'];
+    case TEXTSTYLE.TYPE_NORMAL:
+      return [3, 2, '#D3D2BA'];
     case TEXTSTYLE.SPRING:
     case TEXTSTYLE.SUMMER:
     case TEXTSTYLE.FALL:
@@ -259,6 +321,96 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.MESSAGE_BLUE:
       config.fontSize = '80px';
       config.color = '#236df3';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_FIRE:
+      config.fontSize = '80px';
+      config.color = '#e47b3a';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_WATER:
+      config.fontSize = '80px';
+      config.color = '#5F87E6';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_ELECTRIC:
+      config.fontSize = '80px';
+      config.color = '#F4C948';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_GRASS:
+      config.fontSize = '80px';
+      config.color = '#7BBC55';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_ICE:
+      config.fontSize = '80px';
+      config.color = '#97D0D2';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_FIGHTING:
+      config.fontSize = '80px';
+      config.color = '#AE362A';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_POISON:
+      config.fontSize = '80px';
+      config.color = '#8D4191';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_GROUND:
+      config.fontSize = '80px';
+      config.color = '#D9B869';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_FLYING:
+      config.fontSize = '80px';
+      config.color = '#9989E7';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_PSYCHIC:
+      config.fontSize = '80px';
+      config.color = '#E95B7D';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_BUG:
+      config.fontSize = '80px';
+      config.color = '#A2AD39';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_ROCK:
+      config.fontSize = '80px';
+      config.color = '#AE9541';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_GHOST:
+      config.fontSize = '80px';
+      config.color = '#615189';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_DRAGON:
+      config.fontSize = '80px';
+      config.color = '#5B3FED';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_DARK:
+      config.fontSize = '80px';
+      config.color = '#634E41';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_STEEL:
+      config.fontSize = '80px';
+      config.color = '#AFB0C8';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_FAIRY:
+      config.fontSize = '80px';
+      config.color = '#E6A2A7';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.TYPE_NORMAL:
+      config.fontSize = '80px';
+      config.color = '#9F9D72';
       config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.SPECIAL:

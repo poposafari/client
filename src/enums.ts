@@ -33,7 +33,12 @@ export const enum TEXTURE {
   BG_EVOLVE = 'bg_evolve',
   BG_BLACK = 'bg_black',
   BG_STARTER = 'bg_starter',
-  BG_STARTER_POKEMON = 'bg_starter_pokemon',
+  BG_TUTORIAL_CHOICE = 'bg_tutorial_choice',
+
+  //tutorial
+  TUTORIAL_CHOICE_BALL = 'tutorial_choice_ball',
+  TUTORIAL_CHOICE_FINGER = 'tutorial_choice_finger',
+  TUTORIAL_CHOICE_INFO = 'tutorial_choice_info',
 
   //maps
   INDOOR_TILE_FLOOR = 'indoor_floor',
@@ -51,6 +56,7 @@ export const enum TEXTURE {
   OVERWORLD_005 = 'overworld-005',
   OVERWORLD_011 = 'overworld-011',
   OVERWORLD_021 = 'overworld-021',
+  OVERWORLD_022 = 'overworld-022',
 
   //icons
   ICON_PC = 'icon_pc',
@@ -283,6 +289,8 @@ export const enum ANIMATION {
   BATTLE_BALL_1 = 'battle_ball_1',
   PARTICLE_ENTER_BALL = 'particle_enter_ball',
   GROUND_ITEM = 'ground_item',
+  TUTORIAL_CHOICE_BALL = 'tutorial_choice_ball',
+  TUTORIAL_CHOICE_FINGER = 'tutorial_choice_finger',
 }
 
 export const enum EASE {
@@ -577,6 +585,24 @@ export const enum TEXTSTYLE {
   WINTER,
   SEASON_SYMBOL,
   ONLY_WHITE,
+  TYPE_FIRE,
+  TYPE_WATER,
+  TYPE_ELECTRIC,
+  TYPE_GRASS,
+  TYPE_ICE,
+  TYPE_FIGHTING,
+  TYPE_POISON,
+  TYPE_GROUND,
+  TYPE_FLYING,
+  TYPE_PSYCHIC,
+  TYPE_BUG,
+  TYPE_ROCK,
+  TYPE_GHOST,
+  TYPE_DRAGON,
+  TYPE_DARK,
+  TYPE_STEEL,
+  TYPE_FAIRY,
+  TYPE_NORMAL,
 }
 
 export const enum OVERWORLD_TYPE {
@@ -667,6 +693,11 @@ export const enum TYPE {
   STEEL,
   FAIRY,
   NORMAL,
+}
+
+export const enum DOOR_TYPE {
+  ENTER,
+  EXIT,
 }
 
 export enum Season {

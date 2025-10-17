@@ -1,6 +1,7 @@
 import { catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
+import { getSafariByKey } from '../data';
 import { DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
@@ -51,9 +52,9 @@ export class OverworldUi extends Ui {
     runFadeEffect(this.scene, 1200, 'in');
 
     this.map.show();
-    this.player.show(this.map.get());
-    this.npc.show(this.map.get());
     this.statue.show();
+    this.npc.show(this.map.get());
+    this.player.show(this.map.get());
 
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.show(this.map.get());
   }
@@ -299,6 +300,7 @@ export class OverworldPlayer {
       this.hiddenMoveUi.setup();
       this.shopUi_0.setup(['002', '003', '004']);
       this.shopUi_1.setup(['011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021', '022', '023', '024', '025', '026', '027', '028', '029']);
+      this.starterPokemonUi.setup();
       this.safariListUi.setup();
       this.uiInitCnt = true;
     }
@@ -646,7 +648,30 @@ export class OverworldPlayer {
           GM.changeMode(MODE.OVERWORLD);
         }
         break;
-      case 'npc001':
+      case 'npc003':
+        if (GM.getUserData()?.isStarter) {
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_0'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_1'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_2'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_3'), speed: GM.getUserOption()?.getTextSpeed()! });
+
+          const ret = await this.starterPokemonUi.show();
+
+          if (ret) {
+            GM.updateUserData({ isStarter: false });
+
+            await this.talkMessageUi.show({
+              type: 'default',
+              content: replacePercentSymbol(i18next.t('message:catch_starter_pokemon'), [GM.getUserData()?.nickname, i18next.t(`pokemon:${ret.pokedex}.name`)]),
+              speed: GM.getUserOption()?.getTextSpeed()!,
+            });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_4'), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_5'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+          }
+        } else {
+          await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_6'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_7'), speed: GM.getUserOption()?.getTextSpeed()! });
+        }
         break;
     }
   }
