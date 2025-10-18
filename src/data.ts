@@ -457,15 +457,78 @@ export interface SafariData {
 }
 
 const initialSafariData: Record<string, SafariData> = {
-  '021': {
-    key: '021',
+  s000: {
+    key: 's000',
     cost: 1,
     x: 0,
     y: 0,
     area: BATTLE_AREA.FIELD,
   },
-  '022': {
-    key: '022',
+  s001: {
+    key: 's001',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s002: {
+    key: 's002',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s003: {
+    key: 's003',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s004: {
+    key: 's004',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s005: {
+    key: 's005',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s006: {
+    key: 's006',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s007: {
+    key: 's007',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s008: {
+    key: 's008',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s009: {
+    key: 's009',
+    cost: 1,
+    x: 0,
+    y: 0,
+    area: BATTLE_AREA.FIELD,
+  },
+  s010: {
+    key: 's010',
     cost: 1,
     x: 0,
     y: 0,

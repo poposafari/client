@@ -233,7 +233,7 @@ export class OverworldInfoUi extends Ui {
   private unblock() {}
 
   updateLocation() {
-    this.texts[0].setText(i18next.t(`menu:overworld_${GM.getUserData()?.location}`));
+    this.texts[0].setText(i18next.t(`menu:${GM.getUserData()?.location}`));
   }
 
   updatePosition() {
@@ -296,7 +296,7 @@ export class OverworldLocationUi extends Ui {
   }
 
   show(data?: any): void {
-    this.location.setText(i18next.t(`menu:overworld_${data}`));
+    this.location.setText(i18next.t(`menu:${data}`));
 
     this.container.y = this.restorePosY;
 

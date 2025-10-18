@@ -52,7 +52,7 @@ export class StarterUi extends ModalFormUi {
     this.container = this.createContainer(width / 2, height / 2);
 
     const bg = addBackground(this.scene, TEXTURE.BG_STARTER).setOrigin(0.5, 0.5);
-    const professor = addImage(this.scene, TEXTURE.PROFESSOR, 0, -50).setScale(5.2);
+    const professor = addImage(this.scene, TEXTURE.PROFESSOR, 0, -50).setScale(5);
 
     this.setupAvatarModal(width, height);
 

@@ -192,7 +192,7 @@ export class StarterPokemonUi extends Ui {
   }
 
   private async showPokemon() {
-    const ret = await enterSafariZoneApi({ overworld: 'st' });
+    const ret = await enterSafariZoneApi({ overworld: 'lab' });
 
     if (ret.result) {
       const contentWidth = 100;

@@ -12,7 +12,7 @@ import { ConnectUi } from '../uis/connect-ui';
 import { LoginUi } from '../uis/login-ui';
 import { NewgameUi } from '../uis/newgame-ui';
 import { OptionUi } from '../uis/option-ui';
-import { Overworld001, Overworld002, Overworld003, Overworld004, Overworld005, Overworld021, Overworld022 } from '../uis/overworld';
+import { Plaza001, Plaza002, Plaza003, Plaza004, Plaza005, Safari000 } from '../uis/overworld';
 import { OverworldHUDUi } from '../uis/overworld-hud-ui';
 import { OverworldMenuUi } from '../uis/overworld-menu-ui';
 import { OverworldUi } from '../uis/overworld-ui';
@@ -65,13 +65,15 @@ export class InGameScene extends BaseScene {
     GM.registerUi(UI.OVERWORLD, overworldUi);
 
     const overworldInfo = OverworldStorage.getInstance();
-    overworldInfo.registerMap('001', new Overworld001(overworldUi));
-    overworldInfo.registerMap('002', new Overworld002(overworldUi));
-    overworldInfo.registerMap('003', new Overworld003(overworldUi));
-    overworldInfo.registerMap('004', new Overworld004(overworldUi));
-    overworldInfo.registerMap('005', new Overworld005(overworldUi));
-    overworldInfo.registerMap('021', new Overworld021(overworldUi));
-    overworldInfo.registerMap('022', new Overworld022(overworldUi));
+    //plaza
+    overworldInfo.registerMap(TEXTURE.PLAZA_001, new Plaza001(overworldUi, TEXTURE.PLAZA_001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_002, new Plaza002(overworldUi, TEXTURE.PLAZA_002));
+    overworldInfo.registerMap(TEXTURE.PLAZA_003, new Plaza003(overworldUi, TEXTURE.PLAZA_003));
+    overworldInfo.registerMap(TEXTURE.PLAZA_004, new Plaza004(overworldUi, TEXTURE.PLAZA_004));
+    overworldInfo.registerMap(TEXTURE.PLAZA_005, new Plaza005(overworldUi, TEXTURE.PLAZA_005));
+
+    //safari
+    overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000));
 
     GM.changeMode(MODE.AUTO_LOGIN);
   }

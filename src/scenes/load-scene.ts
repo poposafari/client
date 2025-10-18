@@ -57,13 +57,12 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT);
     this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT_URBAN);
     this.loadImage(TEXTURE.OUTDOOR_TILE_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_URBAN);
-    this.loadMap(TEXTURE.OVERWORLD_001, 'ui/map', TEXTURE.OVERWORLD_001);
-    this.loadMap(TEXTURE.OVERWORLD_002, 'ui/map', TEXTURE.OVERWORLD_002);
-    this.loadMap(TEXTURE.OVERWORLD_003, 'ui/map', TEXTURE.OVERWORLD_003);
-    this.loadMap(TEXTURE.OVERWORLD_004, 'ui/map', TEXTURE.OVERWORLD_004);
-    this.loadMap(TEXTURE.OVERWORLD_005, 'ui/map', TEXTURE.OVERWORLD_005);
-    this.loadMap(TEXTURE.OVERWORLD_021, 'ui/map', TEXTURE.OVERWORLD_021);
-    this.loadMap(TEXTURE.OVERWORLD_022, 'ui/map', TEXTURE.OVERWORLD_022);
+    this.loadMap(TEXTURE.PLAZA_001, 'ui/map', TEXTURE.PLAZA_001);
+    this.loadMap(TEXTURE.PLAZA_002, 'ui/map', TEXTURE.PLAZA_002);
+    this.loadMap(TEXTURE.PLAZA_003, 'ui/map', TEXTURE.PLAZA_003);
+    this.loadMap(TEXTURE.PLAZA_004, 'ui/map', TEXTURE.PLAZA_004);
+    this.loadMap(TEXTURE.PLAZA_005, 'ui/map', TEXTURE.PLAZA_005);
+    this.loadMap(TEXTURE.SAFARI_000, 'ui/map', TEXTURE.SAFARI_000);
 
     //tutorial
     this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_BALL, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
