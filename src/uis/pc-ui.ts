@@ -912,7 +912,7 @@ export class PcSummaryUi extends Ui {
       this.name.setText(name ? name : i18next.t(`pokemon:${pokemon.getPokedex()}.name`));
       this.pokedex.setText(pokemon.getPokedex());
       this.captureCnt.setText(String(pokemon.getCount()));
-      this.captureLocation.setText(`- ` + i18next.t(`menu:overworld_${pokemon.getCreatedLocation()}`));
+      this.captureLocation.setText(`- ` + i18next.t(`menu:${pokemon.getCreatedLocation()}`));
       this.captureDate.setText(`- ` + formatDateTime(pokemon.getCreatedAt()));
 
       this.updateGenderSummary(pokemon.getGender());

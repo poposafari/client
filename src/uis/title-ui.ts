@@ -168,7 +168,7 @@ export class TitleUi extends Ui {
     const continueTitleLocation = addText(this.scene, this.contentPosY, -245, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
     const continueTitlePlaytime = addText(this.scene, this.contentPosY, -200, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
     const continueName = addText(this.scene, -60, -290, nickname, TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continueLocation = addText(this.scene, -60, -245, i18next.t(`menu:overworld_${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueLocation = addText(this.scene, -60, -245, i18next.t(`menu:${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
     const continuePlaytime = addText(this.scene, -60, -200, '00:00', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
 
     const statue = addImage(this.scene, `${gender}_${avatar}_statue`, -335, -140).setScale(3.4);
