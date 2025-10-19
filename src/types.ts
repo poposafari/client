@@ -48,6 +48,58 @@ export type PlayerAvatar = '1' | '2' | '3' | '4';
 export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
 export type OverworldStatue = ShopCheckoutOverworldObj | PostCheckoutOverworldObj;
 
+export interface SocketInitData {
+  location: string;
+  x: number;
+  y: number;
+  nickname: string;
+  gender: PlayerGender;
+  avatar: number;
+  pet: string | null;
+  option: { textSpeed: number | null; frame: number | null; backgroundVolume: number | null; effectVolume: number | null };
+  pc: { bgs: number[]; names: string[] };
+}
+
+export type MoveLocation = {
+  from: string | null;
+  to: string;
+  toX: number;
+  toY: number;
+};
+
+export type MovementPlayer = {
+  x: number;
+  y: number;
+  direction: 'up' | 'down' | 'left' | 'right';
+  movement: 'walk' | 'running' | 'jump' | 'surf' | 'ride';
+  pet: string | null;
+};
+
+export type OtherPlayerEnterRes = {
+  socketId: string;
+  player: SocketInitData;
+};
+
+export type OtherPlayerExitRes = {
+  socketId: string;
+  player: SocketInitData;
+};
+
+export type CurrentPlayersInRoomRes = {
+  location: string;
+  players: Array<{ socketId: string; player: SocketInitData }>;
+};
+
+export type PlayerMovementRes = {
+  socketId: string;
+  data: MovementPlayer;
+};
+
+export interface OtherPlayerInfo {
+  socketId: string;
+  data: SocketInitData;
+}
+
 export type ApiResponse<T> = {
   result: true;
   data: T;
@@ -454,6 +506,7 @@ export type IngameData = {
   isStarter: boolean;
   isTutorial: boolean;
   location: string;
+  lastLocation: string | null;
   nickname: string;
   party: (PlayerPokemon | null)[];
   pcBg: number[];

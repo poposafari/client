@@ -8,6 +8,7 @@ import i18next from '../i18n';
 import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { GroundItemOverworldObj } from '../obj/ground-item-overworld-obj';
 import { NpcOverworldObj } from '../obj/npc-overworld-obj';
+import { OtherPlayerOverworldObj } from '../obj/other-player-overworld-obj';
 import { OverworldObj } from '../obj/overworld-obj';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
 import { PostCheckoutOverworldObj } from '../obj/post-checkout-overworld-obj';
@@ -15,8 +16,26 @@ import { ShopCheckoutOverworldObj } from '../obj/shop-checkout-overworld-obj';
 import { WildOverworldObj } from '../obj/wild-overworld-obj';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldStorage } from '../storage';
-import { DoorInfo, ForegroundLayer, Layer, MapInfo, NpcInfo, OtherObjectMovementQueue, PokemonSpawn, PostOfficeType, ShopType, StatueInfo } from '../types';
-import { isSafariData, replacePercentSymbol } from '../utils/string-util';
+import {
+  CurrentPlayersInRoomRes,
+  DoorInfo,
+  ForegroundLayer,
+  Layer,
+  MapInfo,
+  MovementPlayer,
+  NpcInfo,
+  OtherObjectMovementQueue,
+  OtherPlayerEnterRes,
+  OtherPlayerExitRes,
+  OtherPlayerInfo,
+  PlayerMovementRes,
+  PokemonSpawn,
+  PostOfficeType,
+  ShopType,
+  SocketInitData,
+  StatueInfo,
+} from '../types';
+import { isSafariData, matchPlayerStatusToDirection, replacePercentSymbol } from '../utils/string-util';
 import { BattleUi } from './battle-ui';
 import { HiddenMoveUi } from './hidden-move-ui';
 import { NoticeUi } from './notice-ui';
@@ -35,6 +54,7 @@ export class OverworldUi extends Ui {
   protected npc: OverworldNpc;
   protected safari: OverworldSafari;
   protected statue: OverworldStatue;
+  protected otherPlayers: OverworldOtherPlayer;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -44,19 +64,21 @@ export class OverworldUi extends Ui {
     this.npc = new OverworldNpc(scene);
     this.safari = new OverworldSafari(scene);
     this.player = new OverworldPlayer(scene, this.npc, this.safari);
+    this.otherPlayers = new OverworldOtherPlayer(scene);
   }
 
   setup(): void {}
 
   show(data?: any): void {
-    runFadeEffect(this.scene, 1200, 'in');
-
     this.map.show();
     this.statue.show();
     this.npc.show(this.map.get());
     this.player.show(this.map.get());
+    this.otherPlayers.show(this.map.get());
 
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.show(this.map.get());
+
+    runFadeEffect(this.scene, 1200, 'in');
   }
 
   clean(data?: any): void {
@@ -64,6 +86,7 @@ export class OverworldUi extends Ui {
     this.player.clean();
     this.npc.clean();
     this.statue.clean();
+    this.otherPlayers.clean();
 
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.clean();
   }
@@ -75,12 +98,12 @@ export class OverworldUi extends Ui {
   }
 
   update(time: number, delta: number): void {
+    if (OverworldStorage.getInstance().getBlockingUpdate()) return;
+
     const currentUi = GM.getTopUiStack();
 
-    if (currentUi instanceof OverworldUi) {
-      this.player.update(delta);
-    }
-
+    if (currentUi instanceof OverworldUi) this.player.update(delta);
+    if (this.map.get()) this.otherPlayers.update(delta);
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.updateWilds(delta);
 
     eventBus.emit(EVENT.HUD_LOCATION_UPDATE);
@@ -311,6 +334,7 @@ export class OverworldPlayer {
     this.map = map;
     this.obj = new PlayerOverworldObj(this.scene, this.map, user.gender, user.avatar, user.pet!, user.x, user.y, user.nickname, OBJECT.PLAYER, initPlayerDirection!);
     GM.setPlayerObj(this.obj);
+    GM.setOverworldMap(this.map);
     this.obj.setSpriteScale(this.scale);
     this.scene.cameras.main.startFollow(this.obj.getSprite(), true, 0.5, 0.5);
 
@@ -350,31 +374,6 @@ export class OverworldPlayer {
         eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_TALK, false);
       }
     }
-
-    // if (this.otherObjMovementQueue.length > 0) {
-    //   const next = this.otherObjMovementQueue.shift();
-
-    //   console.log('check1 ', next);
-
-    //   if (next) {
-    //     const other = this.otherObj.get(next.id);
-
-    //     console.log('check2 ', other);
-
-    //     other?.setStatus(this.changeStatus(next.status)!, next.direction);
-
-    //     if (next.status === PLAYER_STATUS.JUMP) {
-    //       other?.startSurfAnimation(this.changeDirection(next.direction)!);
-    //     } else {
-    //       other?.move(this.changeDirectionToKey(next.direction)!);
-    //     }
-    //   }
-    // }
-
-    // for (const [key, value] of this.otherObj.entries()) {
-    //   value.update(delta);
-    //   value.getPet()?.update(delta);
-    // }
   }
 
   private movement() {
@@ -642,7 +641,10 @@ export class OverworldPlayer {
         const result = await this.safariListUi.show();
 
         if (isSafariData(result)) {
-          GM.updateUserData({ location: result.key, x: result.x, y: result.y });
+          const lastLocation = GM.getUserData()?.location;
+          const currentLocation = result.key;
+
+          GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: result.x, y: result.y });
           GM.changeMode(MODE.CONNECT_SAFARI);
           this.obj?.setIsEvent(false);
           GM.changeMode(MODE.OVERWORLD);
@@ -674,6 +676,98 @@ export class OverworldPlayer {
         }
         break;
     }
+  }
+}
+
+export class OverworldOtherPlayer {
+  private scene: InGameScene;
+  private otherPlayers: Map<string, OtherPlayerOverworldObj> = new Map<string, OtherPlayerOverworldObj>();
+  private map!: Phaser.Tilemaps.Tilemap;
+  private storage: OverworldStorage;
+
+  constructor(scene: InGameScene) {
+    this.scene = scene;
+
+    this.storage = OverworldStorage.getInstance();
+  }
+
+  show(map: Phaser.Tilemaps.Tilemap): void {
+    this.resetOtherPlayers();
+    this.map = map;
+  }
+
+  clean() {
+    this.storage.cleanOtherplayerExitInfo();
+    this.storage.cleanOtherplayerInfo();
+    this.storage.cleanOtherplayerMovementInfo();
+  }
+
+  update(delta: number): void {
+    if (this.map) {
+      this.getOtherPlayers().forEach((player) => {
+        player.update(delta);
+      });
+
+      this.removeOtherPlayer(this.storage.shiftOtherplayerExitInfo()?.socketId!);
+      this.addOtherPlayer(this.storage.shiftOtherplayerInfo()!);
+      this.updateOtherPlayerMovement(this.storage.shiftOtherplayerMovementInfo()!);
+    }
+  }
+
+  addOtherPlayer(player: OtherPlayerInfo): void {
+    if (!player) return;
+    if (player.data.location !== this.storage.getKey()) return;
+
+    const otherPlayer = new OtherPlayerOverworldObj(
+      this.scene,
+      this.map,
+      player.data.gender,
+      player.data.avatar,
+      null as any,
+      player.data.x,
+      player.data.y,
+      player.data.nickname,
+      OBJECT.OTHER_PLAYER,
+      DIRECTION.DOWN,
+    );
+    this.otherPlayers.set(player.socketId, otherPlayer);
+
+    console.log('overworld ui add other player');
+    console.log(otherPlayer);
+  }
+
+  removeOtherPlayer(socketId: string): void {
+    if (!socketId) return;
+
+    const otherPlayer = this.otherPlayers.get(socketId);
+    if (otherPlayer) {
+      otherPlayer.destroy();
+      this.otherPlayers.delete(socketId);
+    }
+  }
+
+  getOtherPlayers(): Map<string, OtherPlayerOverworldObj> {
+    return this.otherPlayers;
+  }
+
+  getOtherPlayer(socketId: string): OtherPlayerOverworldObj | undefined {
+    return this.otherPlayers.get(socketId);
+  }
+
+  updateOtherPlayerMovement(movement: PlayerMovementRes): void {
+    if (!movement) return;
+
+    const otherPlayer = this.otherPlayers.get(movement.socketId);
+    if (otherPlayer) {
+      otherPlayer.updateMovement(movement.data);
+    }
+  }
+
+  resetOtherPlayers(): void {
+    for (const [socketId, otherPlayer] of this.otherPlayers) {
+      otherPlayer.destroy();
+    }
+    this.otherPlayers.clear();
   }
 }
 
@@ -887,46 +981,4 @@ export class OverworldSafari {
 
     return Phaser.Utils.Array.GetRandom(targetTiles);
   }
-
-  // async talkGroundItem(obj: GroundItemObject) {
-  //   obj.destroy();
-  //   obj.changeCatch();
-
-  //   const ret = await catchGroundItem({ idx: obj.getIdx() });
-
-  //   if (ret && ret.success) {
-  //     const bag = Bag.getInstance();
-
-  //     bag.addItems(ret.data.item, ret.data.stock, ret.data.category);
-  //     playSound(this.scene, AUDIO.GET_0);
-  //     eventBus.emit(EVENT.OVERLAP_MODE, MODE.MESSAGE, [
-  //       {
-  //         type: 'default',
-  //         format: 'talk',
-  //         content: replacePercentSymbol(i18next.t(`message:catchItem`), [PlayerInfo.getInstance().getNickname(), i18next.t(`item:${obj.getItemKey()}.name`), obj.getCount()]),
-  //         speed: 60,
-  //       },
-  //       {
-  //         type: 'default',
-  //         format: 'talk',
-  //         content: replacePercentSymbol(i18next.t(`message:putPocket`), [
-  //           PlayerInfo.getInstance().getNickname(),
-  //           i18next.t(`item:${obj.getItemKey()}.name`),
-  //           i18next.t(`menu:${ret.data.data.category}`),
-  //         ]),
-  //         speed: 10,
-  //       },
-  //     ]);
-  //   }
-  // }
-
-  // talkWildPokemon(obj: PokemonObject, direction: DIRECTION) {
-  //   playSound(this.scene, AUDIO.REACTION_0);
-  //   obj.reaction(direction);
-
-  //   eventBus.emit(EVENT.OVERLAP_MODE, MODE.BATTLE, obj);
-
-  //   // this.scene.time.delayedCall(100, () => {
-  //   // });
-  // }
 }

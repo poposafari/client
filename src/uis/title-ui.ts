@@ -3,6 +3,7 @@ import { MAX_ITEM_SLOT, MAX_PARTY_SLOT } from '../constants';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { PlayerItem } from '../obj/player-item';
 import { PlayerPokemon } from '../obj/player-pokemon';

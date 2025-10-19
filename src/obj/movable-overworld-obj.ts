@@ -1,9 +1,11 @@
 import { MAP_SCALE, TILE_SIZE } from '../constants';
 import { GM } from '../core/game-manager';
 import { ANIMATION, DIRECTION, OBJECT, TEXTURE } from '../enums';
+import { SocketHandler } from '../handlers/socket-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldStorage } from '../storage';
 import { findEventTile } from '../uis/ui';
+import { matchPlayerStatus, matchPlayerStatusToDirection } from '../utils/string-util';
 import { OverworldObj } from './overworld-obj';
 
 const Vector2 = Phaser.Math.Vector2;
@@ -224,7 +226,16 @@ export class MovableOverworldObj extends OverworldObj {
       this.step++;
 
       if (this.getObjType() === OBJECT.PLAYER) {
+        const socketHandler = SocketHandler.getInstance();
         GM.updateUserData({ x: this.getTilePos().x, y: this.getTilePos().y });
+
+        socketHandler.movementPlayer({
+          x: this.getTilePos().x,
+          y: this.getTilePos().y,
+          direction: matchPlayerStatusToDirection(GM.getPlayerObj()!.getLastDirection()),
+          movement: matchPlayerStatus(GM.getPlayerObj()!.getCurrentStatus()),
+          pet: null,
+        });
       }
     } else {
       this.lastDirection = this.currentDirection;

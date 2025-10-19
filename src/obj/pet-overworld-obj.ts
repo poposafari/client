@@ -2,6 +2,7 @@ import { ANIMATION, DIRECTION, KEY, OBJECT, PLAYER_STATUS, TEXTURE } from '../en
 import { InGameScene } from '../scenes/ingame-scene';
 import { getOverworldPokemonTexture } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
+import { OtherPlayerOverworldObj } from './other-player-overworld-obj';
 import { PlayerOverworldObj } from './player-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
 
@@ -20,7 +21,7 @@ export class PetOverworldObj extends MovableOverworldObj {
     this.isShiny();
   }
 
-  move(player: PlayerOverworldObj) {
+  move(player: PlayerOverworldObj | OtherPlayerOverworldObj) {
     this.setMovement(player.getCurrentStatus());
     this.followReady(player);
   }
@@ -108,7 +109,7 @@ export class PetOverworldObj extends MovableOverworldObj {
     this.baseSpeed = speed;
   }
 
-  followReady(player: PlayerOverworldObj) {
+  followReady(player: PlayerOverworldObj | OtherPlayerOverworldObj) {
     if (player.isMovementBlocking()) return;
 
     const current = this.getTilePos();

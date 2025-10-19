@@ -19,11 +19,15 @@ import {
   GetPcRes,
   LoginRes,
   MovePcReq,
+  PlayerAvatar,
+  PlayerGender,
   RegisterIngameReq,
+  SocketInitData,
   UseItemReq,
 } from './types';
 import { HttpErrorCode, MODE } from './enums';
 import { GM } from './core/game-manager';
+import { SocketHandler } from './handlers/socket-handler';
 
 const Axios = axios.create({
   baseURL: 'https://poposafari.net/api',
@@ -75,7 +79,48 @@ Axios.interceptors.response.use(
   },
 );
 
-export async function apiWrap<T>(api: () => Promise<{ data: any }>): Promise<ApiResponse<T> | ApiErrorResponse> {
+function handleSocketConnection(apiName: string, success: boolean): void {
+  const socketHandler = SocketHandler.getInstance();
+
+  if (success) {
+    if (['autoLoginApi', 'loginLocalApi', 'registerApi'].includes(apiName)) {
+      if (!socketHandler.isSocketConnected()) {
+        const scene = GM.getScene();
+        if (scene) {
+          socketHandler.connect(scene);
+        }
+      }
+    } else if (apiName === 'logoutApi') {
+      if (socketHandler.isSocketConnected()) {
+        socketHandler.disconnect();
+      }
+    }
+  }
+}
+
+function handleSocketEventInit(apiName: string, success: boolean, data: GetIngameRes): void {
+  const socketHandler = SocketHandler.getInstance();
+
+  let initData: SocketInitData = {
+    location: data.location,
+    x: data.x,
+    y: data.y,
+    nickname: data.nickname,
+    gender: data.gender,
+    avatar: data.avatar,
+    pet: null,
+    option: data.option,
+    pc: { bgs: data.pcBg, names: data.pcName },
+  };
+
+  if (success) {
+    if (apiName === 'getIngameApi') {
+      socketHandler.init(initData);
+    }
+  }
+}
+
+export async function apiWrap<T>(api: () => Promise<{ data: any }>, apiName?: string): Promise<ApiResponse<T> | ApiErrorResponse> {
   try {
     GM.changeMode(MODE.CONNECT);
 
@@ -85,12 +130,24 @@ export async function apiWrap<T>(api: () => Promise<{ data: any }>): Promise<Api
 
     if (typeof responseData === 'object' && responseData !== null && 'result' in responseData && 'data' in responseData) {
       GM.popUi();
+      if (apiName) {
+        handleSocketConnection(apiName, true);
+        handleSocketEventInit(apiName, true, responseData.data as GetIngameRes);
+      }
       return responseData as ApiResponse<T>;
     }
     const successResponse: ApiResponse<T> = { result: true, data: responseData };
+    if (apiName) {
+      handleSocketConnection(apiName, true);
+      handleSocketEventInit(apiName, true, responseData.data as GetIngameRes);
+    }
     return successResponse;
   } catch (err: any) {
     GM.popUi();
+
+    if (apiName) {
+      handleSocketConnection(apiName, false);
+    }
 
     if (axios.isAxiosError(err) && err.response) {
       return err.response.data as ApiErrorResponse;
@@ -103,14 +160,14 @@ export async function apiWrap<T>(api: () => Promise<{ data: any }>): Promise<Api
   }
 }
 
-export const registerApi = (data: AccountReq) => apiWrap<unknown>(() => Axios.post('/account/register', data));
-export const loginLocalApi = (data: AccountReq) => apiWrap<LoginRes>(() => Axios.post('/account/login/local', data));
-export const autoLoginApi = () => apiWrap<unknown>(() => Axios.get('/account/login/auto'));
+export const registerApi = (data: AccountReq) => apiWrap<unknown>(() => Axios.post('/account/register', data), 'registerApi');
+export const loginLocalApi = (data: AccountReq) => apiWrap<LoginRes>(() => Axios.post('/account/login/local', data), 'loginLocalApi');
+export const autoLoginApi = () => apiWrap<unknown>(() => Axios.get('/account/login/auto'), 'autoLoginApi');
 export const checkRefreshApi = () => Axios.get('account/auth/refresh');
-export const logoutApi = () => apiWrap<unknown>(() => Axios.get('/account/logout'));
+export const logoutApi = () => apiWrap<unknown>(() => Axios.get('/account/logout'), 'logoutApi');
 export const deleteAccountApi = () => apiWrap<unknown>(() => Axios.get('/account/delete'));
 export const restoreDeleteAccountApi = () => apiWrap<unknown>(() => Axios.get('/account/delete/restore'));
-export const getIngameApi = () => apiWrap<GetIngameRes>(() => Axios.get('/ingame/get'));
+export const getIngameApi = () => apiWrap<GetIngameRes>(() => Axios.get('/ingame/get'), 'getIngameApi');
 export const registerIngameApi = (data: RegisterIngameReq) => apiWrap(() => Axios.post('/ingame/register', data));
 export const getItemsApi = () => apiWrap<GetItemRes[]>(() => Axios.get('/bag/get'));
 export const getPcApi = (data: GetPcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/get', data));

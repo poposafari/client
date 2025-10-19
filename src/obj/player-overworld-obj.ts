@@ -56,6 +56,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     GM.setRunningToggle(false);
     eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
     this.setSpriteScale(this.spriteScale);
+    this.movePetBehind();
   }
 
   setRunningToggle() {
@@ -147,10 +148,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
   }
 
   changeDirectionOnly(direction: DIRECTION) {
-    // 방향만 변경하고 실제 이동은 하지 않음
     this.lastDirection = direction;
-
-    // 해당 방향의 정지 애니메이션 프레임으로 변경
     const stopFrameNumber = this.getStopFrameNumberFromDirection(direction);
     if (stopFrameNumber !== undefined) {
       this.stopSpriteAnimation(stopFrameNumber);
@@ -294,6 +292,11 @@ export class PlayerOverworldObj extends MovableOverworldObj {
   async openDoor(direction: DIRECTION, door: DoorOverworldObj): Promise<void> {
     return new Promise(async (resolve) => {
       const goal = door.getGoal();
+      const lastLocation = GM.getUserData()?.location;
+      const currentLocation = goal.location;
+
+      console.log('check lastLocation', lastLocation);
+      console.log('check currentLocation', currentLocation);
 
       this.setIsEvent(true);
       if (door.getTexture() !== TEXTURE.BLANK) {
@@ -301,7 +304,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         await this.forceMoveForward(direction, 200);
       }
       runFadeEffect(this.getScene(), 800, 'in');
-      GM.updateUserData({ location: goal.location, x: goal.x, y: goal.y });
+      GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: goal.x, y: goal.y });
       GM.changeMode(MODE.OVERWORLD);
 
       this.setIsEvent(false);

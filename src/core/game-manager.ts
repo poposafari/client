@@ -1,6 +1,7 @@
 import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
 import { MAX_ITEM_SLOT, MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
 import { EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
+import { SocketHandler } from '../handlers/socket-handler';
 import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { PlayerItem } from '../obj/player-item';
 import { PlayerOption } from '../obj/player-option';
@@ -32,6 +33,8 @@ export class GameManager {
   private tempPlayerObj!: PlayerOverworldObj;
   private currentDoorObj: DoorOverworldObj | null = null;
   private tempRunningToggle!: boolean;
+  private currentScene: any = null;
+  private tempOverworldMap!: Phaser.Tilemaps.Tilemap;
 
   static get(): GameManager {
     if (!GameManager.instance) {
@@ -39,6 +42,14 @@ export class GameManager {
     }
 
     return GameManager.instance;
+  }
+
+  setScene(scene: any): void {
+    this.currentScene = scene;
+  }
+
+  getScene(): any {
+    return this.currentScene;
   }
 
   private findUiOnRegistry(key: string) {
@@ -179,11 +190,29 @@ export class GameManager {
         this.showUi(UI.STARTER);
         break;
       case MODE.OVERWORLD:
+        OverworldStorage.getInstance().setBlockingUpdate(true);
+
         const overworld = OverworldStorage.getInstance().getMap(this.user?.location!);
+
+        const socketHandler = SocketHandler.getInstance();
+        const user = GM.getUserData()!;
+
+        console.log(user.lastLocation);
+        console.log(user.location);
+
+        socketHandler.enterLocation({
+          from: user?.lastLocation,
+          to: user?.location!,
+          toX: user?.x!,
+          toY: user?.y!,
+        });
+
         this.showUi(UI.OVERWORLD_HUD);
         overworld?.setup();
         this.overlapUi(UI.OVERWORLD);
         eventBus.emit(EVENT.HUD_SHOW_OVERWORLD);
+
+        OverworldStorage.getInstance().setBlockingUpdate(false);
         break;
       case MODE.OVERWORLD_MENU:
         this.overlapUi(UI.OVERWORLD_MENU);
@@ -331,6 +360,7 @@ export class GameManager {
       isStarter: data.isStarter,
       isTutorial: data.isTutorial,
       location: data.location,
+      lastLocation: null,
       nickname: data.nickname,
       party: party,
       pcBg: data.pcBg,
@@ -562,6 +592,14 @@ export class GameManager {
 
   getPlayerObj() {
     return this.tempPlayerObj;
+  }
+
+  setOverworldMap(map: Phaser.Tilemaps.Tilemap) {
+    this.tempOverworldMap = map;
+  }
+
+  getOverworldMap() {
+    return this.tempOverworldMap;
   }
 
   setRunningToggle(toggle: boolean) {

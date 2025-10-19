@@ -2,6 +2,7 @@ import { GM } from '../core/game-manager';
 import { npcData, PokemonData } from '../data';
 import { ANIMATION, MODE, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import { BagStorage, OverworldStorage } from '../storage';
 import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
 import { AccountDeleteUi } from '../uis/account-delete-ui';
@@ -37,11 +38,13 @@ export class InGameScene extends BaseScene {
   }
 
   create() {
+    GM.setScene(this);
+    OverworldStorage.getInstance().setScene(this);
     const overworldUi = new OverworldUi(this);
     this.initAnimation();
     this.initAudio();
-    BagStorage.getInstance();
 
+    BagStorage.getInstance();
     const keyboard = KeyboardHandler.getInstance();
     keyboard.init(this);
 
