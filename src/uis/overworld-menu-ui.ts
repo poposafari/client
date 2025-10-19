@@ -197,8 +197,11 @@ export class OverworldMenuUi extends Ui {
         yes: async () => {
           this.cancelMenu(choice);
           const res = await exitSafariZoneApi();
+          const lastLocation = GM.getUserData()?.location;
+          const currentLocation = 'p005';
+
           if (res.result) {
-            GM.updateUserData({ location: '005', x: 39, y: 41 });
+            GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: 39, y: 41 });
             GM.changeMode(MODE.OVERWORLD);
           }
         },

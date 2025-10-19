@@ -1,5 +1,5 @@
 import { SafariData } from '../data';
-import { DIRECTION, KEY, Season, TYPE } from '../enums';
+import { DIRECTION, KEY, PLAYER_STATUS, Season, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { ItemRank } from '../types';
 
@@ -281,4 +281,34 @@ export const matchItemRank = (rank: string) => {
   }
 
   return rate;
+};
+
+export const matchPlayerStatus = (status: PLAYER_STATUS) => {
+  switch (status) {
+    case PLAYER_STATUS.WALK:
+      return 'walk';
+    case PLAYER_STATUS.RUNNING:
+      return 'running';
+    case PLAYER_STATUS.RIDE:
+      return 'ride';
+    case PLAYER_STATUS.SURF:
+      return 'surf';
+  }
+
+  return 'jump';
+};
+
+export const matchPlayerStatusToDirection = (direction: DIRECTION) => {
+  switch (direction) {
+    case DIRECTION.UP:
+      return 'up';
+    case DIRECTION.DOWN:
+      return 'down';
+    case DIRECTION.LEFT:
+      return 'left';
+    case DIRECTION.RIGHT:
+      return 'right';
+  }
+
+  return 'down';
 };

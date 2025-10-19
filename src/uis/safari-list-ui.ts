@@ -76,7 +76,7 @@ export class SafariListUi extends Ui {
     return new Promise(async (resolve) => {
       await this.questionMessageUi.show({
         type: 'default',
-        content: replacePercentSymbol(i18next.t('npc:npc000_2'), [i18next.t(`menu:overworld_${safari.key}`)]),
+        content: replacePercentSymbol(i18next.t('npc:npc000_2'), [i18next.t(`menu:${safari.key}`)]),
         speed: GM.getUserOption()?.getTextSpeed()!,
         yes: async () => {
           const res = await useSafariTicketApi({ item: '030', cost: safari.cost });
@@ -115,7 +115,7 @@ export class SafariListUi extends Ui {
 
     for (const safari of this.safaris) {
       ret.push({
-        name: i18next.t(`menu:overworld_${safari.key}`),
+        name: i18next.t(`menu:${safari.key}`),
         nameImg: '',
         etc: `x${safari.cost}`,
         etcImg: ticketIcon,

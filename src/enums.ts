@@ -565,6 +565,12 @@ export enum EVENT {
   FORCE_CHANGE_BATTLE_MESSAGE,
   EVOLVE_FINISH_IN_PC,
   UPDATE_CATCHRATE,
+
+  //socket event
+  ADD_OTHER_PLAYER,
+  REMOVE_OTHER_PLAYER,
+  CURRENT_PLAYERS_IN_ROOM,
+  UPDATE_OTHER_PLAYER_MOVEMENT,
 }
 
 export function isEvent(data: any): data is EVENT {

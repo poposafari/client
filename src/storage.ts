@@ -1,13 +1,15 @@
+import { GM } from './core/game-manager';
 import { itemData } from './data';
 import { ItemCategory } from './enums';
 import { DoorOverworldObj } from './obj/door-overworld-obj';
 import { GroundItemOverworldObj } from './obj/ground-item-overworld-obj';
 import { NpcOverworldObj } from './obj/npc-overworld-obj';
+import { OtherPlayerOverworldObj } from './obj/other-player-overworld-obj';
 import { PlayerItem } from './obj/player-item';
 import { WildOverworldObj } from './obj/wild-overworld-obj';
 // import { GroundItemObject } from './object-legacy/ground-item-object';
 // import { PokemonObject } from './object-legacy/pokemon-object';
-import { GetItemRes, GroundItemInfo, GroundItemRes, OverworldStatue, WildPokemonInfo, WildRes } from './types';
+import { GetItemRes, GroundItemInfo, GroundItemRes, OverworldStatue, WildPokemonInfo, WildRes, SocketInitData, MovementPlayer, OtherPlayerInfo, OtherPlayerExitRes, PlayerMovementRes } from './types';
 import { Overworld } from './uis/overworld';
 
 export class BagStorage {
@@ -147,6 +149,9 @@ export class OverworldStorage {
   private static instance: OverworldStorage;
 
   private maps: Map<string, Overworld> = new Map<string, Overworld>();
+  private scene: any = null;
+
+  private blockingUpdate: boolean = false;
 
   private key!: string;
   private npcs: NpcOverworldObj[] = [];
@@ -158,6 +163,10 @@ export class OverworldStorage {
   private groundItems: GroundItemOverworldObj[] = [];
   private groundItemData: GroundItemRes[] = [];
 
+  private otherPlayersInfo: OtherPlayerInfo[] = [];
+  private otherPlayersExitInfo: OtherPlayerExitRes[] = [];
+  private otherPlayersMovementInfo: PlayerMovementRes[] = [];
+
   constructor() {}
 
   static getInstance(): OverworldStorage {
@@ -165,6 +174,18 @@ export class OverworldStorage {
       OverworldStorage.instance = new OverworldStorage();
     }
     return OverworldStorage.instance;
+  }
+
+  getBlockingUpdate() {
+    return this.blockingUpdate;
+  }
+
+  setBlockingUpdate(onoff: boolean) {
+    this.blockingUpdate = onoff;
+  }
+
+  setScene(scene: any): void {
+    this.scene = scene;
   }
 
   registerMap(key: string, value: Overworld) {
@@ -271,5 +292,53 @@ export class OverworldStorage {
 
   getStatue() {
     return this.statue;
+  }
+
+  getOtherplayerInfo() {
+    return this.otherPlayersInfo;
+  }
+
+  cleanOtherplayerInfo() {
+    this.otherPlayersInfo = [];
+  }
+
+  addOtherplayerInfo(data: OtherPlayerInfo) {
+    this.otherPlayersInfo.push(data);
+  }
+
+  shiftOtherplayerInfo() {
+    return this.otherPlayersInfo.shift();
+  }
+
+  getOtherplayerMovementInfo() {
+    return this.otherPlayersMovementInfo;
+  }
+
+  cleanOtherplayerMovementInfo() {
+    this.otherPlayersMovementInfo = [];
+  }
+
+  addOtherplayerMovementInfo(data: PlayerMovementRes) {
+    this.otherPlayersMovementInfo.push(data);
+  }
+
+  shiftOtherplayerMovementInfo() {
+    return this.otherPlayersMovementInfo.shift();
+  }
+
+  getOtherplayerExitInfo() {
+    return this.otherPlayersExitInfo;
+  }
+
+  cleanOtherplayerExitInfo() {
+    this.otherPlayersExitInfo = [];
+  }
+
+  addOtherplayerExitInfo(data: OtherPlayerExitRes) {
+    this.otherPlayersExitInfo.push(data);
+  }
+
+  shiftOtherplayerExitInfo() {
+    return this.otherPlayersExitInfo.shift();
   }
 }
