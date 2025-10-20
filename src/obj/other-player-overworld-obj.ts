@@ -1,6 +1,6 @@
 import { DIRECTION, OBJECT, PLAYER_STATUS } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PlayerGender, MovementPlayer, SocketInitData } from '../types';
+import { PlayerGender, MovementPlayer } from '../types';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { PetOverworldObj } from './pet-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
@@ -42,7 +42,6 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     let smoothFrames = [0, 3, 6, 9];
     let stopFrames = [0, 3, 6, 9];
     let speed = 0;
-    this.step = 0;
 
     this.lastStatus = this.currentStatus;
     this.currentStatus = newStatus;
