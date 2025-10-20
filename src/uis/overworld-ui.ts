@@ -1,7 +1,6 @@
 import { catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
-import { getSafariByKey } from '../data';
 import { DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
@@ -9,34 +8,14 @@ import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { GroundItemOverworldObj } from '../obj/ground-item-overworld-obj';
 import { NpcOverworldObj } from '../obj/npc-overworld-obj';
 import { OtherPlayerOverworldObj } from '../obj/other-player-overworld-obj';
-import { OverworldObj } from '../obj/overworld-obj';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
 import { PostCheckoutOverworldObj } from '../obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from '../obj/shop-checkout-overworld-obj';
 import { WildOverworldObj } from '../obj/wild-overworld-obj';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldStorage } from '../storage';
-import {
-  CurrentPlayersInRoomRes,
-  DoorInfo,
-  ForegroundLayer,
-  Layer,
-  MapInfo,
-  MovementPlayer,
-  NpcInfo,
-  OtherObjectMovementQueue,
-  OtherPlayerEnterRes,
-  OtherPlayerExitRes,
-  OtherPlayerInfo,
-  PlayerMovementRes,
-  PokemonSpawn,
-  PostOfficeType,
-  ShopType,
-  SocketInitData,
-  StatueInfo,
-} from '../types';
-import { isSafariData, matchPlayerStatusToDirection, replacePercentSymbol } from '../utils/string-util';
-import { BattleUi } from './battle-ui';
+import { DoorInfo, ForegroundLayer, Layer, MapInfo, NpcInfo, OtherObjectMovementQueue, OtherPlayerInfo, PlayerMovementRes, PokemonSpawn, PostOfficeType, ShopType, StatueInfo } from '../types';
+import { isSafariData, replacePercentSymbol } from '../utils/string-util';
 import { HiddenMoveUi } from './hidden-move-ui';
 import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
@@ -647,7 +626,6 @@ export class OverworldPlayer {
           GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: result.x, y: result.y });
           GM.changeMode(MODE.CONNECT_SAFARI);
           this.obj?.setIsEvent(false);
-          GM.changeMode(MODE.OVERWORLD);
         }
         break;
       case 'npc003':

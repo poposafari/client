@@ -169,6 +169,14 @@ export class MovableOverworldObj extends OverworldObj {
     return null;
   }
 
+  hasPlayer(pos: Phaser.Math.Vector2): boolean {
+    const playerAtPosition = GM.getPlayerObj();
+    if (playerAtPosition) {
+      return playerAtPosition.getTilePos().equals(pos);
+    }
+    return false;
+  }
+
   hasWild(pos: Phaser.Math.Vector2): boolean {
     const wildAtPosition = OverworldStorage.getInstance()
       .getWilds()
@@ -244,12 +252,13 @@ export class MovableOverworldObj extends OverworldObj {
 
   private hasBlocking(pos: Phaser.Math.Vector2, direction: DIRECTION) {
     if (this.hasStairTile(direction)) return false;
-    if (this.hasNoTile(pos)) return true;
-    if (this.hasBlockingTile(pos)) return true;
-    if (this.hasNpc(pos)) return true;
-    if (this.hasDoor(pos)) return true;
-    if (this.hasWild(pos)) return true;
-    if (this.hasGroundItem(pos)) return true;
+    if (this.hasNoTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasBlockingTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasNpc(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasDoor(pos) && this.getObjType() === OBJECT.PLAYER) return true;
+    if (this.hasWild(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasGroundItem(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.getObjType() === OBJECT.WILD && this.hasPlayer(pos)) return true;
 
     return false;
   }
