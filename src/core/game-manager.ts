@@ -1,6 +1,6 @@
 import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
 import { MAX_ITEM_SLOT, MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
-import { EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
+import { AUDIO, EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
 import { SocketHandler } from '../handlers/socket-handler';
 import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { PlayerItem } from '../obj/player-item';
@@ -9,7 +9,7 @@ import { PlayerOverworldObj } from '../obj/player-overworld-obj';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { BagStorage, OverworldStorage } from '../storage';
 import { GetIngameRes, IngameData, PokemonSkill } from '../types';
-import { Ui } from '../uis/ui';
+import { playBackgroundMusic, Ui } from '../uis/ui';
 import { getPokemonType } from '../utils/string-util';
 import { eventBus } from './event-bus';
 
@@ -151,6 +151,7 @@ export class GameManager {
         break;
       case MODE.LOGOUT:
         ret = await logoutApi();
+        console.log(ret);
         if (ret!.result) {
           localStorage.removeItem('access_token');
           this.changeMode(MODE.LOGIN);
@@ -197,9 +198,6 @@ export class GameManager {
         const socketHandler = SocketHandler.getInstance();
         const user = GM.getUserData()!;
 
-        console.log(user.lastLocation);
-        console.log(user.location);
-
         socketHandler.enterLocation({
           from: user?.lastLocation,
           to: user?.location!,
@@ -212,6 +210,7 @@ export class GameManager {
         this.overlapUi(UI.OVERWORLD);
         eventBus.emit(EVENT.HUD_SHOW_OVERWORLD);
 
+        playBackgroundMusic(this.currentScene, overworld?.getSound()!);
         OverworldStorage.getInstance().setBlockingUpdate(false);
         break;
       case MODE.OVERWORLD_MENU:

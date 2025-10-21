@@ -269,34 +269,43 @@ export class LoadingScene extends BaseScene {
       });
     });
 
-    //sounds
-    this.loadAudio(AUDIO.SELECT_0, 'audio', AUDIO.SELECT_0, 'ogg');
-    this.loadAudio(AUDIO.SELECT_1, 'audio', AUDIO.SELECT_1, 'ogg');
-    this.loadAudio(AUDIO.SELECT_2, 'audio', AUDIO.SELECT_2, 'wav');
-    this.loadAudio(AUDIO.OPEN_0, 'audio', AUDIO.OPEN_0, 'wav');
-    this.loadAudio(AUDIO.OPEN_1, 'audio', AUDIO.OPEN_1, 'ogg');
-    this.loadAudio(AUDIO.CANCEL_0, 'audio', AUDIO.CANCEL_0, 'ogg');
-    this.loadAudio(AUDIO.CANCEL_1, 'audio', AUDIO.CANCEL_1, 'ogg');
-    this.loadAudio(AUDIO.GET_0, 'audio', AUDIO.GET_0, 'ogg');
-    this.loadAudio(AUDIO.BUY, 'audio', AUDIO.BUY, 'ogg');
-    this.loadAudio(AUDIO.JUMP, 'audio', AUDIO.JUMP, 'ogg');
-    this.loadAudio(AUDIO.REACTION_0, 'audio', AUDIO.REACTION_0, 'ogg');
-    this.loadAudio(AUDIO.THROW, 'audio', AUDIO.THROW, 'ogg');
-    this.loadAudio(AUDIO.BALL_CATCH, 'audio', AUDIO.BALL_CATCH, 'ogg');
-    this.loadAudio(AUDIO.BALL_DROP, 'audio', AUDIO.BALL_DROP, 'ogg');
-    this.loadAudio(AUDIO.BALL_ENTER, 'audio', AUDIO.BALL_ENTER, 'ogg');
-    this.loadAudio(AUDIO.BALL_ENTER, 'audio', AUDIO.BALL_ENTER, 'ogg');
-    this.loadAudio(AUDIO.BALL_EXIT, 'audio', AUDIO.BALL_EXIT, 'ogg');
-    this.loadAudio(AUDIO.BALL_SHAKE, 'audio', AUDIO.BALL_SHAKE, 'ogg');
-    this.loadAudio(AUDIO.BUZZER, 'audio', AUDIO.BUZZER, 'ogg');
-    this.loadAudio(AUDIO.REWARD, 'audio', AUDIO.REWARD, 'ogg');
-    this.loadAudio(AUDIO.FLEE, 'audio', AUDIO.FLEE, 'ogg');
-    this.loadAudio(AUDIO.SHINY, 'audio', AUDIO.SHINY, 'wav');
-    this.loadAudio(AUDIO.EVOL_INTRO, 'audio', AUDIO.EVOL_INTRO, 'ogg');
-    this.loadAudio(AUDIO.EVOL, 'audio', AUDIO.EVOL, 'ogg');
-    this.loadAudio(AUDIO.CONG, 'audio', AUDIO.CONG, 'ogg');
-    this.loadAudio(AUDIO.HATCH, 'audio', AUDIO.HATCH, 'wav');
-    this.loadAudio(AUDIO.DOOR_ENTER, 'audio', AUDIO.DOOR_ENTER, 'ogg');
+    //background sounds
+    this.loadAudio(AUDIO.P001, 'audio/background', AUDIO.P001, 'wav');
+    this.loadAudio(AUDIO.P002, 'audio/background', AUDIO.P002, 'wav');
+    this.loadAudio(AUDIO.P003, 'audio/background', AUDIO.P003, 'wav');
+    this.loadAudio(AUDIO.P004, 'audio/background', AUDIO.P004, 'wav');
+    this.loadAudio(AUDIO.S000, 'audio/background', AUDIO.S000, 'wav');
+
+    //effect sounds
+    this.loadAudio(AUDIO.SELECT_0, 'audio/effect', AUDIO.SELECT_0, 'ogg');
+    this.loadAudio(AUDIO.SELECT_1, 'audio/effect', AUDIO.SELECT_1, 'ogg');
+    this.loadAudio(AUDIO.SELECT_2, 'audio/effect', AUDIO.SELECT_2, 'wav');
+    this.loadAudio(AUDIO.OPEN_0, 'audio/effect', AUDIO.OPEN_0, 'wav');
+    this.loadAudio(AUDIO.OPEN_1, 'audio/effect', AUDIO.OPEN_1, 'ogg');
+    this.loadAudio(AUDIO.CANCEL_0, 'audio/effect', AUDIO.CANCEL_0, 'ogg');
+    this.loadAudio(AUDIO.CANCEL_1, 'audio/effect', AUDIO.CANCEL_1, 'ogg');
+    this.loadAudio(AUDIO.GET_0, 'audio/effect', AUDIO.GET_0, 'ogg');
+    this.loadAudio(AUDIO.BUY, 'audio/effect', AUDIO.BUY, 'ogg');
+    this.loadAudio(AUDIO.JUMP, 'audio/effect', AUDIO.JUMP, 'ogg');
+    this.loadAudio(AUDIO.REACTION_0, 'audio/effect', AUDIO.REACTION_0, 'ogg');
+    this.loadAudio(AUDIO.THROW, 'audio/effect', AUDIO.THROW, 'ogg');
+    this.loadAudio(AUDIO.BALL_CATCH, 'audio/effect', AUDIO.BALL_CATCH, 'ogg');
+    this.loadAudio(AUDIO.BALL_DROP, 'audio/effect', AUDIO.BALL_DROP, 'ogg');
+    this.loadAudio(AUDIO.BALL_ENTER, 'audio/effect', AUDIO.BALL_ENTER, 'ogg');
+    this.loadAudio(AUDIO.BALL_ENTER, 'audio/effect', AUDIO.BALL_ENTER, 'ogg');
+    this.loadAudio(AUDIO.BALL_EXIT, 'audio/effect', AUDIO.BALL_EXIT, 'ogg');
+    this.loadAudio(AUDIO.BALL_SHAKE, 'audio/effect', AUDIO.BALL_SHAKE, 'ogg');
+    this.loadAudio(AUDIO.BUZZER, 'audio/effect', AUDIO.BUZZER, 'ogg');
+    this.loadAudio(AUDIO.REWARD, 'audio/effect', AUDIO.REWARD, 'ogg');
+    this.loadAudio(AUDIO.FLEE, 'audio/effect', AUDIO.FLEE, 'ogg');
+    this.loadAudio(AUDIO.SHINY, 'audio/effect', AUDIO.SHINY, 'wav');
+    this.loadAudio(AUDIO.EVOL_INTRO, 'audio/effect', AUDIO.EVOL_INTRO, 'ogg');
+    this.loadAudio(AUDIO.EVOL, 'audio/effect', AUDIO.EVOL, 'ogg');
+    this.loadAudio(AUDIO.CONG, 'audio/effect', AUDIO.CONG, 'ogg');
+    this.loadAudio(AUDIO.HATCH, 'audio/effect', AUDIO.HATCH, 'wav');
+    this.loadAudio(AUDIO.DOOR_ENTER_0, 'audio/effect', AUDIO.DOOR_ENTER_0, 'ogg');
+    this.loadAudio(AUDIO.DOOR_ENTER_1, 'audio/effect', AUDIO.DOOR_ENTER_1, 'ogg');
+    this.loadAudio(AUDIO.DOOR_ENTER_2, 'audio/effect', AUDIO.DOOR_ENTER_2, 'ogg');
 
     this.createLoadingBar();
 

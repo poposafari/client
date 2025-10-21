@@ -1,11 +1,8 @@
 import { DIRECTION, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PlayerGender, MovementPlayer } from '../types';
-import { matchPlayerStatusToDirection } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { OtherPlayerPetOverworldObj } from './other-player-pet-overworld-obj';
-import { PetOverworldObj } from './pet-overworld-obj';
-import { PlayerPokemon } from './player-pokemon';
 
 export class OtherPlayerOverworldObj extends MovableOverworldObj {
   private pet: OtherPlayerPetOverworldObj | null;

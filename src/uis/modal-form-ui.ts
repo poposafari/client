@@ -2,7 +2,7 @@ import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, EVENT, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addWindow, playSound, shakeEffect, Ui } from './ui';
+import { addWindow, playEffectSound, shakeEffect, Ui } from './ui';
 
 export class ModalFormUi extends Ui {
   private modalContainer!: Phaser.GameObjects.Container;
@@ -38,7 +38,7 @@ export class ModalFormUi extends Ui {
   update(time: number, delta: number): void {}
 
   shake() {
-    playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.BUZZER);
     shakeEffect(this.scene, this.modalContainer);
   }
 

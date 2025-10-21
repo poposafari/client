@@ -2,7 +2,7 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
 import { AUDIO, DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
-import { addBackground, addImage, addText, addTextInput, addWindow, playSound, startModalAnimation } from './ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, playEffectSound, startModalAnimation } from './ui';
 import i18next from '../i18n';
 import { loginLocalApi } from '../api';
 import { GM } from '../core/game-manager';
@@ -63,7 +63,7 @@ export class LoginUi extends ModalFormUi {
   }
 
   show(data?: any): void {
-    playSound(this.scene, AUDIO.OPEN_0, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.OPEN_0);
     super.show();
     this.inputs[0].text = '';
     this.inputs[1].text = '';

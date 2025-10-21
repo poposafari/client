@@ -1,9 +1,6 @@
 import { OBJECT, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { ShopType } from '../types';
-import { NoticeUi } from '../uis/notice-ui';
-import { QuestionMessageUi } from '../uis/question-message-ui';
-import { TalkMessageUi } from '../uis/talk-message-ui';
 import { ImmovableOverworldObj } from './immovable-overworld-obj';
 
 export class ShopCheckoutOverworldObj extends ImmovableOverworldObj {

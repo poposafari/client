@@ -6,7 +6,7 @@ import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { QuestionMessageUi } from './question-message-ui';
-import { addImage, addText, addWindow, playSound, Ui } from './ui';
+import { addImage, addText, addWindow, playEffectSound, stopBackgroundMusic, Ui } from './ui';
 
 export class OverworldMenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -59,7 +59,7 @@ export class OverworldMenuUi extends Ui {
   }
 
   show(data?: unknown): void {
-    playSound(this.scene, AUDIO.OPEN_0, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.OPEN_0);
 
     this.renderIconsTint();
     this.icons[0].clearTint();
@@ -108,13 +108,13 @@ export class OverworldMenuUi extends Ui {
             break;
           case KEY.CANCEL:
             this.cancelMenu(choice);
-            playSound(this.scene, AUDIO.CANCEL_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.CANCEL_0);
             break;
         }
 
         if (key === KEY.UP || key === KEY.DOWN) {
           if (choice !== prevChoice) {
-            playSound(this.scene, AUDIO.SELECT_1, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_1);
 
             this.renderIconsTint();
             this.icons[choice].clearTint();
@@ -183,6 +183,7 @@ export class OverworldMenuUi extends Ui {
         speed: GM.getUserOption()?.getTextSpeed()!,
         yes: async () => {
           this.cancelMenu(choice);
+          stopBackgroundMusic();
           GM.changeMode(MODE.TITLE, false);
         },
         no: async () => {
@@ -212,7 +213,7 @@ export class OverworldMenuUi extends Ui {
     } else if (target === i18next.t('menu:menuCancel')) {
       //cancel
       this.cancelMenu(choice);
-      playSound(this.scene, AUDIO.CANCEL_0, GM.getUserOption()?.getEffectVolume());
+      playEffectSound(this.scene, AUDIO.CANCEL_0);
     }
   }
 

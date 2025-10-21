@@ -3,7 +3,7 @@ import { AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Notice } from '../types';
-import { addText, addWindow, playSound, Ui } from './ui';
+import { addText, addWindow, playEffectSound, Ui } from './ui';
 
 export class NoticeUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -43,7 +43,7 @@ export class NoticeUi extends Ui {
 
       const result = await this.showNotice(notice);
 
-      playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+      playEffectSound(this.scene, AUDIO.SELECT_0);
       this.container.setVisible(true);
 
       return new Promise((resolve) => {
@@ -73,4 +73,7 @@ export class NoticeUi extends Ui {
       resolve(true);
     });
   }
+}
+function playSound(scene: InGameScene, SELECT_0: AUDIO, arg2: number | undefined) {
+  throw new Error('Function not implemented.');
 }

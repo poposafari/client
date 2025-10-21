@@ -4,7 +4,7 @@ import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Question } from '../types';
-import { addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
+import { addImage, addText, addWindow, getTextStyle, playEffectSound, Ui } from './ui';
 
 export class QuestionMessageUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -89,7 +89,7 @@ export class QuestionMessageUi extends Ui {
       this.arrowTexture = TEXTURE.ARROW_B;
     }
 
-    playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.SELECT_0);
     this.container.setVisible(true);
 
     await this.showText(data);
@@ -128,7 +128,7 @@ export class QuestionMessageUi extends Ui {
         }
 
         if (choice !== prevChoice) {
-          playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+          playEffectSound(this.scene, AUDIO.SELECT_0);
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.dummys[choice].setTexture(this.arrowTexture);
         }

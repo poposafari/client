@@ -22,7 +22,7 @@ import {
   createSprite,
   delay,
   getTextStyle,
-  playSound,
+  playEffectSound,
   runFadeEffect,
   runFlashEffect,
   runWipeRifghtToLeftEffect,
@@ -338,7 +338,7 @@ export class BattleMessageUi extends Ui {
             if ((choice + 1) % cols !== 0 && choice + 1 <= maxChoice) choice++;
             break;
           case KEY.SELECT:
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             const target = this.menus[choice];
             this.lastChoice = choice;
@@ -364,7 +364,7 @@ export class BattleMessageUi extends Ui {
               }
             } else if (target === i18next.t('menu:battleSelect1')) {
               if (this.wildObj.getData().eaten_berry) {
-                playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+                playEffectSound(this.scene, AUDIO.BUZZER);
               } else {
                 this.berryMenuListDummy.handleKeyInput([0]);
                 const menuResult1 = await this.handleBerryMenuKeyInput();
@@ -390,7 +390,7 @@ export class BattleMessageUi extends Ui {
               this.dummys[choice].setTexture(TEXTURE.BLANK);
               this.lastChoice = 0;
 
-              playSound(this.scene, AUDIO.FLEE, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.FLEE);
 
               await this.talkMessage.show({
                 type: 'default',
@@ -406,7 +406,7 @@ export class BattleMessageUi extends Ui {
         }
 
         if (choice !== prevChoice) {
-          playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+          playEffectSound(this.scene, AUDIO.SELECT_0);
 
           this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.dummys[choice].setTexture(TEXTURE.ARROW_B);
@@ -766,7 +766,10 @@ export class BattleSpriteUi extends Ui {
       const hasAnim = this.player.anims.animationManager.exists(throwAnimKey);
       if (hasAnim) {
         this.player.anims.play({ key: throwAnimKey, repeat: 0, frameRate: 8, delay: 0 });
-        this.player.once('animationcomplete', () => resolve());
+        this.player.once('animationcomplete', () => {
+          playEffectSound(this.scene, AUDIO.THROW);
+          resolve();
+        });
       } else {
         resolve();
       }
@@ -837,6 +840,7 @@ export class BattleSpriteUi extends Ui {
           await this.startShakeBall(3);
           await this.startCatchBall();
           eventBus.emit(EVENT.FORCE_CHANGE_BATTLE_MESSAGE, replacePercentSymbol(i18next.t('message:battle_catch_success'), [i18next.t(`pokemon:${this.wildObj.getData().pokedex}.name`)]));
+          playEffectSound(this.scene, AUDIO.CONG);
           await this.talkMessage.show({
             type: 'default',
             content: replacePercentSymbol(i18next.t('message:battle_catch_success'), [i18next.t(`pokemon:${this.wildObj.getData().pokedex}.name`)]),
@@ -852,6 +856,7 @@ export class BattleSpriteUi extends Ui {
 
           await this.startShakeBall(1);
           await this.startFailBall(item);
+          playEffectSound(this.scene, AUDIO.FLEE);
           await this.talkMessage.show({
             type: 'default',
             content: replacePercentSymbol(i18next.t('message:battle_catch_fail'), [i18next.t(`pokemon:${this.wildObj.getData().pokedex}.name`)]),
@@ -946,6 +951,7 @@ export class BattleSpriteUi extends Ui {
     const ballEnter = new Promise<void>((resolve) => {
       const enterKey = `ball_${item.getKey()}_enter`;
       this.wildShadow.setVisible(false);
+      playEffectSound(this.scene, AUDIO.BALL_ENTER);
       this.throwItem.anims.play({ key: enterKey, repeat: 0, frameRate: 12 });
       this.throwItem.once('animationcomplete', () => resolve());
     });
@@ -1108,7 +1114,7 @@ export class BattleSpriteUi extends Ui {
 
           if (falling && currentY >= prevY) {
             bounceCount++;
-            playSound(this.scene, AUDIO.BALL_DROP, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.BALL_DROP);
             falling = false;
           }
 
@@ -1149,7 +1155,7 @@ export class BattleSpriteUi extends Ui {
         }
 
         await delay(this.scene, 500);
-        playSound(this.scene, AUDIO.BALL_SHAKE, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.BALL_SHAKE);
 
         this.scene.tweens.add({
           targets: this.throwItem,
@@ -1187,7 +1193,8 @@ export class BattleSpriteUi extends Ui {
     await delay(this.scene, 500);
 
     return new Promise((resolve) => {
-      playSound(this.scene, AUDIO.BALL_CATCH, GM.getUserOption()?.getEffectVolume());
+      playEffectSound(this.scene, AUDIO.BALL_CATCH);
+
       this.throwItem.setTint(0x5a5a5a);
 
       const ballX = this.throwItem.x;
@@ -1262,7 +1269,7 @@ export class BattleSpriteUi extends Ui {
 
       this.throwItem.anims.stop();
 
-      playSound(this.scene, AUDIO.BALL_EXIT, GM.getUserOption()?.getEffectVolume());
+      playEffectSound(this.scene, AUDIO.BALL_EXIT);
 
       this.scene.tweens.add({
         targets: this.wild,
@@ -1369,7 +1376,7 @@ export class BattleSpriteUi extends Ui {
         return;
       }
 
-      playSound(this.scene, AUDIO.SHINY, GM.getUserOption()?.getEffectVolume());
+      playEffectSound(this.scene, AUDIO.SHINY);
 
       this.effect.setTexture(TEXTURE.SPARKLE);
       this.effect.anims.play({
@@ -1652,6 +1659,7 @@ export class BattleRewardUi extends Ui {
     this.updateCandy(candy);
     this.updateRewards(rewards);
 
+    playEffectSound(this.scene, AUDIO.REWARD);
     this.container.setVisible(true);
     for (const container of this.targetContainers) {
       container.y += 70;
@@ -1739,33 +1747,21 @@ export class BattleRewardUi extends Ui {
     this.rewardContainer.add(candyText);
     this.rewardContainer.add(candyStock);
 
-    // 캔디 추가 후 위치 재배치
     this.repositionRewards();
   }
 
   private repositionRewards() {
-    const itemSpacing = 200; // 아이템 간 간격
+    const itemSpacing = 200;
     const totalItems = this.rewardIcons.length;
 
     if (totalItems === 0) return;
 
-    // 전체 너비 계산
     const totalWidth = (totalItems - 1) * itemSpacing;
-
-    // 시작 위치 (중앙 정렬을 위해)
     const startX = -totalWidth / 2;
-
-    // 각 아이템 배치
     for (let i = 0; i < totalItems; i++) {
       const x = startX + i * itemSpacing;
-
-      // 아이콘 위치
       this.rewardIcons[i].setPosition(x, -10);
-
-      // 텍스트 위치 (아이콘 오른쪽 아래)
       this.rewardTexts[i].setPosition(x, +70);
-
-      // 재고 위치 (아이콘 오른쪽 아래)
       this.rewardStocks[i].setPosition(x + 35, 30);
     }
   }

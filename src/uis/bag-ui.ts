@@ -2,18 +2,17 @@ import { getItemsApi } from '../api';
 import { MAX_QUICK_ITEM_SLOT } from '../constants';
 import { GM } from '../core/game-manager';
 import { getItemByKey } from '../data';
-import { DEPTH, ItemCategory, ItemData, KEY, PLAYER_STATUS, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, ItemCategory, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { PlayerItem } from '../obj/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BagStorage } from '../storage';
 import { ListForm } from '../types';
-import { BagMenuUi } from './bag-ui-dummy';
 import { MenuListUi } from './menu-list-ui';
 import { MenuUi } from './menu-ui';
 import { TalkMessageUi } from './talk-message-ui';
-import { addBackground, addImage, addText, addWindow, createSprite, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, createSprite, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class BagUi extends Ui {
   private menu!: MenuUi;
@@ -277,6 +276,7 @@ export class BagUi extends Ui {
   private runPocketAnimation(current: number) {
     const pockets = ['ball', 'etc', 'berry', 'key'];
 
+    playEffectSound(this.scene, AUDIO.SELECT_2);
     this.pocketTitleText.setText(this.pocketTitles[current]);
     this.pocketSprites[current].anims.play({
       key: `bag_pocket_${pockets[current]}`,
@@ -435,6 +435,7 @@ export class BagRegisterUi extends Ui {
               }
               break;
             case KEY.SELECT:
+              playEffectSound(this.scene, AUDIO.SELECT_0);
               this.registerItem((choice + 1) as 1 | 2 | 3 | 4 | 5);
               this.renderSlot();
               this.bagUi.setRegVisual(true, this.item);
@@ -447,6 +448,7 @@ export class BagRegisterUi extends Ui {
           }
           if (key === KEY.LEFT || key === KEY.RIGHT) {
             if (choice !== prevChoice) {
+              playEffectSound(this.scene, AUDIO.SELECT_0);
               this.renderChoice(prevChoice, choice);
             }
           }

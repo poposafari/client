@@ -1,7 +1,7 @@
 import { catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
-import { DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
+import { AUDIO, DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
@@ -39,7 +39,7 @@ import { SafariListUi } from './safari-list-ui';
 import { ShopUi } from './shop-ui';
 import { StarterPokemonUi } from './starter-pokemon-ui';
 import { TalkMessageUi } from './talk-message-ui';
-import { addMap, runFadeEffect, Ui } from './ui';
+import { addMap, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class OverworldUi extends Ui {
   private type!: OVERWORLD_TYPE;
@@ -478,6 +478,7 @@ export class OverworldPlayer {
                 const res = await catchGroundItemApi({ idx: groundItemData.idx });
 
                 event.caught();
+                playEffectSound(this.scene, AUDIO.GET_0);
 
                 if (res.result) {
                   await this.talkMessageUi.show({
@@ -657,17 +658,26 @@ export class OverworldPlayer {
           if (ret) {
             GM.updateUserData({ isStarter: false });
 
+            playEffectSound(this.scene, AUDIO.CONG);
             await this.talkMessageUi.show({
               type: 'default',
               content: replacePercentSymbol(i18next.t('message:catch_starter_pokemon'), [GM.getUserData()?.nickname, i18next.t(`pokemon:${ret.pokedex}.name`)]),
               speed: GM.getUserOption()?.getTextSpeed()!,
             });
             await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_4'), speed: GM.getUserOption()?.getTextSpeed()! });
-            await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_5'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_5'), speed: GM.getUserOption()?.getTextSpeed()! });
+            playEffectSound(this.scene, AUDIO.GET_0);
+            await this.talkMessageUi.show({
+              type: 'default',
+              content: replacePercentSymbol(i18next.t('message:catch_starter_item'), [GM.getUserData()?.nickname]),
+              speed: GM.getUserOption()?.getTextSpeed()!,
+            });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_6'), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_7'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
           }
         } else {
-          await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_6'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_7'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_8'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_9'), speed: GM.getUserOption()?.getTextSpeed()! });
         }
         break;
     }

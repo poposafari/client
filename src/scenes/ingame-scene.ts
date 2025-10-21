@@ -1,8 +1,7 @@
 import { GM } from '../core/game-manager';
 import { npcData, PokemonData } from '../data';
-import { ANIMATION, MODE, TEXTURE, UI } from '../enums';
+import { ANIMATION, AUDIO, MODE, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { SocketHandler } from '../handlers/socket-handler';
 import { BagStorage, OverworldStorage } from '../storage';
 import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
 import { AccountDeleteUi } from '../uis/account-delete-ui';
@@ -20,7 +19,6 @@ import { OverworldUi } from '../uis/overworld-ui';
 import { PcUi } from '../uis/pc-ui';
 import { QuickSlotItemUi } from '../uis/quick-slot-item-ui';
 import { RegisterUi } from '../uis/register-ui';
-import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
 import { StarterUi } from '../uis/starter-ui';
 import { TitleUi } from '../uis/title-ui';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
@@ -69,14 +67,14 @@ export class InGameScene extends BaseScene {
 
     const overworldInfo = OverworldStorage.getInstance();
     //plaza
-    overworldInfo.registerMap(TEXTURE.PLAZA_001, new Plaza001(overworldUi, TEXTURE.PLAZA_001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_002, new Plaza002(overworldUi, TEXTURE.PLAZA_002));
-    overworldInfo.registerMap(TEXTURE.PLAZA_003, new Plaza003(overworldUi, TEXTURE.PLAZA_003));
-    overworldInfo.registerMap(TEXTURE.PLAZA_004, new Plaza004(overworldUi, TEXTURE.PLAZA_004));
-    overworldInfo.registerMap(TEXTURE.PLAZA_005, new Plaza005(overworldUi, TEXTURE.PLAZA_005));
+    overworldInfo.registerMap(TEXTURE.PLAZA_001, new Plaza001(overworldUi, TEXTURE.PLAZA_001, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_002, new Plaza002(overworldUi, TEXTURE.PLAZA_002, AUDIO.P002));
+    overworldInfo.registerMap(TEXTURE.PLAZA_003, new Plaza003(overworldUi, TEXTURE.PLAZA_003, AUDIO.P003));
+    overworldInfo.registerMap(TEXTURE.PLAZA_004, new Plaza004(overworldUi, TEXTURE.PLAZA_004, AUDIO.P004));
+    overworldInfo.registerMap(TEXTURE.PLAZA_005, new Plaza005(overworldUi, TEXTURE.PLAZA_005, AUDIO.P001));
 
     //safari
-    overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000));
+    overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000, AUDIO.S000));
 
     GM.changeMode(MODE.AUTO_LOGIN);
   }

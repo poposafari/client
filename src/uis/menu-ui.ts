@@ -4,7 +4,7 @@ import { AUDIO, DEPTH, EVENT, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addImage, addText, addWindow, getTextStyle, playSound, Ui } from './ui';
+import { addImage, addText, addWindow, getTextStyle, playEffectSound, Ui } from './ui';
 
 export class MenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -136,7 +136,7 @@ export class MenuUi extends Ui {
                 this.clean();
                 return resolve(this.info[choice]);
               }
-              playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.BUZZER);
 
               break;
             case KEY.CANCEL:
@@ -146,7 +146,7 @@ export class MenuUi extends Ui {
 
           if (key === KEY.UP || key === KEY.DOWN) {
             if (choice !== prevChoice) {
-              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.SELECT_0);
 
               this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
               this.dummys[choice].setTexture(TEXTURE.ARROW_B);

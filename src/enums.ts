@@ -365,6 +365,14 @@ export const enum EASE {
 }
 
 export enum AUDIO {
+  //background sounds
+  P001 = 'p001',
+  P002 = 'p002',
+  P003 = 'p003',
+  P004 = 'p004',
+  S000 = 's000',
+
+  //effect sounds
   SELECT_0 = 'select_0',
   SELECT_1 = 'select_1',
   SELECT_2 = 'select_2',
@@ -377,7 +385,9 @@ export enum AUDIO {
   JUMP = 'jump',
   REACTION_0 = 'reaction_0',
   THROW = 'throw',
-  DOOR_ENTER = 'enter',
+  DOOR_ENTER_0 = 'enter_0',
+  DOOR_ENTER_1 = 'enter_1',
+  DOOR_ENTER_2 = 'enter_2',
   BALL_CATCH = 'ball_catch',
   BALL_DROP = 'ball_drop',
   BALL_ENTER = 'ball_enter',
