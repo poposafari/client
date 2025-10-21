@@ -4,11 +4,12 @@ import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, EVENT, HttpErrorCode, KEY, TEXTSTYLE, TEXTURE, TYPE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
 import { GetPcRes, ListForm, PokemonGender, PokemonSkill } from '../types';
-import { formatDateTime, getPokemonType, replacePercentSymbol } from '../utils/string-util';
+import { formatDateTime, getOverworldPokemonTexture, getPokemonType, replacePercentSymbol } from '../utils/string-util';
 import { EvolveUi } from './evolve-ui';
 import { InputNicknameUi } from './input-nickname-ui';
 import { MenuListUi } from './menu-list-ui';
@@ -472,10 +473,12 @@ export class PcBoxUi extends Ui {
       GM.registerPet(pokemon);
       this.showPartyFollowIcon(pokemon);
       GM.getPlayerObj().getPet()?.changePet(pokemon);
+      SocketHandler.getInstance().changePet({ idx: pokemon.getIdx(), texture: getOverworldPokemonTexture(pokemon) });
     } else if (ret === i18next.t('menu:removeFollow')) {
       GM.registerCancelPet(pokemon);
       this.showPartyFollowIcon(pokemon);
       GM.getPlayerObj().getPet()?.changePet(null);
+      SocketHandler.getInstance().changePet({ idx: pokemon.getIdx(), texture: null });
     }
 
     this.handlePartyKeyInput();

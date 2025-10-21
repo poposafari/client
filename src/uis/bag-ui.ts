@@ -281,6 +281,8 @@ export class BagUi extends Ui {
     this.pocketSprites[current].anims.play({
       key: `bag_pocket_${pockets[current]}`,
       repeat: 0,
+      frameRate: 10,
+      delay: 0,
     });
   }
 
