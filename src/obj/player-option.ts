@@ -1,4 +1,5 @@
 import { TextSpeed } from '../enums';
+import { updateBackgroundVolume } from '../uis/ui';
 
 export class PlayerOption {
   private textSpeed: number;
@@ -50,6 +51,7 @@ export class PlayerOption {
 
   setBackgroundVolume(backgroundVolume: number): void {
     this.backgroundVolume = backgroundVolume;
+    updateBackgroundVolume(this.backgroundVolume);
   }
 
   setEffectVolume(effectVolume: number): void {

@@ -3,7 +3,7 @@ import { ANIMATION, AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Talk } from '../types';
-import { addText, addWindow, createSprite, getTextStyle, playSound, Ui } from './ui';
+import { addText, addWindow, createSprite, getTextStyle, playEffectSound, Ui } from './ui';
 
 export class TalkMessageUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -66,7 +66,7 @@ export class TalkMessageUi extends Ui {
 
     const keyboard = KeyboardHandler.getInstance();
     keyboard.setAllowKey([KEY.SELECT]);
-    playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.SELECT_0);
 
     await this.showText(data);
 

@@ -1,7 +1,8 @@
-import { ANIMATION, DIRECTION, KEY, OBJECT, TEXTURE } from '../enums';
+import { ANIMATION, AUDIO, DIRECTION, KEY, OBJECT, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { WildRes } from '../types';
+import { playEffectSound } from '../uis/ui';
 import { changeDirectionToKey } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
 
@@ -100,6 +101,7 @@ export class WildOverworldObj extends MovableOverworldObj {
         break;
     }
 
+    playEffectSound(this.getScene(), AUDIO.REACTION_0);
     this.setEmotion('emo_0', 'emo_0');
   }
 

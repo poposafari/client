@@ -1,5 +1,5 @@
 import { eventBus } from '../core/event-bus';
-import { DEPTH, DIRECTION, EVENT, OBJECT, OVERWORLD_TYPE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, DIRECTION, EVENT, OBJECT, OVERWORLD_TYPE, TEXTURE } from '../enums';
 import { OverworldStorage } from '../storage';
 import { PostOfficeType, ShopType } from '../types';
 import { OverworldUi } from './overworld-ui';
@@ -8,11 +8,13 @@ export abstract class Overworld {
   protected ui!: OverworldUi;
   protected initPlayerDirection!: DIRECTION;
   protected key!: TEXTURE | string;
+  protected sound!: AUDIO | string;
 
-  constructor(ui: OverworldUi, initPlayerDirection: DIRECTION, key: TEXTURE | string) {
+  constructor(ui: OverworldUi, initPlayerDirection: DIRECTION, key: TEXTURE | string, sound: AUDIO | string) {
     this.ui = ui;
     this.initPlayerDirection = initPlayerDirection;
     this.key = key;
+    this.sound = sound;
   }
 
   abstract setup(): void;
@@ -24,11 +26,15 @@ export abstract class Overworld {
   getInitPlayerDirection() {
     return this.initPlayerDirection;
   }
+
+  getSound() {
+    return this.sound;
+  }
 }
 
 export class Plaza001 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.DOWN, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.DOWN, key, sound);
   }
 
   setup(): void {
@@ -71,8 +77,8 @@ export class Plaza001 extends Overworld {
 }
 
 export class Plaza002 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.UP, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.UP, key, sound);
   }
 
   setup(): void {
@@ -95,8 +101,8 @@ export class Plaza002 extends Overworld {
 }
 
 export class Plaza003 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.UP, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.UP, key, sound);
   }
 
   setup(): void {
@@ -123,8 +129,8 @@ export class Plaza003 extends Overworld {
 }
 
 export class Plaza004 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.UP, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.UP, key, sound);
   }
 
   setup(): void {
@@ -150,8 +156,8 @@ export class Plaza004 extends Overworld {
 }
 
 export class Plaza005 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.UP, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.UP, key, sound);
   }
 
   setup(): void {
@@ -190,8 +196,8 @@ export class Plaza005 extends Overworld {
 }
 
 export class Safari000 extends Overworld {
-  constructor(ui: OverworldUi, key: TEXTURE | string) {
-    super(ui, DIRECTION.DOWN, key);
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.DOWN, key, sound);
   }
 
   setup(): void {

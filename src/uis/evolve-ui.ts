@@ -6,7 +6,7 @@ import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
 import { getPokemonSpriteKey, replacePercentSymbol } from '../utils/string-util';
 import { TalkMessageUi } from './talk-message-ui';
-import { addBackground, addImage, addText, addWindow, delay, pauseSound, playSound, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, delay, pauseSound, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class EvolveUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -109,11 +109,11 @@ export class EvolveUi extends Ui {
   }
 
   private async startEvolveAnimation(start: string, next: string) {
-    playSound(this.scene, AUDIO.EVOL_INTRO, GM.getUserOption()?.getBackgroundVolume());
+    playEffectSound(this.scene, AUDIO.EVOL_INTRO);
 
     await delay(this.scene, 900);
 
-    playSound(this.scene, AUDIO.EVOL, GM.getUserOption()?.getBackgroundVolume());
+    playEffectSound(this.scene, AUDIO.EVOL);
 
     const maxRepeats = 12;
     let speed = 800;
@@ -132,12 +132,12 @@ export class EvolveUi extends Ui {
     this.nextPokemon.setVisible(true);
     await this.animateGrow(this.nextPokemon, speed);
     this.startParticle();
-    playSound(this.scene, AUDIO.HATCH, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.HATCH);
 
     await delay(this.scene, 1000);
 
     pauseSound(this.scene, true);
-    playSound(this.scene, AUDIO.CONG, GM.getUserOption()?.getBackgroundVolume());
+    playEffectSound(this.scene, AUDIO.CONG);
 
     this.nextPokemon.clearTint();
 

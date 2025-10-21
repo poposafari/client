@@ -1,17 +1,12 @@
 import { getIngameApi } from '../api';
-import { MAX_ITEM_SLOT, MAX_PARTY_SLOT } from '../constants';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
-import { PlayerItem } from '../obj/player-item';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
-import { BagStorage } from '../storage';
-import { GetItemRes, PlayerGender } from '../types';
-import { getPokemonType } from '../utils/string-util';
-import { addBackground, addImage, addText, addWindow, playSound, runFadeEffect, Ui } from './ui';
+import { PlayerGender } from '../types';
+import { addBackground, addImage, addText, addWindow, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class TitleUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
@@ -136,7 +131,7 @@ export class TitleUi extends Ui {
           if (choice !== prevChoice) {
             this.choice = choice;
 
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             this.windows[prevChoice].setTexture(TEXTURE.WINDOW_MENU);
             this.windows[choice].setTexture(TEXTURE.WINDOW_MENU_S);

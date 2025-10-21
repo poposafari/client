@@ -125,23 +125,25 @@ export async function apiWrap<T>(api: () => Promise<{ data: any }>, apiName?: st
     GM.changeMode(MODE.CONNECT);
 
     const res = await api();
-
     const responseData = res.data;
 
+    let finalResponse: ApiResponse<T>;
+
     if (typeof responseData === 'object' && responseData !== null && 'result' in responseData && 'data' in responseData) {
-      GM.popUi();
-      if (apiName) {
-        handleSocketConnection(apiName, true);
-        handleSocketEventInit(apiName, true, responseData.data as GetIngameRes);
-      }
-      return responseData as ApiResponse<T>;
+      finalResponse = responseData as ApiResponse<T>;
+    } else {
+      finalResponse = { result: true, data: responseData };
     }
-    const successResponse: ApiResponse<T> = { result: true, data: responseData };
+
+    GM.popUi();
+
+    // 단일 호출로 통합
     if (apiName) {
       handleSocketConnection(apiName, true);
-      handleSocketEventInit(apiName, true, responseData.data as GetIngameRes);
+      handleSocketEventInit(apiName, true, finalResponse.data as GetIngameRes);
     }
-    return successResponse;
+
+    return finalResponse;
   } catch (err: any) {
     GM.popUi();
 

@@ -4,20 +4,17 @@ import { PlayerGender } from '../types';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { PetOverworldObj } from './pet-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
-import { findEventTile, runFadeEffect, delay } from '../uis/ui';
+import { findEventTile, runFadeEffect, playEffectSound } from '../uis/ui';
 import { OverworldObj } from './overworld-obj';
 import { DoorOverworldObj } from './door-overworld-obj';
 import { ShopCheckoutOverworldObj } from './shop-checkout-overworld-obj';
 import { eventBus } from '../core/event-bus';
 import { PostCheckoutOverworldObj } from './post-checkout-overworld-obj';
-import { DIRECTION, EASE, EVENT, MODE, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
+import { AUDIO, DIRECTION, EASE, EVENT, MODE, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { GM } from '../core/game-manager';
 import { NpcOverworldObj } from './npc-overworld-obj';
-import { OverworldStorage } from '../storage';
 import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
-import { SocketHandler } from '../handlers/socket-handler';
-import { matchPlayerStatusToDirection } from '../utils/string-util';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -299,8 +296,15 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
       this.setIsEvent(true);
       if (door.getTexture() !== TEXTURE.BLANK) {
+        if (door.getTexture() === 'door_1' || door.getTexture() === 'door_7') {
+          playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_1);
+        } else {
+          playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_2);
+        }
         await door.reaction();
         await this.forceMoveForward(direction, 200);
+      } else {
+        playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_0);
       }
       runFadeEffect(this.getScene(), 800, 'in');
       GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: goal.x, y: goal.y });

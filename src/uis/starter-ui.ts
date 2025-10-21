@@ -2,7 +2,7 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { PlayerAvatar, PlayerGender } from '../types';
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow, delay, runFadeEffect, startModalAnimation } from './ui';
+import { addBackground, addImage, addText, addTextInput, addWindow, runFadeEffect, startModalAnimation } from './ui';
 import { DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { getIngameApi, registerIngameApi } from '../api';

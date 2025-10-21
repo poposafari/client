@@ -4,7 +4,7 @@ import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { IngameOption } from '../types';
-import { addBackground, addImage, addText, addWindow, getTextStyle, playSound, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class OptionUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
@@ -184,7 +184,7 @@ export class OptionUi extends Ui {
     if (key === KEY.UP || key === KEY.DOWN) {
       if (this.choice !== prevChoice) {
         this.lastChoice = this.choice;
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.contentTitleDummys[prevChoice].setTexture(TEXTURE.BLANK);
         this.contentTitleDummys[this.choice].setTexture(TEXTURE.WINDOW_RED);
@@ -313,7 +313,7 @@ export class OptionTextSpeedUi extends Ui {
       if (this.choice !== prevChoice) {
         GM.getUserOption()?.setTextSpeed(this.choice);
 
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.optionDescUi.showTestTextSpeed(GM.getUserOption()?.getTextSpeed()!);
 
@@ -435,7 +435,7 @@ export class OptionWindowTypeUi extends Ui {
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
         GM.getUserOption()?.setFrame(this.choice);
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.optionDescUi.showTestWindowFrame(GM.getUserOption()?.getFrame('text') as string);
         this.text.setText(i18next.t('menu:optionWindow') + `${this.choice}`);
@@ -532,7 +532,7 @@ export class OptionBackgroundSoundUi extends Ui {
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
         GM.getUserOption()?.setBackgroundVolume(this.choice);
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
         this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
@@ -633,7 +633,7 @@ export class OptionEffectSoundUi extends Ui {
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
         GM.getUserOption()?.setEffectVolume(this.choice);
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
         this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));

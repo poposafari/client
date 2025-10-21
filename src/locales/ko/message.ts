@@ -80,4 +80,5 @@ export const message: TranslationDefault = {
   tutorial_select: '그 볼에는 % 포켓몬\n[special]%[/special](이/가) 들어 있단다!',
   tutorial_choice: '% 포켓몬\n%(이/가) 마음에 들었느냐!?',
   catch_starter_pokemon: '%(은/는) 호박사에게\n[blue]%[/blue](을/를) 받았다!',
+  catch_starter_item: '%(은/는) 호박사에게\n[blue]스타터 아이템[/blue]들을 받았다!',
 };

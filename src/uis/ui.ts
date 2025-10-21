@@ -3,6 +3,7 @@ import { ANIMATION, AUDIO, EASE, PIPELINES, TEXTSTYLE, TEXTURE } from '../enums'
 import { InGameScene } from '../scenes/ingame-scene';
 import { LoadingScene } from '../scenes/load-scene';
 import { GM } from '../core/game-manager';
+import { SoundManager } from '../core/sound-manager';
 
 export function addWindow(
   scene: InGameScene,
@@ -648,11 +649,41 @@ export function startModalAnimation(scene: InGameScene, target: any, duration: n
   });
 }
 
-export function playSound(scene: InGameScene | LoadingScene, key: AUDIO, volume: number = 1, loop: boolean = false) {
-  scene.sound.play(key, {
-    volume: volume,
-    loop: loop,
-  });
+export function playBackgroundMusic(scene: InGameScene | LoadingScene, key: AUDIO | string) {
+  const soundManager = SoundManager.getInstance();
+  soundManager.setScene(scene);
+  soundManager.playBackgroundMusic(key, GM.getUserOption()?.getBackgroundVolume());
+}
+
+export function playEffectSound(scene: InGameScene | LoadingScene, key: AUDIO) {
+  const soundManager = SoundManager.getInstance();
+  soundManager.setScene(scene);
+  soundManager.playEffectSound(key, GM.getUserOption()?.getEffectVolume());
+}
+
+export function stopBackgroundMusic() {
+  const soundManager = SoundManager.getInstance();
+  soundManager.stopBackgroundMusic();
+}
+
+export function pauseBackgroundMusic() {
+  const soundManager = SoundManager.getInstance();
+  soundManager.pauseBackgroundMusic();
+}
+
+export function resumeBackgroundMusic() {
+  const soundManager = SoundManager.getInstance();
+  soundManager.resumeBackgroundMusic();
+}
+
+export function updateBackgroundVolume(volume: number) {
+  const soundManager = SoundManager.getInstance();
+  soundManager.updateBackgroundVolume(volume);
+}
+
+export function getCurrentBackgroundVolume(): number {
+  const soundManager = SoundManager.getInstance();
+  return soundManager.getCurrentBackgroundVolume();
 }
 
 export function pauseSound(scene: InGameScene, onoff: boolean) {
@@ -681,7 +712,7 @@ export function findEventTile(tiles: Phaser.Tilemaps.Tile[] | null) {
 export const shakeEffect = (scene: InGameScene | LoadingScene, container: Phaser.GameObjects.Container, intensity = 10, duration = 50): void => {
   const originalX = container.x;
 
-  playSound(scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+  playEffectSound(scene, AUDIO.BUZZER);
 
   scene.tweens.add({
     targets: container,

@@ -16,7 +16,7 @@ import { MenuListUi } from './menu-list-ui';
 import { MenuUi } from './menu-ui';
 import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
-import { addBackground, addImage, addText, addWindow, getTextStyle, playSound, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class PcUi extends Ui {
   private pcBoxUi: PcBoxUi;
@@ -50,7 +50,7 @@ export class PcUi extends Ui {
   }
 
   show(data?: unknown): void {
-    playSound(this.scene, AUDIO.OPEN_1, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.OPEN_1);
     runFadeEffect(this.scene, 800, 'in');
     this.container.setVisible(true);
 
@@ -59,7 +59,7 @@ export class PcUi extends Ui {
   }
 
   clean(data?: any): void {
-    playSound(this.scene, AUDIO.CANCEL_1, GM.getUserOption()?.getEffectVolume());
+    playEffectSound(this.scene, AUDIO.CANCEL_1);
     runFadeEffect(this.scene, 800, 'in');
 
     this.container.setVisible(false);
@@ -200,7 +200,7 @@ export class PcBoxUi extends Ui {
           case KEY.UP:
             if (row > -1) row--;
             if (row === -1) {
-              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.SELECT_0);
 
               this.boxDummys[prevChoice].setTexture(TEXTURE.BLANK);
               this.boxTitleDummy.setTexture(TEXTURE.FINGER);
@@ -215,7 +215,7 @@ export class PcBoxUi extends Ui {
           case KEY.LEFT:
             if (col > -1) col--;
             if (col === -1) {
-              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.SELECT_0);
 
               this.lastPartySelect = 0;
               this.boxDummys[prevChoice].setTexture(TEXTURE.BLANK);
@@ -230,7 +230,7 @@ export class PcBoxUi extends Ui {
             const target = this.boxPokemons[choice];
 
             if (target) {
-              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.SELECT_0);
               this.handleMenu(target, choice);
             }
             break;
@@ -243,7 +243,7 @@ export class PcBoxUi extends Ui {
         choice = row * this.MaxRow + col;
 
         if (choice !== prevChoice) {
-          playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+          playEffectSound(this.scene, AUDIO.SELECT_0);
 
           this.boxDummys[prevChoice].setTexture(TEXTURE.BLANK);
           this.boxDummys[choice].setTexture(this.finger);
@@ -272,7 +272,7 @@ export class PcBoxUi extends Ui {
       try {
         switch (key) {
           case KEY.DOWN:
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             this.lastBoxSelect = page;
             this.boxTitleDummy.setTexture(TEXTURE.BLANK);
@@ -280,7 +280,7 @@ export class PcBoxUi extends Ui {
             this.handleKeyInput();
             break;
           case KEY.SELECT:
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             this.lastBoxSelect = page;
             this.handleBg();
@@ -295,7 +295,7 @@ export class PcBoxUi extends Ui {
 
         if (key === KEY.LEFT || key === KEY.RIGHT) {
           if (page !== prevPage) {
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             await this.renderBox(page);
             this.renderBackground(page);
@@ -333,7 +333,7 @@ export class PcBoxUi extends Ui {
             }
             break;
           case KEY.RIGHT:
-            playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+            playEffectSound(this.scene, AUDIO.SELECT_0);
 
             this.partyDummys[choice].setTexture(TEXTURE.BLANK);
             this.handleKeyInput();
@@ -342,7 +342,7 @@ export class PcBoxUi extends Ui {
             const target = GM.getUserData()?.party[choice]!;
 
             if (target) {
-              playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.SELECT_0);
               this.handleParty(target);
             }
 
@@ -358,7 +358,7 @@ export class PcBoxUi extends Ui {
 
       if (choice !== prevChoice) {
         this.lastPartySelect = choice;
-        playSound(this.scene, AUDIO.SELECT_0, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.partyDummys[prevChoice].setTexture(TEXTURE.BLANK);
         this.partyDummys[choice].setTexture(this.finger);
@@ -392,7 +392,7 @@ export class PcBoxUi extends Ui {
         this.showPartyIcon();
         this.updateBoxIconAlpha(pokemon, true);
       } else {
-        playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+        playEffectSound(this.scene, AUDIO.BUZZER);
         await this.noticeUi.show([{ content: i18next.t('message:warn_full_party') }]);
       }
     } else if (ret === i18next.t('menu:removeParty')) {
@@ -424,7 +424,7 @@ export class PcBoxUi extends Ui {
             await this.evolveUi.show(pokemon);
           } else {
             if (res?.data === HttpErrorCode.NOT_ENOUGH_CANDY) {
-              playSound(this.scene, AUDIO.BUZZER, GM.getUserOption()?.getEffectVolume());
+              playEffectSound(this.scene, AUDIO.BUZZER);
               await this.noticeUi.show([{ content: i18next.t('message:warn_not_enough_candy') }]);
               this.handleKeyInput();
             }
