@@ -3,6 +3,7 @@ import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { DoorOverworldObj } from '../obj/door-overworld-obj';
 import { GroundItemOverworldObj } from '../obj/ground-item-overworld-obj';
@@ -14,8 +15,23 @@ import { ShopCheckoutOverworldObj } from '../obj/shop-checkout-overworld-obj';
 import { WildOverworldObj } from '../obj/wild-overworld-obj';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldStorage } from '../storage';
-import { DoorInfo, ForegroundLayer, Layer, MapInfo, NpcInfo, OtherObjectMovementQueue, OtherPlayerInfo, PlayerMovementRes, PokemonSpawn, PostOfficeType, ShopType, StatueInfo } from '../types';
-import { isSafariData, replacePercentSymbol } from '../utils/string-util';
+import {
+  ChangePetRes,
+  DoorInfo,
+  FacingPlayerRes,
+  ForegroundLayer,
+  Layer,
+  MapInfo,
+  NpcInfo,
+  OtherObjectMovementQueue,
+  OtherPlayerInfo,
+  PlayerMovementRes,
+  PokemonSpawn,
+  PostOfficeType,
+  ShopType,
+  StatueInfo,
+} from '../types';
+import { isSafariData, matchPlayerStatusToDirection, replacePercentSymbol } from '../utils/string-util';
 import { HiddenMoveUi } from './hidden-move-ui';
 import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
@@ -401,6 +417,7 @@ export class OverworldPlayer {
 
     if (keyPressDuration <= this.SHORT_KEY_THRESHOLD) {
       this.obj!.changeDirectionOnly(direction);
+      SocketHandler.getInstance().facingPlayer(matchPlayerStatusToDirection(direction));
     } else {
       this.obj!.isDoorInFront(direction);
       this.obj!.move(direction);
@@ -681,14 +698,16 @@ export class OverworldOtherPlayer {
   }
 
   update(delta: number): void {
+    this.OtherPlayerFacing(this.storage.shiftOtherplayerFacingInfo()!);
+    this.removeOtherPlayer(this.storage.shiftOtherplayerExitInfo()?.socketId!);
+    this.addOtherPlayer(this.storage.shiftOtherplayerInfo()!);
+    this.updateOtherPlayerMovement(this.storage.shiftOtherplayerMovementInfo()!);
+    this.OtherPlayerPet(this.storage.shiftOtherplayerPetInfo()!);
+
     if (this.map) {
       this.getOtherPlayers().forEach((player) => {
         player.update(delta);
       });
-
-      this.removeOtherPlayer(this.storage.shiftOtherplayerExitInfo()?.socketId!);
-      this.addOtherPlayer(this.storage.shiftOtherplayerInfo()!);
-      this.updateOtherPlayerMovement(this.storage.shiftOtherplayerMovementInfo()!);
     }
   }
 
@@ -701,7 +720,7 @@ export class OverworldOtherPlayer {
       this.map,
       player.data.gender,
       player.data.avatar,
-      null as any,
+      player.data.pet?.texture ?? null,
       player.data.x,
       player.data.y,
       player.data.nickname,
@@ -709,9 +728,6 @@ export class OverworldOtherPlayer {
       DIRECTION.DOWN,
     );
     this.otherPlayers.set(player.socketId, otherPlayer);
-
-    console.log('overworld ui add other player');
-    console.log(otherPlayer);
   }
 
   removeOtherPlayer(socketId: string): void {
@@ -738,6 +754,24 @@ export class OverworldOtherPlayer {
     const otherPlayer = this.otherPlayers.get(movement.socketId);
     if (otherPlayer) {
       otherPlayer.updateMovement(movement.data);
+    }
+  }
+
+  OtherPlayerFacing(data: FacingPlayerRes): void {
+    if (!data) return;
+
+    const otherPlayer = this.otherPlayers.get(data.socketId);
+    if (otherPlayer && otherPlayer.isMovementFinish()) {
+      otherPlayer.changeFacing(data.data);
+    }
+  }
+
+  OtherPlayerPet(data: ChangePetRes): void {
+    if (!data) return;
+
+    const otherPlayer = this.otherPlayers.get(data.socketId);
+    if (otherPlayer) {
+      otherPlayer.getPet()?.changePet(data.data?.texture ?? null, otherPlayer.getCurrentStatus());
     }
   }
 

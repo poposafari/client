@@ -1,6 +1,19 @@
 import { io, Socket } from 'socket.io-client';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PlayerAvatar, PlayerGender, SocketInitData, OtherPlayerEnterRes, OtherPlayerExitRes, CurrentPlayersInRoomRes, PlayerMovementRes, MoveLocation, MovementPlayer } from '../types';
+import {
+  PlayerAvatar,
+  PlayerGender,
+  SocketInitData,
+  OtherPlayerEnterRes,
+  OtherPlayerExitRes,
+  CurrentPlayersInRoomRes,
+  PlayerMovementRes,
+  MoveLocation,
+  MovementPlayer,
+  FacingPlayerRes,
+  OtherPet,
+  ChangePetRes,
+} from '../types';
 import { GM } from '../core/game-manager';
 import { EVENT, MODE } from '../enums';
 import { OverworldStorage } from '../storage';
@@ -71,6 +84,14 @@ export class SocketHandler {
     this.socket.on('player_movement', (data: PlayerMovementRes) => {
       OverworldStorage.getInstance().addOtherplayerMovementInfo(data);
     });
+
+    this.socket.on('facing_player', (data: FacingPlayerRes) => {
+      OverworldStorage.getInstance().addOtherplayerFacingInfo(data);
+    });
+
+    this.socket.on('change_pet', (data: ChangePetRes) => {
+      OverworldStorage.getInstance().addOtherplayerPetInfo(data);
+    });
   }
 
   disconnect(): void {
@@ -97,6 +118,11 @@ export class SocketHandler {
     this.socket.emit('update_player', data);
   }
 
+  facingPlayer(data: 'up' | 'down' | 'left' | 'right') {
+    if (!this.isConnected) return;
+    this.socket.emit('facing_player', data);
+  }
+
   enterLocation(data: MoveLocation): void {
     if (!this.isConnected) return;
     this.socket.emit('enter_location', data);
@@ -105,5 +131,10 @@ export class SocketHandler {
   movementPlayer(data: MovementPlayer): void {
     if (!this.isConnected) return;
     this.socket.emit('movement_player', data);
+  }
+
+  changePet(data: OtherPet): void {
+    if (!this.isConnected) return;
+    this.socket.emit('change_pet', data);
   }
 }
