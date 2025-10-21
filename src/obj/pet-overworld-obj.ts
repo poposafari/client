@@ -97,7 +97,7 @@ export class PetOverworldObj extends MovableOverworldObj {
         speed = 4;
         break;
       case PLAYER_STATUS.RIDE:
-        speed = 8;
+        speed = 6;
         break;
       case PLAYER_STATUS.SURF:
         speed = 4;

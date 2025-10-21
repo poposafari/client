@@ -69,7 +69,7 @@ export class MovableOverworldObj extends OverworldObj {
     }
 
     if (this.isMoving()) {
-      const pixelsToMove = (this.baseSpeed * delta) / 11;
+      const pixelsToMove = (this.baseSpeed * delta) / 12;
       this.moveObject(pixelsToMove);
     }
   }

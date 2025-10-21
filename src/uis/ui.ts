@@ -75,11 +75,14 @@ export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilema
 }
 
 export function createSpriteAnimation(scene: InGameScene, key: TEXTURE | string, animationKey: ANIMATION | string, frames?: Phaser.Types.Animations.AnimationFrame[]) {
+  // 라이드 애니메이션은 1번만 반복, 나머지는 무한 반복
+  const repeatCount = isRideAnimation(animationKey) ? 0 : -1;
+
   scene.anims.create({
     key: animationKey,
     frames: frames ? frames : getSpriteFrames(scene, key, animationKey),
     frameRate: getSpriteAnimationFrameRate(animationKey),
-    repeat: -1,
+    repeat: repeatCount,
     delay: getSpriteAnimationDelay(animationKey),
     yoyo: false,
   });
@@ -111,20 +114,20 @@ function isRideAnimation(animationKey: string): boolean {
 }
 
 function getSpriteAnimationFrameRate(animationKey: ANIMATION | string): number {
-  let ret = 8;
+  let ret = 5;
 
   if (isRideAnimation(animationKey)) {
-    ret = 5;
+    ret = 50; // 1에서 3으로 조정 - 더 느린 자전거 속도
   }
 
   return ret;
 }
 
 function getSpriteAnimationDelay(animationKey: ANIMATION | string): number {
-  let ret = 8;
+  let ret = 15;
 
   if (isRideAnimation(animationKey)) {
-    ret = 8;
+    ret = 0; // 5에서 15로 조정 - 더 느린 페달링
   }
 
   return ret;

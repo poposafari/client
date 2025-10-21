@@ -16,6 +16,8 @@ import { NpcOverworldObj } from './npc-overworld-obj';
 import { OverworldStorage } from '../storage';
 import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
+import { SocketHandler } from '../handlers/socket-handler';
+import { matchPlayerStatusToDirection } from '../utils/string-util';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -115,7 +117,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         speed = 4;
         break;
       case PLAYER_STATUS.RIDE:
-        speed = 8;
+        speed = 6;
         break;
       case PLAYER_STATUS.SURF:
         speed = 4;
@@ -294,9 +296,6 @@ export class PlayerOverworldObj extends MovableOverworldObj {
       const goal = door.getGoal();
       const lastLocation = GM.getUserData()?.location;
       const currentLocation = goal.location;
-
-      console.log('check lastLocation', lastLocation);
-      console.log('check currentLocation', currentLocation);
 
       this.setIsEvent(true);
       if (door.getTexture() !== TEXTURE.BLANK) {

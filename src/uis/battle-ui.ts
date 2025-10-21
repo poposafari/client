@@ -765,7 +765,7 @@ export class BattleSpriteUi extends Ui {
     await new Promise<void>((resolve) => {
       const hasAnim = this.player.anims.animationManager.exists(throwAnimKey);
       if (hasAnim) {
-        this.player.anims.play({ key: throwAnimKey, repeat: 0 });
+        this.player.anims.play({ key: throwAnimKey, repeat: 0, frameRate: 8, delay: 0 });
         this.player.once('animationcomplete', () => resolve());
       } else {
         resolve();

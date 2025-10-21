@@ -345,39 +345,39 @@ export class InGameScene extends BaseScene {
       ];
 
       const rideUpB = [
-        [rideFramesB[1], rideFramesB[0]],
-        [rideFramesB[0], rideFramesB[0]],
-        [rideFramesB[0], rideFramesB[0]],
-        [rideFramesB[2], rideFramesB[0]],
-        [rideFramesB[0], rideFramesB[0]],
-        [rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[1], rideFramesB[1], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[2], rideFramesB[2], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0], rideFramesB[0]],
+        [rideFramesB[0], rideFramesB[0], rideFramesB[0]],
       ];
 
       const rideDownB = [
-        [rideFramesB[4], rideFramesB[3]],
-        [rideFramesB[3], rideFramesB[3]],
-        [rideFramesB[3], rideFramesB[3]],
-        [rideFramesB[5], rideFramesB[3]],
-        [rideFramesB[3], rideFramesB[3]],
-        [rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[4], rideFramesB[4], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[5], rideFramesB[5], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3], rideFramesB[3]],
+        [rideFramesB[3], rideFramesB[3], rideFramesB[3]],
       ];
 
       const rideLeftB = [
-        [rideFramesB[7], rideFramesB[6]],
-        [rideFramesB[6], rideFramesB[6]],
-        [rideFramesB[6], rideFramesB[6]],
-        [rideFramesB[8], rideFramesB[6]],
-        [rideFramesB[6], rideFramesB[6]],
-        [rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[7], rideFramesB[7], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[8], rideFramesB[8], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6], rideFramesB[6]],
+        [rideFramesB[6], rideFramesB[6], rideFramesB[6]],
       ];
 
       const rideRightB = [
-        [rideFramesB[10], rideFramesB[9]],
-        [rideFramesB[9], rideFramesB[9]],
-        [rideFramesB[9], rideFramesB[9]],
-        [rideFramesB[11], rideFramesB[9]],
-        [rideFramesB[9], rideFramesB[9]],
-        [rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[10], rideFramesB[10], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[11], rideFramesB[11], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9], rideFramesB[9]],
+        [rideFramesB[9], rideFramesB[9], rideFramesB[9]],
       ];
 
       const surfUpB = [[surfFramesB[0]]];
@@ -484,39 +484,39 @@ export class InGameScene extends BaseScene {
       ];
 
       const rideUpG = [
-        [rideFramesG[1], rideFramesG[0]],
-        [rideFramesG[0], rideFramesG[0]],
-        [rideFramesG[0], rideFramesG[0]],
-        [rideFramesG[2], rideFramesG[0]],
-        [rideFramesG[0], rideFramesG[0]],
-        [rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[1], rideFramesG[1], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[2], rideFramesG[2], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0], rideFramesG[0]],
+        [rideFramesG[0], rideFramesG[0], rideFramesG[0]],
       ];
 
       const rideDownG = [
-        [rideFramesG[4], rideFramesG[3]],
-        [rideFramesG[3], rideFramesG[3]],
-        [rideFramesG[3], rideFramesG[3]],
-        [rideFramesG[5], rideFramesG[3]],
-        [rideFramesG[3], rideFramesG[3]],
-        [rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[4], rideFramesG[4], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[5], rideFramesG[5], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3], rideFramesG[3]],
+        [rideFramesG[3], rideFramesG[3], rideFramesG[3]],
       ];
 
       const rideLeftG = [
-        [rideFramesG[7], rideFramesG[6]],
-        [rideFramesG[6], rideFramesG[6]],
-        [rideFramesG[6], rideFramesG[6]],
-        [rideFramesG[8], rideFramesG[6]],
-        [rideFramesG[6], rideFramesG[6]],
-        [rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[7], rideFramesG[7], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[8], rideFramesG[8], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6], rideFramesG[6]],
+        [rideFramesG[6], rideFramesG[6], rideFramesG[6]],
       ];
 
       const rideRightG = [
-        [rideFramesG[10], rideFramesG[9]],
-        [rideFramesG[9], rideFramesG[9]],
-        [rideFramesG[9], rideFramesG[9]],
-        [rideFramesG[11], rideFramesG[9]],
-        [rideFramesG[9], rideFramesG[9]],
-        [rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[10], rideFramesG[10], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[11], rideFramesG[11], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9], rideFramesG[9]],
+        [rideFramesG[9], rideFramesG[9], rideFramesG[9]],
       ];
 
       const surfUpG = [[surfFramesG[0]]];
