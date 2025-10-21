@@ -55,7 +55,7 @@ export interface SocketInitData {
   nickname: string;
   gender: PlayerGender;
   avatar: number;
-  pet: string | null;
+  pet: OtherPet | null;
   option: { textSpeed: number | null; frame: number | null; backgroundVolume: number | null; effectVolume: number | null };
   pc: { bgs: number[]; names: string[] };
 }
@@ -93,6 +93,21 @@ export type CurrentPlayersInRoomRes = {
 export type PlayerMovementRes = {
   socketId: string;
   data: MovementPlayer;
+};
+
+export type FacingPlayerRes = {
+  socketId: string;
+  data: 'up' | 'down' | 'left' | 'right';
+};
+
+export type OtherPet = {
+  idx: number;
+  texture: string | null;
+};
+
+export type ChangePetRes = {
+  socketId: string;
+  data: OtherPet | null;
 };
 
 export interface OtherPlayerInfo {

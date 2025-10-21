@@ -1,12 +1,14 @@
-import { DIRECTION, OBJECT, PLAYER_STATUS } from '../enums';
+import { DIRECTION, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PlayerGender, MovementPlayer } from '../types';
+import { matchPlayerStatusToDirection } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
+import { OtherPlayerPetOverworldObj } from './other-player-pet-overworld-obj';
 import { PetOverworldObj } from './pet-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
 
 export class OtherPlayerOverworldObj extends MovableOverworldObj {
-  private pet: PetOverworldObj | null;
+  private pet: OtherPlayerPetOverworldObj | null;
   private gender: PlayerGender;
   private avatar: number;
   private currentStatus!: PLAYER_STATUS;
@@ -19,7 +21,7 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     map: Phaser.Tilemaps.Tilemap | null,
     gender: PlayerGender,
     avatar: number,
-    pet: PlayerPokemon,
+    pet: string | null,
     x: number,
     y: number,
     name: string = '',
@@ -29,13 +31,24 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     const texture = `${gender}_${avatar}_movement`;
 
     super(scene, map, texture, x, y, name, obj, direction);
-    this.pet = new PetOverworldObj(scene, map, pet, x, y);
+    this.pet = new OtherPlayerPetOverworldObj(scene, map, pet, x, y);
     this.gender = gender;
     this.avatar = avatar;
     this.lastStatus = PLAYER_STATUS.WALK;
     this.currentStatus = PLAYER_STATUS.WALK;
     this.setMovement(PLAYER_STATUS.WALK);
     this.setSpriteScale(this.spriteScale);
+  }
+
+  update(delta: number) {
+    super.update(delta);
+    this.pet?.update(delta);
+  }
+
+  destroy(): void {
+    super.destroy();
+    this.pet?.destroy();
+    this.pet = null;
   }
 
   setMovement(newStatus: PLAYER_STATUS) {
@@ -65,6 +78,10 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     this.smoothFrameNumbers = smoothFrames;
     this.stopFrameNumbers = stopFrames;
     this.baseSpeed = speed;
+  }
+
+  getPet() {
+    return this.pet;
   }
 
   async jump(duration: number = 400, jumpHeight: number = 40): Promise<void> {
@@ -252,6 +269,17 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
+  changeFacing(facing: 'up' | 'down' | 'left' | 'right'): void {
+    const direction = this.getDirectionFromString(facing);
+
+    this.lastDirection = direction;
+
+    const stopFrameNumber = this.getStopFrameNumberFromDirection(direction);
+    if (stopFrameNumber !== undefined) {
+      this.stopSpriteAnimation(stopFrameNumber);
+    }
+  }
+
   private getDirectionFromString(direction: string): DIRECTION {
     switch (direction) {
       case 'up':
@@ -280,5 +308,22 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     }
 
     return PLAYER_STATUS.JUMP;
+  }
+
+  private getBaseTextureKey(status?: PLAYER_STATUS): string {
+    const targetStatus = status ? status : this.currentStatus;
+
+    const prefix = `${this.gender}_${this.avatar}_`;
+    switch (targetStatus) {
+      case PLAYER_STATUS.WALK:
+      case PLAYER_STATUS.RUNNING:
+        return `${prefix}movement`;
+      case PLAYER_STATUS.RIDE:
+        return `${prefix}ride`;
+      case PLAYER_STATUS.SURF:
+        return TEXTURE.SURF;
+      default:
+        return `${prefix}movement`;
+    }
   }
 }

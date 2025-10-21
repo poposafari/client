@@ -9,7 +9,21 @@ import { PlayerItem } from './obj/player-item';
 import { WildOverworldObj } from './obj/wild-overworld-obj';
 // import { GroundItemObject } from './object-legacy/ground-item-object';
 // import { PokemonObject } from './object-legacy/pokemon-object';
-import { GetItemRes, GroundItemInfo, GroundItemRes, OverworldStatue, WildPokemonInfo, WildRes, SocketInitData, MovementPlayer, OtherPlayerInfo, OtherPlayerExitRes, PlayerMovementRes } from './types';
+import {
+  GetItemRes,
+  GroundItemInfo,
+  GroundItemRes,
+  OverworldStatue,
+  WildPokemonInfo,
+  WildRes,
+  SocketInitData,
+  MovementPlayer,
+  OtherPlayerInfo,
+  OtherPlayerExitRes,
+  PlayerMovementRes,
+  FacingPlayerRes,
+  ChangePetRes,
+} from './types';
 import { Overworld } from './uis/overworld';
 
 export class BagStorage {
@@ -166,6 +180,8 @@ export class OverworldStorage {
   private otherPlayersInfo: OtherPlayerInfo[] = [];
   private otherPlayersExitInfo: OtherPlayerExitRes[] = [];
   private otherPlayersMovementInfo: PlayerMovementRes[] = [];
+  private otherPlayerFacingInfo: FacingPlayerRes[] = [];
+  private otherPlayerPetInfo: ChangePetRes[] = [];
 
   constructor() {}
 
@@ -340,5 +356,37 @@ export class OverworldStorage {
 
   shiftOtherplayerExitInfo() {
     return this.otherPlayersExitInfo.shift();
+  }
+
+  getOtherplayerFacingInfo() {
+    return this.otherPlayerFacingInfo;
+  }
+
+  cleanOtherplayerFacingInfo() {
+    this.otherPlayerFacingInfo = [];
+  }
+
+  addOtherplayerFacingInfo(data: FacingPlayerRes) {
+    this.otherPlayerFacingInfo.push(data);
+  }
+
+  shiftOtherplayerFacingInfo() {
+    return this.otherPlayerFacingInfo.shift();
+  }
+
+  getOtherplayerPetInfo() {
+    return this.otherPlayerPetInfo;
+  }
+
+  cleanOtherplayerPetInfo() {
+    this.otherPlayerPetInfo = [];
+  }
+
+  addOtherplayerPetInfo(data: ChangePetRes) {
+    this.otherPlayerPetInfo.push(data);
+  }
+
+  shiftOtherplayerPetInfo() {
+    return this.otherPlayerPetInfo.shift();
   }
 }
