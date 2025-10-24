@@ -65,7 +65,13 @@ export class BlackScreenUi extends Ui {
               ease: EASE.LINEAR,
               onComplete: () => {
                 this.clean();
-                GM.changeMode(MODE.OVERWORLD);
+
+                if (GM.getUserData()?.location.includes('s')) {
+                  GM.changeMode(MODE.CONNECT_SAFARI);
+                } else {
+                  GM.changeMode(MODE.OVERWORLD);
+                }
+
                 resolve();
               },
             });

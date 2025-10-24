@@ -1,4 +1,3 @@
-import { getIngameApi } from '../api';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
@@ -54,14 +53,14 @@ export class TitleUi extends Ui {
     this.windowContainer.setScrollFactor(0);
   }
 
-  async show(isInit: boolean = true): Promise<void> {
+  async show(): Promise<void> {
     runFadeEffect(this.scene, 1000, 'in');
 
     this.restoreContinue();
     this.removeMenus();
     this.createMenus();
 
-    await this.getIngame(isInit);
+    this.getIngame();
 
     this.bgContainer.setVisible(true);
     this.windowContainer.setVisible(true);
@@ -242,22 +241,13 @@ export class TitleUi extends Ui {
     }
   }
 
-  private async getIngame(isInit: boolean) {
-    if (isInit) {
-      const ret = await getIngameApi();
+  private async getIngame() {
+    const data = GM.getUserData();
 
-      if (ret.result) {
-        GM.initUserData(ret.data);
-
-        const data = GM.getUserData()!;
-
-        this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
-      } else {
-        GM.setUserData(null);
-      }
+    if (!data) {
+      GM.setUserData(null);
     } else {
       const data = GM.getUserData()!;
-
       this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
     }
   }

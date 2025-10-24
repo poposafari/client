@@ -1,8 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { InGameScene } from '../scenes/ingame-scene';
 import {
-  PlayerAvatar,
-  PlayerGender,
   SocketInitData,
   OtherPlayerEnterRes,
   OtherPlayerExitRes,
@@ -13,17 +11,20 @@ import {
   FacingPlayerRes,
   OtherPet,
   ChangePetRes,
+  IngameOption,
+  IngameData,
 } from '../types';
 import { GM } from '../core/game-manager';
-import { EVENT, MODE } from '../enums';
+import { MODE } from '../enums';
 import { OverworldStorage } from '../storage';
-import { eventBus } from '../core/event-bus';
 
 export class SocketHandler {
   private static instance: SocketHandler;
   private scene!: InGameScene;
   private socket!: Socket;
   private isConnected: boolean = false;
+  private isReadyInit: boolean = false;
+  private connectionPromise: Promise<void> | null = null;
 
   static getInstance(): SocketHandler {
     if (!SocketHandler.instance) {
@@ -32,8 +33,44 @@ export class SocketHandler {
     return SocketHandler.instance;
   }
 
-  init(data: SocketInitData): void {
+  async init(data: SocketInitData): Promise<void> {
+    if (!this.isConnected) {
+      await this.waitForConnection();
+    }
+
     this.socket.emit('init', data);
+  }
+
+  async connectAndInit(scene: InGameScene, data: SocketInitData): Promise<void> {
+    if (!this.isSocketConnected()) {
+      this.connect(scene);
+    }
+    await this.init(data);
+  }
+
+  private async waitForConnection(): Promise<void> {
+    if (this.connectionPromise) {
+      return this.connectionPromise;
+    }
+
+    this.connectionPromise = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Socket connection timeout'));
+      }, 10000);
+
+      this.socket.on('connect', () => {
+        clearTimeout(timeout);
+        this.isConnected = true;
+        resolve();
+      });
+
+      this.socket.on('connect_error', (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      });
+    });
+
+    return this.connectionPromise;
   }
 
   connect(scene: InGameScene): void {
@@ -47,7 +84,6 @@ export class SocketHandler {
 
     this.socket.on('connect', () => {
       this.isConnected = true;
-      console.log('authenticate', localStorage.getItem('access_token'));
       this.socket.emit('authenticate', localStorage.getItem('access_token'));
       console.log('Socket connected successfully');
     });
@@ -62,6 +98,8 @@ export class SocketHandler {
 
       if (!result.success) {
         GM.changeMode(MODE.LOGOUT);
+      } else {
+        this.isReadyInit = true;
       }
     });
 
@@ -123,6 +161,11 @@ export class SocketHandler {
     this.socket.emit('facing_player', data);
   }
 
+  moveToTitle(data: { from: string }): void {
+    if (!this.isConnected) return;
+    this.socket.emit('move_title', data);
+  }
+
   enterLocation(data: MoveLocation): void {
     if (!this.isConnected) return;
     this.socket.emit('enter_location', data);
@@ -136,5 +179,38 @@ export class SocketHandler {
   changePet(data: OtherPet): void {
     if (!this.isConnected) return;
     this.socket.emit('change_pet', data);
+  }
+
+  changeOption(data: IngameOption): void {
+    if (!this.isConnected) return;
+    this.socket.emit('change_option', data);
+  }
+
+  changePcName(box: number, name: string): void {
+    if (!this.isConnected) return;
+    this.socket.emit('change_pc_name', { idx: box, name: name });
+  }
+
+  changePcBg(box: number, bg: number): void {
+    if (!this.isConnected) return;
+    this.socket.emit('change_pc_bg', { idx: box, bg: bg });
+  }
+
+  changePokemonNickname(idx: number, nickname: string): void {
+    if (!this.isConnected) return;
+    this.socket.emit('change_pokemon_nickname', { idx: idx, nickname: nickname });
+  }
+
+  changeParty(party: (number | null)[]): void {
+    if (!this.isConnected) return;
+    console.log('change_party', party);
+
+    this.socket.emit('change_party', party);
+  }
+
+  changeItemSlot(slots: (number | null)[]): void {
+    if (!this.isConnected) return;
+    console.log('change_slot_item', slots);
+    this.socket.emit('change_slot_item', slots);
   }
 }

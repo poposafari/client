@@ -3,6 +3,7 @@ import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, EVENT, KEY, MODE, OVERWORLD_TYPE, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { QuestionMessageUi } from './question-message-ui';
@@ -184,7 +185,9 @@ export class OverworldMenuUi extends Ui {
         yes: async () => {
           this.cancelMenu(choice);
           stopBackgroundMusic();
-          GM.changeMode(MODE.TITLE, false);
+          SocketHandler.getInstance().moveToTitle({ from: GM.getUserData()?.location! });
+          GM.getPlayerObj().destroy();
+          GM.changeMode(MODE.TITLE, null);
         },
         no: async () => {
           this.handleKeyInput();
