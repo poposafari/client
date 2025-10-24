@@ -1,14 +1,15 @@
 import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
-import { PlayerAvatar, PlayerGender } from '../types';
+import { GetIngameRes, PlayerAvatar, PlayerGender } from '../types';
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addBackground, addImage, addText, addTextInput, addWindow, runFadeEffect, startModalAnimation } from './ui';
 import { DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { getIngameApi, registerIngameApi } from '../api';
-import { isValidNickname, replacePercentSymbol } from '../utils/string-util';
+import { changeTextSpeedToDigit, getPokemonSpriteKey, isValidNickname, replacePercentSymbol } from '../utils/string-util';
 import { TalkMessageUi } from './talk-message-ui';
 import { GM } from '../core/game-manager';
+import { SocketHandler } from '../handlers/socket-handler';
 
 export class StarterUi extends ModalFormUi {
   private container!: Phaser.GameObjects.Container;
@@ -353,7 +354,34 @@ export class StarterUi extends ModalFormUi {
     const res = await getIngameApi();
 
     if (res.result) {
-      GM.initUserData(res.data);
+      const data = res.data as GetIngameRes;
+      GM.initUserData(data);
+
+      try {
+        await SocketHandler.getInstance().connectAndInit(this.scene, {
+          location: data.location,
+          x: data.x,
+          y: data.y,
+          nickname: data.nickname,
+          gender: data.gender,
+          avatar: data.avatar,
+          pet: data.pet ? { idx: data.pet.idx, texture: getPokemonSpriteKey(data.pet as any) } : null,
+          party: data.party.map((p) => (p ? p.idx : null)),
+          slotItem: data.slotItem.map((s) => (s ? s.idx : null)),
+          option: {
+            textSpeed: changeTextSpeedToDigit(data.option.textSpeed),
+            frame: data.option.frame as number,
+            backgroundVolume: data.option.backgroundVolume,
+            effectVolume: data.option.effectVolume,
+          },
+          pBgs: data.pcBg,
+          pcNames: data.pcName,
+        });
+
+        console.log('Socket connection and init completed successfully');
+      } catch (error) {
+        console.error('Socket connection failed:', error);
+      }
     } else {
       GM.setUserData(null);
     }

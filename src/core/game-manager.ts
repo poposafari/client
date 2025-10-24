@@ -1,4 +1,4 @@
-import { autoLoginApi, enterSafariZoneApi, logoutApi } from '../api';
+import { autoLoginApi, enterSafariZoneApi, getIngameApi, logoutApi } from '../api';
 import { MAX_ITEM_SLOT, MAX_PARTY_SLOT, MAX_QUICK_ITEM_SLOT } from '../constants';
 import { AUDIO, EVENT, HttpErrorCode, MODE, OVERWORLD_TYPE, TEXTURE, UI } from '../enums';
 import { SocketHandler } from '../handlers/socket-handler';
@@ -10,7 +10,7 @@ import { PlayerPokemon } from '../obj/player-pokemon';
 import { BagStorage, OverworldStorage } from '../storage';
 import { GetIngameRes, IngameData, PokemonSkill } from '../types';
 import { playBackgroundMusic, Ui } from '../uis/ui';
-import { getPokemonType } from '../utils/string-util';
+import { changeTextSpeedToDigit, getPokemonSpriteKey, getPokemonType } from '../utils/string-util';
 import { eventBus } from './event-bus';
 
 export class GameManager {
@@ -20,8 +20,10 @@ export class GameManager {
   private stackUi: Ui[] = [];
   private preMode: MODE = MODE.NONE;
   private currenctMode: MODE = MODE.NONE;
-  private user!: IngameData | null;
+  private user: IngameData | null = null;
   private userPokemonNicknames = new Map<number, string>();
+  private userPcNames = new Map<number, string>();
+  private userPcBgs = new Map<number, number>();
   private currentOverworldType!: OVERWORLD_TYPE;
   private token!: string;
   private isRegisterPet!: boolean;
@@ -134,8 +136,10 @@ export class GameManager {
       case MODE.AUTO_LOGIN:
         ret = await autoLoginApi();
         if (ret!.result) {
-          this.changeMode(MODE.TITLE);
-        } else if (ret?.data === HttpErrorCode.NOT_FOUND_TOKEN || ret?.data === HttpErrorCode.LOGIN_FAIL) this.changeMode(MODE.LOGIN);
+          this.changeMode(MODE.CHECK_INGAME_DATA);
+        } else {
+          this.changeMode(MODE.LOGIN);
+        }
         break;
       case MODE.LOGIN:
         this.showUi(UI.LOGIN);
@@ -177,6 +181,20 @@ export class GameManager {
         }
 
         GM.changeMode(MODE.OVERWORLD);
+        break;
+      case MODE.CHECK_INGAME_DATA:
+        const ingame = await getIngameApi();
+
+        if (ingame.result) {
+          const data = ingame.data as GetIngameRes;
+
+          GM.initUserData(data);
+          await this.handleSocketConnectionAndInit(data);
+          this.changeMode(MODE.TITLE, GM.getUserData());
+        } else {
+          GM.setUserData(null);
+          this.changeMode(MODE.TITLE, null);
+        }
         break;
       case MODE.TITLE:
         this.showUi(UI.TITLE, data);
@@ -432,6 +450,8 @@ export class GameManager {
 
     newSlotItem[idx] = item;
     this.updateUserData({ slotItem: newSlotItem });
+
+    SocketHandler.getInstance().changeItemSlot(this.user.slotItem.map((slot) => (slot ? slot.getIdx() : null)));
   }
 
   registerCancelSlotItem(item: PlayerItem) {
@@ -448,6 +468,8 @@ export class GameManager {
     }
 
     this.updateUserData({ slotItem: newSlotItem });
+
+    SocketHandler.getInstance().changeItemSlot(this.user.slotItem.map((slot) => (slot ? slot.getIdx() : null)));
   }
 
   findParty(pokemon: PlayerPokemon) {
@@ -502,6 +524,9 @@ export class GameManager {
     const newParty = [...this.user.party];
     newParty[firstEmptySlotIndex] = pokemon;
     this.updateUserData({ party: newParty });
+
+    SocketHandler.getInstance().changeParty(this.user.party.map((idx) => (idx ? idx.getIdx() : null)));
+
     return true;
   }
 
@@ -528,6 +553,7 @@ export class GameManager {
     }
 
     this.updateUserData({ party: newParty });
+    SocketHandler.getInstance().changeParty(this.user.party.map((idx) => (idx ? idx.getIdx() : null)));
   }
 
   findPet(pokemon: PlayerPokemon) {
@@ -637,6 +663,36 @@ export class GameManager {
     const newPcName = [...this.user.pcName];
     newPcName[box] = name;
     this.updateUserData({ pcName: newPcName });
+  }
+
+  private async handleSocketConnectionAndInit(ingameData: GetIngameRes): Promise<void> {
+    const socket = SocketHandler.getInstance();
+
+    try {
+      await socket.connectAndInit(this.currentScene, {
+        location: ingameData.location,
+        x: ingameData.x,
+        y: ingameData.y,
+        nickname: ingameData.nickname,
+        gender: ingameData.gender,
+        avatar: ingameData.avatar,
+        pet: ingameData.pet ? { idx: ingameData.pet.idx, texture: getPokemonSpriteKey(ingameData.pet as any) } : null,
+        party: ingameData.party.map((p) => (p ? p.idx : null)),
+        slotItem: ingameData.slotItem.map((s) => (s ? s.idx : null)),
+        option: {
+          textSpeed: changeTextSpeedToDigit(ingameData.option.textSpeed),
+          frame: ingameData.option.frame as number,
+          backgroundVolume: ingameData.option.backgroundVolume,
+          effectVolume: ingameData.option.effectVolume,
+        },
+        pBgs: ingameData.pcBg,
+        pcNames: ingameData.pcName,
+      });
+
+      console.log('Socket connection and init completed successfully');
+    } catch (error) {
+      console.error('Socket connection failed:', error);
+    }
   }
 }
 

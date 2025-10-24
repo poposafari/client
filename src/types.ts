@@ -56,8 +56,11 @@ export interface SocketInitData {
   gender: PlayerGender;
   avatar: number;
   pet: OtherPet | null;
+  party: (number | null)[];
+  slotItem: (number | null)[];
   option: { textSpeed: number | null; frame: number | null; backgroundVolume: number | null; effectVolume: number | null };
-  pc: { bgs: number[]; names: string[] };
+  pBgs: number[];
+  pcNames: string[];
 }
 
 export type MoveLocation = {

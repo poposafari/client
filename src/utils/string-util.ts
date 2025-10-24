@@ -1,5 +1,5 @@
 import { SafariData } from '../data';
-import { DIRECTION, KEY, PLAYER_STATUS, Season, TYPE } from '../enums';
+import { DIRECTION, KEY, PLAYER_STATUS, Season, TextSpeed, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { ItemRank } from '../types';
 
@@ -311,4 +311,25 @@ export const matchPlayerStatusToDirection = (direction: DIRECTION) => {
   }
 
   return 'down';
+};
+
+export const changeTextSpeedToDigit = (speed: TextSpeed) => {
+  let ret = 0;
+
+  switch (speed) {
+    case TextSpeed.SLOW:
+      ret = 0;
+      break;
+    case TextSpeed.MID:
+      ret = 1;
+      break;
+    case TextSpeed.FAST:
+      ret = 2;
+      break;
+    default:
+      ret = 1;
+      break;
+  }
+
+  return ret;
 };

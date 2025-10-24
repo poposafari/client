@@ -439,6 +439,7 @@ export class PcBoxUi extends Ui {
 
       if (nickname !== i18next.t('menu:cancel')) {
         pokemon.setNickname(nickname);
+        SocketHandler.getInstance().changePokemonNickname(pokemon.getIdx(), nickname);
         GM.registerUserPokemonNickname(pokemon.getIdx(), nickname);
         this.pcSummaryUi.updateNickname(pokemon);
       }
@@ -505,6 +506,7 @@ export class PcBoxUi extends Ui {
 
       if (typeof bgIdx === 'number') {
         GM.registerPcBg(this.lastBoxSelect, bgIdx);
+        SocketHandler.getInstance().changePcBg(this.lastBoxSelect, bgIdx);
         this.renderBackground(this.lastBoxSelect);
       }
     } else if (ret === i18next.t('menu:rename')) {
@@ -515,6 +517,7 @@ export class PcBoxUi extends Ui {
 
       if (nickname !== i18next.t('menu:cancel')) {
         GM.registerPcName(this.lastBoxSelect, nickname);
+        SocketHandler.getInstance().changePcName(this.lastBoxSelect, nickname);
         this.renderBackground(this.lastBoxSelect);
       }
     }

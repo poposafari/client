@@ -1,9 +1,11 @@
 import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, TextSpeed, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { IngameOption } from '../types';
+import { changeTextSpeedToDigit } from '../utils/string-util';
 import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
 
 export class OptionUi extends Ui {
@@ -114,6 +116,18 @@ export class OptionUi extends Ui {
     }
 
     this.optionDescUi.clean();
+
+    console.log(GM.getUserOption()?.getTextSpeed());
+    console.log(GM.getUserOption()?.getFrame('number'));
+    console.log(GM.getUserOption()?.getBackgroundVolume());
+    console.log(GM.getUserOption()?.getEffectVolume());
+
+    SocketHandler.getInstance().changeOption({
+      textSpeed: changeTextSpeedToDigit(GM.getUserOption()?.getTextSpeed() as number),
+      frame: GM.getUserOption()?.getFrame('number') as number,
+      backgroundVolume: (GM.getUserOption()?.getBackgroundVolume()! as number) * 10,
+      effectVolume: (GM.getUserOption()?.getEffectVolume()! as number) * 10,
+    });
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -328,20 +342,7 @@ export class OptionTextSpeedUi extends Ui {
   }
 
   updateValue() {
-    switch (GM.getUserOption()?.getTextSpeed()) {
-      case TextSpeed.SLOW:
-        this.choice = 0;
-        break;
-      case TextSpeed.MID:
-        this.choice = 1;
-        break;
-      case TextSpeed.FAST:
-        this.choice = 2;
-        break;
-      default:
-        this.choice = 1;
-        break;
-    }
+    this.choice = changeTextSpeedToDigit(GM.getUserOption()?.getTextSpeed()!);
 
     for (const text of this.texts) {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
