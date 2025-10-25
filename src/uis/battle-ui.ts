@@ -1736,7 +1736,7 @@ export class BattleRewardUi extends Ui {
 
   private updateCandy(candy: number) {
     const candyIcon = addImage(this.scene, TEXTURE.ICON_CANDY, 0, 0).setScale(4);
-    const candyText = addText(this.scene, 0, 0, i18next.t('menu:candyName'), TEXTSTYLE.ONLY_WHITE).setScale(0.5).setStroke('#696969', 12);
+    const candyText = addText(this.scene, 0, 0, i18next.t('menu:candy'), TEXTSTYLE.ONLY_WHITE).setScale(0.5).setStroke('#696969', 12);
     const candyStock = addText(this.scene, 0, 0, `x${candy}`, TEXTSTYLE.ONLY_WHITE).setScale(0.5).setStroke('#696969', 12);
 
     this.rewardIcons.push(candyIcon);
