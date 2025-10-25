@@ -62,6 +62,7 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.PLAZA_003, 'ui/map', TEXTURE.PLAZA_003);
     this.loadMap(TEXTURE.PLAZA_004, 'ui/map', TEXTURE.PLAZA_004);
     this.loadMap(TEXTURE.PLAZA_005, 'ui/map', TEXTURE.PLAZA_005);
+    this.loadMap(TEXTURE.PLAZA_006, 'ui/map', TEXTURE.PLAZA_006);
     this.loadMap(TEXTURE.SAFARI_000, 'ui/map', TEXTURE.SAFARI_000);
 
     //tutorial

@@ -1,6 +1,7 @@
-import { catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
+import { buyItemApi, catchGroundItemApi, getAvailableTicketApi, receiveAvailableTicketApi } from '../api';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
+import { getItemByKey } from '../data';
 import { AUDIO, DEPTH, DIRECTION, EVENT, ItemCategory, KEY, MODE, OBJECT, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, UI } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { SocketHandler } from '../handlers/socket-handler';
@@ -14,8 +15,9 @@ import { PostCheckoutOverworldObj } from '../obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from '../obj/shop-checkout-overworld-obj';
 import { WildOverworldObj } from '../obj/wild-overworld-obj';
 import { InGameScene } from '../scenes/ingame-scene';
-import { OverworldStorage } from '../storage';
+import { BagStorage, OverworldStorage } from '../storage';
 import {
+  BuyItemRes,
   ChangePetRes,
   DoorInfo,
   FacingPlayerRes,
@@ -534,6 +536,11 @@ export class OverworldPlayer {
 
   private async showSurfMessage(): Promise<void> {
     if (this.obj?.getCurrentStatus() === PLAYER_STATUS.SURF) {
+      if (!this.obj?.canSurfOff(this.obj.getLastDirection())) {
+        this.obj?.setIsEvent(false);
+        return;
+      }
+
       return new Promise((resolve) => {
         this.questionMessageUi.show({
           type: 'default',
@@ -614,14 +621,15 @@ export class OverworldPlayer {
 
   private async receiveItem(item: string, category: ItemCategory): Promise<void> {
     return new Promise(async (resolve) => {
+      playEffectSound(this.scene, AUDIO.GET_0);
       await this.talkMessageUi.show({
         type: 'default',
-        content: replacePercentSymbol(i18next.t('message:catchItem'), [GM.getUserData()?.nickname, i18next.t(`item:${item}.name`)]),
+        content: replacePercentSymbol(i18next.t('message:catch_item'), [GM.getUserData()?.nickname, i18next.t(`item:${item}.name`)]),
         speed: GM.getUserOption()?.getTextSpeed()!,
       });
       await this.talkMessageUi.show({
         type: 'default',
-        content: replacePercentSymbol(i18next.t('message:putPocket'), [GM.getUserData()?.nickname, i18next.t(`item:${item}.name`), i18next.t(`menu:${category}`)]),
+        content: replacePercentSymbol(i18next.t('message:put_item'), [GM.getUserData()?.nickname, i18next.t(`item:${item}.name`), i18next.t(`menu:${category}`)]),
         speed: GM.getUserOption()?.getTextSpeed()!,
       });
       resolve();
@@ -679,6 +687,48 @@ export class OverworldPlayer {
           await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_8'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
           await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_9'), speed: GM.getUserOption()?.getTextSpeed()! });
         }
+        break;
+      case 'npc004':
+        if (BagStorage.getInstance().getItem('046')) {
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc004_5'), speed: GM.getUserOption()?.getTextSpeed()! });
+        } else {
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc004_0'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.questionMessageUi.show({
+            type: 'default',
+            content: replacePercentSymbol(i18next.t('npc:npc004_1'), [getItemByKey('046')?.price]),
+            speed: GM.getUserOption()?.getTextSpeed()!,
+            yes: async () => {
+              const res = await buyItemApi({ item: '046', stock: 1 });
+
+              if (res.result) {
+                const data = res.data as BuyItemRes;
+
+                GM.updateUserData({ candy: data.candy });
+                eventBus.emit(EVENT.HUD_CANDY_UPDATE);
+                BagStorage.getInstance().addItems(data.idx, data.item, data.stock, data.category);
+
+                await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc004_2'), speed: GM.getUserOption()?.getTextSpeed()! });
+                playEffectSound(this.scene, AUDIO.GET_0);
+                await this.talkMessageUi.show({
+                  type: 'default',
+                  content: replacePercentSymbol(i18next.t('message:catch_item'), [GM.getUserData()?.nickname, i18next.t(`item:046.name`)]),
+                  speed: GM.getUserOption()?.getTextSpeed()!,
+                });
+                await this.talkMessageUi.show({
+                  type: 'default',
+                  content: replacePercentSymbol(i18next.t('message:put_item'), [GM.getUserData()?.nickname, i18next.t(`item:046.name`), i18next.t(`menu:pocket_${res.data.category}`)]),
+                  speed: GM.getUserOption()?.getTextSpeed()!,
+                });
+              } else {
+                await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc004_4'), speed: GM.getUserOption()?.getTextSpeed()! });
+              }
+            },
+            no: async () => {
+              await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc004_3'), speed: GM.getUserOption()?.getTextSpeed()! });
+            },
+          });
+        }
+
         break;
     }
   }

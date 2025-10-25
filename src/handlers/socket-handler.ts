@@ -75,7 +75,7 @@ export class SocketHandler {
 
   connect(scene: InGameScene): void {
     if (this.isConnected) {
-      console.log('Socket is already connected');
+      // console.log('Socket is already connected');
       return;
     }
 
@@ -85,16 +85,16 @@ export class SocketHandler {
     this.socket.on('connect', () => {
       this.isConnected = true;
       this.socket.emit('authenticate', localStorage.getItem('access_token'));
-      console.log('Socket connected successfully');
+      // console.log('Socket connected successfully');
     });
 
     this.socket.on('disconnect', () => {
       this.isConnected = false;
-      console.log('Socket disconnected');
+      // console.log('Socket disconnected');
     });
 
     this.socket.on('authenticated', (result: { success: boolean; error: string | null }) => {
-      console.log('Socket authenticated', result);
+      // console.log('Socket authenticated', result);
 
       if (!result.success) {
         GM.changeMode(MODE.LOGOUT);
@@ -105,8 +105,8 @@ export class SocketHandler {
 
     this.socket.on('enter_player', (data: OtherPlayerEnterRes) => {
       OverworldStorage.getInstance().addOtherplayerInfo({ socketId: data.socketId, data: data.player });
-      console.log('enter player');
-      console.log(data);
+      // console.log('enter player');
+      // console.log(data);
     });
 
     this.socket.on('exit_player', (data: OtherPlayerExitRes) => {
@@ -203,14 +203,11 @@ export class SocketHandler {
 
   changeParty(party: (number | null)[]): void {
     if (!this.isConnected) return;
-    console.log('change_party', party);
-
     this.socket.emit('change_party', party);
   }
 
   changeItemSlot(slots: (number | null)[]): void {
     if (!this.isConnected) return;
-    console.log('change_slot_item', slots);
     this.socket.emit('change_slot_item', slots);
   }
 }

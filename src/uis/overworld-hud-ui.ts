@@ -1,4 +1,4 @@
-import { MAX_ITEM_SLOT, MAX_PARTY_SLOT } from '../constants';
+import { MAX_PARTY_SLOT } from '../constants';
 import { eventBus } from '../core/event-bus';
 import { GM } from '../core/game-manager';
 import { DEPTH, EASE, EVENT, TEXTSTYLE, TEXTURE } from '../enums';

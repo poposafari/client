@@ -1,4 +1,3 @@
-import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';

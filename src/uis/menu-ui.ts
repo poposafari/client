@@ -1,6 +1,4 @@
-import { eventBus } from '../core/event-bus';
-import { GM } from '../core/game-manager';
-import { AUDIO, DEPTH, EVENT, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';

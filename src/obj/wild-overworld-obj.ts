@@ -3,7 +3,6 @@ import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { WildRes } from '../types';
 import { playEffectSound } from '../uis/ui';
-import { changeDirectionToKey } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
 
 export class WildOverworldObj extends MovableOverworldObj {

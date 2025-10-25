@@ -10,7 +10,7 @@ import { PlayerPokemon } from '../obj/player-pokemon';
 import { BagStorage, OverworldStorage } from '../storage';
 import { GetIngameRes, IngameData, PokemonSkill } from '../types';
 import { playBackgroundMusic, Ui } from '../uis/ui';
-import { changeTextSpeedToDigit, getPokemonSpriteKey, getPokemonType } from '../utils/string-util';
+import { changeTextSpeedToDigit, getOverworldPokemonTexture, getPokemonSpriteKey, getPokemonType } from '../utils/string-util';
 import { eventBus } from './event-bus';
 
 export class GameManager {
@@ -189,7 +189,7 @@ export class GameManager {
           const data = ingame.data as GetIngameRes;
 
           GM.initUserData(data);
-          await this.handleSocketConnectionAndInit(data);
+          await this.handleSocketConnectionAndInit(GM.getUserData()!);
           this.changeMode(MODE.TITLE, GM.getUserData());
         } else {
           GM.setUserData(null);
@@ -665,8 +665,10 @@ export class GameManager {
     this.updateUserData({ pcName: newPcName });
   }
 
-  private async handleSocketConnectionAndInit(ingameData: GetIngameRes): Promise<void> {
+  private async handleSocketConnectionAndInit(ingameData: IngameData): Promise<void> {
     const socket = SocketHandler.getInstance();
+
+    console.log(ingameData);
 
     try {
       await socket.connectAndInit(this.currentScene, {
@@ -676,14 +678,14 @@ export class GameManager {
         nickname: ingameData.nickname,
         gender: ingameData.gender,
         avatar: ingameData.avatar,
-        pet: ingameData.pet ? { idx: ingameData.pet.idx, texture: getPokemonSpriteKey(ingameData.pet as any) } : null,
-        party: ingameData.party.map((p) => (p ? p.idx : null)),
-        slotItem: ingameData.slotItem.map((s) => (s ? s.idx : null)),
+        pet: ingameData.pet ? { idx: ingameData.pet.getIdx(), texture: getOverworldPokemonTexture(ingameData.pet as any) } : null,
+        party: ingameData.party.map((p) => (p ? p.getIdx() : null)),
+        slotItem: ingameData.slotItem.map((s) => (s ? s.getIdx() : null)),
         option: {
-          textSpeed: changeTextSpeedToDigit(ingameData.option.textSpeed),
-          frame: ingameData.option.frame as number,
-          backgroundVolume: ingameData.option.backgroundVolume,
-          effectVolume: ingameData.option.effectVolume,
+          textSpeed: changeTextSpeedToDigit(ingameData.option.getTextSpeed()),
+          frame: ingameData.option.getFrame('number') as number,
+          backgroundVolume: ingameData.option.getBackgroundVolume() * 10,
+          effectVolume: ingameData.option.getEffectVolume() * 10,
         },
         pBgs: ingameData.pcBg,
         pcNames: ingameData.pcName,

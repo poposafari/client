@@ -1,29 +1,11 @@
-import { GM } from './core/game-manager';
 import { itemData } from './data';
 import { ItemCategory } from './enums';
 import { DoorOverworldObj } from './obj/door-overworld-obj';
 import { GroundItemOverworldObj } from './obj/ground-item-overworld-obj';
 import { NpcOverworldObj } from './obj/npc-overworld-obj';
-import { OtherPlayerOverworldObj } from './obj/other-player-overworld-obj';
 import { PlayerItem } from './obj/player-item';
 import { WildOverworldObj } from './obj/wild-overworld-obj';
-// import { GroundItemObject } from './object-legacy/ground-item-object';
-// import { PokemonObject } from './object-legacy/pokemon-object';
-import {
-  GetItemRes,
-  GroundItemInfo,
-  GroundItemRes,
-  OverworldStatue,
-  WildPokemonInfo,
-  WildRes,
-  SocketInitData,
-  MovementPlayer,
-  OtherPlayerInfo,
-  OtherPlayerExitRes,
-  PlayerMovementRes,
-  FacingPlayerRes,
-  ChangePetRes,
-} from './types';
+import { GetItemRes, GroundItemRes, OverworldStatue, WildRes, OtherPlayerInfo, OtherPlayerExitRes, PlayerMovementRes, FacingPlayerRes, ChangePetRes } from './types';
 import { Overworld } from './uis/overworld';
 
 export class BagStorage {

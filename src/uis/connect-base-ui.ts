@@ -1,8 +1,6 @@
-import { GM } from '../core/game-manager';
-import { DEPTH, EASE, TEXTSTYLE, TEXTURE } from '../enums';
+import { DEPTH, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
-import { AccountDeleteUi } from './account-delete-ui';
-import { addBackground, addText, addWindow, Ui } from './ui';
+import { addText, addWindow, Ui } from './ui';
 
 export class ConnectBaseUi extends Ui {
   private container!: Phaser.GameObjects.Container;

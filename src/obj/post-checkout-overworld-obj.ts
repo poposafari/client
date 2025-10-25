@@ -1,6 +1,6 @@
 import { OBJECT, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PostOfficeType, ShopType } from '../types';
+import { PostOfficeType } from '../types';
 import { ImmovableOverworldObj } from './immovable-overworld-obj';
 
 export class PostCheckoutOverworldObj extends ImmovableOverworldObj {

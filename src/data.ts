@@ -223,7 +223,7 @@ const initialItemData: Record<string, ItemData> = {
     usable: true,
     purchasable: false,
     registerable: true,
-    price: 0,
+    price: 3000,
   },
 };
 
@@ -262,6 +262,45 @@ const initialNpcData: Record<string, NpcData> = {
     movable: false,
   },
   npc003: {
+    movable: false,
+  },
+  npc004: {
+    movable: false,
+  },
+  npc005: {
+    movable: false,
+  },
+  npc006: {
+    movable: false,
+  },
+  npc007: {
+    movable: false,
+  },
+  npc008: {
+    movable: false,
+  },
+  npc009: {
+    movable: false,
+  },
+  npc010: {
+    movable: false,
+  },
+  npc011: {
+    movable: false,
+  },
+  npc012: {
+    movable: false,
+  },
+  npc013: {
+    movable: false,
+  },
+  npc014: {
+    movable: false,
+  },
+  npc015: {
+    movable: false,
+  },
+  npc016: {
     movable: false,
   },
 };

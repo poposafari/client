@@ -15,6 +15,8 @@ import { GM } from '../core/game-manager';
 import { NpcOverworldObj } from './npc-overworld-obj';
 import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
+import { SocketHandler } from '../handlers/socket-handler';
+import { changeDirectionToKey, matchPlayerStatusToDirection } from '../utils/string-util';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -197,6 +199,17 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     this.pet?.teleportBehind(this);
   }
 
+  canSurfOff(direction: DIRECTION): boolean {
+    const directionVector = new Phaser.Math.Vector2(direction === DIRECTION.LEFT ? -1 : direction === DIRECTION.RIGHT ? 1 : 0, direction === DIRECTION.UP ? -1 : direction === DIRECTION.DOWN ? 1 : 0);
+    const targetTilePos = this.getTilePos().add(directionVector.scale(2));
+
+    if (this.hasBlocking(targetTilePos, direction)) {
+      return false;
+    }
+
+    return true;
+  }
+
   async jump(duration: number = 400, jumpHeight: number = 40): Promise<void> {
     const directionVector = new Phaser.Math.Vector2(
       this.lastDirection === DIRECTION.LEFT ? -1 : this.lastDirection === DIRECTION.RIGHT ? 1 : 0,
@@ -213,7 +226,17 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         x: targetVec.x,
         duration,
         ease: 'Linear',
-        onStart: () => {},
+        onStart: () => {
+          playEffectSound(this.getScene(), AUDIO.JUMP);
+
+          SocketHandler.getInstance().movementPlayer({
+            x: targetVec.x,
+            y: targetVec.y,
+            direction: matchPlayerStatusToDirection(this.lastDirection),
+            movement: 'jump',
+            pet: null,
+          });
+        },
         onUpdate: (tween) => {
           const t = tween.progress;
           const parabolaY = -4 * jumpHeight * t * (1 - t);

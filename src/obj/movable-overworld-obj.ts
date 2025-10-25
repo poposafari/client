@@ -250,7 +250,7 @@ export class MovableOverworldObj extends OverworldObj {
     }
   }
 
-  private hasBlocking(pos: Phaser.Math.Vector2, direction: DIRECTION) {
+  hasBlocking(pos: Phaser.Math.Vector2, direction: DIRECTION) {
     if (this.hasStairTile(direction)) return false;
     if (this.hasNoTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.hasBlockingTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;

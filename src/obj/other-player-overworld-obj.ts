@@ -257,11 +257,26 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     const direction = this.getDirectionFromString(movementData.direction);
     this.lastDirection = direction;
     const status = this.getStatusFromString(movementData.movement as 'walk' | 'running' | 'surf' | 'ride' | 'jump');
+
+    if (status === PLAYER_STATUS.JUMP) {
+      this.jump();
+      return;
+    }
+
     this.setMovement(status);
 
     const animationKey = this.getAnimationKey(direction);
     if (animationKey) {
       this.ready(direction, animationKey);
+      if (this.currentStatus === PLAYER_STATUS.SURF) {
+        const avatarSurfAnimationKey = this.getAvatarSurfAnimationType(direction);
+        this.setVisibleDummy(true);
+        this.setDummyOffsetY(this.getTilePos().x, this.getTilePos().y, -40);
+        this.setDummy(TEXTURE.NONE, avatarSurfAnimationKey!, 0, 30, 3);
+      } else {
+        this.setVisibleDummy(false);
+      }
+
       this.pet?.move(this);
     }
   }
