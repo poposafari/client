@@ -1,6 +1,4 @@
-import { eventBus } from '../core/event-bus';
-import { GM } from '../core/game-manager';
-import { AUDIO, DEPTH, EVENT, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addWindow, playEffectSound, shakeEffect, Ui } from './ui';
 

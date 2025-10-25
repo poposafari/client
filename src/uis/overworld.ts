@@ -57,6 +57,7 @@ export class Plaza001 extends Overworld {
 
     this.ui.getStatue().setupDoor('door_1', 83, 54, +3, 142, 98, TEXTURE.PLAZA_003, 9, 18);
     this.ui.getStatue().setupDoor('door_22', 98, 78, +3, 142, 98, TEXTURE.PLAZA_002, 11, 22);
+    this.ui.getStatue().setupDoor('door_1', 77, 44, +6, 135, 90, TEXTURE.PLAZA_006, 9, 13);
 
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 69, 43, +3, 142, 98, TEXTURE.PLAZA_004, 10, 24);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 70, 43, +3, 142, 98, TEXTURE.PLAZA_004, 11, 24);
@@ -190,6 +191,31 @@ export class Plaza005 extends Overworld {
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 44, 58, +3, 142, 98, TEXTURE.PLAZA_001, 47, 17);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 45, 58, +3, 142, 98, TEXTURE.PLAZA_001, 48, 17);
     this.ui.getStatue().setupDoor(TEXTURE.BLANK, 46, 58, +3, 142, 98, TEXTURE.PLAZA_001, 49, 17);
+
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
+  }
+}
+
+export class Plaza006 extends Overworld {
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.UP, key, sound);
+  }
+
+  setup(): void {
+    this.ui.setType(OVERWORLD_TYPE.PLAZA);
+    OverworldStorage.getInstance().setKey(this.key as string);
+
+    this.ui.getMap().setup(this.key as TEXTURE, [TEXTURE.INDOOR_TILE_FLOOR, TEXTURE.INDOOR_TILE_OBJECT]);
+    this.ui.getMap().setLayer(0, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    this.ui.getMap().setLayer(1, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    this.ui.getMap().setLayer(2, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    this.ui.getMap().setLayer(3, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    this.ui.getMap().setForegroundLayer(4, [TEXTURE.INDOOR_TILE_OBJECT], DEPTH.FOREGROND);
+
+    this.ui.getNpc().setup('npc004', 12, 7);
+
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 9, 14, +3, 142, 98, TEXTURE.PLAZA_001, 77, 44);
+    this.ui.getStatue().setupDoor(TEXTURE.BLANK, 10, 14, +3, 142, 98, TEXTURE.PLAZA_001, 77, 44);
 
     eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }

@@ -1,9 +1,6 @@
-import { enterSafariZoneApi } from '../api';
-import { GM } from '../core/game-manager';
-import { DEPTH, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { DEPTH, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
-import { OverworldStorage } from '../storage';
 import { addBackground, addText, runFadeEffect, Ui } from './ui';
 
 export class ConnectSafariUi extends Ui {

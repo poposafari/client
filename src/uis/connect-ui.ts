@@ -1,11 +1,10 @@
 import { GM } from '../core/game-manager';
-import { DEPTH, MODE, TEXTSTYLE, TEXTURE } from '../enums';
-import i18next from '../i18n';
+import { MODE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { ConnectAccountDeleteUi } from './connect-account-delete-ui';
 import { ConnectBaseUi } from './connect-base-ui';
 import { ConnectSafariUi } from './connect-safari-ui';
-import { addText, addWindow, Ui } from './ui';
+import { Ui } from './ui';
 
 export class ConnectUi extends Ui {
   private container!: Phaser.GameObjects.Container;

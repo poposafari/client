@@ -1,4 +1,4 @@
-import { TranslationItem } from '../../interface/locales';
+import { TranslationItem } from '../../types';
 
 export const item: TranslationItem = {
   '001': {
@@ -107,6 +107,6 @@ export const item: TranslationItem = {
   },
   '046': {
     name: '자전거',
-    description: '빠른 이동 속도를 얻기 위한 중요한 도구 중에 하나이다.',
+    description: '러닝슈즈보다도 빨리 달릴 수 있는\n접이식 자전다.',
   },
 };

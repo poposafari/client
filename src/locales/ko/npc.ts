@@ -1,4 +1,4 @@
-import { TranslationDefault } from '../../interface/locales';
+import { TranslationDefault } from '../../types';
 
 export const npc: TranslationDefault = {
   npc000: '택시 기사',
@@ -29,4 +29,11 @@ export const npc: TranslationDefault = {
   npc003_7: '%! 앞으로 수많은 포켓몬과 만나\n모험을 떠나며 너만의 경험을 쌓길 바란다!',
   npc003_8: '%! 요즘 컨디션은 어떠니?\n여행은 잘 되가니?',
   npc003_9: '나는 언제나 이곳 연구소에\n너를 응원하마!',
+  npc004: '자전거 숍 주인',
+  npc004_0: '너 자전거를 가지고 있지 않네?',
+  npc004_1: '%캔디에 자전거를 팔게\n살래?',
+  npc004_2: '자 여기 있단다!',
+  npc004_3: '...그렇구나 혹시라도\n마음이 바뀌면 언제든지 오렴!',
+  npc004_4: '...사탕이 부족하네\n다음에 오렴',
+  npc004_5: '그 자전거와 함께라면\n어디든 갈 수 있을걸!',
 };

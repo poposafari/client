@@ -4,7 +4,6 @@ import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { SocketHandler } from '../handlers/socket-handler';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
-import { IngameOption } from '../types';
 import { changeTextSpeedToDigit } from '../utils/string-util';
 import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
 

@@ -3,7 +3,7 @@ import { DEPTH, MODE, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { QuestionMessageUi } from './question-message-ui';
 import { TalkMessageUi } from './talk-message-ui';
-import { addBackground, delay, runFadeEffect, Ui } from './ui';
+import { addBackground, runFadeEffect, Ui } from './ui';
 import { deleteAccountApi } from '../api';
 import { GM } from '../core/game-manager';
 

@@ -1,7 +1,6 @@
 import { SafariData } from '../data';
 import { DIRECTION, KEY, PLAYER_STATUS, Season, TextSpeed, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
-import { ItemRank } from '../types';
 
 export function createZeroPad(value: number): string {
   return value.toString().padStart(4, '0');
