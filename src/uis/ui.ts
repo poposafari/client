@@ -51,10 +51,11 @@ export function addTextBackground(scene: InGameScene, x: number, y: number, cont
   const result = scene.add.text(x, y, content, getTextStyle(style));
   const shadow = getTextShadow(style);
 
-  result.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
+  // result.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
   result.setScale(0.5);
   result.setOrigin(0.5, 0.5);
-  result.setBackgroundColor('rgba(0, 0, 0, 0.7)');
+  // result.setBackgroundColor('rgba(0, 0, 0, 0.7)');
+  result.setStroke('#5e5e5e', 10);
 
   return result;
 }

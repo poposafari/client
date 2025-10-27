@@ -13,6 +13,7 @@ import { OtherPlayerOverworldObj } from '../obj/other-player-overworld-obj';
 import { PlayerOverworldObj } from '../obj/player-overworld-obj';
 import { PostCheckoutOverworldObj } from '../obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from '../obj/shop-checkout-overworld-obj';
+import { StatueOverworldObj } from '../obj/statue-overworld-obj';
 import { WildOverworldObj } from '../obj/wild-overworld-obj';
 import { InGameScene } from '../scenes/ingame-scene';
 import { BagStorage, OverworldStorage } from '../storage';
@@ -463,6 +464,17 @@ export class OverworldPlayer {
                 this.obj.setIsEvent(false);
                 keyboard.setAllowKey(keys);
                 keyboard.setKeyDownCallback(keydownCallback);
+              } else if (event instanceof StatueOverworldObj) {
+                this.obj.setIsEvent(true);
+
+                console.log;
+                const key = event.reaction();
+                if (key === 'opening_soon') {
+                  await this.noticeUi.show([{ content: i18next.t('message:opening_soon') }]);
+                }
+                this.obj.setIsEvent(false);
+                keyboard.setAllowKey(keys);
+                keyboard.setKeyDownCallback(keydownCallback);
               } else if (event instanceof NpcOverworldObj) {
                 this.obj.setIsEvent(true);
                 await this.talkToNpc(event, this.obj.getLastDirection());
@@ -637,7 +649,7 @@ export class OverworldPlayer {
   }
 
   private async talkToNpc(npc: NpcOverworldObj, playerDirection: DIRECTION): Promise<void> {
-    npc.reaction(playerDirection);
+    await npc.reaction(playerDirection, this.talkMessageUi);
 
     switch (npc.getKey()) {
       case 'npc000':
@@ -654,12 +666,12 @@ export class OverworldPlayer {
           this.obj?.setIsEvent(false);
         }
         break;
-      case 'npc003':
+      case 'npc029':
         if (GM.getUserData()?.isStarter) {
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_0'), speed: GM.getUserOption()?.getTextSpeed()! });
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_1'), speed: GM.getUserOption()?.getTextSpeed()! });
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_2'), speed: GM.getUserOption()?.getTextSpeed()! });
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_3'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_0'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_1'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_2'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_3'), speed: GM.getUserOption()?.getTextSpeed()! });
 
           const ret = await this.starterPokemonUi.show();
 
@@ -672,20 +684,20 @@ export class OverworldPlayer {
               content: replacePercentSymbol(i18next.t('message:catch_starter_pokemon'), [GM.getUserData()?.nickname, i18next.t(`pokemon:${ret.pokedex}.name`)]),
               speed: GM.getUserOption()?.getTextSpeed()!,
             });
-            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_4'), speed: GM.getUserOption()?.getTextSpeed()! });
-            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_5'), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_4'), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_5'), speed: GM.getUserOption()?.getTextSpeed()! });
             playEffectSound(this.scene, AUDIO.GET_0);
             await this.talkMessageUi.show({
               type: 'default',
               content: replacePercentSymbol(i18next.t('message:catch_starter_item'), [GM.getUserData()?.nickname]),
               speed: GM.getUserOption()?.getTextSpeed()!,
             });
-            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_6'), speed: GM.getUserOption()?.getTextSpeed()! });
-            await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_7'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_6'), speed: GM.getUserOption()?.getTextSpeed()! });
+            await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc029_7'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
           }
         } else {
-          await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc003_8'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
-          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc003_9'), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('npc:npc029_8'), [GM.getUserData()?.nickname]), speed: GM.getUserOption()?.getTextSpeed()! });
+          await this.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc029_9'), speed: GM.getUserOption()?.getTextSpeed()! });
         }
         break;
       case 'npc004':
@@ -851,17 +863,19 @@ export class OverworldNpc {
     this.scene = scene;
   }
 
-  setup(npcKey: string, x: number, y: number) {
+  setup(npcKey: string, name: string, x: number, y: number, script: string[]) {
     this.info.push({
       key: npcKey,
+      name: name,
       x: x,
       y: y,
+      script: script,
     });
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
     for (const info of this.info) {
-      const npc = new NpcOverworldObj(this.scene, info.key, info.x, info.y, i18next.t(`npc:${info.key}.name`));
+      const npc = new NpcOverworldObj(this.scene, info.key, info.x, info.y, info.name, info.script);
       OverworldStorage.getInstance().addNpc(npc);
     }
   }
@@ -898,13 +912,14 @@ export class OverworldStatue {
     });
   }
 
-  setupStatue(texture: TEXTURE | string, x: number, y: number, type: OBJECT.STATUE | OBJECT.SHOP_CHECKOUT | OBJECT.POST_CHECKOUT, statueType: ShopType | PostOfficeType) {
+  setupStatue(texture: TEXTURE | string, x: number, y: number, type: OBJECT.STATUE | OBJECT.SHOP_CHECKOUT | OBJECT.POST_CHECKOUT, statueType: ShopType | PostOfficeType | null, key: string = '') {
     this.statue.push({
       texture: texture,
       x: x,
       y: y,
       type: type,
-      statueType: statueType,
+      statueType: statueType ?? null,
+      key: key,
     });
   }
 
@@ -936,6 +951,8 @@ export class OverworldStatue {
         OverworldStorage.getInstance().addStatue(new ShopCheckoutOverworldObj(this.scene, statue.texture, statue.x, statue.y, '', statue.statueType as ShopType));
       } else if (statue.type === OBJECT.POST_CHECKOUT) {
         OverworldStorage.getInstance().addStatue(new PostCheckoutOverworldObj(this.scene, statue.texture, statue.x, statue.y, '', statue.statueType as PostOfficeType));
+      } else if (statue.type === OBJECT.STATUE) {
+        OverworldStorage.getInstance().addStatue(new StatueOverworldObj(this.scene, statue.texture, statue.x, statue.y, '', statue.key as string));
       }
     }
   }
