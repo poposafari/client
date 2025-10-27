@@ -303,6 +303,45 @@ const initialNpcData: Record<string, NpcData> = {
   npc016: {
     movable: false,
   },
+  npc017: {
+    movable: false,
+  },
+  npc018: {
+    movable: false,
+  },
+  npc019: {
+    movable: false,
+  },
+  npc020: {
+    movable: false,
+  },
+  npc021: {
+    movable: false,
+  },
+  npc022: {
+    movable: false,
+  },
+  npc023: {
+    movable: false,
+  },
+  npc024: {
+    movable: false,
+  },
+  npc025: {
+    movable: false,
+  },
+  npc026: {
+    movable: false,
+  },
+  npc027: {
+    movable: false,
+  },
+  npc028: {
+    movable: false,
+  },
+  npc029: {
+    movable: false,
+  },
 };
 
 export const npcData = new Proxy(initialNpcData, {

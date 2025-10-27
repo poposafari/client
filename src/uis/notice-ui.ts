@@ -1,4 +1,4 @@
-import { AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, EASE, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import { KeyboardHandler } from '../handlers/keyboard-handler';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Notice } from '../types';
@@ -43,13 +43,30 @@ export class NoticeUi extends Ui {
       const result = await this.showNotice(notice);
 
       playEffectSound(this.scene, AUDIO.SELECT_0);
+
+      this.container.setY(this.getHeight() / 2 + 500);
       this.container.setVisible(true);
+
+      this.scene.tweens.add({
+        targets: this.container,
+        y: this.getHeight() / 2 + 410,
+        duration: 300,
+        ease: EASE.QUINT_EASEOUT,
+      });
 
       return new Promise((resolve) => {
         keyboard.setKeyDownCallback((key) => {
           if (key === KEY.SELECT && result) {
-            this.container.setVisible(false);
-            resolve(true);
+            this.scene.tweens.add({
+              targets: this.container,
+              y: this.getHeight() / 2 + 500,
+              duration: 200,
+              ease: EASE.QUINT_EASEIN,
+              onComplete: () => {
+                this.container.setVisible(false);
+                resolve(true);
+              },
+            });
           }
         });
       });
@@ -72,7 +89,4 @@ export class NoticeUi extends Ui {
       resolve(true);
     });
   }
-}
-function playSound(scene: InGameScene, SELECT_0: AUDIO, arg2: number | undefined) {
-  throw new Error('Function not implemented.');
 }

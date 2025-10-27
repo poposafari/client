@@ -17,6 +17,7 @@ import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
 import { SocketHandler } from '../handlers/socket-handler';
 import { changeDirectionToKey, matchPlayerStatusToDirection } from '../utils/string-util';
+import { StatueOverworldObj } from './statue-overworld-obj';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -176,13 +177,14 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
-  getEvent(): 'surf' | ShopCheckoutOverworldObj | PostCheckoutOverworldObj | NpcOverworldObj | WildOverworldObj | GroundItemOverworldObj | null {
+  getEvent(): 'surf' | ShopCheckoutOverworldObj | PostCheckoutOverworldObj | NpcOverworldObj | WildOverworldObj | GroundItemOverworldObj | StatueOverworldObj | null {
     const tiles = this.getTileInfo(this.lastDirection);
     const obj = this.getObjectInFront(this.lastDirection);
     const event = findEventTile(tiles);
 
     if (obj instanceof ShopCheckoutOverworldObj) return obj;
     if (obj instanceof PostCheckoutOverworldObj) return obj;
+    if (obj instanceof StatueOverworldObj) return obj;
     if (obj instanceof NpcOverworldObj) return obj;
     if (obj instanceof WildOverworldObj) return obj;
     if (obj instanceof GroundItemOverworldObj) return obj;

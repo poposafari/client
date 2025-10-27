@@ -4,6 +4,7 @@ import { PlayerOption } from './obj/player-option';
 import { PlayerPokemon } from './obj/player-pokemon';
 import { PostCheckoutOverworldObj } from './obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from './obj/shop-checkout-overworld-obj';
+import { StatueOverworldObj } from './obj/statue-overworld-obj';
 
 export type TranslationDefault = {
   [key: string]: string;
@@ -46,7 +47,7 @@ export type ItemRank = 'common' | 'rare' | 'epic' | 'legendary';
 export type PlayerGender = 'boy' | 'girl';
 export type PlayerAvatar = '1' | '2' | '3' | '4';
 export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
-export type OverworldStatue = ShopCheckoutOverworldObj | PostCheckoutOverworldObj;
+export type OverworldStatue = ShopCheckoutOverworldObj | PostCheckoutOverworldObj | StatueOverworldObj;
 
 export interface SocketInitData {
   location: string;
@@ -451,6 +452,11 @@ export enum PostOfficeType {
   POST_1 = 'post_1',
 }
 
+export enum StatueType {
+  STATUE_WARNING = 'statue_warning',
+  STATUE_SIGN = 'statue_sign',
+}
+
 export type MenuListSetting = {
   scale: number;
   etcScale: number;
@@ -483,8 +489,10 @@ export type ForegroundLayer = {
 
 export type NpcInfo = {
   key: string;
+  name: string;
   x: number;
   y: number;
+  script: string[];
 };
 
 export type DoorInfo = {
@@ -506,7 +514,8 @@ export type StatueInfo = {
   x: number;
   y: number;
   type: OBJECT.STATUE | OBJECT.SHOP_CHECKOUT | OBJECT.POST_CHECKOUT;
-  statueType: ShopType | PostOfficeType;
+  statueType: ShopType | PostOfficeType | null;
+  key?: string;
 };
 
 export type IngameOption = {

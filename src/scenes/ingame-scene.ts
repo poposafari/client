@@ -12,7 +12,28 @@ import { ConnectUi } from '../uis/connect-ui';
 import { LoginUi } from '../uis/login-ui';
 import { NewgameUi } from '../uis/newgame-ui';
 import { OptionUi } from '../uis/option-ui';
-import { Plaza001, Plaza002, Plaza003, Plaza004, Plaza005, Plaza006, Safari000 } from '../uis/overworld';
+import {
+  Plaza001,
+  Plaza002,
+  Plaza003,
+  Plaza004,
+  Plaza005,
+  Plaza006,
+  Plaza007,
+  Plaza008,
+  Plaza009,
+  Plaza010,
+  Plaza011,
+  Plaza012,
+  Plaza013,
+  Plaza014,
+  Plaza015,
+  Plaza016,
+  Plaza017,
+  Plaza018,
+  Plaza019,
+  Safari000,
+} from '../uis/overworld';
 import { OverworldHUDUi } from '../uis/overworld-hud-ui';
 import { OverworldMenuUi } from '../uis/overworld-menu-ui';
 import { OverworldUi } from '../uis/overworld-ui';
@@ -70,7 +91,19 @@ export class InGameScene extends BaseScene {
     overworldInfo.registerMap(TEXTURE.PLAZA_004, new Plaza004(overworldUi, TEXTURE.PLAZA_004, AUDIO.P004));
     overworldInfo.registerMap(TEXTURE.PLAZA_005, new Plaza005(overworldUi, TEXTURE.PLAZA_005, AUDIO.P001));
     overworldInfo.registerMap(TEXTURE.PLAZA_006, new Plaza006(overworldUi, TEXTURE.PLAZA_006, AUDIO.P001));
-
+    overworldInfo.registerMap(TEXTURE.PLAZA_007, new Plaza007(overworldUi, TEXTURE.PLAZA_007, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_008, new Plaza008(overworldUi, TEXTURE.PLAZA_008, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_009, new Plaza009(overworldUi, TEXTURE.PLAZA_009, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_010, new Plaza010(overworldUi, TEXTURE.PLAZA_010, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_011, new Plaza011(overworldUi, TEXTURE.PLAZA_011, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_012, new Plaza012(overworldUi, TEXTURE.PLAZA_012, AUDIO.P012));
+    overworldInfo.registerMap(TEXTURE.PLAZA_013, new Plaza013(overworldUi, TEXTURE.PLAZA_013, AUDIO.P012));
+    overworldInfo.registerMap(TEXTURE.PLAZA_014, new Plaza014(overworldUi, TEXTURE.PLAZA_014, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_015, new Plaza015(overworldUi, TEXTURE.PLAZA_015, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_016, new Plaza016(overworldUi, TEXTURE.PLAZA_016, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_017, new Plaza017(overworldUi, TEXTURE.PLAZA_017, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_018, new Plaza018(overworldUi, TEXTURE.PLAZA_018, AUDIO.P001));
+    overworldInfo.registerMap(TEXTURE.PLAZA_019, new Plaza019(overworldUi, TEXTURE.PLAZA_019, AUDIO.P001));
     //safari
     overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000, AUDIO.S000));
 

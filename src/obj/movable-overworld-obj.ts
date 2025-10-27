@@ -207,6 +207,12 @@ export class MovableOverworldObj extends OverworldObj {
       .some((door) => door.getTilePos().equals(pos));
   }
 
+  hasStatue(pos: Phaser.Math.Vector2): boolean {
+    return OverworldStorage.getInstance()
+      .getStatue()
+      .some((statue) => statue.getTilePos().equals(pos));
+  }
+
   getLastDirection() {
     return this.lastDirection;
   }
@@ -255,6 +261,7 @@ export class MovableOverworldObj extends OverworldObj {
     if (this.hasNoTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.hasBlockingTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.hasNpc(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasStatue(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.hasDoor(pos) && this.getObjType() === OBJECT.PLAYER) return true;
     if (this.hasWild(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.hasGroundItem(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;

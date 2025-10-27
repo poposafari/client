@@ -63,6 +63,19 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.PLAZA_004, 'ui/map', TEXTURE.PLAZA_004);
     this.loadMap(TEXTURE.PLAZA_005, 'ui/map', TEXTURE.PLAZA_005);
     this.loadMap(TEXTURE.PLAZA_006, 'ui/map', TEXTURE.PLAZA_006);
+    this.loadMap(TEXTURE.PLAZA_007, 'ui/map', TEXTURE.PLAZA_007);
+    this.loadMap(TEXTURE.PLAZA_008, 'ui/map', TEXTURE.PLAZA_008);
+    this.loadMap(TEXTURE.PLAZA_009, 'ui/map', TEXTURE.PLAZA_009);
+    this.loadMap(TEXTURE.PLAZA_010, 'ui/map', TEXTURE.PLAZA_010);
+    this.loadMap(TEXTURE.PLAZA_011, 'ui/map', TEXTURE.PLAZA_011);
+    this.loadMap(TEXTURE.PLAZA_012, 'ui/map', TEXTURE.PLAZA_012);
+    this.loadMap(TEXTURE.PLAZA_013, 'ui/map', TEXTURE.PLAZA_013);
+    this.loadMap(TEXTURE.PLAZA_014, 'ui/map', TEXTURE.PLAZA_014);
+    this.loadMap(TEXTURE.PLAZA_015, 'ui/map', TEXTURE.PLAZA_015);
+    this.loadMap(TEXTURE.PLAZA_016, 'ui/map', TEXTURE.PLAZA_016);
+    this.loadMap(TEXTURE.PLAZA_017, 'ui/map', TEXTURE.PLAZA_017);
+    this.loadMap(TEXTURE.PLAZA_018, 'ui/map', TEXTURE.PLAZA_018);
+    this.loadMap(TEXTURE.PLAZA_019, 'ui/map', TEXTURE.PLAZA_019);
     this.loadMap(TEXTURE.SAFARI_000, 'ui/map', TEXTURE.SAFARI_000);
 
     //tutorial
@@ -275,6 +288,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.P002, 'audio/background', AUDIO.P002, 'wav');
     this.loadAudio(AUDIO.P003, 'audio/background', AUDIO.P003, 'wav');
     this.loadAudio(AUDIO.P004, 'audio/background', AUDIO.P004, 'wav');
+    this.loadAudio(AUDIO.P012, 'audio/background', AUDIO.P012, 'wav');
     this.loadAudio(AUDIO.S000, 'audio/background', AUDIO.S000, 'wav');
 
     //effect sounds

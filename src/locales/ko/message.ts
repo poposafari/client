@@ -71,4 +71,5 @@ export const message: TranslationDefault = {
   tutorial_choice: '% 포켓몬\n%(이/가) 마음에 들었느냐!?',
   catch_starter_pokemon: '%(은/는) 호박사에게\n[blue]%[/blue](을/를) 받았다!',
   catch_starter_item: '%(은/는) 호박사에게\n[blue]스타터 아이템[/blue]들을 받았다!',
+  opening_soon: '준비 중입니다.',
 };

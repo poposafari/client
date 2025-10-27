@@ -252,11 +252,12 @@ export class OverworldInfoUi extends Ui {
     let currentY = 0;
     let i = 0;
     for (const key of this.icons) {
-      const window = addWindow(this.scene, TEXTURE.WINDOW_OPACITY, 0, currentY, contentWidth, contentHeight, 8, 8, 8, 8);
+      // const window = addWindow(this.scene, TEXTURE.WINDOW_OPACITY, 0, currentY, contentWidth, contentHeight, 8, 8, 8, 8);
       const icon = addImage(this.scene, key, -160, currentY).setScale(2);
-      const text = addText(this.scene, -120, currentY, '10,20', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5);
+      const text = addText(this.scene, -120, currentY, '10,20', TEXTSTYLE.ONLY_WHITE).setOrigin(0, 0.5);
+      text.setStroke('#5e5e5e', 12);
 
-      this.container.add(window);
+      // this.container.add(window);
       this.container.add(icon);
       this.container.add(text);
 
