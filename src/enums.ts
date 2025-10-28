@@ -372,6 +372,7 @@ export enum AUDIO {
   P004 = 'p004',
   P012 = 'p012',
   S000 = 's000',
+  S001 = 's001',
 
   //effect sounds
   SELECT_0 = 'select_0',

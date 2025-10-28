@@ -33,6 +33,7 @@ import {
   Plaza018,
   Plaza019,
   Safari000,
+  Safari001,
 } from '../uis/overworld';
 import { OverworldHUDUi } from '../uis/overworld-hud-ui';
 import { OverworldMenuUi } from '../uis/overworld-menu-ui';
@@ -106,6 +107,7 @@ export class InGameScene extends BaseScene {
     overworldInfo.registerMap(TEXTURE.PLAZA_019, new Plaza019(overworldUi, TEXTURE.PLAZA_019, AUDIO.P001));
     //safari
     overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000, AUDIO.S000));
+    overworldInfo.registerMap(TEXTURE.SAFARI_001, new Safari001(overworldUi, TEXTURE.SAFARI_001, AUDIO.S001));
 
     GM.changeMode(MODE.AUTO_LOGIN);
   }

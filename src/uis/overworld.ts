@@ -616,3 +616,30 @@ export class Safari000 extends Overworld {
     eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
   }
 }
+
+export class Safari001 extends Overworld {
+  constructor(ui: OverworldUi, key: TEXTURE | string, sound: AUDIO | string) {
+    super(ui, DIRECTION.DOWN, key, sound);
+  }
+
+  setup(): void {
+    this.ui.setType(OVERWORLD_TYPE.SAFARI);
+    OverworldStorage.getInstance().setKey(this.key as string);
+
+    this.ui.getMap().setup(this.key as TEXTURE, [TEXTURE.OUTDOOR_TILE_FLOOR, TEXTURE.OUTDOOR_TILE_EDGE, TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN]);
+    this.ui.getMap().setLayer(0, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND);
+    this.ui.getMap().setLayer(1, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND + 1);
+    this.ui.getMap().setLayer(2, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 2);
+    this.ui.getMap().setLayer(3, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 3);
+    this.ui.getMap().setLayer(4, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 4);
+    this.ui.getMap().setLayer(5, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 5);
+    this.ui.getMap().setLayer(6, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 6);
+    this.ui.getMap().setLayer(7, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 7);
+    this.ui.getMap().setLayer(8, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 8);
+    this.ui.getMap().setLayer(9, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 9);
+    this.ui.getMap().setForegroundLayer(10, [TEXTURE.OUTDOOR_TILE_OBJECT], DEPTH.FOREGROND);
+    this.ui.getMap().setForeground1Layer(11, [TEXTURE.OUTDOOR_TILE_OBJECT], DEPTH.FOREGROND);
+
+    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
+  }
+}
