@@ -77,6 +77,7 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.PLAZA_018, 'ui/map', TEXTURE.PLAZA_018);
     this.loadMap(TEXTURE.PLAZA_019, 'ui/map', TEXTURE.PLAZA_019);
     this.loadMap(TEXTURE.SAFARI_000, 'ui/map', TEXTURE.SAFARI_000);
+    this.loadMap(TEXTURE.SAFARI_001, 'ui/map', TEXTURE.SAFARI_001);
 
     //tutorial
     this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_BALL, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
@@ -290,6 +291,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.P004, 'audio/background', AUDIO.P004, 'wav');
     this.loadAudio(AUDIO.P012, 'audio/background', AUDIO.P012, 'wav');
     this.loadAudio(AUDIO.S000, 'audio/background', AUDIO.S000, 'wav');
+    this.loadAudio(AUDIO.S001, 'audio/background', AUDIO.S001, 'wav');
 
     //effect sounds
     this.loadAudio(AUDIO.SELECT_0, 'audio/effect', AUDIO.SELECT_0, 'ogg');

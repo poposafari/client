@@ -24,7 +24,7 @@ export class OverworldObj {
   constructor(scene: InGameScene, texture: TEXTURE | string, x: number, y: number, name: string = '', objType: OBJECT) {
     this.scene = scene;
     this.sprite = createSprite(scene, texture, 0, 0).setOrigin(0.5, 1);
-    this.shadow = createSprite(scene, TEXTURE.OVERWORLD_SHADOW, 0, 0).setOrigin(0.5, 1);
+    this.shadow = createSprite(scene, TEXTURE.OVERWORLD_SHADOW, 0, 0).setOrigin(0.5, 1).setAlpha(0.5);
     this.effect = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
     this.emotion = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
     this.dummy = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
