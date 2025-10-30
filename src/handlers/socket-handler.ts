@@ -80,7 +80,7 @@ export class SocketHandler {
     }
 
     this.scene = scene;
-    this.socket = io('https://poposafari.net', { withCredentials: true, path: '/socket' });
+    this.socket = io('https://poposafari.net', { withCredentials: true, path: '/socket.io' });
 
     this.socket.on('connect', () => {
       this.isConnected = true;
