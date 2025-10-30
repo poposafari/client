@@ -82,6 +82,7 @@ export class BattleUi extends Ui {
 
   async show(data: WildOverworldObj): Promise<void> {
     const currentUserFrame = GM.getUserOption()?.getFrame('text') as string;
+    this.battleBg.updateCatchRate(0);
 
     await delay(this.scene, 500);
     await runFlashEffect(this.scene, 100);
@@ -101,6 +102,7 @@ export class BattleUi extends Ui {
 
   clean(data?: any): void {
     this.dummyContainer.setVisible(false);
+    this.battleBg.updateCatchRate(0);
 
     this.battleBg.clean();
     this.battleMessage.clean();

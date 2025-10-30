@@ -243,7 +243,7 @@ export class LoginUi extends ModalFormUi {
           if (res!.data.isDelete) {
             GM.changeMode(MODE.ACCOUNT_DELETE_RESTORE, res!.data.isDeleteAt);
           } else {
-            GM.changeMode(MODE.TITLE);
+            GM.changeMode(MODE.CHECK_INGAME_DATA);
           }
         } else {
           if (res!.data === HttpErrorCode.LOGIN_FAIL) {

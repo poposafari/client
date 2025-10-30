@@ -104,9 +104,21 @@ export class WildOverworldObj extends MovableOverworldObj {
     this.setEmotion('emo_0', 'emo_0');
   }
 
-  private moveInSteps(directionIndex: number, steps: number) {
-    if (steps <= 0) return this.scheduleRandomMovement();
-    this.ready(this.directions[directionIndex], this.getAnimation(this.keys[directionIndex]));
+  private moveInSteps(directionIndex: number, steps: number): void {
+    if (steps <= 0) {
+      this.scheduleRandomMovement();
+      return;
+    }
+
+    const direction = this.directions[directionIndex];
+
+    if (this.isBlockingDirection(direction)) {
+      const newDirectionIndex = this.getRandomDirection();
+      const newSteps = this.getRandomStep();
+      return this.moveInSteps(newDirectionIndex, newSteps);
+    }
+
+    this.ready(direction, this.getAnimation(this.keys[directionIndex]));
     this.againTimer = this.getScene().time.delayedCall(200, () => {
       this.moveInSteps(directionIndex, steps - 1);
     });
