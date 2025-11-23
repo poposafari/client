@@ -1,16 +1,22 @@
-import { DEPTH, TEXTURE } from '../enums';
-import { addBackground, Ui } from './ui';
+import { DEPTH, MessageEndDelay, MODE, TEXTURE } from '../enums';
+import { TalkMessageUi } from './talk-message-ui';
+import { Ui } from './ui';
+import i18next from '../i18n';
+import { Option } from '../core/storage/player-option';
+import { Game } from '../core/manager/game-manager';
 
 export class WelcomeUi extends Ui {
   private container!: Phaser.GameObjects.Container;
+
+  private talkUi: TalkMessageUi | null = null;
 
   setup(): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2, height / 2);
+    this.container = this.createTrackedContainer(width / 2, height / 2);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    const bg = this.addBackground(TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
 
     this.container.add(bg);
 
@@ -19,12 +25,27 @@ export class WelcomeUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  show(data?: any): void {
+  async show(data?: any): Promise<void> {
     this.container.setVisible(true);
+
+    this.talkUi = new TalkMessageUi(this.scene);
+    await this.talkUi.setup();
+
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame1'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame2'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame3'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame4'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame5'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:introNewgame6'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+
+    Game.changeMode(MODE.TITLE);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
+  protected onClean(): void {
+    if (this.talkUi) {
+      this.talkUi.clean();
+      this.talkUi = null;
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}

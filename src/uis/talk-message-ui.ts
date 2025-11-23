@@ -1,203 +1,157 @@
-import { GM } from '../core/game-manager';
 import { ANIMATION, AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { InGameScene } from '../scenes/ingame-scene';
+import { KeyboardManager } from '../core/manager/keyboard-manager';
 import { Talk } from '../types';
-import { addText, addWindow, createSprite, getTextStyle, playEffectSound, Ui } from './ui';
+import { delay, playEffectSound } from './ui';
+import { MessageUi } from './message-ui';
+import i18next from '../i18n';
 
-export class TalkMessageUi extends Ui {
-  private container!: Phaser.GameObjects.Container;
+export class TalkMessageUi extends MessageUi {
+  private guideTextContainer!: Phaser.GameObjects.Container;
   private endMarkContainer!: Phaser.GameObjects.Container;
-
-  private window!: Phaser.GameObjects.NineSlice;
-  private text!: Phaser.GameObjects.Text;
   private endMark!: Phaser.GameObjects.Sprite;
   private endMarkTexture!: TEXTURE | string;
-  private textObjects: Phaser.GameObjects.Text[] = [];
-
-  private readonly scale: number = 2;
-  private readonly messageWindowWidth: number = 960;
-  private readonly messageWindowHeight: number = 130;
-
-  constructor(scene: InGameScene) {
-    super(scene);
-  }
+  private guideText!: Phaser.GameObjects.Text;
+  private guideTextTimer!: Phaser.Time.TimerEvent | null;
+  private readonly GUIDE_TEXT_DELAY: number = 5000;
 
   setup(data?: any): void {
+    super.setup(data);
+
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2, height / 2 + 410);
+    this.endMarkContainer = this.createTrackedContainer(width / 2 + 830, height / 2 + 410);
+    this.guideTextContainer = this.createTrackedContainer(width / 2 + 830, height / 2);
+    this.endMark = this.createSprite(TEXTURE.PAUSE_B, 0, 0);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.messageWindowWidth / this.scale, this.messageWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
-    this.text = addText(this.scene, -440, -35, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0);
-
-    this.container.add(this.window);
-    this.container.add(this.text);
-
-    this.container.setScale(this.scale);
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.MESSAGE);
-    this.container.setScrollFactor(0);
-
-    this.endMarkContainer = this.createContainer(width / 2 + 830, height / 2 + 410);
-    this.endMark = createSprite(this.scene, TEXTURE.PAUSE_B, 0, 0);
+    this.guideText = this.addText(0, +230, i18next.t('menu:guide_talk_message'), TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5);
 
     this.endMarkContainer.add(this.endMark);
+    this.guideTextContainer.add(this.guideText);
 
     this.endMarkContainer.setScale(this.scale);
     this.endMarkContainer.setVisible(false);
     this.endMarkContainer.setDepth(DEPTH.MESSAGE + 1);
     this.endMarkContainer.setScrollFactor(0);
+
+    this.guideTextContainer.setScale(1);
+    this.guideTextContainer.setVisible(false);
+    this.guideTextContainer.setDepth(DEPTH.MESSAGE + 1);
+    this.guideTextContainer.setScrollFactor(0);
   }
 
   async show(data: Talk): Promise<boolean> {
+    this.setMessageStyle(data.type);
+
     if (data.type === 'sys') {
-      this.window.setTexture(TEXTURE.WINDOW_SYS);
-      this.text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_WHITE));
       this.endMarkTexture = ANIMATION.PAUSE_W;
     } else {
-      this.window.setTexture(GM.getUserOption() ? (GM.getUserOption()!.getFrame('text') as string) : TEXTURE.WINDOW_0);
-      this.text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
       this.endMarkTexture = ANIMATION.PAUSE_B;
     }
 
     this.container.setVisible(true);
 
-    const keyboard = KeyboardHandler.getInstance();
-    keyboard.setAllowKey([KEY.SELECT]);
+    const keyboard = KeyboardManager.getInstance();
+    keyboard.setAllowKey([KEY.SELECT, KEY.ENTER]);
     playEffectSound(this.scene, AUDIO.SELECT_0);
 
-    await this.showText(data);
+    await this.showText(data.content, data.speed);
+
+    await delay(this.scene, data.endDelay);
 
     return new Promise((resolve) => {
       this.showEndMark(true);
-      keyboard.setKeyDownCallback((key) => {
-        if (key === KEY.SELECT) {
-          this.clean();
+      this.startGuideTextTimer();
+
+      const callback = (key: KEY) => {
+        if (key === KEY.SELECT || key === KEY.ENTER) {
+          this.cancelGuideTextTimer();
           this.showEndMark(false);
-          KeyboardHandler.getInstance().clearCallbacks();
+          keyboard.clearCallbacks();
+          this.container.setVisible(false);
+          this.text.text = '';
+          this.textObjects.forEach((obj) => obj.destroy());
+          this.textObjects = [];
           if (data.end) data.end();
           resolve(true);
         }
+      };
+      keyboard.setKeyDownCallback(callback);
+      this.trackKeyboardCallback(() => {
+        this.cancelGuideTextTimer();
+        keyboard.clearCallbacks();
       });
     });
   }
 
-  clean(data?: any): void {
-    this.text.text = '';
-
-    // BBCode 텍스트 객체들 정리
-    this.textObjects.forEach((obj) => obj.destroy());
-    this.textObjects = [];
-
-    this.container.setVisible(false);
-    this.endMarkContainer.setVisible(false);
-  }
-
-  pause(onoff: boolean, data?: any): void {}
-
-  handleKeyInput(...data: any[]): void {}
-
-  update(time?: number, delta?: number): void {}
-
-  private async showText(talk: Talk) {
-    const content = talk.content;
-    const speed = talk.speed;
-
-    const segments = this.parseBBCode(content);
-
-    let currentX = -440;
-    let currentY = -37;
-    const startX = -440;
-    const lineHeight = 35;
-    const currentStyle = this.text.style.color;
-
-    return new Promise((resolve) => {
-      let segmentIndex = 0;
-      let charIndex = 0;
-
-      const addNextChar = () => {
-        if (segmentIndex >= segments.length) {
-          resolve(true);
-          return;
-        }
-
-        const segment = segments[segmentIndex];
-
-        if (charIndex === 0) {
-          const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
-          const textObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
-          this.container.add(textObj);
-          this.textObjects.push(textObj);
-        }
-
-        const currentTextObj = this.textObjects[this.textObjects.length - 1];
-        const char = segment.text[charIndex];
-
-        if (char === '\n') {
-          currentY += lineHeight;
-          currentX = startX;
-          charIndex++;
-
-          if (charIndex < segment.text.length) {
-            const style = segment.isSpecial ? TEXTSTYLE.MESSAGE_BLUE : TEXTSTYLE.MESSAGE_BLACK;
-            const newTextObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0);
-            this.container.add(newTextObj);
-            this.textObjects.push(newTextObj);
-          }
-        } else {
-          currentTextObj.text += char;
-          charIndex++;
-        }
-
-        if (charIndex >= segment.text.length) {
-          if (!segment.text.endsWith('\n')) {
-            currentX += currentTextObj.displayWidth;
-          }
-          segmentIndex++;
-          charIndex = 0;
-        }
-
-        this.scene.time.delayedCall(speed, addNextChar, [], this);
-      };
-
-      addNextChar();
-    });
-  }
-
-  private parseBBCode(content: string): { text: string; isSpecial: boolean }[] {
-    const segments: { text: string; isSpecial: boolean }[] = [];
-    const regex = /\[blue\](.*?)\[\/blue\]/g;
-
-    let lastIndex = 0;
-    let match;
-
-    while ((match = regex.exec(content)) !== null) {
-      if (match.index > lastIndex) {
-        const normalText = content.substring(lastIndex, match.index);
-        segments.push({ text: normalText, isSpecial: false });
-      }
-
-      segments.push({ text: match[1], isSpecial: true });
-
-      lastIndex = regex.lastIndex;
-    }
-
-    if (lastIndex < content.length) {
-      segments.push({ text: content.substring(lastIndex), isSpecial: false });
-    }
-
-    return segments;
+  protected onClean(): void {
+    super.onClean();
+    this.cancelGuideTextTimer();
   }
 
   private showEndMark(onoff: boolean) {
     if (onoff) {
       this.endMarkContainer.setVisible(true);
-      this.endMark.anims.play(this.endMarkTexture);
+      if (this.endMark && this.endMark.anims) {
+        this.endMark.anims.play(this.endMarkTexture);
+      }
     } else {
       this.endMarkContainer.setVisible(false);
-      this.endMark.anims.stop();
+      if (this.endMark && this.endMark.anims) {
+        this.endMark.anims.stop();
+      }
     }
+  }
+
+  private startGuideTextTimer(): void {
+    this.cancelGuideTextTimer();
+
+    this.guideTextTimer = this.scene.time.delayedCall(this.GUIDE_TEXT_DELAY, () => {
+      this.showGuideText();
+      this.guideTextTimer = null;
+    });
+  }
+
+  private showGuideText(): void {
+    const mapWidth = this.getWidth();
+    const textDisplayWidth = this.guideText.displayWidth;
+
+    const containerCenterX = +90;
+    const calculatedX = containerCenterX - textDisplayWidth;
+
+    this.guideText.setX(calculatedX);
+    this.guideTextContainer.setVisible(true);
+    this.guideTextContainer.setAlpha(0);
+
+    this.scene.tweens.add({
+      targets: this.guideTextContainer,
+      alpha: 1,
+      duration: 800,
+      ease: 'Linear',
+      onComplete: () => {
+        this.startGuideTextPulse();
+      },
+    });
+  }
+
+  private startGuideTextPulse(): void {
+    this.scene.tweens.add({
+      targets: this.guideTextContainer,
+      alpha: 0.3,
+      duration: 500,
+      ease: 'Linear',
+      yoyo: true,
+      repeat: -1,
+    });
+  }
+
+  private cancelGuideTextTimer(): void {
+    if (this.guideTextTimer) {
+      this.guideTextTimer.remove();
+      this.guideTextTimer = null;
+    }
+    this.scene.tweens.killTweensOf(this.guideTextContainer);
+    this.guideTextContainer.setVisible(false);
+    this.guideTextContainer.setAlpha(0);
   }
 }

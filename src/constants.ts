@@ -1,3 +1,5 @@
+export const VERSION = 'v0.1.0';
+
 export const TILE_SIZE = 32;
 export const MAP_SCALE = 1.5;
 export const PLAYER_SCALE = 3;

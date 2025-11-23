@@ -1,20 +1,27 @@
-import { GM } from '../core/game-manager';
-import { AUDIO, DEPTH, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { AUDIO, DEPTH, EASE, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { Keyboard } from '../core/manager/keyboard-manager';
 import i18next from '../i18n';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PlayerGender } from '../types';
-import { addBackground, addImage, addText, addWindow, playEffectSound, runFadeEffect, Ui } from './ui';
+import { playEffectSound, runFadeEffect, Ui } from './ui';
+import { Game } from '../core/manager/game-manager';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { PC } from '../core/storage/pc-storage';
+import { VERSION } from '../constants';
+import { formatPlaytime } from '../utils/string-util';
 
 export class TitleUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
   private windowContainer!: Phaser.GameObjects.Container;
+  private splashContainer!: Phaser.GameObjects.Container;
 
   private bg!: Phaser.GameObjects.Image;
   private title!: Phaser.GameObjects.Image;
   private windows: Phaser.GameObjects.NineSlice[] = [];
   private texts: Phaser.GameObjects.Text[] = [];
+  private versionText!: Phaser.GameObjects.Text;
+  private splashText!: Phaser.GameObjects.Text;
 
   private choice: number = 0;
 
@@ -35,11 +42,24 @@ export class TitleUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.bgContainer = this.createContainer(width / 2, height / 2);
-    this.windowContainer = this.createContainer(width / 2, height / 2 + 160);
+    this.bgContainer = this.createTrackedContainer(width / 2, height / 2);
+    this.splashContainer = this.createTrackedContainer(width / 2, height / 2);
+    this.windowContainer = this.createTrackedContainer(width / 2, height / 2 + 160);
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
-    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, -370).setScale(4);
+    this.bg = this.addBackground(TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    this.title = this.addImage(TEXTURE.LOGO_0, 0, -410).setScale(3.2);
+
+    const titleLeftX = this.title.x - this.title.displayWidth / 2;
+    const titleRightX = this.title.x + this.title.displayWidth / 2;
+    const titleTopY = this.title.y - this.title.displayHeight / 2;
+
+    this.versionText = this.addText(titleLeftX, -330, VERSION, TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5);
+    this.splashText = this.addText(titleRightX, titleTopY + 90, i18next.t('menu:splashText_2'), TEXTSTYLE.SPLASH_TEXT)
+      .setOrigin(0.5, 0.5)
+      .setRotation(Phaser.Math.DegToRad(-25));
+
+    this.splashContainer.add(this.splashText);
+    this.splashContainer.add(this.versionText);
 
     this.bgContainer.add(this.bg);
     this.bgContainer.add(this.title);
@@ -48,44 +68,66 @@ export class TitleUi extends Ui {
     this.bgContainer.setDepth(DEPTH.TITLE - 1);
     this.bgContainer.setScrollFactor(0);
 
+    this.splashContainer.setVisible(false);
+    this.splashContainer.setDepth(DEPTH.TITLE + 2);
+    this.splashContainer.setScrollFactor(0);
+
     this.windowContainer.setVisible(false);
     this.windowContainer.setDepth(DEPTH.TITLE);
     this.windowContainer.setScrollFactor(0);
   }
 
   async show(): Promise<void> {
+    this.assertNotDestroyed();
+
+    Keyboard.blockKeys(false);
+
     runFadeEffect(this.scene, 1000, 'in');
 
     this.restoreContinue();
     this.removeMenus();
     this.createMenus();
 
-    this.getIngame();
+    const playerData = PlayerGlobal.getData();
+
+    if (playerData) {
+      const nickname = playerData.nickname;
+      const location = playerData.location;
+      const gender = playerData.gender;
+      const avatar = playerData.avatar;
+      const party = PC.getParty();
+
+      this.createContinue(nickname, location, gender, avatar, party);
+    }
 
     this.bgContainer.setVisible(true);
     this.windowContainer.setVisible(true);
+    this.splashContainer.setVisible(true);
+
+    this.startSplashAnimation();
 
     this.handleKeyInput();
   }
 
-  clean(data?: any): void {
-    this.bgContainer.setVisible(false);
-    this.windowContainer.setVisible(false);
+  protected onClean(): void {
+    this.choice = 0;
+    this.windows = [];
+    this.texts = [];
+    this.continueParties = [];
   }
 
   pause(onoff: boolean, data?: any): void {}
 
   handleKeyInput(data?: any): void {
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT];
-    const keyboard = KeyboardHandler.getInstance();
-
     let choice = this.choice ? this.choice : 0;
 
     this.renderWindowTexture();
 
-    keyboard.setAllowKey(keys);
-    keyboard.setKeyDownCallback(async (key) => {
+    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.ENTER]);
+    Keyboard.setKeyDownCallback(async (key) => {
       let prevChoice = choice;
+
+      console.log('title ui handleKeyInput');
 
       try {
         switch (key) {
@@ -99,34 +141,33 @@ export class TitleUi extends Ui {
               choice++;
             }
             break;
+          case KEY.ENTER:
           case KEY.SELECT:
+            playEffectSound(this.scene, AUDIO.SELECT_0);
+
             const target = this.menus[choice];
 
-            keyboard.clearCallbacks();
-
             if (target === i18next.t('menu:newgame')) {
-              if (!GM.getUserData()) {
-                GM.changeMode(MODE.STARTER);
+              if (!PlayerGlobal.getData()) {
+                await Game.changeMode(MODE.STARTER);
               } else {
-                GM.changeMode(MODE.ACCOUNT_DELETE);
+                await Game.changeMode(MODE.ACCOUNT_DELETE);
               }
             } else if (target === i18next.t('menu:logout')) {
-              keyboard.clearCallbacks();
-              GM.setUserData(null);
-              GM.changeMode(MODE.LOGOUT);
+              await Game.changeMode(MODE.LOGOUT);
             } else if (target === i18next.t('menu:continue')) {
-              GM.changeMode(MODE.BLACK_SCREEN);
+              await Game.changeMode(MODE.SEASON_SCREEN);
             } else if (target === i18next.t('menu:option')) {
-              GM.changeMode(MODE.OPTION);
+              await Game.changeMode(MODE.OPTION);
             }
 
-            this.windows[choice].setTexture(TEXTURE.WINDOW_MENU);
-            this.choice = 0;
+            if (this.windows[choice]) this.windows[choice].setTexture(TEXTURE.WINDOW_MENU);
 
+            this.choice = 0;
             break;
         }
-
         if (key === KEY.UP || key === KEY.DOWN) {
+          console.log('title ui handleKeyInput up or down');
           if (choice !== prevChoice) {
             this.choice = choice;
 
@@ -137,7 +178,7 @@ export class TitleUi extends Ui {
           }
         }
       } catch (error) {
-        console.error(`Error handling key input: ${error}`);
+        console.error(`Error: ${error}`);
       }
     });
   }
@@ -157,16 +198,16 @@ export class TitleUi extends Ui {
   }
 
   private createContinue(nickname: string, location: string, gender: PlayerGender, avatar: number, party: (PlayerPokemon | null)[]) {
-    const continueWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, -230, this.windowWidth, 95, 16, 16, 16, 16).setScale(this.scale);
-    const continueTitle = addText(this.scene, this.contentPosY, -340, i18next.t('menu:continue'), TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
-    const continueTitleName = addText(this.scene, this.contentPosY, -290, i18next.t('menu:continueName'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continueTitleLocation = addText(this.scene, this.contentPosY, -245, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continueTitlePlaytime = addText(this.scene, this.contentPosY, -200, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continueName = addText(this.scene, -60, -290, nickname, TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continueLocation = addText(this.scene, -60, -245, i18next.t(`menu:${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continuePlaytime = addText(this.scene, -60, -200, '00:00', TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueWindow = this.addWindow(TEXTURE.WINDOW_0, 0, -230, this.windowWidth, 95, 16, 16, 16, 16).setScale(this.scale);
+    const continueTitle = this.addText(this.contentPosY, -340, i18next.t('menu:continue'), TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+    const continueTitleName = this.addText(this.contentPosY, -290, i18next.t('menu:continueName'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueTitleLocation = this.addText(this.contentPosY, -245, i18next.t('menu:continueLocation'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueTitlePlaytime = this.addText(this.contentPosY, -200, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueName = this.addText(-60, -290, nickname, TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continueLocation = this.addText(-60, -245, i18next.t(`menu:${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continuePlaytime = this.addText(-60, -200, formatPlaytime(PlayerGlobal.getData()?.updatedAt as Date, PlayerGlobal.getData()?.createdAt as Date), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
 
-    const statue = addImage(this.scene, `${gender}_${avatar}_statue`, -335, -140).setScale(3.4);
+    const statue = this.addImage(`${gender}_${avatar}_statue`, -335, -140).setScale(3.4);
 
     this.windowContainer.add(continueWindow);
     this.windowContainer.add(continueTitle);
@@ -183,8 +224,8 @@ export class TitleUi extends Ui {
     let currentX = -200;
 
     party.forEach((pokemon) => {
-      const icon = addImage(this.scene, `pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}${pokemon?.getShiny() ? 's' : ''}`, currentX, -140);
-      const shiny = addImage(this.scene, pokemon?.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK, currentX - 40, -160).setScale(1.4);
+      const icon = this.addImage(`pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}${pokemon?.getShiny() ? 's' : ''}`, currentX, -140);
+      const shiny = this.addImage(pokemon?.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK, currentX - 40, -160).setScale(1.4);
 
       icon.setScale(1.4);
       shiny.setScale(1.4);
@@ -211,14 +252,6 @@ export class TitleUi extends Ui {
   }
 
   private removeMenus() {
-    if (this.windowContainer) {
-      this.windowContainer.removeAll(true);
-    }
-
-    this.windows.forEach((window) => window.destroy());
-    this.texts.forEach((text) => text.destroy());
-    this.continueParties.forEach((image) => image.destroy());
-
     this.windows = [];
     this.texts = [];
     this.continueParties = [];
@@ -228,8 +261,8 @@ export class TitleUi extends Ui {
     let currentY = 0;
 
     for (const target of this.menus) {
-      const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, currentY, this.windowWidth, 30, 16, 16, 16, 16).setScale(this.scale);
-      const text = addText(this.scene, this.contentPosY, currentY, target, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+      const window = this.addWindow(TEXTURE.WINDOW_MENU, 0, currentY, this.windowWidth, 30, 16, 16, 16, 16).setScale(this.scale);
+      const text = this.addText(this.contentPosY, currentY, target, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
 
       this.windows.push(window);
       this.texts.push(text);
@@ -241,14 +274,21 @@ export class TitleUi extends Ui {
     }
   }
 
-  private async getIngame() {
-    const data = GM.getUserData();
+  private startSplashAnimation(): void {
+    this.scene.tweens.killTweensOf(this.splashText);
 
-    if (!data) {
-      GM.setUserData(null);
-    } else {
-      const data = GM.getUserData()!;
-      this.createContinue(data.nickname, data.location, data.gender, data.avatar, data.party);
-    }
+    this.splashText.setScale(0.5);
+
+    const tween = this.scene.tweens.add({
+      targets: this.splashText,
+      scaleX: 0.4,
+      scaleY: 0.4,
+      duration: 400,
+      ease: EASE.SINE_EASEINOUT,
+      yoyo: true,
+      repeat: -1,
+    });
+
+    this.trackTween(tween);
   }
 }

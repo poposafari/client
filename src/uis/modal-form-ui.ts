@@ -15,8 +15,8 @@ export class ModalFormUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.modalContainer = this.createContainer(width / 2, height / 2);
-    this.window = addWindow(this.scene, TEXTURE.BLANK, 0, 0, 0, 0, 16, 16, 16, 16);
+    this.modalContainer = this.createTrackedContainer(width / 2, height / 2);
+    this.window = this.addWindow(TEXTURE.BLANK, 0, 0, 0, 0, 16, 16, 16, 16);
 
     this.modalContainer.add(this.window);
 
@@ -27,7 +27,7 @@ export class ModalFormUi extends Ui {
 
   show(): void {}
 
-  clean(data?: any): void {}
+  protected onClean(): void {}
 
   pause(data?: any): void {}
 

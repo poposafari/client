@@ -1,18 +1,11 @@
-import { GM } from '../core/game-manager';
 import { npcData, PokemonData } from '../data';
-import { ANIMATION, AUDIO, MODE, TEXTURE, UI } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { BagStorage, OverworldStorage } from '../storage';
-import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
-import { AccountDeleteUi } from '../uis/account-delete-ui';
-import { BagUi } from '../uis/bag-ui';
-import { BattleUi } from '../uis/battle-ui';
-import { BlackScreenUi } from '../uis/black-screen-ui';
-import { ConnectUi } from '../uis/connect-ui';
+import { ANIMATION, AUDIO, TEXTURE, UI } from '../enums';
+import { Keyboard } from '../core/manager/keyboard-manager';
+import { Option } from '../core/storage/player-option';
 import { LoginUi } from '../uis/login-ui';
-import { NewgameUi } from '../uis/newgame-ui';
-import { OptionUi } from '../uis/option-ui';
 import {
+  Gate001,
+  Gate002,
   Plaza001,
   Plaza002,
   Plaza003,
@@ -25,29 +18,46 @@ import {
   Plaza010,
   Plaza011,
   Plaza012,
-  Plaza013,
-  Plaza014,
-  Plaza015,
-  Plaza016,
-  Plaza017,
-  Plaza018,
   Plaza019,
-  Safari000,
+  Plaza020,
+  Plaza021,
+  Plaza022,
+  Plaza023,
   Safari001,
-} from '../uis/overworld';
-import { OverworldHUDUi } from '../uis/overworld-hud-ui';
-import { OverworldMenuUi } from '../uis/overworld-menu-ui';
-import { OverworldUi } from '../uis/overworld-ui';
-import { PcUi } from '../uis/pc-ui';
-import { QuickSlotItemUi } from '../uis/quick-slot-item-ui';
-import { RegisterUi } from '../uis/register-ui';
-import { StarterUi } from '../uis/starter-ui';
-import { TitleUi } from '../uis/title-ui';
+  Safari002,
+} from '../uis/overworld/overworld';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
 import { WelcomeUi } from '../uis/welcome-ui';
 import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
 import { BaseScene } from './base-scene';
+import { Game } from '../core/manager/game-manager';
+import { Sound } from '../core/manager/sound-manager';
+import { Event } from '../core/manager/event-manager';
+import { Bag } from '../core/storage/bag-storage';
+import { OverworldGlobal } from '../core/storage/overworld-storage';
+import { PC } from '../core/storage/pc-storage';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { RegisterUi } from '../uis/register-ui';
+import { TitleUi } from '../uis/title-ui';
+import { StarterUi } from '../uis/starter-ui';
+import { OptionUi } from '../uis/option-ui';
+import { FailTokenUi } from '../uis/fail-token-ui';
+import { SeasonScreenUi } from '../uis/season-screen-ui';
+import { ConnectBaseUi } from '../uis/connect-base-ui';
+import { ConnectAccountDeleteUi } from '../uis/connect-account-delete-ui';
+import { ConnectSafariUi } from '../uis/connect-safari-ui';
+import { AccountDeleteUi } from '../uis/account-delete-ui';
+import { AccountDeleteRestoreUi } from '../uis/account-delete-restore-ui';
+import { OverworldUi } from '../uis/overworld/overworld-ui';
+import { OverworldMenuUi } from '../uis/overworld/overworld-menu-ui';
+import { QuickSlotItemUi } from '../uis/quick-slot-item-ui';
+import { BagUi } from '../uis/bag-ui';
+import { PcUi } from '../uis/pc-ui';
+import { EvolveUi } from '../uis/evolve-ui';
+import { HiddenMoveUi } from '../uis/hidden-move-ui';
+import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
+import { Battle } from '../uis/battle/battle';
 
 export class InGameScene extends BaseScene {
   constructor() {
@@ -55,67 +65,75 @@ export class InGameScene extends BaseScene {
   }
 
   create() {
-    GM.setScene(this);
-    OverworldStorage.getInstance().setScene(this);
-    const overworldUi = new OverworldUi(this);
     this.initAnimation();
-    this.initAudio();
 
-    BagStorage.getInstance();
-    const keyboard = KeyboardHandler.getInstance();
-    keyboard.init(this);
+    Game.init(this);
+    Keyboard.init(this);
+    Sound.init(this);
+    Event.init();
+    Bag.init();
+    PC.init();
+    PlayerGlobal.init();
+    Option.init();
+    OverworldGlobal.init(this);
 
-    GM.registerUi(UI.CONNECT, new ConnectUi(this));
-    GM.registerUi(UI.LOGIN, new LoginUi(this));
-    GM.registerUi(UI.REGISTER, new RegisterUi(this));
-    GM.registerUi(UI.ACCOUNT_DELETE, new AccountDeleteUi(this));
-    GM.registerUi(UI.ACCOUNT_DELETE_RESTORE, new AccountDeleteRestoreUi(this));
-    GM.registerUi(UI.TITLE, new TitleUi(this));
-    GM.registerUi(UI.NEWGAME, new NewgameUi(this));
-    GM.registerUi(UI.WELCOME, new WelcomeUi(this));
-    GM.registerUi(UI.STARTER, new StarterUi(this));
-    GM.registerUi(UI.OVERWORLD_MENU, new OverworldMenuUi(this));
-    GM.registerUi(UI.OVERWORLD_HUD, new OverworldHUDUi(this));
-    GM.registerUi(UI.BAG, new BagUi(this));
-    GM.registerUi(UI.PC, new PcUi(this));
-    GM.registerUi(UI.OPTION, new OptionUi(this));
-    GM.registerUi(UI.BLACK_SCREEN, new BlackScreenUi(this));
-    GM.registerUi(UI.BATTLE, new BattleUi(this));
-    GM.registerUi(UI.QUICK_SLOT_ITEM, new QuickSlotItemUi(this));
-    GM.registerUi(UI.OVERWORLD, overworldUi);
+    Game.registerUiFactory(UI.FAIL_TOKEN, (scene) => new FailTokenUi(scene));
+    Game.registerUiFactory(UI.CONNECT_BASE, (scene) => new ConnectBaseUi(scene));
+    Game.registerUiFactory(UI.CONNECT_ACCOUNT_DELETE, (scene) => new ConnectAccountDeleteUi(scene));
+    Game.registerUiFactory(UI.CONNECT_SAFARI, (scene) => new ConnectSafariUi(scene));
+    Game.registerUiFactory(UI.LOGIN, (scene) => new LoginUi(scene));
+    Game.registerUiFactory(UI.REGISTER, (scene) => new RegisterUi(scene));
+    Game.registerUiFactory(UI.WELCOME, (scene) => new WelcomeUi(scene));
+    Game.registerUiFactory(UI.SEASON_SCREEN, (scene) => new SeasonScreenUi(scene));
+    Game.registerUiFactory(UI.TITLE, (scene) => new TitleUi(scene));
+    Game.registerUiFactory(UI.STARTER, (scene) => new StarterUi(scene));
+    Game.registerUiFactory(UI.OPTION, (scene) => new OptionUi(scene));
+    Game.registerUiFactory(UI.ACCOUNT_DELETE, (scene) => new AccountDeleteUi(scene));
+    Game.registerUiFactory(UI.ACCOUNT_DELETE_RESTORE, (scene) => new AccountDeleteRestoreUi(scene));
+    Game.registerUiFactory(UI.OVERWORLD, (scene) => new OverworldUi(scene));
+    Game.registerUiFactory(UI.OVERWORLD_MENU, (scene) => new OverworldMenuUi(scene));
+    Game.registerUiFactory(UI.QUICK_SLOT_ITEM, (scene) => new QuickSlotItemUi(scene));
+    Game.registerUiFactory(UI.BAG, (scene) => new BagUi(scene));
+    Game.registerUiFactory(UI.PC, (scene) => new PcUi(scene));
+    Game.registerUiFactory(UI.EVOLVE, (scene) => new EvolveUi(scene));
+    Game.registerUiFactory(UI.HIDDEN_MOVE, (scene) => new HiddenMoveUi(scene));
+    Game.registerUiFactory(UI.STARTER_POKEMON, (scene) => new StarterPokemonUi(scene));
+    Game.registerUiFactory(UI.BATTLE, (scene) => new Battle(scene));
 
-    const overworldInfo = OverworldStorage.getInstance();
     //plaza
-    overworldInfo.registerMap(TEXTURE.PLAZA_001, new Plaza001(overworldUi, TEXTURE.PLAZA_001, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_002, new Plaza002(overworldUi, TEXTURE.PLAZA_002, AUDIO.P002));
-    overworldInfo.registerMap(TEXTURE.PLAZA_003, new Plaza003(overworldUi, TEXTURE.PLAZA_003, AUDIO.P003));
-    overworldInfo.registerMap(TEXTURE.PLAZA_004, new Plaza004(overworldUi, TEXTURE.PLAZA_004, AUDIO.P004));
-    overworldInfo.registerMap(TEXTURE.PLAZA_005, new Plaza005(overworldUi, TEXTURE.PLAZA_005, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_006, new Plaza006(overworldUi, TEXTURE.PLAZA_006, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_007, new Plaza007(overworldUi, TEXTURE.PLAZA_007, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_008, new Plaza008(overworldUi, TEXTURE.PLAZA_008, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_009, new Plaza009(overworldUi, TEXTURE.PLAZA_009, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_010, new Plaza010(overworldUi, TEXTURE.PLAZA_010, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_011, new Plaza011(overworldUi, TEXTURE.PLAZA_011, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_012, new Plaza012(overworldUi, TEXTURE.PLAZA_012, AUDIO.P012));
-    overworldInfo.registerMap(TEXTURE.PLAZA_013, new Plaza013(overworldUi, TEXTURE.PLAZA_013, AUDIO.P012));
-    overworldInfo.registerMap(TEXTURE.PLAZA_014, new Plaza014(overworldUi, TEXTURE.PLAZA_014, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_015, new Plaza015(overworldUi, TEXTURE.PLAZA_015, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_016, new Plaza016(overworldUi, TEXTURE.PLAZA_016, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_017, new Plaza017(overworldUi, TEXTURE.PLAZA_017, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_018, new Plaza018(overworldUi, TEXTURE.PLAZA_018, AUDIO.P001));
-    overworldInfo.registerMap(TEXTURE.PLAZA_019, new Plaza019(overworldUi, TEXTURE.PLAZA_019, AUDIO.P001));
-    //safari
-    overworldInfo.registerMap(TEXTURE.SAFARI_000, new Safari000(overworldUi, TEXTURE.SAFARI_000, AUDIO.S000));
-    overworldInfo.registerMap(TEXTURE.SAFARI_001, new Safari001(overworldUi, TEXTURE.SAFARI_001, AUDIO.S001));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_001, (ui) => new Plaza001(TEXTURE.PLAZA_001, AUDIO.B005, false, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_002, (ui) => new Plaza002(TEXTURE.PLAZA_002, AUDIO.B010, false, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_003, (ui) => new Plaza003(TEXTURE.PLAZA_003, AUDIO.B001, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_004, (ui) => new Plaza004(TEXTURE.PLAZA_004, AUDIO.B008, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_005, (ui) => new Plaza005(TEXTURE.PLAZA_005, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_006, (ui) => new Plaza006(TEXTURE.PLAZA_006, AUDIO.B011, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_007, (ui) => new Plaza007(TEXTURE.PLAZA_007, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_008, (ui) => new Plaza008(TEXTURE.PLAZA_008, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_009, (ui) => new Plaza009(TEXTURE.PLAZA_009, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_010, (ui) => new Plaza010(TEXTURE.PLAZA_010, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_011, (ui) => new Plaza011(TEXTURE.PLAZA_011, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_012, (ui) => new Plaza012(TEXTURE.PLAZA_012, AUDIO.B005, true, TEXTURE.AREA_3));
 
-    GM.changeMode(MODE.AUTO_LOGIN);
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_019, (ui) => new Plaza019(TEXTURE.PLAZA_019, AUDIO.B009, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_020, (ui) => new Plaza020(TEXTURE.PLAZA_020, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_021, (ui) => new Plaza021(TEXTURE.PLAZA_021, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_022, (ui) => new Plaza022(TEXTURE.PLAZA_022, AUDIO.B005, true, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_023, (ui) => new Plaza023(TEXTURE.PLAZA_023, AUDIO.B005, true, TEXTURE.AREA_3));
+    //gate
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_001, (ui) => new Gate001(TEXTURE.GATE_001, AUDIO.B004, false, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_002, (ui) => new Gate002(TEXTURE.GATE_002, AUDIO.B004, false, TEXTURE.AREA_3));
+
+    //safari
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_001, (ui) => new Safari001(TEXTURE.SAFARI_001, AUDIO.B006, false, TEXTURE.AREA_1));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_002, (ui) => new Safari002(TEXTURE.SAFARI_002, AUDIO.B007, false, TEXTURE.AREA_1));
+
+    Game.initializeGame();
   }
 
   update(time: number, delta: number): void {
-    const overworldUi = GM.findUiOnStack(UI.OVERWORLD);
+    const overworldUi = Game.findUiInStack((ui): ui is OverworldUi => ui instanceof OverworldUi);
 
-    if (overworldUi && overworldUi instanceof OverworldUi) {
+    if (overworldUi) {
       overworldUi.update(time, delta);
     }
   }
@@ -158,7 +176,7 @@ export class InGameScene extends BaseScene {
 
     this.initDoorAnimation();
 
-    // this.initNpcAnimation();
+    this.initNpcAnimation();
     this.initPlayerAnimation();
     this.initPokemonAnimation();
     this.initBattleBallAnimation();
@@ -188,17 +206,25 @@ export class InGameScene extends BaseScene {
 
   private initNpcAnimation() {
     for (const key of Object.keys(npcData)) {
-      const movementFrames = getSpriteFrames(this, `${key}`, ANIMATION.NPC_MOVEMENT);
+      const frames = getSpriteFrames(this, `${key}`, ANIMATION.NPC_MOVEMENT);
 
-      const up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
-      const down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
-      const left = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
-      const right = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
+      const up_0 = [frames[13], frames[12]];
+      const up_1 = [frames[15], frames[14]];
+      const down_0 = [frames[1], frames[0]];
+      const down_1 = [frames[3], frames[2]];
+      const left_0 = [frames[5], frames[4]];
+      const left_1 = [frames[7], frames[6]];
+      const right_0 = [frames[9], frames[8]];
+      const right_1 = [frames[11], frames[10]];
 
-      createSpriteAnimation(this, `npc${key}`, `npc${key}_up`, up);
-      createSpriteAnimation(this, `npc${key}`, `npc${key}_down`, down);
-      createSpriteAnimation(this, `npc${key}`, `npc${key}_left`, left);
-      createSpriteAnimation(this, `npc${key}`, `npc${key}_right`, right);
+      createSpriteAnimation(this, `${key}`, `${key}_up_0`, up_0);
+      createSpriteAnimation(this, `${key}`, `${key}_up_1`, up_1);
+      createSpriteAnimation(this, `${key}`, `${key}_down_0`, down_0);
+      createSpriteAnimation(this, `${key}`, `${key}_down_1`, down_1);
+      createSpriteAnimation(this, `${key}`, `${key}_left_0`, left_0);
+      createSpriteAnimation(this, `${key}`, `${key}_left_1`, left_1);
+      createSpriteAnimation(this, `${key}`, `${key}_right_0`, right_0);
+      createSpriteAnimation(this, `${key}`, `${key}_right_1`, right_1);
     }
   }
 
@@ -593,6 +619,4 @@ export class InGameScene extends BaseScene {
       this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
     }
   }
-
-  private initAudio() {}
 }

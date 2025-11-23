@@ -2,15 +2,15 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
 import { AUDIO, DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
-import { addBackground, addImage, addText, addTextInput, addWindow, playEffectSound, startModalAnimation } from './ui';
+import { playEffectSound, startModalAnimation } from './ui';
 import i18next from '../i18n';
 import { loginLocalApi } from '../api';
-import { GM } from '../core/game-manager';
+import { Game } from '../core/manager/game-manager';
+import { ErrorCode } from '../core/errors';
 
 export class LoginUi extends ModalFormUi {
   private bg!: Phaser.GameObjects.Image;
 
-  // private loginTitle!: Phaser.GameObjects.Text;
   private title!: Phaser.GameObjects.Image;
   private errTexts!: Phaser.GameObjects.Text;
 
@@ -42,10 +42,10 @@ export class LoginUi extends ModalFormUi {
     super.setup();
     this.setModalSize(TEXTURE.WINDOW_0, 180, 190, 4);
 
-    this.container = this.createContainer(width / 2, height / 2);
-    this.mixContainer = this.createContainer(width / 2, height / 2);
+    this.container = this.createTrackedContainer(width / 2, height / 2);
+    this.mixContainer = this.createTrackedContainer(width / 2, height / 2);
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    this.bg = this.addBackground(TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
     this.setUpTitles(width, height);
     this.setUpInput(width, height);
     this.setUpBtn(width, height);
@@ -81,16 +81,14 @@ export class LoginUi extends ModalFormUi {
     this.pause(false);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-
-    for (let i = 0; i < this.targetContainers.length; i++) {
-      this.targetContainers[i].y = this.restorePosY[i];
-      this.targetContainers[i].setAlpha(1);
-      this.targetContainers[i].setVisible(false);
-    }
-
-    this.pause(true);
+  protected onClean(): void {
+    this.inputs = [];
+    this.inputWindows = [];
+    this.btnWindows = [];
+    this.btnTexts = [];
+    this.btnOthers = [];
+    this.targetContainers = [];
+    this.restorePosY = [];
   }
 
   handleKeyInput() {
@@ -137,20 +135,20 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpInput(width: number, height: number) {
-    this.inputContainer = this.createContainer(width / 2, height / 2 - 110);
+    this.inputContainer = this.createTrackedContainer(width / 2, height / 2 - 110);
 
-    this.inputWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.inputWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.errTexts = addText(this.scene, 0, +195, '', TEXTSTYLE.GENDER_1);
+    this.inputWindows[0] = this.addWindow(TEXTURE.WINDOW_WHITE, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[1] = this.addWindow(TEXTURE.WINDOW_WHITE, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.errTexts = this.addText(0, +195, '', TEXTSTYLE.GENDER_1);
 
-    this.inputs[0] = addTextInput(this.scene, -200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+    this.inputs[0] = this.addTextInput(-200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'text',
       placeholder: i18next.t('menu:username'),
       minLength: 6,
       maxLength: 18,
     }).setScale(2);
 
-    this.inputs[1] = addTextInput(this.scene, -200, +100, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+    this.inputs[1] = this.addTextInput(-200, +100, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'password',
       placeholder: i18next.t('menu:password'),
       minLength: 6,
@@ -169,23 +167,23 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpBtn(width: number, height: number) {
-    this.btnContainer = this.createContainer(width / 2, height / 2 + 150);
+    this.btnContainer = this.createTrackedContainer(width / 2, height / 2 + 150);
 
-    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_0, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
-    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_0, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
-    this.btnTexts[0] = addText(this.scene, -125, 0, i18next.t('menu:login'), TEXTSTYLE.DEFAULT);
-    this.btnTexts[1] = addText(this.scene, +125, 0, i18next.t('menu:register'), TEXTSTYLE.DEFAULT);
-    this.btnOthers[0] = addImage(this.scene, TEXTURE.BLANK, -40, +115).setInteractive({ cursor: 'pointer' }); //google
-    this.btnOthers[1] = addImage(this.scene, TEXTURE.BLANK, +40, +115).setInteractive({ cursor: 'pointer' }); //discord
-    this.orText = addText(this.scene, 0, +60, '', TEXTSTYLE.DEFAULT_GRAY); //i18next.t('menu:or')
+    this.btnWindows[0] = this.addWindow(TEXTURE.WINDOW_0, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnWindows[1] = this.addWindow(TEXTURE.WINDOW_0, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnTexts[0] = this.addText(-125, 0, i18next.t('menu:login'), TEXTSTYLE.DEFAULT);
+    this.btnTexts[1] = this.addText(+125, 0, i18next.t('menu:register'), TEXTSTYLE.DEFAULT);
+    this.btnOthers[0] = this.addImage(TEXTURE.BLANK, -40, +115).setInteractive({ cursor: 'default' }); //google
+    this.btnOthers[1] = this.addImage(TEXTURE.BLANK, +40, +115).setInteractive({ cursor: 'default' }); //discord
+    this.orText = this.addText(0, +60, '', TEXTSTYLE.DEFAULT_GRAY);
 
     this.btnContainer.add(this.btnWindows[0]);
     this.btnContainer.add(this.btnWindows[1]);
     this.btnContainer.add(this.btnTexts[0]);
     this.btnContainer.add(this.btnTexts[1]);
+    this.btnContainer.add(this.orText);
     this.btnContainer.add(this.btnOthers[0]);
     this.btnContainer.add(this.btnOthers[1]);
-    this.btnContainer.add(this.orText);
 
     this.btnContainer.setVisible(false);
     this.btnContainer.setDepth(DEPTH.TITLE + 2);
@@ -193,11 +191,9 @@ export class LoginUi extends ModalFormUi {
   }
 
   private setUpTitles(width: number, height: number) {
-    this.titleContainer = this.createContainer(width / 2, height / 2 - 250);
+    this.titleContainer = this.createTrackedContainer(width / 2, height / 2 - 250);
 
-    // this.loginTitle = addText(this.scene, 0, 0, i18next.t('menu:login'), TEXTSTYLE.TITLE_MODAL);
-    this.title = addImage(this.scene, TEXTURE.LOGO_0, 0, 0).setScale(2.4);
-    // this.titleContainer.add(this.loginTitle);
+    this.title = this.addImage(TEXTURE.LOGO_0, 0, 0).setScale(2.2);
     this.titleContainer.add(this.title);
 
     this.titleContainer.setVisible(false);
@@ -212,24 +208,18 @@ export class LoginUi extends ModalFormUi {
     this.btnWindows[1].on('pointerover', () => {
       this.btnWindows[1].setTint(0xcccccc);
     });
-    this.btnOthers[0].on('pointerover', () => {
-      this.btnOthers[0].setTint(0xcccccc);
-    });
-    this.btnOthers[1].on('pointerover', () => {
-      this.btnOthers[1].setTint(0xcccccc);
-    });
+    // this.btnOthers[0].on('pointerover', () => {
+    //   this.btnOthers[0].setTint(0xcccccc);
+    // });
+    // this.btnOthers[1].on('pointerover', () => {
+    //   this.btnOthers[1].setTint(0xcccccc);
+    // });
 
     this.btnWindows[0].on('pointerout', () => {
       this.btnWindows[0].clearTint();
     });
     this.btnWindows[1].on('pointerout', () => {
       this.btnWindows[1].clearTint();
-    });
-    this.btnOthers[0].on('pointerout', () => {
-      this.btnOthers[0].clearTint();
-    });
-    this.btnOthers[1].on('pointerout', () => {
-      this.btnOthers[1].clearTint();
     });
 
     this.btnWindows[0].on('pointerup', async () => {
@@ -240,27 +230,19 @@ export class LoginUi extends ModalFormUi {
         if (res!.result) {
           localStorage.setItem('access_token', String(res!.data.token));
 
-          if (res!.data.isDelete) {
-            GM.changeMode(MODE.ACCOUNT_DELETE_RESTORE, res!.data.isDeleteAt);
-          } else {
-            GM.changeMode(MODE.CHECK_INGAME_DATA);
-          }
+          if (res!.data.isDelete) Game.changeMode(MODE.ACCOUNT_DELETE_RESTORE, res!.data.isDeleteAt);
+          else Game.changeMode(MODE.CHECK_INGAME_DATA);
         } else {
-          if (res!.data === HttpErrorCode.LOGIN_FAIL) {
+          if (res!.data === ErrorCode.FAIL_LOGIN) {
             this.shake();
             this.errTexts.setText(i18next.t('message:invalidUsernameOrPassword'));
+            this.pause(false);
           }
         }
       }
     });
     this.btnWindows[1].on('pointerup', () => {
-      GM.changeMode(MODE.REGISTER);
-    });
-    this.btnOthers[0].on('pointerup', () => {
-      console.log('OAuth Google');
-    });
-    this.btnOthers[1].on('pointerup', () => {
-      console.log('OAuth Discord');
+      Game.changeMode(MODE.REGISTER);
     });
   }
 

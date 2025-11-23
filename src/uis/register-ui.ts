@@ -6,7 +6,8 @@ import { addBackground, addText, addTextInput, addWindow, playEffectSound, start
 import i18next from '../i18n';
 import { registerApi } from '../api';
 import { isValidPassword, isValidUsername } from '../utils/string-util';
-import { GM } from '../core/game-manager';
+import { Game } from '../core/manager/game-manager';
+import { ErrorCode } from '../core/errors';
 
 export class RegisterUi extends ModalFormUi {
   private bg!: Phaser.GameObjects.Image;
@@ -39,9 +40,9 @@ export class RegisterUi extends ModalFormUi {
     super.setup();
     this.setModalSize(TEXTURE.WINDOW_0, 170, 185, 4);
 
-    this.container = this.createContainer(width / 2, height / 2);
+    this.container = this.createTrackedContainer(width / 2, height / 2);
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    this.bg = this.addBackground(TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
     this.setUpTitle(width, height);
     this.setUpInput(width, height);
     this.setUpBtn(width, height);
@@ -79,14 +80,13 @@ export class RegisterUi extends ModalFormUi {
     this.pause(false);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-
-    for (let i = 0; i < this.targetContainers.length; i++) {
-      this.targetContainers[i].y = this.restorePosY[i];
-      this.targetContainers[i].setAlpha(1);
-      this.targetContainers[i].setVisible(false);
-    }
+  protected onClean(): void {
+    this.inputs = [];
+    this.inputWindows = [];
+    this.btnWindows = [];
+    this.btnTexts = [];
+    this.targetContainers = [];
+    this.restorePosY = [];
   }
 
   pause(onoff: boolean, data?: any): void {
@@ -119,9 +119,9 @@ export class RegisterUi extends ModalFormUi {
   }
 
   private setUpTitle(width: number, height: number) {
-    this.titleContainer = this.createContainer(width / 2, height / 2 - 280);
+    this.titleContainer = this.createTrackedContainer(width / 2, height / 2 - 280);
 
-    this.title = addText(this.scene, 0, 0, i18next.t('menu:register'), TEXTSTYLE.TITLE_MODAL);
+    this.title = this.addText(0, 0, i18next.t('menu:register'), TEXTSTYLE.TITLE_MODAL);
 
     this.titleContainer.add(this.title);
 
@@ -133,28 +133,28 @@ export class RegisterUi extends ModalFormUi {
   }
 
   private setUpInput(width: number, height: number) {
-    this.inputContainer = this.createContainer(width / 2, height / 2 - 120);
+    this.inputContainer = this.createTrackedContainer(width / 2, height / 2 - 120);
 
-    this.inputWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.inputWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.inputWindows[2] = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, +200, 380, 60, 16, 16, 16, 16).setScale(1.2);
-    this.errTexts = addText(this.scene, 0, +270, '', TEXTSTYLE.GENDER_1).setOrigin(0.5, 0);
+    this.inputWindows[0] = this.addWindow(TEXTURE.WINDOW_WHITE, 0, 0, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[1] = this.addWindow(TEXTURE.WINDOW_WHITE, 0, +100, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.inputWindows[2] = this.addWindow(TEXTURE.WINDOW_WHITE, 0, +200, 380, 60, 16, 16, 16, 16).setScale(1.2);
+    this.errTexts = this.addText(0, +270, '', TEXTSTYLE.GENDER_1).setOrigin(0.5, 0);
 
-    this.inputs[0] = addTextInput(this.scene, -200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+    this.inputs[0] = this.addTextInput(-200, 0, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'text',
       placeholder: i18next.t('menu:username'),
       minLength: 6,
       maxLength: 18,
     }).setScale(2);
 
-    this.inputs[1] = addTextInput(this.scene, -200, +100, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+    this.inputs[1] = this.addTextInput(-200, +100, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'password',
       placeholder: i18next.t('menu:password'),
       minLength: 6,
       maxLength: 18,
     }).setScale(2);
 
-    this.inputs[2] = addTextInput(this.scene, -200, +200, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
+    this.inputs[2] = this.addTextInput(-200, +200, 380, 60, TEXTSTYLE.LOBBY_INPUT, {
       type: 'password',
       placeholder: i18next.t('menu:repassword'),
       minLength: 6,
@@ -175,12 +175,12 @@ export class RegisterUi extends ModalFormUi {
   }
 
   private setUpBtn(width: number, height: number) {
-    this.btnContainer = this.createContainer(width / 2, height / 2 + 270);
+    this.btnContainer = this.createTrackedContainer(width / 2, height / 2 + 270);
 
-    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_0, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
-    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_0, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
-    this.btnTexts[0] = addText(this.scene, -125, 0, i18next.t('menu:register'), TEXTSTYLE.DEFAULT);
-    this.btnTexts[1] = addText(this.scene, +125, 0, i18next.t('menu:backToLogin'), TEXTSTYLE.DEFAULT).setFontSize(50);
+    this.btnWindows[0] = this.addWindow(TEXTURE.WINDOW_0, -125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnWindows[1] = this.addWindow(TEXTURE.WINDOW_0, +125, 0, 170, 60, 16, 16, 16, 16).setScale(1.2).setInteractive({ cursor: 'pointer' });
+    this.btnTexts[0] = this.addText(-125, 0, i18next.t('menu:register'), TEXTSTYLE.DEFAULT);
+    this.btnTexts[1] = this.addText(+125, 0, i18next.t('menu:backToLogin'), TEXTSTYLE.DEFAULT).setFontSize(50);
 
     this.btnContainer.add(this.btnWindows[0]);
     this.btnContainer.add(this.btnWindows[1]);
@@ -211,12 +211,11 @@ export class RegisterUi extends ModalFormUi {
       if (this.validate(this.inputs[0].text, this.inputs[1].text, this.inputs[2].text)) {
         const res = await registerApi({ username: this.inputs[0].text, password: this.inputs[2].text });
         if (res!.result) {
-          console.log(res!.data);
           localStorage.setItem('access_token', String(res!.data));
 
-          GM.changeMode(MODE.NEWGAME);
+          Game.changeMode(MODE.WELCOME);
         } else {
-          if (res!.data === HttpErrorCode.ALREADY_EXIST_ACCOUNT) {
+          if (res!.data === ErrorCode.ALREADY_EXIST_ACCOUNT) {
             this.shake();
             this.errTexts.setText(i18next.t('message:existAccount'));
           }
@@ -225,7 +224,7 @@ export class RegisterUi extends ModalFormUi {
     });
 
     this.btnWindows[1].on('pointerup', () => {
-      GM.changeMode(MODE.LOGIN);
+      Game.changeMode(MODE.LOGIN);
     });
   }
 

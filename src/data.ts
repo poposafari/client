@@ -528,18 +528,16 @@ export function getPokemonInfo(pokedexNumber: number): PokemonData | null {
 
 export interface SafariData {
   key: string;
-  cost: number;
-  x: number;
-  y: number;
   area: BATTLE_AREA;
 }
 
 const initialSafariData: Record<string, SafariData> = {
   s001: {
     key: 's001',
-    cost: 1,
-    x: 110,
-    y: 72,
+    area: BATTLE_AREA.FIELD,
+  },
+  s002: {
+    key: 's002',
     area: BATTLE_AREA.FIELD,
   },
 };

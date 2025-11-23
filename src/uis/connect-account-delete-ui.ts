@@ -1,7 +1,8 @@
 import { DEPTH, EASE, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addText, addWindow, Ui } from './ui';
+import { TalkMessageUi } from './talk-message-ui';
+import { Ui } from './ui';
 
 export class ConnectAccountDeleteUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -22,11 +23,11 @@ export class ConnectAccountDeleteUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2 + 410);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, windowWidth / windowScale, windowHeight / windowScale, 16, 16, 16, 16);
+    const window = this.addWindow(TEXTURE.WINDOW_MENU, 0, 0, windowWidth / windowScale, windowHeight / windowScale, 16, 16, 16, 16);
     window.setScale(windowScale);
-    const text = addText(this.scene, -440, -35, i18next.t('message:deleteAccount3'), TEXTSTYLE.MESSAGE_BLACK);
+    const text = this.addText(-440, -35, i18next.t('message:deleteAccount3'), TEXTSTYLE.MESSAGE_BLACK);
     text.setOrigin(0, 0);
-    this.type1Symbol = addText(this.scene, text.displayWidth + text.x + 15, text.displayOriginY + 16, '/', TEXTSTYLE.MESSAGE_BLACK);
+    this.type1Symbol = this.addText(text.displayWidth + text.x + 15, text.displayOriginY + 16, '/', TEXTSTYLE.MESSAGE_BLACK);
     this.type1Symbol.setOrigin(0.5, 0.55);
 
     this.container.add(window);
@@ -56,9 +57,7 @@ export class ConnectAccountDeleteUi extends Ui {
     });
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-
+  protected onClean(): void {
     if (this.spinningTween) {
       this.spinningTween.stop();
       this.spinningTween = null;

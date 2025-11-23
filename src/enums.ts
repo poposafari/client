@@ -12,6 +12,7 @@ export const enum TEXTURE {
   WINDOW_REWARD_0 = 'window_reward_0',
   WINDOW_WHITE = 'window_white',
   WINDOW_OPACITY = 'window_opacity',
+  WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
   WINDOW_2 = 'window_2',
@@ -48,38 +49,35 @@ export const enum TEXTURE {
   OUTDOOR_TILE_OBJECT = 'outdoor_object',
   OUTDOOR_TILE_OBJECT_URBAN = 'outdoor_object_urban',
   OUTDOOR_TILE_URBAN = 'outdoor_urban',
-  PLAZA_000 = 'p000',
+  EVENT = 'event',
+  GATE_TYPE_0 = 'gate_0', //게이트_타입0(가로형)
   PLAZA_001 = 'p001', //포포시티
   PLAZA_002 = 'p002', //호박사 연구소
-  PLAZA_003 = 'p003', //프렌들리 숍
-  PLAZA_004 = 'p004', //우체국
-  PLAZA_005 = 'p005', //비행정
-  PLAZA_006 = 'p006', //자전거 가게
-  PLAZA_007 = 'p007', //npc집 1
-  PLAZA_008 = 'p008', //npc집 2
-  PLAZA_009 = 'p009', //npc집 3
-  PLAZA_010 = 'p010', //npc집 4
-  PLAZA_011 = 'p011', //npc집 5
-  PLAZA_012 = 'p012', //npc집 6
-  PLAZA_013 = 'p013', //npc집 7
-  PLAZA_014 = 'p014', //npc집 8
-  PLAZA_015 = 'p015', //npc집 9
-  PLAZA_016 = 'p016', //npc집 10
-  PLAZA_017 = 'p017', //npc집 11
-  PLAZA_018 = 'p018', //npc집 12
-  PLAZA_019 = 'p019', //npc집 13
-  PLAZA_020 = 'p020', //npc집 14
-  SAFARI_000 = 's000', //테스트 사파리 존
-  SAFARI_001 = 's001', //숲
-  SAFARI_002 = 's002',
-  SAFARI_003 = 's003',
-  SAFARI_004 = 's004',
-  SAFARI_005 = 's005',
-  SAFARI_006 = 's006',
-  SAFARI_007 = 's007',
-  SAFARI_008 = 's008',
-  SAFARI_009 = 's009',
-  SAFARI_010 = 's010',
+  PLAZA_003 = 'p003', //호박사 집
+  PLAZA_004 = 'p004', //프렌들리 숍
+  PLAZA_005 = 'p005', //자전거 가게
+  PLAZA_006 = 'p006', //시청
+  PLAZA_007 = 'p007', //플라자 007
+  PLAZA_008 = 'p008', //플라자 008
+  PLAZA_009 = 'p009', //플라자 009
+  PLAZA_010 = 'p010', //플라자 010
+  PLAZA_011 = 'p011', //플라자 011
+  PLAZA_012 = 'p012', //플라자 012
+  PLAZA_013 = 'p013', //플라자 013
+  PLAZA_014 = 'p014', //플라자 014
+  PLAZA_015 = 'p015', //플라자 015
+  PLAZA_016 = 'p016', //플라자 016
+  PLAZA_017 = 'p017', //플라자 017
+  PLAZA_018 = 'p018', //플라자 018
+  PLAZA_019 = 'p019', //플라자 019
+  PLAZA_020 = 'p020', //플라자 020
+  PLAZA_021 = 'p021', //플라자 021
+  PLAZA_022 = 'p022', //플라자 022
+  PLAZA_023 = 'p023', //플라자 023
+  GATE_001 = 'g001', //1번 게이트
+  GATE_002 = 'g002', //2번 게이트
+  SAFARI_001 = 's001', //1번 도로
+  SAFARI_002 = 's002', //2번 도로
 
   //icons
   ICON_PC = 'icon_pc',
@@ -100,6 +98,25 @@ export const enum TEXTURE {
   ICON_CANCEL = 'icon_cancel',
   ICON_REG = 'icon_reg',
   ICON_TALK = 'icon_talk',
+
+  //area
+  AREA_0 = 'area_0',
+  AREA_1 = 'area_1',
+  AREA_2 = 'area_2',
+  AREA_3 = 'area_3',
+  AREA_4 = 'area_4',
+  AREA_5 = 'area_5',
+  AREA_6 = 'area_6',
+  AREA_7 = 'area_7',
+  AREA_8 = 'area_8',
+  AREA_9 = 'area_9',
+  AREA_10 = 'area_10',
+  AREA_11 = 'area_11',
+  AREA_12 = 'area_12',
+  AREA_13 = 'area_13',
+  AREA_14 = 'area_14',
+  AREA_15 = 'area_15',
+  AREA_16 = 'area_16',
 
   //etc
   LOGO_0 = 'logo_0',
@@ -239,7 +256,7 @@ export const enum ANIMATION {
   PAUSE = 'pause',
   PAUSE_W = 'pause_w',
   PAUSE_B = 'pause_b',
-  NPC_MOVEMENT = 'npc_movement',
+  NPC_MOVEMENT = 'npc',
   PLAYER_MOVEMENT = 'player_movement',
   PLAYER_SURF = 'player_surf',
   OVERWORLD_SHADOW = 'overworld_shadow',
@@ -366,13 +383,27 @@ export const enum EASE {
 
 export enum AUDIO {
   //background sounds
-  P001 = 'p001',
-  P002 = 'p002',
-  P003 = 'p003',
-  P004 = 'p004',
-  P012 = 'p012',
-  S000 = 's000',
-  S001 = 's001',
+  B000 = 'b000',
+  B001 = 'b001',
+  B002 = 'b002',
+  B003 = 'b003',
+  B004 = 'b004',
+  B005 = 'b005',
+  B006 = 'b006',
+  B007 = 'b007',
+  B008 = 'b008',
+  B009 = 'b009',
+  B010 = 'b010',
+  B011 = 'b011',
+  B012 = 'b012',
+  B013 = 'b013',
+  B014 = 'b014',
+  B015 = 'b015',
+  B016 = 'b016',
+  B017 = 'b017',
+  B018 = 'b018',
+  B019 = 'b019',
+  B020 = 'b020',
 
   //effect sounds
   SELECT_0 = 'select_0',
@@ -380,6 +411,7 @@ export enum AUDIO {
   SELECT_2 = 'select_2',
   OPEN_0 = 'open_0',
   OPEN_1 = 'open_1',
+  OPEN_2 = 'open_2',
   CANCEL_0 = 'cancel_0',
   CANCEL_1 = 'cancel_1',
   GET_0 = 'get_0',
@@ -435,6 +467,7 @@ export const enum KEY {
   CANCEL = 90,
   RUNNING = 82,
   ENTER = 13,
+  ESC = 27,
   LEFT = 37,
   UP = 38,
   RIGHT = 39,
@@ -452,16 +485,18 @@ export const enum KEY {
 }
 
 export enum UI {
-  CONNECT = 'ConnectUi',
-  MESSAGE = 'MessageUi',
+  CONNECT_BASE = 'ConnectBaseUi',
+  CONNECT_ACCOUNT_DELETE = 'ConnectAccountDeleteUi',
+  CONNECT_SAFARI = 'ConnectSafariUi',
+  FAIL_TOKEN = 'FailTokenUi',
   LOGIN = 'LoginUi',
   REGISTER = 'RegisterUi',
   TITLE = 'TitleUi',
   WELCOME = 'WelcomeUi',
-  NEWGAME = 'NewgameUi',
   STARTER = 'StarterUi',
+  STARTER_POKEMON = 'StarterPokemonUi',
   ACCOUNT_DELETE = 'AccountDeleteUi',
-  CONNECT_ACCOUNT_DELETE = 'ConnectAccountDeleteUi',
+  SEASON_SCREEN = 'SeasonScreenUi',
   OVERWORLD = 'OverworldUi',
   OVERWORLD_HUD = 'OverworldHUDUi',
   OVERWORLD_MENU = 'OverworldMenuUi',
@@ -520,6 +555,13 @@ export const enum OBJECT {
   STATUE = 'statue',
   SHOP_CHECKOUT = 'shop-checkout',
   POST_CHECKOUT = 'post-checkout',
+  TRIGGER = 'trigger',
+  SIGN = 'sign',
+}
+
+export const enum TRIGGER {
+  TRIGGER_000 = 'trigger_000',
+  TRIGGER_001 = 'trigger_001',
 }
 
 export const enum ITEM {
@@ -538,6 +580,10 @@ export const enum ITEM_USAGE_TYPE {
 export enum MODE {
   NONE,
   AUTO_LOGIN,
+  FAIL_TOKEN,
+  SEASON_SCREEN,
+  CONTINUE,
+  EVOLVE,
   LOGIN,
   REGISTER,
   ACCOUNT_DELETE,
@@ -559,6 +605,9 @@ export enum MODE {
   BLACK_SCREEN,
   BATTLE,
   QUICK_SLOT_ITEM,
+  HIDDEN_MOVE,
+  STARTER_POKEMON,
+  CHECK_OVERWORLD,
 }
 
 export function isMode(data: any): data is MODE {
@@ -566,18 +615,16 @@ export function isMode(data: any): data is MODE {
 }
 
 export enum EVENT {
-  HUD_LOCATION_UPDATE,
-  HUD_ITEMSLOT_UPDATE,
-  HUD_PARTY_UPDATE,
-  HUD_CANDY_UPDATE,
   HUD_SHOW_OVERWORLD,
-  UPDATE_OVERWORLD_ICON_TINT,
-  BATTLE_FINISH,
-  BATTLE_UI_FINISH,
-  SHOW_BATTLE_MENU,
-  FORCE_CHANGE_BATTLE_MESSAGE,
-  EVOLVE_FINISH_IN_PC,
-  UPDATE_CATCHRATE,
+  UPDATE_OVERWORLD_ICON_TINT, //
+  BATTLE_FINISH, //
+  BATTLE_UI_FINISH, //
+  SHOW_BATTLE_MENU, //
+  FORCE_CHANGE_BATTLE_MESSAGE, //
+  UI_CLOSED,
+  USE_ITEM,
+  SET_PET,
+  FINISH_MOVEMENT_PLAYER,
 
   //socket event
   ADD_OTHER_PLAYER,
@@ -601,6 +648,8 @@ export enum TIME {
 }
 
 export const enum TEXTSTYLE {
+  SPLASH_TEXT,
+  OVERWORLD_AREA,
   BAG_DESC,
   BAG_REGISTER,
   DEFAULT,
@@ -609,6 +658,7 @@ export const enum TEXTSTYLE {
   SPECIAL,
   TITLE_MODAL,
   LOBBY_INPUT,
+  SIGN_WHITE,
   MESSAGE_WHITE,
   MESSAGE_BLACK,
   MESSAGE_GRAY,
@@ -645,6 +695,10 @@ export const enum TEXTSTYLE {
   TYPE_STEEL,
   TYPE_FAIRY,
   TYPE_NORMAL,
+  RANK_COMMON,
+  RANK_RARE,
+  RANK_EPIC,
+  RANK_LEGENDARY,
 }
 
 export const enum OVERWORLD_TYPE {
@@ -666,6 +720,18 @@ export const enum PLAYER_STATUS {
   TALK = 'talk',
   WARP = 'warp',
   JUMP = 'jump',
+}
+
+export const enum OVERWORLD_ACTION {
+  IDLE = 'IDLE',
+  TALK = 'TALK',
+  MENU = 'MENU',
+  QUICK_SLOT = 'QUICK_SLOT',
+  OPEN_DOOR = 'OPEN_DOOR',
+  SURF = 'SURF',
+  AUTO_WALK = 'AUTO_WALK',
+  TRIGGER = 'TRIGGER',
+  BATTLE = 'BATTLE',
 }
 
 export enum POKEMON_STATUS {
@@ -753,4 +819,12 @@ export enum TextSpeed {
   SLOW = 100,
   MID = 50,
   FAST = 10,
+  CONG = 60,
+}
+
+export enum MessageEndDelay {
+  DEFAULT = 0,
+  CONG = 2300,
+  GET = 2000,
+  FLEE = 400,
 }

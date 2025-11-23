@@ -76,6 +76,10 @@ export class PlayerPokemon {
     return this.count;
   }
 
+  public setCount(count: number) {
+    this.count = count;
+  }
+
   public getSkill(): PokemonSkill[] {
     return this.skill;
   }

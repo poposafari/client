@@ -1,92 +1,67 @@
 import { AUDIO, DEPTH, EASE, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { Keyboard, KeyboardManager } from '../core/manager/keyboard-manager';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Notice } from '../types';
-import { addText, addWindow, playEffectSound, Ui } from './ui';
+import { addText, addWindow, getTextShadow, getTextStyle, playEffectSound, setTextShadow } from './ui';
+import { MessageUi } from './message-ui';
 
-export class NoticeUi extends Ui {
-  private container!: Phaser.GameObjects.Container;
-  private window!: Phaser.GameObjects.NineSlice;
-  private text!: Phaser.GameObjects.Text;
-
-  private readonly scale: number = 2;
-  private readonly windowWidth: number = 950;
-  private readonly windowHeight: number = 120;
-
+export class NoticeUi extends MessageUi {
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  setup(data?: any): void {
-    const width = this.getWidth();
-    const height = this.getHeight();
-
-    this.container = this.createContainer(width / 2, height / 2 + 410);
-
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_SYS, 0, 0, this.windowWidth / this.scale, this.windowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
-    this.text = addText(this.scene, -440, -35, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0);
-
-    this.container.add(this.window);
-    this.container.add(this.text);
-
-    this.container.setScale(this.scale);
-    this.container.setVisible(false);
-    this.container.setDepth(DEPTH.MESSAGE);
-    this.container.setScrollFactor(0);
+  protected setupMessageContainer(): void {
+    super.setupMessageContainer();
+    this.setTextPosition(-425, -35);
   }
 
-  async show(data: Notice[]): Promise<boolean> {
-    for (const notice of data) {
-      const keyboard = KeyboardHandler.getInstance();
-      keyboard.setAllowKey([KEY.SELECT]);
+  async show(data: Notice): Promise<boolean> {
+    this.text.setStyle(getTextStyle(data.textStyle || TEXTSTYLE.SIGN_WHITE));
+    setTextShadow(this.text, getTextShadow(TEXTSTYLE.SIGN_WHITE));
+    this.window.setTexture(data.window);
 
-      const result = await this.showNotice(notice);
+    Keyboard.setAllowKey([KEY.SELECT, KEY.ENTER]);
 
-      playEffectSound(this.scene, AUDIO.SELECT_0);
+    await this.showNotice(data);
 
-      this.container.setY(this.getHeight() / 2 + 500);
-      this.container.setVisible(true);
+    playEffectSound(this.scene, AUDIO.SELECT_0);
 
-      this.scene.tweens.add({
-        targets: this.container,
-        y: this.getHeight() / 2 + 410,
-        duration: 300,
-        ease: EASE.QUINT_EASEOUT,
+    this.container.setY(this.getHeight() / 2 + 500);
+    this.container.setVisible(true);
+
+    this.scene.tweens.add({
+      targets: this.container,
+      y: this.getHeight() / 2 + 410,
+      duration: 300,
+      ease: EASE.QUINT_EASEOUT,
+    });
+
+    await new Promise((resolve) => {
+      Keyboard.setKeyDownCallback((key) => {
+        if (key === KEY.SELECT || key === KEY.ENTER) {
+          this.scene.tweens.add({
+            targets: this.container,
+            y: this.getHeight() / 2 + 500,
+            duration: 200,
+            ease: EASE.QUINT_EASEIN,
+            onComplete: () => {
+              this.container.setVisible(false);
+              resolve(true);
+            },
+          });
+        }
       });
-
-      return new Promise((resolve) => {
-        keyboard.setKeyDownCallback((key) => {
-          if (key === KEY.SELECT && result) {
-            this.scene.tweens.add({
-              targets: this.container,
-              y: this.getHeight() / 2 + 500,
-              duration: 200,
-              ease: EASE.QUINT_EASEIN,
-              onComplete: () => {
-                this.container.setVisible(false);
-                resolve(true);
-              },
-            });
-          }
-        });
-      });
-    }
+      this.trackKeyboardCallback(() => Keyboard.clearCallbacks());
+    });
 
     return true;
   }
 
-  clean(data?: any): void {}
+  protected onClean(): void {
+    super.onClean();
+  }
 
-  pause(onoff: boolean, data?: any): void {}
-
-  handleKeyInput(...data: any[]) {}
-
-  update(time?: number, delta?: number): void {}
-
-  private showNotice(message: Notice): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.text.setText(message.content);
-      resolve(true);
-    });
+  private async showNotice(message: Notice): Promise<void> {
+    this.text.setText(message.content);
   }
 }

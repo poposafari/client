@@ -1,5 +1,5 @@
 import { SafariData } from '../data';
-import { DIRECTION, KEY, PLAYER_STATUS, Season, TextSpeed, TYPE } from '../enums';
+import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, Season, TextSpeed, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 
 export function createZeroPad(value: number): string {
@@ -331,4 +331,56 @@ export const changeTextSpeedToDigit = (speed: TextSpeed) => {
   }
 
   return ret;
+};
+
+export const formatPlaytime = (updatedAt: Date | string, createdAt: Date | string): string => {
+  const updated = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
+  const created = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
+  const diffMs = updated.getTime() - created.getTime();
+  const totalMinutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
+
+export const getBattleArea = (location: string) => {
+  switch (location) {
+    case 's001':
+      return BATTLE_AREA.FIELD;
+    case 's002':
+      return BATTLE_AREA.FIELD;
+  }
+};
+
+export const checkItemType = (item: string): ItemCategory => {
+  switch (item) {
+    case '001':
+    case '002':
+    case '003':
+    case '004':
+      return ItemCategory.POKEBALL;
+    case '011':
+    case '012':
+    case '013':
+    case '014':
+    case '015':
+    case '016':
+    case '017':
+    case '018':
+    case '019':
+    case '020':
+    case '021':
+    case '022':
+    case '023':
+    case '024':
+    case '025':
+    case '026':
+    case '027':
+    case '028':
+    case '029':
+      return ItemCategory.BERRY;
+    default:
+      return ItemCategory.ETC;
+  }
 };

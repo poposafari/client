@@ -1,11 +1,12 @@
-import { GM } from '../core/game-manager';
 import { AUDIO, DEPTH, KEY, TextSpeed, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
-import { SocketHandler } from '../handlers/socket-handler';
+import { Keyboard, KeyboardManager } from '../core/manager/keyboard-manager';
+import { SocketIO, SocketManager } from '../core/manager/socket-manager';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { changeTextSpeedToDigit } from '../utils/string-util';
 import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
+import { Option } from '../core/storage/player-option';
+import { Game } from '../core/manager/game-manager';
 
 export class OptionUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
@@ -32,6 +33,7 @@ export class OptionUi extends Ui {
     i18next.t('menu:optionTitle2'),
     i18next.t('menu:optionTitle3'),
     i18next.t('menu:optionTitle4'),
+    i18next.t('menu:optionTitle5'),
   ];
 
   constructor(scene: InGameScene) {
@@ -42,6 +44,7 @@ export class OptionUi extends Ui {
     this.optionUis.push(new OptionWindowTypeUi(scene, this, this.optionDescUi));
     this.optionUis.push(new OptionBackgroundSoundUi(scene, this));
     this.optionUis.push(new OptionEffectSoundUi(scene, this));
+    this.optionUis.push(new OptionTutorialUi(scene, this, this.optionDescUi));
   }
 
   setup(data?: any): void {
@@ -58,7 +61,7 @@ export class OptionUi extends Ui {
     this.titleContainer = this.createContainer(width / 2, height / 2 - 400);
     this.container = this.createContainer(width / 2, height / 2 - 20);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
+    const bg = this.addBackground(TEXTURE.BG_TITLE).setOrigin(0.5, 0.5);
 
     this.bgContainer.add(bg);
 
@@ -66,8 +69,8 @@ export class OptionUi extends Ui {
     this.bgContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE);
     this.bgContainer.setScrollFactor(0);
 
-    const titleWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.windowScale, this.titleWindowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
-    const titleText = addText(this.scene, -550, 0, i18next.t(`menu:option`), TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
+    const titleWindow = this.addWindow(TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.windowScale, this.titleWindowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
+    const titleText = this.addText(-550, 0, i18next.t(`menu:option`), TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
 
     this.titleContainer.add(titleWindow);
     this.titleContainer.add(titleText);
@@ -76,7 +79,7 @@ export class OptionUi extends Ui {
     this.titleContainer.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 1);
     this.titleContainer.setScrollFactor(0);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.windowScale, this.windowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
+    const window = this.addWindow(TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.windowScale, this.windowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
 
     this.container.add(window);
     this.setupContent();
@@ -103,7 +106,7 @@ export class OptionUi extends Ui {
     this.handleKeyInput();
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     runFadeEffect(this.scene, 800, 'in');
 
     this.bgContainer.setVisible(false);
@@ -116,31 +119,24 @@ export class OptionUi extends Ui {
 
     this.optionDescUi.clean();
 
-    console.log(GM.getUserOption()?.getTextSpeed());
-    console.log(GM.getUserOption()?.getFrame('number'));
-    console.log(GM.getUserOption()?.getBackgroundVolume());
-    console.log(GM.getUserOption()?.getEffectVolume());
-
-    SocketHandler.getInstance().changeOption({
-      textSpeed: changeTextSpeedToDigit(GM.getUserOption()?.getTextSpeed() as number),
-      frame: GM.getUserOption()?.getFrame('number') as number,
-      backgroundVolume: (GM.getUserOption()?.getBackgroundVolume()! as number) * 10,
-      effectVolume: (GM.getUserOption()?.getEffectVolume()! as number) * 10,
+    SocketIO.changeOption({
+      textSpeed: changeTextSpeedToDigit(Option.getTextSpeed() as number),
+      frame: Option.getFrame('number') as number,
+      backgroundVolume: (Option.getBackgroundVolume()! as number) * 10,
+      effectVolume: (Option.getEffectVolume()! as number) * 10,
+      tutorial: Option.getTutorial() as boolean,
     });
   }
 
   pause(onoff: boolean, data?: any): void {}
 
   handleKeyInput(...data: any[]) {
-    const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
-    const keyboard = KeyboardHandler.getInstance();
-
     this.choice = this.lastChoice;
     this.optionDescUi.updateText(this.choice);
     this.contentTitleDummys[this.choice].setTexture(TEXTURE.WINDOW_RED);
 
-    keyboard.setAllowKey(keys);
-    keyboard.setKeyDownCallback(async (key) => {
+    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL]);
+    Keyboard.setKeyDownCallback(async (key) => {
       try {
         if (this.activeControl === 'menu') {
           this.handleMenuNavigation(key);
@@ -174,23 +170,21 @@ export class OptionUi extends Ui {
       case KEY.RIGHT:
         this.optionUis[this.choice].handleKeyInput(key);
         this.switchToOptionControl();
-
         return;
+      case KEY.ENTER:
       case KEY.SELECT:
         const target = this.contentTitle[this.choice];
 
-        if (target === i18next.t('menu:optionTitle4')) {
+        if (target === i18next.t('menu:optionTitle5')) {
           this.lastChoice = 0;
           this.contentTitleDummys[this.choice].setTexture(TEXTURE.BLANK);
-          GM.popUi();
+          Game.popUi();
         }
-
         break;
       case KEY.CANCEL:
         this.lastChoice = 0;
         this.contentTitleDummys[this.choice].setTexture(TEXTURE.BLANK);
-        GM.popUi();
-
+        Game.popUi();
         break;
     }
 
@@ -223,8 +217,8 @@ export class OptionUi extends Ui {
 
     let currentY = -240;
     for (const title of this.contentTitle) {
-      const titleText = addText(this.scene, -570, currentY, title, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
-      const dummy = addWindow(this.scene, TEXTURE.BLANK, -578, currentY, (this.windowWidth - 42) / this.contentDummyScale, 80 / this.contentDummyScale, 16, 16, 16, 16)
+      const titleText = this.addText(-570, currentY, title, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
+      const dummy = this.addWindow(TEXTURE.BLANK, -578, currentY, (this.windowWidth - 42) / this.contentDummyScale, 80 / this.contentDummyScale, 16, 16, 16, 16)
         .setScale(this.contentDummyScale)
         .setOrigin(0, 0.5);
 
@@ -269,7 +263,7 @@ export class OptionTextSpeedUi extends Ui {
     this.container = this.createContainer(width / 2, height / 2 - 260);
 
     for (const content of this.contents) {
-      const text = addText(this.scene, currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
+      const text = this.addText(currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
 
       this.texts.push(text);
 
@@ -287,13 +281,13 @@ export class OptionTextSpeedUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}
 
-  handleKeyInput(key: KEY) {
+  async handleKeyInput(key: KEY) {
     let prevChoice = this.choice;
 
     this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
@@ -316,19 +310,19 @@ export class OptionTextSpeedUi extends Ui {
         }
         break;
       case KEY.CANCEL:
-        GM.popUi();
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
+        Game.popUi();
         break;
     }
 
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
-        GM.getUserOption()?.setTextSpeed(this.choice);
+        Option.setTextSpeed(this.choice);
 
         playEffectSound(this.scene, AUDIO.SELECT_0);
 
-        this.optionDescUi.showTestTextSpeed(GM.getUserOption()?.getTextSpeed()!);
+        this.optionDescUi.showTestTextSpeed(Option.getTextSpeed()!);
 
         this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
         this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
@@ -341,7 +335,7 @@ export class OptionTextSpeedUi extends Ui {
   }
 
   updateValue() {
-    this.choice = changeTextSpeedToDigit(GM.getUserOption()?.getTextSpeed()!);
+    this.choice = changeTextSpeedToDigit(Option.getTextSpeed()!);
 
     for (const text of this.texts) {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
@@ -377,11 +371,11 @@ export class OptionWindowTypeUi extends Ui {
 
     this.container = this.createContainer(width / 2 + 230, height / 2 - 180);
 
-    this.text = addText(this.scene, 0, 0, i18next.t('menu:optionWindow') + '0', TEXTSTYLE.MESSAGE_BLACK)
+    this.text = this.addText(0, 0, i18next.t('menu:optionWindow') + '0', TEXTSTYLE.MESSAGE_BLACK)
       .setOrigin(0.5, 0.5)
       .setScale(0.9);
-    this.arrowLeft = addImage(this.scene, TEXTURE.ARROW_G, this.text.x - this.text.displayOriginX - 20, 0).setScale(3);
-    this.arrowRight = addImage(this.scene, TEXTURE.ARROW_G, this.text.displayOriginX + this.text.x + 20, 0)
+    this.arrowLeft = this.addImage(TEXTURE.ARROW_G, this.text.x - this.text.displayOriginX - 20, 0).setScale(3);
+    this.arrowRight = this.addImage(TEXTURE.ARROW_G, this.text.displayOriginX + this.text.x + 20, 0)
       .setFlipX(true)
       .setScale(3);
 
@@ -400,7 +394,7 @@ export class OptionWindowTypeUi extends Ui {
     this.text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
@@ -427,17 +421,17 @@ export class OptionWindowTypeUi extends Ui {
         if (this.choice < this.contents - 1) this.choice++;
         break;
       case KEY.CANCEL:
-        GM.popUi();
+        Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
-        GM.getUserOption()?.setFrame(this.choice);
+        Option.setFrame(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
 
-        this.optionDescUi.showTestWindowFrame(GM.getUserOption()?.getFrame('text') as string);
+        this.optionDescUi.showTestWindowFrame(Option.getFrame('text') as string);
         this.text.setText(i18next.t('menu:optionWindow') + `${this.choice}`);
       }
     }
@@ -448,7 +442,7 @@ export class OptionWindowTypeUi extends Ui {
   }
 
   updateValue() {
-    this.choice = GM.getUserOption() ? (GM.getUserOption()?.getFrame('number') as number) : 0;
+    this.choice = Option.getFrame('number') as number;
 
     this.text.setText(i18next.t('menu:optionWindow') + `${this.choice}`);
   }
@@ -482,7 +476,7 @@ export class OptionBackgroundSoundUi extends Ui {
     this.container = this.createContainer(width / 2 - 60, height / 2 - 100);
 
     for (const content of this.contents) {
-      const text = addText(this.scene, currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
+      const text = this.addText(currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
 
       this.texts.push(text);
 
@@ -500,7 +494,7 @@ export class OptionBackgroundSoundUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
@@ -524,14 +518,14 @@ export class OptionBackgroundSoundUi extends Ui {
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
       case KEY.CANCEL:
-        GM.popUi();
+        Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
-        GM.getUserOption()?.setBackgroundVolume(this.choice);
+        Option.setBackgroundVolume(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
@@ -545,7 +539,7 @@ export class OptionBackgroundSoundUi extends Ui {
   }
 
   updateValue() {
-    this.choice = GM.getUserOption()?.getBackgroundVolume()! * 10;
+    this.choice = Option.getBackgroundVolume()! * 10;
 
     for (const text of this.texts) {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
@@ -583,7 +577,7 @@ export class OptionEffectSoundUi extends Ui {
     this.container = this.createContainer(width / 2 - 60, height / 2 - 20);
 
     for (const content of this.contents) {
-      const text = addText(this.scene, currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
+      const text = this.addText(currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
 
       this.texts.push(text);
 
@@ -601,7 +595,7 @@ export class OptionEffectSoundUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
@@ -625,14 +619,14 @@ export class OptionEffectSoundUi extends Ui {
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
       case KEY.CANCEL:
-        GM.popUi();
+        Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
     if (key === KEY.LEFT || key === KEY.RIGHT) {
       if (this.choice !== prevChoice) {
-        GM.getUserOption()?.setEffectVolume(this.choice);
+        Option.setEffectVolume(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
 
         this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
@@ -646,13 +640,127 @@ export class OptionEffectSoundUi extends Ui {
   }
 
   updateValue() {
-    this.choice = GM.getUserOption()?.getEffectVolume()! * 10;
+    this.choice = Option.getEffectVolume()! * 10;
 
     for (const text of this.texts) {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
 
     this.texts[this.choice >= 0 ? this.choice : 5].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+  }
+}
+
+export class OptionTutorialUi extends Ui {
+  private container!: Phaser.GameObjects.Container;
+
+  private optionUi: OptionUi;
+  private optionDescUi: OptionDescUi;
+
+  private choice: number = 0;
+
+  private texts: Phaser.GameObjects.Text[] = [];
+
+  private readonly contents: string[] = [i18next.t('menu:optionOn'), i18next.t('menu:optionOff')];
+
+  constructor(scene: InGameScene, option: OptionUi, optionDesc: OptionDescUi) {
+    super(scene);
+    this.optionUi = option;
+    this.optionDescUi = optionDesc;
+  }
+
+  setup(data?: any): void {
+    const width = this.getWidth();
+    const height = this.getHeight();
+
+    const contentWidth = 180;
+    const spacing = 50;
+
+    let currentX = +125;
+
+    this.container = this.createContainer(width / 2, height / 2 + 60);
+
+    for (const content of this.contents) {
+      const text = this.addText(currentX, 0, content, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
+
+      this.texts.push(text);
+
+      this.container.add(text);
+
+      currentX += contentWidth + spacing;
+    }
+
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
+    this.container.setScrollFactor(0);
+  }
+
+  show(data?: any) {
+    this.container.setVisible(true);
+  }
+
+  protected onClean(): void {
+    this.container.setVisible(false);
+  }
+
+  pause(onoff: boolean, data?: any): void {}
+
+  async handleKeyInput(key: KEY) {
+    let prevChoice = this.choice;
+
+    this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+
+    switch (key) {
+      case KEY.UP:
+      case KEY.DOWN:
+        this.optionDescUi.updateText(0);
+        this.optionUi.switchToMenuControl();
+        this.optionUi.handleMenuNavigation(key);
+        return;
+      case KEY.LEFT:
+        if (this.choice > 0) {
+          this.choice--;
+        }
+        break;
+      case KEY.RIGHT:
+        if (this.choice < this.contents.length - 1) {
+          this.choice++;
+        }
+        break;
+      case KEY.CANCEL:
+        this.optionDescUi.updateText(0);
+        this.optionUi.switchToMenuControl();
+        Game.popUi();
+        break;
+    }
+
+    if (key === KEY.LEFT || key === KEY.RIGHT) {
+      if (this.choice !== prevChoice) {
+        Option.setTutorial(this.choice === 0 ? true : false);
+
+        playEffectSound(this.scene, AUDIO.SELECT_0);
+
+        this.texts[prevChoice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+        this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+      }
+    }
+  }
+
+  update(time?: number, delta?: number): void {
+    this.updateValue();
+  }
+
+  updateValue() {
+    for (const text of this.texts) {
+      text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
+    }
+
+    if (Option.getTutorial()) {
+      this.choice = 0;
+      this.texts[0].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    } else {
+      this.choice = 1;
+      this.texts[1].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+    }
   }
 }
 
@@ -669,7 +777,14 @@ export class OptionDescUi extends Ui {
   private readonly windowHeight: number = 200;
   private readonly windowScale: number = 3;
 
-  private readonly contents: string[] = [i18next.t('menu:optionDesc0'), i18next.t('menu:optionDesc1'), i18next.t('menu:optionDesc2'), i18next.t('menu:optionDesc3'), ''];
+  private readonly contents: string[] = [
+    i18next.t('menu:optionDesc0'),
+    i18next.t('menu:optionDesc1'),
+    i18next.t('menu:optionDesc2'),
+    i18next.t('menu:optionDesc3'),
+    i18next.t('menu:optionDesc4'),
+    i18next.t('menu:optionDesc5'),
+  ];
 
   constructor(scene: InGameScene, option: OptionUi) {
     super(scene);
@@ -682,8 +797,8 @@ export class OptionDescUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2 + 392);
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.windowScale, this.windowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
-    this.text = addText(this.scene, -555, -30, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
+    this.window = this.addWindow(Option.getFrame('text') as TEXTURE, 0, 0, this.windowWidth / this.windowScale, this.windowHeight / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
+    this.text = this.addText(-555, -30, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.9);
 
     this.container.add(this.window);
     this.container.add(this.text);
@@ -697,7 +812,7 @@ export class OptionDescUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
@@ -708,11 +823,16 @@ export class OptionDescUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   updateText(idx: number) {
+    if (!this.text || !this.text.active) return;
+
     if (this.textSpeedTimer) {
       this.textSpeedTimer.destroy();
       this.textSpeedTimer = null;
     }
-    this.text.setText(this.contents[idx]);
+
+    if (idx >= 0 && idx < this.contents.length) {
+      this.text.setText(this.contents[idx]);
+    }
   }
 
   async showTestTextSpeed(speed: TextSpeed) {

@@ -34,7 +34,7 @@ export class OverworldObj {
     this.moveTilePos(this.tilePos.x, this.tilePos.y);
 
     this.name.setDepth(DEPTH.NICKNAME);
-    this.effect.setDepth(this.tilePos.y);
+    this.effect.setDepth(this.tilePos.y + 1);
     this.emotion.setDepth(DEPTH.MENU);
     this.dummy.setDepth(this.tilePos.y + 1);
     this.sprite.setDepth(this.tilePos.y);
@@ -63,11 +63,14 @@ export class OverworldObj {
     this.emotion.setPosition(retX, retY + this.emotionOffsetY);
     this.dummy.setPosition(retX, retY + this.dummyOffsetY);
     this.name.setPosition(retX, retY - this.offsetNameY);
+
+    this.sprite.setDepth(this.tilePos.y);
+    this.effect.setDepth(this.tilePos.y + 1);
+    this.dummy.setDepth(this.tilePos.y + 1);
   }
 
   destroy() {
     if (this.sprite) {
-      this.scene.children.remove(this.sprite);
       this.sprite.destroy();
       this.sprite = null!;
     }
@@ -139,6 +142,10 @@ export class OverworldObj {
     this.emotion.setPosition(pos.x, pos.y + this.emotionOffsetY);
     this.dummy.setPosition(pos.x, pos.y + this.dummyOffsetY);
     this.name.setPosition(pos.x, pos.y - this.offsetNameY);
+
+    this.sprite.setDepth(this.tilePos.y);
+    this.effect.setDepth(this.tilePos.y + 1);
+    this.dummy.setDepth(this.tilePos.y + 1);
   }
 
   setEffect(texture: TEXTURE | string, animation: ANIMATION | string, repeat: number = -1, frame: number = 10, scale: number = 1, fn?: () => void) {
@@ -162,7 +169,7 @@ export class OverworldObj {
     });
   }
 
-  setEmotion(texture: TEXTURE | string, animation: ANIMATION | string, repeat: number = 0, frame: number = 7, scale: number = 1.5) {
+  async setEmotion(texture: TEXTURE | string, animation: ANIMATION | string, repeat: number = 0, frame: number = 7, scale: number = 1.5): Promise<void> {
     this.emotion.stop();
     this.emotion.removeAllListeners('animationcomplete');
     this.scene.tweens.killTweensOf(this.emotion);
@@ -172,15 +179,20 @@ export class OverworldObj {
     this.emotion.setScale(scale);
     this.emotion.setVisible(true);
 
-    if (animation !== ANIMATION.NONE) {
-      this.emotion.play({ key: animation, repeat: repeat, frameRate: frame });
-    } else {
-      this.emotion.stop();
+    if (animation === ANIMATION.NONE) {
+      this.emotion.setVisible(false);
+      this.emotion.setTexture(TEXTURE.BLANK);
+      return;
     }
 
-    this.emotion.once('animationcomplete', () => {
-      this.emotion.setTexture(TEXTURE.BLANK);
-      this.emotion.setVisible(false);
+    this.emotion.play({ key: animation, repeat: repeat, frameRate: frame });
+
+    await new Promise<void>((resolve) => {
+      this.emotion.once('animationcomplete', () => {
+        this.emotion.setTexture(TEXTURE.BLANK);
+        this.emotion.setVisible(false);
+        resolve();
+      });
     });
   }
 

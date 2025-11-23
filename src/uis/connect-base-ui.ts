@@ -1,3 +1,4 @@
+import { Option } from '../core/storage/player-option';
 import { DEPTH, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { addText, addWindow, Ui } from './ui';
@@ -12,9 +13,9 @@ export class ConnectBaseUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, 700 / windowScale, 200 / windowScale, 16, 16, 16, 16);
+    const window = this.addWindow(Option.getFrame('text') as TEXTURE, 0, 0, 700 / windowScale, 200 / windowScale, 16, 16, 16, 16);
     window.setScale(windowScale);
-    const text = addText(this.scene, 0, 0, i18next.t('menu:connecting'), TEXTSTYLE.DEFAULT_BLACK);
+    const text = this.addText(0, 0, i18next.t('menu:connecting'), TEXTSTYLE.DEFAULT_BLACK);
     text.setScale(1);
 
     window.setSize((text.displayWidth + 200) / windowScale, (text.displayHeight + 100) / windowScale);
@@ -31,9 +32,7 @@ export class ConnectBaseUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-  }
+  protected onClean(): void {}
 
   pause(data?: any): void {}
 

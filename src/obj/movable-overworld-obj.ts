@@ -1,18 +1,30 @@
 import { MAP_SCALE, TILE_SIZE } from '../constants';
-import { GM } from '../core/game-manager';
 import { ANIMATION, DIRECTION, OBJECT, TEXTURE } from '../enums';
-import { SocketHandler } from '../handlers/socket-handler';
 import { InGameScene } from '../scenes/ingame-scene';
-import { OverworldStorage } from '../storage';
 import { findEventTile } from '../uis/ui';
-import { matchPlayerStatus, matchPlayerStatusToDirection } from '../utils/string-util';
 import { OverworldObj } from './overworld-obj';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { NpcOverworldObj } from './npc-overworld-obj';
+import { WildOverworldObj } from './wild-overworld-obj';
+import { GroundItemOverworldObj } from './ground-item-overworld-obj';
+import { DoorOverworldObj } from './door-overworld-obj';
+import { OverworldTriggerObj } from './overworld-trigger-obj';
+import { SignOverworldObj } from './sign-overworld-obj';
 
 const Vector2 = Phaser.Math.Vector2;
 
 type MovementQueue = {
   direction: DIRECTION;
   animationKey: ANIMATION | string;
+};
+
+export type OverworldObjectCollections = {
+  npcs?: NpcOverworldObj[];
+  wilds?: WildOverworldObj[];
+  groundItems?: GroundItemOverworldObj[];
+  doors?: DoorOverworldObj[];
+  signs?: SignOverworldObj[];
+  triggers?: OverworldTriggerObj[];
 };
 
 export class MovableOverworldObj extends OverworldObj {
@@ -33,13 +45,29 @@ export class MovableOverworldObj extends OverworldObj {
   protected smoothFrameNumbers: number[] = [];
   protected stopFrameNumbers: number[] = [];
   protected baseSpeed: number = 100;
+  protected objectCollections?: OverworldObjectCollections;
 
-  constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap | null, texture: TEXTURE | string, x: number, y: number, name: string = '', objType: OBJECT, initDirection: DIRECTION) {
+  constructor(
+    scene: InGameScene,
+    map: Phaser.Tilemaps.Tilemap | null,
+    texture: TEXTURE | string,
+    x: number,
+    y: number,
+    name: string = '',
+    objType: OBJECT,
+    initDirection: DIRECTION,
+    objectCollections?: OverworldObjectCollections,
+  ) {
     super(scene, texture, x, y, name, objType);
 
     this.map = map ? map : null;
     this.step = 0;
     this.lastDirection = initDirection;
+    this.objectCollections = objectCollections;
+  }
+
+  setObjectCollections(objectCollections: OverworldObjectCollections) {
+    this.objectCollections = objectCollections;
   }
 
   ready(direction: DIRECTION, animationKey: ANIMATION | string) {
@@ -124,53 +152,49 @@ export class MovableOverworldObj extends OverworldObj {
 
   getObjectInFront(direction: DIRECTION) {
     const nextTilePos = this.getTilePos().add(this.movementDirection[direction]!);
-    const storage = OverworldStorage.getInstance();
 
-    for (const statue of storage.getStatue()) {
-      const statueTilePos = statue.getTilePos();
+    const signs = this.objectCollections?.signs;
+    const doors = this.objectCollections?.doors;
+    const npcs = this.objectCollections?.npcs;
+    const wilds = this.objectCollections?.wilds;
+    const groundItems = this.objectCollections?.groundItems;
+    const triggers = this.objectCollections?.triggers;
 
-      if (statueTilePos.x === nextTilePos.x && statueTilePos.y === nextTilePos.y) {
-        return statue;
+    for (const sign of signs || []) {
+      const signTilePos = sign.getTilePos();
+      if (signTilePos.x === nextTilePos.x && signTilePos.y === nextTilePos.y) {
+        return sign;
       }
     }
-
-    for (const door of storage.getDoors()) {
+    for (const door of doors || []) {
       const doorTilePos = door.getTilePos();
-
       if (doorTilePos.x === nextTilePos.x && doorTilePos.y === nextTilePos.y) {
         return door;
       }
     }
-
-    for (const npc of storage.getNpcs()) {
+    for (const npc of npcs || []) {
       const npcTilePos = npc.getTilePos();
-
       if (npcTilePos.x === nextTilePos.x && npcTilePos.y === nextTilePos.y) {
         return npc;
       }
     }
-
-    for (const wild of storage.getWilds()) {
+    for (const wild of wilds || []) {
       const wildTilePos = wild.getTilePos();
-
       if (wildTilePos.x === nextTilePos.x && wildTilePos.y === nextTilePos.y && !wild.isCatchable()) {
         return wild;
       }
     }
-
-    for (const groundItem of storage.getGroundItems()) {
+    for (const groundItem of groundItems || []) {
       const groundItemTilePos = groundItem.getTilePos();
-
       if (groundItemTilePos.x === nextTilePos.x && groundItemTilePos.y === nextTilePos.y && !groundItem.isCatchable()) {
         return groundItem;
       }
     }
-
     return null;
   }
 
   hasPlayer(pos: Phaser.Math.Vector2): boolean {
-    const playerAtPosition = GM.getPlayerObj();
+    const playerAtPosition = PlayerGlobal.getObj();
     if (playerAtPosition) {
       return playerAtPosition.getTilePos().equals(pos);
     }
@@ -178,9 +202,8 @@ export class MovableOverworldObj extends OverworldObj {
   }
 
   hasWild(pos: Phaser.Math.Vector2): boolean {
-    const wildAtPosition = OverworldStorage.getInstance()
-      .getWilds()
-      .find((wild) => wild.getTilePos().equals(pos));
+    const wilds = this.objectCollections?.wilds;
+    const wildAtPosition = wilds?.find((wild) => wild.getTilePos().equals(pos));
 
     if (wildAtPosition && wildAtPosition.isCatchable()) {
       return false;
@@ -190,9 +213,8 @@ export class MovableOverworldObj extends OverworldObj {
   }
 
   hasGroundItem(pos: Phaser.Math.Vector2): boolean {
-    const groundItemAtPosition = OverworldStorage.getInstance()
-      .getGroundItems()
-      .find((groundItem) => groundItem.getTilePos().equals(pos));
+    const groundItems = this.objectCollections?.groundItems;
+    const groundItemAtPosition = groundItems?.find((groundItem) => groundItem.getTilePos().equals(pos));
 
     if (groundItemAtPosition && groundItemAtPosition.isCatchable()) {
       return false;
@@ -202,15 +224,13 @@ export class MovableOverworldObj extends OverworldObj {
   }
 
   hasDoor(pos: Phaser.Math.Vector2): boolean {
-    return OverworldStorage.getInstance()
-      .getDoors()
-      .some((door) => door.getTilePos().equals(pos));
+    const doors = this.objectCollections?.doors;
+    return !!doors?.some((door) => door.getTilePos().equals(pos));
   }
 
-  hasStatue(pos: Phaser.Math.Vector2): boolean {
-    return OverworldStorage.getInstance()
-      .getStatue()
-      .some((statue) => statue.getTilePos().equals(pos));
+  hasSign(pos: Phaser.Math.Vector2): boolean {
+    const signs = this.objectCollections?.signs;
+    return !!signs?.some((sign) => sign.getTilePos().equals(pos));
   }
 
   getLastDirection() {
@@ -238,19 +258,6 @@ export class MovableOverworldObj extends OverworldObj {
       this.stopSpriteAnimation(this.getSmoothFrameNumberFromDirection(this.lastDirection)!);
       this.setSpriteDepth(newTile.y);
       this.step++;
-
-      if (this.getObjType() === OBJECT.PLAYER) {
-        const socketHandler = SocketHandler.getInstance();
-        GM.updateUserData({ x: this.getTilePos().x, y: this.getTilePos().y });
-
-        socketHandler.movementPlayer({
-          x: this.getTilePos().x,
-          y: this.getTilePos().y,
-          direction: matchPlayerStatusToDirection(GM.getPlayerObj()!.getLastDirection()),
-          movement: matchPlayerStatus(GM.getPlayerObj()!.getCurrentStatus()),
-          pet: null,
-        });
-      }
     } else {
       this.lastDirection = this.currentDirection;
     }
@@ -259,13 +266,13 @@ export class MovableOverworldObj extends OverworldObj {
   hasBlocking(pos: Phaser.Math.Vector2, direction: DIRECTION) {
     if (this.hasStairTile(direction)) return false;
     if (this.hasNoTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
-    if (this.hasBlockingTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
-    if (this.hasNpc(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
-    if (this.hasStatue(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
-    if (this.hasDoor(pos) && this.getObjType() === OBJECT.PLAYER) return true;
     if (this.hasWild(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
-    if (this.hasGroundItem(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
     if (this.getObjType() === OBJECT.WILD && this.hasPlayer(pos)) return true;
+    if (this.hasGroundItem(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasNpc(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasSign(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
+    if (this.hasDoor(pos) && this.getObjType() === OBJECT.PLAYER) return true;
+    if (this.hasBlockingTile(pos) && (this.getObjType() === OBJECT.PLAYER || this.getObjType() === OBJECT.WILD)) return true;
 
     return false;
   }
@@ -287,9 +294,8 @@ export class MovableOverworldObj extends OverworldObj {
   }
 
   private hasNpc(pos: Phaser.Math.Vector2): boolean {
-    return OverworldStorage.getInstance()
-      .getNpcs()
-      .some((npc) => npc.getTilePos().equals(pos));
+    const npcs = this.objectCollections?.npcs;
+    return !!npcs?.some((npc) => npc.getTilePos().equals(pos));
   }
 
   private isMoving() {

@@ -1,9 +1,9 @@
 import { AUDIO, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { Keyboard } from '../core/manager/keyboard-manager';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { ListForm, MenuListSetting } from '../types';
-import { addImage, addText, addWindow, getTextStyle, playEffectSound, Ui } from './ui';
+import { getTextStyle, playEffectSound, Ui } from './ui';
 
 export class MenuListUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -51,7 +51,7 @@ export class MenuListUi extends Ui {
 
     this.container = this.createContainer(width / 2 + data.offsetX, height / 2 + data.offsetY);
 
-    this.window = addWindow(this.scene, data.window, 0, this.contentHeight + this.spacing + this.spacing, 0, 0, 16, 16, 16, 16);
+    this.window = this.addWindow(data.window, 0, this.contentHeight + this.spacing + this.spacing, 0, 0, 16, 16, 16, 16);
     this.window.setOrigin(0, 1);
     this.window.setScale(this.scale);
 
@@ -69,15 +69,18 @@ export class MenuListUi extends Ui {
 
   show(data?: any): void {
     this.renderList();
-
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-
-    this.lastChoice = 0;
-    this.lastStart = 0;
+  protected onClean(): void {
+    this.texts = [];
+    this.textImages = [];
+    this.dummys = [];
+    this.etcImages = [];
+    this.etcTexts = [];
+    this.info = [];
+    this.lastChoice = null;
+    this.lastStart = null;
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -88,10 +91,11 @@ export class MenuListUi extends Ui {
     this.addCancel();
   }
 
-  async handleKeyInput(data?: ListForm[]): Promise<string | number> {
-    const keys = [KEY.UP, KEY.DOWN, KEY.SELECT, KEY.LEFT, KEY.RIGHT, KEY.CANCEL];
-    const keyboard = KeyboardHandler.getInstance();
+  getInfo() {
+    return this.info;
+  }
 
+  async handleKeyInput(data?: ListForm[]): Promise<string | number> {
     let choice = this.lastChoice ? this.lastChoice : 0;
     this.start = this.lastStart ? this.lastStart : 0;
 
@@ -101,10 +105,13 @@ export class MenuListUi extends Ui {
 
     this.dummys[choice].setTexture(TEXTURE.ARROW_B);
 
+    if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
+
     return new Promise((resolve) => {
-      keyboard.setAllowKey(keys);
-      keyboard.setKeyDownCallback((key) => {
+      Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.LEFT, KEY.RIGHT, KEY.CANCEL, KEY.ENTER, KEY.ESC]);
+      Keyboard.setKeyDownCallback((key) => {
         let prevChoice = choice;
+        let scrolled = false;
 
         try {
           switch (key) {
@@ -112,10 +119,12 @@ export class MenuListUi extends Ui {
               if (choice > 0) {
                 choice--;
               } else if (this.start > 0) {
-                prevChoice = 1;
                 this.start--;
                 this.renderList();
-                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                scrolled = true;
+                if (this.dummys[choice]) {
+                  this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                }
               }
               break;
             case KEY.DOWN:
@@ -123,55 +132,61 @@ export class MenuListUi extends Ui {
               if (choice < Math.min(this.perList, totalItems) - 1) {
                 choice++;
               } else if (this.start + this.perList < totalItems) {
-                prevChoice = 5;
                 this.start++;
                 this.renderList();
-                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                scrolled = true;
+                if (this.dummys[choice]) {
+                  this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                }
               }
               break;
             case KEY.LEFT:
               if (this.isAllowLRCancel) {
-                this.clean();
-                keyboard.setKeyDownCallback(() => {});
+                Keyboard.setKeyDownCallback(() => {});
                 return resolve('cancelL');
               }
               break;
             case KEY.RIGHT:
               if (this.isAllowLRCancel) {
-                this.clean();
-                keyboard.setKeyDownCallback(() => {});
+                Keyboard.setKeyDownCallback(() => {});
                 return resolve('cancelR');
               }
               break;
+            case KEY.ENTER:
             case KEY.SELECT:
               playEffectSound(this.scene, AUDIO.SELECT_0);
 
-              this.lastChoice = choice;
-              this.lastStart = this.start;
-
               if (choice + this.start === this.info.length - 1) {
-                this.clean();
-                keyboard.setKeyDownCallback(() => {});
+                this.hide();
+                Keyboard.setKeyDownCallback(() => {});
                 return resolve(i18next.t('menu:cancelMenu'));
+              } else {
+                this.lastChoice = choice;
+                this.lastStart = this.start;
               }
 
-              if (!this.etcUi) this.clean();
-              keyboard.setKeyDownCallback(() => {});
+              if (!this.etcUi) this.hide();
+              Keyboard.setKeyDownCallback(() => {});
               return resolve(choice + this.start);
+            case KEY.ESC:
             case KEY.CANCEL:
-              this.clean();
-              keyboard.setKeyDownCallback(() => {});
+              this.hide();
+              Keyboard.setKeyDownCallback(() => {});
               return resolve(i18next.t('menu:cancelMenu'));
           }
 
           if (key === KEY.UP || key === KEY.DOWN) {
-            if (choice !== prevChoice) {
+            if (choice !== prevChoice || scrolled) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
 
-              this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-
-              this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-              this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+              if (choice !== prevChoice) {
+                if (this.dummys[prevChoice]) {
+                  this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+                }
+              }
+              if (this.dummys[choice]) {
+                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+              }
 
               if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
             }
@@ -259,19 +274,25 @@ export class MenuListUi extends Ui {
     const textTexture = target.nameImg === '' ? TEXTURE.BLANK : target.nameImg;
     const etcTexture = target.etcImg === '' ? TEXTURE.BLANK : target.etcImg;
 
-    const text = addText(this.scene, +40, y, target.name, TEXTSTYLE.MESSAGE_BLACK);
+    const text = this.addText(+40, y, target.name, TEXTSTYLE.MESSAGE_BLACK);
     text.setOrigin(0, 1);
-    const textImage = addImage(this.scene, textTexture, 0, y);
+    const textImage = this.addImage(textTexture, 0, y);
     textImage.setOrigin(0, 1);
-    const etcText = addText(this.scene, this.windowWidth - 85, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
+    const etcText = this.addText(this.windowWidth - 85, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
     etcText.setOrigin(0, 1);
-    const etcImage = addImage(this.scene, etcTexture, this.windowWidth - 125, y - 3);
+    const etcImage = this.addImage(etcTexture, this.windowWidth - 125, y - 3);
     etcImage.setScale(this.etcScale ? this.etcScale : 1.6);
     etcImage.setOrigin(0, 1);
-    const dummy = addImage(this.scene, TEXTURE.BLANK, +20, y);
+    const dummy = this.addImage(TEXTURE.BLANK, +20, y);
     dummy.setOrigin(0, 1);
     dummy.setScale(1.6);
 
     return [text, textImage, etcText, etcImage, dummy];
+  }
+
+  hide(): void {
+    if (this.container) {
+      this.container.setVisible(false);
+    }
   }
 }
