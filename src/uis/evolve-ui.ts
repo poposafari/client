@@ -1,12 +1,13 @@
-import { eventBus } from '../core/event-bus';
-import { GM } from '../core/game-manager';
-import { AUDIO, DEPTH, EASE, EVENT, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
+import { Event } from '../core/manager/event-manager';
+import { Game } from '../core/manager/game-manager';
+import { Option } from '../core/storage/player-option';
+import { AUDIO, DEPTH, EASE, EVENT, MessageEndDelay, TextSpeed, TEXTSTYLE, TEXTURE, UI } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
 import { getPokemonSpriteKey, replacePercentSymbol } from '../utils/string-util';
 import { TalkMessageUi } from './talk-message-ui';
-import { addBackground, addImage, addText, addWindow, delay, pauseSound, playEffectSound, runFadeEffect, Ui } from './ui';
+import { delay, pauseSound, playEffectSound, resumeBackgroundMusic, runFadeEffect, Ui } from './ui';
 
 export class EvolveUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -34,14 +35,14 @@ export class EvolveUi extends Ui {
 
     this.talkUi.setup();
 
-    this.container = this.createContainer(width / 2, height / 2);
-    this.particleContainer = this.createContainer(width / 2, height / 2);
+    this.container = this.createTrackedContainer(width / 2, height / 2);
+    this.particleContainer = this.createTrackedContainer(width / 2, height / 2);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_EVOLVE).setOrigin(0.5, 0.5);
-    this.startPokemon = addImage(this.scene, `pokemon_sprite0000`, 0, 0).setScale(4.8);
-    this.nextPokemon = addImage(this.scene, `pokemon_sprite0000`, 0, 0).setScale(4.8);
-    this.textWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 410, 1900 / this.baseWindowScale, 240 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
-    this.text = addText(this.scene, -880, +340, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
+    const bg = this.addBackground(TEXTURE.BG_EVOLVE).setOrigin(0.5, 0.5);
+    this.startPokemon = this.addImage(`pokemon_sprite0000`, 0, 0).setScale(4.8);
+    this.nextPokemon = this.addImage(`pokemon_sprite0000`, 0, 0).setScale(4.8);
+    this.textWindow = this.addWindow(TEXTURE.WINDOW_MENU, 0, 410, 1900 / this.baseWindowScale, 240 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
+    this.text = this.addText(-880, +340, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
 
     this.textWindow.setVisible(false);
 
@@ -77,7 +78,8 @@ export class EvolveUi extends Ui {
     await this.talkUi.show({
       type: 'default',
       content: replacePercentSymbol(i18next.t('message:evolve_0'), [i18next.t(`pokemon:${data.getPokedex()}.name`)]),
-      speed: GM.getUserOption()?.getTextSpeed()!,
+      speed: Option.getTextSpeed()!,
+      endDelay: MessageEndDelay.DEFAULT,
       end: async () => {
         this.showMessage(replacePercentSymbol(i18next.t('message:evolve_0'), [i18next.t(`pokemon:${data.getPokedex()}.name`)]));
         await this.startEvolveAnimation(data.getPokedex(), data.getEvol().next!);
@@ -85,11 +87,7 @@ export class EvolveUi extends Ui {
     });
   }
 
-  clean(data?: any): void {
-    runFadeEffect(this.scene, 800, 'in');
-
-    this.container.setVisible(false);
-  }
+  protected onClean(): void {}
 
   pause(onoff: boolean, data?: any): void {}
 
@@ -99,7 +97,7 @@ export class EvolveUi extends Ui {
 
   private showMessage(content: string) {
     this.text.setText(content);
-    this.textWindow.setTexture(GM.getUserOption()?.getFrame('text') as string);
+    this.textWindow.setTexture(Option.getFrame('text') as string);
     this.textWindow.setVisible(true);
   }
 
@@ -146,12 +144,14 @@ export class EvolveUi extends Ui {
     await this.talkUi.show({
       type: 'default',
       content: replacePercentSymbol(i18next.t('message:evolve_1'), [i18next.t(`pokemon:${start}.name`), i18next.t(`pokemon:${next}.name`)]),
-      speed: GM.getUserOption()?.getTextSpeed()!,
-      end: () => {
-        this.clean();
-        eventBus.emit(EVENT.EVOLVE_FINISH_IN_PC);
+      speed: TextSpeed.CONG,
+      endDelay: MessageEndDelay.CONG,
+      end: async () => {
+        await Game.removeUi(UI.EVOLVE);
       },
     });
+
+    resumeBackgroundMusic();
   }
 
   private crossTween(shrinkTarget: Phaser.GameObjects.Image, growTarget: Phaser.GameObjects.Image, duration: number): Promise<void> {
@@ -215,7 +215,7 @@ export class EvolveUi extends Ui {
     this.particles = [];
 
     for (let i = 0; i < 100; i++) {
-      const particle = addImage(this.scene, TEXTURE.PARTICLE_EVOL, 0, 0);
+      const particle = this.addImage(TEXTURE.PARTICLE_EVOL, 0, 0);
 
       this.particles.push(particle);
       this.particleContainer.add(particle);

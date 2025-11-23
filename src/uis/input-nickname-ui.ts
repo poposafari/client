@@ -4,7 +4,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { InputNickname } from '../types';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { Keyboard, KeyboardManager } from '../core/manager/keyboard-manager';
 
 export class InputNicknameUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -13,6 +13,9 @@ export class InputNicknameUi extends Ui {
   private input!: InputText;
   private btnWindows: Phaser.GameObjects.NineSlice[] = [];
   private btnTitles: Phaser.GameObjects.Text[] = [];
+
+  private enterKey!: Phaser.Input.Keyboard.Key;
+  private escKey!: Phaser.Input.Keyboard.Key;
 
   private readonly windowWidth: number = 1000;
   private readonly windowHeight: number = 410;
@@ -31,11 +34,11 @@ export class InputNicknameUi extends Ui {
     this.container = this.createContainer(width / 2, height / 2);
     this.btnContainer = this.createContainer(width / 2, height / 2 + 110);
 
-    const window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.scale, this.windowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
-    this.title = addText(this.scene, 0, -110, '', TEXTSTYLE.MESSAGE_BLACK).setScale(1);
-    const inputWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, (this.windowWidth - 400) / this.inputScale, 100 / this.inputScale, 16, 16, 16, 16).setScale(this.inputScale);
+    const window = this.addWindow(TEXTURE.WINDOW_MENU, 0, 0, this.windowWidth / this.scale, this.windowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
+    this.title = this.addText(0, -110, '', TEXTSTYLE.MESSAGE_BLACK).setScale(1);
+    const inputWindow = this.addWindow(TEXTURE.WINDOW_MENU, 0, 0, (this.windowWidth - 400) / this.inputScale, 100 / this.inputScale, 16, 16, 16, 16).setScale(this.inputScale);
 
-    this.input = addTextInput(this.scene, -260, 0, 1300, 200, TEXTSTYLE.MESSAGE_BLACK, {
+    this.input = this.addTextInput(-260, 0, 1300, 200, TEXTSTYLE.MESSAGE_BLACK, {
       type: 'text',
       minLength: 1,
       maxLength: 16,
@@ -44,15 +47,15 @@ export class InputNicknameUi extends Ui {
       .setScale(0.5)
       .setOrigin(0, 0.5);
 
-    this.btnWindows[0] = addWindow(this.scene, TEXTURE.WINDOW_MENU, -170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
+    this.btnWindows[0] = this.addWindow(TEXTURE.WINDOW_MENU, -170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
       .setScale(this.btnScale)
       .setInteractive({ cursor: 'pointer' });
-    this.btnWindows[1] = addWindow(this.scene, TEXTURE.WINDOW_MENU, +170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
+    this.btnWindows[1] = this.addWindow(TEXTURE.WINDOW_MENU, +170, 0, 220 / this.btnScale, 90 / this.btnScale, 16, 16, 16, 16)
       .setScale(this.btnScale)
       .setInteractive({ cursor: 'pointer' });
 
-    this.btnTitles[0] = addText(this.scene, -170, 0, i18next.t('menu:change'), TEXTSTYLE.MESSAGE_BLACK);
-    this.btnTitles[1] = addText(this.scene, +170, 0, i18next.t('menu:cancel'), TEXTSTYLE.MESSAGE_BLACK);
+    this.btnTitles[0] = this.addText(-170, 0, i18next.t('menu:change'), TEXTSTYLE.MESSAGE_BLACK);
+    this.btnTitles[1] = this.addText(+170, 0, i18next.t('menu:cancel'), TEXTSTYLE.MESSAGE_BLACK);
     this.btnTitles[0].setScale(0.7);
     this.btnTitles[1].setScale(0.7);
 
@@ -78,31 +81,62 @@ export class InputNicknameUi extends Ui {
   }
 
   async show(data: InputNickname): Promise<string> {
+    Keyboard.setKeyDownCallback(() => {});
+    Keyboard.clearAllowKey();
+
+    this.btnContainer.setActive(true);
     this.btnContainer.setVisible(true);
+    this.container.setActive(true);
     this.container.setVisible(true);
 
     this.title.setText(data.title);
-
-    this.input.text = data.content;
+    this.input.text = data.content || '';
 
     this.pause(false);
 
     return new Promise((resolve) => {
-      const keyboard = KeyboardHandler.getInstance();
-      const keys = [KEY.ENTER, KEY.CANCEL];
-      keyboard.setAllowKey(keys);
-      keyboard.setKeyDownCallback((key) => {
-        switch (key) {
-          case KEY.CANCEL:
-            this.clean();
-            resolve(i18next.t('menu:cancel'));
-            break;
-          case KEY.ENTER:
-            this.clean();
-            resolve(this.input.text);
-            break;
+      let resolved = false;
+      const resolveOnce = (value: string) => {
+        if (!resolved) {
+          resolved = true;
+          this.hide();
+          if (this.enterKey) {
+            this.enterKey.removeAllListeners();
+          }
+          if (this.escKey) {
+            this.escKey.removeAllListeners();
+          }
+          resolve(value);
         }
-      });
+      };
+
+      const keyboard = this.scene.input.keyboard;
+      if (!keyboard) {
+        resolveOnce(i18next.t('menu:cancel'));
+        return;
+      }
+
+      this.enterKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+      this.escKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+      const handleEnter = () => {
+        if (!resolved) {
+          resolveOnce(this.input.text);
+        }
+      };
+
+      const handleEsc = () => {
+        if (!resolved) {
+          resolveOnce(i18next.t('menu:cancel'));
+        }
+      };
+
+      this.enterKey.on('down', handleEnter);
+      this.escKey.on('down', handleEsc);
+
+      for (const btn of this.btnWindows) {
+        btn.removeAllListeners();
+      }
 
       this.btnWindows[0].on('pointerover', () => {
         this.btnWindows[0].setTint(0xcccccc);
@@ -119,19 +153,27 @@ export class InputNicknameUi extends Ui {
       });
 
       this.btnWindows[0].on('pointerup', () => {
-        this.clean();
-        resolve(this.input.text);
+        resolveOnce(this.input.text);
       });
       this.btnWindows[1].on('pointerup', () => {
-        console.log('?');
-        this.clean();
-        resolve(i18next.t('menu:cancel'));
+        resolveOnce(i18next.t('menu:cancel'));
       });
     });
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.pause(true);
+
+    Keyboard.setKeyDownCallback(() => {});
+
+    if (this.enterKey) {
+      this.enterKey.removeAllListeners();
+      this.enterKey.destroy();
+    }
+    if (this.escKey) {
+      this.escKey.removeAllListeners();
+      this.escKey.destroy();
+    }
 
     for (const btn of this.btnWindows) {
       btn.removeAllListeners();
@@ -143,6 +185,15 @@ export class InputNicknameUi extends Ui {
 
   pause(onoff: boolean, data?: any): void {
     onoff ? this.block() : this.unblock();
+  }
+
+  hide(): void {
+    if (this.btnContainer) {
+      this.btnContainer.setVisible(false);
+    }
+    if (this.container) {
+      this.container.setVisible(false);
+    }
   }
 
   handleKeyInput(...data: any[]) {}

@@ -36,7 +36,7 @@ export class PetOverworldObj extends MovableOverworldObj {
     this.data = newPet;
 
     if (!newPet) this.setSpriteVisible(false);
-    if (oldPet?.getIdx() === newPet?.getIdx()) return;
+    if (oldPet?.getIdx() === newPet?.getIdx() && oldPet?.getPokedex() === newPet?.getPokedex()) return;
 
     this.texture = getOverworldPokemonTexture(newPet);
     this.startSpriteAnimation(this.getAnimation(KEY.DOWN)!);

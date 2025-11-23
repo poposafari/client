@@ -1,9 +1,10 @@
-import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
+import type InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
+import InputTextClass from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText';
 import { ANIMATION, AUDIO, EASE, PIPELINES, TEXTSTYLE, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { LoadingScene } from '../scenes/load-scene';
-import { GM } from '../core/game-manager';
-import { SoundManager } from '../core/sound-manager';
+import { Sound, SoundManager } from '../core/manager/sound-manager';
+import { Option } from '../core/storage/player-option';
 
 export function addWindow(
   scene: InGameScene,
@@ -51,17 +52,15 @@ export function addTextBackground(scene: InGameScene, x: number, y: number, cont
   const result = scene.add.text(x, y, content, getTextStyle(style));
   const shadow = getTextShadow(style);
 
-  // result.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
   result.setScale(0.5);
   result.setOrigin(0.5, 0.5);
-  // result.setBackgroundColor('rgba(0, 0, 0, 0.7)');
   result.setStroke('#5e5e5e', 10);
 
   return result;
 }
 
 export function addTextInput(scene: InGameScene, x: number, y: number, width: number, height: number, style: TEXTSTYLE, option: InputText.IConfig): InputText {
-  const result = new InputText(scene, x, y, width, height, getTextStyle(style, option));
+  const result = new InputTextClass(scene, x, y, width, height, getTextStyle(style, option));
 
   scene.add.existing(result);
   result.setScale(1);
@@ -77,7 +76,6 @@ export function addMap(scene: InGameScene, key: TEXTURE): Phaser.Tilemaps.Tilema
 }
 
 export function createSpriteAnimation(scene: InGameScene, key: TEXTURE | string, animationKey: ANIMATION | string, frames?: Phaser.Types.Animations.AnimationFrame[]) {
-  // 라이드 애니메이션은 1번만 반복, 나머지는 무한 반복
   const repeatCount = isRideAnimation(animationKey) ? 0 : -1;
 
   scene.anims.create({
@@ -119,7 +117,7 @@ function getSpriteAnimationFrameRate(animationKey: ANIMATION | string): number {
   let ret = 5;
 
   if (isRideAnimation(animationKey)) {
-    ret = 50; // 1에서 3으로 조정 - 더 느린 자전거 속도
+    ret = 50;
   }
 
   return ret;
@@ -129,7 +127,7 @@ function getSpriteAnimationDelay(animationKey: ANIMATION | string): number {
   let ret = 15;
 
   if (isRideAnimation(animationKey)) {
-    ret = 0; // 5에서 15로 조정 - 더 느린 페달링
+    ret = 0;
   }
 
   return ret;
@@ -235,14 +233,20 @@ function getAnimationSize(key: ANIMATION | string) {
   }
 }
 
-export function getTextShadow(style: TEXTSTYLE) {
+export function getTextShadow(style: TEXTSTYLE): [number, number, string] {
   switch (style) {
+    case TEXTSTYLE.SPLASH_TEXT:
+      return [9, 7, '#efa539'];
+    case TEXTSTYLE.OVERWORLD_AREA:
+      return [7, 4, '#91919a'];
     case TEXTSTYLE.TITLE_MODAL:
-      return [8, 4, '#266c58'];
+      return [7, 4, '#7fbc49'];
     case TEXTSTYLE.DEFAULT_BLACK:
       return [5, 3, '#91919a'];
     case TEXTSTYLE.SPECIAL:
       return [5, 3, '#53a8fc'];
+    case TEXTSTYLE.MESSAGE_BLACK:
+      return [4, 2, '#91919a'];
     case TEXTSTYLE.MESSAGE_BLUE:
       return [3, 2, '#53a8fc'];
     case TEXTSTYLE.MESSAGE_WHITE:
@@ -290,17 +294,30 @@ export function getTextShadow(style: TEXTSTYLE) {
     case TEXTSTYLE.WINTER:
     case TEXTSTYLE.SEASON_SYMBOL:
     case TEXTSTYLE.ONLY_WHITE:
-      return [0, 0, 0];
+      return [0, 0, ''];
     case TEXTSTYLE.BOX_NAME:
     case TEXTSTYLE.CHOICE_DEFAULT:
-    case TEXTSTYLE.MESSAGE_BLACK:
     case TEXTSTYLE.ITEM_NOTICE:
     case TEXTSTYLE.BOX_CAPTURE_TITLE:
     case TEXTSTYLE.DEFAULT:
       return [3, 2, '#91919a'];
+    case TEXTSTYLE.RANK_COMMON:
+      return [4, 3, '#519855'];
+    case TEXTSTYLE.RANK_RARE:
+      return [4, 3, '#2d6aaa'];
+    case TEXTSTYLE.RANK_EPIC:
+      return [4, 3, '#0e048e'];
+    case TEXTSTYLE.RANK_LEGENDARY:
+      return [4, 3, '#dc7e35'];
+    case TEXTSTYLE.SIGN_WHITE:
+      return [5, 3, '#cccccc'];
   }
 
-  return [0, 0, 0];
+  return [0, 0, ''];
+}
+
+export function setTextShadow(text: Phaser.GameObjects.Text, shadow: [number, number, string]) {
+  text.setShadow(shadow[0] as number, shadow[1] as number, shadow[2] as string);
 }
 
 export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
@@ -311,6 +328,15 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
   if (inputConfig) Object.assign(config, inputConfig);
 
   switch (style) {
+    case TEXTSTYLE.SPLASH_TEXT:
+      config.fontSize = '130px';
+      config.color = '#ffde6b';
+      break;
+    case TEXTSTYLE.OVERWORLD_AREA:
+      config.fontSize = '120px';
+      config.color = '#4b4b4b';
+      config.fontStyle = 'bold';
+      break;
     case TEXTSTYLE.MESSAGE_BLACK:
       config.fontSize = '80px';
       config.color = '#4b4b4b';
@@ -318,6 +344,10 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
     case TEXTSTYLE.MESSAGE_GRAY:
       config.fontSize = '80px';
       config.color = '#999999';
+      break;
+    case TEXTSTYLE.SIGN_WHITE:
+      config.fontSize = '80px';
+      config.color = '#ffffff';
       break;
     case TEXTSTYLE.MESSAGE_WHITE:
       config.fontSize = '80px';
@@ -515,12 +545,32 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       break;
     case TEXTSTYLE.TITLE_MODAL:
       config.fontSize = '150px';
-      config.color = '#40a174';
+      config.color = '#528d42';
       config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.ONLY_WHITE:
       config.fontSize = '80px';
       config.color = '#ffffff';
+      break;
+    case TEXTSTYLE.RANK_COMMON:
+      config.fontSize = '80px';
+      config.color = '#76c35f';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.RANK_RARE:
+      config.fontSize = '80px';
+      config.color = '#4498d4';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.RANK_EPIC:
+      config.fontSize = '80px';
+      config.color = '#7318ee';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.RANK_LEGENDARY:
+      config.fontSize = '80px';
+      config.color = '#f2a53f';
+      config.fontStyle = 'bold';
       break;
   }
 
@@ -594,15 +644,15 @@ export function runZoomEffect(scene: InGameScene, value: number, delay: number, 
   });
 }
 
-export function runFadeEffect(scene: InGameScene, delay: number, status: 'in' | 'out'): Promise<void> {
+export function runFadeEffect(scene: InGameScene, delay: number, status: 'in' | 'out', r: number = 0, g: number = 0, b: number = 0): Promise<void> {
   return new Promise((resolve) => {
     const camera = scene.cameras.main;
 
     if (status === 'in') {
-      camera.fadeIn(delay, 0, 0, 0);
+      camera.fadeIn(delay, r, g, b);
       camera.once('camerafadeincomplete', () => resolve());
     } else {
-      camera.fadeOut(delay, 0, 0, 0);
+      camera.fadeOut(delay, r, g, b);
       camera.once('camerafadeoutcomplete', () => resolve());
     }
   });
@@ -651,15 +701,13 @@ export function startModalAnimation(scene: InGameScene, target: any, duration: n
 }
 
 export function playBackgroundMusic(scene: InGameScene | LoadingScene, key: AUDIO | string) {
-  const soundManager = SoundManager.getInstance();
-  soundManager.setScene(scene);
-  soundManager.playBackgroundMusic(key, GM.getUserOption()?.getBackgroundVolume());
+  Sound.init(scene);
+  Sound.playBackgroundMusic(key, Option.getBackgroundVolume());
 }
 
-export function playEffectSound(scene: InGameScene | LoadingScene, key: AUDIO) {
-  const soundManager = SoundManager.getInstance();
-  soundManager.setScene(scene);
-  soundManager.playEffectSound(key, GM.getUserOption()?.getEffectVolume());
+export function playEffectSound(scene: InGameScene | LoadingScene, key: AUDIO | string) {
+  Sound.init(scene);
+  Sound.playEffectSound(key, Option.getEffectVolume());
 }
 
 export function stopBackgroundMusic() {
@@ -711,7 +759,14 @@ export function findEventTile(tiles: Phaser.Tilemaps.Tile[] | null) {
 }
 
 export const shakeEffect = (scene: InGameScene | LoadingScene, container: Phaser.GameObjects.Container, intensity = 10, duration = 50): void => {
-  const originalX = container.x;
+  scene.tweens.killTweensOf(container);
+
+  if (container.getData('originalX') === undefined) {
+    container.setData('originalX', container.x);
+  }
+
+  const originalX = container.getData('originalX');
+  container.setX(originalX);
 
   playEffectSound(scene, AUDIO.BUZZER);
 
@@ -728,16 +783,25 @@ export const shakeEffect = (scene: InGameScene | LoadingScene, container: Phaser
   });
 };
 
+import { UIResourceManager } from '../core/manager/ui-resource-manager';
+import { KeyboardManager } from '../core/manager/keyboard-manager';
+import { Event } from '../core/manager/event-manager';
+import { EVENT } from '../enums';
+
 export abstract class Ui {
   protected scene: InGameScene;
+  protected resourceManager: UIResourceManager;
+  private isDestroyed: boolean = false;
+  protected shouldBlockPlayerUpdate: boolean = false;
 
   constructor(scene: InGameScene) {
     this.scene = scene;
+    this.resourceManager = new UIResourceManager(scene);
   }
 
   abstract setup(data?: any): void;
-  abstract show(data?: any): void;
-  abstract clean(data?: any): void;
+  abstract show(data?: any): any;
+  protected abstract onClean(): void;
   abstract pause(onoff: boolean, data?: any): void;
   abstract handleKeyInput(...data: any[]): any;
   abstract update(time?: number, delta?: number): void;
@@ -750,7 +814,123 @@ export abstract class Ui {
     return this.scene.game.canvas.height;
   }
 
+  protected createTrackedContainer(x: number = 0, y: number = 0): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    this.resourceManager.trackContainer(container);
+    return container;
+  }
+
+  protected trackGameObject(obj: Phaser.GameObjects.GameObject): void {
+    this.resourceManager.trackGameObject(obj);
+  }
+
+  protected addImage(texture: TEXTURE | string, x: number, y: number): Phaser.GameObjects.Image {
+    const img = addImage(this.scene, texture, x, y);
+    this.trackGameObject(img);
+    return img;
+  }
+
+  protected addBackground(texture: TEXTURE | string): Phaser.GameObjects.Image {
+    const bg = addBackground(this.scene, texture);
+    this.trackGameObject(bg);
+    return bg;
+  }
+
+  protected addText(x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
+    const text = addText(this.scene, x, y, content, style);
+    this.trackGameObject(text);
+    return text;
+  }
+
+  protected addTextBackground(x: number, y: number, content: string, style: TEXTSTYLE): Phaser.GameObjects.Text {
+    const text = addTextBackground(this.scene, x, y, content, style);
+    this.trackGameObject(text);
+    return text;
+  }
+
+  protected addTextInput(x: number, y: number, width: number, height: number, style: TEXTSTYLE, option: InputText.IConfig): InputText {
+    const input = addTextInput(this.scene, x, y, width, height, style, option);
+    this.trackGameObject(input);
+    return input;
+  }
+
+  protected createSprite(key: TEXTURE | string, posX: number, posY: number): Phaser.GameObjects.Sprite {
+    const sprite = createSprite(this.scene, key, posX, posY);
+    this.trackGameObject(sprite);
+    return sprite;
+  }
+
+  protected addWindow(
+    texture: TEXTURE | string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    leftWidth?: number,
+    rightWidth?: number,
+    topHeight?: number,
+    bottomHeight?: number,
+  ): Phaser.GameObjects.NineSlice {
+    const window = addWindow(this.scene, texture, x, y, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
+    this.trackGameObject(window);
+    return window;
+  }
+
+  protected trackTween(tween: Phaser.Tweens.Tween): Phaser.Tweens.Tween {
+    this.resourceManager.trackTween(tween);
+    return tween;
+  }
+
+  protected trackTimer(timer: Phaser.Time.TimerEvent): Phaser.Time.TimerEvent {
+    this.resourceManager.trackTimer(timer);
+    return timer;
+  }
+
+  protected trackEvent(event: EVENT | string, callback: (...args: any[]) => void): void {
+    this.resourceManager.trackEvent(event as string | number, callback);
+  }
+
+  protected trackKeyboardCallback(callback: () => void): void {
+    this.resourceManager.trackKeyboardCallback(callback);
+  }
+
   createContainer(width: number, height: number) {
-    return this.scene.add.container(width, height);
+    return this.createTrackedContainer(width, height);
+  }
+
+  clean(data?: any): void {
+    if (this.isDestroyed) {
+      console.log(`[Ui] clean() 호출됨 (이미 destroyed): ${this.constructor.name}`);
+      return;
+    }
+
+    console.log(`[Ui] clean() 시작: ${this.constructor.name}`);
+    try {
+      this.onClean();
+      console.log(`[Ui] onClean() 완료: ${this.constructor.name}`);
+      console.log(`[Ui] KeyboardManager.clearCallbacks() 호출: ${this.constructor.name}`);
+      KeyboardManager.getInstance().clearCallbacks();
+      this.resourceManager.cleanup();
+      console.log(`[Ui] resourceManager.cleanup() 완료: ${this.constructor.name}`);
+
+      this.isDestroyed = true;
+      console.log(`[Ui] clean() 완료: ${this.constructor.name}`);
+    } catch (error) {
+      console.error(`[Ui] Error cleaning UI ${this.constructor.name}:`, error);
+    }
+  }
+
+  destroy(): void {
+    this.clean();
+  }
+
+  protected assertNotDestroyed(): void {
+    if (this.isDestroyed) {
+      throw new Error(`UI is already destroyed: ${this.constructor.name}`);
+    }
+  }
+
+  getIsDestroyed(): boolean {
+    return this.isDestroyed;
   }
 }

@@ -1,6 +1,6 @@
 import { DIRECTION, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { PlayerGender, MovementPlayer } from '../types';
+import { PlayerGender } from '../types';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { OtherPlayerPetOverworldObj } from './other-player-pet-overworld-obj';
 
@@ -12,6 +12,9 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
   private lastStatus!: PLAYER_STATUS;
 
   private readonly spriteScale: number = 3;
+  private currentAutoMove: Promise<boolean> | null = null;
+  private autoMoveCancelled: boolean = false;
+  private lastPositionTimestamp: number = 0;
 
   constructor(
     scene: InGameScene,
@@ -43,6 +46,11 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
   }
 
   destroy(): void {
+    if (this.currentAutoMove) {
+      this.autoMoveCancelled = true;
+      this.currentAutoMove = null;
+    }
+
     super.destroy();
     this.pet?.destroy();
     this.pet = null;
@@ -127,6 +135,177 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     return this.currentStatus;
   }
 
+  async autoMoveTo(tileX: number, tileY: number, playerType: PLAYER_STATUS, timestamp?: number): Promise<boolean> {
+    if (timestamp && timestamp < this.lastPositionTimestamp) {
+      return false;
+    }
+    if (timestamp) {
+      this.lastPositionTimestamp = timestamp;
+    }
+
+    const targetTilePos = new Phaser.Math.Vector2(tileX, tileY);
+    if (this.getTilePos().equals(targetTilePos)) {
+      return true;
+    }
+
+    if (this.currentAutoMove) {
+      this.autoMoveCancelled = true;
+      try {
+        await this.currentAutoMove;
+      } catch {}
+      this.autoMoveCancelled = false;
+    }
+
+    this.setMovement(playerType);
+
+    this.currentAutoMove = this.executeAutoMove(tileX, tileY);
+    const result = await this.currentAutoMove;
+    this.currentAutoMove = null;
+
+    return result;
+  }
+
+  private async executeAutoMove(tileX: number, tileY: number): Promise<boolean> {
+    const targetTilePos = new Phaser.Math.Vector2(tileX, tileY);
+    const path = this.buildStraightPath(targetTilePos);
+
+    if (!path || path.length === 0) {
+      this.setTilePos(targetTilePos);
+      const [targetX, targetY] = this.calcOverworldTilePos(targetTilePos.x, targetTilePos.y);
+      this.setPosition(new Phaser.Math.Vector2(targetX, targetY));
+      return false;
+    }
+
+    const stepDuration = 2000;
+    let success = true;
+
+    try {
+      for (const direction of path) {
+        if (this.autoMoveCancelled) {
+          success = false;
+          break;
+        }
+
+        const ready = await this.waitForMovementState(true, stepDuration);
+        if (!ready || this.autoMoveCancelled) {
+          success = false;
+          break;
+        }
+
+        const animationKey = this.getAnimationKey(direction);
+        if (!animationKey) {
+          success = false;
+          break;
+        }
+
+        this.ready(direction, animationKey);
+
+        if (this.currentStatus === PLAYER_STATUS.SURF) {
+          const avatarSurfAnimationKey = this.getAvatarSurfAnimationType(direction);
+          this.setVisibleDummy(true);
+          this.setDummyOffsetY(this.getTilePos().x, this.getTilePos().y, -40);
+          this.setDummy(TEXTURE.NONE, avatarSurfAnimationKey!, 0, 30, 3);
+        } else {
+          this.setVisibleDummy(false);
+        }
+
+        this.pet?.move(this);
+
+        const started = await this.waitForMovementState(false, stepDuration);
+        if (!started || this.autoMoveCancelled) {
+          success = false;
+          break;
+        }
+
+        const finished = await this.waitForMovementState(true, stepDuration);
+        if (!finished || this.autoMoveCancelled) {
+          success = false;
+          break;
+        }
+      }
+
+      return success;
+    } catch (error) {
+      console.error(`[OtherPlayerOverworldObj] AutoMove error: ${error}`);
+      return false;
+    }
+  }
+
+  private buildStraightPath(targetTilePos: Phaser.Math.Vector2): DIRECTION[] | null {
+    const start = this.getTilePos().clone();
+    const path: DIRECTION[] = [];
+    const cursor = start.clone();
+
+    const deltaX = targetTilePos.x - cursor.x;
+    const horizontalDirection = deltaX > 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+    for (let i = 0; i < Math.abs(deltaX); i++) {
+      cursor.add(this.getDirectionVector(horizontalDirection));
+      path.push(horizontalDirection);
+    }
+
+    const deltaY = targetTilePos.y - cursor.y;
+    const verticalDirection = deltaY > 0 ? DIRECTION.DOWN : DIRECTION.UP;
+    for (let i = 0; i < Math.abs(deltaY); i++) {
+      cursor.add(this.getDirectionVector(verticalDirection));
+      path.push(verticalDirection);
+    }
+
+    if (!cursor.equals(targetTilePos)) {
+      return null;
+    }
+
+    return path;
+  }
+
+  private getDirectionVector(direction: DIRECTION): Phaser.Math.Vector2 {
+    switch (direction) {
+      case DIRECTION.UP:
+        return new Phaser.Math.Vector2(0, -1);
+      case DIRECTION.DOWN:
+        return new Phaser.Math.Vector2(0, 1);
+      case DIRECTION.LEFT:
+        return new Phaser.Math.Vector2(-1, 0);
+      case DIRECTION.RIGHT:
+        return new Phaser.Math.Vector2(1, 0);
+      default:
+        return new Phaser.Math.Vector2(0, 0);
+    }
+  }
+
+  private waitForMovementState(expectFinished: boolean, timeout: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const scene = this.getScene();
+      const step = 16;
+      let elapsed = 0;
+
+      const checkState = () => {
+        if (this.autoMoveCancelled) {
+          resolve(false);
+          return;
+        }
+
+        if (this.isMovementFinish() === expectFinished) {
+          resolve(true);
+          return;
+        }
+
+        if (elapsed >= timeout) {
+          resolve(false);
+          return;
+        }
+
+        elapsed += step;
+        scene.time.delayedCall(step, checkState);
+      };
+
+      checkState();
+    });
+  }
+
+  isAutoMoving(): boolean {
+    return this.currentAutoMove !== null;
+  }
+
   private getAnimationKey(direction: DIRECTION) {
     switch (this.currentStatus) {
       case PLAYER_STATUS.WALK:
@@ -149,16 +328,21 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
       case DIRECTION.UP:
         if (this.step == 0) return animationKey + 'up_1';
         if (this.step == 1) return animationKey + 'up_2';
+        break;
       case DIRECTION.DOWN:
         if (this.step == 0) return animationKey + 'down_1';
         if (this.step == 1) return animationKey + 'down_2';
+        break;
       case DIRECTION.LEFT:
         if (this.step == 0) return animationKey + 'left_1';
         if (this.step == 1) return animationKey + 'left_2';
+        break;
       case DIRECTION.RIGHT:
         if (this.step == 0) return animationKey + 'right_1';
         if (this.step == 1) return animationKey + 'right_2';
+        break;
     }
+    return undefined;
   }
 
   private getRunAnimationType(direction: DIRECTION) {
@@ -171,19 +355,24 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         if (this.step == 0) return animationKey + 'up_1';
         if (this.step == 1) return animationKey + 'up_2';
         if (this.step == 2) return animationKey + 'up_3';
+        break;
       case DIRECTION.DOWN:
         if (this.step == 0) return animationKey + 'down_1';
         if (this.step == 1) return animationKey + 'down_2';
         if (this.step == 2) return animationKey + 'down_3';
+        break;
       case DIRECTION.LEFT:
         if (this.step == 0) return animationKey + 'left_1';
         if (this.step == 1) return animationKey + 'left_2';
         if (this.step == 2) return animationKey + 'left_3';
+        break;
       case DIRECTION.RIGHT:
         if (this.step == 0) return animationKey + 'right_1';
         if (this.step == 1) return animationKey + 'right_2';
         if (this.step == 2) return animationKey + 'right_3';
+        break;
     }
+    return undefined;
   }
 
   private getRideAnimationType(direction: DIRECTION) {
@@ -199,6 +388,7 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         if (this.step == 3) return animationKey + 'up_4';
         if (this.step == 4) return animationKey + 'up_5';
         if (this.step == 5) return animationKey + 'up_6';
+        break;
       case DIRECTION.DOWN:
         if (this.step == 0) return animationKey + 'down_1';
         if (this.step == 1) return animationKey + 'down_2';
@@ -206,6 +396,7 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         if (this.step == 3) return animationKey + 'down_4';
         if (this.step == 4) return animationKey + 'down_5';
         if (this.step == 5) return animationKey + 'down_6';
+        break;
       case DIRECTION.LEFT:
         if (this.step == 0) return animationKey + 'left_1';
         if (this.step == 1) return animationKey + 'left_2';
@@ -213,6 +404,7 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         if (this.step == 3) return animationKey + 'left_4';
         if (this.step == 4) return animationKey + 'left_5';
         if (this.step == 5) return animationKey + 'left_6';
+        break;
       case DIRECTION.RIGHT:
         if (this.step == 0) return animationKey + 'right_1';
         if (this.step == 1) return animationKey + 'right_2';
@@ -220,7 +412,9 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         if (this.step == 3) return animationKey + 'right_4';
         if (this.step == 4) return animationKey + 'right_5';
         if (this.step == 5) return animationKey + 'right_6';
+        break;
     }
+    return undefined;
   }
 
   private getSurfAnimationType(direction: DIRECTION) {
@@ -253,32 +447,11 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
-  updateMovement(movementData: MovementPlayer): void {
-    const direction = this.getDirectionFromString(movementData.direction);
-    this.lastDirection = direction;
-    const status = this.getStatusFromString(movementData.movement as 'walk' | 'running' | 'surf' | 'ride' | 'jump');
-
-    if (status === PLAYER_STATUS.JUMP) {
-      this.jump();
-      return;
-    }
-
-    this.setMovement(status);
-
-    const animationKey = this.getAnimationKey(direction);
-    if (animationKey) {
-      this.ready(direction, animationKey);
-      if (this.currentStatus === PLAYER_STATUS.SURF) {
-        const avatarSurfAnimationKey = this.getAvatarSurfAnimationType(direction);
-        this.setVisibleDummy(true);
-        this.setDummyOffsetY(this.getTilePos().x, this.getTilePos().y, -40);
-        this.setDummy(TEXTURE.NONE, avatarSurfAnimationKey!, 0, 30, 3);
-      } else {
-        this.setVisibleDummy(false);
-      }
-
-      this.pet?.move(this);
-    }
+  updatePosition(x: number, y: number, movement: 'walk' | 'running' | 'ride' | 'surf', timestamp?: number): void {
+    const status = this.getStatusFromString(movement);
+    this.autoMoveTo(x, y, status, timestamp).catch((error) => {
+      console.error(`[OtherPlayerOverworldObj] updatePosition error: ${error}`);
+    });
   }
 
   changeFacing(facing: 'up' | 'down' | 'left' | 'right'): void {
@@ -317,25 +490,10 @@ export class OtherPlayerOverworldObj extends MovableOverworldObj {
         return PLAYER_STATUS.SURF;
       case 'ride':
         return PLAYER_STATUS.RIDE;
-    }
-
-    return PLAYER_STATUS.JUMP;
-  }
-
-  private getBaseTextureKey(status?: PLAYER_STATUS): string {
-    const targetStatus = status ? status : this.currentStatus;
-
-    const prefix = `${this.gender}_${this.avatar}_`;
-    switch (targetStatus) {
-      case PLAYER_STATUS.WALK:
-      case PLAYER_STATUS.RUNNING:
-        return `${prefix}movement`;
-      case PLAYER_STATUS.RIDE:
-        return `${prefix}ride`;
-      case PLAYER_STATUS.SURF:
-        return TEXTURE.SURF;
+      case 'jump':
+        return PLAYER_STATUS.JUMP;
       default:
-        return `${prefix}movement`;
+        return PLAYER_STATUS.WALK;
     }
   }
 }

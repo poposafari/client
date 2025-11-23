@@ -1,8 +1,9 @@
 import { AUDIO, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { KeyboardManager } from '../core/manager/keyboard-manager';
 import i18next from '../i18n';
 import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, getTextStyle, playEffectSound, Ui } from './ui';
+import { Option } from '../core/storage/player-option';
 
 export class MenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -25,14 +26,16 @@ export class MenuUi extends Ui {
   setup(texts: string[]): void {
     const width = this.getWidth();
     const height = this.getHeight();
+    this.info = [...texts];
 
-    this.info.push(...texts);
-    this.container = this.createContainer(width / 2 + 410, height / 2 + 530);
+    if (!this.container) {
+      this.container = this.createContainer(width / 2 + 410, height / 2 + 530);
+      this.container.setScale(this.scale);
+      this.container.setDepth(DEPTH.MENU);
+      this.container.setScrollFactor(0);
+    }
 
-    this.container.setScale(this.scale);
     this.container.setVisible(false);
-    this.container.setDepth(DEPTH.MENU);
-    this.container.setScrollFactor(0);
   }
 
   show(data?: any): void {
@@ -66,17 +69,17 @@ export class MenuUi extends Ui {
       this.container.removeAll(true);
     }
 
-    this.window = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, 0, 0, 16, 16, 16, 16);
+    this.window = this.addWindow(Option.getFrame('text') as TEXTURE, 0, 0, 0, 0, 16, 16, 16, 16);
     this.window.setOrigin(0, 1);
     this.window.setScale(this.scale);
 
     this.container.add(this.window);
 
     for (const info of this.info) {
-      const text = addText(this.scene, +40, currentY, info, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
-      const dummy = addImage(this.scene, TEXTURE.BLANK, +20, currentY).setOrigin(0, 1);
-      const etcTexts = addText(this.scene, text.displayWidth + text.x + 33, currentY - 5, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
-      const etcImgs = addImage(this.scene, TEXTURE.BLANK, text.displayWidth + text.x + 10, currentY - 8).setOrigin(0, 1);
+      const text = this.addText(+40, currentY, info, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
+      const dummy = this.addImage(TEXTURE.BLANK, +20, currentY).setOrigin(0, 1);
+      const etcTexts = this.addText(text.displayWidth + text.x + 33, currentY - 5, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 1);
+      const etcImgs = this.addImage(TEXTURE.BLANK, text.displayWidth + text.x + 10, currentY - 8).setOrigin(0, 1);
 
       dummy.setScale(1.6);
 
@@ -100,21 +103,35 @@ export class MenuUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
+  protected onClean(): void {
+    if (this.container) {
+      this.container.setVisible(false);
+    }
+  }
+
+  hide(): void {
+    if (this.container) {
+      this.container.setVisible(false);
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}
 
   async handleKeyInput(data?: any): Promise<string> {
-    const keys = [KEY.DOWN, KEY.UP, KEY.SELECT, KEY.CANCEL];
-    const keyboard = KeyboardHandler.getInstance();
+    const keys = [KEY.DOWN, KEY.UP, KEY.SELECT, KEY.ENTER, KEY.CANCEL, KEY.ESC];
+    const keyboard = KeyboardManager.getInstance();
+
+    if (this.dummys.length === 0 || !this.container.visible) {
+      this.show();
+    }
 
     let start = 0;
     let end = this.info.length - 1;
     let choice = start;
 
-    this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+    if (this.dummys[choice]) {
+      this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+    }
 
     return new Promise((resolve) => {
       keyboard.setAllowKey(keys);
@@ -129,16 +146,18 @@ export class MenuUi extends Ui {
             case KEY.DOWN:
               choice = Math.min(end, choice + 1);
               break;
+            case KEY.ENTER:
             case KEY.SELECT:
               if (this.menus[choice].style.color !== '#999999') {
-                this.clean();
+                this.hide();
                 return resolve(this.info[choice]);
               }
               playEffectSound(this.scene, AUDIO.BUZZER);
 
               break;
+            case KEY.ESC:
             case KEY.CANCEL:
-              this.clean();
+              this.hide();
               return resolve(i18next.t('menu:cancelMenu'));
           }
 
@@ -146,8 +165,12 @@ export class MenuUi extends Ui {
             if (choice !== prevChoice) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
 
-              this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
-              this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+              if (this.dummys[prevChoice]) {
+                this.dummys[prevChoice].setTexture(TEXTURE.BLANK);
+              }
+              if (this.dummys[choice]) {
+                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+              }
             }
           }
         } catch (error) {

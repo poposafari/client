@@ -1,23 +1,26 @@
 import { PlayerItem } from './player-item';
 import { InGameScene } from '../scenes/ingame-scene';
 import { PlayerGender } from '../types';
-import { MovableOverworldObj } from './movable-overworld-obj';
+import { MovableOverworldObj, OverworldObjectCollections } from './movable-overworld-obj';
 import { PetOverworldObj } from './pet-overworld-obj';
 import { PlayerPokemon } from './player-pokemon';
 import { findEventTile, runFadeEffect, playEffectSound } from '../uis/ui';
 import { OverworldObj } from './overworld-obj';
 import { DoorOverworldObj } from './door-overworld-obj';
-import { ShopCheckoutOverworldObj } from './shop-checkout-overworld-obj';
-import { eventBus } from '../core/event-bus';
-import { PostCheckoutOverworldObj } from './post-checkout-overworld-obj';
+import { Event } from '../core/manager/event-manager';
 import { AUDIO, DIRECTION, EASE, EVENT, MODE, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
-import { GM } from '../core/game-manager';
 import { NpcOverworldObj } from './npc-overworld-obj';
 import { WildOverworldObj } from './wild-overworld-obj';
 import { GroundItemOverworldObj } from './ground-item-overworld-obj';
-import { SocketHandler } from '../handlers/socket-handler';
-import { changeDirectionToKey, matchPlayerStatusToDirection } from '../utils/string-util';
-import { StatueOverworldObj } from './statue-overworld-obj';
+import { SocketManager } from '../core/manager/socket-manager';
+import { matchPlayerStatusToDirection } from '../utils/string-util';
+import { SignOverworldObj } from './sign-overworld-obj';
+import { PlayerGlobal, PlayerStorage } from '../core/storage/player-storage';
+import { Game } from '../core/manager/game-manager';
+import { OverworldGlobal } from '../core/storage/overworld-storage';
+import { PC } from '../core/storage/pc-storage';
+import { OverworldTriggerObj } from './overworld-trigger-obj';
+import { OverworldHUDUi } from '../uis/overworld/overworld-hud-ui';
 
 export class PlayerOverworldObj extends MovableOverworldObj {
   private currentStatus!: PLAYER_STATUS;
@@ -27,48 +30,71 @@ export class PlayerOverworldObj extends MovableOverworldObj {
   private pet: PetOverworldObj | null;
   private dummyObj!: OverworldObj | null;
   private runningToggle!: boolean;
+  private playerMap: Phaser.Tilemaps.Tilemap | null;
+  private tempHudUi!: OverworldHUDUi;
+  private handleSetPetListener: () => void;
 
   isEvent: boolean = false;
 
-  private readonly spriteScale: number = 3;
+  // private readonly spriteScale: number = 3;
+  private readonly spriteScale: number = 2;
 
   constructor(
     scene: InGameScene,
     map: Phaser.Tilemaps.Tilemap | null,
     gender: PlayerGender,
     avatar: number,
-    pet: PlayerPokemon,
+    pet: PlayerPokemon | null,
     x: number,
     y: number,
     name: string = '',
     obj: OBJECT,
     direction: DIRECTION,
+    hud: OverworldHUDUi,
+    objectCollections?: OverworldObjectCollections,
   ) {
     const texture = `${gender}_${avatar}_movement`;
 
-    super(scene, map, texture, x, y, name, obj, direction);
+    super(scene, map, texture, x, y, name, obj, direction, objectCollections);
 
     this.gender = gender;
     this.avatar = avatar;
+    this.playerMap = map;
 
     this.pet = new PetOverworldObj(scene, map, pet, x, y);
 
+    this.tempHudUi = hud;
+
     this.currentStatus = PLAYER_STATUS.WALK;
-    this.setMovement(PLAYER_STATUS.WALK);
-    GM.setRunningToggle(false);
-    eventBus.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
+    this.setMovement(PlayerGlobal.getLastPlayerStatus());
+    Event.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
     this.setSpriteScale(this.spriteScale);
     this.movePetBehind();
+    this.changeDirectionOnly(PlayerGlobal.getLastDirection());
+
+    this.handleSetPetListener = () => this.handleSetPet();
+    Event.on(EVENT.SET_PET, this.handleSetPetListener);
   }
 
-  setRunningToggle() {
-    this.runningToggle = !this.runningToggle;
-    GM.setRunningToggle(this.runningToggle);
+  destroy(): void {
+    Event.off(EVENT.SET_PET, this.handleSetPetListener);
+    if (this.pet) {
+      this.pet.destroy();
+      this.pet = null;
+    }
+    super.destroy();
+  }
+
+  async showHUDForStarter(icon: TEXTURE) {
+    await this.tempHudUi.showIconsForStarter(icon);
   }
 
   setMovement(newStatus: PLAYER_STATUS) {
     if (this.currentStatus === PLAYER_STATUS.WALK) {
-      if (newStatus === PLAYER_STATUS.RUNNING) this.currentStatus = PLAYER_STATUS.RUNNING;
+      if (newStatus === PLAYER_STATUS.RUNNING) {
+        this.currentStatus = PLAYER_STATUS.RUNNING;
+        PlayerGlobal.setLastPlayerStatusWalkOrRunning(this.currentStatus);
+      }
       if (newStatus === PLAYER_STATUS.RIDE) {
         this.currentStatus = PLAYER_STATUS.RIDE;
         this.recallPet();
@@ -78,8 +104,14 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         this.setVisibleDummy(true);
       }
     } else if (this.currentStatus === PLAYER_STATUS.RUNNING) {
-      if (newStatus === PLAYER_STATUS.RUNNING) this.currentStatus = PLAYER_STATUS.WALK;
-      if (newStatus === PLAYER_STATUS.WALK) this.currentStatus = PLAYER_STATUS.WALK;
+      if (newStatus === PLAYER_STATUS.RUNNING) {
+        this.currentStatus = PLAYER_STATUS.WALK;
+        PlayerGlobal.setLastPlayerStatusWalkOrRunning(this.currentStatus);
+      }
+      if (newStatus === PLAYER_STATUS.WALK) {
+        this.currentStatus = PLAYER_STATUS.WALK;
+        PlayerGlobal.setLastPlayerStatusWalkOrRunning(this.currentStatus);
+      }
       if (newStatus === PLAYER_STATUS.RIDE) {
         this.currentStatus = PLAYER_STATUS.RIDE;
         this.recallPet();
@@ -90,16 +122,16 @@ export class PlayerOverworldObj extends MovableOverworldObj {
       }
     } else if (this.currentStatus === PLAYER_STATUS.RIDE) {
       if (newStatus === PLAYER_STATUS.RIDE) {
-        this.currentStatus = this.runningToggle ? PLAYER_STATUS.RUNNING : PLAYER_STATUS.WALK;
-        this.callPet();
+        this.currentStatus = PlayerGlobal.getLastPlayerStatusWalkOrRunning();
+        PlayerGlobal.setLastPlayerStatus(this.currentStatus);
+        this.handlePetForStatusChange();
       } else if (newStatus === PLAYER_STATUS.SURF) {
         this.currentStatus = PLAYER_STATUS.SURF;
       }
     } else if (this.currentStatus === PLAYER_STATUS.SURF) {
       if (newStatus === PLAYER_STATUS.SURF) {
-        this.currentStatus = this.runningToggle ? PLAYER_STATUS.RUNNING : PLAYER_STATUS.WALK;
+        this.currentStatus = PlayerGlobal.getLastPlayerStatusWalkOrRunning();
         this.setVisibleDummy(false);
-        this.callPet();
       }
     }
 
@@ -133,7 +165,6 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
   move(direction: DIRECTION) {
     const animationKey = this.getAnimationKey(direction);
-
     if (this.currentStatus === PLAYER_STATUS.SURF) {
       const avatarSurfAnimationKey = this.getAvatarSurfAnimationType(direction);
       this.setVisibleDummy(true);
@@ -145,6 +176,9 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
     if (animationKey) {
       this.ready(direction, animationKey);
+      if (!this.pet) {
+        this.createPetIfNeeded();
+      }
       this.pet?.move(this);
     }
   }
@@ -154,6 +188,13 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     const stopFrameNumber = this.getStopFrameNumberFromDirection(direction);
     if (stopFrameNumber !== undefined) {
       this.stopSpriteAnimation(stopFrameNumber);
+
+      if (this.currentStatus === PLAYER_STATUS.SURF) {
+        const avatarSurfAnimationKey = this.getAvatarSurfAnimationType(direction);
+        this.setVisibleDummy(true);
+        this.setDummyOffsetY(this.getTilePos().x, this.getTilePos().y, -40);
+        this.setDummy(TEXTURE.NONE, avatarSurfAnimationKey!, 0, 30, 3);
+      }
     }
   }
 
@@ -177,20 +218,31 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     }
   }
 
-  getEvent(): 'surf' | ShopCheckoutOverworldObj | PostCheckoutOverworldObj | NpcOverworldObj | WildOverworldObj | GroundItemOverworldObj | StatueOverworldObj | null {
+  getEvent(): 'surf' | NpcOverworldObj | WildOverworldObj | GroundItemOverworldObj | SignOverworldObj | null {
     const tiles = this.getTileInfo(this.lastDirection);
     const obj = this.getObjectInFront(this.lastDirection);
     const event = findEventTile(tiles);
 
-    if (obj instanceof ShopCheckoutOverworldObj) return obj;
-    if (obj instanceof PostCheckoutOverworldObj) return obj;
-    if (obj instanceof StatueOverworldObj) return obj;
     if (obj instanceof NpcOverworldObj) return obj;
     if (obj instanceof WildOverworldObj) return obj;
     if (obj instanceof GroundItemOverworldObj) return obj;
-    if (event === 'surf' && GM.findSkillsInParty('surf')) return 'surf';
+    if (obj instanceof SignOverworldObj) return obj;
+    if (event === 'surf' && PC.findSkillsInParty('surf')) return 'surf';
 
     return null;
+  }
+
+  getTriggerOnCurrentTile(): OverworldTriggerObj | null {
+    const triggers = this.objectCollections?.triggers;
+    if (!triggers || triggers.length === 0) return null;
+
+    const currentTilePos = this.getTilePos();
+    return (
+      triggers.find((trigger) => {
+        const triggerTilePos = trigger.getTilePos();
+        return triggerTilePos.x === currentTilePos.x && triggerTilePos.y === currentTilePos.y;
+      }) || null
+    );
   }
 
   setIsEvent(onoff: boolean) {
@@ -199,6 +251,56 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
   movePetBehind() {
     this.pet?.teleportBehind(this);
+  }
+
+  async autoWalkTo(tileX: number, tileY: number, timeoutPerStep: number = 2000): Promise<boolean> {
+    if (!this.isMovementFinish()) return false;
+
+    const targetTilePos = new Phaser.Math.Vector2(tileX, tileY);
+    if (this.getTilePos().equals(targetTilePos)) return true;
+
+    const path = this.buildStraightPath(targetTilePos);
+    if (!path || path.length === 0) return false;
+
+    const previousStatus = this.currentStatus;
+    if (this.currentStatus !== PLAYER_STATUS.WALK) {
+      this.setMovement(PLAYER_STATUS.WALK);
+    }
+
+    let success = true;
+
+    for (const direction of path) {
+      const ready = await this.waitForMovementState(true, timeoutPerStep);
+      if (!ready) {
+        success = false;
+        break;
+      }
+
+      this.move(direction);
+
+      if (this.isMovementBlocking()) {
+        success = false;
+        break;
+      }
+
+      const started = await this.waitForMovementState(false, timeoutPerStep);
+      if (!started) {
+        success = false;
+        break;
+      }
+
+      const finished = await this.waitForMovementState(true, timeoutPerStep);
+      if (!finished || this.isMovementBlocking()) {
+        success = false;
+        break;
+      }
+    }
+
+    if (previousStatus !== PLAYER_STATUS.WALK) {
+      this.setMovement(previousStatus);
+    }
+
+    return success;
   }
 
   canSurfOff(direction: DIRECTION): boolean {
@@ -231,7 +333,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         onStart: () => {
           playEffectSound(this.getScene(), AUDIO.JUMP);
 
-          SocketHandler.getInstance().movementPlayer({
+          SocketManager.getInstance().movementPlayer({
             x: targetVec.x,
             y: targetVec.y,
             direction: matchPlayerStatusToDirection(this.lastDirection),
@@ -302,7 +404,63 @@ export class PlayerOverworldObj extends MovableOverworldObj {
   }
 
   recallPet() {
-    this.pet?.recall();
+    if (this.pet) {
+      this.pet.recall();
+      setTimeout(() => {
+        if (this.pet) {
+          this.pet.destroy();
+          this.pet = null;
+        }
+      }, 1000);
+    }
+  }
+
+  private handleSetPet() {
+    const petData = PC.getPet();
+
+    if (this.currentStatus === PLAYER_STATUS.WALK || this.currentStatus === PLAYER_STATUS.RUNNING) {
+      if (!this.pet && petData) {
+        const [x, y] = this.calcOverworldTilePos(this.getTilePos().x, this.getTilePos().y);
+        this.pet = new PetOverworldObj(this.getScene(), this.playerMap, petData, this.getTilePos().x, this.getTilePos().y);
+        this.movePetBehind();
+        this.pet.call();
+      } else if (this.pet && petData) {
+        this.pet.changePet(petData, false);
+      } else if (this.pet && !petData) {
+        this.recallPet();
+      }
+    } else if (this.currentStatus === PLAYER_STATUS.SURF || this.currentStatus === PLAYER_STATUS.RIDE) {
+      if (this.pet) {
+        this.pet.getSprite().setVisible(false);
+        this.pet.recall();
+        setTimeout(() => {
+          if (this.pet) {
+            this.pet.destroy();
+            this.pet = null;
+          }
+        }, 1000);
+      }
+    }
+  }
+
+  handlePetForStatusChange() {
+    const petData = PC.getPet();
+    if (petData && !this.pet) {
+      const [x, y] = this.calcOverworldTilePos(this.getTilePos().x, this.getTilePos().y);
+      this.pet = new PetOverworldObj(this.getScene(), this.playerMap, petData, this.getTilePos().x, this.getTilePos().y);
+      this.movePetBehind();
+      this.pet.call();
+    }
+  }
+
+  private createPetIfNeeded() {
+    const petData = PC.getPet();
+    if (petData && !this.pet && (this.currentStatus === PLAYER_STATUS.WALK || this.currentStatus === PLAYER_STATUS.RUNNING)) {
+      const [x, y] = this.calcOverworldTilePos(this.getTilePos().x, this.getTilePos().y);
+      this.pet = new PetOverworldObj(this.getScene(), this.playerMap, petData, this.getTilePos().x, this.getTilePos().y);
+      this.movePetBehind();
+      this.pet.call();
+    }
   }
 
   async isDoorInFront(direction: DIRECTION) {
@@ -316,10 +474,9 @@ export class PlayerOverworldObj extends MovableOverworldObj {
   async openDoor(direction: DIRECTION, door: DoorOverworldObj): Promise<void> {
     return new Promise(async (resolve) => {
       const goal = door.getGoal();
-      const lastLocation = GM.getUserData()?.location;
+      const lastLocation = PlayerGlobal.getData()?.location;
       const currentLocation = goal.location;
 
-      this.setIsEvent(true);
       if (door.getTexture() !== TEXTURE.BLANK) {
         if (door.getTexture() === 'door_1' || door.getTexture() === 'door_7') {
           playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_1);
@@ -327,15 +484,15 @@ export class PlayerOverworldObj extends MovableOverworldObj {
           playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_2);
         }
         await door.reaction();
-        await this.forceMoveForward(direction, 200);
       } else {
         playEffectSound(this.getScene(), AUDIO.DOOR_ENTER_0);
       }
       runFadeEffect(this.getScene(), 800, 'in');
-      GM.updateUserData({ location: currentLocation, lastLocation: lastLocation, x: goal.x, y: goal.y });
-      GM.changeMode(MODE.OVERWORLD);
-
-      this.setIsEvent(false);
+      PlayerGlobal.updateData({ location: currentLocation, lastLocation: lastLocation, x: goal.x, y: goal.y });
+      OverworldGlobal.setBlockingUpdate(true);
+      PlayerGlobal.setLastDirection(direction);
+      PlayerGlobal.setLastPlayerStatus(this.currentStatus);
+      await Game.changeMode(MODE.CHECK_OVERWORLD);
       resolve();
     });
   }
@@ -560,5 +717,93 @@ export class PlayerOverworldObj extends MovableOverworldObj {
       default:
         return `${prefix}surf`;
     }
+  }
+
+  private buildStraightPath(targetTilePos: Phaser.Math.Vector2): DIRECTION[] | null {
+    const horizontalFirst = this.buildAxisAlignedPath(targetTilePos, ['horizontal', 'vertical']);
+    if (horizontalFirst) return horizontalFirst;
+    return this.buildAxisAlignedPath(targetTilePos, ['vertical', 'horizontal']);
+  }
+
+  private buildAxisAlignedPath(targetTilePos: Phaser.Math.Vector2, order: Array<'horizontal' | 'vertical'>): DIRECTION[] | null {
+    const start = this.getTilePos().clone();
+    const path: DIRECTION[] = [];
+    const cursor = start.clone();
+
+    for (const axis of order) {
+      if (axis === 'horizontal') {
+        const deltaX = targetTilePos.x - cursor.x;
+        if (deltaX !== 0) {
+          const direction = deltaX > 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+          const steps = Math.abs(deltaX);
+          for (let i = 0; i < steps; i++) {
+            cursor.add(this.getDirectionVector(direction));
+            if (this.hasBlocking(cursor.clone(), direction)) {
+              return null;
+            }
+            path.push(direction);
+          }
+        }
+      } else {
+        const deltaY = targetTilePos.y - cursor.y;
+        if (deltaY !== 0) {
+          const direction = deltaY > 0 ? DIRECTION.DOWN : DIRECTION.UP;
+          const steps = Math.abs(deltaY);
+          for (let i = 0; i < steps; i++) {
+            cursor.add(this.getDirectionVector(direction));
+            if (this.hasBlocking(cursor.clone(), direction)) {
+              return null;
+            }
+            path.push(direction);
+          }
+        }
+      }
+    }
+
+    if (!cursor.equals(targetTilePos)) {
+      return null;
+    }
+
+    return path;
+  }
+
+  private getDirectionVector(direction: DIRECTION): Phaser.Math.Vector2 {
+    switch (direction) {
+      case DIRECTION.UP:
+        return new Phaser.Math.Vector2(0, -1);
+      case DIRECTION.DOWN:
+        return new Phaser.Math.Vector2(0, 1);
+      case DIRECTION.LEFT:
+        return new Phaser.Math.Vector2(-1, 0);
+      case DIRECTION.RIGHT:
+        return new Phaser.Math.Vector2(1, 0);
+      default:
+        return new Phaser.Math.Vector2(0, 0);
+    }
+  }
+
+  private waitForMovementState(expectFinished: boolean, timeout: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const scene = this.getScene();
+      const step = 16;
+      let elapsed = 0;
+
+      const checkState = () => {
+        if (this.isMovementFinish() === expectFinished) {
+          resolve(true);
+          return;
+        }
+
+        if (elapsed >= timeout) {
+          resolve(false);
+          return;
+        }
+
+        elapsed += step;
+        scene.time.delayedCall(step, checkState);
+      };
+
+      checkState();
+    });
   }
 }

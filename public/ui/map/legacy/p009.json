@@ -1,0 +1,521 @@
+{
+  "compressionlevel": -1,
+  "height": 14,
+  "infinite": false,
+  "layers": [
+    {
+      "data": [
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473, 3473,
+        3473, 3473, 3473, 3473
+      ],
+      "height": 14,
+      "id": 1,
+      "name": "L0_floor",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3506, 3506, 0, 0, 0, 0, 0, 0, 76, 77, 77, 77, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 125, 125, 125,
+        126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 125, 125, 125, 126, 0, 0, 0, 0, 0, 217, 218, 219, 0, 172, 173, 173, 173, 174, 0, 0, 0, 0, 0, 265, 0, 267, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 313, 314, 315,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 14,
+      "id": 2,
+      "name": "L1_floor",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 58, 58, 3265, 3265, 3265, 3265, 3265, 3265, 3265, 3265,
+        3265, 3265, 3265, 3265, 58, 58, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 3313, 58, 58, 374, 375, 376, 2006, 2007, 2201, 2202, 0, 0, 0, 2799, 2800, 58, 58, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 2847, 2848, 58, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2895, 2896, 58, 58, 0, 0, 0, 0, 0, 1581, 1582, 1583, 0, 0, 0, 0, 58, 58, 0, 0, 0, 0, 1097, 1629, 1630, 1631, 0, 0, 0, 0, 58,
+        58, 0, 0, 0, 0, 0, 1677, 1678, 1679, 0, 0, 0, 0, 58, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 58, 0, 93, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 58, 0, 141, 0, 0, 0, 0, 0, 0, 0, 0, 3444, 3443,
+        58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58
+      ],
+      "height": 14,
+      "id": 3,
+      "name": "L2_object",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1739, 1740, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2121, 2122, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2153, 2154, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 14,
+      "id": 4,
+      "name": "L3_object",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1910, 1911, 1102, 0, 0, 0, 0, 0, 0, 0, 0, 326, 327, 328, 1958, 1959, 1150, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 45, 46, 0, 0, 0, 0, 0, 0, 0, 0, 3347, 0, 0, 92, 0, 94, 0, 0, 0, 0, 0, 0, 0, 3396, 3395, 0, 0, 140, 0, 142, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 14,
+      "id": 5,
+      "name": "foreground",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextlayerid": 6,
+  "nextobjectid": 1,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "tiledversion": "1.10.2",
+  "tileheight": 16,
+  "tilesets": [
+    {
+      "columns": 32,
+      "image": "../../png/indoor/floor.png",
+      "imageheight": 640,
+      "imagewidth": 512,
+      "name": "indoor_floor",
+      "tilecount": 1280,
+      "tiles": [
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 49,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "tilewidth": 16,
+      "tileheight": 16,
+      "type": "tileset",
+      "firstgid": 3457
+    },
+    {
+      "columns": 48,
+      "image": "../../png/indoor/object.png",
+      "imageheight": 1152,
+      "imagewidth": 768,
+      "name": "indoor_object",
+      "tilecount": 3456,
+      "tiles": [
+        {
+          "id": 57,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "event",
+              "type": "string",
+              "value": "exit_"
+            }
+          ]
+        },
+        {
+          "id": 92,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 140,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 373,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 374,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 375,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1096,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1580,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1581,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1582,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1628,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1629,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1630,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1676,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1677,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1678,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1738,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1739,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2005,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2006,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2120,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2121,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2152,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2153,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2200,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2201,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2798,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2799,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2846,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2847,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2894,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2895,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 3264,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 3312,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 3442,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 3443,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "tilewidth": 16,
+      "tileheight": 16,
+      "type": "tileset",
+      "firstgid": 1
+    }
+  ],
+  "tilewidth": 16,
+  "type": "map",
+  "version": "1.10",
+  "width": 14
+}

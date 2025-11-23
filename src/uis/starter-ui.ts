@@ -2,19 +2,20 @@ import InputText from 'phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/Inp
 import { GetIngameRes, PlayerAvatar, PlayerGender } from '../types';
 import { ModalFormUi } from './modal-form-ui';
 import { InGameScene } from '../scenes/ingame-scene';
-import { addBackground, addImage, addText, addTextInput, addWindow, runFadeEffect, startModalAnimation } from './ui';
-import { DEPTH, HttpErrorCode, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { playBackgroundMusic, runFadeEffect, startModalAnimation, stopBackgroundMusic } from './ui';
+import { AUDIO, DEPTH, MessageEndDelay, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
 import { getIngameApi, registerIngameApi } from '../api';
-import { changeTextSpeedToDigit, getPokemonSpriteKey, isValidNickname, replacePercentSymbol } from '../utils/string-util';
+import { changeTextSpeedToDigit, isValidNickname, replacePercentSymbol } from '../utils/string-util';
 import { TalkMessageUi } from './talk-message-ui';
-import { GM } from '../core/game-manager';
-import { SocketHandler } from '../handlers/socket-handler';
+import { Option } from '../core/storage/player-option';
+import { ErrorCode } from '../core/errors';
+import { Game } from '../core/manager/game-manager';
 
 export class StarterUi extends ModalFormUi {
   private container!: Phaser.GameObjects.Container;
 
-  private talkUi: TalkMessageUi;
+  private talkUi!: TalkMessageUi;
 
   private titleContainer!: Phaser.GameObjects.Container;
   private statueContainer!: Phaser.GameObjects.Container;
@@ -40,20 +41,16 @@ export class StarterUi extends ModalFormUi {
 
   constructor(scene: InGameScene) {
     super(scene);
-
-    this.talkUi = new TalkMessageUi(scene);
   }
 
   setup(data?: any): void {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.talkUi.setup();
+    this.container = this.createTrackedContainer(width / 2, height / 2);
 
-    this.container = this.createContainer(width / 2, height / 2);
-
-    const bg = addBackground(this.scene, TEXTURE.BG_STARTER).setOrigin(0.5, 0.5);
-    const professor = addImage(this.scene, TEXTURE.PROFESSOR, 0, -50).setScale(5);
+    const bg = this.addBackground(TEXTURE.BG_STARTER).setOrigin(0.5, 0.5);
+    const professor = this.addImage(TEXTURE.PROFESSOR, 0, -50).setScale(5);
 
     this.setupAvatarModal(width, height);
 
@@ -68,25 +65,34 @@ export class StarterUi extends ModalFormUi {
   async show(data?: any): Promise<void> {
     runFadeEffect(this.scene, 1000, 'in');
 
+    playBackgroundMusic(this.scene, AUDIO.B000);
+
     this.container.setVisible(true);
 
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame1'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame2'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame3'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame4'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame5'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame6'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame7'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame8'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame9'), speed: this.professorMsgSpeed });
+    this.talkUi = new TalkMessageUi(this.scene);
+    await this.talkUi.setup();
+
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame1'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame2'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame3'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame4'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame5'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame6'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame7'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame8'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame9'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
 
     this.showModal();
     this.handleMouseBtn();
     this.pause(false);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
+  protected onClean(): void {
+    this.gender = 'boy';
+    this.avatar = '1';
+    this.selectBtns = [];
+    this.selectTexts = [];
+    this.selectViewTexts = [];
   }
 
   pause(onoff: boolean, data?: any): void {
@@ -125,11 +131,11 @@ export class StarterUi extends ModalFormUi {
     this.avatar = '1';
 
     super.setup();
-    this.setModalSize(TEXTURE.WINDOW_MENU, 110, 120, 6);
+    this.setModalSize(Option.getFrame('text') as TEXTURE, 110, 120, 6);
 
-    this.titleContainer = this.createContainer(width / 2, height / 2 - 260);
+    this.titleContainer = this.createTrackedContainer(width / 2, height / 2 - 260);
 
-    const text = addText(this.scene, 0, 0, i18next.t('menu:createAvatar'), TEXTSTYLE.TITLE_MODAL);
+    const text = this.addText(0, 0, i18next.t('menu:createAvatar'), TEXTSTYLE.TITLE_MODAL);
 
     this.titleContainer.add(text);
 
@@ -137,9 +143,9 @@ export class StarterUi extends ModalFormUi {
     this.titleContainer.setDepth(DEPTH.TITLE + 3);
     this.titleContainer.setScrollFactor(0);
 
-    this.statueContainer = this.createContainer(width / 2, height / 2 - 140);
+    this.statueContainer = this.createTrackedContainer(width / 2, height / 2 - 140);
 
-    this.statue = addImage(this.scene, `${this.gender}_${this.avatar}_statue`, 0, 0).setScale(3.4);
+    this.statue = this.addImage(`${this.gender}_${this.avatar}_statue`, 0, 0).setScale(3.4);
 
     this.statueContainer.add(this.statue);
 
@@ -147,26 +153,24 @@ export class StarterUi extends ModalFormUi {
     this.statueContainer.setDepth(DEPTH.TITLE + 3);
     this.statueContainer.setScrollFactor(0);
 
-    this.selectContainer = this.createContainer(width / 2, height / 2 + 50);
+    this.selectContainer = this.createTrackedContainer(width / 2, height / 2 + 50);
 
-    const genderRight = addImage(this.scene, TEXTURE.ARROW_B, +150, 0).setScale(2);
-    const genderLeft = addImage(this.scene, TEXTURE.ARROW_B, -150, 0).setFlipX(true).setScale(2);
-    const genderViewText = addText(this.scene, 0, 0, '', TEXTSTYLE.DEFAULT);
+    const genderRight = this.addImage(TEXTURE.ARROW_B, +150, 0).setScale(2);
+    const genderLeft = this.addImage(TEXTURE.ARROW_B, -150, 0).setFlipX(true).setScale(2);
+    const genderViewText = this.addText(0, 0, '', TEXTSTYLE.DEFAULT);
 
-    const avatarIdxRight = addImage(this.scene, TEXTURE.ARROW_B, +150, +70).setScale(2);
-    const avatarIdxLeft = addImage(this.scene, TEXTURE.ARROW_B, -150, +70).setFlipX(true).setScale(2);
-    const avartarViewText = addText(this.scene, 0, +70, '', TEXTSTYLE.DEFAULT);
+    const avatarIdxRight = this.addImage(TEXTURE.ARROW_B, +150, +70).setScale(2);
+    const avatarIdxLeft = this.addImage(TEXTURE.ARROW_B, -150, +70).setFlipX(true).setScale(2);
+    const avartarViewText = this.addText(0, +70, '', TEXTSTYLE.DEFAULT);
 
-    //gender
     this.selectBtns.push(genderLeft);
     this.selectBtns.push(genderRight);
     this.selectTexts[0] = [i18next.t('menu:selectBoy'), i18next.t('menu:selectGirl')];
     this.selectViewTexts[0] = genderViewText;
 
-    //avatar index
     this.selectBtns.push(avatarIdxLeft);
     this.selectBtns.push(avatarIdxRight);
-    this.selectTexts[1] = [i18next.t('menu:selectSet') + ' 1', i18next.t('menu:selectSet') + ' 2', i18next.t('menu:selectSet') + ' 3', i18next.t('menu:selectSet') + ' 4'];
+    this.selectTexts[1] = [i18next.t('menu:selectSet') + ' 1', i18next.t('menu:selectSet') + ' 2'];
     this.selectViewTexts[1] = avartarViewText;
 
     this.selectContainer.add(this.selectBtns);
@@ -181,21 +185,21 @@ export class StarterUi extends ModalFormUi {
 
     const btnScale = 2;
 
-    this.inputContainer = this.createContainer(width / 2, height / 2 - 40);
-    this.btnContainer = this.createContainer(width / 2, height / 2 + 280);
+    this.inputContainer = this.createTrackedContainer(width / 2, height / 2 - 40);
+    this.btnContainer = this.createTrackedContainer(width / 2, height / 2 + 280);
 
-    this.inputWindow = addWindow(this.scene, TEXTURE.WINDOW_WHITE, 0, 0, 210, 50, 16, 16, 16, 16).setScale(1.2);
-    this.errTexts = addText(this.scene, 0, -60, '', TEXTSTYLE.GENDER_1);
+    this.inputWindow = this.addWindow(TEXTURE.WINDOW_WHITE, 0, 0, 210, 50, 16, 16, 16, 16).setScale(1.2);
+    this.errTexts = this.addText(0, -60, '', TEXTSTYLE.GENDER_1);
 
-    this.input = addTextInput(this.scene, -110, 0, 210, 50, TEXTSTYLE.LOBBY_INPUT, {
+    this.input = this.addTextInput(-110, 0, 210, 50, TEXTSTYLE.LOBBY_INPUT, {
       type: 'text',
       placeholder: i18next.t('menu:nickname'),
       minLength: 2,
       maxLength: 10,
     }).setScale(2);
 
-    this.btnWindow = addWindow(this.scene, TEXTURE.WINDOW_MENU, 0, 0, 150 / btnScale, 65 / btnScale, 16, 16, 16, 16).setScale(btnScale);
-    this.btnText = addText(this.scene, 0, 0, i18next.t('menu:create'), TEXTSTYLE.DEFAULT);
+    this.btnWindow = this.addWindow(Option.getFrame('text') as TEXTURE, 0, 0, 150 / btnScale, 65 / btnScale, 16, 16, 16, 16).setScale(btnScale);
+    this.btnText = this.addText(0, 0, i18next.t('menu:create'), TEXTSTYLE.DEFAULT);
 
     this.inputContainer.add(this.inputWindow);
     this.inputContainer.add(this.input);
@@ -245,15 +249,27 @@ export class StarterUi extends ModalFormUi {
     this.btnWindow.on('pointerup', async () => {
       if (await this.validate(this.input.text)) {
         this.pause(true);
-        const res = await registerIngameApi({ nickname: this.input.text, gender: this.gender, avatar: this.avatar as PlayerAvatar });
+        const res = await registerIngameApi({
+          nickname: this.input.text,
+          gender: this.gender,
+          avatar: this.avatar as PlayerAvatar,
+          option: {
+            textSpeed: changeTextSpeedToDigit(Option.getTextSpeed()),
+            frame: Option.getFrame('number') as number,
+            backgroundVolume: Option.getBackgroundVolume() * 10,
+            effectVolume: Option.getEffectVolume() * 10,
+            tutorial: Option.getTutorial() as boolean,
+          },
+        });
 
         if (res!.result) {
           this.cleanModal();
           await this.showOuttroMsg(this.input.text);
         } else {
-          if (res!.data === HttpErrorCode.ALREADY_EXIST_NICKNAME) {
+          if (res!.data === ErrorCode.ALREADY_EXIST_NICKNAME) {
             this.shake();
             this.errTexts.setText(i18next.t('message:existNickname'));
+            this.pause(false);
           }
         }
       }
@@ -315,7 +331,7 @@ export class StarterUi extends ModalFormUi {
     if (section === 0) {
       this.gender = nextIndex === 0 ? 'boy' : 'girl';
     } else if (section === 1) {
-      this.avatar = (nextIndex + 1).toString() as '1' | '2' | '3' | '4';
+      this.avatar = (nextIndex + 1).toString() as '1' | '2';
     }
 
     this.updateStatueImage();
@@ -343,49 +359,21 @@ export class StarterUi extends ModalFormUi {
   }
 
   private async showOuttroMsg(nickname: string): Promise<void> {
-    await this.talkUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('message:starterGame10'), [nickname]), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('message:starterGame11'), [nickname]), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame12'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame13'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame14'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame15'), speed: this.professorMsgSpeed });
-    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame16'), speed: this.professorMsgSpeed });
+    await this.talkUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('message:starterGame10'), [nickname]), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: replacePercentSymbol(i18next.t('message:starterGame11'), [nickname]), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame12'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame13'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame14'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame15'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkUi.show({ type: 'default', content: i18next.t('message:starterGame16'), speed: this.professorMsgSpeed, endDelay: MessageEndDelay.DEFAULT });
 
     const res = await getIngameApi();
 
     if (res.result) {
-      const data = res.data as GetIngameRes;
-      GM.initUserData(data);
-
-      try {
-        await SocketHandler.getInstance().connectAndInit(this.scene, {
-          location: data.location,
-          x: data.x,
-          y: data.y,
-          nickname: data.nickname,
-          gender: data.gender,
-          avatar: data.avatar,
-          pet: data.pet ? { idx: data.pet.idx, texture: getPokemonSpriteKey(data.pet as any) } : null,
-          party: data.party.map((p) => (p ? p.idx : null)),
-          slotItem: data.slotItem.map((s) => (s ? s.idx : null)),
-          option: {
-            textSpeed: changeTextSpeedToDigit(data.option.textSpeed),
-            frame: data.option.frame as number,
-            backgroundVolume: data.option.backgroundVolume,
-            effectVolume: data.option.effectVolume,
-          },
-          pBgs: data.pcBg,
-          pcNames: data.pcName,
-        });
-
-        console.log('Socket connection and init completed successfully');
-      } catch (error) {
-        console.error('Socket connection failed:', error);
-      }
-    } else {
-      GM.setUserData(null);
+      await Game.handleSuccessfulIngameData(res.data as GetIngameRes);
     }
 
-    GM.changeMode(MODE.BLACK_SCREEN);
+    stopBackgroundMusic();
+    await Game.changeMode(MODE.CONTINUE);
   }
 }

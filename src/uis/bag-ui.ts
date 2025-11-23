@@ -1,18 +1,20 @@
 import { getItemsApi } from '../api';
 import { MAX_QUICK_ITEM_SLOT } from '../constants';
-import { GM } from '../core/game-manager';
 import { getItemByKey } from '../data';
-import { AUDIO, DEPTH, ItemCategory, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { AUDIO, DEPTH, EVENT, ItemCategory, KEY, MessageEndDelay, TEXTSTYLE, TEXTURE, UI } from '../enums';
+import { Keyboard } from '../core/manager/keyboard-manager';
+import { Event } from '../core/manager/event-manager';
 import i18next from '../i18n';
 import { PlayerItem } from '../obj/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
-import { BagStorage } from '../storage';
-import { ListForm } from '../types';
+import { GetItemRes, ListForm } from '../types';
 import { MenuListUi } from './menu-list-ui';
 import { MenuUi } from './menu-ui';
 import { TalkMessageUi } from './talk-message-ui';
 import { addBackground, addImage, addText, addWindow, createSprite, playEffectSound, runFadeEffect, Ui } from './ui';
+import { Bag } from '../core/storage/bag-storage';
+import { Game } from '../core/manager/game-manager';
+import { Option } from '../core/storage/player-option';
 
 export class BagUi extends Ui {
   private menu!: MenuUi;
@@ -27,9 +29,11 @@ export class BagUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private pocketContainer!: Phaser.GameObjects.Container;
   private pocketTitleContainer!: Phaser.GameObjects.Container;
+  private tutorialContainer!: Phaser.GameObjects.Container;
   private registerContainer!: Phaser.GameObjects.Container;
 
   private bg!: Phaser.GameObjects.Image;
+  private tutorialBg!: Phaser.GameObjects.Image;
 
   private pocketTitles: string[] = [i18next.t('menu:bag1'), i18next.t('menu:bag2'), i18next.t('menu:bag3'), i18next.t('menu:bag4')];
   private pocketTitleText!: Phaser.GameObjects.Text;
@@ -60,16 +64,23 @@ export class BagUi extends Ui {
 
     this.menu.setup([i18next.t('menu:use'), i18next.t('menu:registerSlot'), i18next.t('menu:cancelMenu')]);
 
-    this.container = this.createContainer(width / 2, height / 2);
-    this.bg = addBackground(this.scene, TEXTURE.BG_BAG).setOrigin(0.5, 0.5);
+    this.container = this.createTrackedContainer(width / 2, height / 2);
+    this.tutorialContainer = this.createTrackedContainer(width / 2, height / 2);
+    this.bg = this.addBackground(TEXTURE.BG_BAG).setOrigin(0.5, 0.5);
+    this.tutorialBg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5).setAlpha(0.5);
 
     this.list.setup({ scale: 2, etcScale: 2, windowWidth: 590, offsetX: -240, offsetY: +130, depth: DEPTH.MENU + 1, per: 9, info: [], window: TEXTURE.BLANK, isAllowLRCancel: true });
 
     this.container.add(this.bg);
+    this.tutorialContainer.add(this.tutorialBg);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE);
     this.container.setScrollFactor(0);
+
+    this.tutorialContainer.setVisible(false);
+    this.tutorialContainer.setDepth(DEPTH.MESSAGE - 1);
+    this.tutorialContainer.setScrollFactor(0);
   }
 
   async show(data?: any): Promise<void> {
@@ -78,29 +89,62 @@ export class BagUi extends Ui {
     this.pocketContainer.setVisible(true);
     this.pocketTitleContainer.setVisible(true);
 
-    const items = await getItemsApi();
-    BagStorage.getInstance().setup(items?.data);
-
     this.runPocketAnimation(0);
     this.getItems(0);
 
     this.descUi.show(this.items);
 
+    if (Option.getTutorial() && Option.getClientTutorial('bag')) {
+      await this.showTutorial();
+    }
+
     await this.handleKeyInput();
   }
 
-  clean(data?: any): void {
-    runFadeEffect(this.scene, 1000, 'in');
+  async showTutorial(): Promise<void> {
+    this.tutorialContainer.setVisible(true);
 
-    this.container.setVisible(false);
-    this.pocketContainer.setVisible(false);
-    this.pocketTitleContainer.setVisible(false);
-    this.descUi.clean();
+    await this.talkMesageUi.show({ type: 'default', content: i18next.t('message:tutorial_bag_0'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkMesageUi.show({ type: 'default', content: i18next.t('message:tutorial_bag_1'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+    await this.talkMesageUi.show({ type: 'default', content: i18next.t('message:tutorial_bag_2'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
+
+    Option.setClientTutorial(false, 'bag');
+    this.tutorialContainer.setVisible(false);
+  }
+
+  protected onClean(): void {
+    Keyboard.clearCallbacks();
+
+    if (this.container) {
+      this.container.setVisible(false);
+    }
+    if (this.pocketContainer) {
+      this.pocketContainer.setVisible(false);
+    }
+    if (this.pocketTitleContainer) {
+      this.pocketTitleContainer.setVisible(false);
+    }
+
+    this.currentPage = 0;
+    this.items = [];
+
+    if (this.descUi) {
+      this.descUi.clean();
+    }
+    if (this.list) {
+      this.list.clean();
+    }
+    if (this.menu) {
+      this.menu.clean();
+    }
+    if (this.registerUi) {
+      this.registerUi.clean();
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}
 
-  async handleKeyInput(...data: any[]) {
+  async handleKeyInput(...data: any[]): Promise<void> {
     this.list.updateInfo(this.createListForm());
 
     while (true) {
@@ -130,10 +174,10 @@ export class BagUi extends Ui {
           }, 10);
           continue;
         } else if (typeof selectedItemIndex === 'string' && selectedItemIndex === i18next.t('menu:cancelMenu')) {
-          GM.popUi();
           this.runSwitchPocketAnimation(this.currentPage, 0);
-          this.currentPage = 0;
-          break;
+          Keyboard.clearCallbacks();
+          await Game.removeUi(UI.BAG);
+          return;
         }
       } else {
         const item = this.items[selectedItemIndex];
@@ -147,7 +191,7 @@ export class BagUi extends Ui {
 
   updateRegVisual() {
     for (const item of this.items) {
-      const [find, i] = GM.findSlotItem(item);
+      const [find, i] = Bag.findSlotItem(item);
       if (find && (i as number) >= 0) {
         this.setRegVisual(true, item);
       } else {
@@ -157,7 +201,7 @@ export class BagUi extends Ui {
   }
 
   async handleMenu(item: PlayerItem): Promise<void> {
-    const [find, i] = GM.findSlotItem(item);
+    const [find, i] = Bag.findSlotItem(item);
     const itemInfo = getItemByKey(item.getKey());
 
     if (find && (i as number) >= 0) {
@@ -180,16 +224,17 @@ export class BagUi extends Ui {
     const ret = await this.menu.handleKeyInput();
 
     if (ret === i18next.t('menu:use')) {
-      GM.getPlayerObj().useItem(item);
+      Event.emit(EVENT.USE_ITEM, item);
+      this.menu.hide();
     } else if (ret === i18next.t('menu:registerSlot')) {
-      this.menu.clean();
+      this.menu.hide();
       await this.registerUi.show(item);
     } else if (ret === i18next.t('menu:registerCancel')) {
-      this.menu.clean();
-      GM.registerCancelSlotItem(item);
+      this.menu.hide();
+      Bag.registerCancelSlotItem(item);
       this.setRegVisual(false, item);
     } else {
-      this.menu.clean();
+      this.menu.hide();
     }
   }
 
@@ -218,41 +263,39 @@ export class BagUi extends Ui {
   }
 
   private getItems(current: number) {
-    const bag = BagStorage.getInstance();
-
     switch (current) {
       case 0:
-        this.items = Object.values(bag.getCategory(ItemCategory.POKEBALL)!);
+        this.items = Object.values(Bag.getCategory(ItemCategory.POKEBALL)!);
         break;
       case 1:
-        this.items = Object.values(bag.getCategory(ItemCategory.ETC)!);
+        this.items = Object.values(Bag.getCategory(ItemCategory.ETC)!);
         break;
       case 2:
-        this.items = Object.values(bag.getCategory(ItemCategory.BERRY)!);
+        this.items = Object.values(Bag.getCategory(ItemCategory.BERRY)!);
         break;
       case 3:
-        this.items = Object.values(bag.getCategory(ItemCategory.KEY)!);
+        this.items = Object.values(Bag.getCategory(ItemCategory.KEY)!);
         break;
     }
   }
 
   private setupPocket(width: number, height: number) {
-    this.pocketContainer = this.createContainer(width / 2 - 960, height / 2 - 100);
-    this.pocketTitleContainer = this.createContainer(width / 2 - 600, height / 2 + 100);
+    this.pocketContainer = this.createTrackedContainer(width / 2 - 960, height / 2 - 100);
+    this.pocketTitleContainer = this.createTrackedContainer(width / 2 - 600, height / 2 + 100);
 
-    const bar = addImage(this.scene, TEXTURE.BLANK, 0, 0);
-    const arrowLeft = addImage(this.scene, TEXTURE.ARROW_R, -150, +15).setAngle(90).setScale(1.4);
-    const arrowRight = addImage(this.scene, TEXTURE.ARROW_R, +140, +15).setAngle(270).setFlipX(true).setScale(1.4);
-    this.pocketTitleText = addText(this.scene, 0, +15, '', TEXTSTYLE.ONLY_WHITE).setScale(0.4).setStroke('#696969', 12);
+    const bar = this.addImage(TEXTURE.BLANK, 0, 0);
+    const arrowLeft = this.addImage(TEXTURE.ARROW_R, -150, +15).setAngle(90).setScale(1.4);
+    const arrowRight = this.addImage(TEXTURE.ARROW_R, +140, +15).setAngle(270).setFlipX(true).setScale(1.4);
+    this.pocketTitleText = this.addText(0, +15, '', TEXTSTYLE.ONLY_WHITE).setScale(0.4).setStroke('#696969', 12);
     this.pocketTitleContainer.add(bar);
     this.pocketTitleContainer.add(this.pocketTitleText);
     this.pocketTitleContainer.add(arrowLeft);
     this.pocketTitleContainer.add(arrowRight);
 
-    this.pokeballPocket = createSprite(this.scene, TEXTURE.BAG_POCKET_BALL, 0, -280);
-    this.etcPocket = createSprite(this.scene, TEXTURE.BAG_POCKET_ETC, 0, -80);
-    this.berryPocket = createSprite(this.scene, TEXTURE.BAG_POCKET_BERRY, 150, -80);
-    this.keyPocket = createSprite(this.scene, TEXTURE.BAG_POCKET_KEY, +230, -270);
+    this.pokeballPocket = this.createSprite(TEXTURE.BAG_POCKET_BALL, 0, -280);
+    this.etcPocket = this.createSprite(TEXTURE.BAG_POCKET_ETC, 0, -80);
+    this.berryPocket = this.createSprite(TEXTURE.BAG_POCKET_BERRY, 150, -80);
+    this.keyPocket = this.createSprite(TEXTURE.BAG_POCKET_KEY, +230, -270);
     this.pocketSprites.push(this.pokeballPocket);
     this.pocketSprites.push(this.etcPocket);
     this.pocketSprites.push(this.berryPocket);
@@ -289,7 +332,6 @@ export class BagUi extends Ui {
   private runSwitchPocketAnimation(prev: number, current: number) {
     const pockets = ['ball', 'etc', 'berry', 'key'];
 
-    BagStorage.getInstance().clearItems();
     this.pocketSprites[prev].anims.playReverse({ key: `bag_pocket_${pockets[prev]}`, repeat: 0 });
     this.runPocketAnimation(current);
   }
@@ -312,8 +354,8 @@ export class BagDescUi extends Ui {
 
     this.container = this.createContainer(width / 2 - 200, height / 2 + 400);
 
-    this.icon = addImage(this.scene, `item000`, -575, +10);
-    this.text = addText(this.scene, -400, -65, '', TEXTSTYLE.MESSAGE_WHITE);
+    this.icon = this.addImage(`item000`, -575, +10);
+    this.text = this.addText(-400, -65, '', TEXTSTYLE.MESSAGE_WHITE);
 
     this.icon.setScale(2.4);
     this.text.setOrigin(0, 0);
@@ -333,10 +375,16 @@ export class BagDescUi extends Ui {
     this.handleKeyInput(0);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-    this.icon.setTexture(TEXTURE.BLANK);
-    this.text.setText('');
+  protected onClean(): void {
+    if (this.container) {
+      this.container.setVisible(false);
+    }
+    if (this.icon) {
+      this.icon.setTexture(TEXTURE.BLANK);
+    }
+    if (this.text) {
+      this.text.setText('');
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -386,10 +434,10 @@ export class BagRegisterUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
 
-    const title = addText(this.scene, 0, -130, i18next.t('menu:guide_item_register_0'), TEXTSTYLE.MESSAGE_WHITE).setScale(1);
-    const guide = addText(this.scene, 0, -80, i18next.t('menu:guide_item_register_1'), TEXTSTYLE.MESSAGE_WHITE).setScale(0.5);
+    const title = this.addText(0, -130, i18next.t('menu:guide_item_register_0'), TEXTSTYLE.MESSAGE_WHITE).setScale(1);
+    const guide = this.addText(0, -80, i18next.t('menu:guide_item_register_1'), TEXTSTYLE.MESSAGE_WHITE).setScale(0.5);
 
-    this.bg = addBackground(this.scene, TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
+    this.bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
     this.bg.setAlpha(0.5);
 
     this.container.add(this.bg);
@@ -408,9 +456,6 @@ export class BagRegisterUi extends Ui {
     this.slotContainer.setVisible(true);
 
     return new Promise((resolve) => {
-      const keyboard = KeyboardHandler.getInstance();
-      const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
-
       let start = 0;
       let end = MAX_QUICK_ITEM_SLOT - 1;
       let choice = start;
@@ -418,8 +463,8 @@ export class BagRegisterUi extends Ui {
       this.renderSlot();
       this.renderChoice(1, 0);
 
-      keyboard.setAllowKey(keys);
-      keyboard.setKeyDownCallback((key) => {
+      Keyboard.setAllowKey([KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL]);
+      Keyboard.setKeyDownCallback((key: KEY) => {
         const prevChoice = choice;
 
         try {
@@ -459,9 +504,13 @@ export class BagRegisterUi extends Ui {
     });
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-    this.slotContainer.setVisible(false);
+  protected onClean(): void {
+    if (this.container) {
+      this.container.setVisible(false);
+    }
+    if (this.slotContainer) {
+      this.slotContainer.setVisible(false);
+    }
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -471,7 +520,7 @@ export class BagRegisterUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   registerItem(choice: 1 | 2 | 3 | 4 | 5) {
-    GM.registerSlotItem(this.item, choice - 1);
+    Bag.registerSlotItem(this.item, choice - 1);
     this.bagUi.setRegVisual(true, this.item);
   }
 
@@ -485,9 +534,9 @@ export class BagRegisterUi extends Ui {
     this.slotContainer = this.createContainer(width / 2 - totalWidth, height / 2 + 50);
 
     for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
-      const window = addWindow(this.scene, TEXTURE.WINDOW_OPACITY, currentX, 0, contentWidth, contentWidth, 8, 8, 8, 8).setScale(1.4);
-      const dummy = addImage(this.scene, TEXTURE.BLANK, currentX, -80).setScale(3.2);
-      const icon = addImage(this.scene, TEXTURE.BLANK, currentX, 0).setScale(2);
+      const window = this.addWindow(TEXTURE.WINDOW_OPACITY, currentX, 0, contentWidth, contentWidth, 8, 8, 8, 8).setScale(1.4);
+      const dummy = this.addImage(TEXTURE.BLANK, currentX, -80).setScale(3.2);
+      const icon = this.addImage(TEXTURE.BLANK, currentX, 0).setScale(2);
 
       this.slotWindows.push(window);
       this.dummys.push(dummy);
@@ -510,7 +559,7 @@ export class BagRegisterUi extends Ui {
 
   private renderSlot() {
     for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
-      const item = GM.getUserData()?.slotItem[i];
+      const item = Bag.getSlotItems()[i];
       if (item) {
         this.slotIcons[i].setTexture(`item${item.getKey()}`);
       } else {

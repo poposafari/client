@@ -1,8 +1,10 @@
-import { GM } from '../core/game-manager';
-import { DEPTH, EASE, TEXTURE } from '../enums';
+import { PC } from '../core/storage/pc-storage';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { DEPTH, EASE, TEXTURE, UI } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { getPokemonSpriteKey } from '../utils/string-util';
-import { addImage, createSprite, Ui } from './ui';
+import { Ui } from './ui';
+import { Game } from '../core/manager/game-manager';
 
 export class HiddenMoveUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -21,9 +23,9 @@ export class HiddenMoveUi extends Ui {
     const height = this.getHeight();
 
     this.container = this.createContainer(width / 2, height / 2);
-    this.bg = addImage(this.scene, TEXTURE.BG_HM, 0, 0);
-    this.pokemon = addImage(this.scene, `pokemon_sprite0000`, 0, 0).setScale(4.8);
-    this.player = createSprite(this.scene, TEXTURE.BLANK, -80, -80);
+    this.bg = this.addImage(TEXTURE.BG_HM, 0, 0);
+    this.pokemon = this.addImage(`pokemon_sprite0000`, 0, 0).setScale(4.8);
+    this.player = this.createSprite(TEXTURE.BLANK, -80, -80);
     this.player.setScale(4.4);
 
     this.container.add(this.bg);
@@ -36,14 +38,15 @@ export class HiddenMoveUi extends Ui {
   }
 
   async show(data: 'surf'): Promise<void> {
-    const userData = GM.getUserData();
-    const targetPokemon = GM.findSkillsInParty(data);
+    const userData = PlayerGlobal.getData();
+    const targetPokemon = PC.findSkillsInParty(data);
 
     if (!userData) return;
     if (!targetPokemon) return;
 
     const playerKey = `${userData.gender}_${userData.avatar}_hm`;
     this.pokemon.setTexture(getPokemonSpriteKey(targetPokemon));
+    PC.setHiddenMovePokemon(targetPokemon);
 
     this.container.setVisible(true);
 
@@ -72,7 +75,6 @@ export class HiddenMoveUi extends Ui {
         delay: 200,
       });
 
-      // 3. 플레이어 등장
       this.scene.time.delayedCall(300, () => {
         this.player.setTexture(playerKey);
         this.player.anims.play({
@@ -84,7 +86,6 @@ export class HiddenMoveUi extends Ui {
 
       this.showParticle();
 
-      // 4. 포켓몬 등장
       this.pokemon.setX(1500);
       this.scene.tweens.add({
         targets: this.pokemon,
@@ -94,7 +95,6 @@ export class HiddenMoveUi extends Ui {
         delay: 800,
       });
 
-      // 5. 포켓몬 퇴장
       this.scene.tweens.add({
         targets: this.pokemon,
         x: -1500,
@@ -106,7 +106,6 @@ export class HiddenMoveUi extends Ui {
         },
       });
 
-      // 6. 배경 축소 및 종료 (1400ms 이후)
       this.scene.tweens.add({
         targets: this.bg,
         displayHeight: 30,
@@ -117,13 +116,14 @@ export class HiddenMoveUi extends Ui {
           this.player.setTexture(TEXTURE.BLANK);
           this.player.stop();
           this.bg.setDisplaySize(startWidth, 0);
+          Game.removeUi(UI.HIDDEN_MOVE);
           resolve();
         },
       });
     });
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     this.container.setVisible(false);
   }
 
@@ -145,7 +145,7 @@ export class HiddenMoveUi extends Ui {
         const x = Phaser.Math.Between(-2000, -300);
         const texture = Phaser.Math.Between(0, 1) === 0 ? TEXTURE.PARTICLE_HM_0 : TEXTURE.PARTICLE_HM_1;
 
-        const particle = addImage(this.scene, texture, x, y);
+        const particle = this.addImage(texture, x, y);
         particle.setScale(4.2);
         this.container.add(particle);
         this.particles.push(particle);

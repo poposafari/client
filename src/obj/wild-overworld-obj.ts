@@ -9,6 +9,8 @@ export class WildOverworldObj extends MovableOverworldObj {
   private data: WildRes;
   private timer?: Phaser.Time.TimerEvent;
   private againTimer?: Phaser.Time.TimerEvent;
+  private currentDirectionIndex?: number;
+  private remainingSteps: number = 0;
 
   private readonly scale: number = 1.5;
   private readonly speed: number = 2;
@@ -68,6 +70,9 @@ export class WildOverworldObj extends MovableOverworldObj {
       this.againTimer.remove(false);
       this.againTimer = undefined;
     }
+
+    this.currentDirectionIndex = undefined;
+    this.remainingSteps = 0;
   }
 
   caught() {
@@ -101,26 +106,71 @@ export class WildOverworldObj extends MovableOverworldObj {
     }
 
     playEffectSound(this.getScene(), AUDIO.REACTION_0);
-    this.setEmotion('emo_0', 'emo_0');
+    await this.setEmotion('emo_0', 'emo_0');
   }
 
   private moveInSteps(directionIndex: number, steps: number): void {
-    if (steps <= 0) {
+    const validDirectionIndex = this.findValidDirection(directionIndex);
+
+    if (validDirectionIndex === null) {
       this.scheduleRandomMovement();
       return;
     }
 
-    const direction = this.directions[directionIndex];
+    this.currentDirectionIndex = validDirectionIndex;
+    this.remainingSteps = steps;
 
-    if (this.isBlockingDirection(direction)) {
-      const newDirectionIndex = this.getRandomDirection();
-      const newSteps = this.getRandomStep();
-      return this.moveInSteps(newDirectionIndex, newSteps);
+    this.executeStep();
+  }
+
+  private findValidDirection(preferredIndex: number): number | null {
+    const triedDirections = new Set<number>();
+    let directionIndex = preferredIndex;
+
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (!this.isBlockingDirection(this.directions[directionIndex])) {
+        return directionIndex;
+      }
+
+      triedDirections.add(directionIndex);
+
+      const availableDirections = this.directions.map((_, index) => index).filter((index) => !triedDirections.has(index) && !this.isBlockingDirection(this.directions[index]));
+
+      if (availableDirections.length > 0) {
+        return availableDirections[Phaser.Math.Between(0, availableDirections.length - 1)];
+      }
+
+      directionIndex = this.getRandomDirection();
     }
 
-    this.ready(direction, this.getAnimation(this.keys[directionIndex]));
+    return null;
+  }
+
+  private executeStep(): void {
+    if (this.remainingSteps <= 0 || this.currentDirectionIndex === undefined) {
+      this.scheduleRandomMovement();
+      return;
+    }
+
+    const direction = this.directions[this.currentDirectionIndex];
+
+    if (this.isBlockingDirection(direction)) {
+      const newDirectionIndex = this.findValidDirection(this.getRandomDirection());
+
+      if (newDirectionIndex === null) {
+        this.scheduleRandomMovement();
+        return;
+      }
+
+      this.currentDirectionIndex = newDirectionIndex;
+    }
+
+    const finalDirection = this.directions[this.currentDirectionIndex];
+    this.ready(finalDirection, this.getAnimation(this.keys[this.currentDirectionIndex]));
+
+    this.remainingSteps--;
     this.againTimer = this.getScene().time.delayedCall(200, () => {
-      this.moveInSteps(directionIndex, steps - 1);
+      this.executeStep();
     });
   }
 
@@ -148,5 +198,26 @@ export class WildOverworldObj extends MovableOverworldObj {
 
   private getRandomStep() {
     return Phaser.Math.Between(1, 5);
+  }
+
+  update(delta: number): void {
+    const movementCheck = (this as any).movementCheck as boolean;
+    const movementDirectionQueue = (this as any).movementDirectionQueue as Array<{ direction: DIRECTION; animationKey: ANIMATION | string }>;
+
+    if (movementCheck && movementDirectionQueue.length > 0) {
+      const nextMovement = movementDirectionQueue[0];
+      if (nextMovement) {
+        const direction = nextMovement.direction;
+        if (this.isBlockingDirection(direction)) {
+          movementDirectionQueue.length = 0;
+          (this as any).movementBlocking = true;
+          this.stopMovement();
+          this.scheduleRandomMovement();
+          return;
+        }
+      }
+    }
+
+    super.update(delta);
   }
 }

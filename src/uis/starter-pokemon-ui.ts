@@ -1,13 +1,13 @@
 import i18next from 'i18next';
 import { catchStarterPokemonApi, enterSafariZoneApi } from '../api';
-import { GM } from '../core/game-manager';
-import { ANIMATION, DEPTH, KEY, TEXTSTYLE, TEXTURE } from '../enums';
-import { KeyboardHandler } from '../handlers/keyboard-handler';
+import { ANIMATION, AUDIO, DEPTH, KEY, MessageEndDelay, TEXTSTYLE, TEXTURE } from '../enums';
+import { KeyboardManager } from '../core/manager/keyboard-manager';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Talk, WildRes } from '../types';
-import { addBackground, addImage, addText, addWindow, createSprite, runFadeEffect, Ui } from './ui';
+import { addBackground, addImage, addText, addWindow, createSprite, playEffectSound, runFadeEffect, Ui } from './ui';
 import { getPokemonType, replacePercentSymbol } from '../utils/string-util';
 import { QuestionMessageUi } from './question-message-ui';
+import { Option } from '../core/storage/player-option';
 
 export class StarterPokemonUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -45,10 +45,10 @@ export class StarterPokemonUi extends Ui {
     this.container = this.createContainer(this.sceneWidth / 2, this.sceneHeight / 2);
     this.contentContainer = this.createContainer(this.sceneWidth / 2, this.sceneHeight / 2);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_TUTORIAL_CHOICE).setOrigin(0.5, 0.5);
-    this.pokemon = addImage(this.scene, `pokemon_sprite0000`, 0, -250).setScale(4.8);
-    this.baseWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, +410, 480, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
-    this.text = addText(this.scene, -880, +335, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
+    const bg = this.addBackground(TEXTURE.BG_TUTORIAL_CHOICE).setOrigin(0.5, 0.5);
+    this.pokemon = this.addImage(`pokemon_sprite0000`, 0, -250).setScale(4.8);
+    this.baseWindow = this.addWindow(TEXTURE.WINDOW_0, 0, +410, 480, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
+    this.text = this.addText(-880, +335, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
 
     this.container.add(bg);
     this.container.add(this.pokemon);
@@ -83,13 +83,10 @@ export class StarterPokemonUi extends Ui {
     });
   }
 
-  clean(data?: any): void {
+  protected onClean(): void {
     runFadeEffect(this.scene, 1000, 'in');
-    this.container.setVisible(false);
-    this.contentContainer.setVisible(false);
     this.textObjects.forEach((obj) => obj.destroy());
     this.textObjects = [];
-
     this.lastChoice = 0;
   }
 
@@ -97,7 +94,7 @@ export class StarterPokemonUi extends Ui {
 
   async handleKeyInput(...data: any[]) {
     return new Promise((resolve) => {
-      const keyboard = KeyboardHandler.getInstance();
+      const keyboard = KeyboardManager.getInstance();
       const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
 
       let start = 0;
@@ -107,8 +104,7 @@ export class StarterPokemonUi extends Ui {
       this.renderEffect(0, choice);
       this.renderPokemon(this.starterPokemons[choice]);
 
-      keyboard.setAllowKey(keys);
-      keyboard.setKeyDownCallback(async (key) => {
+      const keyHandler = async (key: KEY) => {
         const prevChoice = choice;
 
         switch (key) {
@@ -122,37 +118,46 @@ export class StarterPokemonUi extends Ui {
               choice++;
             }
             break;
-          case KEY.SELECT:
+          case KEY.SELECT: {
+            keyboard.setAllowKey([]);
+            keyboard.setKeyDownCallback(() => {});
             await this.questionMessage.show({
               type: 'default',
               content: replacePercentSymbol(i18next.t('message:tutorial_choice'), [
                 i18next.t(`menu:type${getPokemonType(this.starterPokemons[choice].type1)}`),
                 i18next.t(`pokemon:${this.starterPokemons[choice].pokedex}.name`),
               ]),
-              speed: GM.getUserOption()?.getTextSpeed()!,
+              speed: Option.getTextSpeed()!,
               yes: async () => {
                 const ret = await catchStarterPokemonApi({ idx: this.starterPokemons[choice].idx });
-
-                if (ret.result) {
-                  resolve(this.starterPokemons[choice]);
-                } else {
-                  resolve(null);
-                }
+                resolve(ret.result ? this.starterPokemons[choice] : null);
               },
               no: async () => {
-                await this.handleKeyInput();
+                registerHandler();
               },
             });
-            break;
+            return;
+          }
         }
         if (key === KEY.LEFT || key === KEY.RIGHT) {
           if (choice !== prevChoice) {
+            playEffectSound(this.scene, AUDIO.SELECT_0);
+
             this.lastChoice = choice;
             this.renderEffect(prevChoice, choice);
             this.renderPokemon(this.starterPokemons[choice]);
           }
         }
-      });
+      };
+
+      const registerHandler = () => {
+        keyboard.setAllowKey(keys);
+        keyboard.setKeyDownCallback((key) => {
+          void keyHandler(key);
+        });
+      };
+
+      registerHandler();
     });
   }
 
@@ -185,7 +190,8 @@ export class StarterPokemonUi extends Ui {
       {
         type: 'default',
         content: replacePercentSymbol(i18next.t('message:tutorial_select'), [i18next.t(`menu:type${getPokemonType(wild.type1)}`), i18next.t(`pokemon:${pokedex}.name`)]),
-        speed: GM.getUserOption()?.getTextSpeed()!,
+        speed: Option.getTextSpeed()!,
+        endDelay: MessageEndDelay.DEFAULT,
       },
       wild.type1,
     );
@@ -213,9 +219,9 @@ export class StarterPokemonUi extends Ui {
 
       let currentX = 0;
       for (let i = 0; i < sortedWilds.length; i++) {
-        const ball = createSprite(this.scene, TEXTURE.TUTORIAL_CHOICE_BALL, currentX, 0);
+        const ball = this.createSprite(TEXTURE.TUTORIAL_CHOICE_BALL, currentX, 0);
         ball.setScale(2.4);
-        const finger = createSprite(this.scene, TEXTURE.BLANK, currentX, -170);
+        const finger = this.createSprite(TEXTURE.BLANK, currentX, -170);
         finger.setScale(2);
         this.balls.push(ball);
         this.fingers.push(finger);
@@ -260,7 +266,7 @@ export class StarterPokemonUi extends Ui {
 
         if (charIndex === 0) {
           const style = segment.isSpecial && segment.tagType === 'special' ? this.getTextStyleForTag(type) : TEXTSTYLE.MESSAGE_BLACK;
-          const textObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
+          const textObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
           this.container.add(textObj);
           this.textObjects.push(textObj);
         }
@@ -275,7 +281,7 @@ export class StarterPokemonUi extends Ui {
 
           if (charIndex < segment.text.length) {
             const style = segment.isSpecial && segment.tagType === 'special' ? this.getTextStyleForTag(type) : TEXTSTYLE.MESSAGE_BLACK;
-            const newTextObj = addText(this.scene, currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
+            const newTextObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
             this.container.add(newTextObj);
             this.textObjects.push(newTextObj);
           }

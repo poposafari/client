@@ -16,9 +16,10 @@ export class ConnectSafariUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
 
-    const bg = addBackground(this.scene, TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
+    const bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
 
-    const text = addText(this.scene, 0, 0, i18next.t('menu:safariConnecting'), TEXTSTYLE.MESSAGE_WHITE);
+    const text = this.addText(0, 0, i18next.t('menu:connectingSafari'), TEXTSTYLE.MESSAGE_WHITE);
+    text.setScale(1.5);
 
     this.container.add(bg);
     this.container.add(text);
@@ -33,9 +34,7 @@ export class ConnectSafariUi extends Ui {
     this.container.setVisible(true);
   }
 
-  clean(data?: any): void {
-    this.container.setVisible(false);
-  }
+  protected onClean(): void {}
 
   pause(onoff: boolean, data?: any): void {}
 

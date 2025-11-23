@@ -1,10 +1,8 @@
-import { DEPTH, DIRECTION, HttpErrorCode, ItemCategory, OBJECT, PLAYER_STATUS, TEXTURE } from './enums';
-import { PlayerItem } from './obj/player-item';
-import { PlayerOption } from './obj/player-option';
-import { PlayerPokemon } from './obj/player-pokemon';
+import { DEPTH, DIRECTION, ItemCategory, PLAYER_STATUS, TEXTSTYLE, TEXTURE, TRIGGER } from './enums';
 import { PostCheckoutOverworldObj } from './obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from './obj/shop-checkout-overworld-obj';
 import { StatueOverworldObj } from './obj/statue-overworld-obj';
+import { ErrorCode } from './core/errors';
 
 export type TranslationDefault = {
   [key: string]: string;
@@ -59,9 +57,11 @@ export interface SocketInitData {
   pet: OtherPet | null;
   party: (number | null)[];
   slotItem: (number | null)[];
-  option: { textSpeed: number | null; frame: number | null; backgroundVolume: number | null; effectVolume: number | null };
+  option: { textSpeed: number | null; frame: number | null; backgroundVolume: number | null; effectVolume: number | null; tutorial: boolean | null };
   pBgs: number[];
   pcNames: string[];
+  isStarter0: boolean;
+  isStarter1: boolean;
 }
 
 export type MoveLocation = {
@@ -99,6 +99,16 @@ export type PlayerMovementRes = {
   data: MovementPlayer;
 };
 
+export type PlayerPositionRes = {
+  socketId: string;
+  data: {
+    x: number;
+    y: number;
+    movement: 'walk' | 'running' | 'ride' | 'surf';
+    timestamp?: number;
+  };
+};
+
 export type FacingPlayerRes = {
   socketId: string;
   data: 'up' | 'down' | 'left' | 'right';
@@ -126,7 +136,7 @@ export type ApiResponse<T> = {
 
 export type ApiErrorResponse = {
   result: false;
-  data: HttpErrorCode;
+  data: ErrorCode;
 };
 
 export type AccountReq = {
@@ -138,6 +148,7 @@ export type RegisterIngameReq = {
   nickname: string;
   gender: PlayerGender;
   avatar: PlayerAvatar;
+  option: IngameOption;
 };
 
 export type LoginRes = {
@@ -147,14 +158,13 @@ export type LoginRes = {
 };
 
 export type GetIngameRes = {
-  pet: GetPcRes | null;
   pcBg: number[];
   y: number;
   x: number;
   candy: number;
   pcName: string[];
-  isStarter: boolean;
-  isTutorial: boolean;
+  isStarter0: boolean;
+  isStarter1: boolean;
   location: string;
   nickname: string;
   gender: PlayerGender;
@@ -179,6 +189,7 @@ export type GetPcReq = {
 };
 
 export type GetPcRes = {
+  box: number;
   idx: number;
   pokedex: string;
   gender: PokemonGender;
@@ -204,6 +215,11 @@ export type MovePcReq = {
 
 export type EvolPcReq = {
   target: number;
+};
+
+export type EvolPcRes = {
+  box: number;
+  pokemons: GetPcRes[];
 };
 
 export type BuyItemReq = {
@@ -237,7 +253,7 @@ export type CatchWildReq = {
   idx: number;
   ball: string;
   berry: string | null;
-  parties: number[];
+  parties: (number | null)[];
 };
 
 export type CatchGroundItemReq = {
@@ -257,6 +273,7 @@ export type CatchRewardRes = {
 export type CatchWildSuccessRes = {
   catch: boolean;
   rewards: {
+    pc: GetPcRes;
     candy: number;
     items: CatchRewardRes[];
   };
@@ -277,10 +294,17 @@ export type WildRes = {
   catch: boolean;
   eaten_berry: string | null;
   baseRate: number;
+  fleeRate: number;
+  count: number;
   type1: string;
   type2: string;
   rank: PokemonRank;
   spawn: PokemonSpawn;
+};
+
+export type FeedWildEatenBerryReq = {
+  idx: number;
+  berry: string;
 };
 
 export type GroundItemRes = {
@@ -322,11 +346,14 @@ export type Talk = {
   type: 'sys' | 'default';
   content: string;
   speed: number;
+  endDelay: number;
   end?: () => void;
 };
 
 export type Notice = {
   content: string;
+  window: TEXTURE;
+  textStyle?: TEXTSTYLE;
 };
 
 export type InputNickname = {
@@ -492,7 +519,20 @@ export type NpcInfo = {
   name: string;
   x: number;
   y: number;
+  direction: DIRECTION;
   script: string[];
+};
+
+export type SpecialNpc = 'shop' | 'post' | 'professor' | 'bicycle_shop';
+export type SpecialNpcInfo = {
+  type: SpecialNpc;
+  key: string;
+  name: string;
+  x: number;
+  y: number;
+  direction: DIRECTION;
+  script: string[];
+  data?: unknown;
 };
 
 export type DoorInfo = {
@@ -509,13 +549,20 @@ export type DoorInfo = {
   };
 };
 
-export type StatueInfo = {
+export type SignInfo = {
   texture: TEXTURE | string;
   x: number;
   y: number;
-  type: OBJECT.STATUE | OBJECT.SHOP_CHECKOUT | OBJECT.POST_CHECKOUT;
-  statueType: ShopType | PostOfficeType | null;
-  key?: string;
+  script: string;
+  window: TEXTURE;
+  textStyle?: TEXTSTYLE;
+};
+
+export type TriggerInfo = {
+  x: number;
+  y: number;
+  trigger: TRIGGER;
+  targetNpc: string | null;
 };
 
 export type IngameOption = {
@@ -523,6 +570,7 @@ export type IngameOption = {
   backgroundVolume: number;
   effectVolume: number;
   frame: number;
+  tutorial: boolean;
 };
 
 export type IngameData = {
@@ -530,18 +578,12 @@ export type IngameData = {
   candy: number;
   createdAt: Date;
   gender: PlayerGender;
-  isStarter: boolean;
-  isTutorial: boolean;
+  isStarter0: boolean;
+  isStarter1: boolean;
   location: string;
   lastLocation: string | null;
   nickname: string;
-  party: (PlayerPokemon | null)[];
-  pcBg: number[];
-  pcName: string[];
-  pet: PlayerPokemon | null;
-  slotItem: (PlayerItem | null)[];
   updatedAt: Date;
   x: number;
   y: number;
-  option: PlayerOption;
 };

@@ -1,4 +1,4 @@
-import { OBJECT, TEXTURE } from '../enums';
+import { DEPTH, OBJECT, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { OverworldObj } from './overworld-obj';
 
