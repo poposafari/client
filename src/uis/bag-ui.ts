@@ -84,6 +84,8 @@ export class BagUi extends Ui {
   }
 
   async show(data?: any): Promise<void> {
+    Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
+
     runFadeEffect(this.scene, 1000, 'in');
     this.container.setVisible(true);
     this.pocketContainer.setVisible(true);
@@ -113,6 +115,8 @@ export class BagUi extends Ui {
   }
 
   protected onClean(): void {
+    Event.emit(EVENT.ENABLE_DAY_NIGHT_FILTER);
+
     Keyboard.clearCallbacks();
 
     if (this.container) {
@@ -463,35 +467,35 @@ export class BagRegisterUi extends Ui {
       this.renderSlot();
       this.renderChoice(1, 0);
 
-      Keyboard.setAllowKey([KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL]);
+      Keyboard.setAllowKey([KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X]);
       Keyboard.setKeyDownCallback((key: KEY) => {
         const prevChoice = choice;
 
         try {
           switch (key) {
-            case KEY.LEFT:
+            case KEY.ARROW_LEFT:
               if (choice > start) {
                 choice--;
               }
               break;
-            case KEY.RIGHT:
+            case KEY.ARROW_RIGHT:
               if (choice < end && choice < MAX_QUICK_ITEM_SLOT) {
                 choice++;
               }
               break;
-            case KEY.SELECT:
+            case KEY.Z:
               playEffectSound(this.scene, AUDIO.SELECT_0);
               this.registerItem((choice + 1) as 1 | 2 | 3 | 4 | 5);
               this.renderSlot();
               this.bagUi.setRegVisual(true, this.item);
               break;
-            case KEY.CANCEL:
+            case KEY.X:
               this.renderChoice(choice, 0);
               this.clean();
               resolve();
               break;
           }
-          if (key === KEY.LEFT || key === KEY.RIGHT) {
+          if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
             if (choice !== prevChoice) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
               this.renderChoice(prevChoice, choice);

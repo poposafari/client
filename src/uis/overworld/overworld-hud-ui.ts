@@ -3,7 +3,7 @@ import { Game } from '../../core/manager/game-manager';
 import { PlayerGlobal } from '../../core/storage/player-storage';
 import { DEPTH, EASE, TEXTSTYLE, TEXTURE } from '../../enums';
 import { InGameScene } from '../../scenes/ingame-scene';
-import { runFadeEffect, Ui } from '../ui';
+import { getTextShadow, getTextStyle, runFadeEffect, setTextShadow, Ui } from '../ui';
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
 
@@ -69,6 +69,22 @@ export class OverworldHUDUi extends Ui {
     this.updatePokemonSlotUi();
     this.updateLocationUi();
     this.updateCandyUi();
+  }
+
+  getOverworldInfoContainer() {
+    return this.overworldInfoUi.getContainer();
+  }
+
+  getOverworldPokemonSlotContainer() {
+    return this.overworldPokemonSlotUi.getContainer();
+  }
+
+  getOverworldIconContainer() {
+    return this.overworldIconUi.getContainer();
+  }
+
+  getOverworldLocationContainer() {
+    return this.overworldLocationUi.getContainer();
   }
 
   updatePokemonSlotUi() {
@@ -294,6 +310,10 @@ export class OverworldIconUi extends Ui {
       this.starterIconTweens.set(icon, [bounceTween, revealTween]);
     });
   }
+
+  getContainer() {
+    return this.container;
+  }
 }
 
 export class OverworldInfoUi extends Ui {
@@ -376,6 +396,10 @@ export class OverworldInfoUi extends Ui {
       currentY += contentHeight + spacing;
     }
   }
+
+  getContainer() {
+    return this.container;
+  }
 }
 
 export class OverworldLocationUi extends Ui {
@@ -398,8 +422,8 @@ export class OverworldLocationUi extends Ui {
     this.container = this.createContainer(width / 2 - 940, height / 2 - 475);
     this.restorePosY = this.container.y;
 
-    this.window = this.addImage(TEXTURE.WINDOW_0, 0, 0).setOrigin(0, 0.5).setScale(4);
-    this.location = this.addText(30, +22, '', TEXTSTYLE.OVERWORLD_AREA).setOrigin(0, 0.5);
+    this.window = this.addImage(TEXTURE.WINDOW_0, 0, 0).setOrigin(0, 0.5).setScale(4.8);
+    this.location = this.addText(30, +22, '', TEXTSTYLE.OVERWORLD_AREA_B).setOrigin(0, 0.5);
 
     this.container.add(this.window);
     this.container.add(this.location);
@@ -412,9 +436,17 @@ export class OverworldLocationUi extends Ui {
   show(data?: { texture: TEXTURE | string; location: string }): void {
     this.stopAllTweens();
 
+    if (data?.texture === TEXTURE.AREA_4 || data?.texture === TEXTURE.AREA_7) {
+      this.location.setStyle(getTextStyle(TEXTSTYLE.OVERWORLD_AREA_W));
+      setTextShadow(this.location, getTextShadow(TEXTSTYLE.OVERWORLD_AREA_W));
+    } else {
+      this.location.setStyle(getTextStyle(TEXTSTYLE.OVERWORLD_AREA_B));
+      setTextShadow(this.location, getTextShadow(TEXTSTYLE.OVERWORLD_AREA_B));
+    }
+
     this.window.setTexture(data?.texture as string);
     this.location.setText(i18next.t(`menu:${data?.location}`));
-    this.location.setPosition(30, 0);
+    this.location.setPosition(40, 0);
 
     const startY = -100;
     const endY = 80;
@@ -474,6 +506,10 @@ export class OverworldLocationUi extends Ui {
   handleKeyInput(data?: any): void {}
 
   update(time: number, delta: number): void {}
+
+  getContainer() {
+    return this.container;
+  }
 }
 
 export class OverworldPokemonSlotUi extends Ui {
@@ -548,6 +584,10 @@ export class OverworldPokemonSlotUi extends Ui {
         this.shinyIcons[i]?.setTexture(TEXTURE.BLANK);
       }
     }
+  }
+
+  getContainer() {
+    return this.container;
   }
 }
 

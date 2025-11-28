@@ -123,7 +123,7 @@ export class OverworldPlayerInputHandler {
 
   handleKeyInput(): void {
     const keyboard = KeyboardManager.getInstance();
-    const keys = [KEY.SELECT, KEY.ENTER, KEY.RUNNING, KEY.MENU, KEY.QUICK_SLOT];
+    const keys = [KEY.Z, KEY.ENTER, KEY.R, KEY.S, KEY.A];
 
     const keydownCallback = async (key: KEY) => {
       try {
@@ -132,7 +132,7 @@ export class OverworldPlayerInputHandler {
         }
         switch (key) {
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             if (this.context.obj && this.context.obj.isMovementFinish() && this.context.getCurrentAction() === OVERWORLD_ACTION.IDLE) {
               const event = this.context.obj.getEvent();
 
@@ -159,7 +159,7 @@ export class OverworldPlayerInputHandler {
               }
             }
             break;
-          case KEY.MENU:
+          case KEY.S:
             if (!PlayerGlobal.appearMenuFlag) return;
             if (this.context.obj && this.context.obj.isMovementFinish() && this.context.getCurrentAction() === OVERWORLD_ACTION.IDLE) {
               await this.context.actionQueue.enqueue(async () => {
@@ -171,14 +171,14 @@ export class OverworldPlayerInputHandler {
               }, OVERWORLD_ACTION.MENU);
             }
             break;
-          case KEY.RUNNING:
+          case KEY.R:
             if (!PlayerGlobal.appearRunningShoesFlag) return;
             if (this.context.obj && this.context.obj.isMovementFinish() && this.context.getCurrentAction() === OVERWORLD_ACTION.IDLE) {
               this.context.obj.setMovement(PLAYER_STATUS.RUNNING);
               this.context.hud.updateIconTint(TEXTURE.ICON_RUNNING, this.context.obj.getCurrentStatus() === PLAYER_STATUS.RUNNING);
             }
             break;
-          case KEY.QUICK_SLOT:
+          case KEY.A:
             if (!PlayerGlobal.appearItemSlotFlag) return;
             if (this.context.obj && this.context.obj.isMovementFinish() && this.context.getCurrentAction() === OVERWORLD_ACTION.IDLE) {
               await this.context.actionQueue.enqueue(async () => {

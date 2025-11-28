@@ -63,6 +63,8 @@ export class PcUi extends Ui {
   }
 
   async show(data?: unknown): Promise<void> {
+    Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
+
     playEffectSound(this.scene, AUDIO.OPEN_1);
     runFadeEffect(this.scene, 800, 'in');
     this.container.setVisible(true);
@@ -86,6 +88,8 @@ export class PcUi extends Ui {
   }
 
   protected onClean(): void {
+    Event.emit(EVENT.ENABLE_DAY_NIGHT_FILTER);
+
     playEffectSound(this.scene, AUDIO.CANCEL_1);
     runFadeEffect(this.scene, 800, 'in');
     this.container.setVisible(false);
@@ -253,33 +257,33 @@ export class PcBoxUi extends Ui {
     let choice = row * this.MAX_ROW + col;
 
     while (this.currentInputMode === PcInputMode.BOX_GRID) {
-      const key = await this.waitForKeyInput([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL, KEY.ESC]);
+      const key = await this.waitForKeyInput([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
       const prevChoice = choice;
 
       try {
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (row > -1) row--;
             if (row === -1) {
               this.switchToBoxHeader();
               return;
             }
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (row < this.MAX_COLUMN - 1) row++;
             break;
-          case KEY.LEFT:
+          case KEY.ARROW_LEFT:
             if (col > -1) col--;
             if (col === -1) {
               this.switchToParty();
               return;
             }
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             if (col < this.MAX_ROW - 1) col++;
             break;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             const pokemon = this.boxPokemons[choice];
             if (pokemon) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -292,7 +296,7 @@ export class PcBoxUi extends Ui {
             }
             continue;
           case KEY.ESC:
-          case KEY.CANCEL:
+          case KEY.X:
             PC.setLastBoxIndexOnPcUi(this.currentBoxIndex);
             PC.setLastBoxSelectionOnPcUi(this.boxSelection);
             Game.removeUi(UI.PC);
@@ -323,31 +327,31 @@ export class PcBoxUi extends Ui {
     let boxIndex = this.currentBoxIndex;
 
     while (this.currentInputMode === PcInputMode.BOX_HEADER) {
-      const key = await this.waitForKeyInput([KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL, KEY.ESC, KEY.ENTER]);
+      const key = await this.waitForKeyInput([KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.X, KEY.ESC, KEY.ENTER]);
       const prevBoxIndex = boxIndex;
 
       try {
         switch (key) {
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             playEffectSound(this.scene, AUDIO.SELECT_0);
             this.switchToBoxGrid();
             return;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             playEffectSound(this.scene, AUDIO.SELECT_0);
             await this.handleBoxMenu();
             if (this.currentInputMode === PcInputMode.BOX_HEADER) {
               boxIndex = this.currentBoxIndex;
             }
             continue;
-          case KEY.LEFT:
+          case KEY.ARROW_LEFT:
             boxIndex = (boxIndex - 1 + this.MAX_BOX_INDEX + 1) % (this.MAX_BOX_INDEX + 1);
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             boxIndex = (boxIndex + 1) % (this.MAX_BOX_INDEX + 1);
             break;
           case KEY.ESC:
-          case KEY.CANCEL:
+          case KEY.X:
             PC.setLastBoxIndexOnPcUi(this.currentBoxIndex);
             PC.setLastBoxSelectionOnPcUi(this.boxSelection);
             Game.removeUi(UI.PC);
@@ -380,23 +384,23 @@ export class PcBoxUi extends Ui {
     let choice = this.partySelection;
 
     while (this.currentInputMode === PcInputMode.PARTY) {
-      const key = await this.waitForKeyInput([KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL, KEY.ESC]);
+      const key = await this.waitForKeyInput([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
       const prevChoice = choice;
 
       try {
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (choice > 0) choice--;
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (choice < MAX_PARTY_SLOT - 1) choice++;
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             playEffectSound(this.scene, AUDIO.SELECT_0);
             this.switchToBoxGrid();
             return;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             const pokemon = PC.getParty()[choice] ?? null;
             if (pokemon) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -410,7 +414,7 @@ export class PcBoxUi extends Ui {
             }
             continue;
           case KEY.ESC:
-          case KEY.CANCEL:
+          case KEY.X:
             this.clean();
             PC.setLastBoxIndexOnPcUi(this.currentBoxIndex);
             PC.setLastBoxSelectionOnPcUi(this.boxSelection);

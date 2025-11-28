@@ -237,8 +237,10 @@ export function getTextShadow(style: TEXTSTYLE): [number, number, string] {
   switch (style) {
     case TEXTSTYLE.SPLASH_TEXT:
       return [9, 7, '#efa539'];
-    case TEXTSTYLE.OVERWORLD_AREA:
+    case TEXTSTYLE.OVERWORLD_AREA_B:
       return [7, 4, '#91919a'];
+    case TEXTSTYLE.OVERWORLD_AREA_W:
+      return [7, 4, '#777777'];
     case TEXTSTYLE.TITLE_MODAL:
       return [7, 4, '#7fbc49'];
     case TEXTSTYLE.DEFAULT_BLACK:
@@ -332,9 +334,14 @@ export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig):
       config.fontSize = '130px';
       config.color = '#ffde6b';
       break;
-    case TEXTSTYLE.OVERWORLD_AREA:
+    case TEXTSTYLE.OVERWORLD_AREA_B:
       config.fontSize = '120px';
       config.color = '#4b4b4b';
+      config.fontStyle = 'bold';
+      break;
+    case TEXTSTYLE.OVERWORLD_AREA_W:
+      config.fontSize = '120px';
+      config.color = '#ffffff';
       config.fontStyle = 'bold';
       break;
     case TEXTSTYLE.MESSAGE_BLACK:
@@ -667,7 +674,7 @@ export function moveToCamera(scene: InGameScene, x: number, y: number, delay: nu
     const camera = scene.cameras.main;
     camera.pan(x, y, delay, ease);
     camera.once('camerapancomplete', () => {
-      console.log('move to finish?');
+      // console.log('move to finish?');
       resolve();
     });
   });
@@ -900,21 +907,21 @@ export abstract class Ui {
 
   clean(data?: any): void {
     if (this.isDestroyed) {
-      console.log(`[Ui] clean() 호출됨 (이미 destroyed): ${this.constructor.name}`);
+      // console.log(`[Ui] clean() 호출됨 (이미 destroyed): ${this.constructor.name}`);
       return;
     }
 
-    console.log(`[Ui] clean() 시작: ${this.constructor.name}`);
+    // console.log(`[Ui] clean() 시작: ${this.constructor.name}`);
     try {
       this.onClean();
-      console.log(`[Ui] onClean() 완료: ${this.constructor.name}`);
-      console.log(`[Ui] KeyboardManager.clearCallbacks() 호출: ${this.constructor.name}`);
+      // console.log(`[Ui] onClean() 완료: ${this.constructor.name}`);
+      // console.log(`[Ui] KeyboardManager.clearCallbacks() 호출: ${this.constructor.name}`);
       KeyboardManager.getInstance().clearCallbacks();
       this.resourceManager.cleanup();
-      console.log(`[Ui] resourceManager.cleanup() 완료: ${this.constructor.name}`);
+      // console.log(`[Ui] resourceManager.cleanup() 완료: ${this.constructor.name}`);
 
       this.isDestroyed = true;
-      console.log(`[Ui] clean() 완료: ${this.constructor.name}`);
+      // console.log(`[Ui] clean() 완료: ${this.constructor.name}`);
     } catch (error) {
       console.error(`[Ui] Error cleaning UI ${this.constructor.name}:`, error);
     }

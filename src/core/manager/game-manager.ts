@@ -2,7 +2,7 @@ import { autoLoginApi, enterSafariZoneApi, getIngameApi, logoutApi } from '../..
 import { EVENT, MODE, UI } from '../../enums';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { Ui } from '../../uis/ui';
-import { changeTextSpeedToDigit, getPokemonSpriteKey } from '../../utils/string-util';
+import { changeTextSpeedToDigit, getCurrentTimeOfDay, getCurrentTimeOfDayValue, getPokemonSpriteKey } from '../../utils/string-util';
 import { ErrorCode, ErrorMessage, throwError } from '../errors';
 import { PlayerGlobal } from '../storage/player-storage';
 import { PC } from '../storage/pc-storage';
@@ -155,11 +155,6 @@ export class GameManager {
     if (!this.scene) {
       return false;
     }
-
-    // console.log(`[GameManager] removeUi() 현재 스택 길이: ${this.activeUiStack.length}`);
-    // for (let i = 0; i < this.activeUiStack.length; i++) {
-    //   console.log(`[GameManager] removeUi() 스택[${i}]: ${this.activeUiStack[i].constructor.name}`);
-    // }
 
     const factory = this.uiFactories.get(key);
 
@@ -354,7 +349,7 @@ export class GameManager {
         const location = PlayerGlobal.getData()?.location;
         if (!location) return;
 
-        const res = await enterSafariZoneApi({ overworld: location });
+        const res = await enterSafariZoneApi({ overworld: location, time: getCurrentTimeOfDay() });
 
         console.log('enterSafariZoneApi', res);
 

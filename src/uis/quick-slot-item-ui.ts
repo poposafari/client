@@ -71,14 +71,13 @@ export class QuickSlotItemUi extends Ui {
   }
 
   protected onClean(): void {
-    // 상태 초기화
     this.lastChoice = 0;
   }
 
   pause(onoff: boolean, data?: any): void {}
 
   handleKeyInput(...data: any[]) {
-    const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
+    const keys = [KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ESC, KEY.ENTER, KEY.X];
 
     let start = 0;
     let end = MAX_QUICK_ITEM_SLOT - 1;
@@ -91,17 +90,18 @@ export class QuickSlotItemUi extends Ui {
       const prevChoice = choice;
 
       switch (key) {
-        case KEY.LEFT:
+        case KEY.ARROW_LEFT:
           if (choice > start) {
             choice--;
           }
           break;
-        case KEY.RIGHT:
+        case KEY.ARROW_RIGHT:
           if (choice < end && choice < MAX_QUICK_ITEM_SLOT) {
             choice++;
           }
           break;
-        case KEY.SELECT:
+        case KEY.ENTER:
+        case KEY.Z:
           const item = Bag.getSlotItems()[choice];
           if (item) {
             Event.emit(EVENT.USE_ITEM, item);
@@ -111,13 +111,14 @@ export class QuickSlotItemUi extends Ui {
           this.clean();
           Game.removeUi(UI.QUICK_SLOT_ITEM);
           break;
-        case KEY.CANCEL:
+        case KEY.ESC:
+        case KEY.X:
           Event.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_REG, false);
           this.clean();
           Game.removeUi(UI.QUICK_SLOT_ITEM);
           break;
       }
-      if (key === KEY.LEFT || key === KEY.RIGHT) {
+      if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
         if (choice !== prevChoice) {
           playEffectSound(this.scene, AUDIO.SELECT_0);
 

@@ -1,4 +1,4 @@
-import { AUDIO, DEPTH, KEY, TextSpeed, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, EVENT, KEY, TextSpeed, TEXTSTYLE, TEXTURE } from '../enums';
 import { Keyboard, KeyboardManager } from '../core/manager/keyboard-manager';
 import { SocketIO, SocketManager } from '../core/manager/socket-manager';
 import i18next from '../i18n';
@@ -7,6 +7,7 @@ import { changeTextSpeedToDigit } from '../utils/string-util';
 import { addBackground, addImage, addText, addWindow, getTextStyle, playEffectSound, runFadeEffect, Ui } from './ui';
 import { Option } from '../core/storage/player-option';
 import { Game } from '../core/manager/game-manager';
+import { Event } from '../core/manager/event-manager';
 
 export class OptionUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
@@ -90,6 +91,8 @@ export class OptionUi extends Ui {
   }
 
   show(data?: any): void {
+    Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
+
     runFadeEffect(this.scene, 800, 'in');
 
     for (const ui of this.optionUis) {
@@ -107,6 +110,8 @@ export class OptionUi extends Ui {
   }
 
   protected onClean(): void {
+    Event.emit(EVENT.ENABLE_DAY_NIGHT_FILTER);
+
     runFadeEffect(this.scene, 800, 'in');
 
     this.bgContainer.setVisible(false);
@@ -135,7 +140,7 @@ export class OptionUi extends Ui {
     this.optionDescUi.updateText(this.choice);
     this.contentTitleDummys[this.choice].setTexture(TEXTURE.WINDOW_RED);
 
-    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER, KEY.CANCEL]);
+    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X]);
     Keyboard.setKeyDownCallback(async (key) => {
       try {
         if (this.activeControl === 'menu') {
@@ -153,26 +158,26 @@ export class OptionUi extends Ui {
     let prevChoice = this.choice;
 
     switch (key) {
-      case KEY.UP:
+      case KEY.ARROW_UP:
         if (this.choice > 0) {
           this.choice--;
         }
         break;
-      case KEY.DOWN:
+      case KEY.ARROW_DOWN:
         if (this.choice < this.contentTitle.length - 1) {
           this.choice++;
         }
         break;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         this.optionUis[this.choice].handleKeyInput(key);
         this.switchToOptionControl();
         return;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         this.optionUis[this.choice].handleKeyInput(key);
         this.switchToOptionControl();
         return;
       case KEY.ENTER:
-      case KEY.SELECT:
+      case KEY.Z:
         const target = this.contentTitle[this.choice];
 
         if (target === i18next.t('menu:optionTitle5')) {
@@ -181,14 +186,14 @@ export class OptionUi extends Ui {
           Game.popUi();
         }
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         this.lastChoice = 0;
         this.contentTitleDummys[this.choice].setTexture(TEXTURE.BLANK);
         Game.popUi();
         break;
     }
 
-    if (key === KEY.UP || key === KEY.DOWN) {
+    if (key === KEY.ARROW_UP || key === KEY.ARROW_DOWN) {
       if (this.choice !== prevChoice) {
         this.lastChoice = this.choice;
         playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -293,30 +298,30 @@ export class OptionTextSpeedUi extends Ui {
     this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
 
     switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
         this.optionUi.handleMenuNavigation(key);
         return;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         if (this.choice > 0) {
           this.choice--;
         }
         break;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) {
           this.choice++;
         }
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
         Game.popUi();
         break;
     }
 
-    if (key === KEY.LEFT || key === KEY.RIGHT) {
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
       if (this.choice !== prevChoice) {
         Option.setTextSpeed(this.choice);
 
@@ -409,24 +414,24 @@ export class OptionWindowTypeUi extends Ui {
     this.text.setText(i18next.t('menu:optionWindow') + `${this.choice}`);
 
     switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
         this.optionUi.switchToMenuControl();
         this.optionUi.handleMenuNavigation(key);
         return;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         if (this.choice > 0) this.choice--;
         break;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         if (this.choice < this.contents - 1) this.choice++;
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
-    if (key === KEY.LEFT || key === KEY.RIGHT) {
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
       if (this.choice !== prevChoice) {
         Option.setFrame(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -506,24 +511,24 @@ export class OptionBackgroundSoundUi extends Ui {
     this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
 
     switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
         this.optionUi.switchToMenuControl();
         this.optionUi.handleMenuNavigation(key);
         return;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         if (this.choice > 0) this.choice--;
         break;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
-    if (key === KEY.LEFT || key === KEY.RIGHT) {
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
       if (this.choice !== prevChoice) {
         Option.setBackgroundVolume(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -607,24 +612,24 @@ export class OptionEffectSoundUi extends Ui {
     this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
 
     switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
         this.optionUi.switchToMenuControl();
         this.optionUi.handleMenuNavigation(key);
         return;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         if (this.choice > 0) this.choice--;
         break;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
         break;
     }
 
-    if (key === KEY.LEFT || key === KEY.RIGHT) {
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
       if (this.choice !== prevChoice) {
         Option.setEffectVolume(this.choice);
         playEffectSound(this.scene, AUDIO.SELECT_0);
@@ -710,30 +715,30 @@ export class OptionTutorialUi extends Ui {
     this.texts[this.choice].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
 
     switch (key) {
-      case KEY.UP:
-      case KEY.DOWN:
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
         this.optionUi.handleMenuNavigation(key);
         return;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         if (this.choice > 0) {
           this.choice--;
         }
         break;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) {
           this.choice++;
         }
         break;
-      case KEY.CANCEL:
+      case KEY.X:
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
         Game.popUi();
         break;
     }
 
-    if (key === KEY.LEFT || key === KEY.RIGHT) {
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
       if (this.choice !== prevChoice) {
         Option.setTutorial(this.choice === 0 ? true : false);
 

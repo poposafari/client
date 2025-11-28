@@ -113,7 +113,7 @@ export class ShopUi extends Ui {
   private promptForQuantity(item: ItemData): Promise<'purchased' | 'cancel'> {
     return new Promise((resolve) => {
       const keyboard = KeyboardManager.getInstance();
-      const keys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.CANCEL];
+      const keys = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.X];
 
       const bag = Bag.getItem(item.key);
       this.buy = this.minBuy;
@@ -127,19 +127,19 @@ export class ShopUi extends Ui {
         if (this.isProcessing) return;
 
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             this.changeBuy(1);
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             this.changeBuy(-1);
             break;
-          case KEY.LEFT:
+          case KEY.ARROW_LEFT:
             this.changeBuy(-10);
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             this.changeBuy(10);
             break;
-          case KEY.SELECT:
+          case KEY.Z:
             this.isProcessing = true;
             this.menuContainer.setVisible(false);
             await this.questionMessageUi
@@ -188,12 +188,12 @@ export class ShopUi extends Ui {
                 this.isProcessing = false;
               });
             break;
-          case KEY.CANCEL:
+          case KEY.X:
             this.menuContainer.setVisible(false);
             resolve('cancel');
             break;
         }
-        if ([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT].includes(key)) {
+        if ([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT].includes(key)) {
           this.renderMenu(item);
         }
       });

@@ -6,6 +6,8 @@ import { LoginUi } from '../uis/login-ui';
 import {
   Gate001,
   Gate002,
+  Gate003,
+  Gate004,
   Plaza001,
   Plaza002,
   Plaza003,
@@ -25,11 +27,21 @@ import {
   Plaza023,
   Safari001,
   Safari002,
+  Safari003,
+  Safari004,
+  Safari005,
+  Safari006,
+  Safari007,
+  Safari008,
+  Safari009,
+  Safari010,
+  Safari011,
 } from '../uis/overworld/overworld';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
 import { WelcomeUi } from '../uis/welcome-ui';
 import { createZeroPad } from '../utils/string-util';
 import WipeRightToLeftShader from '../utils/wipe-rl-shader';
+import DayNightFilter from '../utils/day-night-filter';
 import { BaseScene } from './base-scene';
 import { Game } from '../core/manager/game-manager';
 import { Sound } from '../core/manager/sound-manager';
@@ -113,19 +125,30 @@ export class InGameScene extends BaseScene {
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_010, (ui) => new Plaza010(TEXTURE.PLAZA_010, AUDIO.B005, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_011, (ui) => new Plaza011(TEXTURE.PLAZA_011, AUDIO.B005, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_012, (ui) => new Plaza012(TEXTURE.PLAZA_012, AUDIO.B005, true, TEXTURE.AREA_3));
-
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_019, (ui) => new Plaza019(TEXTURE.PLAZA_019, AUDIO.B009, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_020, (ui) => new Plaza020(TEXTURE.PLAZA_020, AUDIO.B005, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_021, (ui) => new Plaza021(TEXTURE.PLAZA_021, AUDIO.B005, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_022, (ui) => new Plaza022(TEXTURE.PLAZA_022, AUDIO.B005, true, TEXTURE.AREA_3));
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_023, (ui) => new Plaza023(TEXTURE.PLAZA_023, AUDIO.B005, true, TEXTURE.AREA_3));
+
     //gate
-    OverworldGlobal.registerMapFactory(TEXTURE.GATE_001, (ui) => new Gate001(TEXTURE.GATE_001, AUDIO.B004, false, TEXTURE.AREA_3));
-    OverworldGlobal.registerMapFactory(TEXTURE.GATE_002, (ui) => new Gate002(TEXTURE.GATE_002, AUDIO.B004, false, TEXTURE.AREA_3));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_001, (ui) => new Gate001(TEXTURE.GATE_001, AUDIO.B004, false, TEXTURE.AREA_16));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_002, (ui) => new Gate002(TEXTURE.GATE_002, AUDIO.B004, false, TEXTURE.AREA_16));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_003, (ui) => new Gate003(TEXTURE.GATE_003, AUDIO.B004, false, TEXTURE.AREA_16));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_004, (ui) => new Gate004(TEXTURE.GATE_004, AUDIO.B004, false, TEXTURE.AREA_16));
 
     //safari
-    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_001, (ui) => new Safari001(TEXTURE.SAFARI_001, AUDIO.B006, false, TEXTURE.AREA_1));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_001, (ui) => new Safari001(TEXTURE.SAFARI_001, AUDIO.B032, false, TEXTURE.AREA_1));
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_002, (ui) => new Safari002(TEXTURE.SAFARI_002, AUDIO.B007, false, TEXTURE.AREA_1));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_003, (ui) => new Safari003(TEXTURE.SAFARI_003, AUDIO.B029, false, TEXTURE.AREA_4));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_004, (ui) => new Safari004(TEXTURE.SAFARI_004, AUDIO.B029, false, TEXTURE.AREA_4));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_005, (ui) => new Safari005(TEXTURE.SAFARI_005, AUDIO.B029, false, TEXTURE.AREA_4));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_006, (ui) => new Safari006(TEXTURE.SAFARI_006, AUDIO.B017, false, TEXTURE.AREA_5));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_007, (ui) => new Safari007(TEXTURE.SAFARI_007, AUDIO.B014, false, TEXTURE.AREA_7));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_008, (ui) => new Safari008(TEXTURE.SAFARI_008, AUDIO.B014, false, TEXTURE.AREA_7));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_009, (ui) => new Safari009(TEXTURE.SAFARI_009, AUDIO.B020, false, TEXTURE.AREA_7));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_010, (ui) => new Safari010(TEXTURE.SAFARI_010, AUDIO.B032, false, TEXTURE.AREA_1));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_011, (ui) => new Safari011(TEXTURE.SAFARI_011, AUDIO.B017, false, TEXTURE.AREA_5));
 
     Game.initializeGame();
   }
@@ -617,6 +640,7 @@ export class InGameScene extends BaseScene {
   private initShader() {
     if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
       this.game.renderer.pipelines.addPostPipeline('WipeRightToLeftShader', WipeRightToLeftShader);
+      this.game.renderer.pipelines.addPostPipeline('DayNightFilter', DayNightFilter);
     }
   }
 }

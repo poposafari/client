@@ -52,7 +52,7 @@ export class TalkMessageUi extends MessageUi {
     this.container.setVisible(true);
 
     const keyboard = KeyboardManager.getInstance();
-    keyboard.setAllowKey([KEY.SELECT, KEY.ENTER]);
+    keyboard.setAllowKey([KEY.Z, KEY.ENTER]);
     playEffectSound(this.scene, AUDIO.SELECT_0);
 
     await this.showText(data.content, data.speed);
@@ -64,7 +64,7 @@ export class TalkMessageUi extends MessageUi {
       this.startGuideTextTimer();
 
       const callback = (key: KEY) => {
-        if (key === KEY.SELECT || key === KEY.ENTER) {
+        if (key === KEY.Z || key === KEY.ENTER) {
           this.cancelGuideTextTimer();
           this.showEndMark(false);
           keyboard.clearCallbacks();

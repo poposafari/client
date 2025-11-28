@@ -92,7 +92,7 @@ export class OverworldMenuUi extends Ui {
 
     this.updateBackToText();
 
-    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.ENTER, KEY.CANCEL, KEY.ESC]);
+    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
     const callback = (key: KEY) => {
       if (this.isProcessing) return;
 
@@ -100,7 +100,7 @@ export class OverworldMenuUi extends Ui {
 
       try {
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (choice > 0) {
               choice--;
               playEffectSound(this.scene, AUDIO.SELECT_1);
@@ -110,7 +110,7 @@ export class OverworldMenuUi extends Ui {
               this.dummys[choice].setTexture(TEXTURE.WINDOW_RED);
             }
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (choice < endIndex && choice < this.ListIcons.length - 1) {
               choice++;
               playEffectSound(this.scene, AUDIO.SELECT_1);
@@ -121,7 +121,7 @@ export class OverworldMenuUi extends Ui {
             }
             break;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             this.isProcessing = true;
             this.lastStart = choice;
             this.selectMenu(choice).finally(() => {
@@ -129,7 +129,7 @@ export class OverworldMenuUi extends Ui {
             });
             break;
           case KEY.ESC:
-          case KEY.CANCEL:
+          case KEY.X:
             this.isProcessing = true;
             this.cancelMenu(choice);
             playEffectSound(this.scene, AUDIO.CANCEL_0);

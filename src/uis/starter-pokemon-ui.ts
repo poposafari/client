@@ -5,7 +5,7 @@ import { KeyboardManager } from '../core/manager/keyboard-manager';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Talk, WildRes } from '../types';
 import { addBackground, addImage, addText, addWindow, createSprite, playEffectSound, runFadeEffect, Ui } from './ui';
-import { getPokemonType, replacePercentSymbol } from '../utils/string-util';
+import { getCurrentTimeOfDay, getPokemonType, replacePercentSymbol } from '../utils/string-util';
 import { QuestionMessageUi } from './question-message-ui';
 import { Option } from '../core/storage/player-option';
 
@@ -95,7 +95,7 @@ export class StarterPokemonUi extends Ui {
   async handleKeyInput(...data: any[]) {
     return new Promise((resolve) => {
       const keyboard = KeyboardManager.getInstance();
-      const keys = [KEY.LEFT, KEY.RIGHT, KEY.SELECT];
+      const keys = [KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z];
 
       let start = 0;
       let end = this.balls.length - 1;
@@ -108,17 +108,17 @@ export class StarterPokemonUi extends Ui {
         const prevChoice = choice;
 
         switch (key) {
-          case KEY.LEFT:
+          case KEY.ARROW_LEFT:
             if (choice > start) {
               choice--;
             }
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             if (choice < end && choice < this.balls.length - 1) {
               choice++;
             }
             break;
-          case KEY.SELECT: {
+          case KEY.Z: {
             keyboard.setAllowKey([]);
             keyboard.setKeyDownCallback(() => {});
             await this.questionMessage.show({
@@ -139,7 +139,7 @@ export class StarterPokemonUi extends Ui {
             return;
           }
         }
-        if (key === KEY.LEFT || key === KEY.RIGHT) {
+        if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
           if (choice !== prevChoice) {
             playEffectSound(this.scene, AUDIO.SELECT_0);
 
@@ -198,7 +198,7 @@ export class StarterPokemonUi extends Ui {
   }
 
   private async showPokemon() {
-    const ret = await enterSafariZoneApi({ overworld: 'lab' });
+    const ret = await enterSafariZoneApi({ overworld: 'lab', time: getCurrentTimeOfDay() });
 
     if (ret.result) {
       const contentWidth = 100;

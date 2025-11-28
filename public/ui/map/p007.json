@@ -1676,7 +1676,7 @@
       "height": 17,
       "id": 5,
       "name": "event",
-      "opacity": 0.47,
+      "opacity": 0,
       "type": "tilelayer",
       "visible": true,
       "width": 19,
