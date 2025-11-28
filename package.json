@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "dev:prod": "vite build && vite preview",
+    "dev:watch": "vite build --watch",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write .",
     "test": "jest"
