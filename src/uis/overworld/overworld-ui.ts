@@ -200,6 +200,7 @@ export class OverworldUi extends Ui {
     if (onoff) {
       Keyboard.clearCallbacks();
     } else {
+      this.player.resetCurrentActionIfNotIdle();
       this.player.handleKeyInput();
     }
   }
@@ -523,6 +524,13 @@ export class OverworldPlayer {
 
   clearActionQueue(): void {
     this.actionQueue.clear();
+  }
+
+  resetCurrentActionIfNotIdle(): void {
+    if (this.currentAction !== OVERWORLD_ACTION.IDLE) {
+      this.currentAction = OVERWORLD_ACTION.IDLE;
+      this.actionQueue.clear();
+    }
   }
 
   update(delta: number) {

@@ -29,5 +29,17 @@ export default defineConfig(({ mode }) => {
     define: {
       'import.meta.env.NODE_ENV': JSON.stringify(env.NODE_ENV || 'prod'),
     },
+    build: {
+      // 최적화 옵션 조정 (디버깅용)
+      minify: 'esbuild', // 기본값, 더 빠르고 설치 불필요
+      // 소스맵 생성 (디버깅용)
+      sourcemap: true,
+      // 코드 분할 최적화 완화
+      rollupOptions: {
+        output: {
+          manualChunks: undefined, // 수동 청크 분할 비활성화
+        },
+      },
+    },
   };
 });
