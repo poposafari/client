@@ -1,5 +1,5 @@
 import { SafariData } from '../data';
-import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, Season, TextSpeed, TYPE } from '../enums';
+import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, Season, TextSpeed, TIME, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 
 export function createZeroPad(value: number): string {
@@ -148,6 +148,74 @@ export function getCurrentSeason(): Season {
   return Season.WINTER;
 }
 
+/**
+ * 브라우저의 현재 시간을 기반으로 시간대를 계산하고 TIME enum을 반환
+ * 시간대 분류:
+ * - 새벽 (DAWN): 4-6시 (0.0 ~ 0.25)
+ * - 낮 (DAY): 6-18시 (0.25 ~ 0.75)
+ * - 해질녘 (DUSK): 18-20시 (0.75 ~ 0.83)
+ * - 밤 (NIGHT): 20-4시 (0.83 ~ 1.0)
+ *
+ * @returns {TIME} 현재 시간대 (DAWN, DAY, DUSK, NIGHT)
+ */
+export function getCurrentTimeOfDay(): TIME {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+
+  if (hours >= 4 && hours < 6) {
+    return TIME.DAWN;
+  } else if (hours >= 6 && hours < 18) {
+    return TIME.DAY;
+  } else if (hours >= 18 && hours < 20) {
+    return TIME.DUSK;
+  } else {
+    return TIME.NIGHT;
+  }
+}
+
+/**
+ * 브라우저의 현재 시간을 기반으로 시간대를 0.0~1.0 범위의 값으로 계산
+ * 시간대 분류:
+ * - 새벽: 4-6시 (0.0 ~ 0.25)
+ * - 낮: 6-18시 (0.25 ~ 0.75)
+ * - 해질녘: 18-20시 (0.75 ~ 0.83)
+ * - 밤: 20-4시 (0.83 ~ 1.0)
+ *
+ * @returns {number} 0.0~1.0 범위의 시간대 값
+ */
+export function getCurrentTimeOfDayValue(): number {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+
+  let adjustedTime: number;
+
+  if (hours >= 4 && hours < 6) {
+    // 새벽: 4-6시 (0.0 ~ 0.25)
+    adjustedTime = (((hours - 4) * 60 + minutes) / (2 * 60)) * 0.25;
+  } else if (hours >= 6 && hours < 18) {
+    // 낮: 6-18시 (0.25 ~ 0.75)
+    // 6시 = 0.25, 18시 = 0.75 (경계값 포함하지 않음)
+    adjustedTime = 0.25 + (((hours - 6) * 60 + minutes) / (12 * 60)) * 0.5;
+  } else if (hours >= 18 && hours < 20) {
+    // 해질녘: 18-20시 (0.75 ~ 0.83)
+    // 18시 = 0.75, 20시 = 0.83
+    adjustedTime = 0.75 + (((hours - 18) * 60 + minutes) / (2 * 60)) * 0.08;
+  } else {
+    // 밤: 20-4시 (0.83 ~ 1.0)
+    if (hours >= 20) {
+      // 20시-24시: 0.83 ~ 1.0
+      adjustedTime = 0.83 + (((hours - 20) * 60 + minutes) / (4 * 60)) * 0.17;
+    } else {
+      // 0시-4시: 0.83 ~ 1.0 (자정 이후 새벽 4시 이전)
+      adjustedTime = 0.83 + (((hours + 4) * 60 + minutes) / (4 * 60)) * 0.17;
+    }
+  }
+
+  return adjustedTime;
+}
+
 export function isSafariData(obj: any): obj is SafariData {
   return (
     obj &&
@@ -166,16 +234,16 @@ export function isSafariData(obj: any): obj is SafariData {
 export function changeDirectionToKey(direction: DIRECTION) {
   switch (direction) {
     case DIRECTION.UP:
-      return KEY.UP;
+      return KEY.ARROW_UP;
     case DIRECTION.DOWN:
-      return KEY.DOWN;
+      return KEY.ARROW_DOWN;
     case DIRECTION.LEFT:
-      return KEY.LEFT;
+      return KEY.ARROW_LEFT;
     case DIRECTION.RIGHT:
-      return KEY.RIGHT;
+      return KEY.ARROW_RIGHT;
   }
 
-  return KEY.UP;
+  return KEY.ARROW_UP;
 }
 
 export const matchTypeWithBerryRate = (berry: string | null, type1: string, type2: string | null) => {
@@ -347,9 +415,19 @@ export const formatPlaytime = (updatedAt: Date | string, createdAt: Date | strin
 export const getBattleArea = (location: string) => {
   switch (location) {
     case 's001':
-      return BATTLE_AREA.FIELD;
     case 's002':
+    case 's006':
+    case 's010':
+    case 's011':
       return BATTLE_AREA.FIELD;
+    case 's003':
+    case 's004':
+    case 's005':
+      return BATTLE_AREA.CAVE;
+    case 's007':
+    case 's008':
+    case 's009':
+      return BATTLE_AREA.FOREST;
   }
 };
 

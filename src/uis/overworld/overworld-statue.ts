@@ -1,4 +1,5 @@
-import { TEXTSTYLE, TEXTURE, TRIGGER } from '../../enums';
+import { OVERWORLD_DOOR_DATA, OVERWORLD_INIT_POS_DATA } from '../../constants';
+import { OVERWORLD_DOOR, OVERWORLD_INIT_POS, TEXTSTYLE, TEXTURE, TRIGGER } from '../../enums';
 import { DoorOverworldObj } from '../../obj/door-overworld-obj';
 import { OverworldTriggerObj } from '../../obj/overworld-trigger-obj';
 import { SignOverworldObj } from '../../obj/sign-overworld-obj';
@@ -21,19 +22,22 @@ export class OverworldStatue {
     this.scene = scene;
   }
 
-  setupDoor(texture: TEXTURE | string, x: number, y: number, offsetY: number, displayWidth: number, displayHeight: number, location: string, goalX: number, goalY: number) {
+  setupDoor(start: OVERWORLD_DOOR, end: OVERWORLD_INIT_POS) {
+    const overworldDoorData = OVERWORLD_DOOR_DATA[start];
+    const overworldInitPosData = OVERWORLD_INIT_POS_DATA[end];
+
     this.doorInfo.push({
-      texture: texture,
-      x: x,
-      y: y,
+      texture: overworldDoorData.door,
+      x: overworldDoorData.x,
+      y: overworldDoorData.y,
       goal: {
-        location: location,
-        x: goalX,
-        y: goalY,
+        location: overworldInitPosData.location,
+        x: overworldInitPosData.x,
+        y: overworldInitPosData.y,
       },
-      offsetY: offsetY,
-      displayWidth: displayWidth,
-      displayHeight: displayHeight,
+      offsetY: overworldDoorData.offsetY,
+      displayWidth: overworldDoorData.width,
+      displayHeight: overworldDoorData.height,
     });
   }
 

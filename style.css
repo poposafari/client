@@ -1,13 +1,14 @@
 body {
-    margin: 0;
-    background: #242424;
+  margin: 0;
+  background: #242424;
+  /* background: #000000; */
 }
 
 #app {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-#app>div:first-child {
-    transform-origin: top !important;
+#app > div:first-child {
+  transform-origin: top !important;
 }

@@ -34,6 +34,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.REWARD_OVERLAY_2, 'ui/windows', TEXTURE.REWARD_OVERLAY_2);
     this.loadImage(TEXTURE.REWARD_OVERLAY_3, 'ui/windows', TEXTURE.REWARD_OVERLAY_3);
     this.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', TEXTURE.WINDOW_NOTICE_0);
+    this.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', TEXTURE.WINDOW_NOTICE_1);
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
     this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
@@ -59,7 +60,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT);
     this.loadImage(TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_OBJECT_URBAN);
     this.loadImage(TEXTURE.OUTDOOR_TILE_URBAN, 'ui/map', TEXTURE.OUTDOOR_TILE_URBAN);
-    this.loadImage(TEXTURE.EVENT, 'ui/map', TEXTURE.EVENT);
+    this.loadImage(TEXTURE.OUTDOOR_EVENT, 'ui/map', TEXTURE.OUTDOOR_EVENT);
+    this.loadImage(TEXTURE.INDOOR_EVENT, 'ui/map', TEXTURE.INDOOR_EVENT);
     this.loadMap(TEXTURE.PLAZA_001, 'ui/map', TEXTURE.PLAZA_001);
     this.loadMap(TEXTURE.PLAZA_002, 'ui/map', TEXTURE.PLAZA_002);
     this.loadMap(TEXTURE.PLAZA_003, 'ui/map', TEXTURE.PLAZA_003);
@@ -72,12 +74,12 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.PLAZA_010, 'ui/map', TEXTURE.PLAZA_010);
     this.loadMap(TEXTURE.PLAZA_011, 'ui/map', TEXTURE.PLAZA_011);
     this.loadMap(TEXTURE.PLAZA_012, 'ui/map', TEXTURE.PLAZA_012);
-    this.loadMap(TEXTURE.PLAZA_013, 'ui/map', TEXTURE.PLAZA_013);
-    this.loadMap(TEXTURE.PLAZA_014, 'ui/map', TEXTURE.PLAZA_014);
-    this.loadMap(TEXTURE.PLAZA_015, 'ui/map', TEXTURE.PLAZA_015);
-    this.loadMap(TEXTURE.PLAZA_016, 'ui/map', TEXTURE.PLAZA_016);
-    this.loadMap(TEXTURE.PLAZA_017, 'ui/map', TEXTURE.PLAZA_017);
-    this.loadMap(TEXTURE.PLAZA_018, 'ui/map', TEXTURE.PLAZA_018);
+    // this.loadMap(TEXTURE.PLAZA_013, 'ui/map', TEXTURE.PLAZA_013);
+    // this.loadMap(TEXTURE.PLAZA_014, 'ui/map', TEXTURE.PLAZA_014);
+    // this.loadMap(TEXTURE.PLAZA_015, 'ui/map', TEXTURE.PLAZA_015);
+    // this.loadMap(TEXTURE.PLAZA_016, 'ui/map', TEXTURE.PLAZA_016);
+    // this.loadMap(TEXTURE.PLAZA_017, 'ui/map', TEXTURE.PLAZA_017);
+    // this.loadMap(TEXTURE.PLAZA_018, 'ui/map', TEXTURE.PLAZA_018);
     this.loadMap(TEXTURE.PLAZA_019, 'ui/map', TEXTURE.PLAZA_019);
     this.loadMap(TEXTURE.PLAZA_020, 'ui/map', TEXTURE.PLAZA_020);
     this.loadMap(TEXTURE.PLAZA_021, 'ui/map', TEXTURE.PLAZA_021);
@@ -86,9 +88,20 @@ export class LoadingScene extends BaseScene {
 
     this.loadMap(TEXTURE.GATE_001, 'ui/map', TEXTURE.GATE_001);
     this.loadMap(TEXTURE.GATE_002, 'ui/map', TEXTURE.GATE_002);
+    this.loadMap(TEXTURE.GATE_003, 'ui/map', TEXTURE.GATE_003);
+    this.loadMap(TEXTURE.GATE_004, 'ui/map', TEXTURE.GATE_004);
 
     this.loadMap(TEXTURE.SAFARI_001, 'ui/map', TEXTURE.SAFARI_001);
     this.loadMap(TEXTURE.SAFARI_002, 'ui/map', TEXTURE.SAFARI_002);
+    this.loadMap(TEXTURE.SAFARI_003, 'ui/map', TEXTURE.SAFARI_003);
+    this.loadMap(TEXTURE.SAFARI_004, 'ui/map', TEXTURE.SAFARI_004);
+    this.loadMap(TEXTURE.SAFARI_005, 'ui/map', TEXTURE.SAFARI_005);
+    this.loadMap(TEXTURE.SAFARI_006, 'ui/map', TEXTURE.SAFARI_006);
+    this.loadMap(TEXTURE.SAFARI_007, 'ui/map', TEXTURE.SAFARI_007);
+    this.loadMap(TEXTURE.SAFARI_008, 'ui/map', TEXTURE.SAFARI_008);
+    this.loadMap(TEXTURE.SAFARI_009, 'ui/map', TEXTURE.SAFARI_009);
+    this.loadMap(TEXTURE.SAFARI_010, 'ui/map', TEXTURE.SAFARI_010);
+    this.loadMap(TEXTURE.SAFARI_011, 'ui/map', TEXTURE.SAFARI_011);
 
     //tutorial
     this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_BALL, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
@@ -267,6 +280,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage('battle_shadow_0', 'ui/battle', 'battle_shadow_0');
     this.loadImage('battle_shadow_1', 'ui/battle', 'battle_shadow_1');
     this.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
+    this.loadImage(TEXTURE.LAMP, 'ui', TEXTURE.LAMP);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
@@ -309,9 +323,17 @@ export class LoadingScene extends BaseScene {
 
     Object.values(BATTLE_AREA).forEach((area) => {
       Object.values(TIME).forEach((time) => {
-        this.loadImage(`bg_${area}_${time}`, 'ui/battle', `bg_${area}_${time}`);
-        this.loadImage(`eb_${area}_${time}`, 'ui/battle', `eb_${area}_${time}`);
-        this.loadImage(`pb_${area}_${time}`, 'ui/battle', `pb_${area}_${time}`);
+        if (time !== TIME.DAWN) {
+          if (area === BATTLE_AREA.CAVE) {
+            this.loadImage(`bg_${area}_day`, 'ui/battle', `bg_${area}_day`);
+            this.loadImage(`eb_${area}_day`, 'ui/battle', `eb_${area}_day`);
+            this.loadImage(`pb_${area}_day`, 'ui/battle', `pb_${area}_day`);
+          } else {
+            this.loadImage(`bg_${area}_${time}`, 'ui/battle', `bg_${area}_${time}`);
+            this.loadImage(`eb_${area}_${time}`, 'ui/battle', `eb_${area}_${time}`);
+            this.loadImage(`pb_${area}_${time}`, 'ui/battle', `pb_${area}_${time}`);
+          }
+        }
       });
     });
 
@@ -337,6 +359,20 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.B018, 'audio/background', AUDIO.B018, 'wav');
     this.loadAudio(AUDIO.B019, 'audio/background', AUDIO.B019, 'wav');
     this.loadAudio(AUDIO.B020, 'audio/background', AUDIO.B020, 'wav');
+    this.loadAudio(AUDIO.B021, 'audio/background', AUDIO.B021, 'wav');
+    this.loadAudio(AUDIO.B022, 'audio/background', AUDIO.B022, 'wav');
+    this.loadAudio(AUDIO.B023, 'audio/background', AUDIO.B023, 'wav');
+    this.loadAudio(AUDIO.B024, 'audio/background', AUDIO.B024, 'wav');
+    this.loadAudio(AUDIO.B025, 'audio/background', AUDIO.B025, 'wav');
+    this.loadAudio(AUDIO.B026, 'audio/background', AUDIO.B026, 'wav');
+    this.loadAudio(AUDIO.B027, 'audio/background', AUDIO.B027, 'wav');
+    this.loadAudio(AUDIO.B028, 'audio/background', AUDIO.B028, 'wav');
+    this.loadAudio(AUDIO.B029, 'audio/background', AUDIO.B029, 'wav');
+    this.loadAudio(AUDIO.B030, 'audio/background', AUDIO.B030, 'wav');
+    this.loadAudio(AUDIO.B031, 'audio/background', AUDIO.B031, 'wav');
+    this.loadAudio(AUDIO.B032, 'audio/background', AUDIO.B032, 'wav');
+    this.loadAudio(AUDIO.B033, 'audio/background', AUDIO.B033, 'wav');
+    this.loadAudio(AUDIO.B034, 'audio/background', AUDIO.B034, 'wav');
 
     //effect sounds
     this.loadAudio(AUDIO.SELECT_0, 'audio/effect', AUDIO.SELECT_0, 'ogg');

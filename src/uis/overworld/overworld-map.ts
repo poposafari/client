@@ -151,4 +151,28 @@ export class OverworldMap {
   private addTileset(tilesetTexture: TEXTURE) {
     this.map.addTilesetImage(tilesetTexture, tilesetTexture);
   }
+
+  getLightTilePositions(): { x: number; y: number }[] {
+    const lightPositions: { x: number; y: number }[] = [];
+
+    if (!this.map) {
+      return lightPositions;
+    }
+
+    for (let y = 0; y < this.map.height; y++) {
+      for (let x = 0; x < this.map.width; x++) {
+        for (const layer of this.map.layers) {
+          const tile = layer.data[y]?.[x];
+          if (tile && tile.index !== -1) {
+            if (tile.properties && tile.properties.light === true) {
+              lightPositions.push({ x, y });
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return lightPositions;
+  }
 }

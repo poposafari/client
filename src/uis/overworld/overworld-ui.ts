@@ -1,5 +1,5 @@
 import { Event } from '../../core/manager/event-manager';
-import { DIRECTION, EVENT, MODE, OBJECT, OVERWORLD_ACTION, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE } from '../../enums';
+import { DEPTH, DIRECTION, EVENT, MODE, OBJECT, OVERWORLD_ACTION, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, TIME } from '../../enums';
 import { Keyboard } from '../../core/manager/keyboard-manager';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { NoticeUi } from '../notice-ui';
@@ -24,12 +24,17 @@ import { OverworldPlayerInputHandler, OverworldPlayerInputContext } from './over
 import { OverworldPlayerInteractionHandler, OverworldPlayerInteractionContext } from './overworld-player-interaction-handler';
 import { OverworldTriggerObj } from '../../obj/overworld-trigger-obj';
 import { Option } from '../../core/storage/player-option';
+import DayNightFilter from '../../utils/day-night-filter';
+import { getCurrentTimeOfDay, getCurrentTimeOfDayValue } from '../../utils/string-util';
+import { LampOverworldObj } from '../../obj/lamp-overworld-obj';
 
 export class OverworldUi extends Ui {
   private type!: OVERWORLD_TYPE;
   private areaTexture!: TEXTURE | string;
   private areaLocation!: string;
   private tutorialMessage: TalkMessageUi;
+  private lastTimeUpdate: number = 0;
+  private readonly TIME_UPDATE_INTERVAL: number = 60000;
 
   protected map: OverworldMap;
   protected player: OverworldPlayer;
@@ -38,6 +43,13 @@ export class OverworldUi extends Ui {
   protected statue: OverworldStatue;
   protected otherPlayers: OverworldOtherPlayer;
   protected hud: OverworldHUDUi;
+
+  protected lamp: LampOverworldObj[] = [];
+
+  protected isDayNightFilterEnabled: boolean = true;
+  private disableFilterCallback!: () => void;
+  private enableFilterCallback!: () => void;
+  private dayNightOverlay: Phaser.GameObjects.Rectangle | null = null;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -59,6 +71,18 @@ export class OverworldUi extends Ui {
     this.hud.setup();
     this.tutorialMessage.setup();
 
+    this.disableFilterCallback = () => {
+      this.setDayNightFilterEnabled(false);
+    };
+    this.enableFilterCallback = () => {
+      if (!this.isDayNightFilterEnabled) return;
+
+      this.setDayNightFilterEnabled(true);
+    };
+
+    Event.on(EVENT.DISABLE_DAY_NIGHT_FILTER, this.disableFilterCallback);
+    Event.on(EVENT.ENABLE_DAY_NIGHT_FILTER, this.enableFilterCallback);
+
     const location = PlayerGlobal.getData()?.location;
     if (!location) throwError(ErrorCode.PLAYER_DATA_NOT_SET);
 
@@ -71,6 +95,7 @@ export class OverworldUi extends Ui {
 
     const overworld = mapFactory(this);
     overworld.setup(this);
+    this.isDayNightFilterEnabled = overworld.getIsDayNightFilterEnabled();
   }
 
   async show(data?: any): Promise<void> {
@@ -80,6 +105,13 @@ export class OverworldUi extends Ui {
     this.trackGameObject(this.map.getForeground1Container());
 
     this.hud.showArea(this.areaTexture, this.areaLocation);
+
+    this.setDayNightFilterEnabled(this.isDayNightFilterEnabled);
+
+    this.scene.cameras.main.setBackgroundColor('#000000');
+
+    this.updateTimeOfDayFromCurrentTime();
+    this.createDayNightOverlay();
 
     this.statue.show();
     this.npc.show(this.map.get());
@@ -110,6 +142,9 @@ export class OverworldUi extends Ui {
 
     runFadeEffect(this.scene, 1200, 'in');
 
+    this.addLamps();
+    this.updateLamps();
+
     this.otherPlayers.show(this.map.get());
     this.hud.show();
 
@@ -120,18 +155,45 @@ export class OverworldUi extends Ui {
 
     await this.player.show(this.map.get(), this.type);
     await this.player.showTutorialMessages(this.type);
+
+    const playerSprite = this.player.getSprite();
+
+    if (playerSprite) {
+      this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5);
+    }
   }
 
   protected onClean(): void {
+    this.scene.cameras.main.resetPostPipeline();
+    Event.off(EVENT.DISABLE_DAY_NIGHT_FILTER, this.disableFilterCallback);
+    Event.off(EVENT.ENABLE_DAY_NIGHT_FILTER, this.enableFilterCallback);
+
+    if (this.dayNightOverlay) {
+      this.dayNightOverlay.destroy();
+      this.dayNightOverlay = null;
+    }
+
     this.map.clean();
     this.hud.clean();
     this.npc.clean();
     this.statue.clean();
 
+    this.cleanLamps();
+
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.clean();
 
     this.player.clean();
     this.otherPlayers.clean();
+  }
+
+  setTimeOfDay(time: number): void {
+    DayNightFilter.setTimeOfDay(time);
+    this.updateDayNightOverlayColor();
+  }
+
+  updateTimeOfDayFromCurrentTime(): void {
+    const adjustedTime = getCurrentTimeOfDayValue();
+    this.setTimeOfDay(adjustedTime);
   }
 
   pause(onoff: boolean, data?: any): void {
@@ -154,6 +216,13 @@ export class OverworldUi extends Ui {
     if (this.map.get()) this.otherPlayers.update(delta);
     if (this.type === OVERWORLD_TYPE.SAFARI) this.safari.update(delta);
     this.hud.update(time, delta);
+
+    if (time - this.lastTimeUpdate >= this.TIME_UPDATE_INTERVAL) {
+      this.updateTimeOfDayFromCurrentTime();
+      this.lastTimeUpdate = time;
+
+      this.updateLamps();
+    }
 
     if (OverworldGlobal.getBlockingUpdate()) return;
 
@@ -185,6 +254,106 @@ export class OverworldUi extends Ui {
   savePlayerPosition(): void {
     if (this.player) {
       this.player.savePosition();
+    }
+  }
+
+  setDayNightFilterEnabled(enabled: boolean): void {
+    if (this.dayNightOverlay) {
+      this.dayNightOverlay.setVisible(enabled);
+    }
+  }
+
+  private createDayNightOverlay(): void {
+    const map = this.map.get();
+    if (!map) return;
+
+    const mapScale = 3;
+    const mapWidth = map.widthInPixels * mapScale;
+    const mapHeight = map.heightInPixels * mapScale;
+
+    if (this.dayNightOverlay) {
+      this.dayNightOverlay.destroy();
+      this.dayNightOverlay = null;
+    }
+
+    this.dayNightOverlay = this.scene.add.rectangle(mapWidth / 2, mapHeight / 2, mapWidth, mapHeight, 0x000000, 1.0);
+
+    this.dayNightOverlay.setScrollFactor(1);
+    this.dayNightOverlay.setDepth(DEPTH.FOREGROND + 0.5);
+    this.dayNightOverlay.setBlendMode(Phaser.BlendModes.MULTIPLY);
+    this.updateDayNightOverlayColor();
+  }
+
+  private updateDayNightOverlayColor(): void {
+    if (!this.dayNightOverlay) return;
+
+    const timeOfDay = DayNightFilter.getTimeOfDay();
+    let color: number;
+    let alpha: number;
+
+    if (!this.isDayNightFilterEnabled) {
+      color = 0xffffff;
+      alpha = 0;
+      this.dayNightOverlay.setFillStyle(color, alpha);
+      return;
+    }
+
+    if (timeOfDay < 0.25) {
+      // Night (어두운 파란색 톤) - 0x666699 (0.4, 0.5, 0.8)
+      color = 0x666699;
+      alpha = 0.8; // 어둡게
+    } else if (timeOfDay < 0.35) {
+      // Dawn (약간 밝은 파란색) - 0x99b3e6 (0.6, 0.7, 0.9)
+      color = 0x99b3e6;
+      alpha = 0.7;
+    } else if (timeOfDay < 0.75) {
+      // 낮 (원본 색상) - 오버레이 투명하게
+      // 0.35 ~ 0.75 범위 (새벽 0.35 이후 ~ 해질녘 0.75 이전)
+      color = 0xffffff;
+      alpha = 0;
+    } else if (timeOfDay < 0.83) {
+      // 해질녘 (주황색 톤) - 0xffcc99 (1.0, 0.8, 0.6)
+      // 0.75 ~ 0.83 범위 (18시 ~ 20시)
+      color = 0xffcc99;
+      alpha = 0.8;
+    } else {
+      // 밤 (0.83 ~ 1.0 범위)
+      color = 0x666699;
+      alpha = 0.8;
+    }
+
+    this.dayNightOverlay.setFillStyle(color, alpha);
+  }
+
+  addLamps() {
+    const lightTilePositions = this.map.getLightTilePositions();
+    for (const lightTilePosition of lightTilePositions) {
+      const lamp = new LampOverworldObj(this.scene, TEXTURE.LAMP, lightTilePosition.x, lightTilePosition.y, '', OBJECT.LAMP);
+      this.lamp.push(lamp);
+    }
+  }
+
+  cleanLamps() {
+    for (const lamp of this.lamp) {
+      lamp.clean();
+      lamp.destroy();
+    }
+    this.lamp = [];
+  }
+
+  updateLamps() {
+    const currentTimeOfDay = getCurrentTimeOfDay();
+    if (currentTimeOfDay === TIME.DAWN || currentTimeOfDay === TIME.NIGHT) {
+      for (const lamp of this.lamp) {
+        lamp.getSprite().setTexture(TEXTURE.LAMP);
+        if (lamp.getBlinkTween()) continue;
+
+        lamp.reaction();
+      }
+    } else {
+      for (const lamp of this.lamp) {
+        lamp.getSprite().setTexture(TEXTURE.BLANK);
+      }
     }
   }
 }
@@ -275,9 +444,6 @@ export class OverworldPlayer {
     this.map = map;
     this.obj = new PlayerOverworldObj(this.scene, this.map, user.gender, user.avatar, pet, user.x, user.y, user.nickname, OBJECT.PLAYER, DIRECTION.DOWN, this.hud, objectCollections);
     this.obj.setSpriteScale(this.scale);
-
-    this.scene.cameras.main.startFollow(this.obj.getSprite(), true, 0.5, 0.5);
-
     this.initializeHandlers();
 
     if (this.useItemCallback) {
@@ -441,6 +607,10 @@ export class OverworldPlayer {
         npc: this.npc.getNpcs(),
       });
     }, OVERWORLD_ACTION.TRIGGER);
+  }
+
+  getSprite(): Phaser.GameObjects.Sprite | null {
+    return this.obj?.getSprite() || null;
   }
 
   savePosition(): void {

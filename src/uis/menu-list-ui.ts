@@ -108,14 +108,14 @@ export class MenuListUi extends Ui {
     if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
 
     return new Promise((resolve) => {
-      Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.LEFT, KEY.RIGHT, KEY.CANCEL, KEY.ENTER, KEY.ESC]);
+      Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.X, KEY.ENTER, KEY.ESC]);
       Keyboard.setKeyDownCallback((key) => {
         let prevChoice = choice;
         let scrolled = false;
 
         try {
           switch (key) {
-            case KEY.UP:
+            case KEY.ARROW_UP:
               if (choice > 0) {
                 choice--;
               } else if (this.start > 0) {
@@ -127,7 +127,7 @@ export class MenuListUi extends Ui {
                 }
               }
               break;
-            case KEY.DOWN:
+            case KEY.ARROW_DOWN:
               const totalItems = this.info.length;
               if (choice < Math.min(this.perList, totalItems) - 1) {
                 choice++;
@@ -140,20 +140,20 @@ export class MenuListUi extends Ui {
                 }
               }
               break;
-            case KEY.LEFT:
+            case KEY.ARROW_LEFT:
               if (this.isAllowLRCancel) {
                 Keyboard.setKeyDownCallback(() => {});
                 return resolve('cancelL');
               }
               break;
-            case KEY.RIGHT:
+            case KEY.ARROW_RIGHT:
               if (this.isAllowLRCancel) {
                 Keyboard.setKeyDownCallback(() => {});
                 return resolve('cancelR');
               }
               break;
             case KEY.ENTER:
-            case KEY.SELECT:
+            case KEY.Z:
               playEffectSound(this.scene, AUDIO.SELECT_0);
 
               if (choice + this.start === this.info.length - 1) {
@@ -169,13 +169,13 @@ export class MenuListUi extends Ui {
               Keyboard.setKeyDownCallback(() => {});
               return resolve(choice + this.start);
             case KEY.ESC:
-            case KEY.CANCEL:
+            case KEY.X:
               this.hide();
               Keyboard.setKeyDownCallback(() => {});
               return resolve(i18next.t('menu:cancelMenu'));
           }
 
-          if (key === KEY.UP || key === KEY.DOWN) {
+          if (key === KEY.ARROW_UP || key === KEY.ARROW_DOWN) {
             if (choice !== prevChoice || scrolled) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
 

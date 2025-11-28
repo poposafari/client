@@ -1,4 +1,4 @@
-import { AUDIO, DEPTH, EASE, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
+import { AUDIO, DEPTH, EASE, EVENT, KEY, MODE, TEXTSTYLE, TEXTURE } from '../enums';
 import { Keyboard } from '../core/manager/keyboard-manager';
 import i18next from '../i18n';
 import { PlayerPokemon } from '../obj/player-pokemon';
@@ -10,6 +10,7 @@ import { PlayerGlobal } from '../core/storage/player-storage';
 import { PC } from '../core/storage/pc-storage';
 import { VERSION } from '../constants';
 import { formatPlaytime } from '../utils/string-util';
+import { Event } from '../core/manager/event-manager';
 
 export class TitleUi extends Ui {
   private bgContainer!: Phaser.GameObjects.Container;
@@ -78,6 +79,8 @@ export class TitleUi extends Ui {
   }
 
   async show(): Promise<void> {
+    Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
+
     this.assertNotDestroyed();
 
     Keyboard.blockKeys(false);
@@ -123,26 +126,24 @@ export class TitleUi extends Ui {
 
     this.renderWindowTexture();
 
-    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.ENTER]);
+    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ENTER]);
     Keyboard.setKeyDownCallback(async (key) => {
       let prevChoice = choice;
 
-      console.log('title ui handleKeyInput');
-
       try {
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (choice > 0) {
               choice--;
             }
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (choice < this.windows.length - 1) {
               choice++;
             }
             break;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             playEffectSound(this.scene, AUDIO.SELECT_0);
 
             const target = this.menus[choice];
@@ -166,8 +167,7 @@ export class TitleUi extends Ui {
             this.choice = 0;
             break;
         }
-        if (key === KEY.UP || key === KEY.DOWN) {
-          console.log('title ui handleKeyInput up or down');
+        if (key === KEY.ARROW_UP || key === KEY.ARROW_DOWN) {
           if (choice !== prevChoice) {
             this.choice = choice;
 

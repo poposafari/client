@@ -1,4 +1,4 @@
-import { DEPTH, DIRECTION, ItemCategory, PLAYER_STATUS, TEXTSTYLE, TEXTURE, TRIGGER } from './enums';
+import { DEPTH, DIRECTION, ItemCategory, PLAYER_STATUS, TEXTSTYLE, TEXTURE, TIME, TRIGGER } from './enums';
 import { PostCheckoutOverworldObj } from './obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from './obj/shop-checkout-overworld-obj';
 import { StatueOverworldObj } from './obj/statue-overworld-obj';
@@ -242,6 +242,7 @@ export type UseItemReq = {
 
 export type EnterSafariReq = {
   overworld: string;
+  time: TIME;
 };
 
 export type EnterSafariRes = {
@@ -584,6 +585,21 @@ export type IngameData = {
   lastLocation: string | null;
   nickname: string;
   updatedAt: Date;
+  x: number;
+  y: number;
+};
+
+export type OverworldDoorData = {
+  door: TEXTURE | string;
+  x: number;
+  y: number;
+  offsetY: number;
+  width: number;
+  height: number;
+};
+
+export type OverworldInitPosData = {
+  location: TEXTURE | string;
   x: number;
   y: number;
 };

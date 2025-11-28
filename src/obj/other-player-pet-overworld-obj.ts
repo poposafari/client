@@ -14,7 +14,7 @@ export class OtherPlayerPetOverworldObj extends MovableOverworldObj {
     this.texture = targetTexture;
 
     this.setSpriteScale(1.5);
-    this.startSpriteAnimation(this.getAnimation(KEY.DOWN)!);
+    this.startSpriteAnimation(this.getAnimation(KEY.ARROW_DOWN)!);
     this.isShiny();
     this.changePet(targetTexture, PLAYER_STATUS.WALK);
   }
@@ -39,13 +39,13 @@ export class OtherPlayerPetOverworldObj extends MovableOverworldObj {
     const diffY = playerPos.y - current.y;
 
     if (diffX > 0) {
-      this.ready(DIRECTION.RIGHT, this.getAnimation(KEY.RIGHT)!);
+      this.ready(DIRECTION.RIGHT, this.getAnimation(KEY.ARROW_RIGHT)!);
     } else if (diffX < 0) {
-      this.ready(DIRECTION.LEFT, this.getAnimation(KEY.LEFT)!);
+      this.ready(DIRECTION.LEFT, this.getAnimation(KEY.ARROW_LEFT)!);
     } else if (diffY > 0) {
-      this.ready(DIRECTION.DOWN, this.getAnimation(KEY.DOWN)!);
+      this.ready(DIRECTION.DOWN, this.getAnimation(KEY.ARROW_DOWN)!);
     } else if (diffY < 0) {
-      this.ready(DIRECTION.UP, this.getAnimation(KEY.UP)!);
+      this.ready(DIRECTION.UP, this.getAnimation(KEY.ARROW_UP)!);
     }
   }
 
@@ -60,7 +60,7 @@ export class OtherPlayerPetOverworldObj extends MovableOverworldObj {
       this.setSpriteVisible(true);
     }
 
-    this.startSpriteAnimation(this.getAnimation(KEY.DOWN)!);
+    this.startSpriteAnimation(this.getAnimation(KEY.ARROW_DOWN)!);
     this.stopSpriteAnimation(this.getStopFrameNumberFromDirection(this.lastDirection)!);
 
     this.isShiny();
@@ -98,13 +98,13 @@ export class OtherPlayerPetOverworldObj extends MovableOverworldObj {
 
   private getAnimation(key: KEY) {
     switch (key) {
-      case KEY.UP:
+      case KEY.ARROW_UP:
         return `${this.texture}_up`;
-      case KEY.DOWN:
+      case KEY.ARROW_DOWN:
         return `${this.texture}_down`;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         return `${this.texture}_left`;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         return `${this.texture}_right`;
     }
   }

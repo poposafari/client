@@ -16,7 +16,7 @@ export class WildOverworldObj extends MovableOverworldObj {
   private readonly speed: number = 2;
   private readonly frameNumbers: number[] = [12, 0, 4, 8];
   private readonly directions: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.RIGHT, DIRECTION.LEFT];
-  private readonly keys: KEY[] = [KEY.UP, KEY.DOWN, KEY.RIGHT, KEY.LEFT];
+  private readonly keys: KEY[] = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_RIGHT, KEY.ARROW_LEFT];
 
   constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap, data: WildRes, x: number, y: number) {
     const texture = `pokemon_overworld${data.pokedex}${data.shiny ? 's' : ''}`;
@@ -179,13 +179,13 @@ export class WildOverworldObj extends MovableOverworldObj {
     const shiny = this.data.shiny ? 's' : '';
 
     switch (key) {
-      case KEY.UP:
+      case KEY.ARROW_UP:
         return `pokemon_overworld${pokedex}${shiny}_up`;
-      case KEY.DOWN:
+      case KEY.ARROW_DOWN:
         return `pokemon_overworld${pokedex}${shiny}_down`;
-      case KEY.LEFT:
+      case KEY.ARROW_LEFT:
         return `pokemon_overworld${pokedex}${shiny}_left`;
-      case KEY.RIGHT:
+      case KEY.ARROW_RIGHT:
         return `pokemon_overworld${pokedex}${shiny}_right`;
     }
 

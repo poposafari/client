@@ -228,4 +228,8 @@ export class OverworldObj {
 
     return [retX, retY];
   }
+
+  setSpriteAdjustY(value: number) {
+    this.sprite.setY(this.sprite.y + value);
+  }
 }

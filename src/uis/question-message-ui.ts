@@ -75,19 +75,19 @@ export class QuestionMessageUi extends MessageUi {
       this.showQuestion(true);
 
       const keyboard = KeyboardManager.getInstance();
-      keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.SELECT, KEY.ENTER]);
+      keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ENTER]);
       const callback = async (key: KEY) => {
         let prevChoice = choice;
 
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (choice > 0) choice--;
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (choice < this.dummys.length - 1) choice++;
             break;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             keyboard.clearCallbacks();
             this.container.setVisible(false);
             this.questionContainer.setVisible(false);

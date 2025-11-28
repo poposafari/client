@@ -118,7 +118,7 @@ export class MenuUi extends Ui {
   pause(onoff: boolean, data?: any): void {}
 
   async handleKeyInput(data?: any): Promise<string> {
-    const keys = [KEY.DOWN, KEY.UP, KEY.SELECT, KEY.ENTER, KEY.CANCEL, KEY.ESC];
+    const keys = [KEY.ARROW_DOWN, KEY.ARROW_UP, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC];
     const keyboard = KeyboardManager.getInstance();
 
     if (this.dummys.length === 0 || !this.container.visible) {
@@ -140,14 +140,14 @@ export class MenuUi extends Ui {
 
         try {
           switch (key) {
-            case KEY.UP:
+            case KEY.ARROW_UP:
               choice = Math.max(start, choice - 1);
               break;
-            case KEY.DOWN:
+            case KEY.ARROW_DOWN:
               choice = Math.min(end, choice + 1);
               break;
             case KEY.ENTER:
-            case KEY.SELECT:
+            case KEY.Z:
               if (this.menus[choice].style.color !== '#999999') {
                 this.hide();
                 return resolve(this.info[choice]);
@@ -156,12 +156,12 @@ export class MenuUi extends Ui {
 
               break;
             case KEY.ESC:
-            case KEY.CANCEL:
+            case KEY.X:
               this.hide();
               return resolve(i18next.t('menu:cancelMenu'));
           }
 
-          if (key === KEY.UP || key === KEY.DOWN) {
+          if (key === KEY.ARROW_UP || key === KEY.ARROW_DOWN) {
             if (choice !== prevChoice) {
               playEffectSound(this.scene, AUDIO.SELECT_0);
 

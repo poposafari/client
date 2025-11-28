@@ -20,7 +20,7 @@ export class NoticeUi extends MessageUi {
     setTextShadow(this.text, getTextShadow(TEXTSTYLE.SIGN_WHITE));
     this.window.setTexture(data.window);
 
-    Keyboard.setAllowKey([KEY.SELECT, KEY.ENTER]);
+    Keyboard.setAllowKey([KEY.Z, KEY.ENTER]);
 
     await this.showNotice(data);
 
@@ -38,7 +38,7 @@ export class NoticeUi extends MessageUi {
 
     await new Promise((resolve) => {
       Keyboard.setKeyDownCallback((key) => {
-        if (key === KEY.SELECT || key === KEY.ENTER) {
+        if (key === KEY.Z || key === KEY.ENTER) {
           this.scene.tweens.add({
             targets: this.container,
             y: this.getHeight() / 2 + 500,

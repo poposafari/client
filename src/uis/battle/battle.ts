@@ -1,9 +1,9 @@
 import i18next from 'i18next';
-import { ANIMATION, AUDIO, BATTLE_AREA, DEPTH, EASE, ItemCategory, KEY, MessageEndDelay, TextSpeed, TEXTSTYLE, TEXTURE, TIME, TYPE, UI } from '../../enums';
+import { ANIMATION, AUDIO, BATTLE_AREA, DEPTH, EASE, EVENT, ItemCategory, KEY, MessageEndDelay, TextSpeed, TEXTSTYLE, TEXTURE, TIME, TYPE, UI } from '../../enums';
 import { WildOverworldObj } from '../../obj/wild-overworld-obj';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { delay, getTextStyle, playEffectSound, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, startModalAnimation, stopPostPipeline, Ui } from '../ui';
-import { checkItemType, getBattleArea, getPokemonType, matchPokemonWithRarityRate, matchTypeWithBerryRate, replacePercentSymbol } from '../../utils/string-util';
+import { checkItemType, getBattleArea, getCurrentTimeOfDay, getPokemonType, matchPokemonWithRarityRate, matchTypeWithBerryRate, replacePercentSymbol } from '../../utils/string-util';
 import { PlayerGlobal } from '../../core/storage/player-storage';
 import { getPokemonInfo } from '../../data';
 import { MAX_PARTY_SLOT } from '../../constants';
@@ -17,6 +17,7 @@ import { CatchRewardRes, CatchWildFailRes, CatchWildSuccessRes, GetPcRes, ListFo
 import { PlayerItem } from '../../obj/player-item';
 import { Bag } from '../../core/storage/bag-storage';
 import { catchWildApi, feedWildEatenBerryApi } from '../../api';
+import { Event } from '../../core/manager/event-manager';
 
 enum BATTLE_PHASE {
   IDLE = 'IDLE',
@@ -92,9 +93,14 @@ export class Battle extends Ui {
   }
 
   async show(data: WildOverworldObj): Promise<void> {
+    const currentTimeOfDay = getCurrentTimeOfDay();
+
     this.targetWild = data;
     this.area = getBattleArea(PlayerGlobal.getData()?.location || '') || null;
-    this.time = TIME.DAY;
+    this.time = currentTimeOfDay;
+
+    if (this.time === TIME.DAWN) this.time = TIME.NIGHT;
+    if (this.area === BATTLE_AREA.CAVE) this.time = TIME.DAY;
 
     await this.baseUi.show();
     if (Option.getTutorial() && Option.getClientTutorial('battle')) {
@@ -105,6 +111,8 @@ export class Battle extends Ui {
   }
 
   protected onClean(): void {
+    Event.emit(EVENT.ENABLE_DAY_NIGHT_FILTER);
+
     this.baseUi.clean();
     this.battleSprite.clean();
     this.battleInfo.clean();
@@ -121,6 +129,8 @@ export class Battle extends Ui {
   update(time?: number, delta?: number): void {}
 
   clean(): void {
+    Event.emit(EVENT.ENABLE_DAY_NIGHT_FILTER);
+
     this.idleUi.clean();
     this.battleSprite.clean();
     this.battleInfo.clean();
@@ -387,7 +397,7 @@ export class BattleBaseUi extends Ui {
     this.effectContainer = this.createContainer(width / 2, height / 2);
 
     this.baseWindow = this.addWindow(Option.getFrame('text') as string, 0, +410, 480, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
-    this.bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5).setScale(2);
+    this.bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5).setScale(4);
     this.overlay0 = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
     this.overlay1 = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
     this.effect = this.createSprite(TEXTURE.BLANK, +500, -200).setScale(8).setOrigin(0.5, 0.5);
@@ -449,6 +459,7 @@ export class BattleBaseUi extends Ui {
     await runFlashEffect(this.scene, 100);
     runWipeRifghtToLeftEffect(this.scene);
     await delay(this.scene, 1000);
+    Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
     await stopPostPipeline(this.scene);
 
     await this.displayBattleIntro();
@@ -1684,7 +1695,7 @@ export class BattleIdleUi extends Ui {
     this.dummys[choice].setTexture(TEXTURE.ARROW_B);
     this.menuTexts[1].setStyle(getTextStyle(targetWild?.eaten_berry ? TEXTSTYLE.MESSAGE_GRAY : TEXTSTYLE.MESSAGE_BLACK));
 
-    Keyboard.setAllowKey([KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.SELECT, KEY.ENTER]);
+    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER]);
     Keyboard.setKeyDownCallback(async (key) => {
       if (this.isProcessing) {
         return;
@@ -1694,20 +1705,20 @@ export class BattleIdleUi extends Ui {
 
       try {
         switch (key) {
-          case KEY.UP:
+          case KEY.ARROW_UP:
             if (choice - cols >= 0) choice -= cols;
             break;
-          case KEY.DOWN:
+          case KEY.ARROW_DOWN:
             if (choice + cols <= maxChoice) choice += cols;
             break;
-          case KEY.LEFT:
+          case KEY.ARROW_LEFT:
             if (choice % cols !== 0) choice--;
             break;
-          case KEY.RIGHT:
+          case KEY.ARROW_RIGHT:
             if ((choice + 1) % cols !== 0 && choice + 1 <= maxChoice) choice++;
             break;
           case KEY.ENTER:
-          case KEY.SELECT:
+          case KEY.Z:
             if (this.isProcessing) {
               return;
             }
@@ -2152,9 +2163,9 @@ export class BattleRewardUi extends Ui {
     this.startRewardMessageBlink();
 
     return new Promise((resolve) => {
-      Keyboard.setAllowKey([KEY.SELECT, KEY.ENTER]);
+      Keyboard.setAllowKey([KEY.Z, KEY.ENTER]);
       Keyboard.setKeyDownCallback((key) => {
-        if (key === KEY.SELECT || key === KEY.ENTER) {
+        if (key === KEY.Z || key === KEY.ENTER) {
           this.stopRewardMessageBlink();
           this.clean();
           resolve();
