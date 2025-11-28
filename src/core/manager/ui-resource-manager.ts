@@ -55,6 +55,13 @@ export class UIResourceManager {
     });
     this.timers = [];
 
+    this.keyboardCallbacks.forEach((callback) => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('[UIResourceManager] Error executing keyboard cleanup callback:', error);
+      }
+    });
     this.keyboardCallbacks = [];
 
     this.eventListeners.forEach(({ event, callback }) => {

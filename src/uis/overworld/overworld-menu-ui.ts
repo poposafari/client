@@ -93,7 +93,7 @@ export class OverworldMenuUi extends Ui {
     this.updateBackToText();
 
     Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
-    const callback = (key: KEY) => {
+    const callback = async (key: KEY) => {
       if (this.isProcessing) return;
 
       const prevChoice = choice;
@@ -131,7 +131,7 @@ export class OverworldMenuUi extends Ui {
           case KEY.ESC:
           case KEY.X:
             this.isProcessing = true;
-            this.cancelMenu(choice);
+            await this.cancelMenu(choice);
             playEffectSound(this.scene, AUDIO.CANCEL_0);
             this.isProcessing = false;
             break;
@@ -195,7 +195,7 @@ export class OverworldMenuUi extends Ui {
           content: i18next.t('message:is_back_to_title'),
           speed: Option.getTextSpeed()!,
           yes: async () => {
-            this.cancelMenu(choice);
+            await this.cancelMenu(choice);
             stopBackgroundMusic();
             SocketIO.moveToTitle({ from: PlayerGlobal.getData()?.location! });
             await Game.changeMode(MODE.TITLE);
@@ -205,7 +205,7 @@ export class OverworldMenuUi extends Ui {
           },
         });
       } else if (target === i18next.t('menu:menuCancel')) {
-        this.cancelMenu(choice);
+        await this.cancelMenu(choice);
         playEffectSound(this.scene, AUDIO.CANCEL_0);
       }
     } catch (error) {
@@ -214,11 +214,11 @@ export class OverworldMenuUi extends Ui {
     }
   }
 
-  private cancelMenu(choice: number) {
+  private async cancelMenu(choice: number) {
     this.lastStart = 0;
     this.renderIconsTint();
     this.dummys[choice].setTexture(TEXTURE.BLANK);
-    Game.removeUi(UI.OVERWORLD_MENU);
+    await Game.removeUi(UI.OVERWORLD_MENU);
   }
 
   private updateBackToText() {
