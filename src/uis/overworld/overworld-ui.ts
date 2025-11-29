@@ -200,7 +200,7 @@ export class OverworldUi extends Ui {
     if (onoff) {
       Keyboard.clearCallbacks();
     } else {
-      this.player.resetCurrentActionIfNotIdle();
+      // this.player.resetCurrentActionIfNotIdle();
       this.player.handleKeyInput();
     }
   }

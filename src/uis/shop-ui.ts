@@ -113,7 +113,7 @@ export class ShopUi extends Ui {
   private promptForQuantity(item: ItemData): Promise<'purchased' | 'cancel'> {
     return new Promise((resolve) => {
       const keyboard = KeyboardManager.getInstance();
-      const keys = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.X];
+      const keys = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.X, KEY.ENTER, KEY.ESC];
 
       const bag = Bag.getItem(item.key);
       this.buy = this.minBuy;
@@ -139,6 +139,7 @@ export class ShopUi extends Ui {
           case KEY.ARROW_RIGHT:
             this.changeBuy(10);
             break;
+          case KEY.ENTER:
           case KEY.Z:
             this.isProcessing = true;
             this.menuContainer.setVisible(false);
@@ -149,8 +150,6 @@ export class ShopUi extends Ui {
                 speed: Option.getTextSpeed()!,
                 yes: async () => {
                   const ret = await buyItemApi({ item: item.key, stock: this.buy });
-
-                  console.log(ret);
 
                   if (ret?.result) {
                     const data = ret.data as BuyItemRes;
@@ -188,6 +187,7 @@ export class ShopUi extends Ui {
                 this.isProcessing = false;
               });
             break;
+          case KEY.ESC:
           case KEY.X:
             this.menuContainer.setVisible(false);
             resolve('cancel');
