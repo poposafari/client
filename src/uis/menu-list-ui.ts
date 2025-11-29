@@ -213,8 +213,12 @@ export class MenuListUi extends Ui {
   updateContentColor(target: string, color: TEXTSTYLE) {
     const findIdx = this.info.findIndex((item) => item.name === target);
 
-    this.texts[findIdx].setStyle(getTextStyle(color));
-    this.etcTexts[findIdx].setStyle(getTextStyle(color));
+    if (this.texts[findIdx]) {
+      this.texts[findIdx].setStyle(getTextStyle(color));
+    }
+    if (this.etcTexts[findIdx]) {
+      this.etcTexts[findIdx].setStyle(getTextStyle(color));
+    }
   }
 
   private addCancel() {

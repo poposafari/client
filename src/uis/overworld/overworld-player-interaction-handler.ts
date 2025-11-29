@@ -37,13 +37,19 @@ export class OverworldPlayerInteractionHandler {
 
   waitForUiClose(mode: MODE): Promise<void> {
     return new Promise((resolve) => {
+      // console.log(`[waitForUiClose] Waiting for UI close, mode: ${mode}`);
       const listener = (data: { mode: MODE }) => {
+        // console.log(`[waitForUiClose] UI_CLOSED event received, expected: ${mode}, actual: ${data.mode}`);
         if (data.mode === mode) {
+          // console.log(`[waitForUiClose] Mode matched, resolving promise for mode: ${mode}`);
           Event.off(EVENT.UI_CLOSED, listener);
           resolve();
+        } else {
+          // console.log(`[waitForUiClose] Mode mismatch, continuing to wait...`);
         }
       };
       Event.on(EVENT.UI_CLOSED, listener);
+      // console.log(`[waitForUiClose] Event listener registered for mode: ${mode}`);
     });
   }
 

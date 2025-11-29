@@ -238,7 +238,7 @@ export class Battle extends Ui {
 
           const apiRet = await catchWildApi({ idx: this.targetWild?.getData().idx ?? 0, ball: data as string, berry: null, parties: parties });
 
-          console.log(apiRet);
+          // console.log(apiRet);
 
           if (apiRet && apiRet.result) {
             if (apiRet.data.catch) {

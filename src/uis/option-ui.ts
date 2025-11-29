@@ -140,7 +140,7 @@ export class OptionUi extends Ui {
     this.optionDescUi.updateText(this.choice);
     this.contentTitleDummys[this.choice].setTexture(TEXTURE.WINDOW_RED);
 
-    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X]);
+    Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
     Keyboard.setKeyDownCallback(async (key) => {
       try {
         if (this.activeControl === 'menu') {
@@ -186,6 +186,7 @@ export class OptionUi extends Ui {
           Game.popUi();
         }
         break;
+      case KEY.ESC:
       case KEY.X:
         this.lastChoice = 0;
         this.contentTitleDummys[this.choice].setTexture(TEXTURE.BLANK);

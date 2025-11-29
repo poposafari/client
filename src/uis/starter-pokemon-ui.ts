@@ -95,7 +95,7 @@ export class StarterPokemonUi extends Ui {
   async handleKeyInput(...data: any[]) {
     return new Promise((resolve) => {
       const keyboard = KeyboardManager.getInstance();
-      const keys = [KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z];
+      const keys = [KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER];
 
       let start = 0;
       let end = this.balls.length - 1;
@@ -118,6 +118,7 @@ export class StarterPokemonUi extends Ui {
               choice++;
             }
             break;
+          case KEY.ENTER:
           case KEY.Z: {
             keyboard.setAllowKey([]);
             keyboard.setKeyDownCallback(() => {});
@@ -141,6 +142,7 @@ export class StarterPokemonUi extends Ui {
         }
         if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
           if (choice !== prevChoice) {
+            playEffectSound(this.scene, `${parseInt(this.starterPokemons[choice].pokedex) ?? '1'}`);
             playEffectSound(this.scene, AUDIO.SELECT_0);
 
             this.lastChoice = choice;

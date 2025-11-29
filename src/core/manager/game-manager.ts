@@ -19,7 +19,7 @@ export class GameManager {
 
   private scene: InGameScene | null = null;
   private uiFactories = new Map<string, (scene: InGameScene) => Ui>();
-  private activeUiStack: Ui[] = [];
+  private activeUiStack: Array<{ ui: Ui; key: string }> = [];
 
   private modeChangeQueue: Array<{ mode: MODE; data?: unknown }> = [];
   private isProcessingModeChange: boolean = false;
@@ -84,7 +84,7 @@ export class GameManager {
 
   getTopActiveUi(): Ui | null {
     if (this.activeUiStack.length > 0) {
-      return this.activeUiStack[this.activeUiStack.length - 1];
+      return this.activeUiStack[this.activeUiStack.length - 1].ui;
     }
 
     return null;
@@ -92,7 +92,7 @@ export class GameManager {
 
   findUiInStack<T extends Ui>(predicate: (ui: Ui) => ui is T): T | null {
     for (let i = this.activeUiStack.length - 1; i >= 0; i--) {
-      const ui = this.activeUiStack[i];
+      const ui = this.activeUiStack[i].ui;
       if (predicate(ui)) {
         return ui;
       }
@@ -140,15 +140,7 @@ export class GameManager {
       return false;
     }
 
-    const factory = this.uiFactories.get(key);
-    if (!factory) {
-      return false;
-    }
-
-    const tempInstance = factory(this.scene);
-    const expectedClassName = tempInstance.constructor.name;
-
-    return this.activeUiStack.some((ui) => ui.constructor.name === expectedClassName);
+    return this.activeUiStack.some((item) => item.key === key);
   }
 
   async removeUi(key: string): Promise<boolean> {
@@ -163,15 +155,17 @@ export class GameManager {
     }
 
     for (let i = this.activeUiStack.length - 1; i >= 0; i--) {
-      const ui = this.activeUiStack[i];
+      const item = this.activeUiStack[i];
+      const ui = item.ui;
 
       const tempInstance = factory(this.scene);
       const expectedClassName = tempInstance.constructor.name;
 
-      if (ui.constructor.name === expectedClassName) {
-        const uiMode = this.getUiMode(ui);
-        const preUi = i > 0 ? this.activeUiStack[i - 1] : null;
+      if (ui.constructor.name === expectedClassName || item.key === key) {
+        const uiMode = this.getUiModeFromKey(key);
+        const preUi = i > 0 ? this.activeUiStack[i - 1].ui : null;
 
+        // console.log(`[removeUi] Removing UI: ${ui.constructor.name}, key: ${key}, mode: ${uiMode}`);
         ui.clean();
         this.activeUiStack.splice(i, 1);
 
@@ -180,7 +174,10 @@ export class GameManager {
         }
 
         if (uiMode) {
+          // console.log(`[removeUi] Emitting UI_CLOSED event with mode: ${uiMode}`);
           Event.emit(EVENT.UI_CLOSED, { mode: uiMode });
+        } else {
+          // console.log(`[removeUi] No UI mode detected, not emitting UI_CLOSED event`);
         }
 
         return true;
@@ -191,9 +188,11 @@ export class GameManager {
 
   async popUi(): Promise<void> {
     if (this.activeUiStack.length > 0) {
-      const topUi = this.activeUiStack.pop();
-      if (topUi) {
-        const uiMode = this.getUiMode(topUi);
+      const item = this.activeUiStack.pop();
+      if (item) {
+        const { ui: topUi, key } = item;
+        const uiMode = this.getUiModeFromKey(key);
+        // console.log(`[popUi] UI class name: ${topUi.constructor.name}, key: ${key}, detected mode: ${uiMode}`);
         topUi.clean();
 
         const preUi = this.getTopActiveUi();
@@ -203,15 +202,39 @@ export class GameManager {
         }
 
         if (uiMode) {
+          // console.log(`[popUi] Emitting UI_CLOSED event with mode: ${uiMode}`);
           Event.emit(EVENT.UI_CLOSED, { mode: uiMode });
+        } else {
+          // console.log(`[popUi] No UI mode detected, not emitting UI_CLOSED event`);
         }
       }
     }
   }
 
-  private getUiMode(ui: Ui): MODE | null {
-    const className = ui.constructor.name;
+  private getUiModeFromKey(key: string): MODE | null {
+    const uiModeMap: Record<string, MODE> = {
+      [UI.OVERWORLD_MENU]: MODE.OVERWORLD_MENU,
+      [UI.QUICK_SLOT_ITEM]: MODE.QUICK_SLOT_ITEM,
+      [UI.BAG]: MODE.BAG,
+      [UI.PC]: MODE.PC,
+      [UI.OPTION]: MODE.OPTION,
+      [UI.BATTLE]: MODE.BATTLE,
+      [UI.HIDDEN_MOVE]: MODE.HIDDEN_MOVE,
+    };
 
+    const mode = uiModeMap[key] || null;
+    // console.log(`[getUiModeFromKey] UI key: ${key}, mapped mode: ${mode}`);
+    return mode;
+  }
+
+  private getUiMode(ui: Ui): MODE | null {
+    for (const item of this.activeUiStack) {
+      if (item.ui === ui) {
+        return this.getUiModeFromKey(item.key);
+      }
+    }
+
+    const className = ui.constructor.name;
     const uiModeMap: Record<string, MODE> = {
       OverworldMenuUi: MODE.OVERWORLD_MENU,
       QuickSlotItemUi: MODE.QUICK_SLOT_ITEM,
@@ -223,7 +246,9 @@ export class GameManager {
       HiddenMoveUi: MODE.HIDDEN_MOVE,
     };
 
-    return uiModeMap[className] || null;
+    const mode = uiModeMap[className] || null;
+    // console.log(`[getUiMode] Class name: ${className}, mapped mode: ${mode}`);
+    return mode;
   }
 
   private async showUiFactory(key: string, factory: (scene: InGameScene) => Ui, data?: unknown): Promise<void> {
@@ -238,7 +263,7 @@ export class GameManager {
       await newUi.setup();
       await newUi.show(data);
 
-      this.activeUiStack = [newUi];
+      this.activeUiStack = [{ ui: newUi, key }];
     } catch (error) {
       console.error('Error show ui', error);
     }
@@ -259,12 +284,12 @@ export class GameManager {
       newUi = factory(this.scene);
 
       await newUi.setup();
-      this.activeUiStack.push(newUi);
+      this.activeUiStack.push({ ui: newUi, key });
 
       await newUi.show(data);
     } catch (error) {
       if (newUi) {
-        const index = this.activeUiStack.indexOf(newUi);
+        const index = this.activeUiStack.findIndex((item) => item.ui === newUi);
         if (index !== -1) {
           this.activeUiStack.splice(index, 1);
         }
@@ -273,9 +298,9 @@ export class GameManager {
   }
 
   private async cleanupActiveUis(): Promise<void> {
-    const cleanupPromises = this.activeUiStack.map((ui) => {
+    const cleanupPromises = this.activeUiStack.map((item) => {
       try {
-        ui.clean();
+        item.ui.clean();
       } catch (error) {
         console.error('Error', error);
       }
@@ -351,7 +376,7 @@ export class GameManager {
 
         const res = await enterSafariZoneApi({ overworld: location, time: getCurrentTimeOfDay() });
 
-        console.log('enterSafariZoneApi', res);
+        // console.log('enterSafariZoneApi', res);
 
         if (res.result) {
           const wilds = res.data.wilds;
