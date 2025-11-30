@@ -247,6 +247,14 @@ export class Battle extends Ui {
               const rewardItems = ret.rewards.items;
               const rewardPc = ret.rewards.pc;
 
+              rewardItems.forEach((item) => {
+                Bag.addItems(0, item.item, item.stock, ItemCategory.ETC);
+              });
+
+              PlayerGlobal.updateData({
+                candy: (PlayerGlobal.getData()?.candy ?? 0) + rewardCandy,
+              });
+
               this.addPhase(BATTLE_PHASE.CATCH_SUCCESS_WILD, { pc: rewardPc, wild: this.targetWild?.getData() as WildRes, candy: rewardCandy, items: rewardItems });
             } else {
               const ret = apiRet.data as CatchWildFailRes;
