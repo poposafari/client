@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-// import { enConfig } from './locales/en/config';
+import { enConfig } from './locales/en/config';
 import { koConfig } from './locales/ko/config';
 
 const fonts = [
@@ -11,6 +11,15 @@ const fonts = [
   new FontFace('font_4', 'url(./font/pokemon-bw.ttf'),
   new FontFace('font_5', 'url(./font/pokemon-dppt.ttf'),
 ];
+
+function initLanguageFromBrowser(): void {
+  const existingLang = localStorage.getItem('i18nextLng');
+  if (existingLang) {
+    return;
+  }
+  const browserLang = navigator.language || (navigator.languages && navigator.languages[0]) || 'en';
+  localStorage.setItem('i18nextLng', browserLang);
+}
 
 async function initFonts() {
   const results = await Promise.allSettled(fonts.map((font) => font.load()));
@@ -24,15 +33,17 @@ async function initFonts() {
 }
 
 export async function initI18n(): Promise<void> {
+  initLanguageFromBrowser();
+
   i18next.use(LanguageDetector);
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: 'en',
     supportedLngs: ['en', 'ko'],
     resources: {
-      // en: {
-      //   ...enConfig,
-      // },
+      en: {
+        ...enConfig,
+      },
       ko: {
         ...koConfig,
       },

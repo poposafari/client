@@ -35,6 +35,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.REWARD_OVERLAY_3, 'ui/windows', TEXTURE.REWARD_OVERLAY_3);
     this.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', TEXTURE.WINDOW_NOTICE_0);
     this.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', TEXTURE.WINDOW_NOTICE_1);
+    this.loadImage(TEXTURE.WINDOW_HELP, 'ui/windows', TEXTURE.WINDOW_HELP);
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);
     this.loadImage(TEXTURE.WINDOW_2, 'ui/windows', TEXTURE.WINDOW_2);
@@ -175,6 +176,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.LOGO_0, 'ui', TEXTURE.LOGO_0);
     this.loadImage(TEXTURE.LOGO_DISCORD, 'ui', TEXTURE.LOGO_DISCORD);
     this.loadImage(TEXTURE.LOGO_GOOGLE, 'ui', TEXTURE.LOGO_GOOGLE);
+    this.loadImage(TEXTURE.HELP_ARROWS, 'ui', TEXTURE.HELP_ARROWS);
     this.loadImage(TEXTURE.PC_NAME, 'ui', TEXTURE.PC_NAME);
     this.loadImage(TEXTURE.PC_DESC, 'ui', TEXTURE.PC_DESC);
     this.loadImage(TEXTURE.PC_ARROW, 'ui', TEXTURE.PC_ARROW);

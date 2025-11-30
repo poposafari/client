@@ -14,6 +14,7 @@ import { throwError } from '../../core/errors';
 import { PlayerOverworldObj } from '../../obj/player-overworld-obj';
 import { PC } from '../../core/storage/pc-storage';
 import { OverworldHUDUi } from './overworld-hud-ui';
+import { OverworldMenuUi } from './overworld-menu-ui';
 import { OverworldActionQueue } from './overworld-action-queue';
 import { OverworldMap } from './overworld-map';
 import { OverworldNpc } from './overworld-npc';
@@ -49,6 +50,7 @@ export class OverworldUi extends Ui {
   protected isDayNightFilterEnabled: boolean = true;
   private disableFilterCallback!: () => void;
   private enableFilterCallback!: () => void;
+  private languageChangedCallback!: () => void;
   private dayNightOverlay: Phaser.GameObjects.Rectangle | null = null;
 
   constructor(scene: InGameScene) {
@@ -82,6 +84,11 @@ export class OverworldUi extends Ui {
 
     Event.on(EVENT.DISABLE_DAY_NIGHT_FILTER, this.disableFilterCallback);
     Event.on(EVENT.ENABLE_DAY_NIGHT_FILTER, this.enableFilterCallback);
+
+    this.languageChangedCallback = () => {
+      this.updateTexts();
+    };
+    Event.on(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
 
     const location = PlayerGlobal.getData()?.location;
     if (!location) throwError(ErrorCode.PLAYER_DATA_NOT_SET);
@@ -167,6 +174,9 @@ export class OverworldUi extends Ui {
     this.scene.cameras.main.resetPostPipeline();
     Event.off(EVENT.DISABLE_DAY_NIGHT_FILTER, this.disableFilterCallback);
     Event.off(EVENT.ENABLE_DAY_NIGHT_FILTER, this.enableFilterCallback);
+    if (this.languageChangedCallback) {
+      Event.off(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
+    }
 
     if (this.dayNightOverlay) {
       this.dayNightOverlay.destroy();
@@ -200,7 +210,6 @@ export class OverworldUi extends Ui {
     if (onoff) {
       Keyboard.clearCallbacks();
     } else {
-      // this.player.resetCurrentActionIfNotIdle();
       this.player.handleKeyInput();
     }
   }
@@ -354,6 +363,38 @@ export class OverworldUi extends Ui {
     } else {
       for (const lamp of this.lamp) {
         lamp.getSprite().setTexture(TEXTURE.BLANK);
+      }
+    }
+  }
+
+  private updateTexts(): void {
+    if (this.hud) {
+      this.hud.updateTexts();
+    }
+
+    const currentUi = Game.getTopActiveUi();
+    if (currentUi && currentUi instanceof OverworldMenuUi) {
+      currentUi.updateTexts();
+    }
+
+    if (this.type === OVERWORLD_TYPE.SAFARI && this.safari) {
+      const wilds = this.safari.getWilds();
+      for (const wild of wilds) {
+        wild.updateName();
+      }
+    }
+
+    if (this.npc) {
+      const npcs = this.npc.getNpcs();
+      for (const npc of npcs) {
+        npc.updateName();
+      }
+    }
+
+    if (this.statue) {
+      const signs = this.statue.getSigns();
+      for (const sign of signs) {
+        sign.updateScript();
       }
     }
   }

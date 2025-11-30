@@ -232,4 +232,10 @@ export class OverworldObj {
   setSpriteAdjustY(value: number) {
     this.sprite.setY(this.sprite.y + value);
   }
+
+  setName(name: string) {
+    if (this.name && this.name.active) {
+      this.name.setText(name);
+    }
+  }
 }

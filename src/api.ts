@@ -79,8 +79,10 @@ Axios.interceptors.response.use(
 
         if (originReq.headers) originReq.headers.Authorization = `Bearer ${newAccessToken}`;
         return Axios(originReq);
-      } else if (code === ErrorCode.NOT_FOUND_REFRESH_TOKEN || code === ErrorCode.INVALID_REFRESH_TOKEN) {
+      } else if (code === ErrorCode.INVALID_REFRESH_TOKEN) {
         Game.changeMode(MODE.FAIL_TOKEN);
+      } else if (code === ErrorCode.NOT_FOUND_REFRESH_TOKEN) {
+        Game.changeMode(MODE.LOGOUT);
       }
     }
     return Promise.reject(error);

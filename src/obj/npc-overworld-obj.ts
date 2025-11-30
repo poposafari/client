@@ -9,15 +9,31 @@ export class NpcOverworldObj extends MovableOverworldObj {
   private key: string;
   private script: string[];
   private isAutoWalking: boolean = false;
+  private originalNameKey: string | null = null;
 
   constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap | null, texture: TEXTURE | string, x: number, y: number, name: string, direction: DIRECTION, script: string[]) {
-    super(scene, map, texture, x, y, name, OBJECT.NPC, direction);
+    let nameKey: string;
+    let translatedName: string;
+
+    if (name && name.startsWith('npc:')) {
+      nameKey = name;
+      translatedName = i18next.t(name);
+    } else if (name === '') {
+      nameKey = ``;
+      translatedName = '';
+    } else {
+      nameKey = `npc:${texture}`;
+      translatedName = name;
+    }
+
+    super(scene, map, texture, x, y, translatedName, OBJECT.NPC, direction);
 
     this.setEmotion(TEXTURE.BLANK, ANIMATION.NONE);
     this.key = texture;
     this.setMovement();
     this.setSpriteScale(1.6);
     this.script = script;
+    this.originalNameKey = nameKey;
   }
 
   async reaction(direction: DIRECTION, talkUi: TalkMessageUi) {
@@ -209,6 +225,13 @@ export class NpcOverworldObj extends MovableOverworldObj {
     };
     if (stopFrameNumber !== undefined) {
       this.stopSpriteAnimation(stopFrameNumber()!);
+    }
+  }
+
+  updateName() {
+    if (this.originalNameKey) {
+      const newName = i18next.t(this.originalNameKey);
+      this.setName(newName);
     }
   }
 }

@@ -15,6 +15,7 @@ import { WildOverworldObj } from '../../obj/wild-overworld-obj';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { getBattleArea, matchPlayerStatus, matchPlayerStatusToDirection } from '../../utils/string-util';
 import { Battle } from '../battle/battle';
+import { delay } from '../ui';
 import { OverworldActionQueue } from './overworld-action-queue';
 import { OverworldHUDUi } from './overworld-hud-ui';
 

@@ -220,4 +220,11 @@ export class WildOverworldObj extends MovableOverworldObj {
 
     super.update(delta);
   }
+
+  updateName() {
+    if (this.data) {
+      const newName = i18next.t(`pokemon:${this.data.pokedex}.name`);
+      this.setName(newName);
+    }
+  }
 }

@@ -125,6 +125,21 @@ export class OverworldHUDUi extends Ui {
     this.overworldPokemonSlotUi.pause(false);
     this.overworldInfoUi.pause(false);
   }
+
+  updateTexts(): void {
+    if (this.overworldLocationUi) {
+      const location = this.overworldLocationUi.getCurrentLocation();
+      if (location) {
+        const texture = this.overworldLocationUi.getCurrentTexture();
+        if (texture) {
+          this.overworldLocationUi.show({ texture, location });
+        }
+      }
+    }
+
+    this.overworldInfoUi.updateLocation();
+    this.overworldInfoUi.updateMyCandy();
+  }
 }
 
 export class OverworldIconUi extends Ui {
@@ -373,7 +388,7 @@ export class OverworldInfoUi extends Ui {
   }
 
   updateMyCandy() {
-    this.texts[2].setText(`${PlayerGlobal.getData()?.candy}${i18next.t('menu:candy')}`);
+    this.texts[2].setText(`${PlayerGlobal.getData()?.candy} ${i18next.t('menu:candy')}`);
   }
 
   private createWindow() {
@@ -436,6 +451,10 @@ export class OverworldLocationUi extends Ui {
   show(data?: { texture: TEXTURE | string; location: string }): void {
     this.stopAllTweens();
 
+    if (data?.location) {
+      this.currentLocation = data.location;
+    }
+
     if (data?.texture === TEXTURE.AREA_4 || data?.texture === TEXTURE.AREA_7) {
       this.location.setStyle(getTextStyle(TEXTSTYLE.OVERWORLD_AREA_W));
       setTextShadow(this.location, getTextShadow(TEXTSTYLE.OVERWORLD_AREA_W));
@@ -444,8 +463,12 @@ export class OverworldLocationUi extends Ui {
       setTextShadow(this.location, getTextShadow(TEXTSTYLE.OVERWORLD_AREA_B));
     }
 
-    this.window.setTexture(data?.texture as string);
-    this.location.setText(i18next.t(`menu:${data?.location}`));
+    if (data?.texture) {
+      this.window.setTexture(data.texture as string);
+    }
+    if (data?.location) {
+      this.location.setText(i18next.t(`menu:${data.location}`));
+    }
     this.location.setPosition(40, 0);
 
     const startY = -100;
@@ -492,6 +515,14 @@ export class OverworldLocationUi extends Ui {
     this.scene.tweens.killTweensOf(this.container);
 
     this.isAnimating = false;
+  }
+
+  getCurrentLocation(): string | undefined {
+    return this.currentLocation;
+  }
+
+  getCurrentTexture(): TEXTURE | string | undefined {
+    return this.window.texture?.key as TEXTURE | string | undefined;
   }
 
   protected onClean(): void {

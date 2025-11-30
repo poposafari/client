@@ -555,6 +555,8 @@ export type SignInfo = {
   x: number;
   y: number;
   script: string;
+  scriptKey?: string;
+  scriptParams?: string[];
   window: TEXTURE;
   textStyle?: TEXTSTYLE;
 };

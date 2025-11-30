@@ -41,12 +41,14 @@ export class OverworldStatue {
     });
   }
 
-  setupSign(texture: TEXTURE | string, x: number, y: number, script: string, window: TEXTURE, textStyle?: TEXTSTYLE) {
+  setupSign(texture: TEXTURE | string, x: number, y: number, script: string, window: TEXTURE, textStyle?: TEXTSTYLE, scriptKey?: string, scriptParams?: string[]) {
     this.signInfo.push({
       texture: texture,
       x: x,
       y: y,
       script: script,
+      scriptKey: scriptKey,
+      scriptParams: scriptParams,
       window: window,
       textStyle: textStyle,
     });
@@ -108,7 +110,11 @@ export class OverworldStatue {
   private showSign() {
     this.signs = [];
     for (const sign of this.signInfo) {
-      const signObj = new SignOverworldObj(this.scene, sign.texture, sign.x, sign.y, '', sign.script, sign.window, sign.textStyle);
+      const scriptToPass = sign.scriptKey || sign.script;
+      const signObj = new SignOverworldObj(this.scene, sign.texture, sign.x, sign.y, '', scriptToPass, sign.window, sign.textStyle);
+      if (sign.scriptKey) {
+        signObj.setScriptKey(sign.scriptKey, sign.scriptParams);
+      }
       this.signs.push(signObj);
     }
   }
