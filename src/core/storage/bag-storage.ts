@@ -59,7 +59,7 @@ export class BagStorage {
 
     const existingItem = this.getItem(key);
     if (existingItem) {
-      existingItem.setStock(stock);
+      existingItem.addStock(stock);
       return;
     }
 

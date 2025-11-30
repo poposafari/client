@@ -1,10 +1,11 @@
 import i18next from 'i18next';
 import { PlayerGlobal } from '../../core/storage/player-storage';
-import { DEPTH, EASE, TEXTSTYLE, TEXTURE } from '../../enums';
+import { DEPTH, EASE, EVENT, TEXTSTYLE, TEXTURE } from '../../enums';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { getTextShadow, getTextStyle, runFadeEffect, setTextShadow, Ui } from '../ui';
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
+import { Event } from '../../core/manager/event-manager';
 
 export class OverworldHUDUi extends Ui {
   private tutorialContainer!: Phaser.GameObjects.Container;
@@ -15,6 +16,7 @@ export class OverworldHUDUi extends Ui {
   private overworldLocationUi: OverworldLocationUi;
 
   private tutorialBg!: Phaser.GameObjects.Image;
+  private candyUpdatedCallback!: () => void;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -40,6 +42,11 @@ export class OverworldHUDUi extends Ui {
     this.overworldIconUi.setup();
     this.overworldLocationUi.setup();
 
+    this.candyUpdatedCallback = () => {
+      this.updateCandyUi();
+    };
+    Event.on(EVENT.CANDY_UPDATED, this.candyUpdatedCallback);
+
     this.tutorialContainer.setVisible(false);
     this.tutorialContainer.setDepth(DEPTH.MESSAGE - 1);
     this.tutorialContainer.setScrollFactor(0);
@@ -52,6 +59,7 @@ export class OverworldHUDUi extends Ui {
   }
 
   protected onClean(): void {
+    Event.off(EVENT.CANDY_UPDATED, this.candyUpdatedCallback);
     this.overworldPokemonSlotUi.clean();
     this.overworldInfoUi.clean();
     this.overworldIconUi.clean();

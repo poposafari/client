@@ -1,10 +1,11 @@
 import { itemData } from '../../data';
-import { DIRECTION, ItemCategory, PLAYER_STATUS } from '../../enums';
+import { DIRECTION, EVENT, ItemCategory, PLAYER_STATUS } from '../../enums';
 import { PlayerItem } from '../../obj/player-item';
 import { PlayerOverworldObj } from '../../obj/player-overworld-obj';
 import { PlayerPokemon } from '../../obj/player-pokemon';
 import { GetIngameRes, GetItemRes, IngameData } from '../../types';
 import { getPokemonType } from '../../utils/string-util';
+import { Event } from '../manager/event-manager';
 import { Bag } from './bag-storage';
 import { PC } from './pc-storage';
 import { Option } from './player-option';
@@ -74,10 +75,16 @@ export class PlayerStorage {
       return;
     }
 
+    const candyUpdated = updates.candy !== undefined && updates.candy !== this.data.candy;
+
     this.data = {
       ...this.data,
       ...updates,
     };
+
+    if (candyUpdated) {
+      Event.emit(EVENT.CANDY_UPDATED);
+    }
   }
 
   getObj(): PlayerOverworldObj | null {
