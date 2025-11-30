@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import { Game } from '../../core/manager/game-manager';
 import { PlayerGlobal } from '../../core/storage/player-storage';
 import { DEPTH, EASE, TEXTSTYLE, TEXTURE } from '../../enums';
 import { InGameScene } from '../../scenes/ingame-scene';
@@ -146,13 +145,20 @@ export class OverworldIconUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private icons: Phaser.GameObjects.Image[] = [];
   private iconTitles: Phaser.GameObjects.Text[] = [];
+  private iconHelpWindows: Phaser.GameObjects.NineSlice[] = [];
+  private iconHelpTexts: Phaser.GameObjects.Text[] = [];
   private iconToggle: boolean[] = [];
   private iconBaseY: number[] = [];
+  private iconHelpWindowBaseY: number[] = [];
+  private iconHelpTextBaseY: number[] = [];
   private starterIconTweens: Map<TEXTURE, Phaser.Tweens.Tween[]> = new Map();
+  private starterHelpWindowTweens: Map<TEXTURE, Phaser.Tweens.Tween[]> = new Map();
+  private starterHelpTextTweens: Map<TEXTURE, Phaser.Tweens.Tween[]> = new Map();
 
   private readonly contents: string[] = [TEXTURE.ICON_REG, TEXTURE.ICON_RUNNING, TEXTURE.ICON_MENU];
   private readonly guides: string[] = [TEXTURE.BLANK, TEXTURE.BLANK, TEXTURE.BLANK];
   private readonly guideTexts: string[] = [i18next.t('menu:guide_reg'), i18next.t('menu:guide_runningshoes'), i18next.t('menu:guide_menu')];
+  private readonly helpTexts: string[] = ['A', 'R', 'S'];
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -162,29 +168,42 @@ export class OverworldIconUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    const slotSize = 55;
-    const slotSpacing = 5;
+    const slotSize = 65;
+    const slotSpacing = 10;
 
-    this.container = this.createTrackedContainer(width / 2 + 800, height / 2 + 507);
+    const helpWindowSize = 25;
+    const helpWindowScale = 1;
+
+    this.container = this.createTrackedContainer(width / 2 + 760, height / 2 + 495);
 
     this.contents.forEach((key, index) => {
       const xPosition = index * (slotSize + slotSpacing);
       const yPosition = 0;
 
-      const icon = this.addImage(key, xPosition, yPosition).setScale(2);
+      const icon = this.addImage(key, xPosition, yPosition).setScale(2.4);
+      const iconHelpWindow = this.addWindow(TEXTURE.WINDOW_HELP, xPosition - 20, yPosition - 25, helpWindowSize / helpWindowScale, helpWindowSize / helpWindowScale, 16, 16, 16, 16).setScale(
+        helpWindowScale,
+      );
+      const iconHelpText = this.addText(xPosition - 20, yPosition - 25, this.helpTexts[index], TEXTSTYLE.MESSAGE_BLACK).setScale(0.2);
       const guideText = this.addImage(this.guides[index], xPosition, yPosition - 20);
-      const guideTitle = this.addText(xPosition, yPosition - 45, this.guideTexts[index], TEXTSTYLE.INPUT_GUIDE_WHITE).setScale(0.5);
+      const guideTitle = this.addText(xPosition, yPosition - 55, this.guideTexts[index], TEXTSTYLE.INPUT_GUIDE_WHITE).setScale(0.5);
 
       icon.setVisible(true);
       icon.setInteractive();
       guideTitle.setVisible(false);
 
       this.icons.push(icon);
+      this.iconHelpWindows.push(iconHelpWindow);
+      this.iconHelpTexts.push(iconHelpText);
       this.iconTitles.push(guideTitle);
       this.iconToggle.push(false);
       this.iconBaseY.push(icon.y);
+      this.iconHelpWindowBaseY.push(iconHelpWindow.y);
+      this.iconHelpTextBaseY.push(iconHelpText.y);
 
       this.container.add(icon);
+      this.container.add(iconHelpWindow);
+      this.container.add(iconHelpText);
       this.container.add(guideText);
       this.container.add(guideTitle);
     });
@@ -210,6 +229,14 @@ export class OverworldIconUi extends Ui {
       this.icons[0].setVisible(false);
       this.icons[1].setVisible(false);
       this.icons[2].setVisible(false);
+
+      this.iconHelpWindows[0].setVisible(false);
+      this.iconHelpWindows[1].setVisible(false);
+      this.iconHelpWindows[2].setVisible(false);
+
+      this.iconHelpTexts[0].setVisible(false);
+      this.iconHelpTexts[1].setVisible(false);
+      this.iconHelpTexts[2].setVisible(false);
 
       PlayerGlobal.appearMenuFlag = false;
       PlayerGlobal.appearItemSlotFlag = false;
@@ -254,9 +281,14 @@ export class OverworldIconUi extends Ui {
   async showIconsForStarter(icon: TEXTURE): Promise<void> {
     const targetIndex = this.contents.indexOf(icon);
     const targetIcon = targetIndex > -1 ? this.icons[targetIndex] : null;
-    if (!targetIcon) return;
+    const targetHelpWindow = targetIndex > -1 ? this.iconHelpWindows[targetIndex] : null;
+    const targetHelpText = targetIndex > -1 ? this.iconHelpTexts[targetIndex] : null;
+
+    if (!targetIcon || !targetHelpWindow || !targetHelpText) return;
 
     const initialY = this.iconBaseY[targetIndex] ?? targetIcon.y;
+    const initialHelpWindowY = this.iconHelpWindowBaseY[targetIndex] ?? targetHelpWindow.y;
+    const initialHelpTextY = this.iconHelpTextBaseY[targetIndex] ?? targetHelpText.y;
     const bounceHeight = 10;
 
     this.container.setVisible(true);
@@ -265,16 +297,36 @@ export class OverworldIconUi extends Ui {
     targetIcon.setAlpha(1);
     targetIcon.setY(initialY);
 
-    const existingTweens = this.starterIconTweens.get(icon);
-    if (existingTweens) {
-      existingTweens.forEach((tween) => tween.stop());
+    targetHelpWindow.setVisible(true);
+    targetHelpWindow.setAlpha(1);
+    targetHelpWindow.setY(initialHelpWindowY);
+
+    targetHelpText.setVisible(true);
+    targetHelpText.setAlpha(1);
+    targetHelpText.setY(initialHelpTextY);
+
+    const existingIconTweens = this.starterIconTweens.get(icon);
+    if (existingIconTweens) {
+      existingIconTweens.forEach((tween) => tween.stop());
       this.starterIconTweens.delete(icon);
+    }
+
+    const existingHelpWindowTweens = this.starterHelpWindowTweens.get(icon);
+    if (existingHelpWindowTweens) {
+      existingHelpWindowTweens.forEach((tween) => tween.stop());
+      this.starterHelpWindowTweens.delete(icon);
+    }
+
+    const existingHelpTextTweens = this.starterHelpTextTweens.get(icon);
+    if (existingHelpTextTweens) {
+      existingHelpTextTweens.forEach((tween) => tween.stop());
+      this.starterHelpTextTweens.delete(icon);
     }
 
     await new Promise<void>((resolve) => {
       let settled = false;
       let completed = 0;
-      const totalTweens = 2;
+      const totalTweens = 4;
 
       const finish = () => {
         if (settled) return;
@@ -286,7 +338,12 @@ export class OverworldIconUi extends Ui {
         settled = true;
         targetIcon.setCrop();
         targetIcon.setY(initialY);
+        targetHelpWindow.setY(initialHelpWindowY);
+        targetHelpText.setY(initialHelpTextY);
+
         this.starterIconTweens.delete(icon);
+        this.starterHelpWindowTweens.delete(icon);
+        this.starterHelpTextTweens.delete(icon);
 
         this.icons[0].setTint(0x7f7f7f);
         this.icons[1].setTint(0x7f7f7f);
@@ -295,10 +352,10 @@ export class OverworldIconUi extends Ui {
         resolve();
       };
 
-      const cropState = { height: 0 };
+      const iconCropState = { height: 0 };
       targetIcon.setCrop(0, targetIcon.height, targetIcon.width, 0);
 
-      const bounceTween = this.scene.tweens.add({
+      const iconBounceTween = this.scene.tweens.add({
         targets: targetIcon,
         y: initialY - bounceHeight,
         duration: 220,
@@ -309,20 +366,44 @@ export class OverworldIconUi extends Ui {
         onStop: finish,
       });
 
-      const revealTween = this.scene.tweens.add({
-        targets: cropState,
+      const iconRevealTween = this.scene.tweens.add({
+        targets: iconCropState,
         height: targetIcon.height,
         duration: 260,
         ease: EASE.SINE_EASEOUT,
         onUpdate: () => {
-          const yOffset = Math.max(targetIcon.height - cropState.height, 0);
-          targetIcon.setCrop(0, yOffset, targetIcon.width, Math.max(cropState.height, 0.0001));
+          const yOffset = Math.max(targetIcon.height - iconCropState.height, 0);
+          targetIcon.setCrop(0, yOffset, targetIcon.width, Math.max(iconCropState.height, 0.0001));
         },
         onComplete: finish,
         onStop: finish,
       });
 
-      this.starterIconTweens.set(icon, [bounceTween, revealTween]);
+      const helpWindowBounceTween = this.scene.tweens.add({
+        targets: targetHelpWindow,
+        y: initialHelpWindowY - bounceHeight,
+        duration: 220,
+        ease: EASE.SINE_EASEIN,
+        yoyo: true,
+        hold: 60,
+        onComplete: finish,
+        onStop: finish,
+      });
+
+      const helpTextBounceTween = this.scene.tweens.add({
+        targets: targetHelpText,
+        y: initialHelpTextY - bounceHeight,
+        duration: 220,
+        ease: EASE.SINE_EASEIN,
+        yoyo: true,
+        hold: 60,
+        onComplete: finish,
+        onStop: finish,
+      });
+
+      this.starterIconTweens.set(icon, [iconBounceTween, iconRevealTween]);
+      this.starterHelpWindowTweens.set(icon, [helpWindowBounceTween]);
+      this.starterHelpTextTweens.set(icon, [helpTextBounceTween]);
     });
   }
 
