@@ -361,6 +361,9 @@ export class GameManager {
       case MODE.CONNECT:
         await this.showConnectUi();
         break;
+      case MODE.HELP:
+        await this.showUi(UI.HELP);
+        break;
       case MODE.CHECK_OVERWORLD:
         if (PlayerGlobal.getData()?.location.includes('s')) {
           this.modeChangeQueue.push({ mode: MODE.CONNECT_SAFARI });

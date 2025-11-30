@@ -28,13 +28,14 @@ export class OptionUi extends Ui {
   private readonly titleWindowHeight: number = 140;
   private readonly windowScale: number = 3;
   private readonly contentDummyScale: number = 4;
-  private readonly contentTitle: string[] = [
+  private contentTitle: string[] = [
     i18next.t('menu:optionTitle0'),
     i18next.t('menu:optionTitle1'),
     i18next.t('menu:optionTitle2'),
     i18next.t('menu:optionTitle3'),
     i18next.t('menu:optionTitle4'),
     i18next.t('menu:optionTitle5'),
+    i18next.t('menu:optionTitle6'),
   ];
 
   constructor(scene: InGameScene) {
@@ -46,6 +47,7 @@ export class OptionUi extends Ui {
     this.optionUis.push(new OptionBackgroundSoundUi(scene, this));
     this.optionUis.push(new OptionEffectSoundUi(scene, this));
     this.optionUis.push(new OptionTutorialUi(scene, this, this.optionDescUi));
+    this.optionUis.push(new OptionLanguageUi(scene, this, this.optionDescUi));
   }
 
   setup(data?: any): void {
@@ -180,7 +182,7 @@ export class OptionUi extends Ui {
       case KEY.Z:
         const target = this.contentTitle[this.choice];
 
-        if (target === i18next.t('menu:optionTitle5')) {
+        if (target === i18next.t('menu:optionTitle6')) {
           this.lastChoice = 0;
           this.contentTitleDummys[this.choice].setTexture(TEXTURE.BLANK);
           Game.popUi();
@@ -217,6 +219,35 @@ export class OptionUi extends Ui {
     this.activeControl = 'menu';
   }
 
+  updateAllTexts() {
+    this.contentTitle = [
+      i18next.t('menu:optionTitle0'),
+      i18next.t('menu:optionTitle1'),
+      i18next.t('menu:optionTitle2'),
+      i18next.t('menu:optionTitle3'),
+      i18next.t('menu:optionTitle4'),
+      i18next.t('menu:optionTitle5'),
+      i18next.t('menu:optionTitle6'),
+    ];
+
+    const titleText = this.titleContainer.list.find((child) => child instanceof Phaser.GameObjects.Text) as Phaser.GameObjects.Text;
+    if (titleText) {
+      titleText.setText(i18next.t('menu:option'));
+    }
+
+    for (let i = 0; i < this.contentTitleTexts.length && i < this.contentTitle.length; i++) {
+      this.contentTitleTexts[i].setText(this.contentTitle[i]);
+    }
+
+    for (const ui of this.optionUis) {
+      if (ui instanceof OptionTextSpeedUi || ui instanceof OptionTutorialUi || ui instanceof OptionLanguageUi || ui instanceof OptionWindowTypeUi) {
+        ui.updateValue();
+      }
+    }
+
+    this.optionDescUi.updateText(this.choice);
+  }
+
   private setupContent() {
     const contentHeight = 70;
     const spacing = 10;
@@ -249,7 +280,7 @@ export class OptionTextSpeedUi extends Ui {
 
   private texts: Phaser.GameObjects.Text[] = [];
 
-  private readonly contents: string[] = [i18next.t('menu:optionSlow'), i18next.t('menu:optionMid'), i18next.t('menu:optionFast')];
+  private contents: string[] = [i18next.t('menu:optionSlow'), i18next.t('menu:optionMid'), i18next.t('menu:optionFast')];
 
   constructor(scene: InGameScene, option: OptionUi, optionDesc: OptionDescUi) {
     super(scene);
@@ -341,6 +372,12 @@ export class OptionTextSpeedUi extends Ui {
   }
 
   updateValue() {
+    this.contents = [i18next.t('menu:optionSlow'), i18next.t('menu:optionMid'), i18next.t('menu:optionFast')];
+
+    for (let i = 0; i < this.texts.length && i < this.contents.length; i++) {
+      this.texts[i].setText(this.contents[i]);
+    }
+
     this.choice = changeTextSpeedToDigit(Option.getTextSpeed()!);
 
     for (const text of this.texts) {
@@ -426,6 +463,7 @@ export class OptionWindowTypeUi extends Ui {
       case KEY.ARROW_RIGHT:
         if (this.choice < this.contents - 1) this.choice++;
         break;
+      case KEY.ESC:
       case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
@@ -523,6 +561,7 @@ export class OptionBackgroundSoundUi extends Ui {
       case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
+      case KEY.ESC:
       case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
@@ -624,6 +663,7 @@ export class OptionEffectSoundUi extends Ui {
       case KEY.ARROW_RIGHT:
         if (this.choice < this.contents.length - 1) this.choice++;
         break;
+      case KEY.ESC:
       case KEY.X:
         Game.popUi();
         this.optionUi.switchToMenuControl();
@@ -666,7 +706,7 @@ export class OptionTutorialUi extends Ui {
 
   private texts: Phaser.GameObjects.Text[] = [];
 
-  private readonly contents: string[] = [i18next.t('menu:optionOn'), i18next.t('menu:optionOff')];
+  private contents: string[] = [i18next.t('menu:optionOn'), i18next.t('menu:optionOff')];
 
   constructor(scene: InGameScene, option: OptionUi, optionDesc: OptionDescUi) {
     super(scene);
@@ -732,6 +772,7 @@ export class OptionTutorialUi extends Ui {
           this.choice++;
         }
         break;
+      case KEY.ESC:
       case KEY.X:
         this.optionDescUi.updateText(0);
         this.optionUi.switchToMenuControl();
@@ -756,6 +797,12 @@ export class OptionTutorialUi extends Ui {
   }
 
   updateValue() {
+    this.contents = [i18next.t('menu:optionOn'), i18next.t('menu:optionOff')];
+
+    for (let i = 0; i < this.texts.length && i < this.contents.length; i++) {
+      this.texts[i].setText(this.contents[i]);
+    }
+
     for (const text of this.texts) {
       text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLACK));
     }
@@ -767,6 +814,119 @@ export class OptionTutorialUi extends Ui {
       this.choice = 1;
       this.texts[1].setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
     }
+  }
+}
+
+export class OptionLanguageUi extends Ui {
+  private container!: Phaser.GameObjects.Container;
+
+  private optionUi: OptionUi;
+  private optionDescUi: OptionDescUi;
+
+  private arrowLeft!: Phaser.GameObjects.Image;
+  private arrowRight!: Phaser.GameObjects.Image;
+  private text!: Phaser.GameObjects.Text;
+
+  private choice: number = 0;
+
+  private readonly contents: string[] = ['ko', 'en'];
+
+  constructor(scene: InGameScene, option: OptionUi, optionDesc: OptionDescUi) {
+    super(scene);
+    this.optionUi = option;
+    this.optionDescUi = optionDesc;
+  }
+
+  setup(data?: any): void {
+    const width = this.getWidth();
+    const height = this.getHeight();
+
+    this.container = this.createContainer(width / 2 + 230, height / 2 + 140);
+
+    const currentLang = i18next.language || 'en';
+    const langName = currentLang === 'ko' ? i18next.t('menu:optionLanguageKo') : i18next.t('menu:optionLanguageEn');
+    this.text = this.addText(0, 0, langName, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0.5, 0.5).setScale(0.9);
+    this.arrowLeft = this.addImage(TEXTURE.ARROW_G, this.text.x - this.text.displayOriginX - 20, 0).setScale(3);
+    this.arrowRight = this.addImage(TEXTURE.ARROW_G, this.text.displayOriginX + this.text.x + 20, 0)
+      .setFlipX(true)
+      .setScale(3);
+
+    this.container.add(this.text);
+    this.container.add(this.arrowLeft);
+    this.container.add(this.arrowRight);
+
+    this.container.setVisible(false);
+    this.container.setDepth(DEPTH.OVERWORLD_NEW_PAGE + 2);
+    this.container.setScrollFactor(0);
+  }
+
+  show(data?: any): void {
+    this.container.setVisible(true);
+
+    this.text.setStyle(getTextStyle(TEXTSTYLE.MESSAGE_BLUE));
+  }
+
+  protected onClean(): void {
+    this.container.setVisible(false);
+  }
+
+  pause(onoff: boolean, data?: any): void {}
+
+  async handleKeyInput(key: KEY) {
+    let prevChoice = this.choice;
+
+    this.arrowLeft.setVisible(true);
+    this.arrowRight.setVisible(true);
+
+    const currentLang = i18next.language || 'en';
+    this.choice = currentLang === 'ko' ? 0 : 1;
+    const langName = this.choice === 0 ? i18next.t('menu:optionLanguageKo') : i18next.t('menu:optionLanguageEn');
+    this.text.setText(langName);
+
+    switch (key) {
+      case KEY.ARROW_UP:
+      case KEY.ARROW_DOWN:
+        this.optionUi.switchToMenuControl();
+        this.optionUi.handleMenuNavigation(key);
+        return;
+      case KEY.ARROW_LEFT:
+        if (this.choice > 0) this.choice--;
+        break;
+      case KEY.ARROW_RIGHT:
+        if (this.choice < this.contents.length - 1) this.choice++;
+        break;
+      case KEY.ESC:
+      case KEY.X:
+        Game.popUi();
+        this.optionUi.switchToMenuControl();
+        break;
+    }
+
+    if (key === KEY.ARROW_LEFT || key === KEY.ARROW_RIGHT) {
+      if (this.choice !== prevChoice) {
+        const newLanguage = this.contents[this.choice];
+        await i18next.changeLanguage(newLanguage);
+
+        playEffectSound(this.scene, AUDIO.SELECT_0);
+        Event.emit(EVENT.LANGUAGE_CHANGED);
+        this.optionUi.updateAllTexts();
+        this.updateValue();
+
+        const newLangName = this.choice === 0 ? i18next.t('menu:optionLanguageKo') : i18next.t('menu:optionLanguageEn');
+        this.text.setText(newLangName);
+      }
+    }
+  }
+
+  update(time?: number, delta?: number): void {
+    this.updateValue();
+  }
+
+  updateValue() {
+    const currentLang = i18next.language || 'en';
+    this.choice = currentLang === 'ko' ? 0 : 1;
+    const langName = this.choice === 0 ? i18next.t('menu:optionLanguageKo') : i18next.t('menu:optionLanguageEn');
+    this.text.setText(langName);
   }
 }
 
@@ -783,13 +943,14 @@ export class OptionDescUi extends Ui {
   private readonly windowHeight: number = 200;
   private readonly windowScale: number = 3;
 
-  private readonly contents: string[] = [
+  private contents: string[] = [
     i18next.t('menu:optionDesc0'),
     i18next.t('menu:optionDesc1'),
     i18next.t('menu:optionDesc2'),
     i18next.t('menu:optionDesc3'),
     i18next.t('menu:optionDesc4'),
     i18next.t('menu:optionDesc5'),
+    i18next.t('menu:optionDesc6'),
   ];
 
   constructor(scene: InGameScene, option: OptionUi) {
@@ -835,6 +996,16 @@ export class OptionDescUi extends Ui {
       this.textSpeedTimer.destroy();
       this.textSpeedTimer = null;
     }
+
+    this.contents = [
+      i18next.t('menu:optionDesc0'),
+      i18next.t('menu:optionDesc1'),
+      i18next.t('menu:optionDesc2'),
+      i18next.t('menu:optionDesc3'),
+      i18next.t('menu:optionDesc4'),
+      i18next.t('menu:optionDesc5'),
+      i18next.t('menu:optionDesc6'),
+    ];
 
     if (idx >= 0 && idx < this.contents.length) {
       this.text.setText(this.contents[idx]);

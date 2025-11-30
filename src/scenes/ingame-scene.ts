@@ -70,6 +70,7 @@ import { EvolveUi } from '../uis/evolve-ui';
 import { HiddenMoveUi } from '../uis/hidden-move-ui';
 import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
 import { Battle } from '../uis/battle/battle';
+import { HelpUi } from '../uis/help-ui';
 
 export class InGameScene extends BaseScene {
   constructor() {
@@ -96,6 +97,7 @@ export class InGameScene extends BaseScene {
     Game.registerUiFactory(UI.LOGIN, (scene) => new LoginUi(scene));
     Game.registerUiFactory(UI.REGISTER, (scene) => new RegisterUi(scene));
     Game.registerUiFactory(UI.WELCOME, (scene) => new WelcomeUi(scene));
+    Game.registerUiFactory(UI.HELP, (scene) => new HelpUi(scene));
     Game.registerUiFactory(UI.SEASON_SCREEN, (scene) => new SeasonScreenUi(scene));
     Game.registerUiFactory(UI.TITLE, (scene) => new TitleUi(scene));
     Game.registerUiFactory(UI.STARTER, (scene) => new StarterUi(scene));

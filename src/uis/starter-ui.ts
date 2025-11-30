@@ -267,9 +267,12 @@ export class StarterUi extends ModalFormUi {
           await this.showOuttroMsg(this.input.text);
         } else {
           if (res!.data === ErrorCode.ALREADY_EXIST_NICKNAME) {
-            this.shake();
-            this.errTexts.setText(i18next.t('message:existNickname'));
-            this.pause(false);
+            if (this.errTexts && this.errTexts.scene) {
+              console.log('???? ㅅㅂ? ');
+              this.shake();
+              this.errTexts.setText(i18next.t('message:existNickname'));
+              this.pause(false);
+            }
           }
         }
       }
@@ -345,13 +348,17 @@ export class StarterUi extends ModalFormUi {
   private async validate(nickname: string) {
     if (nickname.length <= 0) {
       this.shake();
-      this.errTexts.setText(i18next.t('message:emptyNickname'));
+      if (this.errTexts && this.errTexts.scene) {
+        this.errTexts.setText(i18next.t('message:emptyNickname'));
+      }
       return false;
     }
 
     if (!isValidNickname(nickname)) {
       this.shake();
-      this.errTexts.setText(i18next.t('message:invalidNickname'));
+      if (this.errTexts && this.errTexts.scene) {
+        this.errTexts.setText(i18next.t('message:invalidNickname'));
+      }
       return false;
     }
 

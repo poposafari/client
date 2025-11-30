@@ -14,6 +14,7 @@ export const enum TEXTURE {
   WINDOW_OPACITY = 'window_opacity',
   WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_NOTICE_1 = 'window_notice_1',
+  WINDOW_HELP = 'window_help',
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
   WINDOW_2 = 'window_2',
@@ -135,6 +136,7 @@ export const enum TEXTURE {
   LOGO_0 = 'logo_0',
   LOGO_DISCORD = 'logo_discord',
   LOGO_GOOGLE = 'logo_google',
+  HELP_ARROWS = 'help_arrows',
   PC_NAME = 'pc_name',
   PC_DESC = 'pc_desc',
   PC_ARROW = 'pc_arrow',
@@ -604,6 +606,7 @@ export enum UI {
   REGISTER = 'RegisterUi',
   TITLE = 'TitleUi',
   WELCOME = 'WelcomeUi',
+  HELP = 'HelpUi',
   STARTER = 'StarterUi',
   STARTER_POKEMON = 'StarterPokemonUi',
   ACCOUNT_DELETE = 'AccountDeleteUi',
@@ -706,6 +709,7 @@ export enum MODE {
   CONNECT_SAFARI,
   CONNECT_ACCOUNT_DELETE,
   TITLE,
+  HELP,
   NEWGAME,
   WELCOME,
   STARTER,
@@ -740,6 +744,7 @@ export enum EVENT {
 
   DISABLE_DAY_NIGHT_FILTER,
   ENABLE_DAY_NIGHT_FILTER,
+  LANGUAGE_CHANGED,
 
   //socket event
   ADD_OTHER_PLAYER,

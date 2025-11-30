@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { AUDIO, DEPTH, KEY, MODE, OVERWORLD_TYPE, TEXTSTYLE, TEXTURE, UI } from '../../enums';
+import { AUDIO, DEPTH, EVENT, KEY, MODE, OVERWORLD_TYPE, TEXTSTYLE, TEXTURE, UI } from '../../enums';
 import { playEffectSound, stopBackgroundMusic, Ui } from '../ui';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { Keyboard } from '../../core/manager/keyboard-manager';
@@ -9,6 +9,7 @@ import { QuestionMessageUi } from '../question-message-ui';
 import { Option } from '../../core/storage/player-option';
 import { SocketIO } from '../../core/manager/socket-manager';
 import { PlayerGlobal } from '../../core/storage/player-storage';
+import { Event } from '../../core/manager/event-manager';
 
 export class OverworldMenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -21,6 +22,7 @@ export class OverworldMenuUi extends Ui {
   private texts: Phaser.GameObjects.Text[] = [];
 
   private questionMessage: QuestionMessageUi;
+  private languageChangedCallback!: () => void;
 
   private readonly ListIcons = [TEXTURE.ICON_PC, TEXTURE.ICON_BAG_M, TEXTURE.ICON_PROFILE, TEXTURE.ICON_OPTION, TEXTURE.ICON_EXIT_0, TEXTURE.ICON_CANCEL];
   private ListTexts = [
@@ -46,6 +48,11 @@ export class OverworldMenuUi extends Ui {
 
     this.lastStart = 0;
 
+    this.languageChangedCallback = () => {
+      this.updateTexts();
+    };
+    Event.on(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
+
     this.container = this.createTrackedContainer(width / 2 + 480, height / 2 - 470);
 
     this.window = this.addWindow(TEXTURE.WINDOW_MENU, 0, -30, 130, 0, 16, 16, 16, 16).setOrigin(0, 0).setScale(this.scale);
@@ -70,6 +77,9 @@ export class OverworldMenuUi extends Ui {
   }
 
   protected onClean(): void {
+    if (this.languageChangedCallback) {
+      Event.off(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
+    }
     this.lastStart = 0;
   }
 
@@ -225,5 +235,20 @@ export class OverworldMenuUi extends Ui {
     this.texts[4].setText(i18next.t('menu:menuBackToTitle'));
     this.icons[4].setTexture(TEXTURE.ICON_EXIT_0);
     this.ListTexts[4] = i18next.t('menu:menuBackToTitle');
+  }
+
+  updateTexts(): void {
+    this.ListTexts = [
+      i18next.t('menu:menuPokebox'),
+      i18next.t('menu:menuBag'),
+      i18next.t('menu:menuProfile'),
+      i18next.t('menu:menuOption'),
+      i18next.t('menu:menuBackToTitle'),
+      i18next.t('menu:menuCancel'),
+    ];
+
+    for (let i = 0; i < this.texts.length && i < this.ListTexts.length; i++) {
+      this.texts[i].setText(this.ListTexts[i]);
+    }
   }
 }

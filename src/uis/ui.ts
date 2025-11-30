@@ -674,7 +674,6 @@ export function moveToCamera(scene: InGameScene, x: number, y: number, delay: nu
     const camera = scene.cameras.main;
     camera.pan(x, y, delay, ease);
     camera.once('camerapancomplete', () => {
-      // console.log('move to finish?');
       resolve();
     });
   });

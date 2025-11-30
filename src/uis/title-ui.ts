@@ -27,6 +27,7 @@ export class TitleUi extends Ui {
   private choice: number = 0;
 
   private continueParties: Phaser.GameObjects.Image[] = [];
+  private continueTexts: Phaser.GameObjects.Text[] = [];
 
   private readonly windowWidth: number = 240;
   private readonly contentPosY: number = -370;
@@ -34,6 +35,8 @@ export class TitleUi extends Ui {
   private readonly contentSpacing: number = 15;
   private readonly scale: number = 3.4;
   private menus = [i18next.t('menu:newgame'), i18next.t('menu:option'), i18next.t('menu:logout')];
+
+  private languageChangedCallback!: () => void;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -85,6 +88,11 @@ export class TitleUi extends Ui {
 
     Keyboard.blockKeys(false);
 
+    this.languageChangedCallback = () => {
+      this.updateTexts();
+    };
+    Event.on(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
+
     runFadeEffect(this.scene, 1000, 'in');
 
     this.restoreContinue();
@@ -113,10 +121,16 @@ export class TitleUi extends Ui {
   }
 
   protected onClean(): void {
+    if (this.languageChangedCallback) {
+      Event.off(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
+      this.languageChangedCallback = undefined as any;
+    }
+
     this.choice = 0;
     this.windows = [];
     this.texts = [];
     this.continueParties = [];
+    this.continueTexts = [];
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -219,6 +233,8 @@ export class TitleUi extends Ui {
     this.windowContainer.add(continuePlaytime);
     this.windowContainer.add(statue);
 
+    this.continueTexts = [continueTitle, continueTitleName, continueTitleLocation, continueTitlePlaytime, continueLocation];
+
     const contentWidth = 80;
     const spacing = 10;
     let currentX = -200;
@@ -290,5 +306,34 @@ export class TitleUi extends Ui {
     });
 
     this.trackTween(tween);
+  }
+
+  private updateTexts(): void {
+    this.menus = [i18next.t('menu:newgame'), i18next.t('menu:option'), i18next.t('menu:logout')];
+
+    if (this.splashText) {
+      this.splashText.setText(i18next.t('menu:splashText_2'));
+    }
+
+    for (let i = 0; i < this.texts.length && i < this.menus.length; i++) {
+      this.texts[i].setText(this.menus[i]);
+    }
+
+    if (this.continueTexts.length > 0) {
+      const playerData = PlayerGlobal.getData();
+      if (playerData && this.continueTexts[0]) {
+        this.continueTexts[0].setText(i18next.t('menu:continue'));
+        if (this.continueTexts[1]) this.continueTexts[1].setText(i18next.t('menu:continueName'));
+        if (this.continueTexts[2]) this.continueTexts[2].setText(i18next.t('menu:continueLocation'));
+        if (this.continueTexts[3]) this.continueTexts[3].setText(i18next.t('menu:continuePlaytime'));
+        if (this.continueTexts[4]) this.continueTexts[4].setText(i18next.t(`menu:${playerData.location}`));
+
+        if (this.menus[0] !== i18next.t('menu:continue')) {
+          this.menus.unshift(i18next.t('menu:continue'));
+        } else {
+          this.menus[0] = i18next.t('menu:continue');
+        }
+      }
+    }
   }
 }

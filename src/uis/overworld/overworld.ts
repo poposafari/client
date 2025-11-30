@@ -104,16 +104,16 @@ export class Plaza001 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.P001_NPC3_0, OVERWORLD_INIT_POS.P020_EXIT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.P001_NPC4_0, OVERWORLD_INIT_POS.P022_EXIT_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 9, 15, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:sign000')]), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 24, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:sign001')]), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 40, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:sign002')]), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 26, 40, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:sign003')]), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 14, 40, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:sign004')]), TEXTURE.WINDOW_NOTICE_0);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 9, 15, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign000']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 24, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign002']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 26, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign003']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 14, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign004']);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 23, replacePercentSymbol(i18next.t('menu:sign_1'), [i18next.t('menu:s001')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 38, i18next.t('menu:sign_2'), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 23, 38, i18next.t('menu:sign_2'), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 40, 30, i18next.t('menu:sign_2'), TEXTURE.WINDOW_NOTICE_0);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 23, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 38, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
+    ui.getStatue().setupSign(TEXTURE.BLANK, 23, 38, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
+    ui.getStatue().setupSign(TEXTURE.BLANK, 40, 30, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
   }
 }
 
@@ -134,7 +134,7 @@ export class Plaza002 extends Overworld {
     ui.getMap().setLayer(4, TEXTURE.INDOOR_EVENT, DEPTH.GROUND + 4);
     ui.getMap().setForegroundLayer(5, [TEXTURE.INDOOR_TILE_OBJECT, TEXTURE.INDOOR_EVENT], DEPTH.FOREGROND);
 
-    ui.getNpc().setup('npc029', i18next.t('npc:special001'), 16, 6, DIRECTION.DOWN, ['script047_17', 'script047_18']);
+    ui.getNpc().setup('npc029', 'npc:special001', 16, 6, DIRECTION.DOWN, ['script047_17', 'script047_18']);
     ui.getStatue().setupTrigger(23, 10, TRIGGER.TRIGGER_001, '');
     ui.getStatue().setupTrigger(23, 11, TRIGGER.TRIGGER_001, '');
     ui.getStatue().setupTrigger(23, 12, TRIGGER.TRIGGER_001, '');
@@ -679,10 +679,10 @@ export class Safari001 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_4, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_4);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_5, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_5);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 62, 13, replacePercentSymbol(i18next.t('menu:sign_1'), [i18next.t('menu:p001')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 63, 13, replacePercentSymbol(i18next.t('menu:sign_1'), [i18next.t('menu:p001')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 12, 13, replacePercentSymbol(i18next.t('menu:sign_up_left'), [i18next.t('menu:s002'), i18next.t('menu:s010')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 13, 13, replacePercentSymbol(i18next.t('menu:sign_up_left'), [i18next.t('menu:s002'), i18next.t('menu:s010')]), TEXTURE.WINDOW_NOTICE_1);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 62, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 63, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 12, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 13, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
   }
 }
 
@@ -732,11 +732,11 @@ export class Safari002 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S002_LEFT_ROAD_0, OVERWORLD_INIT_POS.G003_RIGHT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S002_LEFT_ROAD_1, OVERWORLD_INIT_POS.G003_RIGHT_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 10, 42, replacePercentSymbol(i18next.t('menu:sign_up_down'), [i18next.t('menu:s003'), i18next.t('menu:s001')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 11, 42, replacePercentSymbol(i18next.t('menu:sign_up_down'), [i18next.t('menu:s003'), i18next.t('menu:s001')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 21, 23, replacePercentSymbol(i18next.t('menu:sign_0'), [i18next.t('menu:s003')]), TEXTURE.WINDOW_NOTICE_0);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 25, replacePercentSymbol(i18next.t('menu:sign_1'), [i18next.t('menu:s007')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 7, 25, replacePercentSymbol(i18next.t('menu:sign_1'), [i18next.t('menu:s007')]), TEXTURE.WINDOW_NOTICE_1);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 10, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 11, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 21, 23, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:s003']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 7, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
   }
 }
 
@@ -1048,8 +1048,8 @@ export class Safari010 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_DOWN_ROAD_0, OVERWORLD_INIT_POS.G004_UP_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_DOWN_ROAD_1, OVERWORLD_INIT_POS.G004_UP_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 16, 14, replacePercentSymbol(i18next.t('menu:sign_down_right'), [i18next.t('menu:s011'), i18next.t('menu:s002')]), TEXTURE.WINDOW_NOTICE_1);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 14, replacePercentSymbol(i18next.t('menu:sign_down_right'), [i18next.t('menu:s011'), i18next.t('menu:s002')]), TEXTURE.WINDOW_NOTICE_1);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 16, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
   }
 }
 
