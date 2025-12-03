@@ -107,6 +107,6 @@ export const item: TranslationItem = {
   },
   '046': {
     name: '자전거',
-    description: '러닝슈즈보다도 빨리 달릴 수 있는\n접이식 자전다.',
+    description: '러닝슈즈보다도 빨리 달릴 수 있는\n접이식 자전거다.',
   },
 };
