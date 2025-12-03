@@ -15,6 +15,7 @@ export abstract class Overworld {
   protected area: TEXTURE | string;
   protected battleArea: BATTLE_AREA | null = null;
   protected isDayNightFilterEnabled: boolean = true;
+  protected isAllowedRide: boolean = true;
 
   constructor(initPlayerDirection: DIRECTION, key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string, isDayNightFilterEnabled: boolean = true) {
     this.initPlayerDirection = initPlayerDirection;
@@ -26,6 +27,14 @@ export abstract class Overworld {
   }
 
   abstract setup(ui: OverworldUi): void;
+
+  setIsAllowedRide(isAllowedRide: boolean) {
+    this.isAllowedRide = isAllowedRide;
+  }
+
+  getIsAllowedRide() {
+    return this.isAllowedRide;
+  }
 
   setBattleArea(battleArea: BATTLE_AREA) {
     this.battleArea = battleArea;
@@ -120,6 +129,7 @@ export class Plaza001 extends Overworld {
 export class Plaza002 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -151,6 +161,7 @@ export class Plaza002 extends Overworld {
 export class Plaza003 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -180,6 +191,7 @@ export class Plaza003 extends Overworld {
 export class Plaza004 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -218,6 +230,7 @@ export class Plaza004 extends Overworld {
 export class Plaza005 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -243,6 +256,7 @@ export class Plaza005 extends Overworld {
 export class Plaza006 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -266,6 +280,7 @@ export class Plaza006 extends Overworld {
 export class Plaza007 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -291,6 +306,7 @@ export class Plaza007 extends Overworld {
 export class Plaza008 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -314,6 +330,7 @@ export class Plaza008 extends Overworld {
 export class Plaza009 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -338,6 +355,7 @@ export class Plaza009 extends Overworld {
 export class Plaza010 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -361,6 +379,7 @@ export class Plaza010 extends Overworld {
 export class Plaza011 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -388,6 +407,7 @@ export class Plaza011 extends Overworld {
 export class Plaza012 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -413,6 +433,7 @@ export class Plaza012 extends Overworld {
 export class Plaza019 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -436,6 +457,7 @@ export class Plaza019 extends Overworld {
 export class Plaza020 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -460,6 +482,7 @@ export class Plaza020 extends Overworld {
 export class Plaza021 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -483,6 +506,7 @@ export class Plaza021 extends Overworld {
 export class Plaza022 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
@@ -508,6 +532,7 @@ export class Plaza022 extends Overworld {
 export class Plaza023 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.UP, key, sound, isIndoor, area, false);
+    this.setIsAllowedRide(false);
   }
 
   setup(ui: OverworldUi): void {
