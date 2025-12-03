@@ -113,6 +113,7 @@ export class PlayerStorage {
 
   setLastPlayerStatusWalkOrRunning(status: PLAYER_STATUS.WALK | PLAYER_STATUS.RUNNING) {
     this.lastPlayerStatusWalkOrRunning = status;
+    this.lastPlayerStatus = status === PLAYER_STATUS.WALK ? PLAYER_STATUS.WALK : PLAYER_STATUS.RUNNING;
   }
 
   getLastPlayerStatusWalkOrRunning(): PLAYER_STATUS.WALK | PLAYER_STATUS.RUNNING {

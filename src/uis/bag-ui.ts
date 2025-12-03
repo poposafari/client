@@ -15,6 +15,9 @@ import { addBackground, addImage, addText, addWindow, createSprite, playEffectSo
 import { Bag } from '../core/storage/bag-storage';
 import { Game } from '../core/manager/game-manager';
 import { Option } from '../core/storage/player-option';
+import { OverworldUi } from './overworld/overworld-ui';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { replacePercentSymbol } from '../utils/string-util';
 
 export class BagUi extends Ui {
   private menu!: MenuUi;
@@ -228,8 +231,19 @@ export class BagUi extends Ui {
     const ret = await this.menu.handleKeyInput();
 
     if (ret === i18next.t('menu:use')) {
-      Event.emit(EVENT.USE_ITEM, item);
-      this.menu.hide();
+      const currentUi = Game.findUiInStack((ui) => ui instanceof OverworldUi);
+      if (currentUi instanceof OverworldUi && !currentUi.getIsAllowedRide() && item.getKey() === '046') {
+        this.menu.hide();
+        await this.talkMesageUi.show({
+          type: 'default',
+          content: replacePercentSymbol(i18next.t('message:warn_not_allowed_item'), [PlayerGlobal.getData()?.nickname]),
+          speed: Option.getTextSpeed()!,
+          endDelay: MessageEndDelay.DEFAULT,
+        });
+      } else {
+        Event.emit(EVENT.USE_ITEM, item);
+        this.menu.hide();
+      }
     } else if (ret === i18next.t('menu:registerSlot')) {
       this.menu.hide();
       await this.registerUi.show(item);
@@ -467,7 +481,7 @@ export class BagRegisterUi extends Ui {
       this.renderSlot();
       this.renderChoice(1, 0);
 
-      Keyboard.setAllowKey([KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X]);
+      Keyboard.setAllowKey([KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
       Keyboard.setKeyDownCallback((key: KEY) => {
         const prevChoice = choice;
 
@@ -483,15 +497,17 @@ export class BagRegisterUi extends Ui {
                 choice++;
               }
               break;
+            case KEY.ENTER:
             case KEY.Z:
               playEffectSound(this.scene, AUDIO.SELECT_0);
               this.registerItem((choice + 1) as 1 | 2 | 3 | 4 | 5);
               this.renderSlot();
               this.bagUi.setRegVisual(true, this.item);
               break;
+            case KEY.ESC:
             case KEY.X:
               this.renderChoice(choice, 0);
-              this.clean();
+              this.hide();
               resolve();
               break;
           }
@@ -515,6 +531,11 @@ export class BagRegisterUi extends Ui {
     if (this.slotContainer) {
       this.slotContainer.setVisible(false);
     }
+  }
+
+  hide(): void {
+    this.container.setVisible(false);
+    this.slotContainer.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}

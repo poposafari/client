@@ -1,5 +1,5 @@
 import { Event } from '../../core/manager/event-manager';
-import { DEPTH, DIRECTION, EVENT, MODE, OBJECT, OVERWORLD_ACTION, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, TIME } from '../../enums';
+import { DEPTH, DIRECTION, EVENT, MessageEndDelay, MODE, OBJECT, OVERWORLD_ACTION, OVERWORLD_TYPE, PLAYER_STATUS, TEXTURE, TIME } from '../../enums';
 import { Keyboard } from '../../core/manager/keyboard-manager';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { NoticeUi } from '../notice-ui';
@@ -26,8 +26,9 @@ import { OverworldPlayerInteractionHandler, OverworldPlayerInteractionContext } 
 import { OverworldTriggerObj } from '../../obj/overworld-trigger-obj';
 import { Option } from '../../core/storage/player-option';
 import DayNightFilter from '../../utils/day-night-filter';
-import { getCurrentTimeOfDay, getCurrentTimeOfDayValue } from '../../utils/string-util';
+import { getCurrentTimeOfDay, getCurrentTimeOfDayValue, replacePercentSymbol } from '../../utils/string-util';
 import { LampOverworldObj } from '../../obj/lamp-overworld-obj';
+import i18next from 'i18next';
 
 export class OverworldUi extends Ui {
   private type!: OVERWORLD_TYPE;
@@ -52,6 +53,8 @@ export class OverworldUi extends Ui {
   private enableFilterCallback!: () => void;
   private languageChangedCallback!: () => void;
   private dayNightOverlay: Phaser.GameObjects.Rectangle | null = null;
+
+  protected isAllowedRide: boolean = true;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -103,6 +106,7 @@ export class OverworldUi extends Ui {
     const overworld = mapFactory(this);
     overworld.setup(this);
     this.isDayNightFilterEnabled = overworld.getIsDayNightFilterEnabled();
+    this.isAllowedRide = overworld.getIsAllowedRide();
   }
 
   async show(data?: any): Promise<void> {
@@ -167,6 +171,7 @@ export class OverworldUi extends Ui {
 
     if (playerSprite) {
       this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5);
+      this.scene.cameras.main.setZoom(1);
     }
   }
 
@@ -265,6 +270,10 @@ export class OverworldUi extends Ui {
     if (this.player) {
       this.player.savePosition();
     }
+  }
+
+  getIsAllowedRide() {
+    return this.isAllowedRide;
   }
 
   setDayNightFilterEnabled(enabled: boolean): void {
@@ -484,7 +493,21 @@ export class OverworldPlayer {
     }
 
     this.map = map;
-    this.obj = new PlayerOverworldObj(this.scene, this.map, user.gender, user.avatar, pet, user.x, user.y, user.nickname, OBJECT.PLAYER, DIRECTION.DOWN, this.hud, objectCollections);
+    this.obj = new PlayerOverworldObj(
+      this.scene,
+      this.map,
+      user.gender,
+      user.avatar,
+      pet,
+      user.x,
+      user.y,
+      user.nickname,
+      OBJECT.PLAYER,
+      DIRECTION.DOWN,
+      this.hud,
+      objectCollections,
+      this.overworldUi.getIsAllowedRide(),
+    );
     this.obj.setSpriteScale(this.scale);
     this.initializeHandlers();
 
@@ -492,6 +515,17 @@ export class OverworldPlayer {
       Event.off(EVENT.USE_ITEM, this.useItemCallback);
     }
     this.useItemCallback = (item: any) => {
+      if (!this.overworldUi.getIsAllowedRide() && item.key === '046') {
+        void this.actionQueue.enqueue(async () => {
+          await this.talkMessageUi.show({
+            type: 'default',
+            content: replacePercentSymbol(i18next.t('message:warn_not_allowed_item'), [PlayerGlobal.getData()?.nickname]),
+            speed: Option.getTextSpeed()!,
+            endDelay: MessageEndDelay.DEFAULT,
+          });
+        }, OVERWORLD_ACTION.TALK);
+        return;
+      }
       this.obj?.useItem(item);
     };
     Event.on(EVENT.USE_ITEM, this.useItemCallback);

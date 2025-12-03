@@ -52,6 +52,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     direction: DIRECTION,
     hud: OverworldHUDUi,
     objectCollections?: OverworldObjectCollections,
+    isAllowedRide?: boolean,
   ) {
     const texture = `${gender}_${avatar}_movement`;
 
@@ -67,6 +68,13 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
     this.currentStatus = PLAYER_STATUS.WALK;
     this.setMovement(PlayerGlobal.getLastPlayerStatus());
+
+    if (!isAllowedRide) {
+      if (PlayerGlobal.getLastPlayerStatus() === PLAYER_STATUS.RIDE) {
+        this.setMovement(PLAYER_STATUS.RIDE);
+      }
+    }
+
     Event.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
     this.setSpriteScale(this.spriteScale);
     this.movePetBehind();
@@ -109,7 +117,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
         PlayerGlobal.setLastPlayerStatusWalkOrRunning(this.currentStatus);
       }
       if (newStatus === PLAYER_STATUS.WALK) {
-        this.currentStatus = PLAYER_STATUS.WALK;
+        this.currentStatus = PLAYER_STATUS.RUNNING;
         PlayerGlobal.setLastPlayerStatusWalkOrRunning(this.currentStatus);
       }
       if (newStatus === PLAYER_STATUS.RIDE) {
