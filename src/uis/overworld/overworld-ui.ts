@@ -5,7 +5,7 @@ import { InGameScene } from '../../scenes/ingame-scene';
 import { NoticeUi } from '../notice-ui';
 import { QuestionMessageUi } from '../question-message-ui';
 import { TalkMessageUi } from '../talk-message-ui';
-import { playBackgroundMusic, runFadeEffect, Ui } from '../ui';
+import { delay, playBackgroundMusic, runFadeEffect, Ui } from '../ui';
 import { OverworldGlobal } from '../../core/storage/overworld-storage';
 import { PlayerGlobal } from '../../core/storage/player-storage';
 import { Game } from '../../core/manager/game-manager';
@@ -173,6 +173,8 @@ export class OverworldUi extends Ui {
       this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5);
       this.scene.cameras.main.setZoom(1);
     }
+
+    await this.player.waitingMovement();
   }
 
   protected onClean(): void {
@@ -542,6 +544,12 @@ export class OverworldPlayer {
       }, OVERWORLD_ACTION.TALK);
       Option.setClientTutorial(false, 'safari');
     }
+  }
+
+  async waitingMovement(): Promise<void> {
+    void this.actionQueue.enqueue(async () => {
+      await delay(this.scene, 500);
+    }, OVERWORLD_ACTION.WAITING);
   }
 
   private initializeHandlers(): void {

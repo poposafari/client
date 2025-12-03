@@ -863,6 +863,7 @@ export const enum OVERWORLD_ACTION {
   AUTO_WALK = 'AUTO_WALK',
   TRIGGER = 'TRIGGER',
   BATTLE = 'BATTLE',
+  WAITING = 'WAITING',
 }
 
 export enum POKEMON_STATUS {
