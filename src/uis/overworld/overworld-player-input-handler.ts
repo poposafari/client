@@ -14,7 +14,7 @@ import { StatueOverworldObj } from '../../obj/statue-overworld-obj';
 import { WildOverworldObj } from '../../obj/wild-overworld-obj';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { getBattleArea, matchPlayerStatus, matchPlayerStatusToDirection } from '../../utils/string-util';
-import { Battle } from '../battle/battle';
+import { Battle, startBattleIntro } from '../battle/battle';
 import { delay } from '../ui';
 import { OverworldActionQueue } from './overworld-action-queue';
 import { OverworldHUDUi } from './overworld-hud-ui';
@@ -154,6 +154,7 @@ export class OverworldPlayerInputHandler {
                 await this.context.actionQueue.enqueue(async () => {
                   const closePromise = this.context.waitForUiClose(MODE.BATTLE);
                   await event.reaction(direction);
+                  await startBattleIntro(this.context.scene);
                   await Game.changeMode(MODE.BATTLE, event);
                   await closePromise;
                 }, OVERWORLD_ACTION.BATTLE);

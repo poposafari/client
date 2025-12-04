@@ -18,6 +18,7 @@ export class PlayerStorage {
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private lastPlayerStatus: PLAYER_STATUS = PLAYER_STATUS.WALK;
   private lastPlayerStatusWalkOrRunning: PLAYER_STATUS.WALK | PLAYER_STATUS.RUNNING = PLAYER_STATUS.WALK;
+  private overworldZoom: number = 1;
 
   talkMotherFlag: boolean = false;
   appearRunningShoesFlag: boolean = false;
@@ -34,6 +35,14 @@ export class PlayerStorage {
   }
 
   init() {}
+
+  setOverworldZoom(zoom: number) {
+    this.overworldZoom = zoom;
+  }
+
+  getOverworldZoom(): number {
+    return this.overworldZoom;
+  }
 
   getData(): IngameData | null {
     return this.data;

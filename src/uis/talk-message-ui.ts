@@ -11,30 +11,42 @@ export class TalkMessageUi extends MessageUi {
   private endMark!: Phaser.GameObjects.Sprite;
   private endMarkTexture!: TEXTURE | string;
   private guideText!: Phaser.GameObjects.Text;
+  private guideTextX = 0;
   private guideTextTimer!: Phaser.Time.TimerEvent | null;
   private readonly GUIDE_TEXT_DELAY: number = 5000;
 
-  setup(data?: any): void {
+  setup(data: number = 1): void {
     super.setup(data);
 
     const width = this.getWidth();
     const height = this.getHeight();
+    const zoom = data;
 
-    this.endMarkContainer = this.createTrackedContainer(width / 2 + 830, height / 2 + 410);
-    this.guideTextContainer = this.createTrackedContainer(width / 2 + 830, height / 2);
     this.endMark = this.createSprite(TEXTURE.PAUSE_B, 0, 0);
 
-    this.guideText = this.addText(0, +230, i18next.t('menu:guide_talk_message'), TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5);
+    if (zoom === 1.5) {
+      this.endMarkContainer = this.createTrackedContainer(width / 2 + 560, height / 2 + 280);
+      this.guideTextContainer = this.createTrackedContainer(width / 2 + 570, height / 2);
+      this.guideTextX = -20;
+      this.guideText = this.addText(-150, 250, i18next.t('menu:guide_talk_message'), TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5);
+      this.endMarkContainer.setScale(1.3);
+      this.guideTextContainer.setScale(0.65);
+    } else {
+      this.endMarkContainer = this.createTrackedContainer(width / 2 + 830, height / 2 + 410);
+      this.guideTextContainer = this.createTrackedContainer(width / 2 + 830, height / 2);
+      this.guideTextX = 0;
+      this.guideText = this.addText(0, 240, i18next.t('menu:guide_talk_message'), TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5);
+      this.endMarkContainer.setScale(this.scale_0);
+      this.guideTextContainer.setScale(1);
+    }
 
     this.endMarkContainer.add(this.endMark);
     this.guideTextContainer.add(this.guideText);
 
-    this.endMarkContainer.setScale(this.scale);
     this.endMarkContainer.setVisible(false);
     this.endMarkContainer.setDepth(DEPTH.MESSAGE + 1);
     this.endMarkContainer.setScrollFactor(0);
 
-    this.guideTextContainer.setScale(1);
     this.guideTextContainer.setVisible(false);
     this.guideTextContainer.setDepth(DEPTH.MESSAGE + 1);
     this.guideTextContainer.setScrollFactor(0);
@@ -116,7 +128,7 @@ export class TalkMessageUi extends MessageUi {
     const mapWidth = this.getWidth();
     const textDisplayWidth = this.guideText.displayWidth;
 
-    const containerCenterX = +90;
+    const containerCenterX = this.guideTextX + 90;
     const calculatedX = containerCenterX - textDisplayWidth;
 
     this.guideText.setX(calculatedX);

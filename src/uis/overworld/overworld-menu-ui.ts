@@ -10,6 +10,7 @@ import { Option } from '../../core/storage/player-option';
 import { SocketIO } from '../../core/manager/socket-manager';
 import { PlayerGlobal } from '../../core/storage/player-storage';
 import { Event } from '../../core/manager/event-manager';
+import { DEFAULT_ZOOM, OVERWORLD_ZOOM } from '../../constants';
 
 export class OverworldMenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -44,7 +45,7 @@ export class OverworldMenuUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.questionMessage.setup();
+    this.questionMessage.setup(OVERWORLD_ZOOM);
 
     this.lastStart = 0;
 
@@ -53,14 +54,14 @@ export class OverworldMenuUi extends Ui {
     };
     Event.on(EVENT.LANGUAGE_CHANGED, this.languageChangedCallback);
 
-    this.container = this.createTrackedContainer(width / 2 + 480, height / 2 - 470);
+    this.container = this.createTrackedContainer(width / 2 + 270, height / 2 - 315);
 
-    this.window = this.addWindow(TEXTURE.WINDOW_MENU, 0, -30, 130, 0, 16, 16, 16, 16).setOrigin(0, 0).setScale(this.scale);
+    this.window = this.addWindow(TEXTURE.WINDOW_MENU, 0, -30, 140, 0, 16, 16, 16, 16).setOrigin(0, 0).setScale(this.scale);
     this.container.add(this.window);
 
     this.renderList();
 
-    this.container.setScale(1.8);
+    this.container.setScale(1.3);
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI + 1);
     this.container.setScrollFactor(0);
@@ -206,6 +207,7 @@ export class OverworldMenuUi extends Ui {
           speed: Option.getTextSpeed()!,
           yes: async () => {
             await this.cancelMenu(choice);
+            this.scene.cameras.main.setZoom(DEFAULT_ZOOM);
             stopBackgroundMusic();
             SocketIO.moveToTitle({ from: PlayerGlobal.getData()?.location! });
             await Game.changeMode(MODE.TITLE);

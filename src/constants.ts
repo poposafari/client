@@ -13,6 +13,8 @@ export const MAX_PARTY_SLOT = 6;
 export const MAX_PC_SLOT = 33;
 export const MAX_PC_BG = 15;
 export const MAX_POKEDEX = 9;
+export const OVERWORLD_ZOOM = 1.5;
+export const DEFAULT_ZOOM = 1;
 
 export const OVERWORLD_DOOR_DATA: Record<OVERWORLD_DOOR, OverworldDoorData> = {
   //PLAZA_001

@@ -706,9 +706,9 @@ export function startModalAnimation(scene: InGameScene, target: any, duration: n
   });
 }
 
-export function playBackgroundMusic(scene: InGameScene | LoadingScene, key: AUDIO | string) {
+export function playBackgroundMusic(scene: InGameScene | LoadingScene, key: AUDIO | string, fadeInDuration: number = 1000) {
   Sound.init(scene);
-  Sound.playBackgroundMusic(key, Option.getBackgroundVolume());
+  Sound.playBackgroundMusic(key, Option.getBackgroundVolume(), fadeInDuration);
 }
 
 export function playEffectSound(scene: InGameScene | LoadingScene, key: AUDIO | string) {

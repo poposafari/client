@@ -550,14 +550,14 @@ export class PcBoxUi extends Ui {
       this.updateBoxIconAlpha(pokemon, true);
     } else {
       playEffectSound(this.scene, AUDIO.BUZZER);
-      await this.noticeUi.show({ content: i18next.t('message:warn_full_party'), window: TEXTURE.WINDOW_NOTICE_0, textStyle: TEXTSTYLE.MESSAGE_BLACK });
+      await this.noticeUi.show({ content: i18next.t('message:warn_full_party'), window: TEXTURE.WINDOW_NOTICE_2, textStyle: TEXTSTYLE.MESSAGE_BLACK });
     }
   }
 
   private async handleRemoveParty(pokemon: PlayerPokemon): Promise<void> {
     if (PC.getHiddenMovePokemon()?.getIdx() === pokemon.getIdx()) {
       playEffectSound(this.scene, AUDIO.BUZZER);
-      await this.noticeUi.show({ content: i18next.t('message:warn_hidden_move_pokemon'), window: TEXTURE.WINDOW_NOTICE_0, textStyle: TEXTSTYLE.MESSAGE_BLACK });
+      await this.noticeUi.show({ content: i18next.t('message:warn_hidden_move_pokemon'), window: TEXTURE.WINDOW_NOTICE_2, textStyle: TEXTSTYLE.MESSAGE_BLACK });
       return;
     }
 

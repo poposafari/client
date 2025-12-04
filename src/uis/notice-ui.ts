@@ -6,13 +6,25 @@ import { addText, addWindow, getTextShadow, getTextStyle, playEffectSound, setTe
 import { MessageUi } from './message-ui';
 
 export class NoticeUi extends MessageUi {
+  private currentZoom: number = 1;
+
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  protected setupMessageContainer(): void {
-    super.setupMessageContainer();
-    this.setTextPosition(-425, -35);
+  setup(data: number = 1): void {
+    this.currentZoom = data;
+    super.setup(data);
+  }
+
+  protected setupMessageContainer(zoom: number = 1): void {
+    super.setupMessageContainer(zoom);
+
+    if (zoom === 1.5) {
+      this.setTextPosition(-380, -30);
+    } else {
+      this.setTextPosition(-425, -35);
+    }
   }
 
   async show(data: Notice): Promise<boolean> {
@@ -26,12 +38,29 @@ export class NoticeUi extends MessageUi {
 
     playEffectSound(this.scene, AUDIO.SELECT_0);
 
-    this.container.setY(this.getHeight() / 2 + 500);
+    const zoom = this.currentZoom;
+    const height = this.getHeight();
+
+    let startY: number;
+    let targetY: number;
+    let endY: number;
+
+    if (zoom === 1.5) {
+      startY = height / 2 + 368;
+      targetY = height / 2 + 278;
+      endY = height / 2 + 368;
+    } else {
+      startY = height / 2 + 500;
+      targetY = height / 2 + 410;
+      endY = height / 2 + 500;
+    }
+
+    this.container.setY(startY);
     this.container.setVisible(true);
 
     this.scene.tweens.add({
       targets: this.container,
-      y: this.getHeight() / 2 + 410,
+      y: targetY,
       duration: 300,
       ease: EASE.QUINT_EASEOUT,
     });
@@ -41,7 +70,7 @@ export class NoticeUi extends MessageUi {
         if (key === KEY.Z || key === KEY.ENTER) {
           this.scene.tweens.add({
             targets: this.container,
-            y: this.getHeight() / 2 + 500,
+            y: endY,
             duration: 200,
             ease: EASE.QUINT_EASEIN,
             onComplete: () => {
@@ -62,6 +91,12 @@ export class NoticeUi extends MessageUi {
   }
 
   private async showNotice(message: Notice): Promise<void> {
+    if (this.currentZoom === 1.5) {
+      this.text.setScale(0.43);
+    } else {
+      this.text.setScale(0.5);
+    }
+
     this.text.setText(message.content);
   }
 }

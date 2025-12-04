@@ -29,6 +29,9 @@ import DayNightFilter from '../../utils/day-night-filter';
 import { getCurrentTimeOfDay, getCurrentTimeOfDayValue, replacePercentSymbol } from '../../utils/string-util';
 import { LampOverworldObj } from '../../obj/lamp-overworld-obj';
 import i18next from 'i18next';
+import { QuickSlotItemUi } from '../quick-slot-item-ui';
+import { OVERWORLD_ZOOM } from '../../constants';
+import { ConnectBaseUi } from '../connect-base-ui';
 
 export class OverworldUi extends Ui {
   private type!: OVERWORLD_TYPE;
@@ -74,7 +77,7 @@ export class OverworldUi extends Ui {
 
   setup(): void {
     this.hud.setup();
-    this.tutorialMessage.setup();
+    this.tutorialMessage.setup(OVERWORLD_ZOOM);
 
     this.disableFilterCallback = () => {
       this.setDayNightFilterEnabled(false);
@@ -171,7 +174,7 @@ export class OverworldUi extends Ui {
 
     if (playerSprite) {
       this.scene.cameras.main.startFollow(playerSprite, true, 0.5, 0.5);
-      this.scene.cameras.main.setZoom(1);
+      this.scene.cameras.main.setZoom(1.5);
     }
 
     await this.player.waitingMovement();
@@ -248,6 +251,17 @@ export class OverworldUi extends Ui {
     if (currentUi instanceof OverworldUi) {
       this.player.update(delta);
       this.npc.update(delta);
+    }
+
+    if (currentUi instanceof OverworldMenuUi || currentUi instanceof OverworldUi || currentUi instanceof QuickSlotItemUi) {
+      this.scene.cameras.main.setZoom(1.5);
+      PlayerGlobal.setOverworldZoom(1.5);
+    } else {
+      if (currentUi instanceof ConnectBaseUi) {
+        return;
+      }
+      this.scene.cameras.main.setZoom(1);
+      PlayerGlobal.setOverworldZoom(1);
     }
   }
 
@@ -465,9 +479,9 @@ export class OverworldPlayer {
 
   async show(map: Phaser.Tilemaps.Tilemap, type: OVERWORLD_TYPE) {
     if (!this.uiInitCnt) {
-      this.talkMessageUi.setup();
-      this.questionMessageUi.setup();
-      this.noticeUi.setup();
+      this.talkMessageUi.setup(OVERWORLD_ZOOM);
+      this.questionMessageUi.setup(OVERWORLD_ZOOM);
+      this.noticeUi.setup(OVERWORLD_ZOOM);
       this.uiInitCnt = true;
     }
 
@@ -548,7 +562,7 @@ export class OverworldPlayer {
 
   async waitingMovement(): Promise<void> {
     void this.actionQueue.enqueue(async () => {
-      await delay(this.scene, 500);
+      await delay(this.scene, 200);
     }, OVERWORLD_ACTION.WAITING);
   }
 
