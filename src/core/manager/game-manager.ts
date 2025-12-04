@@ -385,6 +385,8 @@ export class GameManager {
           const wilds = res.data.wilds;
           const groundItems = res.data.groundItems;
 
+          console.log(groundItems);
+
           OverworldGlobal.setupWildData(wilds);
           OverworldGlobal.setupGroundItemInfo(groundItems);
         }

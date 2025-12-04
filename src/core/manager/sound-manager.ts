@@ -19,6 +19,8 @@ export class SoundManager {
   private backgroundMusicPaused: boolean = false;
   private backgroundMusicPosition: number = 0;
   private effectSounds: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private fadeInTween: Phaser.Tweens.Tween | null = null;
+  private fadeInVolume: { value: number } = { value: 0 };
 
   private effectPriorityMap: Map<AUDIO, EFFECT_PRIORITY> = new Map([
     // 우선순위 높음 (배경음악 일시정지 O)
@@ -81,22 +83,52 @@ export class SoundManager {
     return true;
   }
 
-  playBackgroundMusic(key: AUDIO | string, volume: number = 1): void {
+  playBackgroundMusic(key: AUDIO | string, volume: number = 1, fadeInDuration: number = 2000): void {
     if (!this.scene) return;
     if (!this.validateSoundKey(key)) return;
     if (this.currentBackgroundMusic && this.currentBackgroundMusic.key === key && this.currentBackgroundMusic.isPlaying) return;
 
+    if (this.fadeInTween) {
+      this.fadeInTween.stop();
+      this.fadeInTween = null;
+    }
+
     this.stopBackgroundMusic();
     this.currentBackgroundMusic = this.scene.sound.add(key, {
-      volume: volume,
+      volume: 0,
       loop: true,
     }) as Phaser.Sound.BaseSound;
 
     this.currentBackgroundMusic.play();
     this.backgroundMusicPaused = false;
+
+    if (this.scene && fadeInDuration > 0) {
+      this.fadeInVolume.value = 0;
+      this.fadeInTween = this.scene.tweens.add({
+        targets: this.fadeInVolume,
+        value: volume,
+        duration: fadeInDuration,
+        ease: 'Linear',
+        onUpdate: () => {
+          if (this.currentBackgroundMusic) {
+            (this.currentBackgroundMusic as any).setVolume(this.fadeInVolume.value);
+          }
+        },
+        onComplete: () => {
+          this.fadeInTween = null;
+        },
+      });
+    } else {
+      (this.currentBackgroundMusic as any).setVolume(volume);
+    }
   }
 
   stopBackgroundMusic(): void {
+    if (this.fadeInTween) {
+      this.fadeInTween.stop();
+      this.fadeInTween = null;
+    }
+
     if (this.currentBackgroundMusic) {
       this.currentBackgroundMusic.stop();
       this.currentBackgroundMusic.destroy();

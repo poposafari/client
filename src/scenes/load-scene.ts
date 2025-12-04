@@ -35,6 +35,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.REWARD_OVERLAY_3, 'ui/windows', TEXTURE.REWARD_OVERLAY_3);
     this.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', TEXTURE.WINDOW_NOTICE_0);
     this.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', TEXTURE.WINDOW_NOTICE_1);
+    this.loadImage(TEXTURE.WINDOW_NOTICE_2, 'ui/windows', TEXTURE.WINDOW_NOTICE_2);
     this.loadImage(TEXTURE.WINDOW_HELP, 'ui/windows', TEXTURE.WINDOW_HELP);
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', TEXTURE.WINDOW_0);
     this.loadImage(TEXTURE.WINDOW_1, 'ui/windows', TEXTURE.WINDOW_1);

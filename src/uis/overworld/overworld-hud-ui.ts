@@ -176,19 +176,19 @@ export class OverworldIconUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    const slotSize = 65;
+    const slotSize = 50;
     const slotSpacing = 10;
 
     const helpWindowSize = 25;
     const helpWindowScale = 1;
 
-    this.container = this.createTrackedContainer(width / 2 + 760, height / 2 + 495);
+    this.container = this.createTrackedContainer(width / 2 + 480, height / 2 + 330);
 
     this.contents.forEach((key, index) => {
       const xPosition = index * (slotSize + slotSpacing);
       const yPosition = 0;
 
-      const icon = this.addImage(key, xPosition, yPosition).setScale(2.4);
+      const icon = this.addImage(key, xPosition, yPosition).setScale(2);
       const iconHelpWindow = this.addWindow(TEXTURE.WINDOW_HELP, xPosition - 20, yPosition - 25, helpWindowSize / helpWindowScale, helpWindowSize / helpWindowScale, 16, 16, 16, 16).setScale(
         helpWindowScale,
       );
@@ -437,7 +437,7 @@ export class OverworldInfoUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createTrackedContainer(width / 2 - 750, height / 2 - 500);
+    this.container = this.createTrackedContainer(width / 2 - 440, height / 2 - 320);
 
     this.createWindow();
 
@@ -482,14 +482,15 @@ export class OverworldInfoUi extends Ui {
 
   private createWindow() {
     const contentWidth = 380;
-    const contentHeight = 50;
-    const spacing = 5;
+    const contentHeight = 35;
+    const spacing = 10;
 
     let currentY = 0;
     let i = 0;
     for (const key of this.icons) {
-      const icon = this.addImage(key, -160, currentY).setScale(2);
-      const text = this.addText(-120, currentY, '10,20', TEXTSTYLE.ONLY_WHITE).setOrigin(0, 0.5);
+      const icon = this.addImage(key, -160, currentY).setScale(1.6);
+      const text = this.addText(-130, currentY, '10,20', TEXTSTYLE.ONLY_WHITE).setOrigin(0, 0.5);
+      text.setScale(0.4);
       text.setStroke('#5e5e5e', 12);
 
       this.container.add(icon);
@@ -515,6 +516,8 @@ export class OverworldLocationUi extends Ui {
   private isAnimating: boolean = false;
   private activeTweens: Phaser.Tweens.Tween[] = [];
 
+  private readonly posX: number = 35;
+
   constructor(scene: InGameScene) {
     super(scene);
   }
@@ -523,11 +526,12 @@ export class OverworldLocationUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2 - 940, height / 2 - 475);
+    this.container = this.createContainer(width / 2 - 630, height / 2 - 400);
     this.restorePosY = this.container.y;
 
-    this.window = this.addImage(TEXTURE.WINDOW_0, 0, 0).setOrigin(0, 0.5).setScale(4.8);
-    this.location = this.addText(30, +22, '', TEXTSTYLE.OVERWORLD_AREA_B).setOrigin(0, 0.5);
+    this.window = this.addImage(TEXTURE.WINDOW_0, 0, 0).setOrigin(0, 0.5).setScale(3.8);
+    this.location = this.addText(0, 0, '', TEXTSTYLE.OVERWORLD_AREA_B).setOrigin(0, 0.5);
+    this.location.setScale(0.4);
 
     this.container.add(this.window);
     this.container.add(this.location);
@@ -558,10 +562,10 @@ export class OverworldLocationUi extends Ui {
     if (data?.location) {
       this.location.setText(i18next.t(`menu:${data.location}`));
     }
-    this.location.setPosition(40, 0);
+    this.location.setPosition(this.posX, 0);
 
-    const startY = -100;
-    const endY = 80;
+    const startY = 100;
+    const endY = 240;
     this.isAnimating = true;
 
     this.container.setVisible(true);
@@ -652,7 +656,7 @@ export class OverworldPokemonSlotUi extends Ui {
     const spacing = 5;
     let currentY = 0;
 
-    this.container = this.createTrackedContainer(width - 40, height / 3 + 50);
+    this.container = this.createTrackedContainer(width / 2 + 600, height / 3 + 50);
 
     for (let i = 0; i < this.MaxSlot; i++) {
       const window = this.addWindow(TEXTURE.WINDOW_OPACITY, 0, currentY, contentHeight, contentHeight, 8, 8, 8, 8);
@@ -669,7 +673,7 @@ export class OverworldPokemonSlotUi extends Ui {
 
       currentY += contentHeight + spacing;
     }
-    this.container.setScale(1);
+    this.container.setScale(0.8);
 
     this.container.setVisible(false);
     this.container.setDepth(DEPTH.OVERWORLD_UI);

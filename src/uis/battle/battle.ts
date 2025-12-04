@@ -39,6 +39,15 @@ enum BATTLE_PHASE {
   FLEE_PLAYER = 'FLEE_PLAYER',
 }
 
+export const startBattleIntro = async (scene: InGameScene): Promise<void> => {
+  await delay(scene, 100);
+  await runFlashEffect(scene, 100);
+  await runFlashEffect(scene, 100);
+  runWipeRifghtToLeftEffect(scene);
+  await delay(scene, 1000);
+  await stopPostPipeline(scene);
+};
+
 export class Battle extends Ui {
   private tutorialContainer!: Phaser.GameObjects.Container;
   private tutorialBg!: Phaser.GameObjects.Image;
@@ -462,13 +471,7 @@ export class BattleBaseUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   async intro(): Promise<void> {
-    await delay(this.scene, 100);
-    await runFlashEffect(this.scene, 100);
-    await runFlashEffect(this.scene, 100);
-    runWipeRifghtToLeftEffect(this.scene);
-    await delay(this.scene, 1000);
     Event.emit(EVENT.DISABLE_DAY_NIGHT_FILTER);
-    await stopPostPipeline(this.scene);
 
     await this.displayBattleIntro();
   }

@@ -64,7 +64,7 @@ export class OverworldPlayerInteractionHandler {
       if (res.result) {
         event.caught();
         playEffectSound(this.context.scene, AUDIO.GET_0);
-        Bag.addItems(res.data.idx, res.data.item, res.data.stock, res.data.category);
+        Bag.getItem(res.data.item)?.setStock(res.data.stock);
         await this.context.talkMessageUi.show({
           type: 'default',
           content: replacePercentSymbol(i18next.t(`message:catch_item`), [PlayerGlobal.getData()?.nickname, i18next.t(`item:${groundItemData.item}.name`)]),

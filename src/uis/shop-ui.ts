@@ -16,6 +16,7 @@ import { replacePercentSymbol } from '../utils/string-util';
 import { Option } from '../core/storage/player-option';
 import { PlayerGlobal } from '../core/storage/player-storage';
 import { ErrorCode } from '../core/errors';
+import { OVERWORLD_ZOOM } from '../constants';
 
 export class ShopUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -41,7 +42,7 @@ export class ShopUi extends Ui {
 
   private readonly minBuy: number = 1;
   private readonly maxBuy: number = 99;
-  private readonly scale: number = 2.4;
+  private readonly scale: number = 2;
   private readonly descWindowWidth = 1238;
   private readonly descWindowHeight = 160;
 
@@ -59,9 +60,9 @@ export class ShopUi extends Ui {
     const height = this.getHeight();
     this.productList = data;
 
-    this.talkMessageUi.setup();
-    this.questionMessageUi.setup();
-    this.noticeUi.setup();
+    this.talkMessageUi.setup(OVERWORLD_ZOOM);
+    this.questionMessageUi.setup(OVERWORLD_ZOOM);
+    this.noticeUi.setup(OVERWORLD_ZOOM);
 
     this.inBag = 0;
     this.buy = this.minBuy;
@@ -70,10 +71,10 @@ export class ShopUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
 
-    this.list.setup({ scale: 1.5, etcScale: 2, windowWidth: 550, offsetX: +100, offsetY: +100, depth: DEPTH.MENU + 1, per: 10, info: [], window: TEXTURE.BLANK });
+    this.list.setup({ scale: 1.2, etcScale: 2, windowWidth: 470, offsetX: +48, offsetY: +70, depth: DEPTH.MENU + 1, per: 9, info: [], window: TEXTURE.BLANK });
 
-    this.screen = this.addImage(TEXTURE.SHOP_SCREEN, +120, 0);
-    this.screen.setScale(2.8);
+    this.screen = this.addImage(TEXTURE.SHOP_SCREEN, +70, 0);
+    this.screen.setScale(1.9);
 
     this.descUi.setup(this.items);
     this.setupMenu(width, height);
@@ -155,6 +156,7 @@ export class ShopUi extends Ui {
                     const data = ret.data as BuyItemRes;
                     PlayerGlobal.updateData({ candy: data.candy });
                     Bag.addItems(data.idx, data.item, data.stock, data.category);
+                    Bag.getItem(item.key)?.setStock(data.stock);
 
                     await this.talkMessageUi.show({
                       type: 'default',
@@ -215,23 +217,23 @@ export class ShopUi extends Ui {
   update(time?: number, delta?: number): void {}
 
   private setupMenu(width: number, height: number) {
-    this.menuContainer = this.createTrackedContainer(width / 2 - 35, height / 2 + 165);
+    this.menuContainer = this.createTrackedContainer(width / 2, height / 2 + 110);
 
-    const inBagWindow = this.addWindow(TEXTURE.WINDOW_MENU, -435, 0, 280 / this.scale, 120 / this.scale, 16, 16, 16, 16);
+    const inBagWindow = this.addWindow(TEXTURE.WINDOW_MENU, -400, 0, 180 / this.scale, 110 / this.scale, 16, 16, 16, 16);
     inBagWindow.setScale(this.scale);
-    const inBagIcon = this.addImage(TEXTURE.ICON_BAG_M, -490, 0);
-    inBagIcon.setScale(3);
-    const inBagTextSymbol = this.addText(-440, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
-    this.inBagText = this.addText(-420, 0, `${this.inBag}`, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
-    const costWindow = this.addWindow(TEXTURE.WINDOW_MENU, -105, 0, 345 / this.scale, 120 / this.scale, 16, 16, 16, 16);
+    const inBagIcon = this.addImage(TEXTURE.ICON_BAG_M, -440, 0);
+    inBagIcon.setScale(2);
+    const inBagTextSymbol = this.addText(-400, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
+    this.inBagText = this.addText(-380, 0, `${this.inBag}`, TEXTSTYLE.DEFAULT_BLACK).setOrigin(0, 0.5);
+    const costWindow = this.addWindow(TEXTURE.WINDOW_MENU, -140, 0, 330 / this.scale, 110 / this.scale, 16, 16, 16, 16);
     costWindow.setScale(this.scale);
-    const buySymbol = this.addText(-225, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
-    this.buyText = this.addText(-190, 0, `${this.buy}`, TEXTSTYLE.DEFAULT_BLACK);
-    const buyArrowDown = this.addImage(TEXTURE.ARROW_R, -190, -30).setFlipY(true);
-    const buyArrowUp = this.addImage(TEXTURE.ARROW_R, -190, 30);
-    const costIcon = this.addImage(TEXTURE.ICON_CANDY, -110, 0).setScale(2.4);
-    const costSymbol = this.addText(-70, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
-    this.costText = this.addText(-50, 0, `${this.cost}`, TEXTSTYLE.DEFAULT_BLACK);
+    const buySymbol = this.addText(-260, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
+    this.buyText = this.addText(-220, 0, `${this.buy}`, TEXTSTYLE.DEFAULT_BLACK);
+    const buyArrowDown = this.addImage(TEXTURE.ARROW_R, -220, -30).setFlipY(true);
+    const buyArrowUp = this.addImage(TEXTURE.ARROW_R, -220, 30);
+    const costIcon = this.addImage(TEXTURE.ICON_CANDY, -150, 0).setScale(2.4);
+    const costSymbol = this.addText(-110, 0, 'x', TEXTSTYLE.DEFAULT_BLACK);
+    this.costText = this.addText(-90, 0, `${this.cost}`, TEXTSTYLE.DEFAULT_BLACK);
     this.costText.setOrigin(0, 0.5);
 
     this.menuContainer.add(inBagWindow);
@@ -301,14 +303,14 @@ export class ShopDescUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.container = this.createContainer(width / 2 - 200, height / 2 + 400);
+    this.container = this.createContainer(width / 2, height / 2 + 270);
 
-    this.icon = this.addImage(`item000`, -365, 0);
-    this.text = this.addText(-250, -65, '', TEXTSTYLE.MESSAGE_WHITE);
+    this.icon = this.addImage(`item000`, -395, 0);
+    this.text = this.addText(-310, -40, '', TEXTSTYLE.MESSAGE_WHITE);
 
-    this.icon.setScale(2);
+    this.icon.setScale(1.5);
     this.text.setOrigin(0, 0);
-    this.text.setScale(1);
+    this.text.setScale(0.6);
 
     this.container.add(this.icon);
     this.container.add(this.text);

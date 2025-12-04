@@ -14,26 +14,43 @@ export class QuestionMessageUi extends MessageUi {
   private questionTexts: Phaser.GameObjects.Text[] = [];
   private arrowTexture!: TEXTURE | string;
 
-  private readonly questionWindowWidth: number = 160;
-  private readonly questionWindowHeight: number = 120;
+  private questionTextScale: number = 0;
 
-  setup(data?: any): void {
+  private readonly questionWindowWidth_0: number = 160;
+  private readonly questionWindowHeight_0: number = 120;
+
+  private readonly questionWindowWidth_1: number = 150;
+  private readonly questionWindowHeight_1: number = 115;
+
+  setup(data: number = 1): void {
     super.setup(data);
 
     const width = this.getWidth();
     const height = this.getHeight();
-
-    this.questionContainer = this.createTrackedContainer(width / 2 + 790, height / 2 + 150);
-    this.questionWindow = this.addWindow(TEXTURE.WINDOW_0, 0, 0, this.questionWindowWidth / this.scale, this.questionWindowHeight / this.scale, 16, 16, 16, 16).setScale(this.scale);
-    this.questionContainer.add(this.questionWindow);
+    const zoom = data;
 
     const texts = [i18next.t('menu:yes'), i18next.t('menu:no')];
     const contentHeight = 30;
     const spacing = 10;
     let currentY = 0;
 
+    if (zoom === 1.5) {
+      this.questionTextScale = 0.46;
+      this.questionContainer = this.createTrackedContainer(width / 2 + 522, height / 2 + 100);
+      this.questionWindow = this.addWindow(TEXTURE.WINDOW_0, 0, 0, this.questionWindowWidth_1 / this.scale_1, this.questionWindowHeight_1 / this.scale_1, 16, 16, 16, 16).setScale(this.scale_1);
+      this.questionContainer.setScale(this.scale_1);
+    } else {
+      this.questionTextScale = 0.5;
+      this.questionContainer = this.createTrackedContainer(width / 2 + 790, height / 2 + 150);
+      this.questionWindow = this.addWindow(TEXTURE.WINDOW_0, 0, 0, this.questionWindowWidth_0 / this.scale_0, this.questionWindowHeight_0 / this.scale_0, 16, 16, 16, 16).setScale(this.scale_0);
+      this.questionContainer.setScale(this.scale_0);
+    }
+
+    this.questionContainer.add(this.questionWindow);
+
     for (const str of texts) {
       const text = this.addText(-40, currentY - 18, str, TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5);
+      text.setScale(this.questionTextScale);
       const dummy = this.addImage(TEXTURE.BLANK, -50, currentY - 20).setScale(1.4);
 
       this.dummys.push(dummy);
@@ -45,7 +62,6 @@ export class QuestionMessageUi extends MessageUi {
       currentY += contentHeight + spacing;
     }
 
-    this.questionContainer.setScale(this.scale);
     this.questionContainer.setVisible(false);
     this.questionContainer.setDepth(DEPTH.MESSAGE);
     this.questionContainer.setScrollFactor(0);

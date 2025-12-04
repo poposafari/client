@@ -4,6 +4,7 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { NoticeUi } from '../uis/notice-ui';
 import { OverworldObj } from './overworld-obj';
 import { replacePercentSymbol } from '../utils/string-util';
+import { OVERWORLD_ZOOM } from '../constants';
 
 export class SignOverworldObj extends OverworldObj {
   private noticeUi: NoticeUi;
@@ -17,7 +18,7 @@ export class SignOverworldObj extends OverworldObj {
     super(scene, texture, x, y, name, OBJECT.SIGN);
 
     this.noticeUi = new NoticeUi(scene);
-    this.noticeUi.setup();
+    this.noticeUi.setup(OVERWORLD_ZOOM);
 
     this.getShadow().setVisible(false);
 
