@@ -4,6 +4,13 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { WildRes } from '../types';
 import { playEffectSound } from '../uis/ui';
 import { MovableOverworldObj } from './movable-overworld-obj';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { PlayerOverworldObj } from './player-overworld-obj';
+
+export type RangeTile = {
+  x: number;
+  y: number;
+};
 
 export class WildOverworldObj extends MovableOverworldObj {
   private data: WildRes;
@@ -11,6 +18,7 @@ export class WildOverworldObj extends MovableOverworldObj {
   private againTimer?: Phaser.Time.TimerEvent;
   private currentDirectionIndex?: number;
   private remainingSteps: number = 0;
+  private range: number = 7;
 
   private readonly scale: number = 1.5;
   private readonly speed: number = 2;
@@ -20,7 +28,7 @@ export class WildOverworldObj extends MovableOverworldObj {
 
   constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap, data: WildRes, x: number, y: number) {
     const texture = `pokemon_overworld${data.pokedex}${data.shiny ? 's' : ''}`;
-    super(scene, map, texture, x, y, i18next.t(`pokemon:${data.pokedex}.name`), OBJECT.WILD, DIRECTION.DOWN);
+    super(scene, map, texture, x, y, '', OBJECT.WILD, DIRECTION.DOWN);
 
     this.data = data;
     this.setSpriteScale(this.scale);
@@ -226,5 +234,90 @@ export class WildOverworldObj extends MovableOverworldObj {
       const newName = i18next.t(`pokemon:${this.data.pokedex}.name`);
       this.setName(newName);
     }
+  }
+
+  updateNameBasedOnRange(playerObj: PlayerOverworldObj | null): void {
+    if (!playerObj) {
+      this.setName('');
+      return;
+    }
+
+    const wildTilePos = this.getTilePos();
+    const playerTilePos = playerObj.getTilePos();
+
+    const wildX = Math.floor(wildTilePos.x);
+    const wildY = Math.floor(wildTilePos.y);
+    const playerX = Math.floor(playerTilePos.x);
+    const playerY = Math.floor(playerTilePos.y);
+
+    const halfRange = Math.floor((this.range - 1) / 2);
+    const deltaX = Math.abs(playerX - wildX);
+    const deltaY = Math.abs(playerY - wildY);
+
+    const isPlayerInRange = deltaX <= halfRange && deltaY <= halfRange;
+
+    if (isPlayerInRange) {
+      if (this.data) {
+        const pokemonName = i18next.t(`pokemon:${this.data.pokedex}.name`);
+        this.setName(pokemonName);
+      }
+    } else {
+      this.setName('');
+    }
+  }
+
+  setRange(range: number): void {
+    this.range = range;
+  }
+
+  getRange(): number {
+    return this.range;
+  }
+
+  getRangeTiles(): RangeTile[] {
+    const centerTile = this.getTilePos();
+    const centerX = Math.floor(centerTile.x);
+    const centerY = Math.floor(centerTile.y);
+    const halfRange = Math.floor((this.range - 1) / 2);
+
+    const tiles: RangeTile[] = [];
+
+    for (let y = centerY - halfRange; y <= centerY + halfRange; y++) {
+      for (let x = centerX - halfRange; x <= centerX + halfRange; x++) {
+        tiles.push({ x, y });
+      }
+    }
+
+    return tiles;
+  }
+
+  isInRange(tileX: number, tileY: number): boolean {
+    const centerTile = this.getTilePos();
+    const centerX = Math.floor(centerTile.x);
+    const centerY = Math.floor(centerTile.y);
+    const halfRange = Math.floor((this.range - 1) / 2);
+
+    const deltaX = Math.abs(tileX - centerX);
+    const deltaY = Math.abs(tileY - centerY);
+
+    return deltaX <= halfRange && deltaY <= halfRange;
+  }
+
+  isInRangeVector(tilePos: Phaser.Math.Vector2): boolean {
+    return this.isInRange(Math.floor(tilePos.x), Math.floor(tilePos.y));
+  }
+
+  getRangeBounds(): { minX: number; minY: number; maxX: number; maxY: number } {
+    const centerTile = this.getTilePos();
+    const centerX = Math.floor(centerTile.x);
+    const centerY = Math.floor(centerTile.y);
+    const halfRange = Math.floor((this.range - 1) / 2);
+
+    return {
+      minX: centerX - halfRange,
+      minY: centerY - halfRange,
+      maxX: centerX + halfRange,
+      maxY: centerY + halfRange,
+    };
   }
 }

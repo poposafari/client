@@ -251,6 +251,17 @@ export class OverworldUi extends Ui {
     if (currentUi instanceof OverworldUi) {
       this.player.update(delta);
       this.npc.update(delta);
+
+      if (this.type === OVERWORLD_TYPE.SAFARI && this.safari) {
+        const wilds = this.safari.getWilds();
+        const playerObj = this.player.getObj();
+
+        if (playerObj && wilds.length > 0) {
+          for (const wild of wilds) {
+            wild.updateNameBasedOnRange(playerObj);
+          }
+        }
+      }
     }
 
     if (currentUi instanceof OverworldMenuUi || currentUi instanceof OverworldUi || currentUi instanceof QuickSlotItemUi) {
@@ -547,6 +558,10 @@ export class OverworldPlayer {
     Event.on(EVENT.USE_ITEM, this.useItemCallback);
 
     this.handleKeyInput();
+  }
+
+  getObj() {
+    return this.obj;
   }
 
   async showTutorialMessages(type: OVERWORLD_TYPE): Promise<void> {
