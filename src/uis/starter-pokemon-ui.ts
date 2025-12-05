@@ -8,6 +8,7 @@ import { addBackground, addImage, addText, addWindow, createSprite, playEffectSo
 import { getCurrentTimeOfDay, getPokemonType, replacePercentSymbol } from '../utils/string-util';
 import { QuestionMessageUi } from './question-message-ui';
 import { Option } from '../core/storage/player-option';
+import { DEFAULT_ZOOM, OVERWORLD_ZOOM } from '../constants';
 
 export class StarterPokemonUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -28,7 +29,7 @@ export class StarterPokemonUi extends Ui {
 
   private starterPokemons: WildRes[] = [];
 
-  private readonly baseWindowScale: number = 4;
+  private readonly baseWindowScale: number = 2;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -40,15 +41,15 @@ export class StarterPokemonUi extends Ui {
     this.sceneWidth = this.getWidth();
     this.sceneHeight = this.getHeight();
 
-    this.questionMessage.setup();
+    this.questionMessage.setup(OVERWORLD_ZOOM);
 
     this.container = this.createContainer(this.sceneWidth / 2, this.sceneHeight / 2);
     this.contentContainer = this.createContainer(this.sceneWidth / 2, this.sceneHeight / 2);
 
     const bg = this.addBackground(TEXTURE.BG_TUTORIAL_CHOICE).setOrigin(0.5, 0.5);
-    this.pokemon = this.addImage(`pokemon_sprite0000`, 0, -250).setScale(4.8);
-    this.baseWindow = this.addWindow(TEXTURE.WINDOW_0, 0, +410, 480, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
-    this.text = this.addText(-880, +335, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
+    this.pokemon = this.addImage(`pokemon_sprite0000`, 0, -180).setScale(4);
+    this.baseWindow = this.addWindow(TEXTURE.WINDOW_0, 0, 278, 1280 / this.baseWindowScale, 165 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
+    this.text = this.addText(-395, -30, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(0.43);
 
     this.container.add(bg);
     this.container.add(this.pokemon);
@@ -204,7 +205,7 @@ export class StarterPokemonUi extends Ui {
 
     if (ret.result) {
       const contentWidth = 100;
-      const spacing = 20;
+      const spacing = 10;
       const wilds = ret.data.wilds;
 
       const sortedWilds = wilds.sort((a, b) => {
@@ -222,9 +223,9 @@ export class StarterPokemonUi extends Ui {
       let currentX = 0;
       for (let i = 0; i < sortedWilds.length; i++) {
         const ball = this.createSprite(TEXTURE.TUTORIAL_CHOICE_BALL, currentX, 0);
-        ball.setScale(2.4);
-        const finger = this.createSprite(TEXTURE.BLANK, currentX, -170);
-        finger.setScale(2);
+        ball.setScale(2);
+        const finger = this.createSprite(TEXTURE.BLANK, currentX, -150);
+        finger.setScale(1.4);
         this.balls.push(ball);
         this.fingers.push(finger);
         this.contentContainer.add(ball);
@@ -248,10 +249,10 @@ export class StarterPokemonUi extends Ui {
     const speed = talk.speed;
     const segments = this.parseBBCode(content);
 
-    let currentX = -880;
-    let currentY = 340;
-    const startX = -880;
-    const lineHeight = 70;
+    let currentX = -600;
+    let currentY = +230;
+    const startX = -600;
+    const lineHeight = 45;
 
     return new Promise<void>((resolve) => {
       let segmentIndex = 0;
@@ -268,7 +269,7 @@ export class StarterPokemonUi extends Ui {
 
         if (charIndex === 0) {
           const style = segment.isSpecial && segment.tagType === 'special' ? this.getTextStyleForTag(type) : TEXTSTYLE.MESSAGE_BLACK;
-          const textObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
+          const textObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(0.65);
           this.container.add(textObj);
           this.textObjects.push(textObj);
         }
@@ -283,7 +284,7 @@ export class StarterPokemonUi extends Ui {
 
           if (charIndex < segment.text.length) {
             const style = segment.isSpecial && segment.tagType === 'special' ? this.getTextStyleForTag(type) : TEXTSTYLE.MESSAGE_BLACK;
-            const newTextObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(1);
+            const newTextObj = this.addText(currentX, currentY, '', style).setOrigin(0, 0).setScale(0.65);
             this.container.add(newTextObj);
             this.textObjects.push(newTextObj);
           }

@@ -219,7 +219,7 @@ export class TitleUi extends Ui {
     const continueTitlePlaytime = this.addText(this.contentPosY, -200, i18next.t('menu:continuePlaytime'), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
     const continueName = this.addText(-60, -290, nickname, TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
     const continueLocation = this.addText(-60, -245, i18next.t(`menu:${location}`), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
-    const continuePlaytime = this.addText(-60, -200, formatPlaytime(PlayerGlobal.getData()?.updatedAt as Date, PlayerGlobal.getData()?.createdAt as Date), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
+    const continuePlaytime = this.addText(-60, -200, formatPlaytime(PlayerGlobal.getPlayTime()), TEXTSTYLE.SPECIAL).setOrigin(0, 0.5);
 
     const statue = this.addImage(`${gender}_${avatar}_statue`, -335, -140).setScale(3.4);
 

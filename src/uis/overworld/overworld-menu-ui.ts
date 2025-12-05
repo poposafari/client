@@ -209,6 +209,9 @@ export class OverworldMenuUi extends Ui {
             await this.cancelMenu(choice);
             this.scene.cameras.main.setZoom(DEFAULT_ZOOM);
             stopBackgroundMusic();
+
+            PlayerGlobal.stopPlayTimeTimer();
+
             SocketIO.moveToTitle({ from: PlayerGlobal.getData()?.location! });
             await Game.changeMode(MODE.TITLE);
           },

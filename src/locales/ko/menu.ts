@@ -221,4 +221,7 @@ export const menu: TranslationDefault = {
   helpArrowsGuide: '이동',
   helpSelectGuide: '선택',
   helpCancelGuide: '취소',
+  time_day: '낮',
+  time_dusk: '해질녘',
+  time_night: '밤',
 };
