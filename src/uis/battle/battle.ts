@@ -1899,7 +1899,7 @@ export class BattleMenuListUi extends Ui {
   }
 
   private async handlePokeBallMenuKeyInput(): Promise<'cancel' | PlayerItem> {
-    const pokeballs = Object.values(Bag.getCategory(ItemCategory.POKEBALL));
+    const pokeballs = Bag.getCategory(ItemCategory.POKEBALL);
     this.itemDescUi.setInfo(pokeballs);
 
     this.pokeballMenuList.updateInfo(this.createPokeballMenuListForm(pokeballs));
@@ -1915,7 +1915,7 @@ export class BattleMenuListUi extends Ui {
   }
 
   private async handleBerryMenuKeyInput(): Promise<'cancel' | PlayerItem> {
-    const berries = Object.values(Bag.getCategory(ItemCategory.BERRY));
+    const berries = Bag.getCategory(ItemCategory.BERRY);
     this.itemDescUi.setInfo(berries);
 
     this.berryMenuList.updateInfo(this.createBerryMenuListForm(berries));
