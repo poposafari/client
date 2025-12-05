@@ -85,17 +85,25 @@ export class BagStorage {
     return this.items;
   }
 
-  getCategory(category: ItemCategory) {
+  getCategory(category: ItemCategory): PlayerItem[] {
+    let items: Record<string, PlayerItem>;
+
     switch (category) {
       case ItemCategory.POKEBALL:
-        return this.pokeballs;
+        items = this.pokeballs;
+        break;
       case ItemCategory.BERRY:
-        return this.berries;
+        items = this.berries;
+        break;
       case ItemCategory.ETC:
-        return this.etc;
+        items = this.etc;
+        break;
       case ItemCategory.KEY:
-        return this.keys;
+        items = this.keys;
+        break;
     }
+
+    return Object.values(items).sort((a, b) => a.getKey().localeCompare(b.getKey()));
   }
 
   getItem(key: string): PlayerItem | null {

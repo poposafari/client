@@ -283,16 +283,16 @@ export class BagUi extends Ui {
   private getItems(current: number) {
     switch (current) {
       case 0:
-        this.items = Object.values(Bag.getCategory(ItemCategory.POKEBALL)!);
+        this.items = Bag.getCategory(ItemCategory.POKEBALL);
         break;
       case 1:
-        this.items = Object.values(Bag.getCategory(ItemCategory.ETC)!);
+        this.items = Bag.getCategory(ItemCategory.ETC);
         break;
       case 2:
-        this.items = Object.values(Bag.getCategory(ItemCategory.BERRY)!);
+        this.items = Bag.getCategory(ItemCategory.BERRY);
         break;
       case 3:
-        this.items = Object.values(Bag.getCategory(ItemCategory.KEY)!);
+        this.items = Bag.getCategory(ItemCategory.KEY);
         break;
     }
   }
