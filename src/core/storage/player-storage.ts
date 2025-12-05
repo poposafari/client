@@ -6,6 +6,7 @@ import { PlayerPokemon } from '../../obj/player-pokemon';
 import { GetIngameRes, GetItemRes, IngameData } from '../../types';
 import { getPokemonType } from '../../utils/string-util';
 import { Event } from '../manager/event-manager';
+import { SocketIO } from '../manager/socket-manager';
 import { Bag } from './bag-storage';
 import { PC } from './pc-storage';
 import { Option } from './player-option';
@@ -18,12 +19,15 @@ export class PlayerStorage {
   private lastDirection: DIRECTION = DIRECTION.DOWN;
   private lastPlayerStatus: PLAYER_STATUS = PLAYER_STATUS.WALK;
   private lastPlayerStatusWalkOrRunning: PLAYER_STATUS.WALK | PLAYER_STATUS.RUNNING = PLAYER_STATUS.WALK;
-  private overworldZoom: number = 1;
 
   talkMotherFlag: boolean = false;
   appearRunningShoesFlag: boolean = false;
   appearMenuFlag: boolean = false;
   appearItemSlotFlag: boolean = false;
+
+  private playTimeTimer: Phaser.Time.TimerEvent | null = null;
+  private readonly PLAY_TIME_INTERVAL: number = 60000;
+  private scene: Phaser.Scene | null = null;
 
   constructor() {}
 
@@ -36,12 +40,50 @@ export class PlayerStorage {
 
   init() {}
 
-  setOverworldZoom(zoom: number) {
-    this.overworldZoom = zoom;
+  setScene(scene: Phaser.Scene | null): void {
+    this.scene = scene;
   }
 
-  getOverworldZoom(): number {
-    return this.overworldZoom;
+  startPlayTimeTimer(): void {
+    if (!this.scene) {
+      return;
+    }
+
+    if (this.playTimeTimer) {
+      return;
+    }
+
+    this.stopPlayTimeTimer();
+
+    this.playTimeTimer = this.scene.time.addEvent({
+      delay: this.PLAY_TIME_INTERVAL,
+      callback: () => {
+        this.updatePlayTime();
+      },
+      loop: true,
+    });
+  }
+
+  stopPlayTimeTimer(): void {
+    if (this.playTimeTimer) {
+      this.playTimeTimer.remove();
+      this.playTimeTimer = null;
+    }
+  }
+
+  updatePlayTime(): void {
+    if (!this.data) {
+      return;
+    }
+    this.data.playtime += 1;
+    SocketIO.updatePlayTime();
+  }
+
+  getPlayTime(): number {
+    if (!this.data) {
+      return 0;
+    }
+    return this.data.playtime;
   }
 
   getData(): IngameData | null {
@@ -73,7 +115,10 @@ export class PlayerStorage {
       location: data.location,
       lastLocation: null,
       nickname: data.nickname,
-      updatedAt: data.updatedAt,
+      playtime: data.playtime,
+      discoveredLocations: data.discoveredLocations,
+      costume: data.costume,
+      pokedex: data.pokedex,
       x: data.x,
       y: data.y,
     };

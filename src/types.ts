@@ -54,6 +54,9 @@ export interface SocketInitData {
   nickname: string;
   gender: PlayerGender;
   avatar: number;
+  playtime: number;
+  costume: PlayerCostumeRes;
+  discoveredLocations: string[];
   pet: OtherPet | null;
   party: (number | null)[];
   slotItem: (number | null)[];
@@ -157,6 +160,31 @@ export type LoginRes = {
   isDeleteAt: string;
 };
 
+export type PlayerCostumeRes = {
+  skin: number;
+  eyes: number;
+  hair: number;
+  top: number;
+  bottom: number;
+  shoes: number;
+  accessory0: number;
+  accessory1: number;
+  accessory2: number;
+  accessory3: number;
+};
+
+export type PlayerPokedexRes = {
+  gen1: number[];
+  gen2: number[];
+  gen3: number[];
+  gen4: number[];
+  gen5: number[];
+  gen6: number[];
+  gen7: number[];
+  gen8: number[];
+  gen9: number[];
+};
+
 export type GetIngameRes = {
   pcBg: number[];
   y: number;
@@ -172,7 +200,10 @@ export type GetIngameRes = {
   party: GetPcRes[];
   slotItem: (GetItemRes | null)[];
   createdAt: Date;
-  updatedAt: Date;
+  playtime: number;
+  discoveredLocations: string[];
+  costume: PlayerCostumeRes;
+  pokedex: PlayerPokedexRes;
   bag: GetItemRes[];
   option: IngameOption;
 };
@@ -586,7 +617,10 @@ export type IngameData = {
   location: string;
   lastLocation: string | null;
   nickname: string;
-  updatedAt: Date;
+  playtime: number;
+  discoveredLocations: string[];
+  costume: PlayerCostumeRes;
+  pokedex: PlayerPokedexRes;
   x: number;
   y: number;
 };

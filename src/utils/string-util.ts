@@ -401,13 +401,9 @@ export const changeTextSpeedToDigit = (speed: TextSpeed) => {
   return ret;
 };
 
-export const formatPlaytime = (updatedAt: Date | string, createdAt: Date | string): string => {
-  const updated = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
-  const created = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
-  const diffMs = updated.getTime() - created.getTime();
-  const totalMinutes = Math.floor(diffMs / (1000 * 60));
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+export const formatPlaytime = (value: number): string => {
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
 
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 };

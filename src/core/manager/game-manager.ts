@@ -379,13 +379,10 @@ export class GameManager {
 
         const res = await enterSafariZoneApi({ overworld: location, time: getCurrentTimeOfDay() });
         await this.removeUi(UI.CONNECT_SAFARI);
-        // console.log('enterSafariZoneApi', res);
 
         if (res.result) {
           const wilds = res.data.wilds;
           const groundItems = res.data.groundItems;
-
-          console.log(groundItems);
 
           OverworldGlobal.setupWildData(wilds);
           OverworldGlobal.setupGroundItemInfo(groundItems);
@@ -506,6 +503,9 @@ export class GameManager {
           effectVolume: data.option.effectVolume,
           tutorial: data.option.tutorial,
         },
+        playtime: data.playtime,
+        costume: data.costume,
+        discoveredLocations: data.discoveredLocations,
         pBgs: data.pcBg,
         pcNames: data.pcName,
         isStarter0: data.isStarter0,

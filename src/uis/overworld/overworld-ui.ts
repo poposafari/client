@@ -178,6 +178,9 @@ export class OverworldUi extends Ui {
     }
 
     await this.player.waitingMovement();
+
+    PlayerGlobal.setScene(this.scene);
+    PlayerGlobal.startPlayTimeTimer();
   }
 
   protected onClean(): void {
@@ -266,13 +269,9 @@ export class OverworldUi extends Ui {
 
     if (currentUi instanceof OverworldMenuUi || currentUi instanceof OverworldUi || currentUi instanceof QuickSlotItemUi) {
       this.scene.cameras.main.setZoom(1.5);
-      PlayerGlobal.setOverworldZoom(1.5);
     } else {
-      if (currentUi instanceof ConnectBaseUi) {
-        return;
-      }
+      if (currentUi instanceof ConnectBaseUi) return;
       this.scene.cameras.main.setZoom(1);
-      PlayerGlobal.setOverworldZoom(1);
     }
   }
 

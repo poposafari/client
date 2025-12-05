@@ -16,6 +16,7 @@ import {
 import { MODE } from '../../enums';
 import { OverworldGlobal } from '../storage/overworld-storage';
 import { Game } from './game-manager';
+import { PlayerGlobal } from '../storage/player-storage';
 
 const URL = (import.meta.env.NODE_ENV as string) === 'dev' ? 'http://localhost:3001' : 'https://poposafari.net';
 
@@ -259,6 +260,11 @@ export class SocketManager {
   updateIsStarter1(): void {
     if (!this.isConnected) return;
     this.socket.emit('update_is_starter1');
+  }
+
+  updatePlayTime(): void {
+    if (!this.isConnected) return;
+    this.socket.emit('update_playtime', { playtime: PlayerGlobal.getPlayTime() });
   }
 }
 

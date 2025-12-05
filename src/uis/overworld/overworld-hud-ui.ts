@@ -1,11 +1,12 @@
 import i18next from 'i18next';
 import { PlayerGlobal } from '../../core/storage/player-storage';
-import { DEPTH, EASE, EVENT, TEXTSTYLE, TEXTURE } from '../../enums';
+import { DEPTH, EASE, EVENT, TEXTSTYLE, TEXTURE, TIME } from '../../enums';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { getTextShadow, getTextStyle, runFadeEffect, setTextShadow, Ui } from '../ui';
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
 import { Event } from '../../core/manager/event-manager';
+import { getCurrentTimeOfDay } from '../../utils/string-util';
 
 export class OverworldHUDUi extends Ui {
   private tutorialContainer!: Phaser.GameObjects.Container;
@@ -469,7 +470,16 @@ export class OverworldInfoUi extends Ui {
   private unblock() {}
 
   updateLocation() {
-    this.texts[0].setText(i18next.t(`menu:${PlayerGlobal.getData()?.location}`));
+    let timeText = i18next.t('menu:time_day');
+
+    const timeOfDay = getCurrentTimeOfDay();
+    if (timeOfDay === TIME.NIGHT || timeOfDay === TIME.DAWN) {
+      timeText = i18next.t('menu:time_night');
+    } else if (timeOfDay === TIME.DUSK) {
+      timeText = i18next.t('menu:time_dusk');
+    }
+
+    this.texts[0].setText(i18next.t(`menu:${PlayerGlobal.getData()?.location}`) + ' (' + timeText + ')');
   }
 
   updatePosition() {
