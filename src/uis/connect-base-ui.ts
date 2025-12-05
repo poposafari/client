@@ -1,10 +1,12 @@
 import { Option } from '../core/storage/player-option';
 import { DEPTH, TEXTSTYLE, TEXTURE } from '../enums';
 import i18next from '../i18n';
-import { addText, addWindow, Ui } from './ui';
+import { Ui } from './ui';
 
 export class ConnectBaseUi extends Ui {
   private container!: Phaser.GameObjects.Container;
+  private showTimer: Phaser.Time.TimerEvent | null = null;
+  private readonly SHOW_DELAY: number = 5000;
 
   setup(): void {
     const width = this.getWidth();
@@ -29,10 +31,24 @@ export class ConnectBaseUi extends Ui {
   }
 
   show(data?: any): void {
-    this.container.setVisible(true);
+    this.cancelShowTimer();
+    this.showTimer = this.scene.time.delayedCall(this.SHOW_DELAY, () => {
+      this.container.setVisible(true);
+      this.showTimer = null;
+    });
   }
 
-  protected onClean(): void {}
+  protected onClean(): void {
+    this.cancelShowTimer();
+    this.container.setVisible(false);
+  }
+
+  private cancelShowTimer(): void {
+    if (this.showTimer) {
+      this.showTimer.remove();
+      this.showTimer = null;
+    }
+  }
 
   pause(data?: any): void {}
 

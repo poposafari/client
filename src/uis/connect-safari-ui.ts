@@ -19,7 +19,7 @@ export class ConnectSafariUi extends Ui {
     const bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
 
     const text = this.addText(0, 0, i18next.t('menu:connectingSafari'), TEXTSTYLE.MESSAGE_WHITE);
-    text.setScale(1.5);
+    text.setScale(1);
 
     this.container.add(bg);
     this.container.add(text);
