@@ -378,7 +378,7 @@ export class GameManager {
         if (!location) return;
 
         const res = await enterSafariZoneApi({ overworld: location, time: getCurrentTimeOfDay() });
-
+        await this.removeUi(UI.CONNECT_SAFARI);
         // console.log('enterSafariZoneApi', res);
 
         if (res.result) {

@@ -11,7 +11,7 @@ export const menu: TranslationDefault = {
   yes: '예',
   no: '아니오',
   connecting: '로딩 중....',
-  connectingSafari: '사파리 존 준비 중....',
+  connectingSafari: '사파리 존 입장 중....',
   nickname: '닉네임',
   continue: '모험을 계속한다',
   option: '옵션',
