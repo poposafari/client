@@ -22,8 +22,8 @@ export class OverworldSafari {
   }
 
   show(map: Phaser.Tilemaps.Tilemap) {
-    this.addWildObj(map);
     this.addGroundItemObj(map);
+    this.addWildObj(map);
   }
 
   clean() {
@@ -53,11 +53,39 @@ export class OverworldSafari {
     this.wilds = [];
 
     const validPos = this.doScanSpawnTile(map);
+    const usedPositions = new Set<string>();
+
+    for (const groundItem of this.groundItems) {
+      const tilePos = groundItem.getTilePos();
+      const posKey = `${Math.floor(tilePos.x)},${Math.floor(tilePos.y)}`;
+      usedPositions.add(posKey);
+    }
 
     for (const data of OverworldGlobal.getWildData()) {
-      const randPos = this.getRandomSpawnTilePos(validPos, data.spawn);
-
       if (data.catch) continue;
+
+      const maxAttempts = 100;
+      let attempts = 0;
+      let randPos: [number, number] | null = null;
+
+      while (attempts < maxAttempts) {
+        randPos = this.getRandomSpawnTilePos(validPos, data.spawn);
+
+        if (!randPos) {
+          break;
+        }
+
+        const posKey = `${randPos[0]},${randPos[1]}`;
+
+        if (!usedPositions.has(posKey)) {
+          usedPositions.add(posKey);
+          break;
+        }
+
+        attempts++;
+        randPos = null;
+      }
+
       if (randPos) {
         const wild = new WildOverworldObj(this.scene, map, data, randPos[0], randPos[1]);
         this.wilds.push(wild);
@@ -69,11 +97,32 @@ export class OverworldSafari {
     this.groundItems = [];
 
     const validPos = this.doScanSpawnTile(map);
+    const usedPositions = new Set<string>();
 
     for (const data of OverworldGlobal.getGroundItemData()) {
-      const randPos = this.getRandomSpawnTilePos(validPos, 'land');
-
       if (data.catch) continue;
+
+      const maxAttempts = 100;
+      let attempts = 0;
+      let randPos: [number, number] | null = null;
+
+      while (attempts < maxAttempts) {
+        randPos = this.getRandomSpawnTilePos(validPos, 'land');
+
+        if (!randPos) {
+          break;
+        }
+
+        const posKey = `${randPos[0]},${randPos[1]}`;
+
+        if (!usedPositions.has(posKey)) {
+          usedPositions.add(posKey);
+          break;
+        }
+
+        attempts++;
+        randPos = null;
+      }
 
       if (randPos) {
         const groundItem = new GroundItemOverworldObj(this.scene, data, randPos[0], randPos[1]);
