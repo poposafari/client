@@ -282,7 +282,7 @@ export class MenuListUi extends Ui {
     text.setOrigin(0, 1);
     const textImage = this.addImage(textTexture, 0, y);
     textImage.setOrigin(0, 1);
-    const etcText = this.addText(this.windowWidth - 85, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
+    const etcText = this.addText(this.windowWidth - 110, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
     etcText.setOrigin(0, 1);
     const etcImage = this.addImage(etcTexture, this.windowWidth - 125, y - 3);
     etcImage.setScale(this.etcScale ? this.etcScale : 1.6);

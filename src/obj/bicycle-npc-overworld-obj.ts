@@ -10,6 +10,7 @@ import { buyItemApi } from '../api';
 import { playEffectSound } from '../uis/ui';
 import { replacePercentSymbol } from '../utils/string-util';
 import { PlayerGlobal } from '../core/storage/player-storage';
+import { OVERWORLD_ZOOM } from '../constants';
 
 export class BicycleNpcOverworldObj extends NpcOverworldObj {
   private questionMessage: QuestionMessageUi;
@@ -20,13 +21,13 @@ export class BicycleNpcOverworldObj extends NpcOverworldObj {
     this.getShadow().setVisible(texture !== TEXTURE.BLANK);
 
     this.questionMessage = new QuestionMessageUi(scene);
-    this.questionMessage.setup();
+    this.questionMessage.setup(OVERWORLD_ZOOM);
   }
 
   async reaction(direction: DIRECTION, talkUi: TalkMessageUi): Promise<void> {
     await super.reaction(direction, talkUi);
 
-    if (Bag.getItem('046')) {
+    if (Bag.getItem('bicycle')) {
       await talkUi.show({ type: 'default', content: i18next.t('npc:bicycle_shop_4'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
       await talkUi.show({ type: 'default', content: i18next.t('npc:bicycle_shop_5'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
     } else {
@@ -38,20 +39,20 @@ export class BicycleNpcOverworldObj extends NpcOverworldObj {
         yes: async () => {
           await talkUi.show({ type: 'default', content: i18next.t('npc:bicycle_shop_3'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
 
-          const ret = await buyItemApi({ item: '046', stock: 1 });
+          const ret = await buyItemApi({ item: 'bicycle', stock: 1 });
 
           if (ret.result) {
             playEffectSound(this.getScene(), AUDIO.GET_0);
             Bag.addItems(ret.data.idx, ret.data.item, ret.data.stock, ret.data.category);
             await talkUi.show({
               type: 'default',
-              content: replacePercentSymbol(i18next.t(`message:catch_item`), [PlayerGlobal.getData()?.nickname, i18next.t(`item:046.name`)]),
+              content: replacePercentSymbol(i18next.t(`message:catch_item`), [PlayerGlobal.getData()?.nickname, i18next.t(`item:bicycle.name`)]),
               speed: Option.getTextSpeed()!,
               endDelay: MessageEndDelay.GET,
             });
             await talkUi.show({
               type: 'default',
-              content: replacePercentSymbol(i18next.t(`message:put_item`), [PlayerGlobal.getData()?.nickname, i18next.t(`item:046.name`), i18next.t(`menu:pocket_${ItemCategory.KEY}`)]),
+              content: replacePercentSymbol(i18next.t(`message:put_item`), [PlayerGlobal.getData()?.nickname, i18next.t(`item:bicycle.name`), i18next.t(`menu:pocket_${ItemCategory.KEY}`)]),
               speed: Option.getTextSpeed()!,
               endDelay: MessageEndDelay.DEFAULT,
             });

@@ -171,6 +171,7 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.BAG_POCKET_ETC, ANIMATION.BAG_POCKET_ETC);
     createSpriteAnimation(this, TEXTURE.BAG_POCKET_BERRY, ANIMATION.BAG_POCKET_BERRY);
     createSpriteAnimation(this, TEXTURE.BAG_POCKET_KEY, ANIMATION.BAG_POCKET_KEY);
+    createSpriteAnimation(this, TEXTURE.BAG_POCKET_TM_HM, ANIMATION.BAG_POCKET_TM_HM);
 
     createSpriteAnimation(this, TEXTURE.PAUSE_B, ANIMATION.PAUSE_B);
     createSpriteAnimation(this, TEXTURE.PAUSE_W, ANIMATION.PAUSE_W);

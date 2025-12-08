@@ -36,7 +36,7 @@ export class QuickSlotItemUi extends Ui {
 
     for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
       const window = this.addWindow(TEXTURE.WINDOW_OPACITY, currentX, currentY, contentWidth, contentHeight, 8, 8, 8, 8);
-      const icon = this.addImage(TEXTURE.BLANK, currentX, currentY);
+      const icon = this.addImage(TEXTURE.BLANK, currentX, currentY).setScale(2);
       const dummy = this.addImage(TEXTURE.BLANK, currentX, currentY - 40).setScale(1.8);
 
       this.windows.push(window);
@@ -64,7 +64,7 @@ export class QuickSlotItemUi extends Ui {
     for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
       const item = Bag.getSlotItems()[i];
 
-      this.icons[i].setTexture(item ? `item${item.getKey()}` : TEXTURE.BLANK);
+      this.icons[i].setTexture(item ? `${item.getKey()}` : TEXTURE.BLANK);
     }
 
     this.handleKeyInput();
@@ -135,7 +135,7 @@ export class QuickSlotItemUi extends Ui {
     for (let i = 0; i < MAX_QUICK_ITEM_SLOT; i++) {
       const item = Bag.getSlotItems()[i];
       if (item) {
-        this.icons[i].setTexture(`item${item.getKey()}`);
+        this.icons[i].setTexture(`${item.getKey()}`);
       } else {
         this.icons[i].setTexture(TEXTURE.BLANK);
       }

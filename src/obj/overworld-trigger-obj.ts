@@ -129,13 +129,13 @@ export class OverworldTriggerObj extends ImmovableOverworldObj {
         await objs.message?.show({ type: 'default', content: i18next.t(`npc:script047_15`), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
         await objs.message?.show({ type: 'default', content: i18next.t(`npc:script047_16`), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
         PlayerGlobal.updateData({ isStarter1: false });
-        Bag.addItems(0, '002', 30, ItemCategory.POKEBALL);
-        Bag.addItems(0, '003', 10, ItemCategory.POKEBALL);
-        Bag.addItems(0, '004', 5, ItemCategory.POKEBALL);
-        Bag.addItems(0, '011', 3, ItemCategory.BERRY);
-        Bag.addItems(0, '012', 3, ItemCategory.BERRY);
-        Bag.addItems(0, '014', 3, ItemCategory.BERRY);
-        Bag.addItems(0, '029', 3, ItemCategory.BERRY);
+        Bag.addItems(0, 'poke-ball', 30, ItemCategory.POKEBALL);
+        Bag.addItems(0, 'great-ball', 10, ItemCategory.POKEBALL);
+        Bag.addItems(0, 'ultra-ball', 5, ItemCategory.POKEBALL);
+        Bag.addItems(0, 'occa-berry', 3, ItemCategory.BERRY);
+        Bag.addItems(0, 'passho-berry', 3, ItemCategory.BERRY);
+        Bag.addItems(0, 'rindo-berry', 3, ItemCategory.BERRY);
+        Bag.addItems(0, 'enigma-berry', 3, ItemCategory.BERRY);
         SocketIO.updateIsStarter1();
         break;
     }

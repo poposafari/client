@@ -3,9 +3,9 @@ import { ANIMATION, AUDIO, BATTLE_AREA, DEPTH, EASE, EVENT, ItemCategory, KEY, M
 import { WildOverworldObj } from '../../obj/wild-overworld-obj';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { delay, getTextStyle, playEffectSound, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, startModalAnimation, stopPostPipeline, Ui } from '../ui';
-import { checkItemType, getBattleArea, getCurrentTimeOfDay, getPokemonType, matchPokemonWithRarityRate, matchTypeWithBerryRate, replacePercentSymbol } from '../../utils/string-util';
+import { getBattleArea, getCurrentTimeOfDay, getPokemonType, matchBallAnimation, matchPokemonWithRarityRate, matchTypeWithBerryRate, replacePercentSymbol } from '../../utils/string-util';
 import { PlayerGlobal } from '../../core/storage/player-storage';
-import { getPokemonInfo } from '../../data';
+import { getItemByKey, getPokemonInfo } from '../../data';
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
 import { TalkMessageUi } from '../talk-message-ui';
@@ -619,10 +619,16 @@ export class BattleSpriteUi extends Ui {
 
   private readonly playerPosX: number = 900;
   private readonly wildPosX: number = 1000;
-  private readonly throwItemScale: number = 2.4;
+  private readonly throwBallScale: number = 2.4;
+  private readonly throwBerryScale: number = 4.8;
   private readonly wildScale: number = 4.5;
   private readonly particleCnt: number = 8;
   private readonly particleScale: number = 2.4;
+
+  private throwStartX: number = -300;
+  private throwStartY: number = 150;
+  private throwEndX: number = 600;
+  private throwEndY: number = -200;
 
   constructor(scene: InGameScene, battle: Battle) {
     super(scene);
@@ -641,7 +647,7 @@ export class BattleSpriteUi extends Ui {
 
     this.playerBase = this.addImage('', -410, +202).setScale(2.4);
     this.player = this.createSprite('', -400, +16).setScale(4.4).setOrigin(0.5, 0.5);
-    this.throwItem = this.createSprite(`item030`, -230, +110).setOrigin(0.5, 0.5).setScale(this.throwItemScale).setVisible(false);
+    this.throwItem = this.createSprite(`item030`, -230, +110).setOrigin(0.5, 0.5).setScale(this.throwBallScale).setVisible(false);
 
     this.wildBase = this.addImage('', +500, -100).setOrigin(0.5, 0.5).setScale(2.8);
     this.wildShadow = this.addImage('', +500, -100).setScale(2.2).setOrigin(0.5, 0.5).setAlpha(0.5);
@@ -760,7 +766,8 @@ export class BattleSpriteUi extends Ui {
     this.throwItem.setVisible(false);
     this.throwItem.setAngle(0);
     this.throwItem.setOrigin(0.5, 1);
-    this.throwItem.setScale(this.throwItemScale);
+    this.throwItem.setPosition(this.throwStartX, this.throwStartY);
+    this.throwItem.setScale(this.throwBallScale);
     this.throwItem.setAlpha(1);
 
     return new Promise<void>((resolve) => {
@@ -770,7 +777,7 @@ export class BattleSpriteUi extends Ui {
         this.player.once('animationcomplete', () => {
           playEffectSound(this.scene, AUDIO.THROW);
           this.throwItem.setVisible(true);
-          this.throwItem.setTexture(`item${item}`);
+          this.throwItem.setTexture(`${item}`);
           resolve();
         });
       }
@@ -778,33 +785,29 @@ export class BattleSpriteUi extends Ui {
   }
 
   async runThrowItem(item: string): Promise<void> {
-    const startX: number = -300;
-    const startY: number = 150;
-    const endX: number = 600;
-    const endY: number = -200;
     const peakHeight = -300;
     const duration = 500;
 
     return new Promise<void>((resolve) => {
-      this.throwItem.setPosition(startX, startY);
-      this.throwItem.setScale(this.throwItemScale);
+      const targetItem = getItemByKey(item);
+      this.throwItem.setScale(targetItem?.type === ItemCategory.POKEBALL ? this.throwBallScale : this.throwBerryScale);
 
-      if (checkItemType(item) === ItemCategory.POKEBALL) {
-        this.throwItem.anims.play({ key: `ball_${item}_launch`, repeat: 0, frameRate: 12 });
+      if (targetItem?.type === ItemCategory.POKEBALL) {
+        this.throwItem.anims.play({ key: `ball_${matchBallAnimation(item)}_launch`, repeat: 0, frameRate: 12 });
       }
 
       this.scene.tweens.add({
         targets: this.throwItem,
-        x: endX,
+        x: this.throwEndX,
         duration: duration,
         ease: EASE.LINEAR,
         onUpdate: (tween) => {
           const progress = tween.progress;
           const parabola = -4 * peakHeight * (progress - 0.5) ** 2 + peakHeight;
-          this.throwItem.y = startY + (endY - startY) * progress + parabola;
+          this.throwItem.y = this.throwStartY + (this.throwEndY - this.throwStartY) * progress + parabola;
         },
         onComplete: async () => {
-          this.throwItem.setPosition(endX, endY);
+          this.throwItem.setPosition(this.throwEndX, this.throwEndY);
 
           const animation = this.player.scene.anims.get(this.getPlayerThrowAnimKey());
           const firstFrame = animation.frames[0];
@@ -828,9 +831,9 @@ export class BattleSpriteUi extends Ui {
   }
 
   async enterItem(item: string) {
-    const type = checkItemType(item);
+    const targetItem = getItemByKey(item);
 
-    switch (type) {
+    switch (targetItem?.type) {
       case ItemCategory.POKEBALL:
         await this.runEnterBall(item);
         await this.runDropBall(item);
@@ -890,7 +893,7 @@ export class BattleSpriteUi extends Ui {
     await delay(this.scene, 500);
 
     const ballEnter = new Promise<void>((resolve) => {
-      const enterKey = `ball_${item}_enter`;
+      const enterKey = `ball_${matchBallAnimation(item)}_enter`;
       this.wildShadow.setVisible(false);
       playEffectSound(this.scene, AUDIO.BALL_ENTER);
       this.throwItem.anims.play({ key: enterKey, repeat: 0, frameRate: 12 });
@@ -934,7 +937,7 @@ export class BattleSpriteUi extends Ui {
       const done = () => {
         completedCount++;
         if (completedCount === this.particleCnt) {
-          const animation = this.throwItem.scene.anims.get(`ball_${item}_launch`);
+          const animation = this.throwItem.scene.anims.get(`ball_${matchBallAnimation(item)}_launch`);
           const firstFrame = animation.frames[0];
           this.throwItem.setTexture(firstFrame.textureKey, firstFrame.textureFrame);
           resolve();
@@ -1227,7 +1230,7 @@ export class BattleSpriteUi extends Ui {
         ease: EASE.LINEAR,
         onStart: () => {
           this.throwItem.anims.play({
-            key: `ball_${item}_enter`,
+            key: `ball_${matchBallAnimation(item)}_enter`,
             repeat: 0,
             frameRate: 10,
           });
@@ -1246,6 +1249,7 @@ export class BattleSpriteUi extends Ui {
   }
 
   private async runEnterBerry(item: string): Promise<void> {
+    this.throwItem.setTexture(`${item}`);
     return new Promise((resolve) => {
       this.scene.tweens.add({
         targets: this.throwItem,
@@ -1267,7 +1271,7 @@ export class BattleSpriteUi extends Ui {
   }
 
   private getPokeballLaunchKey(item: string): string {
-    return `ball_${item}_launch`;
+    return `ball_${matchBallAnimation(item)}_launch`;
   }
 }
 
@@ -1313,8 +1317,8 @@ export class BattleInfoUi extends Ui {
     this.wildInfoName = this.addText(-340, -35, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5).setScale(1.1);
     this.wildInfoShiny = this.addImage(TEXTURE.ICON_SHINY, 0, 0).setOrigin(0.5, 0.5).setScale(2.8);
 
-    this.wildEatenBerry = this.addImage(TEXTURE.BLANK, -335, +145).setOrigin(0.5, 0.5).setScale(2);
-    this.wildEatenBerryDummy = this.addImage(TEXTURE.BLANK, -335, +145).setOrigin(0.5, 0.5).setScale(2);
+    this.wildEatenBerry = this.addImage(TEXTURE.BLANK, -335, +145).setOrigin(0.5, 0.5).setScale(4);
+    this.wildEatenBerryDummy = this.addImage(TEXTURE.BLANK, -335, +145).setOrigin(0.5, 0.5).setScale(4);
 
     this.wildOwnedIcon = this.addImage(TEXTURE.ICON_OWNED, -330, -125).setOrigin(0.5, 0.5).setScale(2.8);
     this.wildCountTitle = this.addText(-300, -130, 'x', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5).setScale(0.8);
@@ -1535,8 +1539,8 @@ export class BattleInfoUi extends Ui {
       return;
     }
 
-    this.wildEatenBerry.setTexture(`item${berry}`);
-    this.wildEatenBerryDummy.setTexture(`item${berry}`);
+    this.wildEatenBerry.setTexture(`${berry}`);
+    this.wildEatenBerryDummy.setTexture(`${berry}`);
     this.wildEatenBerryDummy.setTintFill(0xffffff);
     this.wildEatenBerryDummy.setAlpha(1);
     this.wildEatenBerryDummy.setVisible(true);
@@ -1556,8 +1560,8 @@ export class BattleInfoUi extends Ui {
     let partyBonus = 0;
     for (const party of PC.getParty()) {
       if (party) {
-        const shinyBonus = party.getShiny() ? 0.03 : 0;
-        const countBonus = Math.min(party.getCount() * 0.005, 0.25);
+        const shinyBonus = party.getShiny() ? 0.05 : 0;
+        const countBonus = Math.min(party.getCount() * 0.001, 1);
         const rankBonus = matchPokemonWithRarityRate(party.getRank());
 
         partyBonus += shinyBonus + countBonus + rankBonus;
@@ -1566,13 +1570,13 @@ export class BattleInfoUi extends Ui {
 
     let ballRate = 1.0;
     switch (ball) {
-      case '002':
+      case 'poke-ball':
         ballRate = 1.0;
         break;
-      case '003':
+      case 'great-ball':
         ballRate = 1.5;
         break;
-      case '004':
+      case 'ultra-ball':
         ballRate = 2.0;
         break;
       default:
@@ -1585,7 +1589,7 @@ export class BattleInfoUi extends Ui {
     const baseRate = targetWild!.baseRate * ballRate * berryRate;
     let finalRate = Math.min(baseRate + partyBonus, 1.0);
 
-    if (ball === '001') finalRate = 1.0;
+    if (ball === 'master-ball') finalRate = 1.0;
 
     this.captureRate.setText(this.calcRate(finalRate));
   }
@@ -1954,7 +1958,7 @@ export class BattleItemDescUi extends Ui {
 
     this.container = this.createContainer(width / 2 + 660, height / 2 + 410);
     this.window = this.addWindow(Option.getFrame('text') as string, 0, +410, 480, 260 / this.windowScale, 16, 16, 16, 16).setScale(this.windowScale);
-    this.item = this.addImage(TEXTURE.BLANK, -1460, 0).setScale(2.4);
+    this.item = this.addImage(TEXTURE.BLANK, -1460, 0).setScale(4.8);
     this.text = this.addText(-1360, -65, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
 
     this.container.add(this.window);
@@ -1969,7 +1973,7 @@ export class BattleItemDescUi extends Ui {
   show(data?: any) {
     this.container.setVisible(true);
 
-    this.item.setTexture(`item${data}`);
+    this.item.setTexture(`${data}`);
     this.text.setText(i18next.t(`item:${data}.description`));
   }
 
@@ -1980,12 +1984,13 @@ export class BattleItemDescUi extends Ui {
   handleKeyInput(...data: any[]) {
     const item = this.itemInfo[data[0]];
     if (item) {
-      this.item.setTexture(`item${item.getKey()}`);
+      this.item.setTexture(`${item.getKey()}`);
       this.text.setText(i18next.t(`item:${item.getKey()}.description`));
 
-      if (checkItemType(item.getKey()) === ItemCategory.POKEBALL) {
+      const targetItem = getItemByKey(item.getKey());
+      if (targetItem?.type === ItemCategory.POKEBALL) {
         this.battle.updateCatchRate(null, item.getKey());
-      } else if (checkItemType(item.getKey()) === ItemCategory.BERRY) {
+      } else if (targetItem?.type === ItemCategory.BERRY) {
         this.battle.updateCatchRate(item.getKey(), null);
       } else {
         this.battle.updateCatchRate(null, null);
@@ -2282,7 +2287,7 @@ export class BattleRewardUi extends Ui {
   }
 
   private updateRewardIcon(item: string) {
-    const icon = this.addImage(`item${item}`, 0, 0).setScale(2);
+    const icon = this.addImage(`${item}`, 0, 0).setScale(4);
     this.rewardIcons.push(icon);
     this.rewardContainer.add(icon);
   }

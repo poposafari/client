@@ -208,7 +208,7 @@ export class Plaza004 extends Overworld {
 
     ui.getNpc().setup('npc002', '', 2, 5, DIRECTION.RIGHT, []);
     ui.getNpc().setup('npc002', '', 2, 7, DIRECTION.RIGHT, []);
-    ui.getNpc().setupSpecial('shop', TEXTURE.BLANK, '', 3, 5, DIRECTION.RIGHT, ['shop_0'], ['002', '003', '004']);
+    ui.getNpc().setupSpecial('shop', TEXTURE.BLANK, '', 3, 5, DIRECTION.RIGHT, ['shop_0'], ['poke-ball', 'great-ball', 'ultra-ball']);
     ui.getNpc().setupSpecial(
       'shop',
       TEXTURE.BLANK,
@@ -217,7 +217,27 @@ export class Plaza004 extends Overworld {
       7,
       DIRECTION.RIGHT,
       ['shop_0'],
-      ['011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021', '022', '023', '024', '025', '026', '027', '028', '029'],
+      [
+        'occa-berry',
+        'passho-berry',
+        'wacan-berry',
+        'rindo-berry',
+        'yache-berry',
+        'chople-berry',
+        'kebia-berry',
+        'shuca-berry',
+        'coba-berry',
+        'payapa-berry',
+        'tanga-berry',
+        'charti-berry',
+        'kasib-berry',
+        'haban-berry',
+        'colbur-berry',
+        'babiri-berry',
+        'roseli-berry',
+        'chilan-berry',
+        'enigma-berry',
+      ],
     );
     ui.getNpc().setupSpecial('post', 'npc001', '', 2, 9, DIRECTION.DOWN, []);
   }

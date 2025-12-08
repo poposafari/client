@@ -249,63 +249,65 @@ export function changeDirectionToKey(direction: DIRECTION) {
 export const matchTypeWithBerryRate = (berry: string | null, type1: string, type2: string | null) => {
   if (!berry) return 1.0;
 
+  const bonusRate = 1.05;
+
   switch (berry) {
-    case '011':
-      if ([type1, type2].includes('fire')) return 1.2;
+    case 'occa-berry':
+      if ([type1, type2].includes('fire')) return bonusRate;
       break;
-    case '012':
-      if ([type1, type2].includes('water')) return 1.2;
+    case 'passho-berry':
+      if ([type1, type2].includes('water')) return bonusRate;
       break;
-    case '013':
-      if ([type1, type2].includes('electric')) return 1.2;
+    case 'wacan-berry':
+      if ([type1, type2].includes('electric')) return bonusRate;
       break;
-    case '014':
-      if ([type1, type2].includes('grass')) return 1.2;
+    case 'rindo-berry':
+      if ([type1, type2].includes('grass')) return bonusRate;
       break;
-    case '015':
-      if ([type1, type2].includes('ice')) return 1.2;
+    case 'yache-berry':
+      if ([type1, type2].includes('ice')) return bonusRate;
       break;
-    case '016':
-      if ([type1, type2].includes('fighting')) return 1.2;
+    case 'chople-berry':
+      if ([type1, type2].includes('fighting')) return bonusRate;
       break;
-    case '017':
-      if ([type1, type2].includes('poison')) return 1.2;
+    case 'kebia-berry':
+      if ([type1, type2].includes('poison')) return bonusRate;
       break;
-    case '018':
-      if ([type1, type2].includes('ground')) return 1.2;
+    case 'shuca-berry':
+      if ([type1, type2].includes('ground')) return bonusRate;
       break;
-    case '019':
-      if ([type1, type2].includes('flying')) return 1.2;
+    case 'coba-berry':
+      if ([type1, type2].includes('flying')) return bonusRate;
       break;
-    case '020':
-      if ([type1, type2].includes('psychic')) return 1.2;
+    case 'payapa-berry':
+      if ([type1, type2].includes('psychic')) return bonusRate;
       break;
-    case '021':
-      if ([type1, type2].includes('bug')) return 1.2;
+    case 'tanga-berry':
+      if ([type1, type2].includes('bug')) return bonusRate;
       break;
-    case '022':
-      if ([type1, type2].includes('rock')) return 1.2;
+    case 'charti-berry':
+      if ([type1, type2].includes('rock')) return bonusRate;
       break;
-    case '023':
-      if ([type1, type2].includes('ghost')) return 1.2;
+    case 'kasib-berry':
+      if ([type1, type2].includes('ghost')) return bonusRate;
       break;
-    case '024':
-      if ([type1, type2].includes('dragon')) return 1.2;
+    case 'haban-berry':
+      if ([type1, type2].includes('dragon')) return bonusRate;
       break;
-    case '025':
-      if ([type1, type2].includes('dark')) return 1.2;
+    case 'colbur-berry':
+      if ([type1, type2].includes('dark')) return bonusRate;
       break;
-    case '026':
-      if ([type1, type2].includes('steel')) return 1.2;
+    case 'babiri-berry':
+      if ([type1, type2].includes('steel')) return bonusRate;
       break;
-    case '027':
-      if ([type1, type2].includes('fairy')) return 1.2;
+    case 'roseli-berry':
+      if ([type1, type2].includes('fairy')) return bonusRate;
       break;
-    case '028':
-      if ([type1, type2].includes('normal')) return 1.2;
+    case 'chilan-berry':
+      if ([type1, type2].includes('normal')) return bonusRate;
       break;
-    case '029':
-      return 1.2;
+    case 'enigma-berry':
+      return bonusRate;
   }
 
   return 1.0;
@@ -427,34 +429,15 @@ export const getBattleArea = (location: string) => {
   }
 };
 
-export const checkItemType = (item: string): ItemCategory => {
+export const matchBallAnimation = (item: string): string => {
   switch (item) {
-    case '001':
-    case '002':
-    case '003':
-    case '004':
-      return ItemCategory.POKEBALL;
-    case '011':
-    case '012':
-    case '013':
-    case '014':
-    case '015':
-    case '016':
-    case '017':
-    case '018':
-    case '019':
-    case '020':
-    case '021':
-    case '022':
-    case '023':
-    case '024':
-    case '025':
-    case '026':
-    case '027':
-    case '028':
-    case '029':
-      return ItemCategory.BERRY;
-    default:
-      return ItemCategory.ETC;
+    case 'poke-ball':
+      return '002';
+    case 'great-ball':
+      return '003';
+    case 'ultra-ball':
+      return '004';
   }
+
+  return '001';
 };
