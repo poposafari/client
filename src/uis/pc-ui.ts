@@ -1017,7 +1017,7 @@ export class PcSummaryUi extends Ui {
     this.type1 = this.addImage(TEXTURE.TYPES, +90, -450).setScale(1.8);
     this.type2 = this.addImage(TEXTURE.TYPES, +210, -450).setScale(1.8);
     this.captureCntTitle = this.addText(-230, -190, i18next.t('menu:captureCount'), TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0.5, 0.5);
-    this.captureCntIcon = this.addImage(`item002`, -230, -250).setScale(1.4).setInteractive();
+    this.captureCntIcon = this.addImage(`poke-ball`, -230, -250).setScale(3.2).setInteractive();
     const captureCntColon = this.addText(-185, -250, ':', TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
     this.captureCnt = this.addText(-155, -250, '', TEXTSTYLE.SPECIAL).setScale(0.7).setOrigin(0, 0.5);
     const captureTitle = this.addText(-110, +322, i18next.t('menu:capture'), TEXTSTYLE.BOX_POKEDEX).setScale(1);

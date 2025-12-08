@@ -120,6 +120,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.ICON_RUNNING, 'ui/icon', TEXTURE.ICON_RUNNING);
     this.loadImage(TEXTURE.ICON_LOCATION, 'ui/icon', TEXTURE.ICON_LOCATION);
     this.loadImage(TEXTURE.ICON_CANDY, 'ui/icon', TEXTURE.ICON_CANDY);
+    this.loadImage(TEXTURE.ICON_MONEY, 'ui/icon', TEXTURE.ICON_MONEY);
     this.loadImage(TEXTURE.ICON_MENU, 'ui/icon', TEXTURE.ICON_MENU);
     this.loadImage(TEXTURE.ICON_OPTION, 'ui/icon', TEXTURE.ICON_OPTION);
     this.loadImage(TEXTURE.ICON_SHINY, 'ui/icon', TEXTURE.ICON_SHINY);
@@ -256,6 +257,7 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.BAG_POCKET_ETC, 'ui', TEXTURE.BAG_POCKET_ETC, ANIMATION.BAG_POCKET_ETC);
     this.loadAtlas(TEXTURE.BAG_POCKET_BERRY, 'ui', TEXTURE.BAG_POCKET_BERRY, ANIMATION.BAG_POCKET_BERRY);
     this.loadAtlas(TEXTURE.BAG_POCKET_KEY, 'ui', TEXTURE.BAG_POCKET_KEY, ANIMATION.BAG_POCKET_KEY);
+    this.loadAtlas(TEXTURE.BAG_POCKET_TM_HM, 'ui', TEXTURE.BAG_POCKET_TM_HM, ANIMATION.BAG_POCKET_TM_HM);
     this.loadImage(TEXTURE.BAG_BAR, 'ui', TEXTURE.BAG_BAR);
     this.loadImage(TEXTURE.ARROW_W, 'ui', TEXTURE.ARROW_W);
     this.loadImage(TEXTURE.ARROW_B, 'ui', TEXTURE.ARROW_B);
@@ -291,7 +293,7 @@ export class LoadingScene extends BaseScene {
     }
 
     for (const key of Object.keys(itemData)) {
-      this.loadImage(`item${key}`, 'ui/item', `item${key}`);
+      this.loadImage(`${key}`, 'ui/item', `${key}`);
     }
 
     for (const key of Object.keys(npcData)) {

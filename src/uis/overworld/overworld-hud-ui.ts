@@ -17,7 +17,7 @@ export class OverworldHUDUi extends Ui {
   private overworldLocationUi: OverworldLocationUi;
 
   private tutorialBg!: Phaser.GameObjects.Image;
-  private candyUpdatedCallback!: () => void;
+  private moneyUpdatedCallback!: () => void;
 
   constructor(scene: InGameScene) {
     super(scene);
@@ -43,10 +43,10 @@ export class OverworldHUDUi extends Ui {
     this.overworldIconUi.setup();
     this.overworldLocationUi.setup();
 
-    this.candyUpdatedCallback = () => {
-      this.updateCandyUi();
+    this.moneyUpdatedCallback = () => {
+      this.updateMoneyUi();
     };
-    Event.on(EVENT.CANDY_UPDATED, this.candyUpdatedCallback);
+    Event.on(EVENT.MONEY_UPDATED, this.moneyUpdatedCallback);
 
     this.tutorialContainer.setVisible(false);
     this.tutorialContainer.setDepth(DEPTH.MESSAGE - 1);
@@ -60,7 +60,7 @@ export class OverworldHUDUi extends Ui {
   }
 
   protected onClean(): void {
-    Event.off(EVENT.CANDY_UPDATED, this.candyUpdatedCallback);
+    Event.off(EVENT.MONEY_UPDATED, this.moneyUpdatedCallback);
     this.overworldPokemonSlotUi.clean();
     this.overworldInfoUi.clean();
     this.overworldIconUi.clean();
@@ -76,7 +76,7 @@ export class OverworldHUDUi extends Ui {
   update(time: number, delta: number): void {
     this.updatePokemonSlotUi();
     this.updateLocationUi();
-    this.updateCandyUi();
+    this.updateMoneyUi();
   }
 
   getOverworldInfoContainer() {
@@ -104,8 +104,8 @@ export class OverworldHUDUi extends Ui {
     this.overworldInfoUi.updatePosition();
   }
 
-  updateCandyUi() {
-    this.overworldInfoUi.updateMyCandy();
+  updateMoneyUi() {
+    this.overworldInfoUi.updateMyMoney();
   }
 
   showArea(texture: TEXTURE | string, location: string) {
@@ -146,7 +146,7 @@ export class OverworldHUDUi extends Ui {
     }
 
     this.overworldInfoUi.updateLocation();
-    this.overworldInfoUi.updateMyCandy();
+    this.overworldInfoUi.updateMyMoney();
   }
 }
 
@@ -427,7 +427,7 @@ export class OverworldInfoUi extends Ui {
   private textMyCandy!: Phaser.GameObjects.Text;
   private textLocation!: Phaser.GameObjects.Text;
   private textPosition!: Phaser.GameObjects.Text;
-  private icons: TEXTURE[] = [TEXTURE.ICON_LOCATION, TEXTURE.ICON_XY, TEXTURE.ICON_CANDY];
+  private icons: TEXTURE[] = [TEXTURE.ICON_LOCATION, TEXTURE.ICON_XY, TEXTURE.ICON_MONEY];
   private texts: Phaser.GameObjects.Text[] = [];
 
   constructor(scene: InGameScene) {
@@ -486,8 +486,8 @@ export class OverworldInfoUi extends Ui {
     this.texts[1].setText(`${PlayerGlobal.getData()?.x},${PlayerGlobal.getData()?.y}`);
   }
 
-  updateMyCandy() {
-    this.texts[2].setText(`${PlayerGlobal.getData()?.candy} ${i18next.t('menu:candy')}`);
+  updateMyMoney() {
+    this.texts[2].setText(` ${PlayerGlobal.getData()?.money}`);
   }
 
   private createWindow() {

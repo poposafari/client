@@ -221,7 +221,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
 
   useItem(item: PlayerItem) {
     switch (item.getKey()) {
-      case '046':
+      case 'bicycle':
         return this.setMovement(PLAYER_STATUS.RIDE);
     }
   }

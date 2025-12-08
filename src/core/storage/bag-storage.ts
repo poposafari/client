@@ -13,6 +13,7 @@ export class BagStorage {
   private berries: Record<string, PlayerItem> = {};
   private keys: Record<string, PlayerItem> = {};
   private etc: Record<string, PlayerItem> = {};
+  private tms_hms: Record<string, PlayerItem> = {};
 
   private slots: (PlayerItem | null)[] = [];
 
@@ -33,6 +34,7 @@ export class BagStorage {
     this.berries = {};
     this.keys = {};
     this.etc = {};
+    this.tms_hms = {};
     this.slots = [];
 
     this.setItems(data);
@@ -78,6 +80,9 @@ export class BagStorage {
       case ItemCategory.KEY:
         this.keys[key] = obj;
         break;
+      case ItemCategory.TM_HM:
+        this.tms_hms[key] = obj;
+        break;
     }
   }
 
@@ -101,13 +106,16 @@ export class BagStorage {
       case ItemCategory.KEY:
         items = this.keys;
         break;
+      case ItemCategory.TM_HM:
+        items = this.tms_hms;
+        break;
     }
 
     return Object.values(items).sort((a, b) => a.getKey().localeCompare(b.getKey()));
   }
 
   getItem(key: string): PlayerItem | null {
-    return this.pokeballs[key] || this.berries[key] || this.keys[key] || this.etc[key];
+    return this.pokeballs[key] || this.berries[key] || this.keys[key] || this.etc[key] || this.tms_hms[key];
   }
 
   useItem(key: string, useValue: number = 1): boolean {
@@ -129,6 +137,7 @@ export class BagStorage {
     delete this.berries[key];
     delete this.keys[key];
     delete this.etc[key];
+    delete this.tms_hms[key];
   }
 
   getSlotItems(): (PlayerItem | null)[] {
@@ -141,6 +150,7 @@ export class BagStorage {
     this.berries = {};
     this.keys = {};
     this.etc = {};
+    this.tms_hms = {};
     this.slots = [];
   }
 

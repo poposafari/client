@@ -104,6 +104,7 @@ export const enum TEXTURE {
   ICON_RUNNING = 'icon_running',
   ICON_LOCATION = 'icon_location',
   ICON_CANDY = 'icon_candy',
+  ICON_MONEY = 'icon_money',
   ICON_MENU = 'icon_menu',
   ICON_OPTION = 'icon_option',
   ICON_SHINY = 'icon_shiny',
@@ -216,6 +217,7 @@ export const enum TEXTURE {
   BAG_POCKET_ETC = 'bag_pocket_etc',
   BAG_POCKET_BERRY = 'bag_pocket_berry',
   BAG_POCKET_KEY = 'bag_pocket_key',
+  BAG_POCKET_TM_HM = 'bag_pocket_tms_hms',
   BAG_BAR = 'bag_bar',
   ARROW_W = 'arrow_w',
   ARROW_B = 'arrow_b',
@@ -334,6 +336,7 @@ export const enum ANIMATION {
   BAG_POCKET_ETC = 'bag_pocket_etc',
   BAG_POCKET_BERRY = 'bag_pocket_berry',
   BAG_POCKET_KEY = 'bag_pocket_key',
+  BAG_POCKET_TM_HM = 'bag_pocket_tms_hms',
   POKEBALL_THROW = 'pokeball_throw',
   POKEBALL_GROUND = 'pokeball_ground',
   EXCLMATION = 'exclamation',
@@ -747,6 +750,7 @@ export enum EVENT {
   ENABLE_DAY_NIGHT_FILTER,
   LANGUAGE_CHANGED,
   CANDY_UPDATED,
+  MONEY_UPDATED,
 
   //socket event
   ADD_OTHER_PLAYER,
@@ -900,14 +904,19 @@ export enum ItemCategory {
   ETC = 'etc',
   BERRY = 'berry',
   KEY = 'key',
+  TM_HM = 'tms_hms',
 }
 
 export type ItemData = {
-  key: string;
-  usable: boolean;
+  id: string;
+  comment: string;
+  type: ItemCategory;
+  buyPrice: number;
+  sellPrice: number;
   purchasable: boolean;
+  sellable: boolean;
+  usable: boolean;
   registerable: boolean;
-  price: number;
 };
 
 export type NpcData = {

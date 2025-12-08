@@ -108,6 +108,7 @@ export class PlayerStorage {
     this.data = {
       avatar: data.avatar,
       candy: data.candy,
+      money: data.money,
       createdAt: data.createdAt,
       gender: data.gender,
       isStarter0: data.isStarter0,

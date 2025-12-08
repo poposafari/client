@@ -170,6 +170,7 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.BAG_POCKET_BALL:
     case ANIMATION.BAG_POCKET_ETC:
     case ANIMATION.BAG_POCKET_BERRY:
+    case ANIMATION.BAG_POCKET_TM_HM:
     case ANIMATION.BAG_POCKET_KEY:
       return 2;
     case ANIMATION.BOY_1_BACK:

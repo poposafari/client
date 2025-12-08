@@ -190,6 +190,7 @@ export type GetIngameRes = {
   y: number;
   x: number;
   candy: number;
+  money: number;
   pcName: string[];
   isStarter0: boolean;
   isStarter1: boolean;
@@ -263,7 +264,7 @@ export type BuyItemRes = {
   item: string;
   category: ItemCategory;
   stock: number;
-  candy: number;
+  money: number;
 };
 
 export type UseItemReq = {
@@ -610,6 +611,7 @@ export type IngameOption = {
 export type IngameData = {
   avatar: number;
   candy: number;
+  money: number;
   createdAt: Date;
   gender: PlayerGender;
   isStarter0: boolean;

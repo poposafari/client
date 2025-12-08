@@ -541,7 +541,7 @@ export class OverworldPlayer {
       Event.off(EVENT.USE_ITEM, this.useItemCallback);
     }
     this.useItemCallback = (item: any) => {
-      if (!this.overworldUi.getIsAllowedRide() && item.key === '046') {
+      if (!this.overworldUi.getIsAllowedRide() && item.key === 'bicycle') {
         void this.actionQueue.enqueue(async () => {
           await this.talkMessageUi.show({
             type: 'default',
