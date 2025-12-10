@@ -103,7 +103,15 @@ export class MenuListUi extends Ui {
 
     this.show();
 
-    this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+    const maxChoice = Math.min(this.perList, this.info.length) - 1;
+    if (choice > maxChoice) {
+      choice = maxChoice >= 0 ? maxChoice : 0;
+      this.lastChoice = choice;
+    }
+
+    if (this.dummys[choice]) {
+      this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+    }
 
     if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
 

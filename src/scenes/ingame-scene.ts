@@ -71,6 +71,7 @@ import { HiddenMoveUi } from '../uis/hidden-move-ui';
 import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
 import { Battle } from '../uis/battle/battle';
 import { HelpUi } from '../uis/help-ui';
+import { BagSellUi } from '../uis/bag-sell-ui';
 
 export class InGameScene extends BaseScene {
   constructor() {
@@ -108,6 +109,7 @@ export class InGameScene extends BaseScene {
     Game.registerUiFactory(UI.OVERWORLD_MENU, (scene) => new OverworldMenuUi(scene));
     Game.registerUiFactory(UI.QUICK_SLOT_ITEM, (scene) => new QuickSlotItemUi(scene));
     Game.registerUiFactory(UI.BAG, (scene) => new BagUi(scene));
+    Game.registerUiFactory(UI.BAG_SELL, (scene) => new BagSellUi(scene));
     Game.registerUiFactory(UI.PC, (scene) => new PcUi(scene));
     Game.registerUiFactory(UI.EVOLVE, (scene) => new EvolveUi(scene));
     Game.registerUiFactory(UI.HIDDEN_MOVE, (scene) => new HiddenMoveUi(scene));

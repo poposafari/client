@@ -686,9 +686,12 @@ export class PcBoxUi extends Ui {
   }
 
   private setupMenus(): void {
-    this.menu.setup([i18next.t('menu:addParty'), i18next.t('menu:boxJump'), i18next.t('menu:evolve'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
-    this.boxMenu.setup([i18next.t('menu:boxJump'), i18next.t('menu:boxBackground'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
-    this.partyMenu.setup([i18next.t('menu:removeParty'), i18next.t('menu:follow'), i18next.t('menu:cancel')]);
+    this.menu.setup();
+    this.menu.setupContent([i18next.t('menu:addParty'), i18next.t('menu:boxJump'), i18next.t('menu:evolve'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
+    this.boxMenu.setup();
+    this.boxMenu.setupContent([i18next.t('menu:boxJump'), i18next.t('menu:boxBackground'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
+    this.partyMenu.setup();
+    this.partyMenu.setupContent([i18next.t('menu:removeParty'), i18next.t('menu:follow'), i18next.t('menu:cancel')]);
     this.noticeUi.setup();
     this.boxListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 10, info: [], window: Option.getFrame('text') as TEXTURE });
     this.boxBgListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 8, info: [], window: Option.getFrame('text') as TEXTURE });

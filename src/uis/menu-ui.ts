@@ -5,6 +5,14 @@ import { InGameScene } from '../scenes/ingame-scene';
 import { addImage, addText, addWindow, getTextStyle, playEffectSound, Ui } from './ui';
 import { Option } from '../core/storage/player-option';
 
+export interface MenuInfo {
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+  window: TEXTURE | string;
+  windowWidth: number;
+}
+
 export class MenuUi extends Ui {
   private container!: Phaser.GameObjects.Container;
   private window!: Phaser.GameObjects.NineSlice;
@@ -14,28 +22,37 @@ export class MenuUi extends Ui {
   private etcTexts: Phaser.GameObjects.Text[] = [];
 
   private info: string[] = [];
+  private windowWidth: number = 270;
+  private scale: number = 2;
+  private windowTexture: TEXTURE | string = Option.getFrame('text') as TEXTURE;
+
   private readonly contentHeight: number = 30;
   private readonly spacing: number = 10;
-  private readonly windowWidth: number = 270;
-  private readonly scale: number = 2;
 
   constructor(scene: InGameScene) {
     super(scene);
   }
 
-  setup(texts: string[]): void {
+  setup(data?: MenuInfo): void {
     const width = this.getWidth();
     const height = this.getHeight();
-    this.info = [...texts];
+
+    this.windowWidth = data?.windowWidth || 270;
+    this.scale = data?.scale || 2;
+    this.windowTexture = data?.window || (Option.getFrame('text') as TEXTURE);
 
     if (!this.container) {
-      this.container = this.createContainer(width / 2 + 410, height / 2 + 530);
+      this.container = this.createContainer(width / 2 + (data?.offsetX || 410), height / 2 + (data?.offsetY || 530));
       this.container.setScale(this.scale);
       this.container.setDepth(DEPTH.MENU);
       this.container.setScrollFactor(0);
     }
 
     this.container.setVisible(false);
+  }
+
+  setupContent(texts: string[]) {
+    this.info = [...texts];
   }
 
   show(data?: any): void {
@@ -69,7 +86,7 @@ export class MenuUi extends Ui {
       this.container.removeAll(true);
     }
 
-    this.window = this.addWindow(Option.getFrame('text') as TEXTURE, 0, 0, 0, 0, 16, 16, 16, 16);
+    this.window = this.addWindow(this.windowTexture, 0, 0, 0, 0, 16, 16, 16, 16);
     this.window.setOrigin(0, 1);
     this.window.setScale(this.scale);
 

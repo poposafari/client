@@ -226,4 +226,7 @@ export const menu: TranslationDefault = {
   time_day: '낮',
   time_dusk: '해질녘',
   time_night: '밤',
+  shop_choice_0: '사러 왔다',
+  shop_choice_1: '팔러 왔다',
+  yourMoney: '소지금',
 };

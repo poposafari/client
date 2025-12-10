@@ -22,6 +22,8 @@ import {
   LoginRes,
   MovePcReq,
   RegisterIngameReq,
+  SellItemReq,
+  SellItemRes,
   UseItemReq,
 } from './types';
 import { MODE } from './enums';
@@ -129,6 +131,7 @@ export const getPcApi = (data: GetPcReq) => apiWrap<GetPcRes[]>(() => Axios.post
 export const MovePcApi = (data: MovePcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/move', data));
 export const EvolvePcApi = (data: EvolPcReq) => apiWrap<EvolPcRes[]>(() => Axios.post('/pc/evol', data));
 export const buyItemApi = (data: BuyItemReq) => apiWrap<BuyItemRes>(() => Axios.post('/bag/buy', data));
+export const sellItemApi = (data: SellItemReq) => apiWrap<SellItemRes>(() => Axios.post('/bag/sell', data));
 export const getAvailableTicketApi = () => apiWrap<number>(() => Axios.get('ingame/ticket/get'));
 export const receiveAvailableTicketApi = () => apiWrap<GetItemRes>(() => Axios.get('ingame/ticket/receive'));
 export const useSafariTicketApi = (data: UseItemReq) => apiWrap<BuyItemRes>(() => Axios.post('bag/ticket/use', data));
