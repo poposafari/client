@@ -64,6 +64,7 @@ export const message: TranslationDefault = {
   warn_full_box: 'Box is full.',
   warn_no_ticket: 'Not enough tickets.',
   warn_not_purchasable_item: 'This item\ncannot be purchased.',
+  warn_not_sellable_item: 'This item\ncannot be sold.',
   warn_hidden_move_pokemon: 'This Pokémon is using Surf.',
   is_back_to_title: 'Return to\ntitle screen?',
   is_back_to_plaza: 'End Safari\nexploration?',

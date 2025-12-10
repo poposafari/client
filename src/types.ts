@@ -259,7 +259,20 @@ export type BuyItemReq = {
   stock: number;
 };
 
+export type SellItemReq = {
+  item: string;
+  stock: number;
+};
+
 export type BuyItemRes = {
+  idx: number;
+  item: string;
+  category: ItemCategory;
+  stock: number;
+  money: number;
+};
+
+export type SellItemRes = {
   idx: number;
   item: string;
   category: ItemCategory;

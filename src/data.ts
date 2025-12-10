@@ -1394,7 +1394,7 @@ const initialItemData: Record<string, ItemData> = {
     buyPrice: 999999999,
     sellPrice: 0,
     purchasable: true,
-    sellable: true,
+    sellable: false,
     usable: true,
     registerable: true,
   },

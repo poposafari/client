@@ -7,6 +7,7 @@ export enum ErrorCode {
 
   //api
   NOT_FOUND_INGAME = 'NOT_FOUND_INGAME',
+  NOT_FOUND_INGAME_ITEM = 'NOT_ALLOWED_INGAME_ITEM',
   FAIL_LOGIN = 'FAIL_LOGIN',
   INVALID_ACCESS_TOKEN = 'INVALID_ACCESS_TOKEN',
   NOT_FOUND_ACCESS_TOKEN = 'NOT_FOUND_ACCESS_TOKEN',
@@ -17,6 +18,7 @@ export enum ErrorCode {
   NOT_ENOUGH_MONEY = 'NOT_ENOUGH_MONEY',
   NOT_ENOUGH_CANDY = 'NOT_ENOUGH_CANDY',
   NOT_PURCHASABLE_INGAME_ITEM = 'NOT_PURCHASABLE_INGAME_ITEM',
+  NOT_SELLABLE_INGAME_ITEM = 'NOT_SELLABLE_INGAME_ITEM',
   INGAME_ITEM_STOCK_LIMIT_EXCEEDED = 'INGAME_ITEM_STOCK_LIMIT_EXCEEDED',
 
   //overworld
@@ -36,6 +38,7 @@ export const ErrorMessage: Record<ErrorCode, string> = {
 
   //api
   [ErrorCode.NOT_FOUND_INGAME]: 'Ingame data not found',
+  [ErrorCode.NOT_FOUND_INGAME_ITEM]: 'Not found ingame item',
   [ErrorCode.FAIL_LOGIN]: 'Login failed',
   [ErrorCode.INVALID_ACCESS_TOKEN]: 'Invalid access token',
   [ErrorCode.NOT_FOUND_ACCESS_TOKEN]: 'Not found access token',
@@ -46,6 +49,7 @@ export const ErrorMessage: Record<ErrorCode, string> = {
   [ErrorCode.NOT_ENOUGH_MONEY]: 'Not enough money',
   [ErrorCode.NOT_ENOUGH_CANDY]: 'Not enough candy',
   [ErrorCode.NOT_PURCHASABLE_INGAME_ITEM]: 'Not purchasable ingame item',
+  [ErrorCode.NOT_SELLABLE_INGAME_ITEM]: 'Not sellable ingame item',
   [ErrorCode.INGAME_ITEM_STOCK_LIMIT_EXCEEDED]: 'Ingame item stock limit exceeded',
 
   //overworld
