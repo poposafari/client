@@ -250,6 +250,8 @@ export const enum TEXTURE {
   GROUND_ITEM = 'ground_item',
   SHOP_SCREEN = 'shop_screen',
   LAMP = 'lamp',
+  SPEAKER = 'speaker',
+  X_BUTTON = 'x',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
@@ -353,6 +355,7 @@ export const enum ANIMATION {
   GROUND_ITEM = 'ground_item',
   TUTORIAL_CHOICE_BALL = 'tutorial_choice_ball',
   TUTORIAL_CHOICE_FINGER = 'tutorial_choice_finger',
+  SPEAKER = 'speaker',
 }
 
 export const enum EASE {

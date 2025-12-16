@@ -24,6 +24,8 @@ export class PlayerStorage {
   appearMenuFlag: boolean = false;
   appearItemSlotFlag: boolean = false;
 
+  pokemonCryFlagInPc: boolean = true;
+
   private playTimeTimer: Phaser.Time.TimerEvent | null = null;
   private readonly PLAY_TIME_INTERVAL: number = 60000;
   private scene: Phaser.Scene | null = null;

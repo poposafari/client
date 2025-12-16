@@ -201,6 +201,8 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
     createSpriteAnimation(this, TEXTURE.TUTORIAL_CHOICE_FINGER, ANIMATION.TUTORIAL_CHOICE_FINGER);
 
+    createSpriteAnimation(this, TEXTURE.SPEAKER, ANIMATION.SPEAKER);
+
     this.initDoorAnimation();
 
     this.initNpcAnimation();

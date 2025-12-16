@@ -183,6 +183,8 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.GIRL_3_BACK:
     case ANIMATION.GIRL_4_BACK:
       return 4;
+    case ANIMATION.SPEAKER:
+      return 3;
     case ANIMATION.POKEBALL:
       return 39;
     case ANIMATION.OVERWORLD_SHADOW_WATER:

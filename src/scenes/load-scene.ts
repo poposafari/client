@@ -350,6 +350,8 @@ export class LoadingScene extends BaseScene {
     this.loadImage('battle_shadow_0', 'ui/battle', 'battle_shadow_0');
     this.loadImage('battle_shadow_1', 'ui/battle', 'battle_shadow_1');
     this.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
+    this.loadAtlas(TEXTURE.SPEAKER, 'ui', TEXTURE.SPEAKER, ANIMATION.SPEAKER);
+    this.loadImage(TEXTURE.X_BUTTON, 'ui', TEXTURE.X_BUTTON);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {

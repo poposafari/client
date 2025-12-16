@@ -77,6 +77,7 @@ export class OverworldHUDUi extends Ui {
     this.updatePokemonSlotUi();
     this.updateLocationUi();
     this.updateMoneyUi();
+    this.updateCandyUi();
   }
 
   getOverworldInfoContainer() {
@@ -106,6 +107,10 @@ export class OverworldHUDUi extends Ui {
 
   updateMoneyUi() {
     this.overworldInfoUi.updateMyMoney();
+  }
+
+  updateCandyUi() {
+    this.overworldInfoUi.updateMyCandy();
   }
 
   showArea(texture: TEXTURE | string, location: string) {
@@ -427,7 +432,7 @@ export class OverworldInfoUi extends Ui {
   private textMyCandy!: Phaser.GameObjects.Text;
   private textLocation!: Phaser.GameObjects.Text;
   private textPosition!: Phaser.GameObjects.Text;
-  private icons: TEXTURE[] = [TEXTURE.ICON_LOCATION, TEXTURE.ICON_XY, TEXTURE.ICON_MONEY];
+  private icons: TEXTURE[] = [TEXTURE.ICON_LOCATION, TEXTURE.ICON_XY, TEXTURE.ICON_MONEY, TEXTURE.ICON_CANDY];
   private texts: Phaser.GameObjects.Text[] = [];
 
   constructor(scene: InGameScene) {
@@ -490,10 +495,14 @@ export class OverworldInfoUi extends Ui {
     this.texts[2].setText(` ${PlayerGlobal.getData()?.money}`);
   }
 
+  updateMyCandy() {
+    this.texts[3].setText(`${PlayerGlobal.getData()?.candy}` + ' ' + i18next.t('menu:candy'));
+  }
+
   private createWindow() {
     const contentWidth = 380;
     const contentHeight = 35;
-    const spacing = 10;
+    const spacing = 5;
 
     let currentY = 0;
     let i = 0;

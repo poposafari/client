@@ -1,7 +1,7 @@
 import { EvolvePcApi, getPcApi, MovePcApi } from '../api';
 import { MAX_PARTY_SLOT, MAX_PC_BG } from '../constants';
 import { Event } from '../core/manager/event-manager';
-import { AUDIO, DEPTH, EVENT, KEY, MessageEndDelay, MODE, TEXTSTYLE, TEXTURE, TIME, TYPE, UI } from '../enums';
+import { ANIMATION, AUDIO, DEPTH, EVENT, KEY, MessageEndDelay, MODE, TEXTSTYLE, TEXTURE, TIME, TYPE, UI } from '../enums';
 import { Keyboard } from '../core/manager/keyboard-manager';
 import { SocketManager } from '../core/manager/socket-manager';
 import i18next from '../i18n';
@@ -155,6 +155,9 @@ export class PcBoxUi extends Ui {
   private boxSelection: { row: number; col: number } = { row: 0, col: 0 };
   private partySelection: number = 0;
   private currentInputMode: PcInputMode = PcInputMode.BOX_GRID;
+  private currentPokemonCrySound: Phaser.Sound.BaseSound | null = null;
+  private pokemonCryDebounceTimer: Phaser.Time.TimerEvent | null = null;
+  private pendingCryPokedex: string | null = null;
 
   private readonly FINGER: TEXTURE = TEXTURE.FINGER;
   private readonly MAX_ROW: number = 9;
@@ -213,6 +216,18 @@ export class PcBoxUi extends Ui {
   }
 
   protected onClean(): void {
+    if (this.pokemonCryDebounceTimer) {
+      this.pokemonCryDebounceTimer.remove();
+      this.pokemonCryDebounceTimer = null;
+    }
+    this.pendingCryPokedex = null;
+
+    if (this.currentPokemonCrySound && this.currentPokemonCrySound.isPlaying) {
+      this.currentPokemonCrySound.stop();
+      this.currentPokemonCrySound.destroy();
+      this.currentPokemonCrySound = null;
+    }
+
     this.container.setVisible(false);
     this.pokeIconContainer.setVisible(false);
     this.partyContainer.setVisible(false);
@@ -270,6 +285,7 @@ export class PcBoxUi extends Ui {
           case KEY.ARROW_UP:
             if (row > -1) row--;
             if (row === -1) {
+              this.stopPokemonCryDebounceTimer();
               this.switchToBoxHeader();
               return;
             }
@@ -280,6 +296,7 @@ export class PcBoxUi extends Ui {
           case KEY.ARROW_LEFT:
             if (col > -1) col--;
             if (col === -1) {
+              this.stopPokemonCryDebounceTimer();
               this.switchToParty();
               return;
             }
@@ -311,6 +328,13 @@ export class PcBoxUi extends Ui {
         choice = row * this.MAX_ROW + col;
         if (choice !== prevChoice) {
           playEffectSound(this.scene, AUDIO.SELECT_0);
+          this.stopPokemonCryDebounceTimer();
+          this.pcSummaryUi.stopSpeakerAnimation();
+
+          if (PlayerGlobal.pokemonCryFlagInPc) {
+            this.playPokemonCrySound(this.boxPokemons[choice]?.getPokedex());
+          }
+
           this.boxSelection = { row, col };
           this.updateBoxSelection(choice);
           this.pcSummaryUi.updateSummary(this.boxPokemons[choice]);
@@ -318,6 +342,48 @@ export class PcBoxUi extends Ui {
       } catch (error) {
         console.error(`Error handling box grid input: ${error}`);
       }
+    }
+  }
+
+  private stopPokemonCryDebounceTimer(): void {
+    if (this.pokemonCryDebounceTimer) {
+      this.pokemonCryDebounceTimer.remove();
+      this.pokemonCryDebounceTimer = null;
+    }
+  }
+
+  private playPokemonCrySound(pokedex: string): void {
+    this.stopPokemonCryDebounceTimer();
+
+    this.pendingCryPokedex = pokedex;
+
+    this.pokemonCryDebounceTimer = this.scene.time.delayedCall(500, () => {
+      if (this.pendingCryPokedex) {
+        this.executePokemonCrySound(this.pendingCryPokedex);
+        this.pendingCryPokedex = null;
+      }
+      this.pokemonCryDebounceTimer = null;
+    });
+  }
+
+  private executePokemonCrySound(pokedex: string): void {
+    if (this.currentPokemonCrySound && this.currentPokemonCrySound.isPlaying) {
+      this.currentPokemonCrySound.stop();
+      this.currentPokemonCrySound.destroy();
+      this.currentPokemonCrySound = null;
+    }
+
+    if (this.scene.cache.audio.exists(pokedex)) {
+      this.currentPokemonCrySound = this.scene.sound.add(pokedex, {
+        volume: Option.getEffectVolume(),
+        loop: false,
+      }) as Phaser.Sound.BaseSound;
+      this.pcSummaryUi.runSpeakerAnimation();
+      this.currentPokemonCrySound.play();
+
+      this.currentPokemonCrySound.once('complete', () => {
+        this.currentPokemonCrySound = null;
+      });
     }
   }
 
@@ -609,8 +675,6 @@ export class PcBoxUi extends Ui {
 
     const ret = await this.evolveListMenu.handleKeyInput();
     const evolIdx = Number(ret);
-
-    console.log(evolLabels);
 
     if (ret === i18next.t('menu:cancelMenu')) return;
 
@@ -1025,6 +1089,8 @@ export class PcSummaryUi extends Ui {
   private skillTexts: Phaser.GameObjects.Text[] = [];
   private rank!: Phaser.GameObjects.Text;
   private friendShip!: Phaser.GameObjects.Text;
+  private speakerSprite!: Phaser.GameObjects.Sprite;
+  private speakerFlagIcon!: Phaser.GameObjects.Image;
 
   private yourCandyIcon!: Phaser.GameObjects.Image;
   private yourCandyText!: Phaser.GameObjects.Text;
@@ -1077,9 +1143,19 @@ export class PcSummaryUi extends Ui {
     this.captureCntIcon.disableInteractive();
   }
 
-  pause(onoff: boolean, data?: any): void {}
+  pause(onoff: boolean, data?: any): void {
+    onoff ? this.block() : this.unblock();
+  }
   handleKeyInput(...data: any[]): void {}
   update(time?: number, delta?: number): void {}
+
+  private block() {
+    this.speakerSprite.disableInteractive();
+  }
+
+  private unblock() {
+    this.speakerSprite.setInteractive();
+  }
 
   updateSummary(pokemon: PlayerPokemon | null): void {
     if (pokemon) {
@@ -1120,6 +1196,11 @@ export class PcSummaryUi extends Ui {
       .setOrigin(0, 0.5);
     this.rank = this.addText(+200, -250, 'Legendary', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0.5).setScale(0.8);
 
+    this.speakerSprite = this.createSprite(TEXTURE.SPEAKER, -380, -480).setScale(3).setInteractive({ cursor: 'pointer' });
+    this.speakerFlagIcon = this.addImage(TEXTURE.X_BUTTON, -320, -445).setScale(1.4);
+
+    this.updateSpeakerFlagIcon();
+
     this.container.add(topWindow);
     this.container.add(bottomWindow);
     this.container.add(this.sprite);
@@ -1141,6 +1222,30 @@ export class PcSummaryUi extends Ui {
     this.container.add(this.captureDate);
     this.container.add(this.captureLocation);
     this.container.add(this.rank);
+    this.container.add(this.speakerSprite);
+    this.container.add(this.speakerFlagIcon);
+  }
+
+  updateSpeakerFlagIcon(): void {
+    this.speakerFlagIcon.setTexture(!PlayerGlobal.pokemonCryFlagInPc ? TEXTURE.X_BUTTON : TEXTURE.BLANK);
+  }
+
+  stopSpeakerAnimation(): void {
+    if (this.speakerSprite.anims.isPlaying) {
+      this.speakerSprite.anims.stop();
+      this.speakerSprite.setFrame(0);
+    }
+  }
+
+  runSpeakerAnimation(): void {
+    this.stopSpeakerAnimation();
+
+    this.speakerSprite.play({ key: ANIMATION.SPEAKER, frameRate: 6, repeat: 0 });
+
+    this.speakerSprite.on('animationcomplete', () => {
+      this.speakerSprite.setFrame(0);
+      this.speakerSprite.anims.stop();
+    });
   }
 
   private renderPokemonSummary(pokemon: PlayerPokemon): void {
@@ -1278,6 +1383,7 @@ export class PcSummaryUi extends Ui {
 
   private handleMousePointer(): void {
     this.captureCntIcon.setInteractive().setScrollFactor(0);
+    this.speakerSprite.setInteractive().setScrollFactor(0);
     this.captureCntTitle.setVisible(false);
 
     this.captureCntIcon.on('pointerover', () => {
@@ -1286,6 +1392,20 @@ export class PcSummaryUi extends Ui {
 
     this.captureCntIcon.on('pointerout', () => {
       this.captureCntTitle.setVisible(false);
+    });
+
+    this.speakerSprite.on('pointerover', () => {
+      this.speakerSprite.setTint(0xcccccc);
+    });
+
+    this.speakerSprite.on('pointerout', () => {
+      this.speakerSprite.clearTint();
+    });
+
+    this.speakerSprite.on('pointerup', () => {
+      PlayerGlobal.pokemonCryFlagInPc = !PlayerGlobal.pokemonCryFlagInPc;
+
+      this.updateSpeakerFlagIcon();
     });
   }
 

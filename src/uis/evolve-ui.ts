@@ -43,7 +43,7 @@ export class EvolveUi extends Ui {
     const bg = this.addBackground(TEXTURE.BG_EVOLVE).setOrigin(0.5, 0.5);
     this.startPokemon = this.addImage(getPokemonTextureFromPlayerPokemon('front', null), 0, 0).setScale(this.pokemonScale);
     this.nextPokemon = this.addImage(getPokemonTextureFromPlayerPokemon('front', null), 0, 0).setScale(this.pokemonScale);
-    this.textWindow = this.addWindow(TEXTURE.WINDOW_MENU, 0, 410, 2000 / this.baseWindowScale, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
+    this.textWindow = this.addWindow(TEXTURE.WINDOW_MENU, 0, 410, 1920 / this.baseWindowScale, 260 / this.baseWindowScale, 16, 16, 16, 16).setScale(this.baseWindowScale);
     this.text = this.addText(-880, +340, '', TEXTSTYLE.MESSAGE_BLACK).setOrigin(0, 0).setScale(1);
 
     this.textWindow.setVisible(false);
