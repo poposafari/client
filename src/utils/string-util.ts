@@ -1,9 +1,13 @@
-import { SafariData } from '../data';
+import i18next from 'i18next';
+import { femalePokemonFrontPokedex, femalePokemonIconPokedex, femalePokemonOverworldPokedex } from '../data';
 import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, Season, TextSpeed, TIME, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
+import { WildRes } from '../types';
+import { PlayerGlobal } from '../core/storage/player-storage';
+import { Bag } from '../core/storage/bag-storage';
 
-export function createZeroPad(value: number): string {
-  return value.toString().padStart(4, '0');
+export function createZeroPad(value: number, length: number = 4): string {
+  return value.toString().padStart(length, '0');
 }
 
 export function isPokedexShiny(pokedex: string) {
@@ -216,21 +220,6 @@ export function getCurrentTimeOfDayValue(): number {
   return adjustedTime;
 }
 
-export function isSafariData(obj: any): obj is SafariData {
-  return (
-    obj &&
-    typeof obj === 'object' &&
-    'key' in obj &&
-    typeof obj.key === 'string' &&
-    'cost' in obj &&
-    typeof obj.cost === 'number' &&
-    'x' in obj &&
-    typeof obj.x === 'number' &&
-    'y' in obj &&
-    typeof obj.y === 'number'
-  );
-}
-
 export function changeDirectionToKey(direction: DIRECTION) {
   switch (direction) {
     case DIRECTION.UP:
@@ -440,4 +429,110 @@ export const matchBallAnimation = (item: string): string => {
   }
 
   return '001';
+};
+
+export const matchPokemonEvolve = (pokemon: PlayerPokemon) => {
+  return `pokemon:${pokemon.getPokedex()}.evolve`;
+};
+
+export const getPokemonTextureFromPlayerPokemon = (type: 'icon' | 'overworld' | 'front', pokemon: PlayerPokemon | null) => {
+  if (pokemon) {
+    const shiny = pokemon.getShiny() ? 's' : '';
+    const gender = pokemon.getGender();
+    const pokedex = pokemon.getPokedex();
+    const region = pokemon.getRegion() ? '_' + pokemon.getRegion() : '';
+
+    switch (type) {
+      case 'icon':
+        if (femalePokemonIconPokedex.includes(pokedex) && gender === 'female') {
+          return `pokemon.icon.${pokedex}${shiny}${region}_female`;
+        }
+        return `pokemon.icon.${pokedex}${shiny}${region}`;
+      case 'overworld':
+        if (femalePokemonOverworldPokedex.includes(pokedex) && gender === 'female') {
+          return `pokemon.overworld.${pokedex}s${region}_female`;
+        }
+        return `pokemon.overworld.${pokedex}${shiny}${region}`;
+      case 'front':
+        if (femalePokemonFrontPokedex.includes(pokedex) && gender === 'female') {
+          return `pokemon.front.${pokedex}${shiny}${region}_female`;
+        }
+        return `pokemon.front.${pokedex}${shiny}${region}`;
+    }
+  } else {
+    switch (type) {
+      case 'icon':
+        return `pokemon.icon.0000`;
+      case 'overworld':
+        return `pokemon.overworld.0000`;
+      case 'front':
+        return `pokemon.front.0000`;
+    }
+  }
+};
+
+export const getPokemonTextureFromWildPokemon = (type: 'overworld' | 'front', pokemon: WildRes | null) => {
+  if (pokemon) {
+    const shiny = pokemon.shiny ? 's' : '';
+    const region = pokemon.region ? '_' + pokemon.region : '';
+    const pokedex = pokemon.pokedex;
+    const gender = pokemon.gender;
+
+    switch (type) {
+      case 'overworld':
+        if (femalePokemonOverworldPokedex.includes(pokedex) && gender === 'female') {
+          return `pokemon.overworld.${pokedex}s${region}_female`;
+        }
+
+        return `pokemon.overworld.${pokedex}${shiny}${region}`;
+      case 'front':
+        if (femalePokemonFrontPokedex.includes(pokedex) && gender === 'female') {
+          return `pokemon.front.${pokedex}${shiny}${region}_female`;
+        }
+
+        return `pokemon.front.${pokedex}${shiny}${region}`;
+    }
+  } else {
+    switch (type) {
+      case 'overworld':
+        return `pokemon.overworld.0000`;
+      case 'front':
+        return `pokemon.front.0000`;
+    }
+  }
+};
+
+export const getPokemonEvolCostText = (targetPokemon: PlayerPokemon, cost: string): [boolean, string] => {
+  let split: string[] = cost.split('+') || [];
+  let ret = '';
+  let check = true;
+
+  for (const target of split) {
+    if (target.includes('candy_')) {
+      let costCandy = target.split('_')[1];
+      if (PlayerGlobal.getData()!.candy < Number(costCandy)) check = false;
+      ret = ret + ',' + i18next.t(`menu:candy`) + `(${costCandy})`;
+    } else if (target.includes('friendship_')) {
+      let costFriendship = target.split('_')[1];
+      if (targetPokemon.getFriendShip() < Number(costFriendship)) check = false;
+      ret = ret + ',' + i18next.t(`menu:friendship`) + `(${costFriendship})`;
+    } else if (target.includes('time_')) {
+      let costTime = target.split('_')[1] as 'day' | 'night';
+      if (getCurrentTimeOfDay() !== costTime) check = false;
+      ret = ret + ',' + i18next.t(`menu:${target}`);
+    } else if (target.includes('move_')) {
+      let costMove = target.split('_')[1];
+      if (!Bag.getItem(costMove)) check = false;
+      ret = ret + ',' + i18next.t(`item:${costMove}.name`);
+    } else if (target === 'female' || target === 'male') {
+      if (targetPokemon.getGender() !== target) check = false;
+      ret = ret + ',' + i18next.t(`menu:${target}`);
+    } else {
+      let costItem = target;
+      if (!Bag.getItem(costItem)) check = false;
+      ret = ret + ',' + i18next.t(`item:${costItem}.name`);
+    }
+  }
+  ret = replacePercentSymbol(i18next.t('menu:use_evolve'), [ret.slice(1)]);
+  return [check, ret];
 };

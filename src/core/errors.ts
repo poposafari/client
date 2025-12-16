@@ -17,6 +17,7 @@ export enum ErrorCode {
   ALREADY_EXIST_NICKNAME = 'ALREADY_EXIST_NICKNAME',
   NOT_ENOUGH_MONEY = 'NOT_ENOUGH_MONEY',
   NOT_ENOUGH_CANDY = 'NOT_ENOUGH_CANDY',
+  NOT_ENOUGH_EVOLVE_CONDITION = 'NOT_ENOUGH_EVOLVE_CONDITION',
   NOT_PURCHASABLE_INGAME_ITEM = 'NOT_PURCHASABLE_INGAME_ITEM',
   NOT_SELLABLE_INGAME_ITEM = 'NOT_SELLABLE_INGAME_ITEM',
   INGAME_ITEM_STOCK_LIMIT_EXCEEDED = 'INGAME_ITEM_STOCK_LIMIT_EXCEEDED',
@@ -51,6 +52,7 @@ export const ErrorMessage: Record<ErrorCode, string> = {
   [ErrorCode.NOT_PURCHASABLE_INGAME_ITEM]: 'Not purchasable ingame item',
   [ErrorCode.NOT_SELLABLE_INGAME_ITEM]: 'Not sellable ingame item',
   [ErrorCode.INGAME_ITEM_STOCK_LIMIT_EXCEEDED]: 'Ingame item stock limit exceeded',
+  [ErrorCode.NOT_ENOUGH_EVOLVE_CONDITION]: 'Not enough evolve condition',
 
   //overworld
   [ErrorCode.PLAYER_DATA_NOT_SET]: 'Player data not set',

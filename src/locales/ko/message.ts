@@ -67,6 +67,7 @@ export const message: TranslationDefault = {
   warn_not_sellable_item: '판매가 불가능한\n아이템 입니다.',
   warn_not_found_ingame_item: '가지고 있지 않은\n아이템 입니다.',
   warn_not_allowed_item: '호박사의 말... %!\n이런 것은 쓸 때가 따로 있단다!',
+  warn_not_enough_evolve_condition: '진화 조건이 부족합니다.',
   warn_hidden_move_pokemon: '파도타기를 사용하고 있는 포켓몬입니다.',
   is_back_to_title: '타이틀로\n이동하시겠습니까?',
   is_back_to_plaza: '사파리 탐험을\n종료하시겠습니까?',

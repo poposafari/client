@@ -461,36 +461,8 @@ export const item: TranslationItem = {
     name: '화석긴목',
     description: '오랜 옛날 바다에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
   },
-  hm01: {
-    name: '비전머신01',
-    description: '-\n-\n-',
-  },
-  hm02: {
-    name: '비전머신02',
-    description: '-\n-\n-',
-  },
-  hm03: {
-    name: '비전머신03',
-    description: '-\n-\n-',
-  },
-  hm04: {
-    name: '비전머신04',
-    description: '-\n-\n-',
-  },
-  hm05: {
-    name: '비전머신05',
-    description: '-\n-\n-',
-  },
-  hm06: {
-    name: '비전머신06',
-    description: '-\n-\n-',
-  },
-  hm07: {
-    name: '비전머신07',
-    description: '1턴째에 잠수했다가 2턴째에\n떠올라 공격한다.',
-  },
-  hm08: {
-    name: 'hm08',
+  'fairy-feather': {
+    name: '요정의 깃털',
     description: '',
   },
   bicycle: {
@@ -576,5 +548,9 @@ export const item: TranslationItem = {
   'blue-orb': {
     name: '쪽빛구슬',
     description: '호연지방의 전설과\n깊은 연관이 있다고 전해지는\n파랗게 빛나는 구슬.',
+  },
+  'soothe-bell': {
+    name: '평온의방울',
+    description: '기분 좋은 소리의 방울.\n지니게 한 포켓몬은 마음이\n편안해져 친밀해지기 쉬워진다.',
   },
 };

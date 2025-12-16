@@ -1,4 +1,3 @@
-import { itemData } from '../../data';
 import { DIRECTION, EVENT, ItemCategory, PLAYER_STATUS } from '../../enums';
 import { PlayerItem } from '../../obj/player-item';
 import { PlayerOverworldObj } from '../../obj/player-overworld-obj';

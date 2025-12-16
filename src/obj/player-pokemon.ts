@@ -1,14 +1,15 @@
 import { TYPE } from '../enums';
-import { PokemonEvol, PokemonGender, PokemonRank, PokemonSkill } from '../types';
+import { PokemonEvol, PokemonGender, PokemonHiddenMove, PokemonRank } from '../types';
 
 export class PlayerPokemon {
   private idx: number;
   private pokedex: string;
   private gender: PokemonGender;
   private shiny: boolean;
-  private form: string;
   private count: number;
-  private skill: PokemonSkill[];
+  private friendShip: number;
+  private region: string;
+  private skill: PokemonHiddenMove[];
   private nickname: string | null;
   private created_location: string;
   private created_at: string;
@@ -23,10 +24,11 @@ export class PlayerPokemon {
     pokedex: string,
     gender: PokemonGender,
     shiny: boolean,
-    form: string,
     count: number,
-    skill: PokemonSkill[],
+    friendShip: number,
+    skill: PokemonHiddenMove[],
     nickname: string | null,
+    region: string,
     created_location: string,
     created_at: string,
     created_ball: string,
@@ -39,10 +41,11 @@ export class PlayerPokemon {
     this.pokedex = pokedex;
     this.gender = gender;
     this.shiny = shiny;
-    this.form = form;
     this.count = count;
+    this.friendShip = friendShip;
     this.skill = skill;
     this.nickname = nickname;
+    this.region = region;
     this.created_location = created_location;
     this.created_at = created_at;
     this.created_ball = created_ball;
@@ -60,16 +63,16 @@ export class PlayerPokemon {
     return this.pokedex;
   }
 
+  public getRegion(): string {
+    return this.region;
+  }
+
   public getGender(): PokemonGender {
     return this.gender;
   }
 
   public getShiny(): boolean {
     return this.shiny;
-  }
-
-  public getForm(): string {
-    return this.form;
   }
 
   public getCount(): number {
@@ -80,7 +83,15 @@ export class PlayerPokemon {
     this.count = count;
   }
 
-  public getSkill(): PokemonSkill[] {
+  public getFriendShip(): number {
+    return this.friendShip;
+  }
+
+  public setFriendShip(friendShip: number) {
+    this.friendShip = friendShip;
+  }
+
+  public getSkill(): PokemonHiddenMove[] {
     return this.skill;
   }
 

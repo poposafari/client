@@ -1,10 +1,21 @@
-import { females, itemData, npcData, PokemonData } from '../data';
 import { ANIMATION, AUDIO, BATTLE_AREA, TEXTURE, TIME } from '../enums';
 import { initI18n } from '../i18n';
 import { addBackground, addImage } from '../uis/ui';
 import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
 import { Game } from '../core/manager/game-manager';
+import {
+  bigSizePokemonOverworldPokedex,
+  femalePokemonFrontPokedex,
+  femalePokemonIconPokedex,
+  femalePokemonOverworldPokedex,
+  getAllItems,
+  getAllPokemonKeys,
+  getAllPokemons,
+  getPokemonData,
+  loadJsonDataFromCache,
+  pokemonCryNames,
+} from '../data';
 
 export class LoadingScene extends BaseScene {
   private bg!: Phaser.GameObjects.Image;
@@ -17,13 +28,68 @@ export class LoadingScene extends BaseScene {
   }
 
   async preload() {
-    await initI18n();
+    let itemJsonLoaded = false;
+    let pokemonJsonLoaded = false;
+    let bgLoaded = false;
+    let logoLoaded = false;
+    let assetsLoaded = false;
 
+    await initI18n();
+    this.loadJson('item', 'data', 'item');
+    this.loadJson('pokemon', 'data', 'pokemon');
+    this.loadImage(TEXTURE.BG_LOAD, 'ui/bg', TEXTURE.BG_LOAD);
+    this.loadImage(TEXTURE.LOGO_0, 'ui', TEXTURE.LOGO_0);
+
+    this.load.on('filecomplete', (key: string) => {
+      if (key === 'item') itemJsonLoaded = true;
+      if (key === 'pokemon') pokemonJsonLoaded = true;
+      if (key === TEXTURE.BG_LOAD) bgLoaded = true;
+      if (key === TEXTURE.LOGO_0) logoLoaded = true;
+
+      // 한 번만 실행되도록 체크
+      if (itemJsonLoaded && pokemonJsonLoaded && bgLoaded && logoLoaded && !assetsLoaded) {
+        assetsLoaded = true; // 플래그 설정
+
+        this.createLoadingBar();
+
+        const itemData = this.cache.json.get('item');
+        const pokemonData = this.cache.json.get('pokemon');
+
+        if (itemData && pokemonData) {
+          loadJsonDataFromCache(itemData, pokemonData);
+          this.loadAssets();
+        } else {
+          console.error('Failed to load JSON data from cache');
+        }
+      }
+    });
+
+    this.load.on('progress', (value: number) => {
+      if (itemJsonLoaded && pokemonJsonLoaded && bgLoaded && logoLoaded && assetsLoaded) {
+        this.percentText.setText(`${parseInt(String(value * 100), 10)}%`);
+      }
+    });
+
+    this.load.on('fileprogress', (file: Phaser.Loader.File) => {
+      if (itemJsonLoaded && pokemonJsonLoaded && bgLoaded && logoLoaded && assetsLoaded) {
+        this.assetText.setText(`Loading asset: ${file.key}`);
+      }
+    });
+
+    this.load.on('complete', async () => {
+      this.startInGameScene();
+    });
+
+    this.load.start();
+  }
+
+  private loadAssets() {
     //windows
     this.loadImage(TEXTURE.WINDOW_BAG, 'ui/windows', TEXTURE.WINDOW_BAG);
     this.loadImage(TEXTURE.WINDOW_BAG_O, 'ui/windows', TEXTURE.WINDOW_BAG_O);
     this.loadImage(TEXTURE.WINDOW_SYS, 'ui/windows', TEXTURE.WINDOW_SYS);
     this.loadImage(TEXTURE.WINDOW_MENU, 'ui/windows', TEXTURE.WINDOW_MENU);
+    this.loadImage(TEXTURE.WINDOW_MENU_BLACK, 'ui/windows', TEXTURE.WINDOW_MENU_BLACK);
     this.loadImage(TEXTURE.WINDOW_MENU_S, 'ui/windows', TEXTURE.WINDOW_MENU_S);
     this.loadImage(TEXTURE.WINDOW_RED, 'ui/windows', TEXTURE.WINDOW_RED);
     this.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', TEXTURE.WINDOW_WHITE);
@@ -44,7 +110,6 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_4, 'ui/windows', TEXTURE.WINDOW_4);
 
     //backgrounds
-    this.loadImage(TEXTURE.BG_LOAD, 'ui/bg', TEXTURE.BG_LOAD);
     this.loadImage(TEXTURE.BG_TITLE, 'ui/bg', TEXTURE.BG_TITLE);
     this.loadImage(TEXTURE.BG_BAG, 'ui/bg', TEXTURE.BG_BAG);
     this.loadImage(TEXTURE.BG_PC, 'ui/bg', TEXTURE.BG_PC);
@@ -175,7 +240,6 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.AREA_16, 'ui/area', TEXTURE.AREA_16);
 
     //etc
-    this.loadImage(TEXTURE.LOGO_0, 'ui', TEXTURE.LOGO_0);
     this.loadImage(TEXTURE.LOGO_DISCORD, 'ui', TEXTURE.LOGO_DISCORD);
     this.loadImage(TEXTURE.LOGO_GOOGLE, 'ui', TEXTURE.LOGO_GOOGLE);
     this.loadImage(TEXTURE.HELP_ARROWS, 'ui', TEXTURE.HELP_ARROWS);
@@ -282,48 +346,93 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.SPARKLE, 'ui', TEXTURE.SPARKLE, ANIMATION.SPARKLE);
     this.loadAtlas(TEXTURE.GROUND_ITEM, 'ui', TEXTURE.GROUND_ITEM, ANIMATION.GROUND_ITEM);
     this.loadImage(TEXTURE.SHOP_SCREEN, 'ui', TEXTURE.SHOP_SCREEN);
+    this.loadImage(TEXTURE.LAMP, 'ui', TEXTURE.LAMP);
     this.loadImage('battle_shadow_0', 'ui/battle', 'battle_shadow_0');
     this.loadImage('battle_shadow_1', 'ui/battle', 'battle_shadow_1');
     this.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
-    this.loadImage(TEXTURE.LAMP, 'ui', TEXTURE.LAMP);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
       this.loadImage(`box${i}`, 'ui/pc', `box${i}`);
     }
 
-    for (const key of Object.keys(itemData)) {
-      this.loadImage(`${key}`, 'ui/item', `${key}`);
+    for (const key of getAllItems()) {
+      this.loadImage(`${key.id}`, 'ui/item', `${key.id}`);
     }
 
-    for (const key of Object.keys(npcData)) {
-      this.loadAtlas(`${key}`, 'ui/character/npc', `${key}`, `npc`);
+    const maxNpc = 29;
+    for (let i = 0; i < maxNpc; i++) {
+      const npcIndex = createZeroPad(i, 3);
+      this.loadAtlas(`npc${npcIndex}`, 'ui/character/npc', `npc${npcIndex}`, `npc`);
     }
 
-    this.loadImage(`pokemon_sprite000`, 'ui/pokemon/sprite', `0`);
-    this.loadAtlas(`pokemon_icon000`, 'ui/pokemon/icon', `0`, 'pokemon_icon');
-    this.loadAtlas(`pokemon_overworld000`, 'ui/pokemon/overworld', '0', `pokemon_overworld_0`);
+    let pokedex = '0000';
+    let form = '';
+    this.loadImage(`pokemon.front.${pokedex}`, 'ui/pokemon/front', `${pokedex}`);
+    this.loadAtlas(`pokemon.icon.${pokedex}`, 'ui/pokemon/icon', `${pokedex}`, 'pokemon_icon');
+    this.loadAtlas(`pokemon.overworld.${pokedex}`, 'ui/pokemon/overworld', `${pokedex}`, `pokemon_overworld_0`);
 
-    for (const pokemon of Object.keys(PokemonData)) {
-      const pokedex = createZeroPad(Number(pokemon));
-
-      this.loadAudio(`${pokemon}`, 'audio/pokemon', `${pokemon}`, 'wav');
-      this.loadImage(`pokemon_sprite${pokedex}_m`, 'ui/pokemon/sprite', `${pokemon}`);
-      this.loadImage(`pokemon_sprite${pokedex}_ms`, 'ui/pokemon/sprite/shiny', `${pokemon}`);
-
-      if (females.includes(Number(pokemon))) {
-        this.loadImage(`pokemon_sprite${pokedex}_f`, 'ui/pokemon/sprite/female', `${pokemon}`);
-        this.loadImage(`pokemon_sprite${pokedex}_fs`, 'ui/pokemon/sprite/female/shiny', `${pokemon}`);
-      } else {
-        this.loadImage(`pokemon_sprite${pokedex}_f`, 'ui/pokemon/sprite', `${pokemon}`);
-        this.loadImage(`pokemon_sprite${pokedex}_fs`, 'ui/pokemon/sprite/shiny', `${pokemon}`);
+    for (const pokemon of getAllPokemonKeys()) {
+      const firstUnderscoreIndex = pokemon.indexOf('_');
+      let pokedex = pokemon;
+      form = '';
+      if (firstUnderscoreIndex !== -1) {
+        pokedex = pokemon.substring(0, firstUnderscoreIndex);
+        form = '_' + pokemon.substring(firstUnderscoreIndex + 1);
       }
 
-      this.loadAtlas(`pokemon_icon${pokedex}`, 'ui/pokemon/icon', `${pokemon}`, 'pokemon_icon');
-      this.loadAtlas(`pokemon_icon${pokedex}s`, 'ui/pokemon/icon/shiny', `${pokemon}s`, 'pokemon_icon');
+      this.loadImage(`pokemon.front.${pokedex}${form}`, 'ui/pokemon/front', `${pokemon}`);
+      this.loadImage(`pokemon.front.${pokedex}s${form}`, 'ui/pokemon/front/shiny', `${pokemon}`);
 
-      this.loadAtlas(`pokemon_overworld${pokedex}`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_0`);
-      this.loadAtlas(`pokemon_overworld${pokedex}s`, 'ui/pokemon/overworld', `${pokemon}s`, `pokemon_overworld_0`);
+      if (femalePokemonFrontPokedex.includes(pokedex)) {
+        this.loadImage(`pokemon.front.${pokedex}${form}_female`, 'ui/pokemon/front', `${pokemon}`);
+        this.loadImage(`pokemon.front.${pokedex}s${form}_female`, 'ui/pokemon/front/shiny', `${pokemon}`);
+      }
+
+      this.loadAtlas(`pokemon.icon.${pokedex}${form}`, 'ui/pokemon/icon', `${pokemon}`, 'pokemon_icon');
+      this.loadAtlas(`pokemon.icon.${pokedex}s${form}`, 'ui/pokemon/icon/shiny', `${pokemon}`, 'pokemon_icon');
+
+      if (femalePokemonIconPokedex.includes(pokedex)) {
+        this.loadAtlas(`pokemon.icon.${pokedex}${form}_female`, 'ui/pokemon/icon', `${pokemon}`, 'pokemon_icon');
+        this.loadAtlas(`pokemon.icon.${pokedex}s${form}_female`, 'ui/pokemon/icon/shiny', `${pokemon}`, 'pokemon_icon');
+      }
+
+      if (
+        !pokemon.includes('mega') &&
+        !pokemon.includes('primal') &&
+        !pokemon.includes('sunshine') &&
+        !pokemon.includes('zen') &&
+        !pokemon.includes('ash') &&
+        !pokemon.includes('blade') &&
+        !pokemon.includes('complete') &&
+        !pokemon.includes('school') &&
+        !pokemon.includes('ultra') &&
+        !pokemon.includes('gulping') &&
+        !pokemon.includes('gorging') &&
+        !pokemon.includes('noice') &&
+        !pokemon.includes('dada') &&
+        !pokemon.includes('stella')
+      ) {
+        if (pokemonCryNames.includes(pokedex)) this.loadAudio(`${pokedex}`, 'audio/pokemon', `${pokedex}`, 'ogg');
+
+        if (bigSizePokemonOverworldPokedex.includes(pokedex)) {
+          this.loadAtlas(`pokemon.overworld.${pokedex}${form}`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_1`);
+          this.loadAtlas(`pokemon.overworld.${pokedex}s${form}`, 'ui/pokemon/overworld/shiny', `${pokemon}`, `pokemon_overworld_1`);
+
+          if (femalePokemonOverworldPokedex.includes(pokedex)) {
+            this.loadAtlas(`pokemon.overworld.${pokedex}${form}_female`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_1`);
+            this.loadAtlas(`pokemon.overworld.${pokedex}s${form}_female`, 'ui/pokemon/overworld/shiny', `${pokemon}`, `pokemon_overworld_1`);
+          }
+        } else {
+          this.loadAtlas(`pokemon.overworld.${pokedex}${form}`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_0`);
+          this.loadAtlas(`pokemon.overworld.${pokedex}s${form}`, 'ui/pokemon/overworld/shiny', `${pokemon}`, `pokemon_overworld_0`);
+
+          if (femalePokemonOverworldPokedex.includes(pokedex)) {
+            this.loadAtlas(`pokemon.overworld.${pokedex}${form}_female`, 'ui/pokemon/overworld', `${pokemon}`, `pokemon_overworld_0`);
+            this.loadAtlas(`pokemon.overworld.${pokedex}s${form}_female`, 'ui/pokemon/overworld/shiny', `${pokemon}`, `pokemon_overworld_0`);
+          }
+        }
+      }
     }
 
     Object.values(BATTLE_AREA).forEach((area) => {
@@ -410,34 +519,6 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.DOOR_ENTER_0, 'audio/effect', AUDIO.DOOR_ENTER_0, 'ogg');
     this.loadAudio(AUDIO.DOOR_ENTER_1, 'audio/effect', AUDIO.DOOR_ENTER_1, 'ogg');
     this.loadAudio(AUDIO.DOOR_ENTER_2, 'audio/effect', AUDIO.DOOR_ENTER_2, 'ogg');
-
-    this.createLoadingBar();
-
-    this.load.on('filecomplete', (key: string) => {
-      if (key === TEXTURE.BG_LOAD) {
-        this.createBg();
-        this.children.sendToBack(this.bg);
-      }
-
-      if (key === TEXTURE.LOGO_0) {
-        this.createTitle();
-        this.children.sendToBack(this.bg);
-      }
-    });
-
-    this.load.on('progress', (value: number) => {
-      this.percentText.setText(`${parseInt(String(value * 100), 10)}%`);
-    });
-
-    this.load.on('fileprogress', (file: Phaser.Loader.File) => {
-      this.assetText.setText(`Loading asset: ${file.key}`);
-    });
-
-    this.load.on('complete', async () => {
-      this.startInGameScene();
-    });
-
-    this.load.start();
   }
 
   private startInGameScene() {
@@ -458,12 +539,15 @@ export class LoadingScene extends BaseScene {
   private createLoadingBar() {
     const { width, height } = this.cameras.main;
 
+    this.createBg();
+    this.createTitle();
+
     this.percentText = this.make.text({
       x: width / 2,
       y: height / 2 + 30,
       text: '0%',
       style: {
-        font: '100px font_4',
+        font: '100px bw_font',
         color: '#ffffff',
       },
     });
@@ -474,7 +558,7 @@ export class LoadingScene extends BaseScene {
       y: height / 2 + 110,
       text: 'ASSET_0',
       style: {
-        font: '60px font_4',
+        font: '60px bw_font',
         color: '#ffffff',
       },
     });

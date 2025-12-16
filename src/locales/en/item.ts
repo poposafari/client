@@ -461,37 +461,9 @@ export const item: TranslationItem = {
     name: 'Fossilized Dino',
     description: 'The fossil of an ancient Pokémon that once lived in the\nsea. What it looked like is a mystery.',
   },
-  hm01: {
-    name: 'HM01',
-    description: '-\n-\n-',
-  },
-  hm02: {
-    name: 'HM02',
-    description: '-\n-\n-',
-  },
-  hm03: {
-    name: 'HM03',
-    description: '-\n-\n-',
-  },
-  hm04: {
-    name: 'HM04',
-    description: '-\n-\n-',
-  },
-  hm05: {
-    name: 'HM05',
-    description: '-\n-\n-',
-  },
-  hm06: {
-    name: 'HM06',
-    description: '-\n-\n-',
-  },
-  hm07: {
-    name: 'HM07',
-    description: 'Diving on the first turn, the user floats up and\nattacks on the next turn.',
-  },
-  hm08: {
-    name: 'HM08',
-    description: 'A charging attack that may also leave\nthe foe confused. It can also be used\nto scale rocky walls.',
+  'fairy-feather': {
+    name: 'Fairy Feather',
+    description: '',
   },
   bicycle: {
     name: 'Bicycle',
@@ -576,5 +548,9 @@ export const item: TranslationItem = {
   'blue-orb': {
     name: 'Blue Orb',
     description: 'A shiny blue orb that is said to have a legend tied\nto it. It’s known to have a deep connection with the\nHoenn region.',
+  },
+  'soothe-bell': {
+    name: 'Soothe Bell',
+    description: 'An item to be held by a Pokémon. The comforting\nchime of this bell calms the holder, making\nit friendly.',
   },
 };

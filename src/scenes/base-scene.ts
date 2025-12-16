@@ -11,7 +11,13 @@ export class BaseScene extends Phaser.Scene {
   }
 
   loadAtlas(key: string, folder: string, filename: string, jsonname: string) {
-    this.load.atlas(key, `${folder}/${filename}.png`, `${folder}/${jsonname}.json`);
+    let jsonPath = `${folder}/${jsonname}.json`;
+
+    if (jsonname.includes('pokemon_icon') || jsonname.includes('pokemon_overworld_0') || jsonname.includes('pokemon_overworld_1')) {
+      jsonPath = `ui/pokemon/${jsonname}.json`;
+    }
+
+    this.load.atlas(key, `${folder}/${filename}.png`, jsonPath);
   }
 
   loadMap(key: string, folder: string, filename: string) {
@@ -26,5 +32,12 @@ export class BaseScene extends Phaser.Scene {
       filename = `${filename}.${extension}`;
     }
     this.load.audio(key, `${folder}/${filename}`);
+  }
+
+  loadJson(key: string, folder: string, filename: string) {
+    if (filename) {
+      filename = `${filename}.json`;
+    }
+    this.load.json(key, `${folder}/${filename}`);
   }
 }

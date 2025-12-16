@@ -6,8 +6,8 @@ import { Keyboard } from '../core/manager/keyboard-manager';
 import { Bag } from '../core/storage/bag-storage';
 import { Option } from '../core/storage/player-option';
 import { PlayerGlobal } from '../core/storage/player-storage';
-import { getItemByKey } from '../data';
-import { AUDIO, DEPTH, EVENT, ItemCategory, ItemData, KEY, MessageEndDelay, MODE, TEXTSTYLE, TEXTURE, UI } from '../enums';
+import { getItemData, ItemData } from '../data';
+import { AUDIO, DEPTH, EVENT, ItemCategory, KEY, MessageEndDelay, TEXTSTYLE, TEXTURE, UI } from '../enums';
 import i18next from '../i18n';
 import { PlayerItem } from '../obj/player-item';
 import { InGameScene } from '../scenes/ingame-scene';
@@ -16,8 +16,6 @@ import { replacePercentSymbol } from '../utils/string-util';
 import { BagBaseUi } from './bag-base-ui';
 import { DummyMessageUi } from './dummy-message-ui';
 import { MenuListUi } from './menu-list-ui';
-import { MessageUi } from './message-ui';
-import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
 import { TalkMessageUi } from './talk-message-ui';
 import { playEffectSound, Ui } from './ui';
@@ -137,7 +135,7 @@ export class BagSellUi extends BagBaseUi {
     }
 
     this.items = this.items.filter((item) => {
-      const info = getItemByKey(item.getKey());
+      const info = getItemData(item.getKey());
       return info?.sellable === true;
     });
   }
@@ -245,7 +243,7 @@ export class BagSellMenuUi extends Ui {
   private async promptForQuantity(item: PlayerItem) {
     return new Promise<void>((resolve) => {
       const keys = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_LEFT, KEY.ARROW_RIGHT, KEY.Z, KEY.X, KEY.ENTER, KEY.ESC];
-      const itemInfo = getItemByKey(item.getKey())!;
+      const itemInfo = getItemData(item.getKey())!;
 
       this.sell = this.minSell;
       this.maxSell = item.getStock();
