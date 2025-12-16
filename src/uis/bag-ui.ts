@@ -1,5 +1,4 @@
 import { MAX_QUICK_ITEM_SLOT } from '../constants';
-import { getItemByKey } from '../data';
 import { AUDIO, DEPTH, EVENT, ItemCategory, KEY, MessageEndDelay, TEXTSTYLE, TEXTURE, UI } from '../enums';
 import { Keyboard } from '../core/manager/keyboard-manager';
 import { Event } from '../core/manager/event-manager';
@@ -18,6 +17,7 @@ import { OverworldUi } from './overworld/overworld-ui';
 import { PlayerGlobal } from '../core/storage/player-storage';
 import { replacePercentSymbol } from '../utils/string-util';
 import { BagBaseUi } from './bag-base-ui';
+import { getItemData } from '../data';
 
 export class BagUi extends BagBaseUi {
   private menu!: MenuUi;
@@ -171,7 +171,7 @@ export class BagUi extends BagBaseUi {
 
   async handleMenu(item: PlayerItem): Promise<void> {
     const [find, i] = Bag.findSlotItem(item);
-    const itemInfo = getItemByKey(item.getKey());
+    const itemInfo = getItemData(item.getKey());
 
     if (find && (i as number) >= 0) {
       this.menu.updateInfo(i18next.t('menu:registerSlot'), i18next.t('menu:registerCancel'));

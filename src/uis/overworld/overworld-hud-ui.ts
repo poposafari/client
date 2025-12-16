@@ -6,7 +6,7 @@ import { getTextShadow, getTextStyle, runFadeEffect, setTextShadow, Ui } from '.
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
 import { Event } from '../../core/manager/event-manager';
-import { getCurrentTimeOfDay } from '../../utils/string-util';
+import { getCurrentTimeOfDay, getPokemonTextureFromPlayerPokemon } from '../../utils/string-util';
 
 export class OverworldHUDUi extends Ui {
   private tutorialContainer!: Phaser.GameObjects.Container;
@@ -670,7 +670,7 @@ export class OverworldPokemonSlotUi extends Ui {
 
     for (let i = 0; i < this.MaxSlot; i++) {
       const window = this.addWindow(TEXTURE.WINDOW_OPACITY, 0, currentY, contentHeight, contentHeight, 8, 8, 8, 8);
-      const icon = this.addImage('pokemon_icon000', 0, currentY);
+      const icon = this.addImage(getPokemonTextureFromPlayerPokemon('icon', null), 0, currentY);
       const shiny = this.addImage(TEXTURE.BLANK, -25, currentY - 15).setScale(1.4);
 
       this.container.add(window);
@@ -711,7 +711,7 @@ export class OverworldPokemonSlotUi extends Ui {
       const party = PC.getParty()[i];
 
       if (party) {
-        this.icons[i]?.setTexture(`pokemon_icon${party.getPokedex()}${party.getShiny() ? 's' : ''}`);
+        this.icons[i]?.setTexture(getPokemonTextureFromPlayerPokemon('icon', party));
         this.shinyIcons[i]?.setTexture(party.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK);
       } else {
         this.icons[i]?.setTexture(TEXTURE.BLANK);

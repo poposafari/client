@@ -6,6 +6,7 @@ export const enum TEXTURE {
   WINDOW_BAG_O = 'window_bag_o',
   WINDOW_SYS = 'window_sys',
   WINDOW_MENU = 'window_menu',
+  WINDOW_MENU_BLACK = 'window_menu_black',
   WINDOW_MENU_S = 'window_menu_s',
   WINDOW_RED = 'window_red',
   WINDOW_REWARD = 'window_reward',
@@ -323,7 +324,8 @@ export const enum ANIMATION {
   TYPES_1 = 'types_1',
   POKEMON_CALL = 'pokemon_call',
   POKEMON_RECALL = 'pokemon_recall',
-  POKEMON_OVERWORLD = `pokemon_overworld_0`,
+  POKEMON_OVERWORLD_0 = `pokemon_overworld_0`,
+  POKEMON_OVERWORLD_1 = `pokemon_overworld_1`,
   POKEMON_OVERWORLD_UP = `pokemon_overworld_up`,
   POKEMON_OVERWORLD_DOWN = `pokemon_overworld_down`,
   POKEMON_OVERWORLD_LEFT = `pokemon_overworld_left`,
@@ -908,18 +910,6 @@ export enum ItemCategory {
   KEY = 'key',
   TM_HM = 'tms_hms',
 }
-
-export type ItemData = {
-  id: string;
-  comment: string;
-  type: ItemCategory;
-  buyPrice: number;
-  sellPrice: number;
-  purchasable: boolean;
-  sellable: boolean;
-  usable: boolean;
-  registerable: boolean;
-};
 
 export type NpcData = {
   movable: boolean;

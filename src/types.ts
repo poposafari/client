@@ -1,4 +1,4 @@
-import { DEPTH, DIRECTION, ItemCategory, PLAYER_STATUS, TEXTSTYLE, TEXTURE, TIME, TRIGGER } from './enums';
+import { DEPTH, DIRECTION, PLAYER_STATUS, TEXTSTYLE, TEXTURE, TIME, TRIGGER } from './enums';
 import { PostCheckoutOverworldObj } from './obj/post-checkout-overworld-obj';
 import { ShopCheckoutOverworldObj } from './obj/shop-checkout-overworld-obj';
 import { StatueOverworldObj } from './obj/statue-overworld-obj';
@@ -39,9 +39,29 @@ export type TranslationPokemon = {
 export type PokemonGender = 'male' | 'female' | 'none';
 export type PokemonHabitat = 'land' | 'lake' | 'mt';
 export type PokemonSpawn = 'land' | 'water';
-export type PokemonSkill = 'none' | 'surf' | 'dark_eyes';
+export type PokemonHiddenMove = 'surf' | 'mean-look' | 'flash' | 'defog' | 'cut' | 'rock-smash' | 'strength' | 'waterfall' | 'dive' | 'fly';
 export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
+export type PokemonType =
+  | 'normal'
+  | 'fire'
+  | 'water'
+  | 'electric'
+  | 'grass'
+  | 'ice'
+  | 'fighting'
+  | 'poison'
+  | 'ground'
+  | 'flying'
+  | 'psychic'
+  | 'bug'
+  | 'rock'
+  | 'ghost'
+  | 'dragon'
+  | 'dark'
+  | 'steel'
+  | 'fairy';
 export type ItemRank = 'common' | 'rare' | 'epic' | 'legendary';
+export type ItemCategory = 'pokeball' | 'berry' | 'tm_hm' | 'etc' | 'key';
 export type PlayerGender = 'boy' | 'girl';
 export type PlayerAvatar = '1' | '2' | '3' | '4';
 export type PokeBoxBG = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15';
@@ -226,10 +246,11 @@ export type GetPcRes = {
   pokedex: string;
   gender: PokemonGender;
   shiny: boolean;
-  form: string;
   count: number;
-  skill: PokemonSkill[];
+  friendShip: number;
+  skill: PokemonHiddenMove[];
   nickname: string | null;
+  region: string;
   createdLocation: string;
   createdAt: string;
   createdBall: string;
@@ -246,7 +267,9 @@ export type MovePcReq = {
 };
 
 export type EvolPcReq = {
-  target: number;
+  idx: number; //PlayerPokemon idx임.
+  target: number; //PlayerPokemon의 진화 인덱스 번호.
+  time: string; // ISO 8601 형식의 클라이언트 시간 (예: "2024-01-01T12:00:00.000Z")
 };
 
 export type EvolPcRes = {
@@ -335,8 +358,8 @@ export type WildRes = {
   pokedex: string;
   gender: PokemonGender;
   shiny: boolean;
-  skills: PokemonSkill[];
-  form: string;
+  skills: PokemonHiddenMove[];
+  region: string;
   catch: boolean;
   eaten_berry: string | null;
   baseRate: number;
@@ -418,7 +441,7 @@ export type RewardForm = {
   gender: PokemonGender;
   shiny: boolean;
   form: number;
-  skill: PokemonSkill | null;
+  skill: PokemonHiddenMove | null;
   candy: number;
   rewards: Reward[];
 };
@@ -486,7 +509,7 @@ export type PlayerPokemonDto = {
   updated_ball: string;
   nickname: string;
   gender: PokemonGender;
-  skill: PokemonSkill[];
+  skill: PokemonHiddenMove[];
 };
 
 export interface WildPokemonInfo {
@@ -496,7 +519,7 @@ export interface WildPokemonInfo {
   gender: PokemonGender;
   pokedex: string;
   shiny: boolean;
-  skills: PokemonSkill[] | null;
+  skills: PokemonHiddenMove[] | null;
   eaten_berry: string | null;
   baseRate: number;
   rank: PokemonRank;

@@ -1,5 +1,5 @@
 import { MAX_QUICK_ITEM_SLOT } from '../../constants';
-import { itemData } from '../../data';
+import { getItemData } from '../../data';
 import { ItemCategory } from '../../enums';
 import { PlayerItem } from '../../obj/player-item';
 import { GetItemRes } from '../../types';
@@ -50,13 +50,13 @@ export class BagStorage {
   setItems(data: GetItemRes[]) {
     if (data && data.length > 0) {
       for (const item of data) {
-        this.addItems(item.idx, item.item, item.stock, item.category);
+        this.addItems(item.idx, item.item, item.stock, item.category as ItemCategory);
       }
     }
   }
 
   addItems(idx: number, key: string, stock: number = 1, category: ItemCategory) {
-    const item = itemData[key];
+    const item = getItemData(key);
     if (!item) return;
 
     const existingItem = this.getItem(key);

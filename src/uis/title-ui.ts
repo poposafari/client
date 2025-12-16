@@ -9,7 +9,7 @@ import { Game } from '../core/manager/game-manager';
 import { PlayerGlobal } from '../core/storage/player-storage';
 import { PC } from '../core/storage/pc-storage';
 import { VERSION } from '../constants';
-import { formatPlaytime } from '../utils/string-util';
+import { formatPlaytime, getPokemonTextureFromPlayerPokemon } from '../utils/string-util';
 import { Event } from '../core/manager/event-manager';
 
 export class TitleUi extends Ui {
@@ -240,7 +240,7 @@ export class TitleUi extends Ui {
     let currentX = -200;
 
     party.forEach((pokemon) => {
-      const icon = this.addImage(`pokemon_icon${pokemon ? pokemon.getPokedex() : '000'}${pokemon?.getShiny() ? 's' : ''}`, currentX, -140);
+      const icon = this.addImage(getPokemonTextureFromPlayerPokemon('icon', pokemon), currentX, -140);
       const shiny = this.addImage(pokemon?.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK, currentX - 40, -160).setScale(1.4);
 
       icon.setScale(1.4);

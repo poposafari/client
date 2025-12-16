@@ -1,4 +1,4 @@
-import { itemData } from '../data';
+import { getItemData } from '../data';
 
 export class PlayerItem {
   private idx: number;
@@ -24,7 +24,7 @@ export class PlayerItem {
   }
 
   getInfo() {
-    return itemData[this.key];
+    return getItemData(this.key);
   }
 
   addStock(amount: number) {

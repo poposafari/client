@@ -1,4 +1,3 @@
-import { npcData, PokemonData } from '../data';
 import { ANIMATION, AUDIO, TEXTURE, UI } from '../enums';
 import { Keyboard } from '../core/manager/keyboard-manager';
 import { Option } from '../core/storage/player-option';
@@ -72,6 +71,7 @@ import { StarterPokemonUi } from '../uis/starter-pokemon-ui';
 import { Battle } from '../uis/battle/battle';
 import { HelpUi } from '../uis/help-ui';
 import { BagSellUi } from '../uis/bag-sell-ui';
+import { bigSizePokemonOverworldPokedex, femalePokemonOverworldPokedex, getAllPokemonKeys } from '../data';
 
 export class InGameScene extends BaseScene {
   constructor() {
@@ -192,7 +192,6 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.EMO, ANIMATION.EMO);
     createSpriteAnimation(this, TEXTURE.SPARKLE, ANIMATION.SPARKLE);
 
-    createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW, ANIMATION.OVERWORLD_SHADOW);
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW_WATER, ANIMATION.OVERWORLD_SHADOW_WATER);
 
     createSpriteAnimation(this, TEXTURE.PARTICLE_ENTER_BALL, ANIMATION.PARTICLE_ENTER_BALL);
@@ -233,66 +232,127 @@ export class InGameScene extends BaseScene {
   }
 
   private initNpcAnimation() {
-    for (const key of Object.keys(npcData)) {
-      const frames = getSpriteFrames(this, `${key}`, ANIMATION.NPC_MOVEMENT);
-
-      const up_0 = [frames[13], frames[12]];
-      const up_1 = [frames[15], frames[14]];
-      const down_0 = [frames[1], frames[0]];
-      const down_1 = [frames[3], frames[2]];
-      const left_0 = [frames[5], frames[4]];
-      const left_1 = [frames[7], frames[6]];
-      const right_0 = [frames[9], frames[8]];
-      const right_1 = [frames[11], frames[10]];
-
-      createSpriteAnimation(this, `${key}`, `${key}_up_0`, up_0);
-      createSpriteAnimation(this, `${key}`, `${key}_up_1`, up_1);
-      createSpriteAnimation(this, `${key}`, `${key}_down_0`, down_0);
-      createSpriteAnimation(this, `${key}`, `${key}_down_1`, down_1);
-      createSpriteAnimation(this, `${key}`, `${key}_left_0`, left_0);
-      createSpriteAnimation(this, `${key}`, `${key}_left_1`, left_1);
-      createSpriteAnimation(this, `${key}`, `${key}_right_0`, right_0);
-      createSpriteAnimation(this, `${key}`, `${key}_right_1`, right_1);
-    }
+    // for (const key of Object.keys(npcData)) {
+    //   const frames = getSpriteFrames(this, `${key}`, ANIMATION.NPC_MOVEMENT);
+    //   const up_0 = [frames[13], frames[12]];
+    //   const up_1 = [frames[15], frames[14]];
+    //   const down_0 = [frames[1], frames[0]];
+    //   const down_1 = [frames[3], frames[2]];
+    //   const left_0 = [frames[5], frames[4]];
+    //   const left_1 = [frames[7], frames[6]];
+    //   const right_0 = [frames[9], frames[8]];
+    //   const right_1 = [frames[11], frames[10]];
+    //   createSpriteAnimation(this, `${key}`, `${key}_up_0`, up_0);
+    //   createSpriteAnimation(this, `${key}`, `${key}_up_1`, up_1);
+    //   createSpriteAnimation(this, `${key}`, `${key}_down_0`, down_0);
+    //   createSpriteAnimation(this, `${key}`, `${key}_down_1`, down_1);
+    //   createSpriteAnimation(this, `${key}`, `${key}_left_0`, left_0);
+    //   createSpriteAnimation(this, `${key}`, `${key}_left_1`, left_1);
+    //   createSpriteAnimation(this, `${key}`, `${key}_right_0`, right_0);
+    //   createSpriteAnimation(this, `${key}`, `${key}_right_1`, right_1);
+    // }
   }
 
   private initPokemonAnimation() {
-    const movementFrames = getSpriteFrames(this, `pokemon_overworld000`, ANIMATION.POKEMON_OVERWORLD);
+    const movementFrames = getSpriteFrames(this, `pokemon.overworld.0000`, ANIMATION.POKEMON_OVERWORLD_0);
 
     const upD = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
     const downD = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
     const leftD = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
     const rightD = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
 
-    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_up`, upD);
-    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_down`, downD);
-    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_left`, leftD);
-    createSpriteAnimation(this, `pokemon_overworld000`, `pokemon_overworld000_right`, rightD);
+    createSpriteAnimation(this, `pokemon.overworld.0000`, `pokemon.overworld.0000_up`, upD);
+    createSpriteAnimation(this, `pokemon.overworld.0000`, `pokemon.overworld.0000_down`, downD);
+    createSpriteAnimation(this, `pokemon.overworld.0000`, `pokemon.overworld.0000_left`, leftD);
+    createSpriteAnimation(this, `pokemon.overworld.0000`, `pokemon.overworld.0000_right`, rightD);
 
-    for (const pokemon of Object.keys(PokemonData)) {
-      const pokedex = createZeroPad(Number(pokemon));
-      const movementFrames = getSpriteFrames(this, `pokemon_overworld${pokedex}`, ANIMATION.POKEMON_OVERWORLD);
-      const movementShinyFrames = getSpriteFrames(this, `pokemon_overworld${pokedex}s`, ANIMATION.POKEMON_OVERWORLD);
+    for (const pokemon of getAllPokemonKeys()) {
+      if (pokemon.includes('mega')) continue;
+      if (pokemon.includes('primal')) continue;
+      if (pokemon.includes('sunshine')) continue;
+      if (pokemon.includes('zen')) continue;
+      if (pokemon.includes('ash')) continue;
+      if (pokemon.includes('blade')) continue;
+      if (pokemon.includes('complete')) continue;
+      if (pokemon.includes('school')) continue;
+      if (pokemon.includes('ultra')) continue;
+      if (pokemon.includes('gulping')) continue;
+      if (pokemon.includes('gorging')) continue;
+      if (pokemon.includes('noice')) continue;
+      if (pokemon.includes('dada')) continue;
+      if (pokemon.includes('stella')) continue;
 
-      const up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
-      const down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
-      const left = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
-      const right = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
+      const firstUnderscoreIndex = pokemon.indexOf('_');
+      let pokedex = pokemon;
+      let form = '';
+      if (firstUnderscoreIndex !== -1) {
+        pokedex = pokemon.substring(0, firstUnderscoreIndex);
+        form = '_' + pokemon.substring(firstUnderscoreIndex + 1);
+      }
+      let movementFrames: Phaser.Types.Animations.AnimationFrame[] = [];
+      let movementShinyFrames: Phaser.Types.Animations.AnimationFrame[] = [];
 
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}`, `pokemon_overworld${pokedex}_up`, up);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}`, `pokemon_overworld${pokedex}_down`, down);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}`, `pokemon_overworld${pokedex}_left`, left);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}`, `pokemon_overworld${pokedex}_right`, right);
+      let upS: Phaser.Types.Animations.AnimationFrame[] = [];
+      let downS: Phaser.Types.Animations.AnimationFrame[] = [];
+      let leftS: Phaser.Types.Animations.AnimationFrame[] = [];
+      let rightS: Phaser.Types.Animations.AnimationFrame[] = [];
 
-      const upS = [movementShinyFrames[12], movementShinyFrames[13], movementShinyFrames[14], movementShinyFrames[15]];
-      const downS = [movementShinyFrames[0], movementShinyFrames[1], movementShinyFrames[2], movementShinyFrames[3]];
-      const leftS = [movementShinyFrames[4], movementShinyFrames[5], movementShinyFrames[6], movementShinyFrames[7]];
-      const rightS = [movementShinyFrames[8], movementShinyFrames[9], movementShinyFrames[10], movementShinyFrames[11]];
+      let up: Phaser.Types.Animations.AnimationFrame[] = [];
+      let down: Phaser.Types.Animations.AnimationFrame[] = [];
+      let left: Phaser.Types.Animations.AnimationFrame[] = [];
+      let right: Phaser.Types.Animations.AnimationFrame[] = [];
 
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}s`, `pokemon_overworld${pokedex}s_up`, upS);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}s`, `pokemon_overworld${pokedex}s_down`, downS);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}s`, `pokemon_overworld${pokedex}s_left`, leftS);
-      createSpriteAnimation(this, `pokemon_overworld${pokedex}s`, `pokemon_overworld${pokedex}s_right`, rightS);
+      movementFrames = getSpriteFrames(this, `pokemon.overworld.${pokedex}${form}`, bigSizePokemonOverworldPokedex.includes(pokedex) ? ANIMATION.POKEMON_OVERWORLD_1 : ANIMATION.POKEMON_OVERWORLD_0);
+      movementShinyFrames = getSpriteFrames(
+        this,
+        `pokemon.overworld.${pokedex}s${form}`,
+        bigSizePokemonOverworldPokedex.includes(pokedex) ? ANIMATION.POKEMON_OVERWORLD_1 : ANIMATION.POKEMON_OVERWORLD_0,
+      );
+
+      if (femalePokemonOverworldPokedex.includes(pokedex)) {
+        movementFrames = getSpriteFrames(
+          this,
+          `pokemon.overworld.${pokedex}s${form}_female`,
+          bigSizePokemonOverworldPokedex.includes(pokedex) ? ANIMATION.POKEMON_OVERWORLD_1 : ANIMATION.POKEMON_OVERWORLD_0,
+        );
+        movementShinyFrames = getSpriteFrames(
+          this,
+          `pokemon.overworld.${pokedex}s${form}_female`,
+          bigSizePokemonOverworldPokedex.includes(pokedex) ? ANIMATION.POKEMON_OVERWORLD_1 : ANIMATION.POKEMON_OVERWORLD_0,
+        );
+      }
+
+      up = [movementFrames[12], movementFrames[13], movementFrames[14], movementFrames[15]];
+      down = [movementFrames[0], movementFrames[1], movementFrames[2], movementFrames[3]];
+      left = [movementFrames[4], movementFrames[5], movementFrames[6], movementFrames[7]];
+      right = [movementFrames[8], movementFrames[9], movementFrames[10], movementFrames[11]];
+
+      upS = [movementShinyFrames[12], movementShinyFrames[13], movementShinyFrames[14], movementShinyFrames[15]];
+      downS = [movementShinyFrames[0], movementShinyFrames[1], movementShinyFrames[2], movementShinyFrames[3]];
+      leftS = [movementShinyFrames[4], movementShinyFrames[5], movementShinyFrames[6], movementShinyFrames[7]];
+      rightS = [movementShinyFrames[8], movementShinyFrames[9], movementShinyFrames[10], movementShinyFrames[11]];
+
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}`, `pokemon.overworld.${pokedex}s${form}_up`, upS);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}`, `pokemon.overworld.${pokedex}s${form}_down`, downS);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}`, `pokemon.overworld.${pokedex}s${form}_left`, leftS);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}`, `pokemon.overworld.${pokedex}s${form}_right`, rightS);
+
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}`, `pokemon.overworld.${pokedex}${form}_up`, up);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}`, `pokemon.overworld.${pokedex}${form}_down`, down);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}`, `pokemon.overworld.${pokedex}${form}_left`, left);
+      createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}`, `pokemon.overworld.${pokedex}${form}_right`, right);
+
+      if (femalePokemonOverworldPokedex.includes(pokedex)) {
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}_female`, `pokemon.overworld.${pokedex}s${form}_female_up`, upS);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}_female`, `pokemon.overworld.${pokedex}s${form}_female_down`, downS);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}_female`, `pokemon.overworld.${pokedex}s${form}_female_left`, leftS);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}s${form}_female`, `pokemon.overworld.${pokedex}s${form}_female_right`, rightS);
+
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}_female`, `pokemon.overworld.${pokedex}${form}_female_up`, up);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}_female`, `pokemon.overworld.${pokedex}${form}_female_down`, down);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}_female`, `pokemon.overworld.${pokedex}${form}_female_left`, left);
+        createSpriteAnimation(this, `pokemon.overworld.${pokedex}${form}_female`, `pokemon.overworld.${pokedex}${form}_female_right`, right);
+      }
     }
   }
 

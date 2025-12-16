@@ -6,6 +6,7 @@ import { playEffectSound } from '../uis/ui';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { PlayerGlobal } from '../core/storage/player-storage';
 import { PlayerOverworldObj } from './player-overworld-obj';
+import { getPokemonTextureFromWildPokemon } from '../utils/string-util';
 
 export type RangeTile = {
   x: number;
@@ -27,7 +28,7 @@ export class WildOverworldObj extends MovableOverworldObj {
   private readonly keys: KEY[] = [KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.ARROW_RIGHT, KEY.ARROW_LEFT];
 
   constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap, data: WildRes, x: number, y: number) {
-    const texture = `pokemon_overworld${data.pokedex}${data.shiny ? 's' : ''}`;
+    const texture = getPokemonTextureFromWildPokemon('overworld', data);
     super(scene, map, texture, x, y, '', OBJECT.WILD, DIRECTION.DOWN);
 
     this.data = data;
@@ -93,23 +94,24 @@ export class WildOverworldObj extends MovableOverworldObj {
   }
 
   async reaction(direction: DIRECTION) {
-    const pokedex = this.data.pokedex;
-    const shiny = this.data.shiny ? 's' : '';
-
     this.stopMovement();
 
     switch (direction) {
       case DIRECTION.DOWN:
-        this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_up`);
+        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_up`);
+        this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_up');
         break;
       case DIRECTION.LEFT:
-        this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_right`);
+        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_right`);
+        this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_right');
         break;
       case DIRECTION.RIGHT:
-        this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_left`);
+        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_left`);
+        this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_left');
         break;
       case DIRECTION.UP:
-        this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_down`);
+        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_down`);
+        this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_down');
         break;
     }
 
@@ -188,16 +190,21 @@ export class WildOverworldObj extends MovableOverworldObj {
 
     switch (key) {
       case KEY.ARROW_UP:
-        return `pokemon_overworld${pokedex}${shiny}_up`;
+        // return `pokemon_overworld${pokedex}${shiny}_up`;
+        return getPokemonTextureFromWildPokemon('overworld', this.data) + '_up';
       case KEY.ARROW_DOWN:
-        return `pokemon_overworld${pokedex}${shiny}_down`;
+        // return `pokemon_overworld${pokedex}${shiny}_down`;
+        return getPokemonTextureFromWildPokemon('overworld', this.data) + '_down';
       case KEY.ARROW_LEFT:
-        return `pokemon_overworld${pokedex}${shiny}_left`;
+        // return `pokemon_overworld${pokedex}${shiny}_left`;
+        return getPokemonTextureFromWildPokemon('overworld', this.data) + '_left';
       case KEY.ARROW_RIGHT:
-        return `pokemon_overworld${pokedex}${shiny}_right`;
+        // return `pokemon_overworld${pokedex}${shiny}_right`;
+        return getPokemonTextureFromWildPokemon('overworld', this.data) + '_right';
     }
 
-    return `pokemon_overworld${pokedex}${shiny}_up`;
+    // return `pokemon_overworld${pokedex}${shiny}_up`;
+    return getPokemonTextureFromWildPokemon('overworld', this.data) + '_up';
   }
 
   private getRandomDirection() {

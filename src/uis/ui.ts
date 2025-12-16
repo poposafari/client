@@ -165,7 +165,8 @@ function getAnimationSize(key: ANIMATION | string) {
     case ANIMATION.POKEMON_RECALL:
       return 4;
     case ANIMATION.NPC_MOVEMENT:
-    case ANIMATION.POKEMON_OVERWORLD:
+    case ANIMATION.POKEMON_OVERWORLD_0:
+    case ANIMATION.POKEMON_OVERWORLD_1:
       return 15;
     case ANIMATION.BAG_POCKET_BALL:
     case ANIMATION.BAG_POCKET_ETC:
@@ -325,7 +326,7 @@ export function setTextShadow(text: Phaser.GameObjects.Text, shadow: [number, nu
 
 export function getTextStyle(style: TEXTSTYLE, inputConfig?: InputText.IConfig): any {
   let config: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: 'font_4',
+    fontFamily: 'bw_font',
   };
 
   if (inputConfig) Object.assign(config, inputConfig);

@@ -3,9 +3,18 @@ import { ANIMATION, AUDIO, BATTLE_AREA, DEPTH, EASE, EVENT, ItemCategory, KEY, M
 import { WildOverworldObj } from '../../obj/wild-overworld-obj';
 import { InGameScene } from '../../scenes/ingame-scene';
 import { delay, getTextStyle, playEffectSound, runFadeEffect, runFlashEffect, runWipeRifghtToLeftEffect, startModalAnimation, stopPostPipeline, Ui } from '../ui';
-import { getBattleArea, getCurrentTimeOfDay, getPokemonType, matchBallAnimation, matchPokemonWithRarityRate, matchTypeWithBerryRate, replacePercentSymbol } from '../../utils/string-util';
+import {
+  getBattleArea,
+  getCurrentTimeOfDay,
+  getPokemonTextureFromPlayerPokemon,
+  getPokemonTextureFromWildPokemon,
+  getPokemonType,
+  matchBallAnimation,
+  matchPokemonWithRarityRate,
+  matchTypeWithBerryRate,
+  replacePercentSymbol,
+} from '../../utils/string-util';
 import { PlayerGlobal } from '../../core/storage/player-storage';
-import { getItemByKey, getPokemonInfo } from '../../data';
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PC } from '../../core/storage/pc-storage';
 import { TalkMessageUi } from '../talk-message-ui';
@@ -18,6 +27,7 @@ import { PlayerItem } from '../../obj/player-item';
 import { Bag } from '../../core/storage/bag-storage';
 import { catchWildApi, feedWildEatenBerryApi } from '../../api';
 import { Event } from '../../core/manager/event-manager';
+import { getItemData, getPokemonData } from '../../data';
 
 enum BATTLE_PHASE {
   IDLE = 'IDLE',
@@ -621,7 +631,7 @@ export class BattleSpriteUi extends Ui {
   private readonly wildPosX: number = 1000;
   private readonly throwBallScale: number = 2.4;
   private readonly throwBerryScale: number = 4.8;
-  private readonly wildScale: number = 4.5;
+  private readonly wildScale: number = 2.4;
   private readonly particleCnt: number = 8;
   private readonly particleScale: number = 2.4;
 
@@ -697,15 +707,15 @@ export class BattleSpriteUi extends Ui {
     this.wildBase.setTexture(`eb_${area}_${time}`);
 
     const playerTexture = `${playerData?.gender}_${playerData?.avatar}_back`;
-    const PokemonData = getPokemonInfo(Number(targetWild?.pokedex));
+    const PokemonData = getPokemonData(targetWild?.pokedex!);
     const shiny = targetWild?.shiny ? 's' : '';
     const gender = targetWild?.gender === 'male' ? 'm' : targetWild?.gender === 'female' ? 'f' : 'm';
 
     this.player.setTexture(playerTexture);
-    this.wild.setTexture(`pokemon_sprite${targetWild?.pokedex}_${gender}${shiny}`);
-    this.wild.setPosition(500, -200 + (PokemonData?.offsetY ?? 0));
-    this.wildShadow.setTexture(`battle_shadow_${PokemonData?.shadow ?? 0}`);
-    this.wildShadow.setPosition(500 + (PokemonData?.shadowOffsetX ?? 0), -100);
+    this.wild.setTexture(getPokemonTextureFromWildPokemon('front', targetWild!));
+    this.wild.setPosition(500, -200);
+    this.wildShadow.setTexture(`battle_shadow_0`);
+    this.wildShadow.setPosition(500, -100);
 
     this.playerContainer.setVisible(true);
     this.wildContainer.setVisible(true);
@@ -736,7 +746,7 @@ export class BattleSpriteUi extends Ui {
       const onComplete = () => {
         completedCount++;
         if (completedCount === 2) {
-          playEffectSound(this.scene, `${parseInt(this.battle.getTargetWild()?.getData().pokedex!) ?? '1'}`);
+          playEffectSound(this.scene, `${this.battle.getTargetWild()?.getData().pokedex! ?? '0001'}`);
           resolve();
         }
       };
@@ -789,7 +799,7 @@ export class BattleSpriteUi extends Ui {
     const duration = 500;
 
     return new Promise<void>((resolve) => {
-      const targetItem = getItemByKey(item);
+      const targetItem = getItemData(item);
       this.throwItem.setScale(targetItem?.type === ItemCategory.POKEBALL ? this.throwBallScale : this.throwBerryScale);
 
       if (targetItem?.type === ItemCategory.POKEBALL) {
@@ -831,7 +841,7 @@ export class BattleSpriteUi extends Ui {
   }
 
   async enterItem(item: string) {
-    const targetItem = getItemByKey(item);
+    const targetItem = getItemData(item);
 
     switch (targetItem?.type) {
       case ItemCategory.POKEBALL:
@@ -1344,7 +1354,7 @@ export class BattleInfoUi extends Ui {
     const spacing = 20;
     let currentX = -215;
     for (let i = 0; i < MAX_PARTY_SLOT; i++) {
-      const icon = this.addImage(`pokemon_icon000`, currentX, -45).setScale(1.4);
+      const icon = this.addImage(getPokemonTextureFromPlayerPokemon('icon', null), currentX, -45).setScale(1.4);
       const shiny = this.addImage(TEXTURE.BLANK, currentX - 30, -65).setScale(2.2);
 
       this.parties.push(icon);
@@ -1405,10 +1415,10 @@ export class BattleInfoUi extends Ui {
     let idx = 0;
     for (const party of PC.getParty()) {
       if (party) {
-        this.parties[idx].setTexture(`pokemon_icon${party.getPokedex()}${party.getShiny() ? 's' : ''}`);
+        this.parties[idx].setTexture(getPokemonTextureFromPlayerPokemon('icon', party));
         this.shinies[idx].setTexture(party.getShiny() ? TEXTURE.ICON_SHINY : TEXTURE.BLANK);
       } else {
-        this.parties[idx].setTexture('pokemon_icon000');
+        this.parties[idx].setTexture(getPokemonTextureFromPlayerPokemon('icon', null));
         this.shinies[idx].setTexture(TEXTURE.BLANK);
       }
 
@@ -1987,7 +1997,7 @@ export class BattleItemDescUi extends Ui {
       this.item.setTexture(`${item.getKey()}`);
       this.text.setText(i18next.t(`item:${item.getKey()}.description`));
 
-      const targetItem = getItemByKey(item.getKey());
+      const targetItem = getItemData(item.getKey());
       if (targetItem?.type === ItemCategory.POKEBALL) {
         this.battle.updateCatchRate(null, item.getKey());
       } else if (targetItem?.type === ItemCategory.BERRY) {
@@ -2064,7 +2074,7 @@ export class BattleRewardUi extends Ui {
     this.contentContainer = this.createContainer(width / 2, height / 2);
     this.rewardContainer = this.createContainer(width / 2, height / 2 + 260);
 
-    this.wild = this.addImage('', -370, -130).setScale(4).setOrigin(0.5, 0.5);
+    this.wild = this.addImage('', -370, -130).setScale(2.8).setOrigin(0.5, 0.5);
 
     const bg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5);
     const window = this.addWindow(TEXTURE.REWARD_WINDOW, 0, 0, this.windowWidth, this.windowHeight, 32, 32, 32, 32).setScale(2.4);
@@ -2151,7 +2161,7 @@ export class BattleRewardUi extends Ui {
 
     PC.addPokemonAfterCatch(pcData);
 
-    this.wild.setTexture(`pokemon_sprite${wildData.pokedex}_${gender}${shiny}`);
+    this.wild.setTexture(getPokemonTextureFromWildPokemon('front', wildData));
     this.wildPokedex.setText(`${wildData.pokedex}`);
     this.wildName.setText(i18next.t(`pokemon:${wildData.pokedex}.name`));
     this.updateGenderSummary(wildData.gender);

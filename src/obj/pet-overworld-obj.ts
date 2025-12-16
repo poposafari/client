@@ -1,6 +1,6 @@
 import { ANIMATION, DIRECTION, KEY, OBJECT, PLAYER_STATUS, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { getOverworldPokemonTexture } from '../utils/string-util';
+import { getOverworldPokemonTexture, getPokemonTextureFromPlayerPokemon } from '../utils/string-util';
 import { MovableOverworldObj } from './movable-overworld-obj';
 import { OtherPlayerOverworldObj } from './other-player-overworld-obj';
 import { PlayerOverworldObj } from './player-overworld-obj';
@@ -11,7 +11,7 @@ export class PetOverworldObj extends MovableOverworldObj {
   private data!: PlayerPokemon | null;
 
   constructor(scene: InGameScene, map: Phaser.Tilemaps.Tilemap | null, pet: PlayerPokemon | null, x: number, y: number) {
-    const texture = getOverworldPokemonTexture(null);
+    const texture = getPokemonTextureFromPlayerPokemon('overworld', pet!);
     super(scene, map, texture, x, y - 1, '', OBJECT.PET, DIRECTION.DOWN);
     this.texture = texture;
 
@@ -38,7 +38,7 @@ export class PetOverworldObj extends MovableOverworldObj {
     if (!newPet) this.setSpriteVisible(false);
     if (oldPet?.getIdx() === newPet?.getIdx() && oldPet?.getPokedex() === newPet?.getPokedex()) return;
 
-    this.texture = getOverworldPokemonTexture(newPet);
+    this.texture = getPokemonTextureFromPlayerPokemon('overworld', newPet!);
     this.startSpriteAnimation(this.getAnimation(KEY.ARROW_DOWN)!);
     this.stopSpriteAnimation(this.getStopFrameNumberFromDirection(this.lastDirection)!);
 

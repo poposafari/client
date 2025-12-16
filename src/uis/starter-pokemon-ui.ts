@@ -5,7 +5,7 @@ import { KeyboardManager } from '../core/manager/keyboard-manager';
 import { InGameScene } from '../scenes/ingame-scene';
 import { Talk, WildRes } from '../types';
 import { addBackground, addImage, addText, addWindow, createSprite, playEffectSound, runFadeEffect, Ui } from './ui';
-import { getCurrentTimeOfDay, getPokemonType, replacePercentSymbol } from '../utils/string-util';
+import { getCurrentTimeOfDay, getPokemonTextureFromWildPokemon, getPokemonType, replacePercentSymbol } from '../utils/string-util';
 import { QuestionMessageUi } from './question-message-ui';
 import { Option } from '../core/storage/player-option';
 import { DEFAULT_ZOOM, OVERWORLD_ZOOM } from '../constants';
@@ -188,7 +188,7 @@ export class StarterPokemonUi extends Ui {
     let gender = wild.gender === 'male' ? 'm' : wild.gender === 'female' ? 'f' : '';
     let pokedex = wild.pokedex;
 
-    this.pokemon.setTexture(`pokemon_sprite${pokedex}_${gender}${shiny}`);
+    this.pokemon.setTexture(getPokemonTextureFromWildPokemon('front', wild));
     this.showMessage(
       {
         type: 'default',

@@ -1,6 +1,6 @@
 import { MAX_PARTY_SLOT } from '../../constants';
 import { PlayerPokemon } from '../../obj/player-pokemon';
-import { EvolPcRes, GetIngameRes, GetPcRes, PokemonSkill } from '../../types';
+import { EvolPcRes, GetIngameRes, GetPcRes, PokemonHiddenMove } from '../../types';
 import { getPokemonType } from '../../utils/string-util';
 import { ErrorCode, throwError } from '../errors';
 import { SocketIO } from '../manager/socket-manager';
@@ -78,10 +78,11 @@ export class PcStorage {
             pokemon.pokedex,
             pokemon.gender,
             pokemon.shiny,
-            pokemon.form,
             pokemon.count,
+            pokemon.friendShip,
             pokemon.skill,
             pokemon.nickname,
+            pokemon.region,
             pokemon.createdLocation,
             pokemon.createdAt,
             pokemon.createdBall,
@@ -140,10 +141,11 @@ export class PcStorage {
             pc.pokedex,
             pc.gender,
             pc.shiny,
-            pc.form,
             pc.count,
+            pc.friendShip,
             pc.skill,
             pc.nickname,
+            pc.region,
             pc.createdLocation,
             pc.createdAt,
             pc.createdBall,
@@ -168,7 +170,7 @@ export class PcStorage {
     return [null, null];
   }
 
-  findSkillsInParty(target: PokemonSkill) {
+  findSkillsInParty(target: PokemonHiddenMove) {
     for (let i = 0; i < MAX_PARTY_SLOT; i++) {
       const party = this.party[i];
       if (party?.getSkill().includes(target)) {
@@ -282,10 +284,11 @@ export class PcStorage {
           pokemon.pokedex,
           pokemon.gender,
           pokemon.shiny,
-          pokemon.form,
           pokemon.count,
+          pokemon.friendShip,
           pokemon.skill,
           pokemon.nickname,
+          pokemon.region,
           pokemon.createdLocation,
           pokemon.createdAt,
           pokemon.createdBall,
@@ -312,10 +315,11 @@ export class PcStorage {
           pokemon.pokedex,
           pokemon.gender,
           pokemon.shiny,
-          pokemon.form,
           pokemon.count,
+          pokemon.friendShip,
           pokemon.skill,
           pokemon.nickname,
+          pokemon.region,
           pokemon.createdLocation,
           pokemon.createdAt,
           pokemon.createdBall,
@@ -377,10 +381,11 @@ export class PcStorage {
       evolvedPokemonData.pokedex,
       evolvedPokemonData.gender,
       evolvedPokemonData.shiny,
-      evolvedPokemonData.form,
       evolvedPokemonData.count,
+      evolvedPokemonData.friendShip,
       evolvedPokemonData.skill,
       evolvedPokemonData.nickname,
+      evolvedPokemonData.region,
       evolvedPokemonData.createdLocation,
       evolvedPokemonData.createdAt,
       evolvedPokemonData.createdBall,

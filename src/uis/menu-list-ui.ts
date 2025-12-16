@@ -28,6 +28,7 @@ export class MenuListUi extends Ui {
 
   private readonly contentHeight: number = 30;
   private readonly spacing: number = 10;
+  private colorOverrides: { [name: string]: TEXTSTYLE } = {};
 
   constructor(scene: InGameScene, etcUi?: Ui) {
     super(scene);
@@ -162,9 +163,18 @@ export class MenuListUi extends Ui {
               break;
             case KEY.ENTER:
             case KEY.Z:
+              const index = choice + this.start;
+              const selected = this.info[index];
+
+              const overrideColor = selected ? this.colorOverrides[selected.name] : undefined;
+              if (overrideColor === TEXTSTYLE.MESSAGE_GRAY) {
+                playEffectSound(this.scene, AUDIO.BUZZER);
+                break;
+              }
+
               playEffectSound(this.scene, AUDIO.SELECT_0);
 
-              if (choice + this.start === this.info.length - 1) {
+              if (index === this.info.length - 1) {
                 this.hide();
                 Keyboard.setKeyDownCallback(() => {});
                 return resolve(i18next.t('menu:cancelMenu'));
@@ -175,7 +185,7 @@ export class MenuListUi extends Ui {
 
               if (!this.etcUi) this.hide();
               Keyboard.setKeyDownCallback(() => {});
-              return resolve(choice + this.start);
+              return resolve(index);
             case KEY.ESC:
             case KEY.X:
               this.hide();
@@ -219,14 +229,7 @@ export class MenuListUi extends Ui {
   }
 
   updateContentColor(target: string, color: TEXTSTYLE) {
-    const findIdx = this.info.findIndex((item) => item.name === target);
-
-    if (this.texts[findIdx]) {
-      this.texts[findIdx].setStyle(getTextStyle(color));
-    }
-    if (this.etcTexts[findIdx]) {
-      this.etcTexts[findIdx].setStyle(getTextStyle(color));
-    }
+    this.colorOverrides[target] = color;
   }
 
   private addCancel() {
@@ -265,6 +268,12 @@ export class MenuListUi extends Ui {
           Phaser.GameObjects.Image,
         ];
 
+        const overrideColor = this.colorOverrides[item.name];
+        if (overrideColor) {
+          text.setStyle(getTextStyle(overrideColor));
+          etcText.setStyle(getTextStyle(overrideColor));
+        }
+
         this.texts.push(text);
         this.textImages.push(textImage);
         this.etcTexts.push(etcText);
@@ -292,9 +301,9 @@ export class MenuListUi extends Ui {
     textImage.setOrigin(0, 1);
     const etcText = this.addText(this.windowWidth - 110, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
     etcText.setOrigin(0, 1);
-    const etcImage = this.addImage(etcTexture, this.windowWidth - 125, y - 3);
+    const etcImage = this.addImage(etcTexture, this.windowWidth - 125, y - 20);
     etcImage.setScale(this.etcScale ? this.etcScale : 1.6);
-    etcImage.setOrigin(0, 1);
+    etcImage.setOrigin(0.5, 0.5);
     const dummy = this.addImage(TEXTURE.BLANK, +20, y);
     dummy.setOrigin(0, 1);
     dummy.setScale(1.6);

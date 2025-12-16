@@ -123,6 +123,7 @@ export const menu: TranslationDefault = {
   boxBackground: '벽지 바꾸기',
   rename: '이름 변경',
   evolve: '진화하기',
+  evolve_content: '진화(%)',
   box0: '숲', //Forest
   box1: '도시', //City
   box2: '사막', //Desert
@@ -229,4 +230,6 @@ export const menu: TranslationDefault = {
   shop_choice_0: '사러 왔다',
   shop_choice_1: '팔러 왔다',
   yourMoney: '소지금',
+  use_evolve: '% 진화',
+  friendship: '친밀도',
 };
