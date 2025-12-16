@@ -232,4 +232,6 @@ export const menu: TranslationDefault = {
   yourMoney: '소지금',
   use_evolve: '% 진화',
   friendship: '친밀도',
+  female: '암컷',
+  male: '수컷',
 };
