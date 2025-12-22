@@ -44,6 +44,18 @@ export class WildOverworldObj extends MovableOverworldObj {
     this.startSpriteAnimation(`${texture}_down`);
 
     this.scheduleRandomMovement();
+
+    if (map) {
+      const isWaterTile = map.layers.some((layer) => {
+        const tile = map!.getTileAt(x, y, false, layer.name);
+        return tile && tile.properties.spawn === 'water';
+      });
+      if (isWaterTile) {
+        this.setShadow('water');
+      } else {
+        this.setShadow('normal');
+      }
+    }
   }
 
   updateData(data: Partial<WildRes>) {
@@ -80,6 +92,11 @@ export class WildOverworldObj extends MovableOverworldObj {
       this.againTimer = undefined;
     }
 
+    const movementDirectionQueue = (this as any).movementDirectionQueue as Array<{ direction: DIRECTION; animationKey: ANIMATION | string }>;
+    if (movementDirectionQueue) {
+      movementDirectionQueue.length = 0;
+    }
+
     this.currentDirectionIndex = undefined;
     this.remainingSteps = 0;
   }
@@ -98,19 +115,15 @@ export class WildOverworldObj extends MovableOverworldObj {
 
     switch (direction) {
       case DIRECTION.DOWN:
-        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_up`);
         this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_up');
         break;
       case DIRECTION.LEFT:
-        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_right`);
         this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_right');
         break;
       case DIRECTION.RIGHT:
-        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_left`);
         this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_left');
         break;
       case DIRECTION.UP:
-        // this.startSpriteAnimation(`pokemon_overworld${pokedex}${shiny}_down`);
         this.startSpriteAnimation(getPokemonTextureFromWildPokemon('overworld', this.data) + '_down');
         break;
     }
@@ -120,6 +133,11 @@ export class WildOverworldObj extends MovableOverworldObj {
   }
 
   private moveInSteps(directionIndex: number, steps: number): void {
+    const movementDirectionQueue = (this as any).movementDirectionQueue as Array<{ direction: DIRECTION; animationKey: ANIMATION | string }>;
+    if (movementDirectionQueue) {
+      movementDirectionQueue.length = 0;
+    }
+
     const validDirectionIndex = this.findValidDirection(directionIndex);
 
     if (validDirectionIndex === null) {
@@ -158,6 +176,10 @@ export class WildOverworldObj extends MovableOverworldObj {
 
   private executeStep(): void {
     if (this.remainingSteps <= 0 || this.currentDirectionIndex === undefined) {
+      const movementDirectionQueue = (this as any).movementDirectionQueue as Array<{ direction: DIRECTION; animationKey: ANIMATION | string }>;
+      if (movementDirectionQueue && movementDirectionQueue.length > 0) {
+        movementDirectionQueue.length = 0;
+      }
       this.scheduleRandomMovement();
       return;
     }
@@ -168,6 +190,10 @@ export class WildOverworldObj extends MovableOverworldObj {
       const newDirectionIndex = this.findValidDirection(this.getRandomDirection());
 
       if (newDirectionIndex === null) {
+        const movementDirectionQueue = (this as any).movementDirectionQueue as Array<{ direction: DIRECTION; animationKey: ANIMATION | string }>;
+        if (movementDirectionQueue && movementDirectionQueue.length > 0) {
+          movementDirectionQueue.length = 0;
+        }
         this.scheduleRandomMovement();
         return;
       }
@@ -179,9 +205,14 @@ export class WildOverworldObj extends MovableOverworldObj {
     this.ready(finalDirection, this.getAnimation(this.keys[this.currentDirectionIndex]));
 
     this.remainingSteps--;
-    this.againTimer = this.getScene().time.delayedCall(200, () => {
-      this.executeStep();
-    });
+
+    if (this.remainingSteps > 0) {
+      this.againTimer = this.getScene().time.delayedCall(200, () => {
+        this.executeStep();
+      });
+    } else {
+      this.scheduleRandomMovement();
+    }
   }
 
   private getAnimation(key: KEY) {
@@ -190,20 +221,15 @@ export class WildOverworldObj extends MovableOverworldObj {
 
     switch (key) {
       case KEY.ARROW_UP:
-        // return `pokemon_overworld${pokedex}${shiny}_up`;
         return getPokemonTextureFromWildPokemon('overworld', this.data) + '_up';
       case KEY.ARROW_DOWN:
-        // return `pokemon_overworld${pokedex}${shiny}_down`;
         return getPokemonTextureFromWildPokemon('overworld', this.data) + '_down';
       case KEY.ARROW_LEFT:
-        // return `pokemon_overworld${pokedex}${shiny}_left`;
         return getPokemonTextureFromWildPokemon('overworld', this.data) + '_left';
       case KEY.ARROW_RIGHT:
-        // return `pokemon_overworld${pokedex}${shiny}_right`;
         return getPokemonTextureFromWildPokemon('overworld', this.data) + '_right';
     }
 
-    // return `pokemon_overworld${pokedex}${shiny}_up`;
     return getPokemonTextureFromWildPokemon('overworld', this.data) + '_up';
   }
 
@@ -234,6 +260,12 @@ export class WildOverworldObj extends MovableOverworldObj {
     }
 
     super.update(delta);
+
+    if (movementCheck && movementDirectionQueue.length === 0 && this.remainingSteps === 0 && this.currentDirectionIndex === undefined) {
+      if (!this.timer) {
+        this.scheduleRandomMovement();
+      }
+    }
   }
 
   updateName() {

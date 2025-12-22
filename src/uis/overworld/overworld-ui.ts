@@ -32,6 +32,7 @@ import i18next from 'i18next';
 import { QuickSlotItemUi } from '../quick-slot-item-ui';
 import { OVERWORLD_ZOOM } from '../../constants';
 import { ConnectBaseUi } from '../connect-base-ui';
+import { HiddenMoveUi } from '../hidden-move-ui';
 
 export class OverworldUi extends Ui {
   private type!: OVERWORLD_TYPE;
@@ -267,7 +268,7 @@ export class OverworldUi extends Ui {
       }
     }
 
-    if (currentUi instanceof OverworldMenuUi || currentUi instanceof OverworldUi || currentUi instanceof QuickSlotItemUi) {
+    if (currentUi instanceof OverworldMenuUi || currentUi instanceof OverworldUi || currentUi instanceof QuickSlotItemUi || currentUi instanceof HiddenMoveUi) {
       this.scene.cameras.main.setZoom(1.5);
     } else {
       if (currentUi instanceof ConnectBaseUi) return;

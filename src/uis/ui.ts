@@ -187,6 +187,8 @@ function getAnimationSize(key: ANIMATION | string) {
       return 3;
     case ANIMATION.POKEBALL:
       return 39;
+    case ANIMATION.OVERWORLD_SHADOW_GRASS:
+      return 3;
     case ANIMATION.OVERWORLD_SHADOW_WATER:
     case ANIMATION.OVERWORLD_SHINY:
       return 2;

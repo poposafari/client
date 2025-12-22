@@ -210,11 +210,11 @@ export class BagSellMenuUi extends Ui {
   }
 
   async show(data: PlayerItem): Promise<void> {
-    this.container.setVisible(true);
-    this.menuContainer.setVisible(true);
-
-    this.message.show(replacePercentSymbol(i18next.t('npc:shop_5'), [i18next.t(`item:${data.getKey()}.name`)]));
     this.sellIcon.setTexture(data.getKey());
+    await this.message.show(replacePercentSymbol(i18next.t('npc:shop_5'), [i18next.t(`item:${data.getKey()}.name`)]));
+
+    // this.container.setVisible(true);
+    // this.menuContainer.setVisible(true);
 
     await this.promptForQuantity(data);
   }

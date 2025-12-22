@@ -7,10 +7,10 @@ export class DummyMessageUi extends MessageUi {
     super(scene);
   }
 
-  show(data: string) {
+  async show(data: string) {
     this.setMessageStyle('default');
     this.container.setVisible(true);
-    this.showText(data!, TextSpeed.FAST);
+    await this.showText(data!, TextSpeed.FAST);
   }
 
   hide() {

@@ -21,6 +21,8 @@ export enum ErrorCode {
   NOT_PURCHASABLE_INGAME_ITEM = 'NOT_PURCHASABLE_INGAME_ITEM',
   NOT_SELLABLE_INGAME_ITEM = 'NOT_SELLABLE_INGAME_ITEM',
   INGAME_ITEM_STOCK_LIMIT_EXCEEDED = 'INGAME_ITEM_STOCK_LIMIT_EXCEEDED',
+  INGAME_PC_SKILL_IS_FULL = 'INGAME_PC_SKILL_IS_FULL',
+  INGAME_PC_SKILL_EXIST = 'INGAME_PC_SKILL_EXIST',
 
   //overworld
   PLAYER_DATA_NOT_SET = 'PLAYER_DATA_NOT_SET',
@@ -53,6 +55,8 @@ export const ErrorMessage: Record<ErrorCode, string> = {
   [ErrorCode.NOT_SELLABLE_INGAME_ITEM]: 'Not sellable ingame item',
   [ErrorCode.INGAME_ITEM_STOCK_LIMIT_EXCEEDED]: 'Ingame item stock limit exceeded',
   [ErrorCode.NOT_ENOUGH_EVOLVE_CONDITION]: 'Not enough evolve condition',
+  [ErrorCode.INGAME_PC_SKILL_IS_FULL]: 'Ingame pc skill is full',
+  [ErrorCode.INGAME_PC_SKILL_EXIST]: 'Ingame pc skill exist',
 
   //overworld
   [ErrorCode.PLAYER_DATA_NOT_SET]: 'Player data not set',

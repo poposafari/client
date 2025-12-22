@@ -1,4 +1,4 @@
-import { EvolvePcApi, getPcApi, MovePcApi } from '../api';
+import { EvolvePcApi, getPcApi, LearnSkillApi, MovePcApi } from '../api';
 import { MAX_PARTY_SLOT, MAX_PC_BG } from '../constants';
 import { Event } from '../core/manager/event-manager';
 import { ANIMATION, AUDIO, DEPTH, EVENT, KEY, MessageEndDelay, MODE, TEXTSTYLE, TEXTURE, TIME, TYPE, UI } from '../enums';
@@ -8,13 +8,22 @@ import i18next from '../i18n';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { InGameScene } from '../scenes/ingame-scene';
 import { EvolPcRes, GetPcRes, ListForm, PokemonGender, PokemonHiddenMove, PokemonRank } from '../types';
-import { formatDateTime, getCurrentTimeOfDay, getOverworldPokemonTexture, getPokemonEvolCostText, getPokemonTextureFromPlayerPokemon, replacePercentSymbol } from '../utils/string-util';
+import {
+  formatDateTime,
+  getCurrentTimeOfDay,
+  getOverworldPokemonTexture,
+  getPokemonEvolCostText,
+  getPokemonSkillText,
+  getPokemonTextureFromPlayerPokemon,
+  getTypesSpriteOnSkills,
+  replacePercentSymbol,
+} from '../utils/string-util';
 import { MenuListUi } from './menu-list-ui';
 import { MenuUi } from './menu-ui';
 import { NoticeUi } from './notice-ui';
 import { QuestionMessageUi } from './question-message-ui';
 import { delay, getTextShadow, getTextStyle, playEffectSound, runFadeEffect, setTextShadow, Ui } from './ui';
-import { PC } from '../core/storage/pc-storage';
+import { PC, PcStorage } from '../core/storage/pc-storage';
 import { Option } from '../core/storage/player-option';
 import { ErrorCode } from '../core/errors';
 import { Game } from '../core/manager/game-manager';
@@ -127,12 +136,14 @@ export class PcBoxUi extends Ui {
 
   private menu: MenuUi;
   private evolveListMenu: MenuListUi;
+  private skillListMenu: MenuListUi;
   private boxMenu: MenuUi;
   private partyMenu: MenuUi;
   private boxListMenu: MenuListUi;
   private boxBgListMenu: MenuListUi;
   private noticeUi: NoticeUi;
   private questionUi: QuestionMessageUi;
+  private talkUi: TalkMessageUi;
 
   private boxBg!: Phaser.GameObjects.Image;
   private window!: Phaser.GameObjects.NineSlice;
@@ -173,12 +184,14 @@ export class PcBoxUi extends Ui {
 
     this.menu = new MenuUi(scene);
     this.evolveListMenu = new MenuListUi(scene);
+    this.skillListMenu = new MenuListUi(scene);
     this.boxMenu = new MenuUi(scene);
     this.partyMenu = new MenuUi(scene);
     this.noticeUi = new NoticeUi(scene);
     this.boxListMenu = new MenuListUi(scene);
     this.boxBgListMenu = new MenuListUi(scene);
     this.questionUi = new QuestionMessageUi(scene);
+    this.talkUi = new TalkMessageUi(scene);
     this.inputNicknameUi = new InputNicknameUi(scene);
   }
 
@@ -357,7 +370,7 @@ export class PcBoxUi extends Ui {
 
     this.pendingCryPokedex = pokedex;
 
-    this.pokemonCryDebounceTimer = this.scene.time.delayedCall(500, () => {
+    this.pokemonCryDebounceTimer = this.scene.time.delayedCall(300, () => {
       if (this.pendingCryPokedex) {
         this.executePokemonCrySound(this.pendingCryPokedex);
         this.pendingCryPokedex = null;
@@ -574,9 +587,66 @@ export class PcBoxUi extends Ui {
       await this.handleEvolve(pokemon);
     } else if (ret === i18next.t('menu:rename')) {
       await this.handleRename(pokemon);
+    } else if (ret === i18next.t('menu:moveTutor')) {
+      await this.handleLearnSkill(pokemon);
     }
 
     this.handleKeyInput();
+  }
+
+  private async handleLearnSkill(pokemon: PlayerPokemon): Promise<void> {
+    const pokemonData = getPokemonData(pokemon.getPokedex());
+    const moveTutor = pokemonData?.skills ?? [];
+
+    const { list, labels } = this.createSkillListMenuForm(pokemon, moveTutor);
+    this.skillListMenu.updateInfo(list);
+
+    labels.forEach(([canSkill, text]) => {
+      if (!canSkill) {
+        this.skillListMenu.updateContentColor(i18next.t(`menu:${text}`), TEXTSTYLE.MESSAGE_GRAY);
+      }
+    });
+
+    const ret = await this.skillListMenu.handleKeyInput();
+    const targetSkill = moveTutor[Number(ret)];
+    let checkSuccess = false;
+
+    if (ret === i18next.t('menu:cancelMenu')) return;
+
+    await this.questionUi.show({
+      type: 'default',
+      content: replacePercentSymbol(i18next.t('message:learn_skill_question'), [i18next.t(`pokemon:${pokemon.getPokedex()}.name`), i18next.t(`menu:${targetSkill}`)]),
+      speed: Option.getTextSpeed()!,
+      yes: async () => {
+        const apiRet = await LearnSkillApi({ idx: pokemon.getIdx(), target: Number(ret) });
+
+        if (apiRet.result) {
+          pokemon.addSkill(targetSkill as PokemonHiddenMove);
+          this.pcSummaryUi.updateSkillSummary(pokemon.getSkill());
+          Bag.useItem(targetSkill);
+          checkSuccess = true;
+        } else {
+          if (apiRet.data === ErrorCode.INGAME_PC_SKILL_IS_FULL) {
+            playEffectSound(this.scene, AUDIO.BUZZER);
+            await this.noticeUi.show({ content: i18next.t('message:warn_pc_skill_is_full'), window: TEXTURE.WINDOW_NOTICE_2, textStyle: TEXTSTYLE.MESSAGE_BLACK });
+          } else if (apiRet.data === ErrorCode.INGAME_PC_SKILL_EXIST) {
+            playEffectSound(this.scene, AUDIO.BUZZER);
+            await this.noticeUi.show({ content: i18next.t('message:warn_skill_exist'), window: TEXTURE.WINDOW_NOTICE_2, textStyle: TEXTSTYLE.MESSAGE_BLACK });
+          }
+        }
+      },
+      no: async () => {},
+    });
+
+    if (checkSuccess) {
+      playEffectSound(this.scene, AUDIO.GET_1);
+      await this.talkUi.show({
+        type: 'default',
+        content: replacePercentSymbol(i18next.t('message:success_skill_learn'), [i18next.t(`pokemon:${pokemon.getPokedex()}.name`), i18next.t(`menu:${targetSkill}`)]),
+        speed: Option.getTextSpeed()!,
+        endDelay: MessageEndDelay.DEFAULT,
+      });
+    }
   }
 
   private async handlePartyMenu(pokemon: PlayerPokemon): Promise<void> {
@@ -780,16 +850,18 @@ export class PcBoxUi extends Ui {
 
   private setupMenus(): void {
     this.menu.setup();
-    this.menu.setupContent([i18next.t('menu:addParty'), i18next.t('menu:boxJump'), i18next.t('menu:evolve'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
+    this.menu.setupContent([i18next.t('menu:addParty'), i18next.t('menu:boxJump'), i18next.t('menu:evolve'), i18next.t('menu:moveTutor'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
     this.boxMenu.setup();
     this.boxMenu.setupContent([i18next.t('menu:boxJump'), i18next.t('menu:boxBackground'), i18next.t('menu:rename'), i18next.t('menu:cancelMenu')]);
     this.partyMenu.setup();
     this.partyMenu.setupContent([i18next.t('menu:removeParty'), i18next.t('menu:follow'), i18next.t('menu:cancel')]);
     this.noticeUi.setup();
     this.evolveListMenu.setup({ scale: 2, etcScale: 1, windowWidth: 450, offsetX: 50, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 6, info: [], window: Option.getFrame('text') as TEXTURE });
+    this.skillListMenu.setup({ scale: 2, etcScale: 1, windowWidth: 330, offsetX: 290, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 6, info: [], window: Option.getFrame('text') as TEXTURE });
     this.boxListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 10, info: [], window: Option.getFrame('text') as TEXTURE });
     this.boxBgListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 8, info: [], window: Option.getFrame('text') as TEXTURE });
     this.questionUi.setup();
+    this.talkUi.setup();
   }
 
   private setupBox(width: number, height: number): void {
@@ -1014,10 +1086,6 @@ export class PcBoxUi extends Ui {
     return { list, evolLabels };
   }
 
-  /**
-   * 진화 조건에 따라 candy와 아이템을 소비하는 함수
-   * @param cost 진화 조건 문자열 (예: "candy_100+fire_stone" 또는 "move_flamethrower")
-   */
   private consumeEvolveCost(cost: string): void {
     const conditions = cost.split('+');
 
@@ -1036,6 +1104,19 @@ export class PcBoxUi extends Ui {
         Bag.useItem(trimmed, 1);
       }
     }
+  }
+
+  private createSkillListMenuForm(targetPokemon: PlayerPokemon, data: string[]): { list: ListForm[]; labels: [boolean, string][] } {
+    const list: ListForm[] = [];
+    const labels: [boolean, string][] = [];
+
+    for (const skill of data) {
+      const label = getPokemonSkillText(targetPokemon, skill);
+      labels.push(label);
+      list.push({ name: i18next.t(`menu:${label[1]}`), nameImg: '', etc: '', etcImg: '' });
+    }
+
+    return { list, labels };
   }
 
   private createBoxListMenuForm(): ListForm[] {
@@ -1085,7 +1166,7 @@ export class PcSummaryUi extends Ui {
   private captureCntTitle!: Phaser.GameObjects.Text;
   private captureLocation!: Phaser.GameObjects.Text;
   private captureDate!: Phaser.GameObjects.Text;
-  private skillIcons: Phaser.GameObjects.Image[] = [];
+  private skillWindows: Phaser.GameObjects.Image[] = [];
   private skillTexts: Phaser.GameObjects.Text[] = [];
   private rank!: Phaser.GameObjects.Text;
   private friendShip!: Phaser.GameObjects.Text;
@@ -1184,11 +1265,11 @@ export class PcSummaryUi extends Ui {
     this.type2 = this.addImage(TEXTURE.TYPES, +210, -450).setScale(1.8);
     this.captureCntTitle = this.addText(-230, -190, i18next.t('menu:captureCount'), TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0.5, 0.5);
     this.captureCntIcon = this.addImage(`poke-ball`, -230, -250).setScale(2.8).setInteractive();
-    const friendShipIcon = this.addImage(`soothe-bell`, -230, -190).setScale(2.8).setInteractive();
-    const friendShipColon = this.addText(-185, -190, ':', TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
+    const friendShipIcon = this.addImage(`soothe-bell`, -230, +250).setScale(2.8).setInteractive();
+    const friendShipColon = this.addText(-185, +255, ':', TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
+    this.friendShip = this.addText(-155, +255, '', TEXTSTYLE.SPECIAL).setScale(0.55).setOrigin(0, 0.5);
     const captureCntColon = this.addText(-185, -250, ':', TEXTSTYLE.BOX_CAPTURE_TITLE).setScale(0.7).setOrigin(0, 0.5);
     this.captureCnt = this.addText(-155, -250, '', TEXTSTYLE.SPECIAL).setScale(0.55).setOrigin(0, 0.5);
-    this.friendShip = this.addText(-155, -190, '', TEXTSTYLE.SPECIAL).setScale(0.55).setOrigin(0, 0.5);
     const captureTitle = this.addText(-110, +322, i18next.t('menu:capture'), TEXTSTYLE.BOX_POKEDEX).setScale(1);
     this.captureLocation = this.addText(-260, +405, '- ', TEXTSTYLE.SPECIAL).setScale(0.55).setOrigin(0, 0.5);
     this.captureDate = this.addText(-260, +480, '- ' + '', TEXTSTYLE.SPECIAL)
@@ -1334,34 +1415,36 @@ export class PcSummaryUi extends Ui {
     type_2 ? this.type2.setTexture(TEXTURE.TYPES, `types-${type_2}`) : this.type2.setTexture(TEXTURE.BLANK);
   }
 
-  private updateSkillSummary(skills: PokemonHiddenMove[]): void {
-    const contentWidth = 35;
+  updateSkillSummary(skills: PokemonHiddenMove[]): void {
+    const contentWidth = 40;
     const spacing = 10;
     let currentY = 0;
+    let targetY = [];
 
     this.cleanSkills();
 
+    skills.reverse();
+
     for (const skill of skills) {
-      const icon = this.addImage(TEXTURE.BLANK, 0, currentY).setScale(1.2);
-      const text = this.addText(+40, currentY, i18next.t(`menu:${skill}`), TEXTSTYLE.BOX_CAPTURE_TITLE);
-      text.setScale(0.7).setOrigin(0, 0.5);
+      const window = this.addImage(TEXTURE.BLANK, +400, currentY).setScale(1.2);
+      const text = this.addText(+400, currentY, i18next.t(`menu:${skill}`), TEXTSTYLE.BOX_CAPTURE_TITLE);
+      text.setScale(0.4).setOrigin(0.5, 0.5);
 
-      switch (skill) {
-        case 'surf':
-          icon.setTexture(`item032`);
-          break;
-      }
+      window.setTexture(TEXTURE.TYPES_B, getTypesSpriteOnSkills(skill));
+      window.setDisplaySize(220, 50);
 
-      this.skillIcons.push(icon);
+      this.skillWindows.push(window);
       this.skillTexts.push(text);
 
-      this.skillContainer.add(icon);
+      this.skillContainer.add(window);
       this.skillContainer.add(text);
 
-      currentY += currentY + contentWidth + spacing;
+      currentY += contentWidth + spacing;
+
+      targetY.push(currentY);
     }
 
-    const length = this.skillIcons.length;
+    const length = this.skillWindows.length;
     if (length > 1) {
       this.skillContainer.setY(this.skillContainerPosY - (length - 1) * (contentWidth + spacing));
     } else {
@@ -1370,13 +1453,13 @@ export class PcSummaryUi extends Ui {
   }
 
   private cleanSkills(): void {
-    this.skillIcons.forEach((icon) => {
+    this.skillWindows.forEach((icon) => {
       icon.off('pointerover');
       icon.destroy();
     });
     this.skillTexts.forEach((text) => text.destroy());
 
-    this.skillIcons = [];
+    this.skillWindows = [];
     this.skillTexts = [];
     this.skillContainer.removeAll(true);
   }

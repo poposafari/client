@@ -8,11 +8,13 @@ export class OverworldObj {
   private tilePos!: Phaser.Math.Vector2;
   private sprite: Phaser.GameObjects.Sprite;
   private shadow: Phaser.GameObjects.Sprite;
+  private waterShadow: Phaser.GameObjects.Sprite;
   private effect: Phaser.GameObjects.Sprite;
   private emotion: Phaser.GameObjects.Sprite;
   private dummy: Phaser.GameObjects.Sprite;
   private effectOffsetY: number = 0;
   private emotionOffsetY: number = -50;
+  private grassShadowOffsetY: number = 5;
   private dummyOffsetY: number = 0;
   private name: Phaser.GameObjects.Text;
   private objType: OBJECT;
@@ -25,6 +27,7 @@ export class OverworldObj {
     this.scene = scene;
     this.sprite = createSprite(scene, texture, 0, 0).setOrigin(0.5, 1);
     this.shadow = createSprite(scene, TEXTURE.OVERWORLD_SHADOW, 0, 0).setOrigin(0.5, 1).setAlpha(0.5);
+    this.waterShadow = createSprite(scene, TEXTURE.OVERWORLD_SHADOW_WATER, 0, 0).setOrigin(0.5, 1);
     this.effect = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
     this.emotion = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
     this.dummy = createSprite(scene, TEXTURE.BLANK, 0, 0).setOrigin(0.5, 1);
@@ -38,6 +41,9 @@ export class OverworldObj {
     this.emotion.setDepth(DEPTH.MENU);
     this.dummy.setDepth(this.tilePos.y + 1);
     this.sprite.setDepth(this.tilePos.y);
+    this.waterShadow.setDepth(this.tilePos.y);
+
+    this.setShadow('normal');
   }
 
   getScene() {
@@ -59,12 +65,14 @@ export class OverworldObj {
 
     this.sprite.setPosition(retX, retY);
     this.shadow.setPosition(retX, retY);
+    this.waterShadow.setPosition(retX, retY);
     this.effect.setPosition(retX, retY + this.effectOffsetY);
     this.emotion.setPosition(retX, retY + this.emotionOffsetY);
     this.dummy.setPosition(retX, retY + this.dummyOffsetY);
     this.name.setPosition(retX, retY - this.offsetNameY);
 
     this.sprite.setDepth(this.tilePos.y);
+    this.waterShadow.setDepth(this.tilePos.y);
     this.effect.setDepth(this.tilePos.y + 1);
     this.dummy.setDepth(this.tilePos.y + 1);
   }
@@ -78,6 +86,12 @@ export class OverworldObj {
     if (this.shadow) {
       this.shadow.destroy();
       this.shadow = null!;
+    }
+
+    if (this.waterShadow) {
+      this.waterShadow.stop();
+      this.waterShadow.destroy();
+      this.waterShadow = null!;
     }
 
     if (this.name) {
@@ -138,12 +152,14 @@ export class OverworldObj {
   setPosition(pos: Phaser.Math.Vector2) {
     this.sprite.setPosition(pos.x, pos.y);
     this.shadow.setPosition(pos.x, pos.y);
+    this.waterShadow.setPosition(pos.x, pos.y);
     this.effect.setPosition(pos.x, pos.y + this.effectOffsetY);
     this.emotion.setPosition(pos.x, pos.y + this.emotionOffsetY);
     this.dummy.setPosition(pos.x, pos.y + this.dummyOffsetY);
     this.name.setPosition(pos.x, pos.y - this.offsetNameY);
 
     this.sprite.setDepth(this.tilePos.y);
+    this.waterShadow.setDepth(this.tilePos.y);
     this.effect.setDepth(this.tilePos.y + 1);
     this.dummy.setDepth(this.tilePos.y + 1);
   }
@@ -209,6 +225,23 @@ export class OverworldObj {
   setSpriteVisible(onoff: boolean) {
     this.sprite.setVisible(onoff);
     this.shadow.setVisible(onoff);
+    // this.waterShadow.setVisible(onoff);
+  }
+
+  setShadow(type: 'water' | 'normal' | 'grass_1' | 'grass_2' | 'grass_3' | 'grass_4' | 'grass_5' | 'grass_6' | 'grass_7') {
+    if (type === 'water') {
+      this.shadow.setVisible(false);
+      this.waterShadow.setVisible(true);
+      this.waterShadow.play({ key: TEXTURE.OVERWORLD_SHADOW_WATER, repeat: -1, frameRate: 10 });
+    } else if (type === 'normal') {
+      this.shadow.setVisible(true);
+      this.waterShadow.setVisible(false);
+      this.waterShadow.stop();
+    } else if (type.startsWith('grass_')) {
+      //TODO: shadow grass 생성.
+      this.shadow.setVisible(false);
+      this.waterShadow.setVisible(false);
+    }
   }
 
   setDummyOffsetY(x: number, y: number, value: number) {

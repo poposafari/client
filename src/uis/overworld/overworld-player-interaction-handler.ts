@@ -120,7 +120,7 @@ export class OverworldPlayerInteractionHandler {
           speed: Option.getTextSpeed()!,
           yes: async () => {
             const closePromise = this.waitForUiClose(MODE.HIDDEN_MOVE);
-            await Game.changeMode(MODE.HIDDEN_MOVE, 'surf');
+            await Game.changeMode(MODE.HIDDEN_MOVE, 'move_surf');
             await closePromise;
 
             this.context.obj?.recallPet();
@@ -138,45 +138,6 @@ export class OverworldPlayerInteractionHandler {
         });
       });
     }
-  }
-
-  private async processSafariTicket(ticketObj: PostCheckoutOverworldObj): Promise<void> {
-    return new Promise(async (resolve) => {
-      if (ticketObj.reaction() === PostOfficeType.POST_0) {
-        await this.context.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc001_0'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
-        const ticket = await getAvailableTicketApi();
-        if (ticket.result) {
-          if (ticket.data > 0) {
-            await this.context.talkMessageUi.show({
-              type: 'default',
-              content: replacePercentSymbol(i18next.t('npc:npc001_1'), [ticket.data]),
-              speed: Option.getTextSpeed()!,
-              endDelay: MessageEndDelay.DEFAULT,
-            });
-            await this.context.questionMessageUi.show({
-              type: 'default',
-              content: i18next.t('npc:npc001_3'),
-              speed: Option.getTextSpeed()!,
-              yes: async () => {
-                const receive = await receiveAvailableTicketApi();
-                if (receive.result) {
-                  await this.receiveItem('030', receive.data.category);
-                  resolve();
-                }
-              },
-              no: async () => {
-                resolve();
-              },
-            });
-          } else {
-            await this.context.talkMessageUi.show({ type: 'default', content: i18next.t('npc:npc001_2'), speed: Option.getTextSpeed()!, endDelay: MessageEndDelay.DEFAULT });
-            resolve();
-          }
-        } else {
-          resolve();
-        }
-      }
-    });
   }
 
   private async receiveItem(item: string, category: ItemCategory): Promise<void> {

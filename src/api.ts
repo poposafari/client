@@ -19,6 +19,7 @@ import {
   GetItemRes,
   GetPcReq,
   GetPcRes,
+  LearnSkillReq,
   LoginRes,
   MovePcReq,
   RegisterIngameReq,
@@ -130,6 +131,7 @@ export const getItemsApi = () => apiWrap<GetItemRes[]>(() => Axios.get('/bag/get
 export const getPcApi = (data: GetPcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/get', data));
 export const MovePcApi = (data: MovePcReq) => apiWrap<GetPcRes[]>(() => Axios.post('/pc/move', data));
 export const EvolvePcApi = (data: EvolPcReq) => apiWrap<EvolPcRes[]>(() => Axios.post('/pc/evol', data));
+export const LearnSkillApi = (data: LearnSkillReq) => apiWrap<unknown[]>(() => Axios.post('/pc/skill', data));
 export const buyItemApi = (data: BuyItemReq) => apiWrap<BuyItemRes>(() => Axios.post('/bag/buy', data));
 export const sellItemApi = (data: SellItemReq) => apiWrap<SellItemRes>(() => Axios.post('/bag/sell', data));
 export const getAvailableTicketApi = () => apiWrap<number>(() => Axios.get('ingame/ticket/get'));

@@ -83,6 +83,7 @@ export const enum TEXTURE {
   GATE_002 = 'g002', //2번 게이트
   GATE_003 = 'g003', //3번 게이트
   GATE_004 = 'g004', //4번 게이트
+  GATE_005 = 'g005', //5번 게이트
   SAFARI_001 = 's001', //1번 도로
   SAFARI_002 = 's002', //2번 도로
   SAFARI_003 = 's003', //3번 도로
@@ -134,6 +135,30 @@ export const enum TEXTURE {
   AREA_14 = 'area_14',
   AREA_15 = 'area_15',
   AREA_16 = 'area_16',
+
+  //tms_hms
+  HM_NORMAL = 'hm01',
+  HM_FLYING = 'hm02',
+  HM_WATER = 'hm03',
+  HM_FIGHTING = 'hm04',
+  TM_BUG = 'move_bug',
+  TM_DARK = 'move_dark',
+  TM_DRAGON = 'move_dragon',
+  TM_ELECTRIC = 'move_electric',
+  TM_FAIRY = 'move_fairy',
+  TM_FIGHTING = 'move_fighting',
+  TM_FIRE = 'move_fire',
+  TM_FLYING = 'move_flying',
+  TM_GHOST = 'move_ghost',
+  TM_GRASS = 'move_grass',
+  TM_GROUND = 'move_ground',
+  TM_ICE = 'move_ice',
+  TM_NORMAL = 'move_normal',
+  TM_POISON = 'move_poison',
+  TM_PSYCHIC = 'move_psychic',
+  TM_ROCK = 'move_rock',
+  TM_STEEL = 'move_steel',
+  TM_WATER = 'move_water',
 
   //etc
   LOGO_0 = 'logo_0',
@@ -227,6 +252,7 @@ export const enum TEXTURE {
   FINGER = 'finger',
   BLANK = 'blank',
   TYPES = 'types',
+  TYPES_B = 'types_blank',
   POKEMON_CALL = 'pokemon_call',
   POKEMON_RECALL = 'pokemon_recall',
   POKEMON_OVERWORLD = 'pokemon_overworld',
@@ -252,6 +278,7 @@ export const enum TEXTURE {
   LAMP = 'lamp',
   SPEAKER = 'speaker',
   X_BUTTON = 'x',
+  OVERWORLD_SHADOW_GRASS = 'overworld_shadow_grass',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
@@ -283,6 +310,7 @@ export const enum ANIMATION {
   PLAYER_SURF = 'player_surf',
   OVERWORLD_SHADOW = 'overworld_shadow',
   OVERWORLD_SHADOW_WATER = 'overworld_shadow_water',
+  OVERWORLD_SHADOW_GRASS = 'overworld_shadow_grass',
   SURF = 'surf',
   PLAYER_MOVEMENT_WALK_UP_1 = 'player_movement_walk_up_1',
   PLAYER_MOVEMENT_WALK_UP_2 = 'player_movement_walk_up_2',
@@ -454,6 +482,7 @@ export enum AUDIO {
   CANCEL_0 = 'cancel_0',
   CANCEL_1 = 'cancel_1',
   GET_0 = 'get_0',
+  GET_1 = 'get_1',
   BUY = 'buy',
   JUMP = 'jump',
   REACTION_0 = 'reaction_0',
@@ -682,6 +711,7 @@ export const enum OBJECT {
   TRIGGER = 'trigger',
   SIGN = 'sign',
   LAMP = 'lamp',
+  GRASS = 'grass',
 }
 
 export const enum TRIGGER {
@@ -1081,16 +1111,19 @@ export enum OVERWORLD_DOOR {
   G004_DOWN_1 = 'G004_DOWN_1',
   G004_DOWN_2 = 'G004_DOWN_2',
 
+  G005_RIGHT_0 = 'G005_RIGHT_0',
+  G005_RIGHT_1 = 'G005_RIGHT_1',
+  G005_RIGHT_2 = 'G005_RIGHT_2',
+  G005_LEFT_0 = 'G005_LEFT_0',
+  G005_LEFT_1 = 'G005_LEFT_1',
+  G005_LEFT_2 = 'G005_LEFT_2',
+
   S001_RIGHT_ROAD_0 = 'S001_RIGHT_ROAD_0',
   S001_RIGHT_ROAD_1 = 'S001_RIGHT_ROAD_1',
   S001_UP_ROAD_0 = 'S001_UP_ROAD_0',
   S001_UP_ROAD_1 = 'S001_UP_ROAD_1',
   S001_LEFT_ROAD_0 = 'S001_LEFT_ROAD_0',
   S001_LEFT_ROAD_1 = 'S001_LEFT_ROAD_1',
-  S001_LEFT_ROAD_2 = 'S001_LEFT_ROAD_2',
-  S001_LEFT_ROAD_3 = 'S001_LEFT_ROAD_3',
-  S001_LEFT_ROAD_4 = 'S001_LEFT_ROAD_4',
-  S001_LEFT_ROAD_5 = 'S001_LEFT_ROAD_5',
 
   S002_DOWN_ROAD_0 = 'S002_DOWN_ROAD_0',
   S002_DOWN_ROAD_1 = 'S002_DOWN_ROAD_1',
@@ -1137,10 +1170,6 @@ export enum OVERWORLD_DOOR {
 
   S010_RIGHT_ROAD_0 = 'S010_RIGHT_ROAD_0',
   S010_RIGHT_ROAD_1 = 'S010_RIGHT_ROAD_1',
-  S010_RIGHT_ROAD_2 = 'S010_RIGHT_ROAD_2',
-  S010_RIGHT_ROAD_3 = 'S010_RIGHT_ROAD_3',
-  S010_RIGHT_ROAD_4 = 'S010_RIGHT_ROAD_4',
-  S010_RIGHT_ROAD_5 = 'S010_RIGHT_ROAD_5',
   S010_DOWN_ROAD_0 = 'S010_DOWN_ROAD_0',
   S010_DOWN_ROAD_1 = 'S010_DOWN_ROAD_1',
 
@@ -1223,16 +1252,15 @@ export enum OVERWORLD_INIT_POS {
   G004_UP_0 = 'G004_UP_0',
   G004_DOWN_0 = 'G004_DOWN_0',
 
+  G005_RIGHT_0 = 'G005_RIGHT_0',
+  G005_LEFT_0 = 'G005_LEFT_0',
+
   S001_RIGHT_ROAD_0 = 'S001_RIGHT_ROAD_0',
   S001_RIGHT_ROAD_1 = 'S001_RIGHT_ROAD_1',
   S001_UP_ROAD_0 = 'S001_UP_ROAD_0',
   S001_UP_ROAD_1 = 'S001_UP_ROAD_1',
   S001_LEFT_ROAD_0 = 'S001_LEFT_ROAD_0',
   S001_LEFT_ROAD_1 = 'S001_LEFT_ROAD_1',
-  S001_LEFT_ROAD_2 = 'S001_LEFT_ROAD_2',
-  S001_LEFT_ROAD_3 = 'S001_LEFT_ROAD_3',
-  S001_LEFT_ROAD_4 = 'S001_LEFT_ROAD_4',
-  S001_LEFT_ROAD_5 = 'S001_LEFT_ROAD_5',
 
   S002_DOWN_ROAD_0 = 'S002_DOWN_ROAD_0',
   S002_DOWN_ROAD_1 = 'S002_DOWN_ROAD_1',
@@ -1279,10 +1307,6 @@ export enum OVERWORLD_INIT_POS {
 
   S010_RIGHT_ROAD_0 = 'S010_RIGHT_ROAD_0',
   S010_RIGHT_ROAD_1 = 'S010_RIGHT_ROAD_1',
-  S010_RIGHT_ROAD_2 = 'S010_RIGHT_ROAD_2',
-  S010_RIGHT_ROAD_3 = 'S010_RIGHT_ROAD_3',
-  S010_RIGHT_ROAD_4 = 'S010_RIGHT_ROAD_4',
-  S010_RIGHT_ROAD_5 = 'S010_RIGHT_ROAD_5',
   S010_DOWN_ROAD_0 = 'S010_DOWN_ROAD_0',
   S010_DOWN_ROAD_1 = 'S010_DOWN_ROAD_1',
 

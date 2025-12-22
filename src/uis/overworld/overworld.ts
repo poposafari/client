@@ -109,16 +109,16 @@ export class Plaza001 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.P001_NPC3_0, OVERWORLD_INIT_POS.P020_EXIT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.P001_NPC4_0, OVERWORLD_INIT_POS.P022_EXIT_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 9, 15, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign000']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 24, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign002']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 26, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign003']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 14, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign004']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 18, 17, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign000']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 40, 26, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 40, 42, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign002']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 35, 42, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign003']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 23, 42, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:sign004']);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 23, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 38, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
-    ui.getStatue().setupSign(TEXTURE.BLANK, 23, 38, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
-    ui.getStatue().setupSign(TEXTURE.BLANK, 40, 30, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
+    ui.getStatue().setupSign(TEXTURE.BLANK, 15, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 49, 32, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
+    ui.getStatue().setupSign(TEXTURE.BLANK, 32, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
+    ui.getStatue().setupSign(TEXTURE.BLANK, 26, 40, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_2');
   }
 }
 
@@ -677,6 +677,33 @@ export class Gate004 extends Overworld {
   }
 }
 
+export class Gate005 extends Overworld {
+  constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
+    super(DIRECTION.DOWN, key, sound, isIndoor, area, false);
+  }
+
+  setup(ui: OverworldUi): void {
+    ui.setType(OVERWORLD_TYPE.PLAZA);
+    OverworldGlobal.setKey(this.key as string);
+
+    ui.getMap().setup(this.key as TEXTURE, [TEXTURE.INDOOR_TILE_FLOOR, TEXTURE.INDOOR_TILE_OBJECT, TEXTURE.INDOOR_EVENT]);
+    ui.getMap().setLayer(0, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(1, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(2, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    ui.getMap().setLayer(3, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    ui.getMap().setLayer(4, TEXTURE.INDOOR_EVENT, DEPTH.GROUND);
+    ui.getMap().setForegroundLayer(5, [TEXTURE.INDOOR_TILE_OBJECT, TEXTURE.INDOOR_EVENT], DEPTH.FOREGROND);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_RIGHT_0, OVERWORLD_INIT_POS.S001_LEFT_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_RIGHT_1, OVERWORLD_INIT_POS.S001_LEFT_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_RIGHT_2, OVERWORLD_INIT_POS.S001_LEFT_ROAD_0);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_LEFT_0, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_LEFT_1, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G005_LEFT_2, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_0);
+  }
+}
+
 export class Safari001 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.DOWN, key, sound, isIndoor, area);
@@ -713,17 +740,13 @@ export class Safari001 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_RIGHT_ROAD_1, OVERWORLD_INIT_POS.G001_LEFT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_UP_ROAD_0, OVERWORLD_INIT_POS.G002_DOWN_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_UP_ROAD_1, OVERWORLD_INIT_POS.G002_DOWN_0);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_0, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_0);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_1, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_1);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_2, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_2);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_3, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_3);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_4, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_4);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_5, OVERWORLD_INIT_POS.S010_RIGHT_ROAD_5);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_0, OVERWORLD_INIT_POS.G005_RIGHT_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S001_LEFT_ROAD_1, OVERWORLD_INIT_POS.G005_RIGHT_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 62, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 63, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 12, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 13, 13, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 76, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 77, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:p001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 26, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 27, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_left', ['menu:s002', 'menu:s010']);
   }
 }
 
@@ -773,11 +796,11 @@ export class Safari002 extends Overworld {
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S002_LEFT_ROAD_0, OVERWORLD_INIT_POS.G003_RIGHT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S002_LEFT_ROAD_1, OVERWORLD_INIT_POS.G003_RIGHT_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 10, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 11, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 21, 23, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:s003']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 6, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 7, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 20, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 21, 42, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_up_down', ['menu:s003', 'menu:s001']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 31, 23, '', TEXTURE.WINDOW_NOTICE_0, undefined, 'menu:sign_0', ['menu:s003']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 16, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 25, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_1', ['menu:s007']);
   }
 }
 
@@ -1080,17 +1103,13 @@ export class Safari010 extends Overworld {
     ui.getMap().setForegroundLayer(11, [TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, TEXTURE.OUTDOOR_TILE_URBAN, TEXTURE.OUTDOOR_TILE_EDGE], DEPTH.FOREGROND);
     ui.getMap().setForeground1Layer(12, [TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, TEXTURE.OUTDOOR_TILE_URBAN, TEXTURE.OUTDOOR_TILE_EDGE], DEPTH.FOREGROND);
 
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_0, OVERWORLD_INIT_POS.S001_LEFT_ROAD_0);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_1, OVERWORLD_INIT_POS.S001_LEFT_ROAD_1);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_2, OVERWORLD_INIT_POS.S001_LEFT_ROAD_2);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_3, OVERWORLD_INIT_POS.S001_LEFT_ROAD_3);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_4, OVERWORLD_INIT_POS.S001_LEFT_ROAD_4);
-    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_5, OVERWORLD_INIT_POS.S001_LEFT_ROAD_5);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_0, OVERWORLD_INIT_POS.G005_LEFT_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_RIGHT_ROAD_1, OVERWORLD_INIT_POS.G005_LEFT_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_DOWN_ROAD_0, OVERWORLD_INIT_POS.G004_UP_0);
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S010_DOWN_ROAD_1, OVERWORLD_INIT_POS.G004_UP_0);
 
-    ui.getStatue().setupSign(TEXTURE.BLANK, 16, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
-    ui.getStatue().setupSign(TEXTURE.BLANK, 17, 14, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 22, 17, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
+    ui.getStatue().setupSign(TEXTURE.BLANK, 23, 17, '', TEXTURE.WINDOW_NOTICE_1, undefined, 'menu:sign_down_right', ['menu:s011', 'menu:s002']);
   }
 }
 

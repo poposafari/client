@@ -2,9 +2,10 @@ import { PC } from '../core/storage/pc-storage';
 import { PlayerGlobal } from '../core/storage/player-storage';
 import { DEPTH, EASE, TEXTURE, UI } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
-import { getPokemonSpriteKey } from '../utils/string-util';
-import { Ui } from './ui';
+import { getPokemonSpriteKey, getPokemonTextureFromPlayerPokemon } from '../utils/string-util';
+import { playEffectSound, Ui } from './ui';
 import { Game } from '../core/manager/game-manager';
+import { PokemonHiddenMove } from '../types';
 
 export class HiddenMoveUi extends Ui {
   private container!: Phaser.GameObjects.Container;
@@ -24,7 +25,7 @@ export class HiddenMoveUi extends Ui {
 
     this.container = this.createContainer(width / 2, height / 2);
     this.bg = this.addImage(TEXTURE.BG_HM, 0, 0);
-    this.pokemon = this.addImage(`pokemon_sprite0000`, 0, 0).setScale(4.8);
+    this.pokemon = this.addImage(getPokemonTextureFromPlayerPokemon('front', null), 0, 0).setScale(2);
     this.player = this.createSprite(TEXTURE.BLANK, -80, -80);
     this.player.setScale(4.4);
 
@@ -37,7 +38,7 @@ export class HiddenMoveUi extends Ui {
     this.container.setScrollFactor(0);
   }
 
-  async show(data: 'surf'): Promise<void> {
+  async show(data: PokemonHiddenMove): Promise<void> {
     const userData = PlayerGlobal.getData();
     const targetPokemon = PC.findSkillsInParty(data);
 
@@ -45,7 +46,7 @@ export class HiddenMoveUi extends Ui {
     if (!targetPokemon) return;
 
     const playerKey = `${userData.gender}_${userData.avatar}_hm`;
-    this.pokemon.setTexture(getPokemonSpriteKey(targetPokemon));
+    this.pokemon.setTexture(getPokemonTextureFromPlayerPokemon('front', targetPokemon));
     PC.setHiddenMovePokemon(targetPokemon);
 
     this.container.setVisible(true);
@@ -69,7 +70,7 @@ export class HiddenMoveUi extends Ui {
 
       this.scene.tweens.add({
         targets: this.bg,
-        displayHeight: 500,
+        displayHeight: 400,
         duration: 200,
         ease: EASE.LINEAR,
         delay: 200,
@@ -93,6 +94,9 @@ export class HiddenMoveUi extends Ui {
         duration: 400,
         ease: EASE.QUINT_EASEOUT,
         delay: 800,
+        onComplete: () => {
+          playEffectSound(this.scene, `${targetPokemon.getPokedex()}`);
+        },
       });
 
       this.scene.tweens.add({
