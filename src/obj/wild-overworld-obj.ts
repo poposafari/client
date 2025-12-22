@@ -260,12 +260,6 @@ export class WildOverworldObj extends MovableOverworldObj {
     }
 
     super.update(delta);
-
-    if (movementCheck && movementDirectionQueue.length === 0 && this.remainingSteps === 0 && this.currentDirectionIndex === undefined) {
-      if (!this.timer) {
-        this.scheduleRandomMovement();
-      }
-    }
   }
 
   updateName() {
