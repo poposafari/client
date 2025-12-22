@@ -75,6 +75,18 @@ export class PlayerOverworldObj extends MovableOverworldObj {
       }
     }
 
+    if (this.playerMap) {
+      const isWaterTile = this.playerMap.layers.some((layer) => {
+        const tile = this.playerMap!.getTileAt(x, y, false, layer.name);
+        return tile && tile.properties.spawn === 'water';
+      });
+      if (isWaterTile) {
+        this.setMovement(PLAYER_STATUS.SURF);
+      } else {
+        this.setShadow('normal');
+      }
+    }
+
     Event.emit(EVENT.UPDATE_OVERWORLD_ICON_TINT, TEXTURE.ICON_RUNNING, false);
     this.setSpriteScale(this.spriteScale);
     this.movePetBehind();
@@ -168,6 +180,12 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     this.stopFrameNumbers = stopFrames;
     this.baseSpeed = speed;
 
+    if (this.currentStatus === PLAYER_STATUS.SURF) {
+      this.getShadow().setVisible(false);
+    } else {
+      this.getShadow().setVisible(true);
+    }
+
     this.updateAppearance();
   }
 
@@ -235,7 +253,7 @@ export class PlayerOverworldObj extends MovableOverworldObj {
     if (obj instanceof WildOverworldObj) return obj;
     if (obj instanceof GroundItemOverworldObj) return obj;
     if (obj instanceof SignOverworldObj) return obj;
-    if (event === 'surf' && PC.findSkillsInParty('surf')) return 'surf';
+    if (event === 'surf' && PC.findSkillsInParty('move_surf')) return 'surf';
 
     return null;
   }
@@ -342,8 +360,8 @@ export class PlayerOverworldObj extends MovableOverworldObj {
           playEffectSound(this.getScene(), AUDIO.JUMP);
 
           SocketManager.getInstance().movementPlayer({
-            x: targetVec.x,
-            y: targetVec.y,
+            x: targetTilePos.x,
+            y: targetTilePos.y,
             direction: matchPlayerStatusToDirection(this.lastDirection),
             movement: 'jump',
             pet: null,

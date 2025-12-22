@@ -7,6 +7,7 @@ import {
   Gate002,
   Gate003,
   Gate004,
+  Gate005,
   Plaza001,
   Plaza002,
   Plaza003,
@@ -140,6 +141,7 @@ export class InGameScene extends BaseScene {
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_002, (ui) => new Gate002(TEXTURE.GATE_002, AUDIO.B004, false, TEXTURE.AREA_16));
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_003, (ui) => new Gate003(TEXTURE.GATE_003, AUDIO.B004, false, TEXTURE.AREA_16));
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_004, (ui) => new Gate004(TEXTURE.GATE_004, AUDIO.B004, false, TEXTURE.AREA_16));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_005, (ui) => new Gate005(TEXTURE.GATE_005, AUDIO.B004, false, TEXTURE.AREA_16));
 
     //safari
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_001, (ui) => new Safari001(TEXTURE.SAFARI_001, AUDIO.B032, false, TEXTURE.AREA_1));
@@ -202,6 +204,8 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.TUTORIAL_CHOICE_FINGER, ANIMATION.TUTORIAL_CHOICE_FINGER);
 
     createSpriteAnimation(this, TEXTURE.SPEAKER, ANIMATION.SPEAKER);
+
+    createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW_GRASS, ANIMATION.OVERWORLD_SHADOW_GRASS);
 
     this.initDoorAnimation();
 

@@ -39,7 +39,26 @@ export type TranslationPokemon = {
 export type PokemonGender = 'male' | 'female' | 'none';
 export type PokemonHabitat = 'land' | 'lake' | 'mt';
 export type PokemonSpawn = 'land' | 'water';
-export type PokemonHiddenMove = 'surf' | 'mean-look' | 'flash' | 'defog' | 'cut' | 'rock-smash' | 'strength' | 'waterfall' | 'dive' | 'fly';
+export type PokemonHiddenMove =
+  | 'move_cut'
+  | 'move_fly'
+  | 'move_surf'
+  | 'move_strength'
+  | 'move_flash'
+  | 'move_rock-smash'
+  | 'move_waterfall'
+  | 'move_dive'
+  | 'move_mean-look'
+  | 'move_defog'
+  | 'move_ancient-power'
+  | 'move_double-hit'
+  | 'move_dragon-pulse'
+  | 'move_hyper-drill'
+  | 'move_mimic'
+  | 'move_rollout'
+  | 'move_stomp'
+  | 'move_taunt'
+  | 'move_twin-beam';
 export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
 export type PokemonType =
   | 'normal'
@@ -270,6 +289,11 @@ export type EvolPcReq = {
   idx: number; //PlayerPokemon idx임.
   target: number; //PlayerPokemon의 진화 인덱스 번호.
   time: string; // ISO 8601 형식의 클라이언트 시간 (예: "2024-01-01T12:00:00.000Z")
+};
+
+export type LearnSkillReq = {
+  idx: number; //PlayerPokemon idx임.
+  target: number; //PlayerPokemon의 스킬 인덱스 번호임.
 };
 
 export type EvolPcRes = {

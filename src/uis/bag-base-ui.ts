@@ -4,6 +4,7 @@ import { AUDIO, DEPTH, EVENT, TEXTSTYLE, TEXTURE } from '../enums';
 import { InGameScene } from '../scenes/ingame-scene';
 import { playEffectSound, runFadeEffect, Ui } from './ui';
 import { PlayerItem } from '../obj/player-item';
+import { getItemTexture } from '../utils/string-util';
 
 export class BagBaseUi extends Ui {
   protected descUi!: BagDescUi;
@@ -196,7 +197,7 @@ export class BagDescUi extends Ui {
       return;
     }
 
-    this.icon.setTexture(`${item.getKey()}`);
+    this.icon.setTexture(getItemTexture(item.getKey()));
     this.text.setText(i18next.t(`item:${item.getKey()}.description`));
   }
 

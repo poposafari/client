@@ -10,6 +10,7 @@ import { GroundItemOverworldObj } from './ground-item-overworld-obj';
 import { DoorOverworldObj } from './door-overworld-obj';
 import { OverworldTriggerObj } from './overworld-trigger-obj';
 import { SignOverworldObj } from './sign-overworld-obj';
+import { GrassOverworldObj } from './grass-overworld-obj';
 
 const Vector2 = Phaser.Math.Vector2;
 
@@ -46,6 +47,7 @@ export class MovableOverworldObj extends OverworldObj {
   protected stopFrameNumbers: number[] = [];
   protected baseSpeed: number = 100;
   protected objectCollections?: OverworldObjectCollections;
+  private currentGrassObj: GrassOverworldObj[] = [];
 
   constructor(
     scene: InGameScene,
@@ -70,6 +72,14 @@ export class MovableOverworldObj extends OverworldObj {
     this.objectCollections = objectCollections;
   }
 
+  destroy(): void {
+    this.currentGrassObj.forEach((grassObj) => {
+      grassObj.destroy();
+    });
+    this.currentGrassObj = [];
+    super.destroy();
+  }
+
   ready(direction: DIRECTION, animationKey: ANIMATION | string) {
     if (this.isBlockingDirection(direction)) {
       this.lastDirection = direction;
@@ -77,6 +87,48 @@ export class MovableOverworldObj extends OverworldObj {
       this.movementBlocking = true;
       this.stopSpriteAnimation(this.getStopFrameNumberFromDirection(this.lastDirection)!);
       return;
+    }
+
+    const nextTilePos = this.getTilePos().add(this.movementDirection[direction]!);
+    const isNextTileGrass = this.checkIfTileIsGrass(nextTilePos);
+
+    if (this.currentGrassObj.length > 0) {
+      this.currentGrassObj.forEach((grassObj) => {
+        const sprite = grassObj.getSprite();
+        const isAnimationPlaying = sprite.anims.isPlaying && sprite.anims.currentAnim?.key === ANIMATION.OVERWORLD_SHADOW_GRASS;
+
+        if (isAnimationPlaying) {
+          sprite.once('animationcomplete', () => {
+            this.getScene().time.delayedCall(100, () => {
+              if (!grassObj.getScene()) return;
+              grassObj.destroy();
+              const index = this.currentGrassObj.indexOf(grassObj);
+              if (index > -1) {
+                this.currentGrassObj.splice(index, 1);
+              }
+            });
+          });
+        } else {
+          this.getScene().time.delayedCall(100, () => {
+            if (!grassObj.getScene()) return;
+            grassObj.destroy();
+            const index = this.currentGrassObj.indexOf(grassObj);
+            if (index > -1) {
+              this.currentGrassObj.splice(index, 1);
+            }
+          });
+        }
+      });
+      this.currentGrassObj = [];
+    }
+
+    if (isNextTileGrass && this.getSprite().visible) {
+      const newGrassObj = new GrassOverworldObj(this.getScene(), TEXTURE.OVERWORLD_SHADOW_GRASS, nextTilePos.x, nextTilePos.y, '', OBJECT.GRASS);
+
+      if (direction === DIRECTION.UP) newGrassObj.setSpriteDepth(nextTilePos.y - 1);
+      else newGrassObj.setSpriteDepth(nextTilePos.y);
+      newGrassObj.startGrassAnimation(this.getTilePos().y);
+      this.currentGrassObj.push(newGrassObj);
     }
 
     this.movementBlocking = false;
@@ -260,6 +312,8 @@ export class MovableOverworldObj extends OverworldObj {
       this.step++;
     } else {
       this.lastDirection = this.currentDirection;
+
+      if (this.getSprite().visible) this.setShadow('normal');
     }
   }
 
@@ -313,5 +367,20 @@ export class MovableOverworldObj extends OverworldObj {
       case DIRECTION.RIGHT:
         return this.smoothFrameNumbers[3];
     }
+  }
+
+  private checkIfTileIsGrass(tilePos: Phaser.Math.Vector2): boolean {
+    if (!this.map) return false;
+
+    for (const layer of this.map.layers) {
+      const tile = this.map.getTileAt(tilePos.x, tilePos.y, false, layer.name);
+      if (tile && tile.properties.type) {
+        const type = tile.properties.type as string;
+        if (type.startsWith('grass_') && /^grass_[1-7]$/.test(type)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

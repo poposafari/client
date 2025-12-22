@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import { femalePokemonFrontPokedex, femalePokemonIconPokedex, femalePokemonOverworldPokedex } from '../data';
-import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, Season, TextSpeed, TIME, TYPE } from '../enums';
+import { BATTLE_AREA, DIRECTION, ItemCategory, KEY, PLAYER_STATUS, POKEMON_TYPE, Season, TextSpeed, TEXTURE, TIME, TYPE } from '../enums';
 import { PlayerPokemon } from '../obj/player-pokemon';
 import { WildRes } from '../types';
 import { PlayerGlobal } from '../core/storage/player-storage';
@@ -535,4 +535,98 @@ export const getPokemonEvolCostText = (targetPokemon: PlayerPokemon, cost: strin
   }
   ret = replacePercentSymbol(i18next.t('menu:use_evolve'), [ret.slice(1)]);
   return [check, ret];
+};
+
+export const getPokemonSkillText = (targetPokemon: PlayerPokemon, skill: string): [boolean, string] => {
+  let check = true;
+  let ret = skill;
+
+  if (!Bag.getItem(skill)) check = false;
+  for (const targetSkill of targetPokemon.getSkill()) {
+    if (targetSkill === skill) {
+      check = false;
+    }
+  }
+
+  return [check, ret];
+};
+
+export const getTypesSpriteOnSkills = (skill: string) => {
+  let type: POKEMON_TYPE = POKEMON_TYPE.NONE;
+
+  switch (skill) {
+    case 'move_cut':
+    case 'move_flash':
+    case 'move_mean-look':
+    case 'move_double-hit':
+    case 'move_hyper-drill':
+    case 'move_mimic':
+    case 'move_stomp':
+      type = POKEMON_TYPE.NORMAL;
+      break;
+    case 'move_fly':
+    case 'move_defog':
+      type = POKEMON_TYPE.FLYING;
+      break;
+    case 'move_surf':
+    case 'move_waterfall':
+    case 'move_dive':
+      type = POKEMON_TYPE.WATER;
+      break;
+    case 'move_rock-smash':
+    case 'move_strength':
+      type = POKEMON_TYPE.FIGHT;
+      break;
+    case 'move_ancient-power':
+    case 'move_rollout':
+      type = POKEMON_TYPE.ROCK;
+      break;
+    case 'move_dragon-pulse':
+      type = POKEMON_TYPE.DRAGON;
+      break;
+    case 'move_taunt':
+      type = POKEMON_TYPE.DARK;
+      break;
+    case 'move_twin-beam':
+      type = POKEMON_TYPE.PSYCHIC;
+      break;
+  }
+
+  return `types-${type}`;
+};
+
+export const getItemTexture = (item: string) => {
+  switch (item) {
+    case 'move_cut':
+    case 'move_flash':
+      return TEXTURE.HM_NORMAL;
+    case 'move_mean-look':
+    case 'move_double-hit':
+    case 'move_hyper-drill':
+    case 'move_mimic':
+    case 'move_stomp':
+      return TEXTURE.TM_NORMAL;
+    case 'move_fly':
+      return TEXTURE.HM_FLYING;
+    case 'move_defog':
+      return TEXTURE.TM_FLYING;
+    case 'move_surf':
+    case 'move_waterfall':
+    case 'move_dive':
+      return TEXTURE.HM_WATER;
+    case 'move_rock-smash':
+    case 'move_strength':
+      return TEXTURE.HM_FIGHTING;
+    case 'move_ancient-power':
+    case 'move_rollout':
+      return TEXTURE.TM_ROCK;
+    case 'move_dragon-pulse':
+      return TEXTURE.TM_DRAGON;
+    case 'move_taunt':
+      return TEXTURE.TM_DARK;
+    case 'move_twin-beam':
+      return TEXTURE.TM_PSYCHIC;
+    default:
+      return item;
+  }
 };

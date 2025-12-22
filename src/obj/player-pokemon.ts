@@ -130,4 +130,8 @@ export class PlayerPokemon {
   public setNickname(value: string) {
     this.nickname = value;
   }
+
+  public addSkill(skill: PokemonHiddenMove) {
+    this.skill.push(skill);
+  }
 }

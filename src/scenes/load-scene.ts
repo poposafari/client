@@ -3,7 +3,6 @@ import { initI18n } from '../i18n';
 import { addBackground, addImage } from '../uis/ui';
 import { createZeroPad } from '../utils/string-util';
 import { BaseScene } from './base-scene';
-import { Game } from '../core/manager/game-manager';
 import {
   bigSizePokemonOverworldPokedex,
   femalePokemonFrontPokedex,
@@ -11,8 +10,6 @@ import {
   femalePokemonOverworldPokedex,
   getAllItems,
   getAllPokemonKeys,
-  getAllPokemons,
-  getPokemonData,
   loadJsonDataFromCache,
   pokemonCryNames,
 } from '../data';
@@ -157,6 +154,7 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.GATE_002, 'ui/map', TEXTURE.GATE_002);
     this.loadMap(TEXTURE.GATE_003, 'ui/map', TEXTURE.GATE_003);
     this.loadMap(TEXTURE.GATE_004, 'ui/map', TEXTURE.GATE_004);
+    this.loadMap(TEXTURE.GATE_005, 'ui/map', TEXTURE.GATE_005);
 
     this.loadMap(TEXTURE.SAFARI_001, 'ui/map', TEXTURE.SAFARI_001);
     this.loadMap(TEXTURE.SAFARI_002, 'ui/map', TEXTURE.SAFARI_002);
@@ -238,6 +236,30 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.AREA_14, 'ui/area', TEXTURE.AREA_14);
     this.loadImage(TEXTURE.AREA_15, 'ui/area', TEXTURE.AREA_15);
     this.loadImage(TEXTURE.AREA_16, 'ui/area', TEXTURE.AREA_16);
+
+    //tms_hms
+    this.loadImage(TEXTURE.HM_NORMAL, 'ui/item', TEXTURE.HM_NORMAL);
+    this.loadImage(TEXTURE.HM_FLYING, 'ui/item', TEXTURE.HM_FLYING);
+    this.loadImage(TEXTURE.HM_WATER, 'ui/item', TEXTURE.HM_WATER);
+    this.loadImage(TEXTURE.HM_FIGHTING, 'ui/item', TEXTURE.HM_FIGHTING);
+    this.loadImage(TEXTURE.TM_BUG, 'ui/item', TEXTURE.TM_BUG);
+    this.loadImage(TEXTURE.TM_DARK, 'ui/item', TEXTURE.TM_DARK);
+    this.loadImage(TEXTURE.TM_DRAGON, 'ui/item', TEXTURE.TM_DRAGON);
+    this.loadImage(TEXTURE.TM_ELECTRIC, 'ui/item', TEXTURE.TM_ELECTRIC);
+    this.loadImage(TEXTURE.TM_FAIRY, 'ui/item', TEXTURE.TM_FAIRY);
+    this.loadImage(TEXTURE.TM_FIGHTING, 'ui/item', TEXTURE.TM_FIGHTING);
+    this.loadImage(TEXTURE.TM_FIRE, 'ui/item', TEXTURE.TM_FIRE);
+    this.loadImage(TEXTURE.TM_FLYING, 'ui/item', TEXTURE.TM_FLYING);
+    this.loadImage(TEXTURE.TM_GHOST, 'ui/item', TEXTURE.TM_GHOST);
+    this.loadImage(TEXTURE.TM_GRASS, 'ui/item', TEXTURE.TM_GRASS);
+    this.loadImage(TEXTURE.TM_GROUND, 'ui/item', TEXTURE.TM_GROUND);
+    this.loadImage(TEXTURE.TM_ICE, 'ui/item', TEXTURE.TM_ICE);
+    this.loadImage(TEXTURE.TM_NORMAL, 'ui/item', TEXTURE.TM_NORMAL);
+    this.loadImage(TEXTURE.TM_POISON, 'ui/item', TEXTURE.TM_POISON);
+    this.loadImage(TEXTURE.TM_PSYCHIC, 'ui/item', TEXTURE.TM_PSYCHIC);
+    this.loadImage(TEXTURE.TM_ROCK, 'ui/item', TEXTURE.TM_ROCK);
+    this.loadImage(TEXTURE.TM_STEEL, 'ui/item', TEXTURE.TM_STEEL);
+    this.loadImage(TEXTURE.TM_WATER, 'ui/item', TEXTURE.TM_WATER);
 
     //etc
     this.loadImage(TEXTURE.LOGO_DISCORD, 'ui', TEXTURE.LOGO_DISCORD);
@@ -330,6 +352,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.FINGER, 'ui', TEXTURE.FINGER);
     this.loadImage(TEXTURE.BLANK, 'ui', TEXTURE.BLANK);
     this.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
+    this.loadAtlas(TEXTURE.TYPES_B, 'ui', TEXTURE.TYPES_B, TEXTURE.TYPES);
     this.loadAtlas(TEXTURE.POKEMON_CALL, 'ui', TEXTURE.POKEMON_CALL, ANIMATION.POKEMON_CALL);
     this.loadAtlas(TEXTURE.POKEMON_RECALL, 'ui', TEXTURE.POKEMON_RECALL, ANIMATION.POKEMON_RECALL);
     this.loadAtlas(TEXTURE.POKEBALL, 'ui', TEXTURE.POKEBALL, ANIMATION.POKEBALL);
@@ -352,6 +375,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
     this.loadAtlas(TEXTURE.SPEAKER, 'ui', TEXTURE.SPEAKER, ANIMATION.SPEAKER);
     this.loadImage(TEXTURE.X_BUTTON, 'ui', TEXTURE.X_BUTTON);
+    this.loadAtlas(TEXTURE.OVERWORLD_SHADOW_GRASS, 'ui', TEXTURE.OVERWORLD_SHADOW_GRASS, ANIMATION.OVERWORLD_SHADOW_GRASS);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
@@ -359,6 +383,8 @@ export class LoadingScene extends BaseScene {
     }
 
     for (const key of getAllItems()) {
+      if (key.id.includes('move_')) continue;
+
       this.loadImage(`${key.id}`, 'ui/item', `${key.id}`);
     }
 
@@ -500,6 +526,7 @@ export class LoadingScene extends BaseScene {
     this.loadAudio(AUDIO.CANCEL_0, 'audio/effect', AUDIO.CANCEL_0, 'ogg');
     this.loadAudio(AUDIO.CANCEL_1, 'audio/effect', AUDIO.CANCEL_1, 'ogg');
     this.loadAudio(AUDIO.GET_0, 'audio/effect', AUDIO.GET_0, 'ogg');
+    this.loadAudio(AUDIO.GET_1, 'audio/effect', AUDIO.GET_1, 'wav');
     this.loadAudio(AUDIO.BUY, 'audio/effect', AUDIO.BUY, 'ogg');
     this.loadAudio(AUDIO.JUMP, 'audio/effect', AUDIO.JUMP, 'ogg');
     this.loadAudio(AUDIO.REACTION_0, 'audio/effect', AUDIO.REACTION_0, 'ogg');
