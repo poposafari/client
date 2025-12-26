@@ -28,6 +28,7 @@ import { Bag } from '../../core/storage/bag-storage';
 import { catchWildApi, feedWildEatenBerryApi } from '../../api';
 import { Event } from '../../core/manager/event-manager';
 import { getItemData, getPokemonData } from '../../data';
+import { Pokedex } from '../../core/storage/player-pokedex';
 
 enum BATTLE_PHASE {
   IDLE = 'IDLE',
@@ -120,6 +121,10 @@ export class Battle extends Ui {
 
     if (this.time === TIME.DAWN) this.time = TIME.NIGHT;
     if (this.area === BATTLE_AREA.CAVE) this.time = TIME.DAY;
+
+    if (data.getCurrentTileInfo()?.isWater) {
+      this.area = BATTLE_AREA.WATER;
+    }
 
     await this.baseUi.show();
     if (Option.getTutorial() && Option.getClientTutorial('battle')) {
@@ -291,6 +296,7 @@ export class Battle extends Ui {
             speed: TextSpeed.CONG,
             endDelay: MessageEndDelay.CONG,
           });
+          Pokedex.add(this.targetWild?.getData());
           await this.battleRewardUi.show(data as BattleRewardData);
           await this.exitBattle();
 
@@ -1475,10 +1481,12 @@ export class BattleInfoUi extends Ui {
     if (targetWild?.gender === 'male') {
       this.wildInfoGender.setText(`♂`);
       this.wildInfoGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_0));
-    }
-    if (targetWild?.gender === 'female') {
+    } else if (targetWild?.gender === 'female') {
       this.wildInfoGender.setText(`♀`);
       this.wildInfoGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_1));
+    } else {
+      this.wildInfoGender.setText(``);
+      this.wildInfoGender.setStyle(getTextStyle(TEXTSTYLE.GENDER_0));
     }
   }
 
@@ -1641,11 +1649,44 @@ export class BattleIdleUi extends Ui {
     const width = this.getWidth();
     const height = this.getHeight();
 
-    this.pokeballMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 365, offsetX: 300, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
+    this.pokeballMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 365,
+      offsetX: 300,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
 
-    this.berryMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 328, offsetX: 362, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
+    this.berryMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 328,
+      offsetX: 362,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
 
-    this.toolMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 328, offsetX: 362, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
+    this.toolMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 328,
+      offsetX: 362,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
 
     this.menuContainer = this.createContainer(width / 2 + 660, height / 2 + 410);
     this.messageContainer = this.createContainer(width / 2 + 660, height / 2 + 410);
@@ -1847,9 +1888,42 @@ export class BattleMenuListUi extends Ui {
   setup(data?: any): void {
     this.itemDescUi.setup();
 
-    this.pokeballMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 365, offsetX: 300, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
-    this.berryMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 365, offsetX: 300, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
-    this.toolMenuList.setup({ scale: 1.8, etcScale: 2, windowWidth: 365, offsetX: 300, offsetY: 183, depth: DEPTH.MESSAGE - 1, per: 7, info: [], window: Option.getFrame('text') as string });
+    this.pokeballMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 365,
+      offsetX: 300,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
+    this.berryMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 365,
+      offsetX: 300,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
+    this.toolMenuList.setup({
+      scale: 1.8,
+      etcScale: 2,
+      windowWidth: 365,
+      offsetX: 300,
+      offsetY: 183,
+      depth: DEPTH.MESSAGE - 1,
+      per: 7,
+      info: [],
+      window: Option.getFrame('text') as string,
+      cursor: TEXTURE.ARROW_B,
+    });
   }
 
   async show(data?: 'ball' | 'berry' | 'tool'): Promise<void> {
