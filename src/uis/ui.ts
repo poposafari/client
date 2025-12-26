@@ -210,6 +210,7 @@ function getAnimationSize(key: ANIMATION | string) {
       return 3;
     case ANIMATION.TUTORIAL_CHOICE_FINGER:
       return 3;
+    case ANIMATION.CURSOR_0:
     case 'ball_001_launch':
       return 7;
     case 'door':
@@ -792,6 +793,13 @@ export const shakeEffect = (scene: InGameScene | LoadingScene, container: Phaser
     onComplete: () => {
       container.setX(originalX);
     },
+  });
+};
+
+export const clickCursorEffect = (scene: InGameScene | LoadingScene, cursor: Phaser.GameObjects.Sprite): void => {
+  cursor.setTint(0x686868);
+  scene.time.delayedCall(200, () => {
+    cursor.clearTint();
   });
 };
 

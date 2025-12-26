@@ -25,8 +25,9 @@ export class OverworldMenuUi extends Ui {
   private questionMessage: QuestionMessageUi;
   private languageChangedCallback!: () => void;
 
-  private readonly ListIcons = [TEXTURE.ICON_PC, TEXTURE.ICON_BAG_M, TEXTURE.ICON_PROFILE, TEXTURE.ICON_OPTION, TEXTURE.ICON_EXIT_0, TEXTURE.ICON_CANCEL];
+  private readonly ListIcons = [TEXTURE.ICON_POKEDEX, TEXTURE.ICON_PC, TEXTURE.ICON_BAG_M, TEXTURE.ICON_PROFILE, TEXTURE.ICON_OPTION, TEXTURE.ICON_EXIT_0, TEXTURE.ICON_CANCEL];
   private ListTexts = [
+    i18next.t('menu:menuPokedex'),
     i18next.t('menu:menuPokebox'),
     i18next.t('menu:menuBag'),
     i18next.t('menu:menuProfile'),
@@ -100,8 +101,6 @@ export class OverworldMenuUi extends Ui {
     let choice = startIndex;
 
     this.dummys[choice].setTexture(TEXTURE.WINDOW_RED);
-
-    this.updateBackToText();
 
     Keyboard.setAllowKey([KEY.ARROW_UP, KEY.ARROW_DOWN, KEY.Z, KEY.ENTER, KEY.X, KEY.ESC]);
     const callback = async (key: KEY) => {
@@ -192,7 +191,9 @@ export class OverworldMenuUi extends Ui {
     const target = this.ListTexts[choice];
 
     try {
-      if (target === i18next.t('menu:menuPokebox')) {
+      if (target === i18next.t('menu:menuPokedex')) {
+        await Game.changeMode(MODE.POKEDEX);
+      } else if (target === i18next.t('menu:menuPokebox')) {
         await Game.changeMode(MODE.PC);
       } else if (target === i18next.t('menu:menuBag')) {
         await Game.changeMode(MODE.BAG);
@@ -244,6 +245,7 @@ export class OverworldMenuUi extends Ui {
 
   updateTexts(): void {
     this.ListTexts = [
+      i18next.t('menu:menuPokedex'),
       i18next.t('menu:menuPokebox'),
       i18next.t('menu:menuBag'),
       i18next.t('menu:menuProfile'),

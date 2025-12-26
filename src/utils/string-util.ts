@@ -435,6 +435,37 @@ export const matchPokemonEvolve = (pokemon: PlayerPokemon) => {
   return `pokemon:${pokemon.getPokedex()}.evolve`;
 };
 
+export const getPokemonTextureFromPokedex = (type: 'icon' | 'overworld' | 'front', pokemon: string | null, gender: 'male' | 'female' | null) => {
+  if (pokemon) {
+    switch (type) {
+      case 'icon':
+        if (femalePokemonIconPokedex.includes(pokemon) && gender === 'female') {
+          return `pokemon.icon.${pokemon}_female`;
+        }
+        return `pokemon.icon.${pokemon}`;
+      case 'overworld':
+        if (femalePokemonOverworldPokedex.includes(pokemon) && gender === 'female') {
+          return `pokemon.overworld.${pokemon}s_female`;
+        }
+        return `pokemon.overworld.${pokemon}`;
+      case 'front':
+        if (femalePokemonFrontPokedex.includes(pokemon) && gender === 'female') {
+          return `pokemon.front.${pokemon}_female`;
+        }
+        return `pokemon.front.${pokemon}`;
+    }
+  } else {
+    switch (type) {
+      case 'icon':
+        return `pokemon.icon.0000`;
+      case 'overworld':
+        return `pokemon.overworld.0000`;
+      case 'front':
+        return `pokemon.front.0000`;
+    }
+  }
+};
+
 export const getPokemonTextureFromPlayerPokemon = (type: 'icon' | 'overworld' | 'front', pokemon: PlayerPokemon | null) => {
   if (pokemon) {
     const shiny = pokemon.getShiny() ? 's' : '';

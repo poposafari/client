@@ -856,10 +856,54 @@ export class PcBoxUi extends Ui {
     this.partyMenu.setup();
     this.partyMenu.setupContent([i18next.t('menu:removeParty'), i18next.t('menu:follow'), i18next.t('menu:cancel')]);
     this.noticeUi.setup();
-    this.evolveListMenu.setup({ scale: 2, etcScale: 1, windowWidth: 450, offsetX: 50, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 6, info: [], window: Option.getFrame('text') as TEXTURE });
-    this.skillListMenu.setup({ scale: 2, etcScale: 1, windowWidth: 330, offsetX: 290, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 6, info: [], window: Option.getFrame('text') as TEXTURE });
-    this.boxListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 10, info: [], window: Option.getFrame('text') as TEXTURE });
-    this.boxBgListMenu.setup({ scale: 2, etcScale: 2, windowWidth: 300, offsetX: 350, offsetY: 425, depth: DEPTH.MESSAGE - 1, per: 8, info: [], window: Option.getFrame('text') as TEXTURE });
+    this.evolveListMenu.setup({
+      scale: 2,
+      etcScale: 1,
+      windowWidth: 450,
+      offsetX: 50,
+      offsetY: 425,
+      depth: DEPTH.MESSAGE - 1,
+      per: 6,
+      info: [],
+      window: Option.getFrame('text') as TEXTURE,
+      cursor: TEXTURE.ARROW_B,
+    });
+    this.skillListMenu.setup({
+      scale: 2,
+      etcScale: 1,
+      windowWidth: 330,
+      offsetX: 290,
+      offsetY: 425,
+      depth: DEPTH.MESSAGE - 1,
+      per: 6,
+      info: [],
+      window: Option.getFrame('text') as TEXTURE,
+      cursor: TEXTURE.ARROW_B,
+    });
+    this.boxListMenu.setup({
+      scale: 2,
+      etcScale: 2,
+      windowWidth: 300,
+      offsetX: 350,
+      offsetY: 425,
+      depth: DEPTH.MESSAGE - 1,
+      per: 10,
+      info: [],
+      window: Option.getFrame('text') as TEXTURE,
+      cursor: TEXTURE.ARROW_B,
+    });
+    this.boxBgListMenu.setup({
+      scale: 2,
+      etcScale: 2,
+      windowWidth: 300,
+      offsetX: 350,
+      offsetY: 425,
+      depth: DEPTH.MESSAGE - 1,
+      per: 8,
+      info: [],
+      window: Option.getFrame('text') as TEXTURE,
+      cursor: TEXTURE.ARROW_B,
+    });
     this.questionUi.setup();
     this.talkUi.setup();
   }

@@ -9,6 +9,7 @@ export const enum TEXTURE {
   WINDOW_MENU_BLACK = 'window_menu_black',
   WINDOW_MENU_S = 'window_menu_s',
   WINDOW_RED = 'window_red',
+  WINDOW_RED_1 = 'window_red_1',
   WINDOW_REWARD = 'window_reward',
   WINDOW_REWARD_0 = 'window_reward_0',
   WINDOW_WHITE = 'window_white',
@@ -97,6 +98,7 @@ export const enum TEXTURE {
   SAFARI_011 = 's011', //11번 도로
 
   //icons
+  ICON_POKEDEX = 'icon_pokedex',
   ICON_PC = 'icon_pc',
   ICON_BAG_M = 'icon_bag_m',
   ICON_BAG_G = 'icon_bag_g',
@@ -159,6 +161,12 @@ export const enum TEXTURE {
   TM_ROCK = 'move_rock',
   TM_STEEL = 'move_steel',
   TM_WATER = 'move_water',
+
+  //pokedex
+  BG_POKEDEX = 'bg_pokedex',
+  POKEDEX_LIST = 'pokedex_list',
+  POKEDEX_OVERLAY_0 = 'pokedex_overlay_0',
+  POKEDEX_WINDOW = 'pokedex_window',
 
   //etc
   LOGO_0 = 'logo_0',
@@ -279,6 +287,7 @@ export const enum TEXTURE {
   SPEAKER = 'speaker',
   X_BUTTON = 'x',
   OVERWORLD_SHADOW_GRASS = 'overworld_shadow_grass',
+  CURSOR_0 = 'cursor_0',
 }
 
 export const TEXTURE_PLAYER_MAP: Record<string, TEXTURE> = {
@@ -384,6 +393,7 @@ export const enum ANIMATION {
   TUTORIAL_CHOICE_BALL = 'tutorial_choice_ball',
   TUTORIAL_CHOICE_FINGER = 'tutorial_choice_finger',
   SPEAKER = 'speaker',
+  CURSOR_0 = 'cursor_0',
 }
 
 export const enum EASE {
@@ -658,6 +668,7 @@ export enum UI {
   BAG_MENU = 'BagMenuUi',
   BAG_REGISTER = 'BagRegisterUi',
   SHOP = 'ShopUi',
+  POKEDEX = 'PokedexUi',
   PC = 'PokePCUi',
   SAFARI_LIST = 'SafariListUi',
   HIDDEN_MOVE = 'HiddenMoveUi',
@@ -757,6 +768,7 @@ export enum MODE {
   OVERWORLD_MENU,
   BAG,
   BAG_SELL,
+  POKEDEX,
   PC,
   OPTION,
   BLACK_SCREEN,
@@ -1167,6 +1179,7 @@ export enum OVERWORLD_DOOR {
   S009_RIGHT_ROAD_1 = 'S009_RIGHT_ROAD_1',
   S009_RIGHT_ROAD_2 = 'S009_RIGHT_ROAD_2',
   S009_RIGHT_ROAD_3 = 'S009_RIGHT_ROAD_3',
+  S009_RIGHT_ROAD_4 = 'S009_RIGHT_ROAD_4',
 
   S010_RIGHT_ROAD_0 = 'S010_RIGHT_ROAD_0',
   S010_RIGHT_ROAD_1 = 'S010_RIGHT_ROAD_1',
@@ -1304,6 +1317,7 @@ export enum OVERWORLD_INIT_POS {
   S009_RIGHT_ROAD_1 = 'S009_RIGHT_ROAD_1',
   S009_RIGHT_ROAD_2 = 'S009_RIGHT_ROAD_2',
   S009_RIGHT_ROAD_3 = 'S009_RIGHT_ROAD_3',
+  S009_RIGHT_ROAD_4 = 'S009_RIGHT_ROAD_4',
 
   S010_RIGHT_ROAD_0 = 'S010_RIGHT_ROAD_0',
   S010_RIGHT_ROAD_1 = 'S010_RIGHT_ROAD_1',

@@ -83,6 +83,7 @@ export const menu: TranslationDefault = {
   s009: 'Damp Forest',
   s010: 'Route 3',
   s011: 'Small Meadow',
+  menuPokedex: 'POKÉDEX',
   menuPokebox: 'POKÉMON BOX',
   menuBag: 'BAG',
   menuProfile: 'PROFILE',

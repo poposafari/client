@@ -262,6 +262,49 @@ export class WildOverworldObj extends MovableOverworldObj {
     super.update(delta);
   }
 
+  ready(direction: DIRECTION, animationKey: ANIMATION | string) {
+    const movementDirection = (this as any).movementDirection as { [key in DIRECTION]?: Phaser.Math.Vector2 };
+    const nextTilePos = this.getTilePos().add(movementDirection[direction]!);
+
+    const map = (this as any).map as Phaser.Tilemaps.Tilemap | null;
+    if (map) {
+      const isWaterTile = map.layers.some((layer) => {
+        const tile = map.getTileAt(Math.floor(nextTilePos.x), Math.floor(nextTilePos.y), false, layer.name);
+        return tile && tile.properties.spawn === 'water';
+      });
+
+      if (isWaterTile) {
+        this.setShadow('water');
+      } else {
+        this.setShadow('normal');
+      }
+    }
+
+    super.ready(direction, animationKey);
+  }
+
+  getCurrentTileInfo(): { x: number; y: number; isWater: boolean } | null {
+    const map = (this as any).map as Phaser.Tilemaps.Tilemap | null;
+    if (!map) {
+      return null;
+    }
+
+    const currentTile = this.getTilePos();
+    const tileX = Math.floor(currentTile.x);
+    const tileY = Math.floor(currentTile.y);
+
+    const isWater = map.layers.some((layer) => {
+      const tile = map.getTileAt(tileX, tileY, false, layer.name);
+      return tile && tile.properties.spawn === 'water';
+    });
+
+    return {
+      x: tileX,
+      y: tileY,
+      isWater: isWater,
+    };
+  }
+
   updateName() {
     if (this.data) {
       const newName = i18next.t(`pokemon:${this.data.pokedex}.name`);

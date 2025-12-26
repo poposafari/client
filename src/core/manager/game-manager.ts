@@ -461,6 +461,9 @@ export class GameManager {
       case MODE.BAG_SELL:
         await this.overlapUi(UI.BAG_SELL);
         break;
+      case MODE.POKEDEX:
+        await this.overlapUi(UI.POKEDEX);
+        break;
       case MODE.PC:
         await this.overlapUi(UI.PC);
         break;

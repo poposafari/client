@@ -73,6 +73,7 @@ import { Battle } from '../uis/battle/battle';
 import { HelpUi } from '../uis/help-ui';
 import { BagSellUi } from '../uis/bag-sell-ui';
 import { bigSizePokemonOverworldPokedex, femalePokemonOverworldPokedex, getAllPokemonKeys } from '../data';
+import { PokedexUi } from '../uis/pokedex-ui';
 
 export class InGameScene extends BaseScene {
   constructor() {
@@ -116,6 +117,7 @@ export class InGameScene extends BaseScene {
     Game.registerUiFactory(UI.HIDDEN_MOVE, (scene) => new HiddenMoveUi(scene));
     Game.registerUiFactory(UI.STARTER_POKEMON, (scene) => new StarterPokemonUi(scene));
     Game.registerUiFactory(UI.BATTLE, (scene) => new Battle(scene));
+    Game.registerUiFactory(UI.POKEDEX, (scene) => new PokedexUi(scene));
 
     //plaza
     OverworldGlobal.registerMapFactory(TEXTURE.PLAZA_001, (ui) => new Plaza001(TEXTURE.PLAZA_001, AUDIO.B005, false, TEXTURE.AREA_3));
@@ -206,6 +208,8 @@ export class InGameScene extends BaseScene {
     createSpriteAnimation(this, TEXTURE.SPEAKER, ANIMATION.SPEAKER);
 
     createSpriteAnimation(this, TEXTURE.OVERWORLD_SHADOW_GRASS, ANIMATION.OVERWORLD_SHADOW_GRASS);
+
+    createSpriteAnimation(this, TEXTURE.CURSOR_0, ANIMATION.CURSOR_0);
 
     this.initDoorAnimation();
 

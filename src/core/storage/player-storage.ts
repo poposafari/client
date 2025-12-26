@@ -9,6 +9,7 @@ import { SocketIO } from '../manager/socket-manager';
 import { Bag } from './bag-storage';
 import { PC } from './pc-storage';
 import { Option } from './player-option';
+import { Pokedex } from './player-pokedex';
 
 export class PlayerStorage {
   private static instance: PlayerStorage;
@@ -99,6 +100,7 @@ export class PlayerStorage {
 
     Bag.setup(data.bag, data.slotItem);
     PC.setBaseData(data);
+    Pokedex.setup(data.pokedex);
 
     Option.setBackgroundVolume(data.option.backgroundVolume);
     Option.setEffectVolume(data.option.effectVolume);

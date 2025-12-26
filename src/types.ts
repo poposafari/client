@@ -213,15 +213,15 @@ export type PlayerCostumeRes = {
 };
 
 export type PlayerPokedexRes = {
-  gen1: number[];
-  gen2: number[];
-  gen3: number[];
-  gen4: number[];
-  gen5: number[];
-  gen6: number[];
-  gen7: number[];
-  gen8: number[];
-  gen9: number[];
+  gen1: string[];
+  gen2: string[];
+  gen3: string[];
+  gen4: string[];
+  gen5: string[];
+  gen6: string[];
+  gen7: string[];
+  gen8: string[];
+  gen9: string[];
 };
 
 export type GetIngameRes = {
@@ -587,6 +587,7 @@ export type MenuListSetting = {
   per: number;
   info: ListForm[];
   window: TEXTURE | string;
+  cursor: TEXTURE | string;
   isAllowLRCancel?: boolean;
 };
 
