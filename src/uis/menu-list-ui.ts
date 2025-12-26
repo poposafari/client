@@ -16,7 +16,7 @@ export class MenuListUi extends Ui {
   private window!: Phaser.GameObjects.NineSlice;
   private texts: Phaser.GameObjects.Text[] = [];
   private textImages: Phaser.GameObjects.Image[] = [];
-  private dummys: Phaser.GameObjects.Image[] = [];
+  private dummys: (Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice)[] = [];
   private etcImages: Phaser.GameObjects.Image[] = [];
   private etcTexts: Phaser.GameObjects.Text[] = [];
   private etcScale!: number;
@@ -25,6 +25,7 @@ export class MenuListUi extends Ui {
   private lastStart!: number | null;
   private lastChoice!: number | null;
   private isAllowLRCancel: boolean = false;
+  private cursor: TEXTURE | string = TEXTURE.ARROW_B;
 
   private readonly contentHeight: number = 30;
   private readonly spacing: number = 10;
@@ -44,6 +45,7 @@ export class MenuListUi extends Ui {
     this.lastChoice = null;
     this.lastStart = null;
     this.isAllowLRCancel = data.isAllowLRCancel || false;
+    this.cursor = data.cursor || TEXTURE.ARROW_B;
 
     this.windowWidth = data.windowWidth;
     this.perList = data.per;
@@ -111,7 +113,7 @@ export class MenuListUi extends Ui {
     }
 
     if (this.dummys[choice]) {
-      this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+      this.dummys[choice].setTexture(this.cursor);
     }
 
     if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
@@ -132,7 +134,7 @@ export class MenuListUi extends Ui {
                 this.renderList();
                 scrolled = true;
                 if (this.dummys[choice]) {
-                  this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                  this.dummys[choice].setTexture(this.cursor);
                 }
               }
               break;
@@ -145,7 +147,7 @@ export class MenuListUi extends Ui {
                 this.renderList();
                 scrolled = true;
                 if (this.dummys[choice]) {
-                  this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                  this.dummys[choice].setTexture(this.cursor);
                 }
               }
               break;
@@ -203,7 +205,7 @@ export class MenuListUi extends Ui {
                 }
               }
               if (this.dummys[choice]) {
-                this.dummys[choice].setTexture(TEXTURE.ARROW_B);
+                this.dummys[choice].setTexture(this.cursor);
               }
 
               if (this.etcUi) this.etcUi.handleKeyInput(choice + this.start);
@@ -265,7 +267,7 @@ export class MenuListUi extends Ui {
           Phaser.GameObjects.Image,
           Phaser.GameObjects.Text,
           Phaser.GameObjects.Image,
-          Phaser.GameObjects.Image,
+          Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice,
         ];
 
         const overrideColor = this.colorOverrides[item.name];
@@ -297,16 +299,22 @@ export class MenuListUi extends Ui {
 
     const text = this.addText(+40, y, target.name, TEXTSTYLE.MESSAGE_BLACK);
     text.setOrigin(0, 1);
-    const textImage = this.addImage(textTexture, 0, y);
+    const textImage = this.addImage(textTexture, +42, y - 3);
     textImage.setOrigin(0, 1);
     const etcText = this.addText(this.windowWidth - 110, y, target.etc, TEXTSTYLE.MESSAGE_BLACK);
     etcText.setOrigin(0, 1);
     const etcImage = this.addImage(etcTexture, this.windowWidth - 125, y - 20);
     etcImage.setScale(this.etcScale ? this.etcScale : 1.6);
     etcImage.setOrigin(0.5, 0.5);
-    const dummy = this.addImage(TEXTURE.BLANK, +20, y);
+
+    let dummy: Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice = this.addImage(TEXTURE.BLANK, +20, y);
     dummy.setOrigin(0, 1);
     dummy.setScale(1.6);
+    if (this.cursor.includes(TEXTURE.WINDOW_RED_1)) {
+      dummy = this.addWindow(TEXTURE.BLANK, +30, y - 18, this.windowWidth, this.contentHeight + this.spacing + 10, 16, 16, 16, 16);
+      dummy.setOrigin(0, 0.5);
+      dummy.setScale(1);
+    }
 
     return [text, textImage, etcText, etcImage, dummy];
   }

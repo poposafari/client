@@ -313,7 +313,7 @@ export class MovableOverworldObj extends OverworldObj {
     } else {
       this.lastDirection = this.currentDirection;
 
-      if (this.getSprite().visible) this.setShadow('normal');
+      // if (this.getSprite().visible) this.setShadow('normal');
     }
   }
 

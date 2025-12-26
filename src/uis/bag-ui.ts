@@ -56,7 +56,19 @@ export class BagUi extends BagBaseUi {
     this.tutorialContainer = this.createTrackedContainer(width / 2, height / 2);
     this.tutorialBg = this.addBackground(TEXTURE.BG_BLACK).setOrigin(0.5, 0.5).setAlpha(0.5);
 
-    this.list.setup({ scale: 2, etcScale: 2, windowWidth: 590, offsetX: -240, offsetY: +130, depth: DEPTH.MENU + 1, per: 9, info: [], window: TEXTURE.BLANK, isAllowLRCancel: true });
+    this.list.setup({
+      scale: 2,
+      etcScale: 2,
+      windowWidth: 590,
+      offsetX: -240,
+      offsetY: +130,
+      depth: DEPTH.MENU + 1,
+      per: 9,
+      info: [],
+      window: TEXTURE.BLANK,
+      cursor: TEXTURE.ARROW_B,
+      isAllowLRCancel: true,
+    });
 
     this.tutorialContainer.add(this.tutorialBg);
 
@@ -365,6 +377,8 @@ export class BagRegisterUi extends Ui {
   }
 
   protected onClean(): void {
+    runFadeEffect(this.scene, 800, 'in');
+
     if (this.container) {
       this.container.setVisible(false);
     }
@@ -433,4 +447,7 @@ export class BagRegisterUi extends Ui {
       }
     }
   }
+}
+function runEffectSound(scene: InGameScene, SELECT_0: AUDIO) {
+  throw new Error('Function not implemented.');
 }

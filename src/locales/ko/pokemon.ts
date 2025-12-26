@@ -4,7 +4,7 @@ export const pokemon: TranslationPokemon = {
   '0001': {
     name: '이상해씨',
     species: '씨앗포켓몬',
-    description: '태어나서 얼마 동안 등의 씨앗에 담긴 영양을 섭취하며 자란다.',
+    description: '태어나서 얼마 동안 등의\n씨앗에 담긴 영양을\n섭취하며 자란다.',
   },
   '0002': {
     name: '이상해풀',

@@ -238,7 +238,6 @@ export class OverworldObj {
       this.waterShadow.setVisible(false);
       this.waterShadow.stop();
     } else if (type.startsWith('grass_')) {
-      //TODO: shadow grass 생성.
       this.shadow.setVisible(false);
       this.waterShadow.setVisible(false);
     }

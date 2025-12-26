@@ -1395,6 +1395,9 @@ export type PokemonData = {
   spawn: PokemonSpawn[];
   skills: PokemonHiddenMove[];
   ability: string[];
+  generation: string;
+  height_m: string;
+  weight_kg: string;
 };
 
 const _itemData: Record<string, ItemData> = {};
@@ -1447,4 +1450,19 @@ export function getAllPokemons(): PokemonData[] {
 
 export function getAllPokemonKeys(): string[] {
   return Object.keys(_pokemonData);
+}
+
+export function getPokemonKeysByGen(gen: 'all' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'): string[] {
+  const filteredKeys: string[] = [];
+
+  if (gen === 'all') return getAllPokemonKeys();
+
+  for (const key in _pokemonData) {
+    const pokemonData = _pokemonData[key];
+    if (pokemonData && pokemonData.generation === gen) {
+      filteredKeys.push(key);
+    }
+  }
+
+  return filteredKeys;
 }

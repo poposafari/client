@@ -89,6 +89,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_MENU_BLACK, 'ui/windows', TEXTURE.WINDOW_MENU_BLACK);
     this.loadImage(TEXTURE.WINDOW_MENU_S, 'ui/windows', TEXTURE.WINDOW_MENU_S);
     this.loadImage(TEXTURE.WINDOW_RED, 'ui/windows', TEXTURE.WINDOW_RED);
+    this.loadImage(TEXTURE.WINDOW_RED_1, 'ui/windows', TEXTURE.WINDOW_RED_1);
     this.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', TEXTURE.WINDOW_WHITE);
     this.loadImage(TEXTURE.WINDOW_OPACITY, 'ui/windows', TEXTURE.WINDOW_OPACITY);
     this.loadImage(TEXTURE.REWARD_WINDOW, 'ui/windows', TEXTURE.REWARD_WINDOW);
@@ -174,6 +175,7 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.TUTORIAL_CHOICE_INFO, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_INFO);
 
     //icons
+    this.loadImage(TEXTURE.ICON_POKEDEX, 'ui/icon', TEXTURE.ICON_POKEDEX);
     this.loadImage(TEXTURE.ICON_PC, 'ui/icon', TEXTURE.ICON_PC);
     this.loadImage(TEXTURE.ICON_BAG_M, 'ui/icon', TEXTURE.ICON_BAG_M);
     this.loadImage(TEXTURE.ICON_BAG_G, 'ui/icon', TEXTURE.ICON_BAG_G);
@@ -260,6 +262,12 @@ export class LoadingScene extends BaseScene {
     this.loadImage(TEXTURE.TM_ROCK, 'ui/item', TEXTURE.TM_ROCK);
     this.loadImage(TEXTURE.TM_STEEL, 'ui/item', TEXTURE.TM_STEEL);
     this.loadImage(TEXTURE.TM_WATER, 'ui/item', TEXTURE.TM_WATER);
+
+    //pokedex
+    this.loadImage(TEXTURE.BG_POKEDEX, 'ui/pokedex', TEXTURE.BG_POKEDEX);
+    this.loadImage(TEXTURE.POKEDEX_LIST, 'ui/pokedex', TEXTURE.POKEDEX_LIST);
+    this.loadImage(TEXTURE.POKEDEX_OVERLAY_0, 'ui/pokedex', TEXTURE.POKEDEX_OVERLAY_0);
+    this.loadImage(TEXTURE.POKEDEX_WINDOW, 'ui/pokedex', TEXTURE.POKEDEX_WINDOW);
 
     //etc
     this.loadImage(TEXTURE.LOGO_DISCORD, 'ui', TEXTURE.LOGO_DISCORD);
@@ -376,6 +384,7 @@ export class LoadingScene extends BaseScene {
     this.loadAtlas(TEXTURE.SPEAKER, 'ui', TEXTURE.SPEAKER, ANIMATION.SPEAKER);
     this.loadImage(TEXTURE.X_BUTTON, 'ui', TEXTURE.X_BUTTON);
     this.loadAtlas(TEXTURE.OVERWORLD_SHADOW_GRASS, 'ui', TEXTURE.OVERWORLD_SHADOW_GRASS, ANIMATION.OVERWORLD_SHADOW_GRASS);
+    this.loadAtlas(TEXTURE.CURSOR_0, 'ui', TEXTURE.CURSOR_0, ANIMATION.CURSOR_0);
 
     const maxBox = 15;
     for (let i = 0; i <= maxBox; i++) {
