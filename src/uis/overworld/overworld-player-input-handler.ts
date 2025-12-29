@@ -113,6 +113,7 @@ export class OverworldPlayerInputHandler {
     } else {
       const door = this.context.obj!.getObjectInFront(direction);
       if (door instanceof DoorOverworldObj) {
+        this.context.obj!.changeDirectionOnly(direction);
         this.context.actionQueue.enqueue(async () => {
           await this.context.obj!.isDoorInFront(direction);
         }, OVERWORLD_ACTION.OPEN_DOOR);

@@ -296,7 +296,7 @@ export class Battle extends Ui {
             speed: TextSpeed.CONG,
             endDelay: MessageEndDelay.CONG,
           });
-          Pokedex.add(this.targetWild?.getData());
+          Pokedex.add(this.targetWild?.getData() as WildRes);
           await this.battleRewardUi.show(data as BattleRewardData);
           await this.exitBattle();
 
@@ -1296,6 +1296,8 @@ export class BattleInfoUi extends Ui {
 
   private playerInfoContainer!: Phaser.GameObjects.Container;
   private wildInfoContainer!: Phaser.GameObjects.Container;
+  private overworldInfoContainer!: Phaser.GameObjects.Container;
+
   private playerInfo!: Phaser.GameObjects.Image;
   private wildInfo!: Phaser.GameObjects.Image;
   private wildInfoShiny!: Phaser.GameObjects.Image;
@@ -1312,9 +1314,10 @@ export class BattleInfoUi extends Ui {
   private captureRate!: Phaser.GameObjects.Text;
   private fleeRateTitle!: Phaser.GameObjects.Text;
   private fleeRate!: Phaser.GameObjects.Text;
-  private rateSymbol!: Phaser.GameObjects.Text;
   private parties: Phaser.GameObjects.Image[] = [];
   private shinies: Phaser.GameObjects.Image[] = [];
+
+  private locationText!: Phaser.GameObjects.Text;
 
   constructor(scene: InGameScene, battle: Battle) {
     super(scene);
@@ -1326,7 +1329,8 @@ export class BattleInfoUi extends Ui {
     const height = this.getHeight();
 
     this.playerInfoContainer = this.createContainer(1500, height / 2 + 125);
-    this.wildInfoContainer = this.createContainer(500, height / 2 - 250);
+    this.wildInfoContainer = this.createContainer(500, height / 2 - 200);
+    this.overworldInfoContainer = this.createContainer(1600, height / 2 - 480);
 
     this.playerInfo = this.addImage(TEXTURE.BATTLE_BAR, 0, 0).setOrigin(0.5, 0.5).setScale(3);
     this.wildInfo = this.addImage(TEXTURE.BATTLE_BAR, 0, 0).setOrigin(0.5, 0.5).setScale(3);
@@ -1345,13 +1349,15 @@ export class BattleInfoUi extends Ui {
     this.wildInfoType2 = this.addImage(TEXTURE.BLANK, 240, -130).setScale(1.8);
     this.captureRateTitle = this.addText(-350, 0, i18next.t('menu:battleCaptureRateTitle') + ' : ', TEXTSTYLE.MESSAGE_WHITE)
       .setOrigin(0, 0.5)
-      .setScale(0.6);
-    this.captureRate = this.addText(-350, 0, '000.0%', TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5).setScale(0.4);
+      .setScale(0.7);
+    this.captureRate = this.addText(-350, 0, '000.0%', TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5).setScale(0.5);
     this.fleeRateTitle = this.addText(-350, 0, i18next.t('menu:battleFleeRateTitle') + ' : ', TEXTSTYLE.MESSAGE_WHITE)
       .setOrigin(0, 0.5)
-      .setScale(0.6);
-    this.fleeRate = this.addText(-350, 0, '000.0%', TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5).setScale(0.4);
-    this.rateSymbol = this.addText(-350, 0, '/', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5).setScale(0.6);
+      .setScale(0.7);
+    this.fleeRate = this.addText(-350, 0, '000.0%', TEXTSTYLE.SPLASH_TEXT).setOrigin(0, 0.5).setScale(0.5);
+
+    this.locationText = this.addText(0, 0, '', TEXTSTYLE.MESSAGE_WHITE).setOrigin(0, 0.5).setScale(0.7);
+    this.overworldInfoContainer.add(this.locationText);
 
     this.playerInfo.setFlipX(true);
     this.playerInfoContainer.add(this.playerInfo);
@@ -1384,7 +1390,6 @@ export class BattleInfoUi extends Ui {
     this.wildInfoContainer.add(this.wildOwnedIcon);
     this.wildInfoContainer.add(this.wildCount);
     this.wildInfoContainer.add(this.wildCountTitle);
-    this.wildInfoContainer.add(this.rateSymbol);
     this.wildInfoContainer.add(this.wildEatenBerry);
     this.wildInfoContainer.add(this.wildEatenBerryDummy);
 
@@ -1395,6 +1400,10 @@ export class BattleInfoUi extends Ui {
     this.wildInfoContainer.setVisible(false);
     this.wildInfoContainer.setDepth(DEPTH.BATTLE + 2);
     this.wildInfoContainer.setScrollFactor(0);
+
+    this.overworldInfoContainer.setVisible(false);
+    this.overworldInfoContainer.setDepth(DEPTH.BATTLE + 2);
+    this.overworldInfoContainer.setScrollFactor(0);
   }
 
   show(data?: any) {}
@@ -1412,11 +1421,13 @@ export class BattleInfoUi extends Ui {
     this.showCount();
     this.showCaptureRate();
     this.showFleeRate();
+    this.showLocation();
     this.updateEatenBerry(targetWild?.eaten_berry ?? null);
   }
 
   showPlayerInfo(data?: any) {
     this.playerInfoContainer.setVisible(true);
+    this.overworldInfoContainer.setVisible(true);
 
     let idx = 0;
     for (const party of PC.getParty()) {
@@ -1437,6 +1448,7 @@ export class BattleInfoUi extends Ui {
   protected onClean(): void {
     this.playerInfoContainer.setVisible(false);
     this.wildInfoContainer.setVisible(false);
+    this.overworldInfoContainer.setVisible(false);
   }
 
   pause(onoff: boolean, data?: any): void {}
@@ -1529,19 +1541,29 @@ export class BattleInfoUi extends Ui {
   private showCaptureRate() {
     const targetWild = this.battle.getTargetWild()?.getData();
 
-    this.captureRateTitle.setPosition(-350, +60);
-    this.captureRate.setPosition(this.captureRateTitle.x + this.captureRateTitle.displayWidth + 7, +58);
+    this.captureRateTitle.setPosition(-460, -280);
+    this.captureRate.setPosition(this.captureRateTitle.x + this.captureRateTitle.displayWidth + 7, -285);
     this.captureRate.setText(this.calcRate(targetWild?.baseRate ?? 0));
-
-    this.rateSymbol.setPosition(this.captureRate.x + this.captureRate.displayWidth + 35, +58);
   }
 
   private showFleeRate() {
     const targetWild = this.battle.getTargetWild()?.getData();
 
-    this.fleeRateTitle.setPosition(this.rateSymbol.x + this.rateSymbol.displayWidth + 35, +60);
-    this.fleeRate.setPosition(this.fleeRateTitle.x + this.fleeRateTitle.displayWidth + 7, +58);
+    this.fleeRateTitle.setPosition(-460, -225);
+    this.fleeRate.setPosition(this.fleeRateTitle.x + this.fleeRateTitle.displayWidth + 7, -230);
     this.fleeRate.setText(this.calcRate(targetWild?.fleeRate ?? 0));
+  }
+
+  private showLocation() {
+    const targetWild = this.battle.getTargetWild()?.getData();
+    const overworld = i18next.t(`menu:${targetWild?.location ?? ''}`);
+    this.locationText.setText(overworld + '' + i18next.t(`menu:time_${this.battle.getTime()}`));
+
+    const margin = 690;
+    const screenWidth = this.getWidth();
+    const maxX = screenWidth / 2 - this.locationText.displayWidth - margin;
+
+    this.locationText.setX(maxX);
   }
 
   private calcRate(value: number): string {
