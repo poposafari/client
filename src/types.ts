@@ -393,6 +393,7 @@ export type WildRes = {
   type2: string;
   rank: PokemonRank;
   spawn: PokemonSpawn;
+  location: string;
 };
 
 export type FeedWildEatenBerryReq = {

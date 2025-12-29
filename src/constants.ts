@@ -163,6 +163,14 @@ export const OVERWORLD_DOOR_DATA: Record<OVERWORLD_DOOR, OverworldDoorData> = {
   [OVERWORLD_DOOR.G005_RIGHT_1]: { door: TEXTURE.BLANK, x: 12, y: 6, offsetY: +7, width: 130, height: 102 },
   [OVERWORLD_DOOR.G005_RIGHT_2]: { door: TEXTURE.BLANK, x: 12, y: 7, offsetY: +7, width: 130, height: 102 },
 
+  //GATE_006
+  [OVERWORLD_DOOR.G006_UP_0]: { door: TEXTURE.BLANK, x: 4, y: 1, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.G006_UP_1]: { door: TEXTURE.BLANK, x: 5, y: 1, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.G006_UP_2]: { door: TEXTURE.BLANK, x: 6, y: 1, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.G006_DOWN_0]: { door: TEXTURE.BLANK, x: 4, y: 13, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.G006_DOWN_1]: { door: TEXTURE.BLANK, x: 5, y: 13, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.G006_DOWN_2]: { door: TEXTURE.BLANK, x: 6, y: 13, offsetY: +7, width: 130, height: 102 },
+
   //SAFARI_001
   [OVERWORLD_DOOR.S001_RIGHT_ROAD_0]: { door: TEXTURE.BLANK, x: 80, y: 16, offsetY: +7, width: 130, height: 102 },
   [OVERWORLD_DOOR.S001_RIGHT_ROAD_1]: { door: TEXTURE.BLANK, x: 80, y: 17, offsetY: +7, width: 130, height: 102 },
@@ -232,6 +240,31 @@ export const OVERWORLD_DOOR_DATA: Record<OVERWORLD_DOOR, OverworldDoorData> = {
   //SAFARI_011
   [OVERWORLD_DOOR.S011_UP_ROAD_0]: { door: TEXTURE.BLANK, x: 38, y: 5, offsetY: +7, width: 130, height: 102 },
   [OVERWORLD_DOOR.S011_UP_ROAD_1]: { door: TEXTURE.BLANK, x: 39, y: 5, offsetY: +7, width: 130, height: 102 },
+
+  //SAFARI_012
+  [OVERWORLD_DOOR.S012_DOWN_ROAD_0]: { door: TEXTURE.BLANK, x: 18, y: 37, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S012_DOWN_ROAD_1]: { door: TEXTURE.BLANK, x: 19, y: 37, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S012_UP_ROAD_0]: { door: TEXTURE.BLANK, x: 61, y: 9, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S012_UP_ROAD_1]: { door: TEXTURE.BLANK, x: 62, y: 9, offsetY: +7, width: 130, height: 102 },
+
+  //SAFARI_013
+  [OVERWORLD_DOOR.S013_DOWN_ROAD_0]: { door: TEXTURE.BLANK, x: 38, y: 66, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S013_DOWN_ROAD_1]: { door: TEXTURE.BLANK, x: 39, y: 66, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S013_UP_ROAD_0]: { door: TEXTURE.BLANK, x: 23, y: 12, offsetY: +7, width: 130, height: 102 },
+
+  //SAFARI_014
+  [OVERWORLD_DOOR.S014_UP_ROAD_0]: { door: TEXTURE.BLANK, x: 24, y: 3, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S014_DOWN_ROAD_0]: { door: TEXTURE.BLANK, x: 26, y: 48, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S014_LEFT_ROAD_1]: { door: TEXTURE.BLANK, x: 5, y: 7, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S014_LEFT_ROAD_0]: { door: TEXTURE.BLANK, x: 5, y: 8, offsetY: +7, width: 130, height: 102 },
+
+  //SAFARI_015
+  [OVERWORLD_DOOR.S015_DOWN_ROAD_0]: { door: TEXTURE.BLANK, x: 32, y: 38, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S015_LEFT_ROAD_1]: { door: TEXTURE.BLANK, x: 2, y: 5, offsetY: +7, width: 130, height: 102 },
+
+  //SAFARI_016
+  [OVERWORLD_DOOR.S016_RIGHT_ROAD_0]: { door: TEXTURE.BLANK, x: 58, y: 19, offsetY: +7, width: 130, height: 102 },
+  [OVERWORLD_DOOR.S016_UP_ROAD_0]: { door: TEXTURE.BLANK, x: 21, y: 3, offsetY: +7, width: 130, height: 102 },
 };
 
 export const OVERWORLD_INIT_POS_DATA: Record<OVERWORLD_INIT_POS, OverworldInitPosData> = {
@@ -334,6 +367,10 @@ export const OVERWORLD_INIT_POS_DATA: Record<OVERWORLD_INIT_POS, OverworldInitPo
   [OVERWORLD_INIT_POS.G005_RIGHT_0]: { location: TEXTURE.GATE_005, x: 11, y: 6 },
   [OVERWORLD_INIT_POS.G005_LEFT_0]: { location: TEXTURE.GATE_005, x: 1, y: 6 },
 
+  //GATE_006
+  [OVERWORLD_INIT_POS.G006_UP_0]: { location: TEXTURE.GATE_006, x: 5, y: 2 },
+  [OVERWORLD_INIT_POS.G006_DOWN_0]: { location: TEXTURE.GATE_006, x: 5, y: 12 },
+
   //SAFARI_001
   [OVERWORLD_INIT_POS.S001_RIGHT_ROAD_0]: { location: TEXTURE.SAFARI_001, x: 79, y: 16 },
   [OVERWORLD_INIT_POS.S001_RIGHT_ROAD_1]: { location: TEXTURE.SAFARI_001, x: 79, y: 17 },
@@ -403,4 +440,28 @@ export const OVERWORLD_INIT_POS_DATA: Record<OVERWORLD_INIT_POS, OverworldInitPo
   //SAFARI_011
   [OVERWORLD_INIT_POS.S011_UP_ROAD_0]: { location: TEXTURE.SAFARI_011, x: 38, y: 6 },
   [OVERWORLD_INIT_POS.S011_UP_ROAD_1]: { location: TEXTURE.SAFARI_011, x: 39, y: 6 },
+
+  //SAFARI_012
+  [OVERWORLD_INIT_POS.S012_DOWN_ROAD_0]: { location: TEXTURE.SAFARI_012, x: 18, y: 36 },
+  [OVERWORLD_INIT_POS.S012_DOWN_ROAD_1]: { location: TEXTURE.SAFARI_012, x: 19, y: 36 },
+  [OVERWORLD_INIT_POS.S012_UP_ROAD_0]: { location: TEXTURE.SAFARI_012, x: 61, y: 10 },
+  [OVERWORLD_INIT_POS.S012_UP_ROAD_1]: { location: TEXTURE.SAFARI_012, x: 62, y: 10 },
+
+  //SAFARI_013
+  [OVERWORLD_INIT_POS.S013_DOWN_ROAD_0]: { location: TEXTURE.SAFARI_013, x: 38, y: 65 },
+  [OVERWORLD_INIT_POS.S013_DOWN_ROAD_1]: { location: TEXTURE.SAFARI_013, x: 39, y: 65 },
+  [OVERWORLD_INIT_POS.S013_UP_ROAD_0]: { location: TEXTURE.SAFARI_013, x: 23, y: 13 },
+
+  //SAFARI_014
+  [OVERWORLD_INIT_POS.S014_UP_ROAD_0]: { location: TEXTURE.SAFARI_014, x: 24, y: 4 },
+  [OVERWORLD_INIT_POS.S014_DOWN_ROAD_0]: { location: TEXTURE.SAFARI_014, x: 26, y: 47 },
+  [OVERWORLD_INIT_POS.S014_LEFT_ROAD_0]: { location: TEXTURE.SAFARI_014, x: 5, y: 9 },
+
+  //SAFARI_015
+  [OVERWORLD_INIT_POS.S015_DOWN_ROAD_0]: { location: TEXTURE.SAFARI_015, x: 32, y: 37 },
+  [OVERWORLD_INIT_POS.S015_LEFT_ROAD_1]: { location: TEXTURE.SAFARI_015, x: 3, y: 5 },
+
+  //SAFARI_016
+  [OVERWORLD_INIT_POS.S016_RIGHT_ROAD_0]: { location: TEXTURE.SAFARI_016, x: 57, y: 19 },
+  [OVERWORLD_INIT_POS.S016_UP_ROAD_0]: { location: TEXTURE.SAFARI_016, x: 21, y: 4 },
 };
