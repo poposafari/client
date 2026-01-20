@@ -734,6 +734,33 @@ export class Gate006 extends Overworld {
   }
 }
 
+export class Gate007 extends Overworld {
+  constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
+    super(DIRECTION.DOWN, key, sound, isIndoor, area, false);
+  }
+
+  setup(ui: OverworldUi): void {
+    ui.setType(OVERWORLD_TYPE.PLAZA);
+    OverworldGlobal.setKey(this.key as string);
+
+    ui.getMap().setup(this.key as TEXTURE, [TEXTURE.INDOOR_TILE_FLOOR, TEXTURE.INDOOR_TILE_OBJECT, TEXTURE.INDOOR_EVENT]);
+    ui.getMap().setLayer(0, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(1, TEXTURE.INDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(2, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    ui.getMap().setLayer(3, TEXTURE.INDOOR_TILE_OBJECT, DEPTH.GROUND);
+    ui.getMap().setLayer(4, TEXTURE.INDOOR_EVENT, DEPTH.GROUND);
+    ui.getMap().setForegroundLayer(5, [TEXTURE.INDOOR_TILE_OBJECT, TEXTURE.INDOOR_EVENT], DEPTH.FOREGROND);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_DOWN_0, OVERWORLD_INIT_POS.S017_UP_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_DOWN_1, OVERWORLD_INIT_POS.S017_UP_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_DOWN_2, OVERWORLD_INIT_POS.S017_UP_ROAD_0);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_UP_0, OVERWORLD_INIT_POS.S018_DOWN_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_UP_1, OVERWORLD_INIT_POS.S018_DOWN_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.G006_UP_2, OVERWORLD_INIT_POS.S018_DOWN_ROAD_0);
+  }
+}
+
 export class Safari001 extends Overworld {
   constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
     super(DIRECTION.DOWN, key, sound, isIndoor, area);
@@ -1360,5 +1387,79 @@ export class Safari016 extends Overworld {
     ui.getMap().setForeground1Layer(12, [TEXTURE.OUTDOOR_TILE_EDGE], DEPTH.FOREGROND);
 
     ui.getStatue().setupDoor(OVERWORLD_DOOR.S016_RIGHT_ROAD_0, OVERWORLD_INIT_POS.S015_LEFT_ROAD_1);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S016_UP_ROAD_0, OVERWORLD_INIT_POS.S017_DOWN_ROAD_0);
+  }
+}
+
+export class Safari017 extends Overworld {
+  constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
+    super(DIRECTION.DOWN, key, sound, isIndoor, area);
+  }
+
+  setup(ui: OverworldUi): void {
+    ui.setType(OVERWORLD_TYPE.SAFARI);
+    OverworldGlobal.setKey(this.key as string);
+
+    ui.getMap().setup(this.key as TEXTURE, [
+      TEXTURE.OUTDOOR_TILE_FLOOR,
+      TEXTURE.OUTDOOR_TILE_EDGE,
+      TEXTURE.OUTDOOR_TILE_URBAN,
+      TEXTURE.OUTDOOR_TILE_OBJECT,
+      TEXTURE.OUTDOOR_TILE_OBJECT_URBAN,
+      TEXTURE.OUTDOOR_EVENT,
+    ]);
+    ui.getMap().setLayer(0, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(1, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND + 1);
+    ui.getMap().setLayer(2, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 2);
+    ui.getMap().setLayer(3, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 3);
+    ui.getMap().setLayer(4, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 4);
+    ui.getMap().setLayer(5, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 5);
+    ui.getMap().setLayer(6, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 6);
+    ui.getMap().setLayer(7, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 7);
+    ui.getMap().setLayer(8, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 8);
+    ui.getMap().setLayer(9, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 9);
+    ui.getMap().setLayer(10, TEXTURE.OUTDOOR_EVENT, DEPTH.GROUND + 10);
+    ui.getMap().setForegroundLayer(11, [TEXTURE.OUTDOOR_TILE_OBJECT], DEPTH.FOREGROND);
+    ui.getMap().setForeground1Layer(12, [TEXTURE.OUTDOOR_TILE_OBJECT], DEPTH.FOREGROND);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S017_DOWN_ROAD_0, OVERWORLD_INIT_POS.S016_UP_ROAD_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S017_UP_ROAD_0, OVERWORLD_INIT_POS.G007_DOWN_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S017_UP_ROAD_1, OVERWORLD_INIT_POS.G007_DOWN_0);
+  }
+}
+
+export class Safari018 extends Overworld {
+  constructor(key: TEXTURE | string, sound: AUDIO | string, isIndoor: boolean, area: TEXTURE | string) {
+    super(DIRECTION.DOWN, key, sound, isIndoor, area);
+  }
+
+  setup(ui: OverworldUi): void {
+    ui.setType(OVERWORLD_TYPE.SAFARI);
+    OverworldGlobal.setKey(this.key as string);
+
+    ui.getMap().setup(this.key as TEXTURE, [
+      TEXTURE.OUTDOOR_TILE_FLOOR,
+      TEXTURE.OUTDOOR_TILE_EDGE,
+      TEXTURE.OUTDOOR_TILE_URBAN,
+      TEXTURE.OUTDOOR_TILE_OBJECT,
+      TEXTURE.OUTDOOR_TILE_OBJECT_URBAN,
+      TEXTURE.OUTDOOR_EVENT,
+    ]);
+    ui.getMap().setLayer(0, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND);
+    ui.getMap().setLayer(1, TEXTURE.OUTDOOR_TILE_FLOOR, DEPTH.GROUND + 1);
+    ui.getMap().setLayer(2, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 2);
+    ui.getMap().setLayer(3, TEXTURE.OUTDOOR_TILE_EDGE, DEPTH.GROUND + 3);
+    ui.getMap().setLayer(4, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 4);
+    ui.getMap().setLayer(5, TEXTURE.OUTDOOR_TILE_URBAN, DEPTH.GROUND + 5);
+    ui.getMap().setLayer(6, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 6);
+    ui.getMap().setLayer(7, TEXTURE.OUTDOOR_TILE_OBJECT, DEPTH.GROUND + 7);
+    ui.getMap().setLayer(8, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 8);
+    ui.getMap().setLayer(9, TEXTURE.OUTDOOR_TILE_OBJECT_URBAN, DEPTH.GROUND + 9);
+    ui.getMap().setLayer(10, TEXTURE.OUTDOOR_EVENT, DEPTH.GROUND + 10);
+    ui.getMap().setForegroundLayer(11, [TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_URBAN], DEPTH.FOREGROND);
+    ui.getMap().setForeground1Layer(12, [TEXTURE.OUTDOOR_TILE_OBJECT, TEXTURE.OUTDOOR_TILE_URBAN], DEPTH.FOREGROND);
+
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S018_DOWN_ROAD_0, OVERWORLD_INIT_POS.G007_UP_0);
+    ui.getStatue().setupDoor(OVERWORLD_DOOR.S018_DOWN_ROAD_1, OVERWORLD_INIT_POS.G007_UP_0);
   }
 }

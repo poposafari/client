@@ -9,6 +9,7 @@ import {
   Gate004,
   Gate005,
   Gate006,
+  Gate007,
   Plaza001,
   Plaza002,
   Plaza003,
@@ -42,6 +43,8 @@ import {
   Safari014,
   Safari015,
   Safari016,
+  Safari017,
+  Safari018,
 } from '../uis/overworld/overworld';
 import { createSpriteAnimation, getSpriteFrames } from '../uis/ui';
 import { WelcomeUi } from '../uis/welcome-ui';
@@ -151,6 +154,7 @@ export class InGameScene extends BaseScene {
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_004, (ui) => new Gate004(TEXTURE.GATE_004, AUDIO.B004, false, TEXTURE.AREA_16));
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_005, (ui) => new Gate005(TEXTURE.GATE_005, AUDIO.B004, false, TEXTURE.AREA_16));
     OverworldGlobal.registerMapFactory(TEXTURE.GATE_006, (ui) => new Gate006(TEXTURE.GATE_006, AUDIO.B004, false, TEXTURE.AREA_16));
+    OverworldGlobal.registerMapFactory(TEXTURE.GATE_007, (ui) => new Gate007(TEXTURE.GATE_007, AUDIO.B004, false, TEXTURE.AREA_16));
 
     //safari
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_001, (ui) => new Safari001(TEXTURE.SAFARI_001, AUDIO.B032, false, TEXTURE.AREA_1));
@@ -169,6 +173,8 @@ export class InGameScene extends BaseScene {
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_014, (ui) => new Safari014(TEXTURE.SAFARI_014, AUDIO.B017, false, TEXTURE.AREA_5));
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_015, (ui) => new Safari015(TEXTURE.SAFARI_015, AUDIO.B017, false, TEXTURE.AREA_5));
     OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_016, (ui) => new Safari016(TEXTURE.SAFARI_016, AUDIO.B017, false, TEXTURE.AREA_5));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_017, (ui) => new Safari017(TEXTURE.SAFARI_017, AUDIO.B017, false, TEXTURE.AREA_5));
+    OverworldGlobal.registerMapFactory(TEXTURE.SAFARI_018, (ui) => new Safari018(TEXTURE.SAFARI_018, AUDIO.B017, false, TEXTURE.AREA_5));
 
     Game.initializeGame();
   }
