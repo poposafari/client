@@ -157,6 +157,7 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.GATE_004, 'ui/map', TEXTURE.GATE_004);
     this.loadMap(TEXTURE.GATE_005, 'ui/map', TEXTURE.GATE_005);
     this.loadMap(TEXTURE.GATE_006, 'ui/map', TEXTURE.GATE_006);
+    this.loadMap(TEXTURE.GATE_007, 'ui/map', TEXTURE.GATE_007);
 
     this.loadMap(TEXTURE.SAFARI_001, 'ui/map', TEXTURE.SAFARI_001);
     this.loadMap(TEXTURE.SAFARI_002, 'ui/map', TEXTURE.SAFARI_002);
@@ -174,6 +175,8 @@ export class LoadingScene extends BaseScene {
     this.loadMap(TEXTURE.SAFARI_014, 'ui/map', TEXTURE.SAFARI_014);
     this.loadMap(TEXTURE.SAFARI_015, 'ui/map', TEXTURE.SAFARI_015);
     this.loadMap(TEXTURE.SAFARI_016, 'ui/map', TEXTURE.SAFARI_016);
+    this.loadMap(TEXTURE.SAFARI_017, 'ui/map', TEXTURE.SAFARI_017);
+    this.loadMap(TEXTURE.SAFARI_018, 'ui/map', TEXTURE.SAFARI_018);
 
     //tutorial
     this.loadAtlas(TEXTURE.TUTORIAL_CHOICE_BALL, 'ui/tutorial', TEXTURE.TUTORIAL_CHOICE_BALL, ANIMATION.TUTORIAL_CHOICE_BALL);
