@@ -1,13 +1,15 @@
-import { item } from './item';
+import { costume } from './costume';
+import { error } from './error';
 import { menu } from './menu';
-import { message } from './message';
-import { npc } from './npc';
-import { pokemon } from './pokemon';
+import { msg } from './message';
+import { option } from './option';
+import { splash } from './splash';
 
 export const enConfig = {
-  message: message,
-  item: item,
-  pokemon: pokemon,
   menu: menu,
-  npc: npc,
+  error: error,
+  msg: msg,
+  costume: costume,
+  option: option,
+  splash: splash,
 };

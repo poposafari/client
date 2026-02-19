@@ -1,0 +1,18 @@
+{
+    "editor.formatOnSave": true, // 저장 시 자동으로 예쁘게 정렬 (Prettier)
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "vs-code-prettier-eslint.prettierLast": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit" // 저장 시 ESLint 규칙에 맞춰 자동 수정
+    },
+    "eslint.validate": [
+        "javascript",
+        "typescript"
+    ],
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
+}

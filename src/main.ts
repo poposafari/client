@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
+import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
-import { LoadingScene } from './scenes/load-scene';
-import { InGameScene } from './scenes/ingame-scene';
+import { GameScene } from './scenes/game.scene';
+import { initI18n } from './i18n';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
@@ -22,6 +23,11 @@ const config: Phaser.Types.Core.GameConfig = {
         plugin: InputTextPlugin,
         start: true,
       },
+      {
+        key: 'rexBBCodeTextPlugin',
+        plugin: BBCodeTextPlugin,
+        start: true,
+      },
     ],
     scene: [
       {
@@ -35,10 +41,12 @@ const config: Phaser.Types.Core.GameConfig = {
     createContainer: true,
   },
   pixelArt: true,
-  scene: [LoadingScene, InGameScene],
+  scene: [GameScene],
 };
 
-const start = () => {
+const start = async () => {
+  await initI18n();
+
   const game = new Phaser.Game(config);
 };
 
