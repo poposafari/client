@@ -1,0 +1,115 @@
+{
+  "frames": {
+    "player_back_skin-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 75
+      }
+    },
+    "player_back_skin-1": {
+      "frame": {
+        "x": 80,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 80,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 75
+      }
+    },
+    "player_back_skin-2": {
+      "frame": {
+        "x": 160,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 160,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 75
+      }
+    },
+    "player_back_skin-3": {
+      "frame": {
+        "x": 240,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 240,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 75
+      }
+    },
+    "player_back_skin-4": {
+      "frame": {
+        "x": 320,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 320,
+        "y": 0,
+        "w": 80,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 75
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "player_back_skin_m.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 400,
+      "h": 75
+    },
+    "scale": "1"
+  }
+}

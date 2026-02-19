@@ -1,0 +1,11 @@
+export enum DEPTH {
+  DEFAULT = 1,
+
+  GROUND = 0,
+  FOREGROUND = 998,
+  OVERWORLD_NAME = 998.5,
+
+  HUD = 999,
+  MESSAGE = 1000,
+  API = 1001,
+}

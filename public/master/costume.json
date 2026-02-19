@@ -1,0 +1,18 @@
+{
+  "skin": ["skin_0", "skin_1", "skin_2", "skin_3"],
+  "male": {
+    "outfits": ["outfit_0"],
+    "hairs": [
+      ["hair_0", "c0", "c1", "c2", "c3", "c4", "c5"],
+      ["hair_1", "c0", "c1", "c2", "c3", "c4", "c5"],
+      ["hair_2", "c0", "c1", "c2", "c3", "c4", "c5"]
+    ]
+  },
+  "female": {
+    "outfits": ["outfit_0"],
+    "hairs": [
+      ["hair_0", "c0", "c1", "c2", "c3", "c4", "c5"],
+      ["hair_1", "c0", "c1", "c2", "c3", "c4", "c5"]
+    ]
+  }
+}

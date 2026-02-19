@@ -1,4 +1,11 @@
-import { TranslationItem } from '../../types';
+type TranslationItem = {
+  [key: string]: TranslationItemData;
+};
+
+type TranslationItemData = {
+  name: string;
+  description: string;
+};
 
 export const item: TranslationItem = {
   'master-ball': {
@@ -299,7 +306,8 @@ export const item: TranslationItem = {
   },
   'super-repel': {
     name: '실버스프레이',
-    description: '약한 야생 포켓몬이\n전혀 나오지 않게 된다.\n벌레회피스프레이보다 효과가 오래간다.',
+    description:
+      '약한 야생 포켓몬이\n전혀 나오지 않게 된다.\n벌레회피스프레이보다 효과가 오래간다.',
   },
   'max-repel': {
     name: '골드스프레이',
@@ -395,7 +403,8 @@ export const item: TranslationItem = {
   },
   'ability-capsule': {
     name: '특성캡슐',
-    description: '2종류의 특성을 가진\n포켓몬에게 사용하면 지금과는 다른\n특성으로 바꿀 수 있는 캡슐.',
+    description:
+      '2종류의 특성을 가진\n포켓몬에게 사용하면 지금과는 다른\n특성으로 바꿀 수 있는 캡슐.',
   },
   'ability-patch': {
     name: '특성패치',
@@ -451,15 +460,18 @@ export const item: TranslationItem = {
   },
   'fossilized-fish': {
     name: '화석물고기',
-    description: '오랜 옛날 바다에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
+    description:
+      '오랜 옛날 바다에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
   },
   'fossilized-drake': {
     name: '화석용',
-    description: '오랜 옛날 육지에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
+    description:
+      '오랜 옛날 육지에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
   },
   'fossilized-dino': {
     name: '화석긴목',
-    description: '오랜 옛날 바다에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
+    description:
+      '오랜 옛날 바다에 살았던\n고대 포켓몬 화석의 일부.\n어떤 모습이었는지는 수수께끼다.',
   },
   'fairy-feather': {
     name: '요정의 깃털',
@@ -503,19 +515,23 @@ export const item: TranslationItem = {
   },
   'rusted-sword': {
     name: '녹슨검',
-    description: '먼 옛날의 영웅이 재앙을 막는 데\n사용했다고 전해지는 검이지만\n지금은 녹이 슬고 닳아버렸다.',
+    description:
+      '먼 옛날의 영웅이 재앙을 막는 데\n사용했다고 전해지는 검이지만\n지금은 녹이 슬고 닳아버렸다.',
   },
   'rusted-shield': {
     name: '녹슨방패',
-    description: '먼 옛날의 영웅이 재앙을 막는 데\n사용했다고 전해지는 방패지만\n지금은 녹이 슬고 닳아버렸다.',
+    description:
+      '먼 옛날의 영웅이 재앙을 막는 데\n사용했다고 전해지는 방패지만\n지금은 녹이 슬고 닳아버렸다.',
   },
   'rotom-catalog': {
     name: '로토무카탈로그',
-    description: '로토무가 좋아하는 가전제품이 실려 있다.\n카탈로그를 사용하면 로토무를\n가전제품에 넣거나 꺼낼 수 있다.',
+    description:
+      '로토무가 좋아하는 가전제품이 실려 있다.\n카탈로그를 사용하면 로토무를\n가전제품에 넣거나 꺼낼 수 있다.',
   },
   'reins-of-unity': {
     name: '유대의고삐',
-    description: '빛에 비추면 반짝이는 천.\n과거에 인간들이 풍요의 왕에게\n감사하는 마음을 담아 바쳤다고 한다.',
+    description:
+      '빛에 비추면 반짝이는 천.\n과거에 인간들이 풍요의 왕에게\n감사하는 마음을 담아 바쳤다고 한다.',
   },
   'adamant-crystal': {
     name: 'adamant-crystal',

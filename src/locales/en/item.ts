@@ -1,556 +1,507 @@
-import { TranslationItem } from '../../types';
+type TranslationItem = {
+  [key: string]: { name: string; description: string };
+};
 
 export const item: TranslationItem = {
   'master-ball': {
     name: 'Master Ball',
-    description: 'The best Poké Ball with the ultimate level of\nperformance. With it, you will catch any wild\nPokémon without fail.',
+    description: 'The best Ball with the ultimate performance.\nIt will catch any wild Pokémon.',
   },
   'poke-ball': {
     name: 'Poké Ball',
-    description: 'A device for catching wild Pokémon. It’s thrown like\na ball at a Pokémon, comfortably encapsulating\nits target.',
+    description: 'A device for catching wild Pokémon.\nIt is shaped like a capsule.',
   },
   'great-ball': {
     name: 'Great Ball',
-    description: 'A good, high-performance Poké Ball that provides\na higher success rate for catching Pokémon than\na standard Poké Ball.',
+    description: 'A good Ball that offers a higher Pokémon catch rate\nthan a standard Poké Ball.',
   },
   'ultra-ball': {
     name: 'Ultra Ball',
-    description: 'An ultra-high-performance Poké Ball that provides\na higher success rate for catching Pokémon than\na Great Ball.',
+    description: 'An ultra-performance Ball that offers a higher\nPokémon catch rate than a Great Ball.',
   },
   'occa-berry': {
     name: 'Occa Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nFire-type attack.',
+    description: 'A Berry that Fire-type Pokémon like.',
   },
   'passho-berry': {
     name: 'Passho Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nWater-type attack.',
+    description: 'A Berry that Water-type Pokémon like.',
   },
   'wacan-berry': {
     name: 'Wacan Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nElectric-type attack.',
+    description: 'A Berry that Electric-type Pokémon like.',
   },
   'rindo-berry': {
     name: 'Rindo Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nGrass-type attack.',
+    description: 'A Berry that Grass-type Pokémon like.',
   },
   'yache-berry': {
     name: 'Yache Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nIce-type attack.',
+    description: 'A Berry that Ice-type Pokémon like.',
   },
   'chople-berry': {
     name: 'Chople Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nFighting-type attack.',
+    description: 'A Berry that Fighting-type Pokémon like.',
   },
   'kebia-berry': {
     name: 'Kebia Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nPoison-type attack.',
+    description: 'A Berry that Poison-type Pokémon like.',
   },
   'shuca-berry': {
     name: 'Shuca Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nGround-type attack.',
+    description: 'A Berry that Ground-type Pokémon like.',
   },
   'coba-berry': {
     name: 'Coba Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nFlying-type attack.',
+    description: 'A Berry that Flying-type Pokémon like.',
   },
   'payapa-berry': {
     name: 'Payapa Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nPsychic-type attack.',
+    description: 'A Berry that Psychic-type Pokémon like.',
   },
   'tanga-berry': {
     name: 'Tanga Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nBug-type attack.',
+    description: 'A Berry that Bug-type Pokémon like.',
   },
   'charti-berry': {
     name: 'Charti Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nRock-type attack.',
+    description: 'A Berry that Rock-type Pokémon like.',
   },
   'kasib-berry': {
     name: 'Kasib Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nGhost-type attack.',
+    description: 'A Berry that Ghost-type Pokémon like.',
   },
   'haban-berry': {
     name: 'Haban Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nDragon-type attack.',
+    description: 'A Berry that Dragon-type Pokémon like.',
   },
   'colbur-berry': {
     name: 'Colbur Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nDark-type attack.',
+    description: 'A Berry that Dark-type Pokémon like.',
   },
   'babiri-berry': {
     name: 'Babiri Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nSteel-type attack.',
+    description: 'A Berry that Steel-type Pokémon like.',
   },
   'roseli-berry': {
     name: 'Roseli Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one supereffective\nFairy-type attack.',
+    description: 'A Berry that Fairy-type Pokémon like.',
   },
   'chilan-berry': {
     name: 'Chilan Berry',
-    description: 'If held by a Pokémon, this Berry will lessen the\ndamage taken from one Normal-type attack.',
+    description: 'A Berry that Normal-type Pokémon like.',
   },
   'enigma-berry': {
     name: 'Enigma Berry',
-    description: 'A Berry to be consumed by Pokémon. If a Pokémon\nholds one, being hit by a supereffective attack will\nrestore its HP.',
+    description: 'A Berry that all types of Pokémon like.',
   },
   'fire-stone': {
     name: 'Fire Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. The stone has a fiery orange heart.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It has an orange tint.',
   },
   'water-stone': {
     name: 'Water Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It is the blue of a pool of clear water.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is transparent and blue.',
   },
   'thunder-stone': {
     name: 'Thunder Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It has a distinct thunderbolt pattern.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It has a lightning pattern.',
   },
   'leaf-stone': {
     name: 'Leaf Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It has an unmistakable leaf pattern.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It has a leaf pattern.',
   },
   'moon-stone': {
     name: 'Moon Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It is as black as the night sky.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is as black as the night sky.',
   },
   'sun-stone': {
     name: 'Sun Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It burns as red as the evening sun.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is red like the sun.',
   },
   'shiny-stone': {
     name: 'Shiny Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It shines with a dazzling light.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It shines like light.',
   },
   'dusk-stone': {
     name: 'Dusk Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It holds shadows as dark as\ncan be.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is as dark as night.',
   },
   'dawn-stone': {
     name: 'Dawn Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It sparkles like a glittering eye.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is beautiful like a pupil.',
   },
   'oval-stone': {
     name: 'Oval Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It’s as round as a Pokémon Egg.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It is round like a bead.',
   },
   'ice-stone': {
     name: 'Ice Stone',
-    description: 'A peculiar stone that can make certain species of\nPokémon evolve. It has an unmistakable\nsnowflake pattern.',
+    description: 'A peculiar stone that can make certain\nPokémon evolve. It has a snowflake pattern.',
   },
   'metal-coat': {
     name: 'Metal Coat',
-    description: 'An item to be held by a Pokémon. It’s a special\nmetallic film that can boost the power of\nSteel-type moves.',
+    description: 'A special metal film. When held,\nit raises the power of Steel-type moves.',
   },
   'up-grade': {
-    name: 'Upgrade',
-    description: 'A transparent device somehow filled with all sorts\nof data. It was produced by Silph Co.',
+    name: 'Up-Grade',
+    description: 'A transparent device packed with\nvarious data. A Silph Co. product.',
   },
   'kings-rock': {
-    name: 'King’s Rock',
-    description: 'An item to be held by a Pokémon. When the holder\nsuccessfully inflicts damage, the target may\nalso flinch.',
+    name: "King's Rock",
+    description: 'When held, it may cause the foe\nto flinch when attacked.',
   },
   'dragon-scale': {
     name: 'Dragon Scale',
-    description: 'A very tough and inflexible scale. Dragon-type\nPokémon may be holding this item when caught.',
+    description: 'A tough, sturdy scale. Dragon-type\nPokémon may be holding it.',
   },
   'deep-sea-scale': {
     name: 'Deep Sea Scale',
-    description: 'An item to be held by Clamperl. This scale shines\nwith a faint pink and raises the holder’s\nSp. Def stat.',
+    description: 'A scale that raises Sp. Def when held\nby Gorebyss. It shines a pale pink.',
   },
   'deep-sea-tooth': {
     name: 'Deep Sea Tooth',
-    description: 'An item to be held by Clamperl. This fang gleams a\nsharp silver and raises the holder’s Sp. Atk stat.',
+    description: 'A tooth that raises Sp. Atk when held\nby Huntail. It shines a sharp silver.',
   },
   'dubious-disc': {
     name: 'Dubious Disc',
-    description: 'A transparent device overflowing with dubious\ndata. Its producer is unknown.',
+    description: 'A transparent device packed with\nstrange data. The manufacturer is unknown.',
   },
   magmarizer: {
     name: 'Magmarizer',
-    description: 'A box packed with a tremendous amount of magma\nenergy. It’s loved by a certain Pokémon.',
+    description: 'A box that stores immense magma energy.\nA certain Pokémon likes it.',
   },
   electirizer: {
     name: 'Electirizer',
-    description: 'A box packed with a tremendous amount of electric\nenergy. It’s loved by a certain Pokémon.',
+    description: 'A box that stores immense electric energy.\nA certain Pokémon likes it.',
   },
   'reaper-cloth': {
     name: 'Reaper Cloth',
-    description: 'A cloth imbued with horrifyingly strong spiritual\nenergy. It’s loved by a certain Pokémon.',
+    description: 'A cloth imbued with fierce spirit energy.\nA certain Pokémon likes it.',
   },
   protector: {
     name: 'Protector',
-    description: 'A protective item of some sort. It is extremely stiff\nand heavy. It’s loved by a certain Pokémon.',
+    description: 'A protective item. Very hard and heavy.\nA certain Pokémon likes it.',
   },
   'razor-claw': {
     name: 'Razor Claw',
-    description: 'An item to be held by a Pokémon. This sharply\nhooked claw increases the holder’s\ncritical-hit ratio.',
+    description: 'A sharp, pointed claw. When held,\nit increases the chance of critical hits.',
   },
   'razor-fang': {
     name: 'Razor Fang',
-    description: 'An item to be held by a Pokémon. When the holder\nsuccessfully inflicts damage, the target may\nalso flinch.',
+    description: 'A sharp, pointed fang. When held,\nit may cause the foe to flinch when hit.',
   },
   'prism-scale': {
     name: 'Prism Scale',
-    description: 'A mysterious scale that causes a certain Pokémon\nto evolve. It shines in rainbow colors.',
+    description: 'A peculiar scale that can make certain\nPokémon evolve. It shines with a rainbow glow.',
   },
   'whipped-dream': {
     name: 'Whipped Dream',
-    description: 'A soft and sweet treat made of fluffy, puffy,\nwhipped, and whirled cream. It’s loved by a\ncertain Pokémon.',
+    description: 'A soft, sweet cream with rich foam.\nA certain Pokémon likes it.',
   },
   sachet: {
     name: 'Sachet',
-    description: 'A sachet filled with fragrant perfumes that are just\nslightly too overwhelming. Yet it’s loved by a\ncertain Pokémon.',
+    description: 'A sachet filled with fragrant perfume.\nA certain Pokémon likes it.',
   },
   'cracked-pot': {
     name: 'Cracked Pot',
-    description: 'A peculiar teapot that can make a certain species of\nPokémon evolve. It may be cracked, but tea poured\nfrom it is delicious.',
+    description: 'A peculiar pot that can make certain\nPokémon evolve. Cracked but tea tastes better.',
   },
   'chipped-pot': {
     name: 'Chipped Pot',
-    description: 'A peculiar teapot that can make a certain species of\nPokémon evolve. It may be chipped, but tea poured\nfrom it is delicious.',
+    description: 'A peculiar pot that can make certain\nPokémon evolve. Chipped but tea tastes better.',
   },
   'tart-apple': {
     name: 'Tart Apple',
-    description: 'A peculiar apple that can make a certain species of\nPokémon evolve. It’s exceptionally tart.',
+    description: 'A peculiar apple that can make certain\nPokémon evolve. Very tart.',
   },
   'sweet-apple': {
     name: 'Sweet Apple',
-    description: 'A peculiar apple that can make a certain species of\nPokémon evolve. It’s exceptionally sweet.',
+    description: 'A peculiar apple that can make certain\nPokémon evolve. Very sweet.',
   },
   'flower-sweet': {
     name: 'Flower Sweet',
-    description: 'A flower-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A flower-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'clover-sweet': {
     name: 'Clover Sweet',
-    description: 'A clover-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A four-leaf clover-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'strawberry-sweet': {
     name: 'Strawberry Sweet',
-    description: 'A strawberry-shaped sweet. When a Milcery\nholds this, it will spin around happily.',
+    description: 'A strawberry-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'ribbon-sweet': {
     name: 'Ribbon Sweet',
-    description: 'A ribbon-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A ribbon-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'berry-sweet': {
     name: 'Berry Sweet',
-    description: 'A berry-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A berry-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'star-sweet': {
     name: 'Star Sweet',
-    description: 'A star-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A star-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'love-sweet': {
     name: 'Love Sweet',
-    description: 'A heart-shaped sweet. When a Milcery\nholds this, it spins around happily.',
+    description: 'A heart-shaped sweet. When held by Milcery,\nit spins around happily.',
   },
   'galarica-cuff': {
     name: 'Galarica Cuff',
-    description: 'A cuff made from woven-together Galarica Twigs.\nGiving it to Galarian Slowpoke makes the\nPokémon very happy.',
+    description: 'A cuff woven from Galarica twigs.\nGalarian Slowpoke is happy when given one.',
   },
   'galarica-wreath': {
     name: 'Galarica Wreath',
-    description: 'A wreath made from woven-together Galarica Twigs.\nPlacing it on the head of a Galarian Slowpoke makes\nthe Pokémon very happy.',
+    description: 'A wreath woven from Galarica twigs.\nGalarian Slowpoke is happy when given one.',
   },
-  'linking-cord': {
-    name: 'Linking Cord',
-    description: '',
-  },
-  'black-augurite': {
-    name: 'black-augurite',
-    description: '',
-  },
-  'peat-block': {
-    name: 'peat-block',
-    description: '',
-  },
-  'scroll-of-darkness': {
-    name: 'Scroll of Darkness',
-    description: '',
-  },
-  'scroll-of-waters': {
-    name: 'Scroll of Waters',
-    description: '',
-  },
-  'malicious-armor': {
-    name: 'Malicious Armor',
-    description: '',
-  },
-  'auspicious-armor': {
-    name: 'Auspicious Armor',
-    description: '',
-  },
-  'syrupy-apple': {
-    name: 'Syrupy Apple',
-    description: '',
-  },
-  'unremarkable-teacup': {
-    name: 'Unremarlable Teacup',
-    description: '',
-  },
-  'masterpiece-teacup': {
-    name: 'Masterpiece Teacup',
-    description: '',
-  },
+  'linking-cord': { name: 'Linking Cord', description: '' },
+  'black-augurite': { name: 'Black Augurite', description: '' },
+  'peat-block': { name: 'Peat Block', description: '' },
+  'scroll-of-darkness': { name: 'Scroll of Darkness', description: '' },
+  'scroll-of-waters': { name: 'Scroll of Waters', description: '' },
+  'malicious-armor': { name: 'Malicious Armor', description: '' },
+  'auspicious-armor': { name: 'Auspicious Armor', description: '' },
+  'syrupy-apple': { name: 'Syrupy Apple', description: '' },
+  'unremarkable-teacup': { name: 'Unremarkable Teacup', description: '' },
+  'masterpiece-teacup': { name: 'Masterpiece Teacup', description: '' },
   repel: {
     name: 'Repel',
-    description: 'An item that prevents any low-level wild Pokémon\nfrom jumping out at you for a while.',
+    description: 'An item that prevents weak wild Pokémon\nfrom appearing for a while.',
   },
   'super-repel': {
     name: 'Super Repel',
-    description: 'An item that prevents any low-level wild Pokémon\nfrom jumping out at you for a while. It lasts longer\nthan Repel.',
+    description: 'Prevents weak wild Pokémon from appearing.\nLasts longer than Repel.',
   },
   'max-repel': {
     name: 'Max Repel',
-    description: 'An item that prevents any low-level wild Pokémon\nfrom jumping out at you for a while. It lasts longer\nthan Super Repel.',
+    description: 'Prevents weak wild Pokémon from appearing.\nLasts longer than Super Repel.',
   },
   nugget: {
     name: 'Nugget',
-    description: 'A nugget of the purest gold that gives off a lustrous\ngleam in direct light. It can be sold at a high price\nto shops.',
+    description: 'A nugget of pure gold that sparkles.\nIt can be sold at a high price.',
   },
   'slowpoke-tail': {
     name: 'Slowpoke Tail',
-    description: 'A very tasty tail of something. It can be sold at a\nhigh price to shops.',
+    description: 'A very tasty tail of something.\nIt can be sold at a high price.',
   },
   stardust: {
     name: 'Stardust',
-    description: 'Lovely red sand that flows between the fingers\nwith a loose, silky feel. It can be sold at a low price\nto shops.',
+    description: 'Red, pretty sand that feels soft.\nIt can be sold at a low price.',
   },
   'star-piece': {
     name: 'Star Piece',
-    description: 'A small shard of a beautiful gem that gives off\na distinctly red sparkle. It can be sold at a high price\nto shops.',
+    description: 'A pretty gem that sparkles red.\nIt can be sold at a high price.',
   },
   'tiny-mushroom': {
     name: 'Tiny Mushroom',
-    description: 'A very small and rare mushroom. It’s popular with\na certain class of collectors.',
+    description: 'A small, rare mushroom.\nVery popular among some collectors.',
   },
   pearl: {
     name: 'Pearl',
-    description: 'A rather small pearl that has a very nice silvery\nsheen to it. It can be sold at a low price to shops.',
+    description: 'A small pearl that shines silver.\nIt can be sold at a low price.',
   },
   'big-mushroom': {
     name: 'Big Mushroom',
-    description: 'A very large and rare mushroom. It’s popular with\na certain class of collectors.',
+    description: 'A large, rare mushroom.\nVery popular among some collectors.',
   },
   'big-pearl': {
     name: 'Big Pearl',
-    description: 'A rather large pearl that has a very nice silvery sheen.\nIt can be sold at a high price to shops.',
+    description: 'A large pearl that shines silver.\nIt can be sold at a high price.',
   },
   'rare-bone': {
     name: 'Rare Bone',
-    description: 'A rare bone that is extremely valuable for the\nstudy of Pokémon archeology. It can be sold for a\nhigh price to shops.',
+    description: 'A bone valuable for Pokémon archaeology.\nIt can be sold at a high price.',
   },
   honey: {
     name: 'Honey',
-    description: 'A sweet honey collected by Pokémon. It has a lush\naroma and can be sold at a low price to shops.',
+    description: 'Sweet honey collected by Pokémon.\nIt can be sold at a low price.',
   },
   'pretty-wing': {
-    name: 'Pretty Feather',
-    description: 'Though this feather is beautiful, it’s just a regular\nfeather and has no effect.',
+    name: 'Pretty Wing',
+    description: 'A pretty wing with no effect.\nJust an ordinary wing.',
   },
   'balm-mushroom': {
     name: 'Balm Mushroom',
-    description: 'A rare mushroom that gives off a nice fragrance.\nIt can be sold at a high price to shops.',
+    description: 'A rare mushroom with a pleasant scent.\nIt can be sold at a high price.',
   },
   'comet-shard': {
     name: 'Comet Shard',
-    description: 'A shard that fell to the ground when a comet\napproached. It can be sold at a high price\nto shops.',
+    description: 'A shard that fell when a comet approached.\nIt can be sold at a high price.',
   },
   'big-nugget': {
     name: 'Big Nugget',
-    description: 'A big nugget of pure gold that gives off a lustrous\ngleam. It can be sold at a high price to shops.',
+    description: 'A large nugget of pure gold that sparkles.\nIt can be sold at a high price.',
   },
   'pearl-string': {
     name: 'Pearl String',
-    description: 'Very large pearls that sparkle in a pretty silver\ncolor. They can be sold at a high price to shops.',
+    description: 'A large pearl that shines silver.\nIt can be sold at a high price.',
   },
   'relic-band': {
     name: 'Relic Band',
-    description: 'A heavy bracelet made by an ancient civilization\nabout three thousand years ago.',
+    description: 'A bracelet from an ancient civilization\nabout 3000 years old.',
   },
   'relic-copper': {
     name: 'Relic Copper',
-    description: 'A copper coin used by an ancient civilization about\nthree thousand years ago.',
+    description: 'A copper coin from an ancient civilization\nabout 3000 years old.',
   },
   'relic-silver': {
     name: 'Relic Silver',
-    description: 'A silver coin used by an ancient civilization about\nthree thousand years ago.',
+    description: 'A silver coin from an ancient civilization\nabout 3000 years old.',
   },
   'relic-gold': {
     name: 'Relic Gold',
-    description: 'A gold coin used by an ancient civilization about\nthree thousand years ago.',
+    description: 'A gold coin from an ancient civilization\nabout 3000 years old.',
   },
   'relic-crown': {
     name: 'Relic Crown',
-    description: 'A heavy crown made by an ancient civilization\nabout three thousand years ago.',
+    description: 'A crown from an ancient civilization\nabout 3000 years old.',
   },
   'relic-statue': {
     name: 'Relic Statue',
-    description: 'A stone figurine made by an ancient civilization\nabout three thousand years ago.',
+    description: 'A statue from an ancient civilization\nabout 3000 years old.',
   },
   'relic-vase': {
     name: 'Relic Vase',
-    description: 'A fragile vase made by an ancient civilization about\nthree thousand years ago.',
+    description: 'A vase from an ancient civilization\nabout 3000 years old.',
   },
   'ability-capsule': {
     name: 'Ability Capsule',
-    description: 'A capsule that allows a Pokémon with two Abilities\nto switch between these Abilities when it is used.',
+    description: 'A capsule that allows a Pokémon with two Abilities\nto switch to the other Ability.',
   },
   'ability-patch': {
     name: 'Ability Patch',
-    description: 'A patch that allows a Pokémon with a regular Ability\nto have a rare Ability.',
+    description: 'A patch that can change a Pokémon with a common Ability\nto a rare Ability.',
   },
   'helix-fossil': {
     name: 'Helix Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sea. It might be a piece of a seashell.',
+    description: 'A fossil from an ancient sea Pokémon.\nIt appears to be part of a shell.',
   },
   'dome-fossil': {
     name: 'Dome Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sea. It could be a shell or carapace.',
+    description: 'A fossil from an ancient sea Pokémon.\nIt appears to be part of a shell.',
   },
   'old-amber': {
     name: 'Old Amber',
-    description: 'A piece of amber that still contains the genetic\nmaterial of an ancient Pokémon. It’s clear with a\ntawny, reddish tint.',
+    description: 'Amber containing ancient Pokémon genes.\nIt has a reddish, translucent glow.',
   },
   'root-fossil': {
     name: 'Root Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sea. It looks as if it could be part of a\nplant’s root.',
+    description: 'A fossil from an ancient sea Pokémon.\nIt appears to be part of a root.',
   },
   'claw-fossil': {
     name: 'Claw Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sea. It appears to be a fragment of a claw.',
+    description: 'A fossil from an ancient sea Pokémon.\nIt appears to be part of a claw.',
   },
   'skull-fossil': {
     name: 'Skull Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\non the land. It appears as though it’s part of\na head.',
+    description: 'A fossil from an ancient land Pokémon.\nIt appears to be part of a head.',
   },
   'armor-fossil': {
     name: 'Armor Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\non the land. It looks to be from some kind of\nprotective collar.',
+    description: 'A fossil from an ancient land Pokémon.\nIt appears to be part of a shield.',
   },
   'cover-fossil': {
     name: 'Cover Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sea. It appears as though it could be part of\nits back.',
+    description: 'A fossil from an ancient sea Pokémon.\nIt appears to be part of a back.',
   },
   'plume-fossil': {
     name: 'Plume Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\nin the sky. It looks as if it could come from part of\nits wing.',
+    description: 'A fossil from an ancient bird Pokémon.\nIt appears to be part of a wing.',
   },
   'jaw-fossil': {
     name: 'Jaw Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\non the land. It looks as if it could be a piece of a\nlarge jaw.',
+    description: 'A fossil from an ancient land Pokémon.\nIt appears to be part of a large jaw.',
   },
   'sail-fossil': {
     name: 'Sail Fossil',
-    description: 'A fossil from a prehistoric Pokémon that once lived\non the land. It looks like the impression from a\nskin sail.',
+    description: 'A fossil from an ancient land Pokémon.\nIt appears to be part of a sail.',
   },
   'fossilized-bird': {
     name: 'Fossilized Bird',
-    description: 'The fossil of an ancient Pokémon that once soared\nthrough the sky. What it looked like is a mystery.',
+    description: 'A fossil from an ancient flying Pokémon.\nIts full form is a mystery.',
   },
   'fossilized-fish': {
     name: 'Fossilized Fish',
-    description: 'The fossil of an ancient Pokémon that once lived in the\nsea. What it looked like is a mystery.',
+    description: 'A fossil from an ancient sea Pokémon.\nIts full form is a mystery.',
   },
   'fossilized-drake': {
     name: 'Fossilized Drake',
-    description: 'The fossil of an ancient Pokémon that once roamed the\nland. What it looked like is a mystery.',
+    description: 'A fossil from an ancient land Pokémon.\nIts full form is a mystery.',
   },
   'fossilized-dino': {
     name: 'Fossilized Dino',
-    description: 'The fossil of an ancient Pokémon that once lived in the\nsea. What it looked like is a mystery.',
+    description: 'A fossil from an ancient sea Pokémon.\nIts full form is a mystery.',
   },
-  'fairy-feather': {
-    name: 'Fairy Feather',
-    description: '',
-  },
+  'fairy-feather': { name: 'Fairy Feather', description: '' },
   bicycle: {
     name: 'Bicycle',
-    description: 'A folding Bicycle that enables a rider\nto get around much faster than a pair\nof Running Shoes will allow.',
+    description: 'A folding bicycle that can run\nfaster than Running Shoes.',
   },
   gracidea: {
     name: 'Gracidea',
-    description: 'A flower sometimes bundled in bouquets to convey\ngratitude on special occasions, such as birthdays.',
+    description: 'A flower sometimes given as a bouquet\nfor birthdays or anniversaries.',
   },
   'reveal-glass': {
     name: 'Reveal Glass',
-    description: 'A looking glass that reveals the truth. It’s a\nmysterious glass that returns a Pokémon to its\noriginal shape.',
+    description: 'A strange mirror that returns Pokémon\nto their original form by revealing the truth.',
   },
   'dna-splicers': {
     name: 'DNA Splicers',
-    description: 'A splicer that fuses Kyurem and a certain Pokémon.\nThey are said to have been one in the beginning.',
+    description: 'A pair of splicers that fuse Kyurem\nwith another Pokémon said to have been one.',
   },
   'prison-bottle': {
     name: 'Prison Bottle',
-    description: 'A bottle believed to have been used to seal away\nthe power of a certain Pokémon long, long ago.',
+    description: 'A bottle said to have sealed\nthe power of a Pokémon long ago.',
   },
   'red-nectar': {
     name: 'Red Nectar',
-    description: 'A flower nectar obtained at Ula’ula Meadow.\nIt changes the form of certain species of Pokémon.',
+    description: 'Flower nectar from Ula\'ula Meadow.\nIt changes the form of certain Pokémon.',
   },
   'purple-nectar': {
     name: 'Purple Nectar',
-    description: 'A flower nectar obtained at Poni Meadow.\nIt changes the form of certain species of Pokémon.',
+    description: 'Flower nectar from Poni Meadow.\nIt changes the form of certain Pokémon.',
   },
   'pink-nectar': {
     name: 'Pink Nectar',
-    description: 'A flower nectar obtained from the flowering shrubs\non Royal Avenue.\nIt changes the form of certain species of Pokémon.',
+    description: 'Flower nectar from Royal Avenue.\nIt changes the form of certain Pokémon.',
   },
   'yellow-nectar': {
     name: 'Yellow Nectar',
-    description: 'A flower nectar obtained at Melemele Meadow.\nIt changes the form of certain species of Pokémon.',
+    description: 'Flower nectar from Melemele Meadow.\nIt changes the form of certain Pokémon.',
   },
   'rusted-sword': {
     name: 'Rusted Sword',
-    description: 'It is said that a hero used this sword to halt a terrible\ndisaster in ancient times. But it’s grown rusty and worn.',
+    description: 'A sword said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
   },
   'rusted-shield': {
     name: 'Rusted Shield',
-    description: 'It is said that a hero used this shield to halt a terrible\ndisaster in ancient times. But it’s grown rusty and worn.',
+    description: 'A shield said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
   },
   'rotom-catalog': {
     name: 'Rotom Catalog',
-    description: 'A catalog of devices that Rotom like. Use the catalog\nto have Rotom hop in and out of the various devices\nlisted within.',
+    description: 'A catalog of appliances Rotom likes.\nUsing it lets you put Rotom in or take it out of appliances.',
   },
   'reins-of-unity': {
     name: 'Reins of Unity',
-    description: 'Cords that shine when you hold them up to the light.\nThe people of old times presented these to the King of\nBountiful Harvests to express their gratitude.',
+    description: 'Cloth that shines when held to the light.\nOffered to the King of Bounty in thanks long ago.',
   },
-  'adamant-crystal': {
-    name: 'Adamant Crystal',
-    description: '',
-  },
-  'lustrous-globe': {
-    name: 'Lustrous Globe',
-    description: '',
-  },
-  'griseous-core': {
-    name: 'Griseous Core',
-    description: '',
-  },
-  'cornerstone-mask': {
-    name: 'Cornerstone Mask',
-    description: '',
-  },
-  'wellspring-mask': {
-    name: 'Wellspring Mask',
-    description: '',
-  },
-  'hearthflame-mask': {
-    name: 'Hearthflame Mask',
-    description: '',
-  },
+  'adamant-crystal': { name: 'Adamant Crystal', description: '' },
+  'lustrous-globe': { name: 'Lustrous Globe', description: '' },
+  'griseous-core': { name: 'Griseous Core', description: '' },
+  'cornerstone-mask': { name: 'Cornerstone Mask', description: '' },
+  'wellspring-mask': { name: 'Wellspring Mask', description: '' },
+  'hearthflame-mask': { name: 'Hearthflame Mask', description: '' },
   'red-orb': {
     name: 'Red Orb',
-    description: 'A shiny red orb that is said to have a legend tied\nto it. It’s known to have a deep connection with the\nHoenn region.',
+    description: 'A glowing red orb said to be deeply\nconnected to Hoenn region legend.',
   },
   'blue-orb': {
     name: 'Blue Orb',
-    description: 'A shiny blue orb that is said to have a legend tied\nto it. It’s known to have a deep connection with the\nHoenn region.',
+    description: 'A glowing blue orb said to be deeply\nconnected to Hoenn region legend.',
   },
   'soothe-bell': {
     name: 'Soothe Bell',
-    description: 'An item to be held by a Pokémon. The comforting\nchime of this bell calms the holder, making\nit friendly.',
+    description: 'A bell with a pleasant sound.\nWhen held, the Pokémon grows calmer and friendlier.',
   },
 };
