@@ -52,9 +52,9 @@ export class MysteryGiftUi extends BaseUi implements IInputHandler {
     for (let i = 1; i <= 20; i++) {
       dummyItems.push({
         key: `gift_${i}`,
-        label: `Mystery Gift ${i}`, // 선물 이름
-        count: i % 2 === 0 ? 'New!' : '', // 짝수만 New 표시 테스트
-        color: undefined, // 기본 색상
+        label: `Mystery Gift ${i}`,
+        count: i % 2 === 0 ? 'New!' : '',
+        color: undefined,
       });
     }
 

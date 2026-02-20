@@ -9,7 +9,6 @@ export class OverworldMenuPhase implements IGamePhase {
   private ui!: OverworldMenuUi;
   private yesOrNoMenu!: BackTitleMenuUi;
 
-  /** 옵션 등에서 복귀 시 커서를 이전 위치로 복원하기 위해 저장 */
   private savedCursorIndex: number | undefined = undefined;
 
   constructor(private scene: GameScene) {}
@@ -20,7 +19,6 @@ export class OverworldMenuPhase implements IGamePhase {
     await this.runMenuOnce();
   }
 
-  /** 메뉴 표시 → 선택 대기 → cancel이면 pop, option이면 option phase push. 복귀 시 savedCursorIndex로 커서 복원. */
   private async runMenuOnce(): Promise<void> {
     const result = await this.ui.waitForInput(this.savedCursorIndex);
     this.savedCursorIndex = result.cursorIndex;

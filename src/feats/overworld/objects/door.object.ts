@@ -16,7 +16,6 @@ export class DoorObject extends BaseObject {
   private readonly offsetY: number;
   private readonly textureKey: string;
 
-  /** trigger 중복 호출 방지 */
   private triggered = false;
 
   constructor(scene: GameScene, doorKey: DOOR, destId: INIT_POS) {
@@ -62,11 +61,6 @@ export class DoorObject extends BaseObject {
     return this.offsetY;
   }
 
-  /**
-   * 문 트리거. Promise로 해당 INIT_POS(OVERWORLD_INIT_POS) 결과를 반환.
-   * BLANK가 아니면 문 애니메이션이 끝난 뒤 resolve, BLANK면 즉시 resolve.
-   * 이미 한 번 호출된 뒤에는 null으로 resolve하여 중복 호출을 막는다.
-   */
   trigger(): Promise<InitPosConfig | null> {
     if (this.triggered) {
       return Promise.resolve(null);
@@ -100,7 +94,6 @@ export class DoorObject extends BaseObject {
     this.scene.getAudio().playEffect(audio);
   }
 
-  /** 트리거 상태 초기화 (같은 문 재진입 시 사용) */
   resetTrigger(): void {
     this.triggered = false;
   }

@@ -13,13 +13,11 @@ import {
 import { addContainer, addWindow, addText, addImage, getTextStyle } from '@poposafari/utils';
 import i18next from 'i18next';
 
-// MenuListUi와 비슷하지만 y좌표만 필수적으로 받거나 하는 별도 인터페이스 정의
 export interface IMenuConfig {
-  x?: number; // 내부적으로 무시되거나 오프셋으로 사용될 수 있음
-  y: number; // 이 y값이 메뉴의 '하단(Bottom)' 기준점이 됩니다.
-  width?: number; // 없으면 Auto Width
+  x?: number;
+  y: number;
+  width?: number;
   itemHeight?: number;
-  /** 아이콘 스케일. 미지정 시 iconSize 기준으로 자동 계산 */
   iconScale?: number;
 }
 
@@ -29,17 +27,15 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
   private readonly FONT_SIZE = 80;
   private readonly LAYOUT = {
     ITEM_HEIGHT_RATIO: 1.4,
-    PADDING_RATIO: 1, // 좌우 여백
+    PADDING_RATIO: 1,
     CURSOR_GAP_RATIO: 0.4,
-    /** 커서와 라벨 사이 아이콘 영역: 크기 비율 */
     ICON_SIZE_RATIO: 0.9,
-    /** 아이콘과 라벨 사이 간격 비율 */
     ICON_LABEL_GAP_RATIO: 0.3,
     MIN_AUTO_WIDTH_RATIO: 4,
-    VISUAL_SCALE: 4, // 9-slice window scale
-    BORDER_PADDING: 40, // 윈도우 상하단 여백
-    RIGHT_MARGIN: 20, // 화면 오른쪽 끝과의 간격
-    LEFT_MARGIN: 20, // 라벨이 맵 영역을 뚫지 않도록 왼쪽 최소 여백
+    VISUAL_SCALE: 4,
+    BORDER_PADDING: 40,
+    RIGHT_MARGIN: 20,
+    LEFT_MARGIN: 20,
   } as const;
 
   protected config: IMenuConfig;
@@ -73,7 +69,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
 
     this.initMetrics();
 
-    // 초기 설정 보정
     if (!this.config.itemHeight) {
       this.config.itemHeight = this.metrics.itemHeight;
     }
@@ -92,7 +87,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     };
   }
 
-  // IInputHandler 구현
   onInput(key: string): void {
     if (this.items.length === 0) return;
 
@@ -160,7 +154,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     this.refreshList();
   }
 
-  /** 자식이 setItems로 넘긴 item.icon이 있을 때만 해당 행에 아이콘 GImage를 생성한다. 없으면 생성하지 않음. */
   private createItemSlots() {
     const iconScale = this.config.iconScale ?? this.metrics.iconSize / 30;
     for (let i = 0; i < this.items.length; i++) {
@@ -207,17 +200,12 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
   }
 
   private updateLayout() {
-    // A. 최적의 너비 계산 (Flexible Width)
     const contentWidth = this.calculateOptimalWidth();
-    // 화면 크기를 넘지 않도록 제한 (오른쪽 마진 고려)
     const maxWidth = this.scene.scale.width - this.LAYOUT.RIGHT_MARGIN * 2;
     const finalWidth = Math.min(contentWidth, maxWidth);
 
-    // B. 전체 높이 계산 (No Scroll)
     const totalHeight = this.items.length * this.config.itemHeight! + this.LAYOUT.BORDER_PADDING;
 
-    // C. 윈도우 리사이즈
-    // 9-slice window scaling 고려 (VISUAL_SCALE)
     if (this.window && this.window.setSize) {
       this.window.setSize(
         finalWidth / this.LAYOUT.VISUAL_SCALE + 7,
@@ -225,8 +213,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
       );
     }
 
-    // D. 위치 선정 (Right Anchor & Bottom Anchor)
-    // X좌표: config.x가 있으면 사용, 없으면 오른쪽 정렬 후 왼쪽이 맵을 뚫지 않도록 클램프
     let targetX: number;
     if (this.config.x !== undefined) {
       targetX = this.config.x;
@@ -238,19 +224,14 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
       }
     }
 
-    // Y좌표: config.y가 '바닥'이 되도록 설정.
-    // Phaser의 중심점(0.5) 기준이므로, 바닥이 config.y가 되려면 -> y = config.y - (height / 2)
     let targetY = this.config.y - totalHeight / 2 - 35;
 
-    // [안전장치] 만약 위로 너무 늘어나서 화면 위를 뚫고 나간다면?
-    // 상단을 화면 0에 맞추고 바닥을 밀어내는 방식으로 fallback
     if (targetY - totalHeight / 2 < 0) {
-      targetY = totalHeight / 2 + this.LAYOUT.RIGHT_MARGIN; // 상단 약간 여백 줌
+      targetY = totalHeight / 2 + this.LAYOUT.RIGHT_MARGIN;
     }
 
     this.setPosition(targetX, targetY);
 
-    // E. 내부 아이템 배치. 아이콘 있는 행: [icon, label, count], 없는 행: [label, count]
     const startY =
       -(totalHeight / 2) + this.LAYOUT.BORDER_PADDING / 2 + this.config.itemHeight! / 2;
 
@@ -300,10 +281,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     dummyText.destroy();
     return Math.max(maxContentWidth, this.metrics.minAutoWidth);
   }
-
-  // =================================================================
-  //  Update & Render Logic
-  // =================================================================
 
   protected refreshList() {
     this.items.forEach((item, index) => {
@@ -368,12 +345,10 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     return this.lastSelectedIndex;
   }
 
-  /** 옵션의 window 텍스처로 윈도우를 갱신 (언어/테마 변경 시 호출) */
   public updateWindow(): void {
     this.window.setTexture(this.scene.getOption().getWindow());
   }
 
-  // Promise 기반 대기. options.initialCursorIndex로 복귀 시 커서 위치 복원 가능.
   public waitForSelect(
     items?: IMenuItem[],
     options?: { initialCursorIndex?: number },

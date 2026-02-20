@@ -23,13 +23,9 @@ const DEFAULT_DIRECTION_KEYS = {
 export interface IGridSelectConfig {
   x: number;
   y: number;
-  /** TEXTURE (or texture key). Grid creates outer window from this. */
   outerWindowTexture: string;
-  /** TEXTURE for each cell frame. Grid creates inner window from this. */
   innerWindowTexture: string;
-  /** TEXTURE for cursor image. */
   cursorTexture: string;
-  /** TEXTURE for cursor highlight window. */
   cursorWindowTexture: string;
   itemScale: number;
   items: IGridSelectItem[];
@@ -37,7 +33,6 @@ export interface IGridSelectConfig {
   rows: number;
   rowGap: number;
   columnGap: number;
-  /** Inner cell size (default 80). */
   innerCellWidth?: number;
   innerCellHeight?: number;
   innerWindowScale?: number;
@@ -58,14 +53,10 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
   private cursor!: GImage;
   private cursorWindow!: GWindow;
   private innerWindowTemplate!: GWindow;
-  /** 데이터 교체 시 사용. null이면 config.items 사용. */
   private _itemsOverride: IGridSelectItem[] | null = null;
 
-  /** Called when cursor moves (direction key). Parent sets to run behavior in their code. */
   onCursorMoved?: (selectedKey: string) => void;
-  /** Called when user confirms (Enter/Z). Parent sets to resolve and hide. */
   onConfirm?: () => void;
-  /** Called when user cancels (Esc/X). Parent sets to resolve with null and hide. */
   onCancel?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager, config: IGridSelectConfig) {
@@ -74,12 +65,10 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     this.createLayout();
   }
 
-  /** 현재 표시할 아이템 목록 (setItems로 교체 시 반영). */
   protected getItems(): IGridSelectItem[] {
     return this._itemsOverride ?? this.config.items;
   }
 
-  /** 아이템 목록을 바꾸고 셀만 다시 그린다. 중간에 데이터가 바뀔 때 호출. */
   setItems(items: IGridSelectItem[]): void {
     this._itemsOverride = items;
     this.refreshItemCells();
@@ -293,37 +282,30 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     return this.getItems()[this.cursorIndex];
   }
 
-  /** 키로 아이템 찾기 (커서가 벗어난 아이템의 스프라이트 등 접근용). */
   getItemByKey(key: string): IGridSelectItem | undefined {
     return this.getItems().find((i) => i.key === key);
   }
 
-  /** Override to change which keys trigger confirm. Default: Enter, Z. */
   protected getConfirmKeys(): string[] {
     return DEFAULT_CONFIRM_KEYS;
   }
 
-  /** Override to change which keys trigger cancel. Default: Esc, X. Return [] to disable. */
   protected getCancelKeys(): string[] {
     return DEFAULT_CANCEL_KEYS;
   }
 
-  /** Override to change direction key bindings. */
   protected getDirectionKeys(): { up: string; down: string; left: string; right: string } {
     return { ...DEFAULT_DIRECTION_KEYS };
   }
 
-  /** Override to define confirm action. Default: calls onConfirm?.() */
   protected handleConfirm(): void {
     this.onConfirm?.();
   }
 
-  /** Override to define cancel action. Default: calls onCancel?.() */
   protected handleCancel(): void {
     this.onCancel?.();
   }
 
-  /** Override to handle direction key entirely. Return true to consume key (no default cursor move). */
   protected handleDirectionInput(_key: string): boolean {
     return false;
   }
@@ -371,7 +353,6 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     this.handleCursorMoved(selectedKey);
   }
 
-  /** Override in child to react to cursor movement. */
   protected handleCursorMoved(_selectedKey: string): void {}
 
   errorEffect(_errorMsg: string): void {}

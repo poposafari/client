@@ -135,7 +135,6 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     }
   }
 
-  /** initialCursorIndex: 복귀 시 커서 복원용. 지정 시 유효한 인덱스로 보정 후 사용. */
   waitForInput(initialCursorIndex?: number): Promise<{ input: TitleUiInput; cursorIndex: number }> {
     if (initialCursorIndex !== undefined) {
       this.currentCursor = Math.max(0, Math.min(this.mainTitles.length - 1, initialCursorIndex));

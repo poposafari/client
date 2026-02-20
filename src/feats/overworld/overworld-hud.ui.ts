@@ -178,7 +178,6 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     }
   }
 
-  /** location, xy, money, candy를 현재 상태로 갱신 (update 라이프사이클에서 호출) */
   refreshInfo(mapKey: string, tileX: number, tileY: number, money: number, candy: number): void {
     const loc = this.infoList.getRow('location');
     if (loc) loc.text.setText(mapKey ? i18next.t(`menu:${mapKey}`) : '');
@@ -193,9 +192,6 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     if (candyRow) candyRow.text.setText(`${candy} ${i18next.t('menu:candy')}`);
   }
 
-  /**
-   * 게임 시간 갱신. 추후 5초 실시간당 1분 게임시간 증가 로직 추가 예정.
-   */
   updateTime(): void {
     const row = this.infoList.getRow('time');
     if (row) row.text.setText('00:00');

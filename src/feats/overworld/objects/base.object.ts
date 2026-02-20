@@ -4,7 +4,6 @@ import { addObjText, addSprite, addText } from '@poposafari/utils';
 import { DEPTH, TEXTCOLOR, TEXTSHADOW, TEXTSTROKE, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
 
-/** 타일 단위로 위치하는 오버월드 오브젝트의 옵션 */
 export interface BaseObjectOptions {
   scale?: number;
 }
@@ -21,7 +20,6 @@ export class BaseObject {
   protected name: GText;
   protected tileX: number;
   protected tileY: number;
-  /** 이름 번역 키 (object:${nameKey}). 언어 변경 시 refreshNameText()로 갱신. */
   protected nameKey: string;
   protected nameColor: TEXTCOLOR;
 
@@ -64,7 +62,6 @@ export class BaseObject {
     this.refreshPosition();
   }
 
-  /** 언어 변경 시 이름 텍스트만 현재 언어로 갱신. (표시 중인 이름만 갱신) */
   refreshNameText(): void {
     if (!this.nameKey || !this.name?.active) return;
     this.name.setText(i18next.t(`object:${this.nameKey}`));
@@ -103,32 +100,27 @@ export class BaseObject {
     this.tileY = Math.floor(tileY);
   }
 
-  /** 한 타일만큼 이동 (dx, dy: -1 | 0 | 1). */
   step(dx: number, dy: number): void {
     this.setTilePos(this.tileX + dx, this.tileY + dy);
     this.refreshPosition();
   }
 
-  /** 스프라이트 바닥 중심 픽셀 좌표 (이동 보간용) */
   getSpritePos(): { x: number; y: number } {
     const c = this.sprite.getBottomCenter();
     return { x: c.x, y: c.y };
   }
 
-  /** 스프라이트 픽셀 위치 직접 설정 (이동 보간용) */
   setPosition(px: number, py: number): void {
     this.sprite.setPosition(px, py);
     this.shadow.setPosition(px, py);
     this.name.setPosition(px, py - this.nameOffsetY);
   }
 
-  /** 애니메이션 재생 (Phaser anim key) */
   startSpriteAnimation(key: string): void {
     if (this.sprite.anims.isPlaying && this.sprite.anims.currentAnim?.key === key) return;
     this.sprite.play(key);
   }
 
-  /** 애니메이션 정지 후 특정 프레임으로 (frame 인덱스) */
   stopSpriteAnimation(frameIndex: number): void {
     this.sprite.anims.stop();
     const textureKey = this.sprite.texture.key;

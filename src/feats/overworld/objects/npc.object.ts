@@ -60,9 +60,6 @@ export class NpcObject extends InteractiveObject {
     return null;
   }
 
-  /**
-   * 플레이어가 바라보는 방향을 받아, 해당 방향에 맞게 스프라이트를 12,0,4,8 프레임으로 변경.
-   */
   override reaction(direction: DIRECTION): ReactionStep[] {
     this.lookAt(direction);
     return this.reactionSteps;

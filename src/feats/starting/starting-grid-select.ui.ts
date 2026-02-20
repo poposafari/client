@@ -25,7 +25,6 @@ function buildItemsFromPokemons(
   });
 }
 
-/** Config는 TEXTURE만 넘기고, 윈도우·커서 생성은 GridSelectUi에서 처리. */
 export class StartingGridSelectUi extends GridSelectUi {
   private iconAnimKeyByKey = new Map<string, string>();
 
@@ -50,14 +49,12 @@ export class StartingGridSelectUi extends GridSelectUi {
     super(scene, inputManager, config);
   }
 
-  /** 포켓몬 목록으로 그리드 아이템을 바꾸고 다시 렌더링. runStartingPokemonFlow 등에서 호출. */
   setPokemonItems(pokemons: StartingPokemon[]): void {
     const scene = this.scene as GameScene;
     this.iconAnimKeyByKey.clear();
     this.setItems(buildItemsFromPokemons(scene, pokemons, this.iconAnimKeyByKey));
   }
 
-  /** 포켓몬 키에 해당하는 아이콘 애니메이션 키 (재생/정지용). */
   getIconAnimationKey(key: string): string | undefined {
     return this.iconAnimKeyByKey.get(key);
   }
