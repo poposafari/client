@@ -1,3 +1,4 @@
+import type { Socket } from 'socket.io-client';
 import {
   ApiManager,
   AudioManager,
@@ -8,10 +9,17 @@ import {
 import { MapRegistry } from '@poposafari/core/map.registry';
 import { MasterData } from '@poposafari/core/master.data.ts';
 import { UserManager } from '@poposafari/core/user.manager';
-import { LoadingPhase, MessageUi, NoticeMessageUi, TalkMessageUi } from '@poposafari/feats';
+import {
+  LoadingPhase,
+  LoginPhase,
+  MessageUi,
+  NoticeMessageUi,
+  TalkMessageUi,
+} from '@poposafari/feats';
 import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui';
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
-import { MapBuilder, OverworldPhase } from '@poposafari/feats/overworld';
+import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
+import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
 import { BaseScene } from '@poposafari/scenes';
 import { GetUserRes, TEXTURE } from '@poposafari/types';
 import { debugLog } from '@poposafari/utils/debug';
@@ -38,15 +46,30 @@ export class GameScene extends BaseScene {
   private noticeUi!: NoticeMessageUi;
   private questionUi!: QuestionMessageUi;
 
-  /** 맵 전환 후 다음 오버월드 진입 시 페이드 인 실행 여부 */
   private fadeInOnNextOverworldEnter = false;
+
+  private socket: Socket | null = null;
+
+  private pendingRoomState: RoomUserState[] | null = null;
+
+  private currentSocketUserId: string | null = null;
+
+  private onSocketKicked = async (): Promise<void> => {
+    if (!this.socket) return;
+    this.socket.off('kicked', this.onSocketKicked);
+    this.socket = null;
+    try {
+      await this.getApi().logout();
+    } catch {}
+    this.clearUser();
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:kicked' }));
+  };
 
   constructor() {
     super('GameScene');
   }
 
   preload() {
-    //Loading에만 필요한 에셋들을 먼저 로드함.
     this.loadImage(TEXTURE.BG_0, 'ui/bgs', 'bg_0');
     this.loadImage(TEXTURE.LOGO_0, 'ui', 'logo_0');
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', 'window_0');
@@ -132,6 +155,40 @@ export class GameScene extends BaseScene {
     return this.mapBuilder;
   }
 
+  getSocket(): Socket | null {
+    return this.socket;
+  }
+
+  setSocket(socket: Socket | null): void {
+    if (this.socket) {
+      this.socket.off('kicked', this.onSocketKicked);
+    }
+    this.socket = socket;
+    if (this.socket) {
+      this.socket.on('kicked', this.onSocketKicked);
+    }
+  }
+
+  setPendingRoomState(users: RoomUserState[]): void {
+    this.pendingRoomState = users;
+  }
+
+  getPendingRoomState(): RoomUserState[] | null {
+    return this.pendingRoomState;
+  }
+
+  clearPendingRoomState(): void {
+    this.pendingRoomState = null;
+  }
+
+  setCurrentSocketUserId(userId: string | null): void {
+    this.currentSocketUserId = userId;
+  }
+
+  getCurrentSocketUserId(): string | null {
+    return this.currentSocketUserId;
+  }
+
   getMessage(type: 'talk'): TalkMessageUi;
   getMessage(type: 'notice'): NoticeMessageUi;
   getMessage(type: 'question'): QuestionMessageUi;
@@ -206,17 +263,12 @@ export class GameScene extends BaseScene {
     return (list.find((p) => p instanceof FadeToBlackPipeline) as FadeToBlackPipeline) ?? null;
   }
 
-  /** 다음 오버월드 진입 시 페이드 인 실행 여부를 소비 (한 번만 true 반환) */
   consumeFadeInOnOverworldEnter(): boolean {
     const v = this.fadeInOnNextOverworldEnter;
     this.fadeInOnNextOverworldEnter = false;
     return v;
   }
 
-  /**
-   * 맵 전환: 검정으로 페이드 아웃 → 전환 → 새 맵에서 검정에서 페이드 인.
-   * 문 트리거 등에서 requestMapTransition 대신 이 메서드 호출.
-   */
   startMapTransitionWithFade(initPosConfig: InitPosConfig, fadeMs = 300): void {
     const pipeline = this.getFadeToBlackPipeline();
     if (!pipeline) {
@@ -236,7 +288,6 @@ export class GameScene extends BaseScene {
     });
   }
 
-  /** 문 트리거 등으로 맵 전환 요청 시: lastLocation 갱신 후 오버월드 재진입 */
   requestMapTransition(initPosConfig: InitPosConfig): void {
     const user = this.getUser();
     if (!user) return;
@@ -245,6 +296,6 @@ export class GameScene extends BaseScene {
       x: initPosConfig.x,
       y: initPosConfig.y,
     };
-    this.switchPhase(new OverworldPhase(this));
+    this.switchPhase(new OverworldEntryPhase(this, initPosConfig));
   }
 }

@@ -1,23 +1,32 @@
+import i18next from 'i18next';
 import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { LoginUi } from './login.ui';
 import { RegisterPhase } from '../register';
 import { WelcomePhase } from '../welcome/welcome.phase';
 
+export interface LoginPhaseOptions {
+  initialErrorKey?: string;
+}
+
 export class LoginPhase implements IGamePhase {
   private ui!: LoginUi;
   private blocker!: ApiBlockingUi;
 
-  constructor(private scene: GameScene) {}
+  constructor(
+    private scene: GameScene,
+    private options?: LoginPhaseOptions,
+  ) {}
 
   async enter(): Promise<void> {
-    const inputManager = this.scene.getInputManager();
-    const audio = this.scene.getAudio();
-
     this.ui = new LoginUi(this.scene);
     this.blocker = new ApiBlockingUi(this.scene);
 
     this.ui.show();
+
+    if (this.options?.initialErrorKey) {
+      this.ui.setErrorText(i18next.t(this.options.initialErrorKey));
+    }
 
     while (1) {
       const inputResult = await this.ui.waitForInput();

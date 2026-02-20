@@ -7,11 +7,19 @@ import {
   OverworldDirection,
   OverworldMovementState,
   SFX,
+  TEXTCOLOR,
   TEXTURE,
 } from '@poposafari/types';
 import { DIRECTION, directionToDelta, OVERWORLD_ZOOM } from './overworld.constants';
 import { MapView } from './map-view';
-import { DoorObject, InteractiveObject, PlayerObject } from './objects';
+import {
+  DEFAULT_MOVE_DURATION_MS,
+  MOVE_TYPE_DURATION_MS,
+  type MovePayload,
+  type RoomUserState,
+  type UserMovedPayload,
+} from './overworld-socket.types';
+import { DoorObject, InteractiveObject, OtherPlayerObject, PlayerObject } from './objects';
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 
@@ -41,6 +49,19 @@ function toOverworldDirection(d: DIRECTION): OverworldDirection | null {
     [DIRECTION.NONE]: OverworldDirection.DOWN,
   };
   return map[d];
+}
+
+/** OverworldMovementState → 서버 moveType 문자열 */
+function toMoveType(state: OverworldMovementState): MovePayload['moveType'] {
+  const map: Record<OverworldMovementState, MovePayload['moveType']> = {
+    [OverworldMovementState.WALK]: 'walk',
+    [OverworldMovementState.RUNNING]: 'running',
+    [OverworldMovementState.RIDE]: 'ride',
+    [OverworldMovementState.JUMP]: 'jump',
+    [OverworldMovementState.SURF]: 'surf',
+    [OverworldMovementState.FISHING]: 'walk',
+  };
+  return map[state] ?? 'walk';
 }
 
 const DEFAULT_TILE_X = 4;
@@ -74,27 +95,21 @@ export class OverworldUi extends BaseUi {
   private mapConfig: MapConfig | null = null;
   private player: PlayerObject | null = null;
   private doors: DoorObject[] = [];
-  /** 플레이어·NPC·문만 담는 Container. setScale(OVERWORLD_ZOOM)으로 줌인 (맵은 MAP_LAYER_SCALE_ZOOMED로 별도 적용). */
+  private otherPlayers: Map<string, OtherPlayerObject> = new Map();
   private worldContainer: Phaser.GameObjects.Container | null = null;
-  /** 닉네임만 담는 Container. FOREGROUND보다 위에 그려져 맵 레이어에 가려지지 않음. */
   private nameContainer: Phaser.GameObjects.Container | null = null;
 
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
 
-  /** IDLE일 때만 사용. 방향별로 키를 처음 누른 시각 */
   private keyPressStartTime: Partial<Record<DIRECTION, number>> = {};
   private lastFrameKeys: KeyState = { up: false, down: false, left: false, right: false };
   private wasIdleLastFrame = true;
 
-  /** 문 애니메이션 재생 중일 때 true. 이 동안 입력 무시 후 맵 전환 대기. */
   private doorTransitionPending = false;
 
-  /** JUMP 종료 시 SURF로 전환할지 (surf() 호출 시 true) */
   private nextJumpEndGoesToSurf = false;
 
-  /** S키 등으로 메뉴 진입 요청 시 호출. Phase 전환은 OverworldPhase에서 처리. */
   onMenuRequested: (() => void) | null = null;
-  /** Z/ENTER 상호작용 객체가 전용 Phase를 요청할 때. (object, phaseKey) → OverworldPhase에서 pushPhase 처리. */
   onInteractivePhaseRequested: ((object: InteractiveObject, phaseKey: string) => void) | null =
     null;
 
@@ -120,7 +135,6 @@ export class OverworldUi extends BaseUi {
     return this.player;
   }
 
-  /** 타일 (fx, fy)에 문이 있으면 해당 DoorObject, 없으면 null. 충돌 기준은 항상 한 타일. */
   private getDoorAtTile(fx: number, fy: number): DoorObject | null {
     for (const door of this.doors) {
       if (fx === door.getTileX() && fy === door.getTileY()) {
@@ -130,10 +144,6 @@ export class OverworldUi extends BaseUi {
     return null;
   }
 
-  /**
-   * 플레이어가 바라보는 방향의 한 타일 앞에 있는 상호작용 가능 오브젝트를 반환.
-   * (NPC 등 InteractiveObject. 없으면 null.)
-   */
   getFacingInteractiveObject(): InteractiveObject | null {
     if (!this.player || !this.mapView) return null;
     const dir = this.player.getLastDirection();
@@ -152,7 +162,6 @@ export class OverworldUi extends BaseUi {
 
   createLayout(): void {}
 
-  /** BaseUi 입력 스택: InputManager가 keydown 시 여기로 전달 (event.code). Idle일 때만 처리. */
   onInput(key: string): void {
     if (this.doorTransitionPending) return;
     const user = this.scene.getUser();
@@ -192,7 +201,6 @@ export class OverworldUi extends BaseUi {
     }
   }
 
-  /** Z/ENTER: 앞에 상호작용 객체가 있으면 reaction() 후, Phase 요청이 있으면 콜백 호출, 없으면 대화 스크립트 순차 실행 */
   private handleTalkAction(): void {
     if (!this.player || !this.player.isMovementFinish()) return;
     const obj = this.getFacingInteractiveObject();
@@ -206,7 +214,6 @@ export class OverworldUi extends BaseUi {
     this.runReaction(steps);
   }
 
-  /** 상호작용 객체의 reaction 스크립트(talk/question) 순차 실행 */
   private runReaction(steps: ReactionStep[]): void {
     if (steps.length === 0) return;
     (async () => {
@@ -231,7 +238,6 @@ export class OverworldUi extends BaseUi {
     })();
   }
 
-  /** J키: 바라보는 방향으로 2타일 점프 (앞 타일 건너뛰기) */
   private handleKeyJ(): void {
     if (!this.player) return;
     const dir = this.player.getLastDirection();
@@ -241,10 +247,6 @@ export class OverworldUi extends BaseUi {
     }
   }
 
-  /**
-   * surf 진입: 플레이어가 바라보는 방향으로 JUMP 진행 후 착지 시 SURF 상태로 전환.
-   * 2타일 점프 → 착지 시 SURF, step 0→1 애니메이션.
-   */
   surf(): boolean {
     if (!this.player) return false;
     const direction = this.player.getLastDirection();
@@ -258,19 +260,16 @@ export class OverworldUi extends BaseUi {
     return true;
   }
 
-  /** 메뉴 열림/닫힘에 따라 메뉴 토글 아이콘 동기화 (Phase에서 메뉴 닫을 때 false 호출) */
   public syncMenuToggleIcon(open: boolean): void {
     this.hud?.updateToggleIcon(TEXTURE.ICON_MENU, open);
   }
 
-  /** RUNNING 여부에 따라 러닝 토글 아이콘 on/off 동기화 */
   private syncRunningToggleIcon(): void {
     const isRunning =
       this.scene.getUser()?.getOverworldMovementState() === OverworldMovementState.RUNNING;
     this.hud?.updateToggleIcon(TEXTURE.ICON_RUNNING, isRunning);
   }
 
-  /** R키: walk ↔ running 토글 (UserManager 상태 + 플레이어 속도 반영) */
   private handleKeyR(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
@@ -308,7 +307,6 @@ export class OverworldUi extends BaseUi {
     this.player.setBaseSpeed(speed);
   }
 
-  /** 자전거 아이템 사용 시 호출 (추후 연동). RIDE 상태로 전환 */
   enterRideBicycle(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
@@ -317,7 +315,6 @@ export class OverworldUi extends BaseUi {
     this.player.setBaseSpeed(speed);
   }
 
-  /** 자전거 내릴 때 호출 (추후 연동). WALK 상태로 전환 */
   exitRideBicycle(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
@@ -381,6 +378,33 @@ export class OverworldUi extends BaseUi {
         this.nameContainer!.add(door.getName());
       }
 
+      const myUserId = this.scene.getCurrentSocketUserId();
+      const pending = this.scene.getPendingRoomState();
+      if (pending?.length) {
+        for (const u of pending) {
+          if (u.userId === myUserId) continue;
+          const tileX = parseInt(u.x, 10) || 0;
+          const tileY = parseInt(u.y, 10) || 0;
+          const other = new OtherPlayerObject(this.scene, tileX, tileY, {
+            costume: u.costume,
+            gender: u.gender as 'male' | 'female' | undefined,
+            name: u.nickname || '',
+          });
+          other.getName().setText(u.nickname || '');
+          this.worldContainer!.add(other.getShadow());
+          this.worldContainer!.add(other.getSprite());
+          const oSprite = other.getOutfitSprite();
+          if (oSprite) this.worldContainer!.add(oSprite);
+          const hSprite = other.getHairSprite();
+          if (hSprite) this.worldContainer!.add(hSprite);
+          this.nameContainer!.add(other.getName());
+          this.otherPlayers.set(u.userId, other);
+        }
+        this.scene.clearPendingRoomState();
+      }
+
+      this.scene.events.on('player_tile_moved', this.handlePlayerTileMoved, this);
+
       this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
 
       this.keyPressStartTime = {};
@@ -411,6 +435,7 @@ export class OverworldUi extends BaseUi {
       this.nameContainer = null;
     }
 
+    this.scene.events.off('player_tile_moved', this.handlePlayerTileMoved, this);
     this.cursorKeys = null;
 
     if (this.hud) {
@@ -422,7 +447,10 @@ export class OverworldUi extends BaseUi {
       door.destroy();
     }
     this.doors = [];
-    // TODO: other-player 배열 순회 destroy 및 배열 비우기
+    for (const other of this.otherPlayers.values()) {
+      other.destroy();
+    }
+    this.otherPlayers.clear();
     if (this.player) {
       this.player.destroy();
       this.player = null;
@@ -435,7 +463,85 @@ export class OverworldUi extends BaseUi {
     super.hide();
   }
 
-  /** 언어 변경 시 HUD(위치·캔디 등)와 현재 맵에 있는 모든 BaseObject 이름(NPC·문·플레이어)을 해당 언어로 갱신. */
+  /** 실시간으로 들어온 다른 플레이어 한 명 추가 (user_joined 수신 시 호출) */
+  addOtherPlayer(u: RoomUserState): void {
+    if (!this.worldContainer || !this.nameContainer) return;
+    const myUserId = this.scene.getCurrentSocketUserId();
+    if (u.userId === myUserId) return;
+    if (this.otherPlayers.has(u.userId)) return;
+
+    const tileX = parseInt(u.x, 10) || 0;
+    const tileY = parseInt(u.y, 10) || 0;
+    const other = new OtherPlayerObject(this.scene, tileX, tileY, {
+      costume: u.costume,
+      gender: u.gender as 'male' | 'female' | undefined,
+      name: u.nickname || '',
+    });
+    other.getName().setText(u.nickname || '');
+    this.worldContainer.add(other.getShadow());
+    this.worldContainer.add(other.getSprite());
+    const oSprite = other.getOutfitSprite();
+    if (oSprite) this.worldContainer.add(oSprite);
+    const hSprite = other.getHairSprite();
+    if (hSprite) this.worldContainer.add(hSprite);
+    this.nameContainer.add(other.getName());
+    this.otherPlayers.set(u.userId, other);
+    this.sortWorldContainerByDepth();
+  }
+
+  /** 나간 다른 플레이어 제거 (user_left 수신 시 호출) */
+  removeOtherPlayer(userId: string): void {
+    const other = this.otherPlayers.get(userId);
+    if (!other) return;
+    if (this.worldContainer) {
+      this.worldContainer.remove(other.getShadow());
+      this.worldContainer.remove(other.getSprite());
+      const oSprite = other.getOutfitSprite();
+      if (oSprite) this.worldContainer.remove(oSprite);
+      const hSprite = other.getHairSprite();
+      if (hSprite) this.worldContainer.remove(hSprite);
+    }
+    if (this.nameContainer) {
+      this.nameContainer.remove(other.getName());
+    }
+    this.otherPlayers.delete(userId);
+    other.destroy();
+    this.sortWorldContainerByDepth();
+  }
+
+  private handlePlayerTileMoved(): void {
+    if (!this.player) return;
+    const user = this.scene.getUser();
+    if (user?.getOverworldMovementState() !== OverworldMovementState.JUMP) return;
+    this.emitMoveToServer(this.player.getLastDirection());
+  }
+
+  private emitMoveToServer(dir: DIRECTION): void {
+    if (dir === DIRECTION.NONE) return;
+    const socket = this.scene.getSocket();
+    if (!socket?.connected) return;
+    const user = this.scene.getUser();
+    const moveType = user ? toMoveType(user.getOverworldMovementState()) : 'walk';
+    const payload: MovePayload = {
+      direction: dir as MovePayload['direction'],
+      moveType,
+    };
+    socket.emit('move', payload);
+  }
+
+  onOtherPlayerMoved(payload: UserMovedPayload): void {
+    const other = this.otherPlayers.get(payload.userId);
+    if (!other) return;
+    const dir = payload.direction as 'up' | 'down' | 'left' | 'right' | undefined;
+    const validDir = dir && ['up', 'down', 'left', 'right'].includes(dir) ? dir : undefined;
+    const rawDuration = payload.moveType ? MOVE_TYPE_DURATION_MS[payload.moveType] : undefined;
+    const durationMs = typeof rawDuration === 'number' ? rawDuration : DEFAULT_MOVE_DURATION_MS;
+    other.moveToTile(payload.x, payload.y, durationMs, {
+      moveType: payload.moveType,
+      direction: validDir,
+    });
+  }
+
   onRefreshLanguage(): void {
     if (this.hud && this.player) {
       const profile = this.scene.getUser()?.getProfile();
@@ -451,7 +557,6 @@ export class OverworldUi extends BaseUi {
     this.player?.refreshNameText();
   }
 
-  /** worldContainer·nameContainer 자식을 depth(tileY) 기준으로 정렬. Container는 자식 depth를 안 쓰므로 리스트 순서로 그리기 순서 결정. */
   private sortWorldContainerByDepth(): void {
     const byDepth = (a: Phaser.GameObjects.GameObject, b: Phaser.GameObjects.GameObject) =>
       (a as unknown as { depth: number }).depth - (b as unknown as { depth: number }).depth;
@@ -475,10 +580,8 @@ export class OverworldUi extends BaseUi {
 
     this.player.update(delta);
 
-    // Container는 자식의 depth를 정렬하지 않으므로, 매 프레임 depth 기준으로 리스트 정렬 (tileY 작을수록 뒤에 그려짐)
     this.sortWorldContainerByDepth();
 
-    // 스프라이트가 worldContainer 안에 있어 startFollow는 로컬 좌표를 따르므로, 월드 중심으로 카메라 scroll 직접 설정
     const sprite = this.player.getSprite();
     const center = sprite.getCenter(undefined, true);
     const cam = this.scene.cameras.main;
@@ -553,6 +656,7 @@ export class OverworldUi extends BaseUi {
         if (!keys[key]) continue;
         if (!this.wasIdleLastFrame) {
           this.player.move(dir);
+          if (!this.player.isMovementBlocking()) this.emitMoveToServer(dir);
           delete this.keyPressStartTime[dir];
           break;
         }
@@ -578,6 +682,7 @@ export class OverworldUi extends BaseUi {
             return;
           } else {
             this.player.move(dir);
+            if (!this.player.isMovementBlocking()) this.emitMoveToServer(dir);
           }
           delete this.keyPressStartTime[dir];
           break;

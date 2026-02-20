@@ -13,4 +13,5 @@ export const msg: TranslationMessage = {
   deleteAccount_0: 'Delete all data?',
   deleteAccount_1: 'This cannot be undone. Are you sure?',
   deleteAccount_2: 'Are you really sure? Delete anyway?',
+  mapPreparing: 'Preparing map...',
 };

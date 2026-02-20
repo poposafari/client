@@ -325,6 +325,10 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     }
   }
 
+  setErrorText(msg: string): void {
+    this.modalErrorMsg.setText(msg);
+  }
+
   errorEffect(errorMsg: string) {
     this.audio.playEffect(SFX.BUZZER);
 

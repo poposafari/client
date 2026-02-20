@@ -6,13 +6,12 @@ import { OptionPhase } from '../option/option.phase';
 import { MysteryGiftPhase } from '../mysterygift/mysterygift.phase';
 import { CreateAvatarPhase } from '../tutorial';
 import { DeleteAccountPhase } from '../delete-account/delete-account.phase';
-import { OverworldPhase } from '../overworld/overworld.phase';
+import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
 
 export class TitlePhase implements IGamePhase {
   private ui!: TitleUi;
   private blocker!: ApiBlockingUi;
 
-  /** 옵션/미스터리기프트 등에서 복귀 시 커서 복원용 */
   private savedCursorIndex: number | undefined = undefined;
 
   constructor(private scene: GameScene) {}
@@ -25,7 +24,6 @@ export class TitlePhase implements IGamePhase {
     await this.runMenuOnce();
   }
 
-  /** 메뉴 한 번 표시 → 선택 처리. 복귀 시 savedCursorIndex로 커서 복원. */
   private async runMenuOnce(): Promise<void> {
     const result = await this.ui.waitForInput(this.savedCursorIndex);
     this.savedCursorIndex = result.cursorIndex;
@@ -33,7 +31,7 @@ export class TitlePhase implements IGamePhase {
     try {
       if (result.input === 'continue') {
         if (this.scene.getUser()) {
-          this.scene.switchPhase(new OverworldPhase(this.scene));
+          this.scene.switchPhase(new OverworldEntryPhase(this.scene));
           return;
         }
         await this.runMenuOnce();

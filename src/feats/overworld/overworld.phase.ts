@@ -1,11 +1,13 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
+import type { RoomUserState, UserMovedPayload } from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
 import { OverworldUi } from './overworld.ui';
 import { StartingPhase } from '../starting/starting.phase';
 
 export class OverworldPhase implements IGamePhase {
   private overworldUi: OverworldUi | null = null;
+  private socketOffFns: Array<() => void> = [];
 
   constructor(private scene: GameScene) {}
 
@@ -36,6 +38,27 @@ export class OverworldPhase implements IGamePhase {
     };
     this.overworldUi.show();
 
+    const socket = this.scene.getSocket();
+    if (socket) {
+      const onUserJoined = (payload: RoomUserState) => {
+        this.overworldUi?.addOtherPlayer(payload);
+      };
+      const onUserLeft = (payload: { userId: string }) => {
+        this.overworldUi?.removeOtherPlayer(payload.userId);
+      };
+      const onUserMoved = (payload: UserMovedPayload) => {
+        this.overworldUi?.onOtherPlayerMoved(payload);
+      };
+      socket.on('user_joined', onUserJoined);
+      socket.on('user_left', onUserLeft);
+      socket.on('user_moved', onUserMoved);
+      this.socketOffFns.push(
+        () => socket.off('user_joined', onUserJoined),
+        () => socket.off('user_left', onUserLeft),
+        () => socket.off('user_moved', onUserMoved),
+      );
+    }
+
     if (this.scene.consumeFadeInOnOverworldEnter()) {
       const pipeline = this.scene.getFadeToBlackPipeline();
       if (pipeline) {
@@ -59,6 +82,8 @@ export class OverworldPhase implements IGamePhase {
   }
 
   exit(): void {
+    this.socketOffFns.forEach((fn) => fn());
+    this.socketOffFns = [];
     this.overworldUi?.destroy();
     this.overworldUi = null;
   }
