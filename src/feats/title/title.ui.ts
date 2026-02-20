@@ -138,10 +138,7 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
   /** initialCursorIndex: 복귀 시 커서 복원용. 지정 시 유효한 인덱스로 보정 후 사용. */
   waitForInput(initialCursorIndex?: number): Promise<{ input: TitleUiInput; cursorIndex: number }> {
     if (initialCursorIndex !== undefined) {
-      this.currentCursor = Math.max(
-        0,
-        Math.min(this.mainTitles.length - 1, initialCursorIndex),
-      );
+      this.currentCursor = Math.max(0, Math.min(this.mainTitles.length - 1, initialCursorIndex));
       this.findInitialValidCursor();
       this.updateCursor();
     }
@@ -165,7 +162,8 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
   }
 
   createTopLayout() {
-    const splashBundle = i18next.getResourceBundle(i18next.language, 'splash');
+    const splashBundle = i18next.getResourceBundle(i18next.resolvedLanguage || 'en', 'splash');
+    console.log(splashBundle);
     const { text: splashContent, fontSize: splashFontSize } = getRandomSplash(splashBundle);
 
     this.topContainer = addContainer(this.scene, DEPTH.DEFAULT);

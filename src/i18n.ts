@@ -34,6 +34,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: 'en',
+    load: 'languageOnly',
     supportedLngs: ['en', 'ko', 'jp'],
     resources: {
       en: {

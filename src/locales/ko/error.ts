@@ -20,4 +20,5 @@ export const error: TranslationError = {
   emptyNickname: '닉네임을 입력해주세요.',
   invalidCostume: '올바르지 않은 코스튬입니다.',
   invalidNickname: '닉네임은 2자 이상 12자 이하로\n입력하셔야 합니다.',
+  kicked: '다른 기기에서 접속했습니다.\n다시 로그인해 주세요.',
 };
