@@ -10,32 +10,23 @@ import { BaseObject, ObjectName } from './base.object';
 type MovementQueue = {
   direction: DIRECTION;
   animationKey: string;
-  /** 이동할 타일 수 (1=일반, 2=점프). 기본 1 */
   tiles?: number;
 };
 
-/** 맵 타일/블로킹 조회 (MapView 호환) */
 export interface IOverworldMapAdapter {
   hasTileAt(tileX: number, tileY: number): boolean;
   hasBlockingTileAt(tileX: number, tileY: number): boolean;
 }
 
-/** 이동을 막는 오브젝트는 getTilePos()만 있으면 됨 */
 export interface IOverworldBlockingRef {
   getTilePos(): { x: number; y: number };
 }
 
-/**
- * 오버월드 이동 가능 오브젝트 (레거시 MovableOverworldObj 참고).
- * delta 기반 한 타일씩 이동, ready(direction, animationKey), update(delta).
- */
 export class MovableObject extends BaseObject {
   private mapAdapter: IOverworldMapAdapter | null;
   private currentDirection: DIRECTION = DIRECTION.NONE;
   private tileSizePixelsWalked = 0;
-  /** 이번 이동에서 이동할 타일 수 (1=일반, 2=점프) */
   private currentMoveTiles = 1;
-  /** 점프 시 출발 픽셀 (포물선 보간용). 2타일 이동 시작 시 설정, 완료 시 null */
   private jumpStartPixel: { x: number; y: number } | null = null;
   private movementCheck = true;
   private movementDirectionQueue: MovementQueue[] = [];
@@ -43,7 +34,6 @@ export class MovableObject extends BaseObject {
   private blockingRefs: IOverworldBlockingRef[] = [];
 
   protected lastDirection: DIRECTION;
-  /** walk 애니메이션 프레임 선택용 (레거시 step) */
   protected animStep = 0;
   protected smoothFrameNumbers: number[] = [];
   protected stopFrameNumbers: number[] = [];
@@ -122,7 +112,6 @@ export class MovableObject extends BaseObject {
     this.startSpriteAnimation(animationKey);
   }
 
-  /** 점프 시 방향별 정지 프레임(12,0,4,8)으로 고정. 애니메이션 없이 포물선 이동 */
   private processJump(direction: DIRECTION): void {
     if (this.isMoving()) return;
     this.currentDirection = direction;
@@ -141,7 +130,6 @@ export class MovableObject extends BaseObject {
     return this.hasBlocking(nextX, nextY, direction);
   }
 
-  /** 해당 타일로 착지 가능한지 (타일 존재, 블로킹 타일/오브젝트 없음). 점프 목적지 검사용 */
   canLandAt(tileX: number, tileY: number): boolean {
     const tx = Math.floor(tileX);
     const ty = Math.floor(tileY);
@@ -164,7 +152,6 @@ export class MovableObject extends BaseObject {
     this.baseSpeed = speed;
   }
 
-  /** 제자리에서 방향만 바꿈 (이동 없이 스프라이트만 해당 방향 IDLE 프레임으로) */
   setDirectionOnly(direction: DIRECTION): void {
     this.lastDirection = direction;
     const frame = this.getStopFrameNumberFromDirection(direction);
@@ -186,7 +173,6 @@ export class MovableObject extends BaseObject {
     }
   }
 
-  /** 타일 이동 확정 시점 훅. 서브클래스에서 override (예: PlayerObject에서 socket emit) */
   protected onTileMoved(_tileX: number, _tileY: number): void {}
 
   private getSmoothFrameNumberFromDirection(direction: DIRECTION): number | undefined {
@@ -204,7 +190,6 @@ export class MovableObject extends BaseObject {
     }
   }
 
-  /** 포물선 점프 높이 (픽셀). sin(π*t)로 중간에서 최대 */
   private static readonly JUMP_ARC_HEIGHT = 60;
 
   private moveObject(pixelsToWalkThisUpdate: number): void {

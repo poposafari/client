@@ -19,7 +19,6 @@ export function calcOverworldTilePos(tileX: number, tileY: number): [number, num
   return [Math.round(x), Math.round(y)];
 }
 
-/** 레거시 DIRECTION (movable ready/update용) */
 export enum DIRECTION {
   NONE = 'none',
   UP = 'up',

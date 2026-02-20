@@ -3,7 +3,6 @@ import { TEXTURE } from '@poposafari/types';
 import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
-/** 자식에서 icon을 지정하면 MenuUi가 해당 행에 GImage를 생성한다. 없으면 아이콘 없이 표시. */
 const MENU_ITEMS = () => [
   { key: 'pokedex', label: i18next.t('menu:pokedex'), icon: TEXTURE.ICON_POKEDEX },
   { key: 'pc', label: i18next.t('menu:pc'), icon: TEXTURE.ICON_PC },

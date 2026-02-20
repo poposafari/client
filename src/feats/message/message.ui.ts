@@ -6,9 +6,8 @@ import { addContainer, addText, addWindow } from '@poposafari/utils';
 
 export interface MessageConfig {
   name?: string;
-  speed?: number; // 0이면 타이핑 없이 즉시 출력
+  speed?: number;
   window?: TEXTURE | string;
-  /** 'close': Z/ENTER로 닫을 때 resolve (기본값). 'displayed': 출력이 끝나자마자 resolve (메뉴 등 즉시 노출용) */
   resolveWhen?: 'close' | 'displayed';
 }
 

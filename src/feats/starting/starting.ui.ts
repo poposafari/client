@@ -25,7 +25,6 @@ const YES_NO_ITEMS = () => [
 export class StartingUi extends BaseUi {
   scene: GameScene;
   menuUi: StartingMenuUi;
-  /** Grid select UI; phase에서 생성 후 주입. onCursorMoved / onConfirm / onCancel 은 여기서 설정. */
   gridSelectUi: StartingGridSelectUi;
 
   private bg!: GImage;
@@ -33,11 +32,9 @@ export class StartingUi extends BaseUi {
   private pokemonName!: GText;
   private pokemonDesc!: GText;
 
-  /** 그리드 선택 결과: key + index. 취소 시 null. */
   private resolveGridSelection: ((result: { key: string; index: number } | null) => void) | null =
     null;
 
-  /** 아이콘 애니메이션 재생 중이던 포켓몬 키 (커서 이동 시 이전 스프라이트 정지용). */
   private lastAnimatedIconKey: string | null = null;
 
   constructor(scene: GameScene, menuUi: StartingMenuUi, gridSelectUi: StartingGridSelectUi) {
@@ -99,7 +96,6 @@ export class StartingUi extends BaseUi {
     ).setOrigin(0.5, 0);
   }
 
-  /** 그리드 표시 후 선택 결과 { key, index } 또는 null(취소)으로 resolve. */
   waitForGridSelect(): Promise<{ key: string; index: number } | null> {
     this.lastAnimatedIconKey = null;
     this.gridSelectUi.onCursorMoved = (key) => this.onGridCursorMoved(key);
@@ -113,7 +109,6 @@ export class StartingUi extends BaseUi {
     });
   }
 
-  /** 커서 이동 시 동작 (미리보기·아이콘 애니메이션). */
   private onGridCursorMoved(selectedKey: string): void {
     this.stopPreviousIconAnimation();
     this.playIconAnimation(selectedKey);
@@ -129,7 +124,6 @@ export class StartingUi extends BaseUi {
     this.pokemonDesc.setText(description);
   }
 
-  /** 이전에 재생 중이던 포켓몬 아이콘 애니메이션 정지 후 첫 프레임으로. */
   private stopPreviousIconAnimation(): void {
     if (!this.lastAnimatedIconKey) return;
     const item = this.gridSelectUi.getItemByKey(this.lastAnimatedIconKey);
@@ -145,7 +139,6 @@ export class StartingUi extends BaseUi {
     }
   }
 
-  /** 해당 포켓몬 아이콘 애니메이션 재생. */
   private playIconAnimation(key: string): void {
     const animKey = this.gridSelectUi.getIconAnimationKey(key);
     const item = this.gridSelectUi.getItemByKey(key);
@@ -179,10 +172,8 @@ export class StartingUi extends BaseUi {
       this.pokemonName.setVisible(false);
       this.pokemonDesc.setVisible(false);
     } else {
-      // 스택 순서: [grid, question, menu]. top이 menu이므로 먼저 menu hide 후 question hide 해야 그리드가 다시 입력받음.
       this.menuUi.hide();
       question.hide();
-      // 그리드는 그대로 두어 커서 이동·재선택 가능
     }
   }
 
@@ -242,7 +233,6 @@ export class StartingUi extends BaseUi {
     );
   }
 
-  /** 포켓몬 그리드 선택 후 yes 시 { key, index }로 resolve. no 시 재선택(그리드 유지). */
   async runStartingPokemonFlow(
     pokemons: StartingPokemon[],
   ): Promise<{ key: string; index: number } | null> {
