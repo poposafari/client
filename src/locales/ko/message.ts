@@ -35,4 +35,5 @@ export const msg: TranslationMessage = {
   center_0: '이곳은 포포시티 시청',
   npc1_0: '네?\n저는 호박사님이 아니에요',
   npc1_1: '호박사님은 안쪽에 계십니다',
+  mapPreparing: '맵 생성중...',
 };

@@ -4,4 +4,7 @@ export * from './map-view';
 export * from './overworld.constants';
 export * from './overworld.phase';
 export * from './overworld.ui';
+export * from './overworld-entry.phase';
+export * from './overworld-entry.ui';
+export * from './overworld-socket.types';
 export * from './objects';

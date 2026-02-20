@@ -13,4 +13,5 @@ export const msg: TranslationMessage = {
   deleteAccount_0: 'すべてのデータを\n削除しますか？',
   deleteAccount_1: '復元できません。\nそれでもよろしいですか？',
   deleteAccount_2: '本当に？\nそれでも削除しますか？',
+  mapPreparing: 'マップを準備中...',
 };

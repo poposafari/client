@@ -2,7 +2,7 @@ import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { ErrorCode } from '@poposafari/types';
 import { CreateAvatarUi } from './create-avatar.ui';
-import { OverworldPhase } from '../overworld/overworld.phase';
+import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
 
 export class CreateAvatarPhase implements IGamePhase {
   private ui!: CreateAvatarUi;
@@ -29,7 +29,7 @@ export class CreateAvatarPhase implements IGamePhase {
           this.scene.createUserManager(res);
         }
 
-        this.scene.switchPhase(new OverworldPhase(this.scene));
+        this.scene.switchPhase(new OverworldEntryPhase(this.scene));
         return;
       } catch (error: any) {
         this.ui.errorEffect(error.message);
