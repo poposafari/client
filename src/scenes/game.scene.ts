@@ -65,6 +65,16 @@ export class GameScene extends BaseScene {
     this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:kicked' }));
   };
 
+  private onSocketDisconnect = (reason: string): void => {
+    console.warn('[Socket] disconnected', { reason, ts: new Date().toISOString() });
+  };
+  private onSocketConnect = (): void => {
+    console.warn('[Socket] connected', { ts: new Date().toISOString() });
+  };
+  private onSocketConnectError = (err: Error): void => {
+    console.warn('[Socket] connect_error', { message: err?.message, ts: new Date().toISOString() });
+  };
+
   constructor() {
     super('GameScene');
   }
@@ -162,10 +172,16 @@ export class GameScene extends BaseScene {
   setSocket(socket: Socket | null): void {
     if (this.socket) {
       this.socket.off('kicked', this.onSocketKicked);
+      this.socket.off('disconnect', this.onSocketDisconnect);
+      this.socket.off('connect', this.onSocketConnect);
+      this.socket.off('connect_error', this.onSocketConnectError);
     }
     this.socket = socket;
     if (this.socket) {
       this.socket.on('kicked', this.onSocketKicked);
+      this.socket.on('disconnect', this.onSocketDisconnect);
+      this.socket.on('connect', this.onSocketConnect);
+      this.socket.on('connect_error', this.onSocketConnectError);
     }
   }
 
