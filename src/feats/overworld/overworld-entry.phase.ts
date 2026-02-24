@@ -3,18 +3,23 @@ import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { InitPosConfig } from './maps/door';
 import type { InitOkPayload, RoomUserState } from './overworld-socket.types';
+import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
+import { LoginPhase } from '../login';
 import { OverworldPhase } from './overworld.phase';
 import { OverworldEntryUi } from './overworld-entry.ui';
 
-/** 소켓 서버 URL (환경에 맞게 변경) */
 const SOCKET_SERVER_URL =
-  typeof window !== 'undefined'
+  VITE_SOCKET_SERVER_URL ??
+  (typeof window !== 'undefined'
     ? `${window.location.protocol}//${window.location.hostname}:9010`
-    : 'http://localhost:9010';
+    : 'http://localhost:9010');
+
+const AUTH_ERROR_MESSAGES = ['Missing access token', 'Invalid access token'];
 
 export class OverworldEntryPhase implements IGamePhase {
   private ui: OverworldEntryUi | null = null;
   private offFns: Array<() => void> = [];
+  private refreshRetried = false;
 
   constructor(
     private scene: GameScene,
@@ -25,13 +30,19 @@ export class OverworldEntryPhase implements IGamePhase {
     this.ui = new OverworldEntryUi(this.scene);
     this.ui.show();
 
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken') ?? ''
+        : '';
     let socket = this.scene.getSocket();
     if (!socket?.connected) {
       socket = io(SOCKET_SERVER_URL, {
+        auth: { token },
         withCredentials: true,
         transports: ['websocket', 'polling'],
       });
       this.scene.setSocket(socket);
+      this.setupConnectErrorHandler(socket);
     }
 
     if (this.initPosConfig) {
@@ -39,6 +50,61 @@ export class OverworldEntryPhase implements IGamePhase {
     } else {
       this.enterInit(socket!);
     }
+  }
+
+  private setupConnectErrorHandler(
+    socket: ReturnType<typeof io>,
+  ): void {
+    const handler = async (err: Error & { message?: string }) => {
+      const msg = err?.message ?? '';
+      if (!AUTH_ERROR_MESSAGES.includes(msg)) return;
+      if (this.refreshRetried) {
+        this.goToLogin();
+        return;
+      }
+      this.refreshRetried = true;
+      const newToken = await this.scene.getApi().refreshAccessToken();
+      if (!newToken) {
+        this.goToLogin();
+        return;
+      }
+      const oldSocket = socket;
+      const newSocket = io(SOCKET_SERVER_URL, {
+        auth: { token: newToken },
+        withCredentials: true,
+        transports: ['websocket', 'polling'],
+      });
+      oldSocket.off('connect_error', handler);
+      oldSocket.disconnect();
+      this.scene.setSocket(newSocket);
+      this.setupConnectErrorHandler(newSocket);
+      if (this.initPosConfig) {
+        this.enterChangeMap(newSocket);
+      } else {
+        this.enterInit(newSocket);
+      }
+    };
+    socket.on('connect_error', handler);
+    this.offFns.push(() => socket.off('connect_error', handler));
+  }
+
+  private goToLogin(): void {
+    this.removeListeners();
+    if (this.ui) {
+      this.ui.hide();
+      this.ui.destroy();
+      this.ui = null;
+    }
+    this.scene.getApi().clearSession();
+    this.scene.clearUser();
+    const s = this.scene.getSocket();
+    if (s) {
+      s.disconnect();
+      this.scene.setSocket(null);
+    }
+    this.scene.switchPhase(
+      new LoginPhase(this.scene, { initialErrorKey: 'error:sessionExpired' }),
+    );
   }
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {

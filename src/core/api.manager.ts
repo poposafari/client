@@ -128,6 +128,19 @@ export class ApiManager {
     }
   }
 
+  async refreshAccessToken(): Promise<string | null> {
+    try {
+      const token = await this.autoLoginOrRefresh();
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        return token;
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  }
+
   async loginLocal(username: string, password: string): Promise<void> {
     const payload: LoginLocalReq = { username, password };
     const res = await this.client.post<ApiResponse<{ accessToken: string }>>(
