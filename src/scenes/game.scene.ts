@@ -23,6 +23,7 @@ import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/fea
 import { BaseScene } from '@poposafari/scenes';
 import { GetUserRes, TEXTURE } from '@poposafari/types';
 import { debugLog } from '@poposafari/utils/debug';
+import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
 
 export enum GameEvent {
@@ -90,7 +91,7 @@ export class GameScene extends BaseScene {
     this.audio = new AudioManager(this);
     this.option = new OptionManager(this.audio);
     this.inputManager = new InputManager(this);
-    this.api = new ApiManager();
+    this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
     this.masterData = new MasterData();

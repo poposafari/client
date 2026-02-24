@@ -36,6 +36,11 @@ export class OverworldMenuPhase implements IGamePhase {
       this.yesOrNoMenu.hide();
       this.scene.getMessage('question').hide();
       if (choice === 'yes') {
+        const socket = this.scene.getSocket();
+        if (socket) {
+          socket.disconnect();
+          this.scene.setSocket(null);
+        }
         this.scene.switchPhase(new TitlePhase(this.scene));
         return;
       }
