@@ -63,7 +63,7 @@ export class OtherPlayerObject extends BaseObject {
   private lastMoveType: string = 'walk';
   private animStep = 0;
 
-  private static readonly DEFAULT_MOVE_DURATION_MS = 200;
+  private static readonly DEFAULT_MOVE_DURATION_MS = 120;
   private static readonly JUMP_ARC_HEIGHT = 60;
 
   constructor(scene: GameScene, tileX: number, tileY: number, options?: OtherPlayerObjectOptions) {

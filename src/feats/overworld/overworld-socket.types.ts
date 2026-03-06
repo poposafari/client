@@ -33,6 +33,11 @@ export interface UserMovedPayload {
   lastMoveTime?: string;
 }
 
+/** Tick 기반: 서버가 주기적으로 방 단위로 보내는 이동 배치 */
+export interface UsersMovedPayload {
+  updates: UserMovedPayload[];
+}
+
 export const MOVE_TYPE_DURATION_MS: Record<string, number> = {
   walk: 288,
   running: 144,
