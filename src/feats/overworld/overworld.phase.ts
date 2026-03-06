@@ -1,6 +1,6 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import type { RoomUserState, UserMovedPayload } from './overworld-socket.types';
+import type { RoomUserState, UsersMovedPayload } from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
 import { OverworldUi } from './overworld.ui';
 import { StartingPhase } from '../starting/starting.phase';
@@ -46,16 +46,20 @@ export class OverworldPhase implements IGamePhase {
       const onUserLeft = (payload: { userId: string }) => {
         this.overworldUi?.removeOtherPlayer(payload.userId);
       };
-      const onUserMoved = (payload: UserMovedPayload) => {
-        this.overworldUi?.onOtherPlayerMoved(payload);
+      const onUsersMoved = (payload: UsersMovedPayload) => {
+        const updates = payload?.updates;
+        if (!Array.isArray(updates)) return;
+        for (const u of updates) {
+          this.overworldUi?.onOtherPlayerMoved(u);
+        }
       };
       socket.on('user_joined', onUserJoined);
       socket.on('user_left', onUserLeft);
-      socket.on('user_moved', onUserMoved);
+      socket.on('users_moved', onUsersMoved);
       this.socketOffFns.push(
         () => socket.off('user_joined', onUserJoined),
         () => socket.off('user_left', onUserLeft),
-        () => socket.off('user_moved', onUserMoved),
+        () => socket.off('users_moved', onUsersMoved),
       );
     }
 
