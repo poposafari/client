@@ -516,6 +516,9 @@ export class OverworldUi extends BaseUi {
     this.emitMoveToServer(this.player.getLastDirection());
   }
 
+  // [MOVE-DEBUG] emit 카운터
+  private moveEmitCount = 0;
+
   private emitMoveToServer(dir: DIRECTION): void {
     if (dir === DIRECTION.NONE) return;
     const socket = this.scene.getSocket();
@@ -526,6 +529,14 @@ export class OverworldUi extends BaseUi {
       direction: dir as MovePayload['direction'],
       moveType,
     };
+
+    // [MOVE-DEBUG] 클라이언트 좌표 + emit 횟수 로그
+    this.moveEmitCount++;
+    const pos = this.player?.getTilePos();
+    console.log(
+      `[MOVE-DEBUG] #${this.moveEmitCount} emit dir=${dir} type=${moveType} clientPos=(${pos?.x},${pos?.y})`,
+    );
+
     socket.emit('move', payload);
   }
 
