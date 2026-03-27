@@ -327,27 +327,27 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
     const repassword = this.labelInputs[2].text;
 
     if (!username) {
-      this.errorEffect(i18next.t('error:emptyUsername'));
+      this.errorEffect(i18next.t('error:EMPTY_USERNAME'));
       return;
     }
 
     if (!password) {
-      this.errorEffect(i18next.t('error:emptyPassword'));
+      this.errorEffect(i18next.t('error:EMPTY_PASSWORD'));
       return;
     }
 
     if (!isValidUsername(username)) {
-      this.errorEffect(i18next.t('error:invalidInputUsername'));
+      this.errorEffect(i18next.t('error:INVALID_INPUT_USERNAME'));
       return;
     }
 
     if (!isValidPassword(password)) {
-      this.errorEffect(i18next.t('error:invalidInputPassword'));
+      this.errorEffect(i18next.t('error:INVALID_INPUT_PASSWORD'));
       return;
     }
 
     if (password !== repassword) {
-      this.errorEffect(i18next.t('error:notMatchPasswordAndRePassword'));
+      this.errorEffect(i18next.t('error:NOT_MATCH_PASSWORD_AND_REPASSWORD'));
       return;
     }
 
