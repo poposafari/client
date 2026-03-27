@@ -31,6 +31,7 @@ export class RegisterPhase implements IGamePhase {
           return;
         }
       } catch (error: any) {
+        console.log(error.message);
         this.ui.errorEffect(error.message);
       } finally {
         this.blocker.unblockInput();

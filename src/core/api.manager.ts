@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import i18next from 'i18next';
 import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
 import {
@@ -27,16 +27,10 @@ export interface ApiSuccess<T> {
 }
 
 export interface ApiFail {
-  success: false;
-  error: {
-    code: ErrorCode;
-    message: string | null;
-    status: number;
-  };
-}
-
-interface CustomRequestConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean;
+  statusCode: number;
+  code: ErrorCode;
+  error: string;
+  message: string | null;
 }
 
 export type ApiResponse<T> =
@@ -46,7 +40,6 @@ export type ApiResponse<T> =
 export class ApiManager {
   private client: AxiosInstance;
   private static readonly TIMEOUT = 10000;
-  private isRefreshing = false;
 
   constructor(private baseUrl: string = 'http://localhost:9000/api') {
     this.client = axios.create({
@@ -62,109 +55,42 @@ export class ApiManager {
   }
 
   private setupInterceptors() {
-    this.client.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('accessToken');
-        if (token && config.headers) {
-          config.headers.authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error),
-    );
-
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError<ApiFail>) => {
-        const originalRequest = error.config as CustomRequestConfig;
-
-        // 서버 응답이 있고, 아직 재시도하지 않은 요청이 있다면?
-        if (error.response?.data && !originalRequest._retry) {
+        if (error.response?.data) {
           const errData = error.response.data;
 
           if (
-            errData.error?.code === ErrorCode.AT_EXPIRED ||
-            errData.error?.code === ErrorCode.AT_MISSING
+            errData.code === ErrorCode.SESSION_MISSING ||
+            errData.code === ErrorCode.SESSION_EXPIRED
           ) {
-            originalRequest._retry = true; // 재시도 플래그 설정
-
-            try {
-              const newToken = await this.autoLoginOrRefresh();
-              localStorage.setItem('accessToken', newToken);
-
-              if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              }
-
-              return this.client(originalRequest);
-            } catch (refreshError) {
-              this.clearSession();
-              return Promise.reject(refreshError);
-            }
+            return Promise.reject(error);
           }
         }
 
-        // 그 외 에러는 공통 핸들러로 전달
         return this.handleGlobalError(error);
       },
     );
   }
 
-  private async autoLoginOrRefresh() {
-    const res = await axios.post<ApiResponse<{ accessToken: string }>>(
-      `${this.baseUrl}/auth/refresh`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
-
-    if (res.data.success) {
-      const { accessToken } = res.data.data;
-
-      return res.data.data.accessToken;
-    } else {
-      throw new Error('Failed to refresh token');
-    }
-  }
-
-  async refreshAccessToken(): Promise<string | null> {
+  async checkSession(): Promise<boolean> {
     try {
-      const token = await this.autoLoginOrRefresh();
-      if (token) {
-        localStorage.setItem('accessToken', token);
-        return token;
-      }
+      await this.client.post<ApiResponse<null>>('/auth/check');
+      return true;
     } catch {
-      return null;
+      return false;
     }
-    return null;
   }
 
   async loginLocal(username: string, password: string): Promise<void> {
     const payload: LoginLocalReq = { username, password };
-    const res = await this.client.post<ApiResponse<{ accessToken: string }>>(
-      '/auth/login/local',
-      payload,
-    );
-
-    if (res.data.success) {
-      const { accessToken } = res.data.data;
-      localStorage.setItem('accessToken', accessToken);
-    }
+    await this.client.post<ApiResponse<null>>('/auth/login/local', payload);
   }
 
   async registerLocal(username: string, password: string): Promise<void> {
     const payload: RegisterLocalReq = { username, password };
-    const res = await this.client.post<ApiResponse<{ accessToken: string }>>(
-      '/auth/register/local',
-      payload,
-    );
-
-    if (res.data.success) {
-      const { accessToken } = res.data.data;
-      localStorage.setItem('accessToken', accessToken);
-    }
+    await this.client.post<ApiResponse<null>>('/auth/register/local', payload);
   }
 
   async getUser(): Promise<GetUserRes | null> {
@@ -178,19 +104,11 @@ export class ApiManager {
   }
 
   async logout(): Promise<void> {
-    const res = await this.client.post<ApiResponse<null>>('/auth/logout');
-
-    if (res.data.success) {
-      this.clearSession();
-    }
+    await this.client.post<ApiResponse<null>>('/auth/logout');
   }
 
   async deleteAccount(): Promise<void> {
-    const res = await this.client.delete<ApiResponse<null>>('/auth/delete');
-
-    if (res.data.success) {
-      this.clearSession();
-    }
+    await this.client.delete<ApiResponse<null>>('/auth/delete');
   }
 
   async createUser(avatar: CreateUserReq): Promise<GetUserRes | null> {
@@ -232,50 +150,36 @@ export class ApiManager {
       status = error.response.status;
       const errData = error.response.data;
 
-      if (errData && !errData.success && errData.error) {
-        code = errData.error.code;
+      if (errData && errData.code) {
+        code = errData.code;
       }
 
       switch (code) {
         case ErrorCode.INTERNAL_SERVER_ERROR:
-          message = i18next.t('error:intervalServer');
+          message = i18next.t('error:INTERNAL_SERVER_ERROR');
           break;
         case ErrorCode.NOT_FOUND:
-          message = i18next.t('error:notFound');
+          message = i18next.t('error:NOT_FOUND');
           break;
         case ErrorCode.DTO_INVALID:
-          message = i18next.t('error:invalidDTO');
+          message = i18next.t('error:DTO_INVALID');
           break;
-        case ErrorCode.USER_NOT_FOUND:
-        case ErrorCode.RT_MISSING:
-          message = i18next.t('error:sessionExpired');
-          break;
-        case ErrorCode.USER_ALREADY_EXISTS:
-          message = i18next.t('error:userAlreadyExist');
-          break;
-        case ErrorCode.FAILED_LOGIN:
-          message = i18next.t('error:invalidUsernameOrPassword');
-          break;
-        case ErrorCode.USER_ALREADY_DELETED:
-          message = i18next.t('error:userAlreadyDeleted');
+        case ErrorCode.ACCOUNT_ALREADY_EXIST:
+          message = i18next.t('error:ACCOUNT_ALREADY_EXIST');
           break;
       }
     } else if (error.request) {
       code = ErrorCode.NETWORK_ERROR;
-      message = i18next.t('error:network');
+      message = i18next.t('error:NETWORK_ERROR');
     } else {
       message = error.message;
     }
 
     if (status === 429) {
-      message = i18next.t('error:exceedTryLogin');
+      message = i18next.t('error:EXCEED_REQUEST');
     }
 
     return Promise.reject(new ApiError(code, message, status));
-  }
-
-  clearSession() {
-    localStorage.removeItem('accessToken');
   }
 }
 

@@ -31,16 +31,9 @@ export class WelcomePhase implements IGamePhase {
     } catch (error: any) {
       this.isUser = false;
       console.log(error.code);
-      if (error.code === ErrorCode.USER_NOT_FOUND) {
-      } else if (
-        error.code === ErrorCode.ERR_BAD_REQUEST ||
-        error.code === ErrorCode.RT_MISSING ||
-        error.code === ErrorCode.NETWORK_ERROR
-      ) {
-        this.blocker.unblockInput();
-        this.scene.switchPhase(new LoginPhase(this.scene));
-        return;
-      }
+      this.blocker.unblockInput();
+      this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: error.code }));
+      return;
     }
 
     if (!this.isUser) {

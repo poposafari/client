@@ -302,17 +302,17 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     const password = this.labelInputs[1].text;
 
     if (!username) {
-      this.errorEffect(i18next.t('error:emptyUsername'));
+      this.errorEffect(i18next.t('error:EMPTY_USERNAME'));
       return;
     }
 
     if (!password) {
-      this.errorEffect(i18next.t('error:emptyPassword'));
+      this.errorEffect(i18next.t('error:EMPTY_PASSWORD'));
       return;
     }
 
     if (!isValidUsername(username) || !isValidPassword(password)) {
-      this.errorEffect(i18next.t('error:invalidUsernameOrPassword'));
+      this.errorEffect(i18next.t('error:EMPTY_USERNAME'));
       return;
     }
 
