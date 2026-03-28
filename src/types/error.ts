@@ -9,6 +9,7 @@ export enum ErrorCode {
   FAILED_ACCOUNT = 'FAILED_ACCOUNT',
   ACCOUNT_ALREADY_DELETED = 'ACCOUNT_ALREADY_DELETED',
   EXCEED_REQUEST = 'EXCEED_REQUEST',
+  USER_NOT_FOUND = 'USER_NOT_FOUND',
 }
 
 export class ApiError extends Error {

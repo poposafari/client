@@ -9,6 +9,7 @@ import {
   getWalkAnimationKey,
 } from '../overworld-animation-keys';
 import {
+  equippedCostumesToParts,
   getDefaultOverworldKeys,
   getHairTextureKey,
   getOutfitTextureKey,
@@ -31,7 +32,11 @@ function parseCostume(costume: string | CurrentUserCostume | undefined): Current
   if (!costume) return null;
   if (typeof costume === 'string') {
     try {
-      return JSON.parse(costume) as CurrentUserCostume;
+      const parsed = JSON.parse(costume);
+      if (Array.isArray(parsed)) {
+        return equippedCostumesToParts(parsed);
+      }
+      return parsed as CurrentUserCostume;
     } catch {
       return null;
     }
@@ -88,7 +93,7 @@ export class OtherPlayerObject extends BaseObject {
     this.skinKey = skinKey;
 
     const hairKeyRequested = costume
-      ? getHairTextureKey(gender, costume.hair, costume.hairColor)
+      ? getHairTextureKey(gender, costume.hair)
       : defaults.hair;
     const hairKeyResolved = scene.textures.exists(hairKeyRequested)
       ? hairKeyRequested

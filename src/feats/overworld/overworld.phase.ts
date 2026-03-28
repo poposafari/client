@@ -29,7 +29,7 @@ export class OverworldPhase implements IGamePhase {
     };
     this.overworldUi.onInteractivePhaseRequested = (_object, phaseKey) => {
       if (phaseKey === 'professor') {
-        if (this.scene.getUser()?.getProfile().isNewbie) {
+        if (!this.scene.getUser()?.getProfile().hasStarter) {
           this.scene.pushPhase(new StartingPhase(this.scene));
         } else {
           console.log('너 뉴비 아닌데? ');

@@ -15,11 +15,87 @@ export interface RegisterLocalReq {
   password: string;
 }
 
+/** @deprecated getMe()로 대체됨 */
 export interface GetUserRes {
   profile: UserProfile;
-  pc: Record<number, UserPokemon[]>; // 박스 번호를 key로 하는 포켓몬 배열
-  bag: Record<string, BagItem>; // itemId를 key로 하는 아이템 정보
-  costume: string[]; // 코스튬 ID 배열
+  pc: Record<number, UserPokemon[]>;
+  bag: Record<string, BagItem>;
+  costume: string[];
+}
+
+// ── 게임 진입 API (GET /api/user/me) ──
+export interface GetMeRes {
+  profile: {
+    nickname: string;
+    gender: number;
+    money: number;
+    playtime: number;
+    hasStarter: boolean;
+    lastMapId: number;
+    lastX: number;
+    lastY: number;
+  };
+  equippedCostumes: { costumeId: string }[];
+  party: {
+    id: number;
+    pokedexId: number;
+    level: number;
+    gender: number;
+    isShiny: boolean;
+    nickname: string | null;
+    abilityId: number;
+    natureId: number;
+    skills: unknown;
+    heldItemId: number | null;
+    partySlot: number | null;
+    ballId: number;
+  }[];
+  itemSlots: {
+    itemId: number;
+    quantity: number;
+    slotNumber: number | null;
+  }[];
+}
+
+// ── Lazy Load API 응답 타입 ──
+export interface PokemonBoxItem {
+  id: number;
+  pokedexId: number;
+  level: number;
+  gender: number;
+  isShiny: boolean;
+  nickname: string | null;
+  abilityId: number;
+  natureId: number;
+  skills: unknown;
+  heldItemId: number | null;
+  boxNumber: number | null;
+  gridNumber: number | null;
+  ballId: number;
+  caughtLocation: string;
+  caughtAt: string;
+}
+
+export interface ItemBagItem {
+  itemId: number;
+  quantity: number;
+  slotNumber: number | null;
+}
+
+export interface PokedexEntry {
+  pokedexId: number;
+  caughtCount: number;
+  registeredAt: string;
+}
+
+export interface TownMapEntry {
+  mapId: number;
+  visitedAt: string;
+}
+
+export interface CostumeEntry {
+  costumeId: string;
+  isEquipped: boolean;
 }
 
 export interface CreateUserReq {
@@ -28,7 +104,6 @@ export interface CreateUserReq {
   costume: {
     skin: string;
     hair: string;
-    hairColor: string;
     outfit: string;
   };
 }

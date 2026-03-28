@@ -9,6 +9,7 @@ import {
   getWalkAnimationKey,
 } from '../overworld-animation-keys';
 import {
+  equippedCostumesToParts,
   getDefaultOverworldKeys,
   getHairTextureKey,
   getOutfitTextureKey,
@@ -36,8 +37,12 @@ export class PlayerObject extends MovableObject {
     tileY: number,
     options?: { blockingRefs?: IOverworldBlockingRef[]; initDirection?: DIRECTION },
   ) {
-    const profile = scene.getUser()?.getProfile();
-    const costume = profile?.lastCostume;
+    const user = scene.getUser();
+    const profile = user?.getProfile();
+    const equippedCostumes = user?.getEquippedCostumes();
+    const costume = equippedCostumes?.length
+      ? equippedCostumesToParts(equippedCostumes)
+      : null;
     const gender = profile?.gender ?? 'male';
     const defaults = getDefaultOverworldKeys(scene, gender);
 
@@ -51,7 +56,7 @@ export class PlayerObject extends MovableObject {
     });
 
     const hairKeyRequested = costume
-      ? getHairTextureKey(gender, costume.hair, costume.hairColor)
+      ? getHairTextureKey(gender, costume.hair)
       : defaults.hair;
     const hairKeyResolved = scene.textures.exists(hairKeyRequested)
       ? hairKeyRequested

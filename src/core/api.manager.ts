@@ -12,12 +12,18 @@ import {
 } from '@poposafari/types';
 import { addText, addWindow } from '@poposafari/utils';
 import {
+  CostumeEntry,
   CreateUserReq,
+  GetMeRes,
   GetStartingPokemonsRes,
   GetUserRes,
+  ItemBagItem,
   LoginLocalReq,
+  PokedexEntry,
+  PokemonBoxItem,
   RegisterLocalReq,
   StartingPokemon,
+  TownMapEntry,
 } from '@poposafari/types/dto';
 import { GameScene } from '@poposafari/scenes';
 
@@ -93,14 +99,39 @@ export class ApiManager {
     await this.client.post<ApiResponse<null>>('/auth/register/local', payload);
   }
 
-  async getUser(): Promise<GetUserRes | null> {
-    const res = await this.client.get<ApiResponse<GetUserRes>>('/user/get');
+  async getMe(): Promise<GetMeRes | null> {
+    const res = await this.client.get<ApiResponse<GetMeRes>>('/user/me');
 
     if (res.data.success) {
       return res.data.data;
     }
 
     return null;
+  }
+
+  async getPokemonBox(): Promise<PokemonBoxItem[] | null> {
+    const res = await this.client.get<ApiResponse<PokemonBoxItem[]>>('/pokemon/box');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async getItemBag(): Promise<ItemBagItem[] | null> {
+    const res = await this.client.get<ApiResponse<ItemBagItem[]>>('/item/bag');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async getPokedex(): Promise<PokedexEntry[] | null> {
+    const res = await this.client.get<ApiResponse<PokedexEntry[]>>('/pokedex');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async getTownMap(): Promise<TownMapEntry[] | null> {
+    const res = await this.client.get<ApiResponse<TownMapEntry[]>>('/town-map');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async getCostumeList(): Promise<CostumeEntry[] | null> {
+    const res = await this.client.get<ApiResponse<CostumeEntry[]>>('/costume');
+    return res.data.success ? res.data.data : null;
   }
 
   async logout(): Promise<void> {
@@ -166,6 +197,9 @@ export class ApiManager {
           break;
         case ErrorCode.ACCOUNT_ALREADY_EXIST:
           message = i18next.t('error:ACCOUNT_ALREADY_EXIST');
+          break;
+        case ErrorCode.USER_NOT_FOUND:
+          message = i18next.t('error:USER_NOT_FOUND');
           break;
       }
     } else if (error.request) {

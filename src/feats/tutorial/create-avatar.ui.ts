@@ -344,8 +344,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
       gender: this.currentGender,
       costume: {
         skin: skinId,
-        hair: hairId,
-        hairColor: hairColorId,
+        hair: `${hairId}_${hairColorId}`,
         outfit: outfitId,
       },
     });

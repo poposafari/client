@@ -1,17 +1,40 @@
 import {
-  BagItem,
-  GetUserRes,
+  CostumeEntry,
+  GetMeRes,
+  ItemBagItem,
   OverworldDirection,
   OverworldMovementState,
-  UserPokemon,
-  UserProfile,
+  PokedexEntry,
+  PokemonBoxItem,
+  TownMapEntry,
 } from '@poposafari/types';
 
+/**
+ * 기존 UI 코드가 접근하는 프로필 형태.
+ * GetMeRes.profile → MappedProfile로 변환하여 하위 호환 유지.
+ */
+export interface MappedProfile {
+  nickname: string;
+  gender: 'male' | 'female';
+  money: number;
+  playtime: number;
+  hasStarter: boolean;
+  lastLocation: { map: string; x: number; y: number };
+}
+
 export class UserManager {
-  private profile!: UserProfile;
-  private pc!: Record<number, UserPokemon[]>;
-  private bag!: Record<string, BagItem>;
-  private costume!: string[];
+  // ── 게임 진입 시 즉시 로드되는 데이터 ──
+  private profile!: MappedProfile;
+  private equippedCostumes!: GetMeRes['equippedCostumes'];
+  private party!: GetMeRes['party'];
+  private itemSlots!: GetMeRes['itemSlots'];
+
+  // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
+  private pokemonBox: PokemonBoxItem[] | null = null;
+  private itemBag: ItemBagItem[] | null = null;
+  private pokedex: PokedexEntry[] | null = null;
+  private townMap: TownMapEntry[] | null = null;
+  private costumeList: CostumeEntry[] | null = null;
 
   /** 플레이어 오버월드 움직임 상태 (walk / running / ride / fishing / surf) */
   private overworldMovementState: OverworldMovementState =
@@ -21,23 +44,84 @@ export class UserManager {
 
   constructor() {}
 
-  init(user: GetUserRes) {
-    this.profile = user.profile;
-    this.pc = user.pc;
-    this.bag = user.bag;
-    this.costume = user.costume;
-
-    console.log('UserManager init start');
-    console.log(this.profile);
-    console.log(this.pc);
-    console.log(this.bag);
-    console.log(this.costume);
-    console.log('UserManager init end');
+  init(user: GetMeRes) {
+    const p = user.profile;
+    this.profile = {
+      nickname: p.nickname,
+      gender: p.gender === 1 ? 'male' : 'female',
+      money: p.money,
+      playtime: p.playtime,
+      hasStarter: p.hasStarter,
+      lastLocation: {
+        map: String(p.lastMapId),
+        x: p.lastX,
+        y: p.lastY,
+      },
+    };
+    this.equippedCostumes = user.equippedCostumes;
+    this.party = user.party;
+    this.itemSlots = user.itemSlots;
   }
 
-  getProfile(): UserProfile {
+  getProfile(): MappedProfile {
     return this.profile;
   }
+
+  getEquippedCostumes(): GetMeRes['equippedCostumes'] {
+    return this.equippedCostumes;
+  }
+
+  getParty(): GetMeRes['party'] {
+    return this.party;
+  }
+
+  getItemSlots(): GetMeRes['itemSlots'] {
+    return this.itemSlots;
+  }
+
+  // ── Lazy Load getter/setter ──
+
+  getPokemonBox(): PokemonBoxItem[] | null {
+    return this.pokemonBox;
+  }
+
+  setPokemonBox(data: PokemonBoxItem[]): void {
+    this.pokemonBox = data;
+  }
+
+  getItemBag(): ItemBagItem[] | null {
+    return this.itemBag;
+  }
+
+  setItemBag(data: ItemBagItem[]): void {
+    this.itemBag = data;
+  }
+
+  getPokedex(): PokedexEntry[] | null {
+    return this.pokedex;
+  }
+
+  setPokedex(data: PokedexEntry[]): void {
+    this.pokedex = data;
+  }
+
+  getTownMap(): TownMapEntry[] | null {
+    return this.townMap;
+  }
+
+  setTownMap(data: TownMapEntry[]): void {
+    this.townMap = data;
+  }
+
+  getCostumeList(): CostumeEntry[] | null {
+    return this.costumeList;
+  }
+
+  setCostumeList(data: CostumeEntry[]): void {
+    this.costumeList = data;
+  }
+
+  // ── 오버월드 상태 ──
 
   getOverworldMovementState(): OverworldMovementState {
     return this.overworldMovementState;
@@ -53,17 +137,5 @@ export class UserManager {
 
   setOverworldDirection(direction: OverworldDirection): void {
     this.overworldDirection = direction;
-  }
-
-  getPc(): Record<number, UserPokemon[]> {
-    return this.pc;
-  }
-
-  getBag(): Record<string, BagItem> {
-    return this.bag;
-  }
-
-  getCostume(): string[] {
-    return this.costume;
   }
 }

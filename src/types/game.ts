@@ -53,7 +53,6 @@ export interface Location {
 export interface CurrentUserCostume {
   skin: string;
   hair: string;
-  hairColor: string;
   outfit: string;
 }
 

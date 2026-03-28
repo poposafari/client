@@ -21,7 +21,7 @@ import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
 import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
 import { BaseScene } from '@poposafari/scenes';
-import { GetUserRes, TEXTURE } from '@poposafari/types';
+import { GetMeRes, TEXTURE } from '@poposafari/types';
 import { debugLog } from '@poposafari/utils/debug';
 import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
@@ -125,7 +125,7 @@ export class GameScene extends BaseScene {
     this.getCurrentPhase()?.update?.(_time, delta);
   }
 
-  createUserManager(data: GetUserRes) {
+  createUserManager(data: GetMeRes) {
     this.user = new UserManager();
     this.user.init(data);
   }
