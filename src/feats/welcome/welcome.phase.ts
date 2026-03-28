@@ -2,7 +2,7 @@ import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { LoginPhase } from '../login';
 import { WelcomeUi } from './welcome.ui';
-import { ErrorCode } from '@poposafari/types';
+import { ApiError, ErrorCode } from '@poposafari/types';
 import { TitlePhase } from '../title';
 
 export class WelcomePhase implements IGamePhase {
@@ -18,7 +18,7 @@ export class WelcomePhase implements IGamePhase {
     this.blocker = new ApiBlockingUi(this.scene);
 
     try {
-      const res = await this.scene.getApi().getUser();
+      const res = await this.scene.getApi().getMe();
 
       this.blocker.blockInput();
 
@@ -30,10 +30,17 @@ export class WelcomePhase implements IGamePhase {
       }
     } catch (error: any) {
       this.isUser = false;
-      console.log(error.code);
-      this.blocker.unblockInput();
-      this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: error.code }));
-      return;
+      const errorCode = error instanceof ApiError ? error.code : error.code;
+
+      // 계정은 있지만 캐릭터 미생성 → 캐릭터 생성 화면으로 분기
+      if (errorCode === ErrorCode.USER_NOT_FOUND) {
+        this.blocker.unblockInput();
+        // isUser = false 상태로 계속 진행 → 아래에서 WelcomeUi 표시
+      } else {
+        this.blocker.unblockInput();
+        this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: errorCode }));
+        return;
+      }
     }
 
     if (!this.isUser) {

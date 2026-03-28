@@ -23,10 +23,11 @@ export class CreateAvatarPhase implements IGamePhase {
         const inputResult = await this.ui.waitForInput();
         this.blocker.blockInput();
 
-        const res = await this.scene.getApi().createUser(inputResult);
+        await this.scene.getApi().createUser(inputResult);
 
-        if (res) {
-          this.scene.createUserManager(res);
+        const me = await this.scene.getApi().getMe();
+        if (me) {
+          this.scene.createUserManager(me);
         }
 
         this.scene.switchPhase(new OverworldEntryPhase(this.scene));

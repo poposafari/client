@@ -127,7 +127,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     const y = user?.lastLocation.y;
     const time = '00:00';
     const money = user?.money;
-    const candy = user?.candy;
+    const candy = 0;
 
     this.infoList = new ImageTextListContainer(this.scene);
     this.infoList.create({

@@ -26,7 +26,7 @@ export class StartingPhase implements IGamePhase {
           const pokemon = await this.scene.getApi().pickStartingPokemon(selected.index);
           if (pokemon) {
             await this.startingUi.runCongratulationsFlow(selected.key);
-            this.scene.getUser()!.getProfile()!.isNewbie = false;
+            this.scene.getUser()!.getProfile()!.hasStarter = true;
             this.scene.popPhase();
           }
         }
