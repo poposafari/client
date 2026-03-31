@@ -14,7 +14,7 @@ const SOCKET_SERVER_URL =
     ? `${window.location.protocol}//${window.location.hostname}:9010`
     : 'http://localhost:9010');
 
-const AUTH_ERROR_MESSAGES = ['Missing session', 'Invalid session'];
+const AUTH_ERROR_MESSAGES = ['Missing connection token', 'Invalid or expired connection token'];
 
 export class OverworldEntryPhase implements IGamePhase {
   private ui: OverworldEntryUi | null = null;
@@ -31,12 +31,18 @@ export class OverworldEntryPhase implements IGamePhase {
 
     let socket = this.scene.getSocket();
     if (!socket?.connected) {
-      socket = io(SOCKET_SERVER_URL, {
-        withCredentials: true,
-        transports: ['websocket', 'polling'],
-      });
-      this.scene.setSocket(socket);
-      this.setupConnectErrorHandler(socket);
+      try {
+        const token = await this.scene.getApi().getConnToken();
+        socket = io(SOCKET_SERVER_URL, {
+          auth: { token },
+          transports: ['websocket', 'polling'],
+        });
+        this.scene.setSocket(socket);
+        this.setupConnectErrorHandler(socket);
+      } catch {
+        this.goToLogin();
+        return;
+      }
     }
 
     if (this.initPosConfig) {

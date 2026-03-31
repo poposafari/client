@@ -19,6 +19,12 @@ export class LoginPhase implements IGamePhase {
   ) {}
 
   async enter(): Promise<void> {
+    const existingSocket = this.scene.getSocket();
+    if (existingSocket) {
+      existingSocket.disconnect();
+      this.scene.setSocket(null);
+    }
+
     this.ui = new LoginUi(this.scene);
     this.blocker = new ApiBlockingUi(this.scene);
 
