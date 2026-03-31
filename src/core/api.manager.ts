@@ -134,8 +134,20 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
+  async getConnToken(): Promise<string> {
+    const res = await this.client.post<ApiResponse<{ token: string }>>('/game/connect');
+    if (res.data.success) {
+      return res.data.data.token;
+    }
+    throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to get connection token', 500);
+  }
+
   async logout(): Promise<void> {
     await this.client.post<ApiResponse<null>>('/auth/logout');
+  }
+
+  async invalidateSession(): Promise<void> {
+    await this.client.post<ApiResponse<null>>('/auth/invalidate-session');
   }
 
   async deleteAccount(): Promise<void> {

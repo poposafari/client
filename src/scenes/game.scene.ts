@@ -60,7 +60,7 @@ export class GameScene extends BaseScene {
     this.socket.off('kicked', this.onSocketKicked);
     this.socket = null;
     try {
-      await this.getApi().logout();
+      await this.getApi().invalidateSession();
     } catch {}
     this.clearUser();
     this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:kicked' }));

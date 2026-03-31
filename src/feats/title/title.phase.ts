@@ -55,6 +55,11 @@ export class TitlePhase implements IGamePhase {
       }
       // logout
       this.blocker.blockInput();
+      const socket = this.scene.getSocket();
+      if (socket) {
+        socket.disconnect();
+        this.scene.setSocket(null);
+      }
       await this.scene.getApi().logout();
       this.scene.clearUser();
       this.blocker.unblockInput();
