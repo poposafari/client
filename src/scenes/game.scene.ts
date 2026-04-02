@@ -25,6 +25,7 @@ import { GetMeRes, TEXTURE } from '@poposafari/types';
 import { debugLog } from '@poposafari/utils/debug';
 import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export enum GameEvent {
   LANGUAGE_CHANGED = 'LANGUAGE_CHANGED',
@@ -76,6 +77,30 @@ export class GameScene extends BaseScene {
     console.warn('[Socket] connect_error', { message: err?.message, ts: new Date().toISOString() });
   };
 
+  private dayNightTween: Phaser.Tweens.Tween | null = null;
+  private onGameTimeChanged = (payload: { timeOfDay?: string }): void => {
+    if (!payload?.timeOfDay) return;
+    const target = DayNightFilter.timeOfDayToValue(payload.timeOfDay);
+    if (this.dayNightTween) {
+      this.dayNightTween.destroy();
+      this.dayNightTween = null;
+    }
+    const obj = { value: DayNightFilter.getTimeOfDay() };
+    this.dayNightTween = this.tweens.add({
+      targets: obj,
+      value: target,
+      duration: 2000,
+      ease: 'Linear',
+      onUpdate: () => {
+        DayNightFilter.setTimeOfDay(obj.value);
+      },
+      onComplete: () => {
+        DayNightFilter.setTimeOfDay(target);
+        this.dayNightTween = null;
+      },
+    });
+  };
+
   constructor() {
     super('GameScene');
   }
@@ -115,6 +140,7 @@ export class GameScene extends BaseScene {
     if (renderer?.pipelines?.addPostPipeline) {
       renderer.pipelines.addPostPipeline(FadeToBlackPipeline.KEY, FadeToBlackPipeline);
       this.cameras.main.setPostPipeline(FadeToBlackPipeline.KEY);
+      renderer.pipelines.addPostPipeline(DayNightFilter.KEY, DayNightFilter);
     }
 
     this.switchPhase(new LoadingPhase(this));
@@ -176,6 +202,7 @@ export class GameScene extends BaseScene {
       this.socket.off('disconnect', this.onSocketDisconnect);
       this.socket.off('connect', this.onSocketConnect);
       this.socket.off('connect_error', this.onSocketConnectError);
+      this.socket.off('game_time_changed', this.onGameTimeChanged);
     }
     this.socket = socket;
     if (this.socket) {
@@ -183,6 +210,7 @@ export class GameScene extends BaseScene {
       this.socket.on('disconnect', this.onSocketDisconnect);
       this.socket.on('connect', this.onSocketConnect);
       this.socket.on('connect_error', this.onSocketConnectError);
+      this.socket.on('game_time_changed', this.onGameTimeChanged);
     }
   }
 

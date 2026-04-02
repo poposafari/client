@@ -22,6 +22,7 @@ import {
 import { DoorObject, InteractiveObject, OtherPlayerObject, PlayerObject } from './objects';
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 /** 트리거 타입별 핸들러 (player, params) => void */
 const TRIGGER_HANDLERS: Record<
@@ -336,6 +337,9 @@ export class OverworldUi extends BaseUi {
       this.worldContainer = this.scene.add.container(0, 0);
       this.worldContainer.setScale(OVERWORLD_ZOOM);
       this.worldContainer.setDepth(DEPTH.GROUND);
+      if (this.mapConfig?.dayNightFilter !== false) {
+        this.worldContainer.setPostPipeline(DayNightFilter.KEY);
+      }
 
       this.nameContainer = this.scene.add.container(0, 0);
       this.nameContainer.setScale(OVERWORLD_ZOOM);

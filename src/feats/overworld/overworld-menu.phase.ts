@@ -4,6 +4,7 @@ import { OverworldMenuUi } from './overworld-menu.ui';
 import { OptionPhase } from '../option';
 import { BackTitleMenuUi } from './back-title-menu.ui';
 import { TitlePhase } from '../title';
+import { PokemonPcPhase } from '../pc/pokemon-pc.phase';
 
 export class OverworldMenuPhase implements IGamePhase {
   private ui!: OverworldMenuUi;
@@ -23,6 +24,11 @@ export class OverworldMenuPhase implements IGamePhase {
     const result = await this.ui.waitForInput(this.savedCursorIndex);
     this.savedCursorIndex = result.cursorIndex;
 
+    if (result.key === 'pc') {
+      this.scene.pushPhase(new PokemonPcPhase(this.scene));
+      return;
+    }
+
     if (result.key === 'cancel') {
       this.scene.popPhase();
       return;
@@ -36,11 +42,6 @@ export class OverworldMenuPhase implements IGamePhase {
       this.yesOrNoMenu.hide();
       this.scene.getMessage('question').hide();
       if (choice === 'yes') {
-        const socket = this.scene.getSocket();
-        if (socket) {
-          socket.disconnect();
-          this.scene.setSocket(null);
-        }
         this.scene.switchPhase(new TitlePhase(this.scene));
         return;
       }

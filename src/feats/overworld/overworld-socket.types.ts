@@ -17,6 +17,7 @@ export interface InitOkPayload {
   nickname: string;
   gender?: string;
   lastLocation?: { map: string; x: number; y: number };
+  timeOfDay?: string;
 }
 
 export interface MovePayload {
