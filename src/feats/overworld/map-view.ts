@@ -3,6 +3,7 @@ import { GameScene } from '@poposafari/scenes';
 import { DEPTH } from '@poposafari/types';
 import { MAP_LAYER_SCALE_ZOOMED } from './overworld.constants';
 import { NpcObject, ProfessorNpcObject, TriggerObject } from './objects';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export class MapView {
   private scene!: GameScene;
@@ -58,6 +59,12 @@ export class MapView {
     this.layerContainer.setVisible(false);
     this.foregroundContainer.setVisible(false);
     this.foreground1Container.setVisible(false);
+
+    if (config.dayNightFilter !== false) {
+      this.layerContainer.setPostPipeline(DayNightFilter.KEY);
+      this.foregroundContainer.setPostPipeline(DayNightFilter.KEY);
+      this.foreground1Container.setPostPipeline(DayNightFilter.KEY);
+    }
 
     this.foregroundContainer.setDepth(DEPTH.FOREGROUND);
     this.foreground1Container.setDepth(DEPTH.FOREGROUND);

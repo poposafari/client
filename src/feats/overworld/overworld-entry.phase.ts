@@ -7,6 +7,7 @@ import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
 import { LoginPhase } from '../login';
 import { OverworldPhase } from './overworld.phase';
 import { OverworldEntryUi } from './overworld-entry.ui';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 const SOCKET_SERVER_URL =
   VITE_SOCKET_SERVER_URL ??
@@ -138,6 +139,9 @@ export class OverworldEntryPhase implements IGamePhase {
           x: payload.lastLocation.x,
           y: payload.lastLocation.y,
         };
+      }
+      if (payload.timeOfDay) {
+        DayNightFilter.setTimeOfDay(DayNightFilter.timeOfDayToValue(payload.timeOfDay));
       }
       this.ui?.hide();
       this.ui?.destroy();
