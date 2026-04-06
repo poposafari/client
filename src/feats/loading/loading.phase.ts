@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { CostumeData } from '@poposafari/types';
-import { ANIMATION, MAP, SFX, TEXTURE, TILE } from '@poposafari/types';
+import { ANIMATION, MAP, PC_BG_CNT, SFX, TEXTURE, TILE } from '@poposafari/types';
 import {
   createAnimationFromFrameNames,
   createSpriteAnimation,
@@ -9,30 +9,7 @@ import {
 } from '@poposafari/utils';
 import { LoadingUi } from './loading.ui';
 import { WelcomePhase } from '../welcome/welcome.phase';
-import {
-  p001Config,
-  p002Config,
-  p003Config,
-  p004Config,
-  p005Config,
-  p006Config,
-  p007Config,
-  p008Config,
-  p009Config,
-  p010Config,
-  p011Config,
-  p012Config,
-  p013Config,
-  p014Config,
-  p015Config,
-  p016Config,
-  p017Config,
-  p019Config,
-  p020Config,
-  p021Config,
-  p022Config,
-  p023Config,
-} from '../overworld';
+import { p001Config } from '../overworld';
 
 import {
   bigSizePokemonOverworldPokedex,
@@ -41,8 +18,9 @@ import {
   femalePokemonOverworldPokedex,
   pokemonCryNames,
 } from '@poposafari/core/master.data.ts';
+import { s001Config, s002Config } from '../overworld/maps/safari';
 
-const MAX_NPC = 1;
+const MAX_NPC = 2;
 const MAX_DOOR = 19;
 
 /** id like "skin_0" | "outfit_0" | "hair_0" -> numeric suffix "0" */
@@ -474,6 +452,17 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_5, 'ui/bgs', 'bg_5');
     this.scene.loadImage(TEXTURE.BG_6, 'ui/bgs', 'bg_6');
     this.scene.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
+    this.scene.loadImage(TEXTURE.BG_PC, 'ui/bgs', 'bg_pc');
+
+    for (let i = 0; i <= PC_BG_CNT; i++) {
+      this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
+    }
+    this.scene.loadImage(`pc_poke-ball`, 'ui/pc', 'pc_poke-ball');
+    this.scene.loadImage(`pc_great-ball`, 'ui/pc', 'pc_great-ball');
+    this.scene.loadImage(`pc_ultra-ball`, 'ui/pc', 'pc_ultra-ball');
+    this.scene.loadImage(`pc_master-ball`, 'ui/pc', 'pc_master-ball');
+
+    this.scene.loadImage(TEXTURE.PC_INFO, 'ui/pc', 'pc_info');
 
     this.scene.loadImage(TEXTURE.BLANK, 'ui', 'blank');
 
@@ -486,6 +475,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_HUD, 'ui/windows', 'window_hud');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', 'window_notice_0');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');
+    this.scene.loadImage(TEXTURE.WINDOW_PC, 'ui/windows', 'window_pc');
 
     this.scene.loadImage(TEXTURE.KEYCAP, 'ui', 'keycap');
 
@@ -500,7 +490,8 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_BAG_M, 'ui/icons', 'icon_bag_m');
     this.scene.loadImage(TEXTURE.ICON_BAG_F, 'ui/icons', 'icon_bag_f');
     this.scene.loadImage(TEXTURE.ICON_OPTION, 'ui/icons', 'icon_option');
-    this.scene.loadImage(TEXTURE.ICON_EXIT, 'ui/icons', 'icon_exit');
+    this.scene.loadImage(TEXTURE.ICON_EXIT_0, 'ui/icons', 'icon_exit_0');
+    this.scene.loadImage(TEXTURE.ICON_EXIT_1, 'ui/icons', 'icon_exit_1');
     this.scene.loadImage(TEXTURE.ICON_MENU, 'ui/icons', 'icon_menu');
     this.scene.loadImage(TEXTURE.ICON_TALK, 'ui/icons', 'icon_talk');
     this.scene.loadImage(TEXTURE.ICON_LOCATION, 'ui/icons', 'icon_location');
@@ -511,8 +502,12 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_DAY, 'ui/icons', 'icon_day');
     this.scene.loadImage(TEXTURE.ICON_DUSK, 'ui/icons', 'icon_dusk');
     this.scene.loadImage(TEXTURE.ICON_NIGHT, 'ui/icons', 'icon_night');
+    this.scene.loadImage(TEXTURE.ICON_SHINY, 'ui/icons', 'icon_shiny');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
+    this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
+
+    this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
 
     this.loadPlayerCostumeAssets();
 
@@ -528,65 +523,49 @@ export class LoadingPhase implements IGamePhase {
   }
 
   private loadMap() {
-    this.scene.loadImage(TILE.INDOOR_FLOOR, 'ui/maps', TILE.INDOOR_FLOOR);
-    this.scene.loadImage(TILE.INDOOR_OBJECT, 'ui/maps', TILE.INDOOR_OBJECT);
-    this.scene.loadImage(TILE.INDOOR_EVENT, 'ui/maps', TILE.INDOOR_EVENT);
+    this.scene.loadImage(TILE.INDOOR_FLOOR, 'ui/maps/indoor', 'floor');
+    this.scene.loadImage(TILE.INDOOR_OBJECT, 'ui/maps/indoor', 'object');
+    this.scene.loadImage(TILE.INDOOR_EVENT, 'ui/maps/indoor', 'event');
 
-    this.scene.loadImage(TILE.OUTDOOR_FLOOR, 'ui/maps', TILE.OUTDOOR_FLOOR);
-    this.scene.loadImage(TILE.OUTDOOR_OBJECT, 'ui/maps', TILE.OUTDOOR_OBJECT);
-    this.scene.loadImage(TILE.OUTDOOR_EDGE, 'ui/maps', TILE.OUTDOOR_EDGE);
-    this.scene.loadImage(TILE.OUTDOOR_OBJECT_URBAN, 'ui/maps', TILE.OUTDOOR_OBJECT_URBAN);
-    this.scene.loadImage(TILE.OUTDOOR_URBAN, 'ui/maps', TILE.OUTDOOR_URBAN);
-    this.scene.loadImage(TILE.OUTDOOR_EVENT, 'ui/maps', TILE.OUTDOOR_EVENT);
+    this.scene.loadImage(TILE.OUTDOOR_FLOOR, 'ui/maps/outdoor', 'floor');
+    this.scene.loadImage(TILE.OUTDOOR_OBJECT, 'ui/maps/outdoor', 'object');
+    this.scene.loadImage(TILE.OUTDOOR_EDGE, 'ui/maps/outdoor', 'edge');
+    this.scene.loadImage(TILE.OUTDOOR_OBJECT_URBAN, 'ui/maps/outdoor', 'object_urban');
+    this.scene.loadImage(TILE.OUTDOOR_URBAN, 'ui/maps/outdoor', 'urban');
+    this.scene.loadImage(TILE.OUTDOOR_EVENT, 'ui/maps/outdoor', 'event');
 
     //plaza
     this.scene.loadMap(MAP.PLAZA_001, 'ui/maps', MAP.PLAZA_001);
-    this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
-    this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
-    this.scene.loadMap(MAP.PLAZA_004, 'ui/maps', MAP.PLAZA_004);
-    this.scene.loadMap(MAP.PLAZA_005, 'ui/maps', MAP.PLAZA_005);
-    this.scene.loadMap(MAP.PLAZA_006, 'ui/maps', MAP.PLAZA_006);
-    this.scene.loadMap(MAP.PLAZA_007, 'ui/maps', MAP.PLAZA_007);
-    this.scene.loadMap(MAP.PLAZA_008, 'ui/maps', MAP.PLAZA_008);
-    this.scene.loadMap(MAP.PLAZA_009, 'ui/maps', MAP.PLAZA_009);
-    this.scene.loadMap(MAP.PLAZA_010, 'ui/maps', MAP.PLAZA_010);
-    this.scene.loadMap(MAP.PLAZA_011, 'ui/maps', MAP.PLAZA_011);
-    this.scene.loadMap(MAP.PLAZA_012, 'ui/maps', MAP.PLAZA_012);
-    this.scene.loadMap(MAP.PLAZA_013, 'ui/maps', MAP.PLAZA_013);
-    this.scene.loadMap(MAP.PLAZA_014, 'ui/maps', MAP.PLAZA_014);
-    this.scene.loadMap(MAP.PLAZA_015, 'ui/maps', MAP.PLAZA_015);
-    this.scene.loadMap(MAP.PLAZA_016, 'ui/maps', MAP.PLAZA_016);
-    this.scene.loadMap(MAP.PLAZA_017, 'ui/maps', MAP.PLAZA_017);
-    this.scene.loadMap(MAP.PLAZA_019, 'ui/maps', MAP.PLAZA_019);
-    this.scene.loadMap(MAP.PLAZA_020, 'ui/maps', MAP.PLAZA_020);
-    this.scene.loadMap(MAP.PLAZA_021, 'ui/maps', MAP.PLAZA_021);
-    this.scene.loadMap(MAP.PLAZA_022, 'ui/maps', MAP.PLAZA_022);
-    this.scene.loadMap(MAP.PLAZA_023, 'ui/maps', MAP.PLAZA_023);
+    this.scene.loadMap(MAP.SAFARI_001, 'ui/maps', MAP.SAFARI_001);
+    this.scene.loadMap(MAP.SAFARI_002, 'ui/maps', MAP.SAFARI_002);
+
+    // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
+    // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
+    // this.scene.loadMap(MAP.PLAZA_004, 'ui/maps', MAP.PLAZA_004);
+    // this.scene.loadMap(MAP.PLAZA_005, 'ui/maps', MAP.PLAZA_005);
+    // this.scene.loadMap(MAP.PLAZA_006, 'ui/maps', MAP.PLAZA_006);
+    // this.scene.loadMap(MAP.PLAZA_007, 'ui/maps', MAP.PLAZA_007);
+    // this.scene.loadMap(MAP.PLAZA_008, 'ui/maps', MAP.PLAZA_008);
+    // this.scene.loadMap(MAP.PLAZA_009, 'ui/maps', MAP.PLAZA_009);
+    // this.scene.loadMap(MAP.PLAZA_010, 'ui/maps', MAP.PLAZA_010);
+    // this.scene.loadMap(MAP.PLAZA_011, 'ui/maps', MAP.PLAZA_011);
+    // this.scene.loadMap(MAP.PLAZA_012, 'ui/maps', MAP.PLAZA_012);
+    // this.scene.loadMap(MAP.PLAZA_013, 'ui/maps', MAP.PLAZA_013);
+    // this.scene.loadMap(MAP.PLAZA_014, 'ui/maps', MAP.PLAZA_014);
+    // this.scene.loadMap(MAP.PLAZA_015, 'ui/maps', MAP.PLAZA_015);
+    // this.scene.loadMap(MAP.PLAZA_016, 'ui/maps', MAP.PLAZA_016);
+    // this.scene.loadMap(MAP.PLAZA_017, 'ui/maps', MAP.PLAZA_017);
+    // this.scene.loadMap(MAP.PLAZA_019, 'ui/maps', MAP.PLAZA_019);
+    // this.scene.loadMap(MAP.PLAZA_020, 'ui/maps', MAP.PLAZA_020);
+    // this.scene.loadMap(MAP.PLAZA_021, 'ui/maps', MAP.PLAZA_021);
+    // this.scene.loadMap(MAP.PLAZA_022, 'ui/maps', MAP.PLAZA_022);
+    // this.scene.loadMap(MAP.PLAZA_023, 'ui/maps', MAP.PLAZA_023);
 
     // register maps
     const mapRegistry = this.scene.getMapRegistry();
     mapRegistry.register(p001Config);
-    mapRegistry.register(p002Config);
-    mapRegistry.register(p003Config);
-    mapRegistry.register(p004Config);
-    mapRegistry.register(p005Config);
-    mapRegistry.register(p006Config);
-    mapRegistry.register(p007Config);
-    mapRegistry.register(p008Config);
-    mapRegistry.register(p009Config);
-    mapRegistry.register(p010Config);
-    mapRegistry.register(p011Config);
-    mapRegistry.register(p012Config);
-    mapRegistry.register(p013Config);
-    mapRegistry.register(p014Config);
-    mapRegistry.register(p015Config);
-    mapRegistry.register(p016Config);
-    mapRegistry.register(p017Config);
-    mapRegistry.register(p019Config);
-    mapRegistry.register(p020Config);
-    mapRegistry.register(p021Config);
-    mapRegistry.register(p022Config);
-    mapRegistry.register(p023Config);
+    mapRegistry.register(s001Config);
+    mapRegistry.register(s002Config);
   }
 
   private loadAudio() {

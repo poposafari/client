@@ -24,6 +24,7 @@ export class TalkMessageUi extends MessageUi {
   }
 
   onInput(key: string): void {
+    if (this.inputLocked) return;
     if (key === KEY.Z || key === KEY.ENTER) {
       if (this.isTyping) {
         this.stopTyping();

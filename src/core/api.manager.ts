@@ -25,7 +25,7 @@ import {
   StartingPokemon,
   TownMapEntry,
 } from '@poposafari/types/dto';
-import { GameScene } from '@poposafari/scenes';
+import { GameScene, SafariMapInfo, SafariWildInfo, SafariItemInfo } from '@poposafari/scenes';
 
 export interface ApiSuccess<T> {
   success: true;
@@ -182,6 +182,35 @@ export class ApiManager {
     }
 
     return null;
+  }
+
+  async enterSafari(
+    mapId: string,
+    needEntry: boolean,
+  ): Promise<{ mapId: string; mapInfo: SafariMapInfo } | null> {
+    const res = await this.client.post<
+      ApiResponse<{
+        mapData: { wilds: SafariWildInfo[]; items: SafariItemInfo[] };
+        entry?: { x: number; y: number };
+      }>
+    >('/game/safari/enter', { mapId, needEntry });
+    if (!res.data.success || !res.data.data) return null;
+    const { mapData, entry } = res.data.data;
+    return {
+      mapId,
+      mapInfo: {
+        wilds: mapData.wilds,
+        items: mapData.items,
+        entry: entry ?? null,
+      },
+    };
+  }
+
+  async exitSafari(): Promise<{ mapId: string; entry: { x: number; y: number } } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ mapId: string; entry: { x: number; y: number } }>
+    >('/game/safari/exit');
+    return res.data.success ? res.data.data : null;
   }
 
   private handleGlobalError(error: AxiosError<ApiFail>) {

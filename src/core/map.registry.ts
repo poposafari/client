@@ -49,7 +49,7 @@ export type ReactionStep =
   | { key: 'question'; content: QuestionStepContent }
   | { key: 'notice'; content: NoticeStepContent };
 
-export type SpecialNpc = 'professor';
+export type SpecialNpc = 'professor' | 'safari';
 
 export interface NpcConfig {
   key: string;

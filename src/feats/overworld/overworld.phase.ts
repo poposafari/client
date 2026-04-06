@@ -3,6 +3,7 @@ import { GameScene } from '@poposafari/scenes';
 import type { RoomUserState, UsersMovedPayload } from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
 import { OverworldUi } from './overworld.ui';
+import { SafariPhase } from '../safari/safari.phase';
 import { StartingPhase } from '../starting/starting.phase';
 
 export class OverworldPhase implements IGamePhase {
@@ -34,6 +35,8 @@ export class OverworldPhase implements IGamePhase {
         } else {
           console.log('너 뉴비 아닌데? ');
         }
+      } else if (phaseKey === 'safari') {
+        this.scene.pushPhase(new SafariPhase(this.scene));
       }
     };
     this.overworldUi.show();

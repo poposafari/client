@@ -60,7 +60,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   protected resolveSelection: ((item: IMenuItem | null) => void) | null = null;
 
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuListConfig) {
-    super(scene, inputManager, DEPTH.DEFAULT);
+    super(scene, inputManager, DEPTH.MESSAGE);
     this.scene = scene;
     this.config = config;
 

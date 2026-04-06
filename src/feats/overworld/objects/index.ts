@@ -5,5 +5,5 @@ export * from './movable.object';
 export * from './npc.object';
 export * from './other-player.object';
 export * from './player.object';
-export * from './professor-npc.object';
+export * from './special-npc.object';
 export * from './trigger.object';

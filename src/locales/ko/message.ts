@@ -18,6 +18,7 @@ export const msg: TranslationMessage = {
   pickStartingPokemon_0: '*을(를)\n선택하시겠습니까?',
   receiveProfessor: '*은(는) 호박사에게\n*을(를) 받았다.',
   backToTitle: '타이틀 화면으로 돌아가시겠습니까?',
+  backToPlaza: '포포마을로 돌아가시겠습니까?',
   professor_0: '오, 처음 보는 얼굴이네.\n포포시티에 막 발을 들인 거지?',
   professor_1: '이곳은 포포시티야. 이 도시를 나가면\n다양한 포켓몬이 나오는 사파리존이 나오게 돼.',
   professor_2:

@@ -73,18 +73,27 @@ export const p001Config: MapConfig = {
 
   npcs: [
     {
+      key: 'npc2',
+      name: '사파리존 테스트',
+      special: 'safari',
+      x: 30,
+      y: 17,
+      direction: DIRECTION.DOWN,
+      reaction: [],
+    },
+    {
       key: TEXTURE.BLANK,
       name: 'professor_office',
-      x: 18,
-      y: 17,
+      x: 31,
+      y: 28,
       direction: DIRECTION.RIGHT,
       reaction: [],
     },
     {
       key: TEXTURE.BLANK,
       name: 'department_store',
-      x: 23,
-      y: 42,
+      x: 38,
+      y: 28,
       direction: DIRECTION.RIGHT,
       reaction: [
         {
@@ -94,45 +103,6 @@ export const p001Config: MapConfig = {
         {
           key: 'notice',
           content: { text: 'msg:department_store_1', name: 'NPC', window: TEXTURE.WINDOW_NOTICE_0 },
-        },
-      ],
-    },
-    {
-      key: TEXTURE.BLANK,
-      name: 'museum',
-      x: 35,
-      y: 42,
-      direction: DIRECTION.RIGHT,
-      reaction: [
-        {
-          key: 'notice',
-          content: { text: 'msg:museum_0', name: 'NPC', window: TEXTURE.WINDOW_NOTICE_0 },
-        },
-      ],
-    },
-    {
-      key: TEXTURE.BLANK,
-      name: 'cafe',
-      x: 40,
-      y: 42,
-      direction: DIRECTION.RIGHT,
-      reaction: [
-        {
-          key: 'notice',
-          content: { text: 'msg:cafe_0', name: 'NPC', window: TEXTURE.WINDOW_NOTICE_0 },
-        },
-      ],
-    },
-    {
-      key: TEXTURE.BLANK,
-      name: 'center',
-      x: 40,
-      y: 26,
-      direction: DIRECTION.RIGHT,
-      reaction: [
-        {
-          key: 'notice',
-          content: { text: 'msg:center_0', name: 'NPC', window: TEXTURE.WINDOW_NOTICE_0 },
         },
       ],
     },

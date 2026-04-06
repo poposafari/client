@@ -688,8 +688,24 @@ export class OverworldUi extends BaseUi {
             this.doorTransitionPending = true;
             this.keyPressStartTime = {};
             this.inputManager.clearInputQueue();
-            frontDoor.trigger().then((result) => {
-              if (result) this.scene.startMapTransitionWithFade(result);
+            frontDoor.trigger().then(async (result) => {
+              if (!result) {
+                this.doorTransitionPending = false;
+                return;
+              }
+              const targetMapId = result.location as string;
+              if (targetMapId.startsWith('s') && !this.scene.getSafariInfo().has(targetMapId)) {
+                try {
+                  const safariResult = await this.scene.getApi().enterSafari(targetMapId, false);
+                  if (safariResult) {
+                    this.scene.mergeSafariInfo({ [safariResult.mapId]: safariResult.mapInfo });
+                  }
+                } catch {
+                  this.doorTransitionPending = false;
+                  return;
+                }
+              }
+              this.scene.startMapTransitionWithFade(result);
               this.scene.time.delayedCall(0, () => {
                 this.doorTransitionPending = false;
               });

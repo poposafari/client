@@ -79,6 +79,18 @@ export enum DOOR {
   P022_LEFT_0 = 'p022_left_0',
   P023_RIGHT_0 = 'p023_right_0',
   P023_RIGHT_1 = 'p023_right_1',
+
+  S001_DOWN_0 = 's001_down_0',
+  S001_DOWN_1 = 's001_down_1',
+  S001_RIGHT_0 = 's001_right_0',
+  S001_RIGHT_1 = 's001_right_1',
+  S001_RIGHT_2 = 's001_right_2',
+
+  S002_UP_0 = 's002_up_0',
+  S002_UP_1 = 's002_up_1',
+  S002_DOWN_0 = 's002_down_0',
+  S002_DOWN_1 = 's002_down_1',
+  S002_DOWN_2 = 's002_down_2',
 }
 
 export enum INIT_POS {
@@ -129,6 +141,18 @@ export enum INIT_POS {
   P022_DOWN_0 = 'p022_down_0',
   P022_LEFT_0 = 'p022_left_0',
   P023_RIGHT_0 = 'p023_right_0',
+
+  S001_DOWN_0 = 's001_down_0',
+  S001_DOWN_1 = 's001_down_1',
+  S001_RIGHT_0 = 's001_right_0',
+  S001_RIGHT_1 = 's001_right_1',
+  S001_RIGHT_2 = 's001_right_2',
+
+  S002_UP_0 = 's002_up_0',
+  S002_UP_1 = 's002_up_1',
+  S002_DOWN_0 = 's002_down_0',
+  S002_DOWN_1 = 's002_down_1',
+  S002_DOWN_2 = 's002_down_2',
 }
 
 export interface DoorConfig {
@@ -724,6 +748,78 @@ export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {
     y: 5,
     offsetY: 0,
   },
+
+  [DOOR.S001_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 22,
+    y: 35,
+    offsetY: 0,
+  },
+  [DOOR.S001_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 23,
+    y: 35,
+    offsetY: 0,
+  },
+  [DOOR.S001_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 19,
+    offsetY: 0,
+  },
+  [DOOR.S001_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 20,
+    offsetY: 0,
+  },
+  [DOOR.S001_RIGHT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 21,
+    offsetY: 0,
+  },
+
+  [DOOR.S002_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 35,
+    y: 11,
+    offsetY: 0,
+  },
+  [DOOR.S002_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 36,
+    y: 11,
+    offsetY: 0,
+  },
+  [DOOR.S002_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 29,
+    y: 48,
+    offsetY: 0,
+  },
+  [DOOR.S002_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 29,
+    y: 49,
+    offsetY: 0,
+  },
+  [DOOR.S002_DOWN_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 29,
+    y: 50,
+    offsetY: 0,
+  },
 };
 
 export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
@@ -961,5 +1057,57 @@ export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
     location: MAP.PLAZA_023,
     x: 15,
     y: 4,
+  },
+
+  [INIT_POS.S001_DOWN_0]: {
+    location: MAP.SAFARI_001,
+    x: 22,
+    y: 34,
+  },
+  [INIT_POS.S001_DOWN_1]: {
+    location: MAP.SAFARI_001,
+    x: 23,
+    y: 34,
+  },
+  [INIT_POS.S001_RIGHT_0]: {
+    location: MAP.SAFARI_001,
+    x: 47,
+    y: 19,
+  },
+  [INIT_POS.S001_RIGHT_1]: {
+    location: MAP.SAFARI_001,
+    x: 47,
+    y: 20,
+  },
+  [INIT_POS.S001_RIGHT_2]: {
+    location: MAP.SAFARI_001,
+    x: 47,
+    y: 21,
+  },
+
+  [INIT_POS.S002_UP_0]: {
+    location: MAP.SAFARI_002,
+    x: 35,
+    y: 12,
+  },
+  [INIT_POS.S002_UP_1]: {
+    location: MAP.SAFARI_002,
+    x: 36,
+    y: 12,
+  },
+  [INIT_POS.S002_DOWN_0]: {
+    location: MAP.SAFARI_002,
+    x: 30,
+    y: 48,
+  },
+  [INIT_POS.S002_DOWN_1]: {
+    location: MAP.SAFARI_002,
+    x: 30,
+    y: 49,
+  },
+  [INIT_POS.S002_DOWN_2]: {
+    location: MAP.SAFARI_002,
+    x: 30,
+    y: 50,
   },
 };

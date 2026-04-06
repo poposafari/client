@@ -2,7 +2,7 @@ import { MapConfig } from '@poposafari/core/map.registry';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH } from '@poposafari/types';
 import { MAP_LAYER_SCALE_ZOOMED } from './overworld.constants';
-import { NpcObject, ProfessorNpcObject, TriggerObject } from './objects';
+import { NpcObject, ProfessorNpcObject, SafariNpcObject, TriggerObject } from './objects';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export class MapView {
@@ -99,6 +99,8 @@ export class MapView {
       for (const n of config.npcs) {
         if (n.special === 'professor') {
           this.npcs.push(new ProfessorNpcObject(this.scene, n));
+        } else if (n.special === 'safari') {
+          this.npcs.push(new SafariNpcObject(this.scene, n));
         } else {
           this.npcs.push(new NpcObject(this.scene, n));
         }
