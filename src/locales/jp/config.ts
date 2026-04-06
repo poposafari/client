@@ -3,6 +3,7 @@ import { error } from './error';
 import { menu } from './menu';
 import { msg } from './message';
 import { option } from './option';
+import { safari } from './safari';
 import { splash } from './splash';
 
 export const jpConfig = {
@@ -11,5 +12,6 @@ export const jpConfig = {
   msg: msg,
   costume: costume,
   option: option,
+  safari: safari,
   splash: splash,
 };

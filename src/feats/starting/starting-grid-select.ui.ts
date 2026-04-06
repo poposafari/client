@@ -34,16 +34,13 @@ export class StartingGridSelectUi extends GridSelectUi {
       y: scene.scale.height / 2 - 80,
       outerWindowTexture: TEXTURE.BLANK,
       innerWindowTexture: TEXTURE.BLANK,
-      cursorTexture: TEXTURE.BLANK,
-      cursorWindowTexture: TEXTURE.WINDOW_CURSOR,
+      cursor: { type: 'window', texture: TEXTURE.WINDOW_CURSOR, size: 120, scale: 2.4 },
       itemScale: 2.2,
       items: [],
       columns: 9,
       rows: 4,
       rowGap: 60,
       columnGap: 60,
-      cursorWindowSize: 120,
-      cursorWindowScale: 2.4,
     };
 
     super(scene, inputManager, config);

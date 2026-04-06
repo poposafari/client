@@ -21,3 +21,21 @@ export class ProfessorNpcObject extends NpcObject {
     return [];
   }
 }
+
+export class SafariNpcObject extends NpcObject {
+  scene: GameScene;
+
+  constructor(scene: GameScene, config: NpcConfig) {
+    super(scene, config);
+    this.scene = scene;
+  }
+
+  override getPhaseRequest(): string | null {
+    return 'safari';
+  }
+
+  override reaction(direction: DIRECTION): ReactionStep[] {
+    this.lookAt(direction);
+    return [];
+  }
+}

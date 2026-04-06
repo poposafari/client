@@ -23,6 +23,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
   private typingTimer: Phaser.Time.TimerEvent | null = null;
   protected resolveFunction: (() => void) | null = null;
   private resolveWhenDisplayed: boolean = false;
+  protected inputLocked: boolean = false;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.MESSAGE);
@@ -75,8 +76,11 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
     this.show(); // Input Stack Push
     this.setVisible(true);
 
-    // const zoom = this.scene.cameras.main.zoom;
-    // this.setScale(zoom > 0 ? 1 / zoom : 1);
+    this.inputLocked = true;
+    this.scene.time.delayedCall(100, () => {
+      this.inputLocked = false;
+    });
+
     this.fullText = content;
     this.text.setText('');
 

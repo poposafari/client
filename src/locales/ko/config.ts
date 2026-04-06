@@ -6,6 +6,7 @@ import { msg } from './message';
 import { object } from './object';
 import { option } from './option';
 import { pokemon } from './pokemon';
+import { safari } from './safari';
 import { splash } from './splash';
 
 export const koConfig = {
@@ -16,6 +17,7 @@ export const koConfig = {
   msg: msg,
   costume: costume,
   option: option,
+  safari: safari,
   splash: splash,
   object: object,
 };

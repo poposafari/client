@@ -32,6 +32,31 @@ export enum GameEvent {
   WINDOW_CHANGED = 'WINDOW_CHANGED',
 }
 
+export interface SafariWildInfo {
+  uid: string;
+  pokedexId: string;
+  level: number;
+  gender: number;
+  isShiny: boolean;
+  nature: string;
+  ability: string;
+  caught: number;
+  bait: boolean;
+  rock: boolean;
+}
+
+export interface SafariItemInfo {
+  uid: string;
+  itemId: string;
+  picked: boolean;
+}
+
+export interface SafariMapInfo {
+  wilds: SafariWildInfo[];
+  items: SafariItemInfo[];
+  entry: { x: number; y: number } | null;
+}
+
 export class GameScene extends BaseScene {
   private inputManager!: InputManager;
   private api!: ApiManager;
@@ -43,6 +68,8 @@ export class GameScene extends BaseScene {
   private mapBuilder!: MapBuilder;
 
   private phaseStack: IGamePhase[] = [];
+
+  private safariInfo: Map<string, SafariMapInfo> = new Map();
 
   private talkUi!: TalkMessageUi;
   private noticeUi!: NoticeMessageUi;
@@ -190,6 +217,24 @@ export class GameScene extends BaseScene {
 
   getMapBuilder(): MapBuilder {
     return this.mapBuilder;
+  }
+
+  getSafariInfo(): Map<string, SafariMapInfo> {
+    return this.safariInfo;
+  }
+
+  setSafariInfo(data: Record<string, SafariMapInfo>): void {
+    this.safariInfo = new Map(Object.entries(data));
+  }
+
+  mergeSafariInfo(data: Record<string, SafariMapInfo>): void {
+    for (const [key, value] of Object.entries(data)) {
+      this.safariInfo.set(key, value);
+    }
+  }
+
+  clearSafariInfo(): void {
+    this.safariInfo.clear();
   }
 
   getSocket(): Socket | null {
