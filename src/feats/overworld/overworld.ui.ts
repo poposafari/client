@@ -19,7 +19,15 @@ import {
   type RoomUserState,
   type UserMovedPayload,
 } from './overworld-socket.types';
-import { DoorObject, InteractiveObject, OtherPlayerObject, PlayerObject } from './objects';
+import {
+  BaseObject,
+  DoorObject,
+  GroundItemObject,
+  InteractiveObject,
+  OtherPlayerObject,
+  PlayerObject,
+  WildPokemonObject,
+} from './objects';
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
@@ -97,6 +105,8 @@ export class OverworldUi extends BaseUi {
   private player: PlayerObject | null = null;
   private doors: DoorObject[] = [];
   private otherPlayers: Map<string, OtherPlayerObject> = new Map();
+  // WildPokemonObject는 InteractiveObject를 상속하지 않으므로 BaseObject로 widen.
+  private safariObjects: BaseObject[] = [];
   private worldContainer: Phaser.GameObjects.Container | null = null;
   private nameContainer: Phaser.GameObjects.Container | null = null;
 
@@ -158,6 +168,12 @@ export class OverworldUi extends BaseUi {
       const { x: nx, y: ny } = npc.getTilePos();
       if (nx === fx && ny === fy) return npc;
     }
+    for (const obj of this.safariObjects) {
+      // 잡기 상호작용은 후속 단계에서 별도 진입점으로 처리. 여기서는 InteractiveObject만 반환.
+      if (!(obj instanceof InteractiveObject)) continue;
+      const { x: ox, y: oy } = obj.getTilePos();
+      if (ox === fx && oy === fy) return obj;
+    }
     return null;
   }
 
@@ -206,6 +222,10 @@ export class OverworldUi extends BaseUi {
     if (!this.player || !this.player.isMovementFinish()) return;
     const obj = this.getFacingInteractiveObject();
     if (!obj) return;
+    if (obj instanceof GroundItemObject) {
+      this.handleGroundItemPick(obj);
+      return;
+    }
     const steps = obj.reaction(this.player.getLastDirection());
     const phaseKey = obj.getPhaseRequest?.() ?? null;
     if (phaseKey) {
@@ -213,6 +233,183 @@ export class OverworldUi extends BaseUi {
       return;
     }
     this.runReaction(steps);
+  }
+
+  private async handleGroundItemPick(obj: GroundItemObject): Promise<void> {
+    const uid = obj.getUid();
+    const itemId = obj.getItemId();
+    try {
+      const result = await this.scene.getApi().pickGroundItem(uid);
+      if (!result) return;
+
+      const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
+      const itemName = i18next.t(`item:${result.itemId}`, {
+        defaultValue: result.itemId,
+      });
+      this.scene.getAudio().playEffect(SFX.GET_0);
+
+      this.removeSafariObject(obj);
+      await this.scene
+        .getMessage('talk')
+        .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
+
+      // SafariInfo 동기화: picked = true
+      const mapKey = this.mapConfig?.key;
+      if (mapKey) {
+        const info = this.scene.getSafariInfo().get(mapKey);
+        const target = info?.items.find((i) => i.uid === uid);
+        if (target) target.picked = true;
+      }
+    } catch (err) {
+      console.warn('[Safari] pickGroundItem failed', err);
+    }
+  }
+
+  private removeSafariObject(obj: InteractiveObject): void {
+    if (this.worldContainer) {
+      this.worldContainer.remove(obj.getShadow());
+      this.worldContainer.remove(obj.getSprite());
+    }
+    if (this.nameContainer) {
+      this.nameContainer.remove(obj.getName());
+    }
+    const idx = this.safariObjects.indexOf(obj);
+    if (idx >= 0) this.safariObjects.splice(idx, 1);
+    obj.destroy();
+    this.refreshPlayerBlockingRefs();
+  }
+
+  private refreshPlayerBlockingRefs(): void {
+    if (!this.player || !this.mapView) return;
+    this.player.setBlockingRefs([...this.mapView.getNpcs(), ...this.safariObjects]);
+  }
+
+  /**
+   * 사파리 맵 진입 시 safariInfo 기반으로 GroundItem/WildPokemon 객체를 스폰.
+   * items는 properties.spawn === 'land' 타일에만, wilds는 land/water 모두 가능.
+   */
+  private spawnSafariEntities(): void {
+    if (!this.mapView || !this.mapConfig || !this.worldContainer || !this.nameContainer) return;
+    if (!this.player) return;
+
+    const mapKey = this.mapConfig.key;
+    const info = this.scene.getSafariInfo().get(mapKey);
+    if (!info) return;
+
+    const landTiles = this.mapView.getSpawnTilePositions('land');
+    const waterTiles = this.mapView.getSpawnTilePositions('water');
+
+    const shuffle = <T>(arr: T[]): T[] => {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+
+    const occupied = new Set<string>();
+    const keyOf = (p: { x: number; y: number }) => `${p.x}:${p.y}`;
+
+    const availableItems = info.items.filter((i) => !i.picked);
+    const availableWilds = info.wilds.filter((w) => w.caught === 0);
+
+    // 이미 좌표가 할당된 엔티티들의 좌표를 먼저 occupied로 등록
+    for (const it of availableItems) {
+      if (it.x != null && it.y != null) occupied.add(keyOf({ x: it.x, y: it.y }));
+    }
+    for (const w of availableWilds) {
+      if (w.x != null && w.y != null) occupied.add(keyOf({ x: w.x, y: w.y }));
+    }
+
+    // 1) Items — land only
+    const landPool = shuffle(landTiles);
+    let landIdx = 0;
+    const nextFreeLand = (): { x: number; y: number } | null => {
+      while (landIdx < landPool.length) {
+        const p = landPool[landIdx++];
+        if (!occupied.has(keyOf(p))) return p;
+      }
+      return null;
+    };
+
+    for (const item of availableItems) {
+      let px: number;
+      let py: number;
+      if (item.x != null && item.y != null) {
+        px = item.x;
+        py = item.y;
+      } else {
+        const pos = nextFreeLand();
+        if (!pos) {
+          console.warn(`[Safari] not enough land spawn tiles for items`);
+          break;
+        }
+        px = pos.x;
+        py = pos.y;
+        item.x = px;
+        item.y = py;
+        occupied.add(keyOf(pos));
+      }
+
+      const obj = new GroundItemObject(this.scene, item.uid, item.itemId, px, py);
+      this.safariObjects.push(obj);
+      this.worldContainer.add(obj.getShadow());
+      this.worldContainer.add(obj.getSprite());
+      this.nameContainer.add(obj.getName());
+    }
+
+    // 2) Wilds — land ∪ water (점유 좌표 제외)
+    const wildPool = shuffle([...landTiles, ...waterTiles].filter((p) => !occupied.has(keyOf(p))));
+    let wildIdx = 0;
+    const nextFreeWild = (): { x: number; y: number } | null => {
+      while (wildIdx < wildPool.length) {
+        const p = wildPool[wildIdx++];
+        if (!occupied.has(keyOf(p))) return p;
+      }
+      return null;
+    };
+
+    for (const wild of availableWilds) {
+      let px: number;
+      let py: number;
+      if (wild.x != null && wild.y != null) {
+        px = wild.x;
+        py = wild.y;
+      } else {
+        const pos = nextFreeWild();
+        if (!pos) {
+          console.warn(`[Safari] not enough spawn tiles for wilds`);
+          break;
+        }
+        px = pos.x;
+        py = pos.y;
+        wild.x = px;
+        wild.y = py;
+        occupied.add(keyOf(pos));
+      }
+
+      const obj = new WildPokemonObject(this.scene, this.mapView, wild, mapKey, px, py, []);
+      this.safariObjects.push(obj);
+      this.worldContainer.add(obj.getShadow());
+      this.worldContainer.add(obj.getSprite());
+      this.nameContainer.add(obj.getName());
+    }
+
+    // wild의 blockingRefs: 다른 safari 객체 + player + npcs.
+    // otherPlayer는 tween 기반 + 동적 join/leave로 race 가능성이 있어 제외.
+    const npcs = this.mapView.getNpcs();
+    for (const obj of this.safariObjects) {
+      if (obj instanceof WildPokemonObject) {
+        const others = this.safariObjects.filter((o) => o !== obj);
+        const refs: BaseObject[] = [...others, ...npcs];
+        if (this.player) refs.push(this.player);
+        obj.setBlockingRefs(refs);
+        obj.startRandomWalk();
+      }
+    }
+
+    this.refreshPlayerBlockingRefs();
   }
 
   private runReaction(steps: ReactionStep[]): void {
@@ -370,6 +567,16 @@ export class OverworldUi extends BaseUi {
       const hair = this.player.getHairSprite();
       if (hair) this.worldContainer.add(hair);
 
+      if (this.mapConfig?.type === 'safari') {
+        this.spawnSafariEntities();
+        // 야생 포켓몬 스폰 직후 1회 emit → 플레이어가 아직 움직이지 않아도
+        // 근처 wild들의 이름표 가시성이 초기 평가되도록 한다.
+        this.scene.events.emit('player_tile_moved', {
+          tileX: this.player.getTileX(),
+          tileY: this.player.getTileY(),
+        });
+      }
+
       this.doors = [];
       if (this.mapConfig?.doors?.length) {
         for (const d of this.mapConfig.doors) {
@@ -447,6 +654,10 @@ export class OverworldUi extends BaseUi {
       this.hud = null;
     }
 
+    for (const obj of this.safariObjects) {
+      obj.destroy();
+    }
+    this.safariObjects = [];
     for (const door of this.doors) {
       door.destroy();
     }
@@ -579,11 +790,33 @@ export class OverworldUi extends BaseUi {
     if (this.nameContainer) this.nameContainer.list.sort(byDepth);
   }
 
+  /**
+   * 사파리 야생 포켓몬의 랜덤 워크 tick. update() 본 경로와 OverworldPhase.tickBackground
+   * (메뉴/PC 등 다른 phase가 위에 있을 때) 양쪽에서 호출되며, 호출 경로 단일화를 위해 분리.
+   * 정렬과 카메라 갱신은 호출자(또는 update 본문)에서 수행한다.
+   */
+  tickWildPokemons(delta: number): void {
+    for (const obj of this.safariObjects) {
+      if (obj instanceof WildPokemonObject) {
+        obj.freezeRandomWalk(false);
+        obj.update(delta);
+      }
+    }
+  }
+
   update(_time: number, delta: number): void {
     if (!this.player || !this.cursorKeys) return;
 
     if (this.doorTransitionPending) {
       this.player.update(delta);
+      // door 전환 중에도 wild의 잔여 픽셀 이동은 마저 진행되도록 freeze 모드로 update.
+      // 상태 머신(IDLE/WALKING 전이, 신규 스텝 큐잉)은 멈추지만 super.update()는 호출됨.
+      for (const obj of this.safariObjects) {
+        if (obj instanceof WildPokemonObject) {
+          obj.freezeRandomWalk(true);
+          obj.update(delta);
+        }
+      }
       this.sortWorldContainerByDepth();
       const sprite = this.player.getSprite();
       const center = sprite.getCenter(undefined, true);
@@ -594,6 +827,9 @@ export class OverworldUi extends BaseUi {
     }
 
     this.player.update(delta);
+
+    // 야생 포켓몬 랜덤 워크 진행. 메뉴/UI push 중에도 계속 움직이는 것이 정책.
+    this.tickWildPokemons(delta);
 
     this.sortWorldContainerByDepth();
 

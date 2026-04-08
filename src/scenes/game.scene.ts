@@ -20,6 +20,7 @@ import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
 import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
+import { DIRECTION } from '@poposafari/feats/overworld/overworld.constants';
 import { BaseScene } from '@poposafari/scenes';
 import { GetMeRes, TEXTURE } from '@poposafari/types';
 import { debugLog } from '@poposafari/utils/debug';
@@ -43,12 +44,20 @@ export interface SafariWildInfo {
   caught: number;
   bait: boolean;
   rock: boolean;
+  /** 클라이언트에서 최초 스폰 시 결정된 좌표. 재진입 시 그대로 재사용. */
+  x?: number;
+  y?: number;
+  /** 마지막으로 실제 이동에 성공한 방향. 재진입 시 초기 애니메이션 방향 복원에 사용. */
+  lastDirection?: DIRECTION;
 }
 
 export interface SafariItemInfo {
   uid: string;
   itemId: string;
   picked: boolean;
+  /** 클라이언트에서 최초 스폰 시 결정된 좌표. 재진입 시 그대로 재사용. */
+  x?: number;
+  y?: number;
 }
 
 export interface SafariMapInfo {
@@ -175,7 +184,13 @@ export class GameScene extends BaseScene {
 
   update(_time: number, delta: number) {
     this.inputManager.update();
-    this.getCurrentPhase()?.update?.(_time, delta);
+    const top = this.getCurrentPhase();
+    top?.update?.(_time, delta);
+    // top이 아닌 하위 phase들의 백그라운드 tick (예: OverworldPhase의 야생 포켓몬 랜덤 워크).
+    // top phase는 이미 update()로 호출했으므로 중복 방지를 위해 제외.
+    for (let i = 0; i < this.phaseStack.length - 1; i++) {
+      this.phaseStack[i].tickBackground?.(_time, delta);
+    }
   }
 
   createUserManager(data: GetMeRes) {
@@ -235,6 +250,26 @@ export class GameScene extends BaseScene {
 
   clearSafariInfo(): void {
     this.safariInfo.clear();
+  }
+
+  /**
+   * 야생 포켓몬의 한 스텝 이동이 끝난 후 SafariInfo의 좌표/방향을 동기화.
+   * WildPokemonObject.onTileMoved에서만 호출되며, 동기화 경로를 단일화하기 위해 헬퍼로 분리.
+   */
+  updateSafariWildPos(
+    mapId: string,
+    uid: string,
+    x: number,
+    y: number,
+    lastDirection: DIRECTION,
+  ): void {
+    const info = this.safariInfo.get(mapId);
+    if (!info) return;
+    const w = info.wilds.find((it) => it.uid === uid);
+    if (!w) return;
+    w.x = x;
+    w.y = y;
+    w.lastDirection = lastDirection;
   }
 
   getSocket(): Socket | null {

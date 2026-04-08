@@ -4,4 +4,5 @@ export const safari = {
   zone1: 'Safari Zone 1',
   zone2: 'Safari Zone 2',
   confirmMove: 'Would you like to move to {{map}}?',
+  pickedItem: '{{name}} found\na {{item}}!',
 };

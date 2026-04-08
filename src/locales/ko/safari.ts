@@ -4,4 +4,5 @@ export const safari = {
   zone1: '사파리 존 1구역',
   zone2: '사파리 존 2구역',
   confirmMove: '{{map}}(으)로 이동하시겠습니까?',
+  pickedItem: '{{name}}은\n{{item}}을(를) 손에 넣었다.',
 };

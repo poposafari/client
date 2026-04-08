@@ -4,6 +4,8 @@ export const SYMBOL_FEMALE = '♀';
 export const SYMBOL_MALE = '♂';
 export const MONEY_SYMBOL = '';
 
+export const PC_BG_CNT = 39;
+
 export const OPTION_KEY = 'option';
 export const LANGUAGE_KEY = 'i18nextLng';
 export enum OptionKey {

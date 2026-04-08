@@ -129,7 +129,7 @@ export class OverworldEntryPhase implements IGamePhase {
     const onConnect = () => {
       socket.emit('init');
     };
-    const onInitOk = (payload: InitOkPayload) => {
+    const onInitOk = async (payload: InitOkPayload) => {
       this.removeListeners();
       this.scene.setCurrentSocketUserId(payload.userId);
       const profile = this.scene.getUser()?.getProfile();
@@ -143,6 +143,20 @@ export class OverworldEntryPhase implements IGamePhase {
       if (payload.timeOfDay) {
         DayNightFilter.setTimeOfDay(DayNightFilter.timeOfDayToValue(payload.timeOfDay));
       }
+
+      // 마지막 위치가 사파리존이면 맵 데이터를 미리 가져온다.
+      const lastMapId = payload.lastLocation?.map;
+      if (lastMapId && this.scene.getMapRegistry().get(lastMapId)?.type === 'safari') {
+        try {
+          const result = await this.scene.getApi().enterSafari(lastMapId, false);
+          if (result) {
+            this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
+          }
+        } catch (e) {
+          console.error('[OverworldEntry] enterSafari on init failed:', e);
+        }
+      }
+
       this.ui?.hide();
       this.ui?.destroy();
       this.ui = null;
