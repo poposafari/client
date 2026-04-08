@@ -3,6 +3,7 @@ export const enum TEXTURE {
   LOGO_1 = 'logo_1',
 
   BLANK = 'blank',
+  TYPES = 'types',
 
   BG_0 = 'bg_0',
   BG_1 = 'bg_1',
@@ -12,6 +13,7 @@ export const enum TEXTURE {
   BG_5 = 'bg_5',
   BG_6 = 'bg_6',
   BG_BLACK = 'bg_black',
+  BG_PC = 'bg_pc',
 
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
@@ -23,9 +25,11 @@ export const enum TEXTURE {
   WINDOW_HUD = 'window_hud',
   WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_NOTICE_1 = 'window_notice_1',
+  WINDOW_PC = 'window_pc',
   KEYCAP = 'keycap',
 
   CURSOR_WHITE = 'cursor_w',
+  CURSOR_FINGER = 'cursor_finger',
 
   SLIDER = 'slider',
   SLIDER_BG = 'slider_b',
@@ -47,10 +51,17 @@ export const enum TEXTURE {
   ICON_BAG_M = 'icon_bag_male',
   ICON_BAG_F = 'icon_bag_female',
   ICON_OPTION = 'icon_option',
-  ICON_EXIT = 'icon_exit',
+  ICON_EXIT_0 = 'icon_exit_0',
+  ICON_EXIT_1 = 'icon_exit_1',
   ICON_CANCEL = 'icon_cancel',
+  ICON_SHINY = 'icon_shiny',
+
+  GROUND_ITEM = 'ground_item',
 
   OVERWORLD_SHADOW = 'overworld_shadow',
+
+  //pc
+  PC_INFO = 'pc_info',
 }
 
 export const enum ANIMATION {
@@ -124,4 +135,6 @@ export const enum MAP {
   //gate
 
   //safari
+  SAFARI_001 = 's001',
+  SAFARI_002 = 's002',
 }

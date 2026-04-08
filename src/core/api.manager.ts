@@ -206,6 +206,15 @@ export class ApiManager {
     };
   }
 
+  async pickGroundItem(
+    uid: string,
+  ): Promise<{ itemId: string; newQuantity: number } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ itemId: string; newQuantity: number }>
+    >('/game/safari/pick-item', { uid });
+    return res.data.success ? res.data.data : null;
+  }
+
   async exitSafari(): Promise<{ mapId: string; entry: { x: number; y: number } } | null> {
     const res = await this.client.post<
       ApiResponse<{ mapId: string; entry: { x: number; y: number } }>

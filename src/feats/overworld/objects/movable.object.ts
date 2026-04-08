@@ -47,9 +47,9 @@ export class MovableObject extends BaseObject {
     tileY: number,
     name: ObjectName,
     initDirection: DIRECTION,
-    options?: { scale?: number; blockingRefs?: IOverworldBlockingRef[] },
+    options?: { scale?: number; blockingRefs?: IOverworldBlockingRef[]; nameOffsetY?: number },
   ) {
-    super(scene, texture, tileX, tileY, name, 0, options);
+    super(scene, texture, tileX, tileY, name, options?.nameOffsetY ?? 0, options);
     this.mapAdapter = mapAdapter ?? null;
     this.lastDirection = initDirection;
     this.blockingRefs = options?.blockingRefs ?? [];

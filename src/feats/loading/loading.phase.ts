@@ -509,6 +509,8 @@ export class LoadingPhase implements IGamePhase {
 
     this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
 
+    this.scene.loadImage(TEXTURE.GROUND_ITEM, 'ui', 'ground_item');
+
     this.loadPlayerCostumeAssets();
 
     //npc

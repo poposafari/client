@@ -84,6 +84,15 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi?.update(time, delta);
   }
 
+  /**
+   * 메뉴/PC/옵션 등 다른 phase가 위에 push되어 OverworldPhase가 top이 아닐 때도
+   * 사파리 야생 포켓몬은 계속 돌아다녀야 한다는 정책에 따라, 야생 포켓몬 랜덤 워크만
+   * 백그라운드에서 계속 진행시킨다. 플레이어 입력/이동·카메라 갱신은 의도적으로 멈춘다.
+   */
+  tickBackground(_time: number, delta: number): void {
+    this.overworldUi?.tickWildPokemons(delta);
+  }
+
   onResume(): void {
     this.overworldUi?.syncMenuToggleIcon(false);
   }

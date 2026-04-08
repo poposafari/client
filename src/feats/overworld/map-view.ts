@@ -165,6 +165,31 @@ export class MapView {
     });
   }
 
+  /**
+   * tile.properties.spawn === filter 인 좌표 목록 반환.
+   * filter가 'any'면 spawn 속성이 있는 모든 좌표(land + water).
+   */
+  getSpawnTilePositions(filter: 'land' | 'water' | 'any'): { x: number; y: number }[] {
+    const positions: { x: number; y: number }[] = [];
+    if (!this.map) return positions;
+
+    for (let y = 0; y < this.map.height; y++) {
+      for (let x = 0; x < this.map.width; x++) {
+        for (const layer of this.map.layers) {
+          const tile = layer.data[y]?.[x];
+          if (!tile || tile.index === -1) continue;
+          const spawn = tile.properties?.spawn;
+          if (!spawn) continue;
+          if (filter === 'any' || spawn === filter) {
+            positions.push({ x, y });
+            break;
+          }
+        }
+      }
+    }
+    return positions;
+  }
+
   getLightTilePositions(): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
     if (!this.map) return positions;
