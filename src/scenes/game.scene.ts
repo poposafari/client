@@ -27,10 +27,12 @@ import { debugLog } from '@poposafari/utils/debug';
 import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import WipeRightToLeftShader from '@poposafari/utils/wipe-rl-shader';
 
 export enum GameEvent {
   LANGUAGE_CHANGED = 'LANGUAGE_CHANGED',
   WINDOW_CHANGED = 'WINDOW_CHANGED',
+  GAME_TIME_CHANGED = 'GAME_TIME_CHANGED',
 }
 
 export interface SafariWildInfo {
@@ -133,6 +135,7 @@ export class GameScene extends BaseScene {
       onComplete: () => {
         DayNightFilter.setTimeOfDay(target);
         this.dayNightTween = null;
+        this.events.emit(GameEvent.GAME_TIME_CHANGED, payload.timeOfDay);
       },
     });
   };
@@ -177,6 +180,7 @@ export class GameScene extends BaseScene {
       renderer.pipelines.addPostPipeline(FadeToBlackPipeline.KEY, FadeToBlackPipeline);
       this.cameras.main.setPostPipeline(FadeToBlackPipeline.KEY);
       renderer.pipelines.addPostPipeline(DayNightFilter.KEY, DayNightFilter);
+      renderer.pipelines.addPostPipeline(WipeRightToLeftShader.KEY, WipeRightToLeftShader);
     }
 
     this.switchPhase(new LoadingPhase(this));
@@ -186,8 +190,7 @@ export class GameScene extends BaseScene {
     this.inputManager.update();
     const top = this.getCurrentPhase();
     top?.update?.(_time, delta);
-    // top이 아닌 하위 phase들의 백그라운드 tick (예: OverworldPhase의 야생 포켓몬 랜덤 워크).
-    // top phase는 이미 update()로 호출했으므로 중복 방지를 위해 제외.
+
     for (let i = 0; i < this.phaseStack.length - 1; i++) {
       this.phaseStack[i].tickBackground?.(_time, delta);
     }
@@ -252,10 +255,6 @@ export class GameScene extends BaseScene {
     this.safariInfo.clear();
   }
 
-  /**
-   * 야생 포켓몬의 한 스텝 이동이 끝난 후 SafariInfo의 좌표/방향을 동기화.
-   * WildPokemonObject.onTileMoved에서만 호출되며, 동기화 경로를 단일화하기 위해 헬퍼로 분리.
-   */
   updateSafariWildPos(
     mapId: string,
     uid: string,

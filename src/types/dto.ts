@@ -55,6 +55,11 @@ export interface GetMeRes {
     quantity: number;
     slotNumber: number | null;
   }[];
+  essentialItems: {
+    itemId: string;
+    quantity: number;
+    slotNumber: number | null;
+  }[];
 }
 
 // ── Lazy Load API 응답 타입 ──
@@ -130,3 +135,40 @@ export interface StartingPokemon {
 export interface GetStartingPokemonsRes {
   list: StartingPokemon[];
 }
+
+export interface SafariCatchReq {
+  uid: string;
+}
+
+// ── 사파리 베잇/락 (POST /api/game/safari/bait|rock) ──
+export interface SafariBaitReq {
+  uid: string;
+}
+export interface SafariRockReq {
+  uid: string;
+}
+export type SafariBaitRockRes = { result: 'flee' | 'stay' };
+
+export interface SafariCatchCaughtPokemon {
+  id: number;
+  pokedexId: string;
+  level: number;
+  gender: number;
+  isShiny: boolean;
+  nickname: string | null;
+  natureId: string;
+  abilityId: string;
+  heldItemId: string | null;
+  skills: string[];
+  boxNumber: number;
+  gridNumber: number;
+}
+
+export type SafariCatchRes =
+  | {
+      result: 'caught';
+      pokemon: SafariCatchCaughtPokemon;
+      reward: { candyId: string; candyQuantity: number };
+    }
+  | { result: 'fail' }
+  | { result: 'flee' };

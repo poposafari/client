@@ -5,6 +5,9 @@ import { OverworldMenuPhase } from './overworld-menu.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
 import { StartingPhase } from '../starting/starting.phase';
+import { BattlePhase } from '../battle';
+import { RewardPhase } from '../battle/reward/reward.phase';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export class OverworldPhase implements IGamePhase {
   private overworldUi: OverworldUi | null = null;
@@ -39,7 +42,47 @@ export class OverworldPhase implements IGamePhase {
         this.scene.pushPhase(new SafariPhase(this.scene));
       }
     };
+    this.overworldUi.onWildEncounterRequested = (wild) => {
+      const wildInfo = wild.getWild();
+      // v1: area/time 매핑이 없으므로 기본값 사용 (Step 5 polish 항목).
+      // mapConfig.area 가 's001'/'s002' 라 battle bg 매트릭스(field/forest/...)와 키가 다르다.
+      this.scene.pushPhase(
+        new BattlePhase(this.scene, {
+          wild: wildInfo,
+          area: this.scene.getMasterData().getMapArea(mapConfig.key),
+          time: DayNightFilter.getBattleTime(),
+          locationLabel: mapConfig.key,
+          onResolved: (reason) => {
+            this.overworldUi?.resolveWildEncounter(wild, reason);
+          },
+        }),
+      );
+    };
     this.overworldUi.show();
+
+    // this.scene.pushPhase(
+    //   new RewardPhase(this.scene, {
+    //     pokemon: {
+    //       id: 1,
+    //       pokedexId: '0006',
+    //       level: 35,
+    //       gender: 1,
+    //       isShiny: false,
+    //       nickname: null,
+    //       nature: 'bold',
+    //       ability: 'blaze',
+    //       heldItemId: null,
+    //       skills: [],
+    //       boxNumber: 1,
+    //       gridNumber: 1,
+    //     },
+    //     rewards: [
+    //       { candyId: 'fire-candy', candyQuantity: 3 },
+    //       { candyId: 'flying-candy', candyQuantity: 1 },
+    //     ],
+    //     onComplete: () => {},
+    //   }),
+    // );
 
     const socket = this.scene.getSocket();
     if (socket) {
@@ -84,11 +127,6 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi?.update(time, delta);
   }
 
-  /**
-   * 메뉴/PC/옵션 등 다른 phase가 위에 push되어 OverworldPhase가 top이 아닐 때도
-   * 사파리 야생 포켓몬은 계속 돌아다녀야 한다는 정책에 따라, 야생 포켓몬 랜덤 워크만
-   * 백그라운드에서 계속 진행시킨다. 플레이어 입력/이동·카메라 갱신은 의도적으로 멈춘다.
-   */
   tickBackground(_time: number, delta: number): void {
     this.overworldUi?.tickWildPokemons(delta);
   }

@@ -22,6 +22,11 @@ import {
   PokedexEntry,
   PokemonBoxItem,
   RegisterLocalReq,
+  SafariBaitReq,
+  SafariBaitRockRes,
+  SafariCatchReq,
+  SafariCatchRes,
+  SafariRockReq,
   StartingPokemon,
   TownMapEntry,
 } from '@poposafari/types/dto';
@@ -206,19 +211,42 @@ export class ApiManager {
     };
   }
 
-  async pickGroundItem(
-    uid: string,
-  ): Promise<{ itemId: string; newQuantity: number } | null> {
-    const res = await this.client.post<
-      ApiResponse<{ itemId: string; newQuantity: number }>
-    >('/game/safari/pick-item', { uid });
+  async pickGroundItem(uid: string): Promise<{ itemId: string; newQuantity: number } | null> {
+    const res = await this.client.post<ApiResponse<{ itemId: string; newQuantity: number }>>(
+      '/game/safari/pick-item',
+      { uid },
+    );
+    return res.data.success ? res.data.data : null;
+  }
+
+  async safariCatch(payload: SafariCatchReq): Promise<SafariCatchRes | null> {
+    const res = await this.client.post<ApiResponse<SafariCatchRes>>('/game/safari/catch', payload);
+    return res.data.success ? res.data.data : null;
+  }
+
+  /** FEED: 베잇 투척. 서버는 flee 확률만 계산 후 {result:'flee'|'stay'} 반환. */
+  async safariBait(payload: SafariBaitReq): Promise<SafariBaitRockRes | null> {
+    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(
+      '/game/safari/bait',
+      payload,
+    );
+    return res.data.success ? res.data.data : null;
+  }
+
+  /** MUD: 진흙 투척. 서버는 flee 확률만 계산 후 {result:'flee'|'stay'} 반환. */
+  async safariRock(payload: SafariRockReq): Promise<SafariBaitRockRes | null> {
+    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(
+      '/game/safari/rock',
+      payload,
+    );
     return res.data.success ? res.data.data : null;
   }
 
   async exitSafari(): Promise<{ mapId: string; entry: { x: number; y: number } } | null> {
-    const res = await this.client.post<
-      ApiResponse<{ mapId: string; entry: { x: number; y: number } }>
-    >('/game/safari/exit');
+    const res =
+      await this.client.post<ApiResponse<{ mapId: string; entry: { x: number; y: number } }>>(
+        '/game/safari/exit',
+      );
     return res.data.success ? res.data.data : null;
   }
 
