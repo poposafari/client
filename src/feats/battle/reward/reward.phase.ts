@@ -1,0 +1,39 @@
+import type { IGamePhase } from '@poposafari/core';
+import type { GameScene } from '@poposafari/scenes/game.scene';
+import type { CatchReward, CaughtPokemon } from '../battle.types';
+import { RewardUi } from './reward.ui';
+import { SFX } from '@poposafari/types';
+
+export interface RewardContext {
+  pokemon: CaughtPokemon;
+  rewards: CatchReward[];
+  onComplete: () => void;
+}
+
+export class RewardPhase implements IGamePhase {
+  private ui: RewardUi | null = null;
+
+  constructor(
+    private readonly scene: GameScene,
+    private readonly ctx: RewardContext,
+  ) {}
+
+  enter(): void {
+    void this.run();
+  }
+
+  exit(): void {
+    this.ui?.hide();
+    this.ui?.destroy();
+    this.ui = null;
+  }
+
+  private async run(): Promise<void> {
+    this.scene.getAudio().playEffect(SFX.REWARD);
+    this.ui = new RewardUi(this.scene, this.scene.getInputManager());
+    await this.ui.build({ pokemon: this.ctx.pokemon, rewards: this.ctx.rewards });
+    await this.ui.waitForInput();
+    this.ctx.onComplete();
+    this.scene.popPhase();
+  }
+}
