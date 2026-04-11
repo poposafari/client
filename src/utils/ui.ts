@@ -10,6 +10,7 @@ import {
   TEXTSTROKE,
   TEXTSTYLE,
   TEXTURE,
+  type PokemonType,
 } from '@poposafari/types';
 
 export function addContainer(scene: Phaser.Scene, depth: number, x: number = 0, y: number = 0) {
@@ -21,7 +22,7 @@ export function addContainer(scene: Phaser.Scene, depth: number, x: number = 0, 
   return ret;
 }
 
-export function addBackground(scene: Phaser.Scene, texture: TEXTURE) {
+export function addBackground(scene: Phaser.Scene, texture: TEXTURE | string) {
   const { width, height } = scene.scale;
   const ret = scene.add.image(0, 0, texture).setOrigin(0.5);
   ret.setDisplaySize(width, height);
@@ -170,6 +171,12 @@ export function getTextStyle(
     case TEXTSTYLE.BLOCKING:
       ret.color = TEXTCOLOR.LIGHT_GRAY;
       break;
+    case TEXTSTYLE.RATE_UP:
+      ret.color = TEXTCOLOR.RATE_UP;
+      break;
+    case TEXTSTYLE.RATE_DOWN:
+      ret.color = TEXTCOLOR.RATE_DOWN;
+      break;
   }
 
   return ret;
@@ -189,6 +196,10 @@ export function getTextShadow(shadow: TEXTSHADOW): [number, number, string] {
       return [4, 3, TEXTCOLOR.DARK_YELLOW];
     case TEXTSHADOW.BLOCKING:
       return [4, 3, TEXTCOLOR.GRAY];
+    case TEXTSHADOW.RATE_UP:
+      return [4, 3, '#166534'];
+    case TEXTSHADOW.RATE_DOWN:
+      return [4, 3, '#991b1b'];
     default:
       return [0, 0, ''];
   }
@@ -513,6 +524,31 @@ const DUSK_HOUR_START = 18;
 const DAWN_HOUR_START = 6;
 const NIGHT_HOUR_START = 19;
 const DAY_HOUR_START = 7;
+
+const POKEMON_TYPE_FRAME: Record<PokemonType, string> = {
+  normal: 'types-18',
+  fire: 'types-1',
+  water: 'types-2',
+  electric: 'types-3',
+  grass: 'types-4',
+  ice: 'types-5',
+  fighting: 'types-6',
+  poison: 'types-7',
+  ground: 'types-8',
+  flying: 'types-9',
+  psychic: 'types-10',
+  bug: 'types-11',
+  rock: 'types-12',
+  ghost: 'types-13',
+  dragon: 'types-14',
+  dark: 'types-15',
+  steel: 'types-16',
+  fairy: 'types-17',
+};
+
+export function getPokemonTypeFrame(type: PokemonType): string {
+  return POKEMON_TYPE_FRAME[type];
+}
 
 export function getBackgroundKey(): TEXTURE {
   const hour = new Date().getHours();

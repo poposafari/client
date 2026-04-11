@@ -3,6 +3,8 @@ import { TEXTURE } from './texture';
 export const SYMBOL_FEMALE = '♀';
 export const SYMBOL_MALE = '♂';
 export const MONEY_SYMBOL = '';
+export const SYMBOL_ARROW_UP = '▲';
+export const SYMBOL_ARROW_DOWN = '▼';
 
 export const PC_BG_CNT = 39;
 
@@ -101,18 +103,17 @@ export interface UserProfile {
   createdAt: string;
 }
 
-export type ItemRank = 'common' | 'rare' | 'epic' | 'legendary';
-export type ItemCategory = 'pokeball' | 'berry' | 'tm_hm' | 'etc' | 'key';
+export type ItemTier = 'common' | 'rare' | 'epic' | 'legendary';
+export type ItemCategory = 'pokeball' | 'tms_hms' | 'etc' | 'key' | 'candy';
 export type ItemData = {
   id: string;
   comment: string;
-  type: ItemCategory;
+  category: ItemCategory;
   buyPrice: number;
   sellPrice: number;
   purchasable: boolean;
   sellable: boolean;
-  usable: boolean;
-  registerable: boolean;
+  tier: ItemTier;
 };
 
 export enum PokemonGender {

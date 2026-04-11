@@ -5,4 +5,5 @@ export const safari = {
   zone2: 'サファリゾーン 2',
   confirmMove: '{{map}}に移動しますか？',
   pickedItem: '{{name}}は\n{{item}}を てにいれた！',
+  wildEncounter: 'おっと！やせいの{{name}}が\nおどろいた かおで こちらを みている！',
 };
