@@ -1,3 +1,8 @@
+import { pokemon } from '@poposafari/locales/ko/pokemon';
+import i18next from 'i18next';
+import { updateTextColor } from './ui';
+import { SYMBOL_FEMALE, SYMBOL_MALE, TEXTCOLOR, TEXTSHADOW } from '@poposafari/types';
+
 export function replacePlaceholders(template: string, ...values: string[]): string {
   let index = 0;
   return template.replace(/\*/g, () => values[index++] ?? '');
@@ -64,6 +69,7 @@ export function getPokemonTexture(
   type: 'icon' | 'sprite' | 'overworld',
   pokemonKey: string,
   options: { isShiny?: boolean; isFemale?: boolean } = {},
+  scene?: Phaser.Scene,
 ): PokemonTexture {
   // 1. 아틀라스 키 결정 (대분류)
   let atlasKey: string;
@@ -97,5 +103,49 @@ export function getPokemonTexture(
     frameName = `shiny/${frameName}`;
   }
 
+  // 3. 프레임 존재 확인 — _female 프레임이 아뜰라스에 없으면 기본(male) 프레임으로 폴백.
+  //    scene 가 전달되지 않으면 검증 없이 그대로 반환한다.
+  if (scene && options.isFemale) {
+    const texture = scene.textures.get(atlasKey);
+    if (texture && !texture.has(frameName)) {
+      // _female 을 제거한 기본 프레임으로 폴백
+      const maleName = options.isShiny ? `shiny/${pokemonKey}` : pokemonKey;
+      frameName = maleName;
+    }
+  }
+
   return { key: atlasKey, frame: frameName };
+}
+
+export function getPokemonI18Name(pokedexId: string) {
+  let pokedex = pokedexId;
+  let prefix = '';
+
+  if (
+    pokedexId.includes('hisui') ||
+    pokedexId.includes('galar') ||
+    pokedexId.includes('alola') ||
+    pokedexId.includes('paldea')
+  ) {
+    const split = pokedexId.split('_');
+
+    pokedex = split[0];
+    prefix = split[1];
+  }
+
+  return prefix.length
+    ? i18next.t(`menu:${prefix}`) + ' ' + i18next.t(`pokemon:${pokedex}.name`)
+    : i18next.t(`pokemon:${pokedex}.name`);
+}
+
+export function updatePokemonGenderIcon(gender: number, text: GText) {
+  if (gender === 1) {
+    text.setText(SYMBOL_MALE).setVisible(true);
+    updateTextColor(text, TEXTCOLOR.MALE, TEXTSHADOW.GRAY);
+  } else if (gender === 2) {
+    text.setText(SYMBOL_FEMALE).setVisible(true);
+    updateTextColor(text, TEXTCOLOR.FEMALE, TEXTSHADOW.GRAY);
+  } else {
+    text.setVisible(false);
+  }
 }

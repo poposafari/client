@@ -55,8 +55,16 @@ export const enum TEXTURE {
   ICON_EXIT_1 = 'icon_exit_1',
   ICON_CANCEL = 'icon_cancel',
   ICON_SHINY = 'icon_shiny',
+  ICON_OWNED = 'icon_owned',
+  ICON_RATE_UP = 'up_rate',
+  ICON_RATE_DOWN = 'down_rate',
 
   GROUND_ITEM = 'ground_item',
+  EMO = 'emo',
+  SPARKLE = 'sparkle',
+  SAFARI_BALL_THROW = 'safari-ball_0',
+  SAFARI_BALL_OPEN = 'safari-ball_1',
+  SAFARI_STAR = 'safari_star',
 
   OVERWORLD_SHADOW = 'overworld_shadow',
 

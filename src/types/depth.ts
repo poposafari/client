@@ -6,6 +6,6 @@ export enum DEPTH {
   OVERWORLD_NAME = 998.5,
 
   HUD = 999,
-  MESSAGE = 1000,
-  API = 1001,
+  MESSAGE = 1001,
+  API = 1003,
 }

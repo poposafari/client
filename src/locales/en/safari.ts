@@ -5,4 +5,5 @@ export const safari = {
   zone2: 'Safari Zone 2',
   confirmMove: 'Would you like to move to {{map}}?',
   pickedItem: '{{name}} found\na {{item}}!',
+  wildEncounter: 'Oh! The wild {{name}}\nis staring at you in surprise!',
 };

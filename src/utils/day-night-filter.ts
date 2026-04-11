@@ -67,4 +67,24 @@ export default class DayNightFilter extends Phaser.Renderer.WebGL.Pipelines.Post
   static timeOfDayToValue(tod: string): number {
     return TIME_OF_DAY_MAP[tod] ?? 0.5;
   }
+
+  /** 현재 timeOfDay 값을 문자열('dawn'|'day'|'dusk'|'night')로 변환 */
+  static getCurrentTimeLabel(): 'dawn' | 'day' | 'dusk' | 'night' {
+    const t = DayNightFilter._timeOfDay;
+    if (t < 0.25) return 'night';
+    if (t < 0.35) return 'dawn';
+    if (t < 0.65) return 'day';
+    if (t < 0.75) return 'dusk';
+    return 'night';
+  }
+
+  /** 현재 timeOfDay 값을 배틀 에셋용 문자열('day'|'dusk'|'night')로 변환 */
+  static getBattleTime(): 'day' | 'dusk' | 'night' {
+    const t = DayNightFilter._timeOfDay;
+    if (t < 0.25) return 'night';
+    if (t < 0.35) return 'day';
+    if (t < 0.65) return 'day';
+    if (t < 0.75) return 'dusk';
+    return 'night';
+  }
 }

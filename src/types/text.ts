@@ -15,6 +15,10 @@ export const enum TEXTCOLOR {
   RARE = '#60A5FA',
   EPIC = '#b973ff',
   LEGENDARY = '#FBBF24',
+  MALE = '#51bff2',
+  FEMALE = '#ed9288',
+  RATE_UP = '#22c55e',
+  RATE_DOWN = '#ef4444',
 }
 
 export const enum TEXTFONT {
@@ -30,6 +34,8 @@ export const enum TEXTSTYLE {
   SIG_2,
   ERROR,
   BLOCKING,
+  RATE_UP,
+  RATE_DOWN,
 }
 
 export const enum TEXTSHADOW {
@@ -42,6 +48,8 @@ export const enum TEXTSHADOW {
   SIG_2,
   ERROR,
   BLOCKING,
+  RATE_UP,
+  RATE_DOWN,
 }
 
 export const enum TEXTSTROKE {

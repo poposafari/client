@@ -569,4 +569,76 @@ export const item: TranslationItem = {
     name: '평온의방울',
     description: '기분 좋은 소리의 방울.\n지니게 한 포켓몬은 마음이\n편안해져 친밀해지기 쉬워진다.',
   },
+  'normal-candy': {
+    name: '노말사탕',
+    description: '노말타입의 에너지가 담긴 사탕.',
+  },
+  'fire-candy': {
+    name: '불꽃사탕',
+    description: '불꽃타입의 에너지가 담긴 사탕.',
+  },
+  'water-candy': {
+    name: '물사탕',
+    description: '물타입의 에너지가 담긴 사탕.',
+  },
+  'electric-candy': {
+    name: '전기사탕',
+    description: '전기타입의 에너지가 담긴 사탕.',
+  },
+  'grass-candy': {
+    name: '풀사탕',
+    description: '풀타입의 에너지가 담긴 사탕.',
+  },
+  'ice-candy': {
+    name: '얼음사탕',
+    description: '얼음타입의 에너지가 담긴 사탕.',
+  },
+  'fighting-candy': {
+    name: '격투사탕',
+    description: '격투타입의 에너지가 담긴 사탕.',
+  },
+  'poison-candy': {
+    name: '독사탕',
+    description: '독타입의 에너지가 담긴 사탕.',
+  },
+  'ground-candy': {
+    name: '땅사탕',
+    description: '땅타입의 에너지가 담긴 사탕.',
+  },
+  'flying-candy': {
+    name: '비행사탕',
+    description: '비행타입의 에너지가 담긴 사탕.',
+  },
+  'psychic-candy': {
+    name: '에스퍼사탕',
+    description: '에스퍼타입의 에너지가 담긴 사탕.',
+  },
+  'bug-candy': {
+    name: '벌레사탕',
+    description: '벌레타입의 에너지가 담긴 사탕.',
+  },
+  'rock-candy': {
+    name: '바위사탕',
+    description: '바위타입의 에너지가 담긴 사탕.',
+  },
+  'ghost-candy': {
+    name: '고스트사탕',
+    description: '고스트타입의 에너지가 담긴 사탕.',
+  },
+  'dragon-candy': {
+    name: '드래곤사탕',
+    description: '드래곤타입의 에너지가 담긴 사탕.',
+  },
+  'dark-candy': {
+    name: '악사탕',
+    description: '악타입의 에너지가 담긴 사탕.',
+  },
+  'steel-candy': {
+    name: '강철사탕',
+    description: '강철타입의 에너지가 담긴 사탕.',
+  },
+  'fairy-candy': {
+    name: '페어리사탕',
+    description: '페어리타입의 에너지가 담긴 사탕.',
+  },
 };
