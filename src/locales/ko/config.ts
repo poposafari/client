@@ -7,6 +7,7 @@ import { msg } from './message';
 import { nature } from './nature';
 import { object } from './object';
 import { option } from './option';
+import { pc } from './pc';
 import { pokemon } from './pokemon';
 import { safari } from './safari';
 import { splash } from './splash';
@@ -21,6 +22,7 @@ export const koConfig = {
   msg: msg,
   costume: costume,
   option: option,
+  pc: pc,
   safari: safari,
   splash: splash,
   object: object,

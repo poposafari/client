@@ -19,6 +19,9 @@ import {
   GetUserRes,
   ItemBagItem,
   LoginLocalReq,
+  BoxMetaItem,
+  NicknameChange,
+  PcSlotState,
   PokedexEntry,
   PokemonBoxItem,
   RegisterLocalReq,
@@ -116,6 +119,32 @@ export class ApiManager {
 
   async getPokemonBox(): Promise<PokemonBoxItem[] | null> {
     const res = await this.client.get<ApiResponse<PokemonBoxItem[]>>('/pokemon/box');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async patchPokemonArrange(
+    changes: PcSlotState[],
+    boxMeta?: BoxMetaItem[],
+    nicknames?: NicknameChange[],
+  ): Promise<boolean> {
+    const res = await this.client.patch<ApiResponse<null>>('/pokemon/box/arrange', {
+      changes,
+      ...(boxMeta?.length ? { boxMeta } : {}),
+      ...(nicknames?.length ? { nicknames } : {}),
+    });
+    return res.data.success;
+  }
+
+  async getBoxMeta(): Promise<BoxMetaItem[] | null> {
+    const res = await this.client.get<ApiResponse<BoxMetaItem[]>>('/pokemon/box/meta');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async sellPokemon(id: number): Promise<{ candyId: string; quantity: number } | null> {
+    const res = await this.client.post<ApiResponse<{ candyId: string; quantity: number }>>(
+      '/pokemon/sell',
+      { id },
+    );
     return res.data.success ? res.data.data : null;
   }
 

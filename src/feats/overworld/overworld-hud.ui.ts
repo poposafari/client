@@ -1,12 +1,20 @@
 import { ImageTextListContainer } from '@poposafari/containers/image-text-list.container';
 import { WindowStripContainer } from '@poposafari/containers/window-strip.container';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import { DEPTH, MONEY_SYMBOL, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addContainer, addImage, addText } from '@poposafari/utils';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from 'i18next';
 
 const MAX_PARTY_SIZE = 6;
 const MAX_QUICK_SLOT_SIZE = 6;
+
+const TIME_ICON_MAP: Record<string, TEXTURE> = {
+  dawn: TEXTURE.ICON_DAWN,
+  day: TEXTURE.ICON_DAY,
+  dusk: TEXTURE.ICON_DUSK,
+  night: TEXTURE.ICON_NIGHT,
+};
 
 export class OverworldHudUI extends Phaser.GameObjects.Container {
   scene: GameScene;
@@ -42,7 +50,18 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.createInfo();
 
     this.add([this.toggleIconContainer, this.partyStrip, this.quickSlotStrip, this.infoList]);
+
+    this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+    this.once('destroy', () => {
+      this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+    });
+
+    this.updateTime(DayNightFilter.getCurrentTimeLabel());
   }
+
+  private onGameTimeChanged = (timeOfDay: string): void => {
+    this.updateTime(timeOfDay);
+  };
 
   private createToggleIcon() {
     this.toggleIconContainer = addContainer(this.scene, 0, 0);
@@ -192,8 +211,12 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     if (candyRow) candyRow.text.setText(`${candy} ${i18next.t('menu:candy')}`);
   }
 
-  updateTime(): void {
+  updateTime(timeOfDay?: string): void {
     const row = this.infoList.getRow('time');
-    if (row) row.text.setText('00:00');
+    if (!row) return;
+    if (timeOfDay) {
+      const texture = TIME_ICON_MAP[timeOfDay] ?? TEXTURE.ICON_DAY;
+      row.image.setTexture(texture);
+    }
   }
 }

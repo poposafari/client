@@ -38,15 +38,15 @@ export interface GetMeRes {
   equippedCostumes: { costumeId: string }[];
   party: {
     id: number;
-    pokedexId: number;
+    pokedexId: string;
     level: number;
     gender: number;
     isShiny: boolean;
     nickname: string | null;
-    abilityId: number;
-    natureId: number;
+    abilityId: string;
+    natureId: string;
     skills: unknown;
-    heldItemId: number | null;
+    heldItemId: string | null;
     partySlot: number | null;
     ballId: number;
   }[];
@@ -65,20 +65,38 @@ export interface GetMeRes {
 // ── Lazy Load API 응답 타입 ──
 export interface PokemonBoxItem {
   id: number;
-  pokedexId: number;
+  pokedexId: string;
   level: number;
   gender: number;
   isShiny: boolean;
   nickname: string | null;
-  abilityId: number;
-  natureId: number;
+  abilityId: string;
+  natureId: string;
   skills: unknown;
-  heldItemId: number | null;
+  heldItemId: string | null;
   boxNumber: number | null;
   gridNumber: number | null;
   ballId: number;
   caughtLocation: string;
   caughtAt: string;
+}
+
+export interface BoxMetaItem {
+  boxNumber: number;
+  wallpaper: number;
+  name: string;
+}
+
+export interface PcSlotState {
+  id: number;
+  boxNumber: number | null;
+  gridNumber: number | null;
+  partySlot: number | null;
+}
+
+export interface NicknameChange {
+  id: number;
+  nickname: string | null;
 }
 
 export interface ItemBagItem {
@@ -162,6 +180,8 @@ export interface SafariCatchCaughtPokemon {
   skills: string[];
   boxNumber: number;
   gridNumber: number;
+  ballId: number;
+  caughtLocation: string;
 }
 
 export type SafariCatchRes =

@@ -149,7 +149,7 @@ export async function playBallThrow(
   wild.y -= wild.displayHeight / 2;
   wild.setOrigin(0.5, 0.5);
   wild.setTintFill(0xffffff);
-  wildShadow.setTintFill(0xffffff);
+  wildShadow.setTintFill(0x000000);
 
   await Promise.all([
     tweenAsync(scene, {
@@ -287,6 +287,7 @@ export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Pr
   wild.y = centerY;
   wild.setOrigin(0.5, 0.5);
   wild.setTintFill(0xffffff);
+  wildShadow.setTintFill(0x000000);
 
   await Promise.all([
     tweenAsync(scene, {
@@ -298,7 +299,7 @@ export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Pr
     tweenAsync(scene, {
       targets: wildShadow,
       scale: 2.2,
-      alpha: 0.5,
+      alpha: 0.3,
       duration: 300,
     }),
   ]);

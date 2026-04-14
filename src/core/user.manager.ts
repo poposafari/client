@@ -2,17 +2,20 @@ import {
   CostumeEntry,
   GetMeRes,
   ItemBagItem,
+  ItemCategory,
   OverworldDirection,
   OverworldMovementState,
   PokedexEntry,
   PokemonBoxItem,
   TownMapEntry,
 } from '@poposafari/types';
+import { MasterData } from './master.data.ts';
 
-/**
- * 기존 UI 코드가 접근하는 프로필 형태.
- * GetMeRes.profile → MappedProfile로 변환하여 하위 호환 유지.
- */
+export interface ItemBagEntry {
+  quantity: number;
+  slotNumber: number | null;
+}
+
 export interface MappedProfile {
   nickname: string;
   gender: 'male' | 'female';
@@ -27,18 +30,21 @@ export class UserManager {
   private profile!: MappedProfile;
   private equippedCostumes!: GetMeRes['equippedCostumes'];
   private party!: GetMeRes['party'];
-  private itemSlots!: GetMeRes['itemSlots'];
+  private itemSlots!: string[];
 
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
-  private itemBag: ItemBagItem[] | null = null;
+  private itemBag: Map<string, ItemBagEntry> | null = null;
   private pokedex: PokedexEntry[] | null = null;
   private townMap: TownMapEntry[] | null = null;
   private costumeList: CostumeEntry[] | null = null;
 
+  /** PC 박스 커서 상태 (세션 내 유지) */
+  private pcBoxIndex = 0;
+  private pcGridIndex = 0;
+
   /** 플레이어 오버월드 움직임 상태 (walk / running / ride / fishing / surf) */
-  private overworldMovementState: OverworldMovementState =
-    OverworldMovementState.WALK;
+  private overworldMovementState: OverworldMovementState = OverworldMovementState.WALK;
   /** 마지막으로 바라본 방향 (맵 전환 후 플레이어 초기 방향으로 사용) */
   private overworldDirection: OverworldDirection = OverworldDirection.DOWN;
 
@@ -60,7 +66,11 @@ export class UserManager {
     };
     this.equippedCostumes = user.equippedCostumes;
     this.party = user.party;
-    this.itemSlots = user.itemSlots;
+    this.itemSlots = user.itemSlots.map((s) => String(s.itemId));
+    this.setItemBag([
+      ...(user.itemSlots as unknown as ItemBagItem[]),
+      ...(user.essentialItems as unknown as ItemBagItem[]),
+    ]);
   }
 
   getProfile(): MappedProfile {
@@ -75,7 +85,11 @@ export class UserManager {
     return this.party;
   }
 
-  getItemSlots(): GetMeRes['itemSlots'] {
+  setParty(party: GetMeRes['party']): void {
+    this.party = party;
+  }
+
+  getItemSlots(): string[] {
     return this.itemSlots;
   }
 
@@ -89,12 +103,64 @@ export class UserManager {
     this.pokemonBox = data;
   }
 
-  getItemBag(): ItemBagItem[] | null {
+  /** 포획 성공해서 박스에 포켓몬 1마리 추가. 캐시가 없으면 무시(다음 PC 진입 시 API로 로드). */
+  addPokemonToBox(pokemon: PokemonBoxItem): void {
+    if (!this.pokemonBox) return;
+    this.pokemonBox.push(pokemon);
+  }
+
+  getItemBag(): Map<string, ItemBagEntry> | null {
     return this.itemBag;
   }
 
   setItemBag(data: ItemBagItem[]): void {
-    this.itemBag = data;
+    this.itemBag = new Map();
+    for (const item of data) {
+      this.itemBag.set(String(item.itemId), {
+        quantity: item.quantity,
+        slotNumber: item.slotNumber,
+      });
+    }
+  }
+
+  getItemBagByCategory(
+    masterData: MasterData,
+    category: ItemCategory,
+  ): { itemId: string; quantity: number; slotNumber: number | null }[] {
+    if (!this.itemBag) return [];
+    const result: { itemId: string; quantity: number; slotNumber: number | null }[] = [];
+    for (const [itemId, entry] of this.itemBag) {
+      const data = masterData.getItemData(itemId);
+      if (data && data.category === category) {
+        result.push({ itemId, ...entry });
+      }
+    }
+    return result;
+  }
+
+  updateItemQuantity(itemId: string, quantity: number, slotNumber?: number | null): void {
+    if (!this.itemBag) return;
+    if (quantity <= 0) {
+      this.itemBag.delete(itemId);
+      return;
+    }
+    const existing = this.itemBag.get(itemId);
+    this.itemBag.set(itemId, {
+      quantity,
+      slotNumber: slotNumber !== undefined ? slotNumber : (existing?.slotNumber ?? null),
+    });
+  }
+
+  decreaseItemQuantity(itemId: string, amount: number): void {
+    if (!this.itemBag) return;
+    const entry = this.itemBag.get(itemId);
+    if (!entry) return;
+    const newQuantity = entry.quantity - amount;
+    if (newQuantity <= 0) {
+      this.itemBag.delete(itemId);
+    } else {
+      entry.quantity = newQuantity;
+    }
   }
 
   getPokedex(): PokedexEntry[] | null {
@@ -119,6 +185,24 @@ export class UserManager {
 
   setCostumeList(data: CostumeEntry[]): void {
     this.costumeList = data;
+  }
+
+  // ── PC 커서 상태 ──
+
+  getPcBoxIndex(): number {
+    return this.pcBoxIndex;
+  }
+
+  setPcBoxIndex(index: number): void {
+    this.pcBoxIndex = index;
+  }
+
+  getPcGridIndex(): number {
+    return this.pcGridIndex;
+  }
+
+  setPcGridIndex(index: number): void {
+    this.pcGridIndex = index;
   }
 
   // ── 오버월드 상태 ──

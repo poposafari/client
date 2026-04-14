@@ -451,7 +451,11 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
         if (labelObj.setText) labelObj.setText(item.label);
 
         const isSelected = dataIndex === this.cursorIndex;
-        const labelColor = isSelected ? TEXTCOLOR.YELLOW : item.color || TEXTCOLOR.WHITE;
+        const labelColor = item.disabled
+          ? TEXTCOLOR.LIGHT_GRAY
+          : isSelected
+            ? TEXTCOLOR.YELLOW
+            : item.color || TEXTCOLOR.WHITE;
         if (labelObj.setColor) labelObj.setColor(labelColor);
 
         this.fillCountArea(slot, item, labelColor);
@@ -522,6 +526,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
   protected selectItem() {
     const selected = this.items[this.cursorIndex];
+    if (selected.disabled) {
+      this.scene.getAudio().playEffect(SFX.BUZZER);
+      return;
+    }
     if (selected.key === 'cancel') this.cancel();
     else {
       if (this.onSelect) this.onSelect(selected);

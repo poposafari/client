@@ -46,7 +46,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
       0,
       width,
       270,
-      4,
+      3,
       16,
       16,
       16,

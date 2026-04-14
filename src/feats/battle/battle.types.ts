@@ -19,6 +19,8 @@ export interface CaughtPokemon {
   skills: string[];
   boxNumber: number;
   gridNumber: number;
+  ballId: number;
+  caughtLocation: string;
 }
 
 export type CatchResult =

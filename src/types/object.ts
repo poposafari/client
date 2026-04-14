@@ -43,6 +43,7 @@ export interface IMenuItem {
   valueParts?: IValuePart[];
   icon?: TEXTURE;
   color?: string;
+  disabled?: boolean;
 }
 
 export interface IMenuListConfig {
