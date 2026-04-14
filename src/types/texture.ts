@@ -58,6 +58,7 @@ export const enum TEXTURE {
   ICON_OWNED = 'icon_owned',
   ICON_RATE_UP = 'up_rate',
   ICON_RATE_DOWN = 'down_rate',
+  ICON_LV = 'icon_lv',
 
   GROUND_ITEM = 'ground_item',
   EMO = 'emo',
@@ -70,6 +71,12 @@ export const enum TEXTURE {
 
   //pc
   PC_INFO = 'pc_info',
+  PC_BGS = 'pc_pgs',
+  PC_FINGER_0 = 'pc_finger_0',
+  PC_FINGER_1 = 'pc_finger_1',
+  PC_SAFARI_BALL = 'pc_safari-ball',
+  PC_ULTRA_BALL = 'pc_ultra-ball',
+  PC_MASTER_BALL = 'pc_master-ball',
 }
 
 export const enum ANIMATION {

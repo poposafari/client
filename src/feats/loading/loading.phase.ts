@@ -11,13 +11,7 @@ import { LoadingUi } from './loading.ui';
 import { WelcomePhase } from '../welcome/welcome.phase';
 import { p001Config } from '../overworld';
 
-import {
-  bigSizePokemonOverworldPokedex,
-  femalePokemonFrontPokedex,
-  femalePokemonIconPokedex,
-  femalePokemonOverworldPokedex,
-  pokemonCryNames,
-} from '@poposafari/core/master.data.ts';
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { s001Config, s002Config } from '../overworld/maps/safari';
 
 const MAX_NPC = 2;
@@ -53,8 +47,9 @@ export class LoadingPhase implements IGamePhase {
     const item = this.scene.cache.json.get('item');
     const pokemon = this.scene.cache.json.get('pokemon');
     const costume = this.scene.cache.json.get('costume');
+    const mapArea = this.scene.cache.json.get('map-area');
 
-    this.scene.getMasterData().loadJsonDataFromCache(costume, item, pokemon);
+    this.scene.getMasterData().loadJsonDataFromCache(costume, item, pokemon, mapArea);
   }
 
   /** 1차: JSON만 로드(0→50%). 2차: Master 반영 후 포켓몬+나머지(50→100%). */
@@ -76,6 +71,7 @@ export class LoadingPhase implements IGamePhase {
           phase = 2;
           this.loadMasterData();
           this.loadPokemonAssets();
+          this.loadItemAssets();
           this.loadImageAndSprite();
           this.loadMap();
           this.loadAudio();
@@ -97,39 +93,23 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadJson('item', 'master', 'item');
     this.scene.loadJson('pokemon', 'master', 'pokemon');
     this.scene.loadJson('costume', 'master', 'costume');
+    this.scene.loadJson('map-area', 'master', 'map-area');
   }
 
   private loadPokemonAssets(): void {
-    let pokedex = '0000';
-    let form = '';
-
-    const pokemonKeys = this.scene.getMasterData().getPokemonDataKeys();
-
     const path = 'ui/pokemons';
     this.scene.load.multiatlas('pokemon.front', `${path}/pokemon.front.json`, path);
     this.scene.load.multiatlas('pokemon.icon', `${path}/pokemon.icon.json`, path);
     this.scene.load.multiatlas('pokemon.overworld', `${path}/pokemon.overworld.json`, path);
 
-    for (const pokemon of pokemonKeys) {
-      if (
-        !pokemon.includes('mega') &&
-        !pokemon.includes('primal') &&
-        !pokemon.includes('sunshine') &&
-        !pokemon.includes('zen') &&
-        !pokemon.includes('ash') &&
-        !pokemon.includes('blade') &&
-        !pokemon.includes('complete') &&
-        !pokemon.includes('school') &&
-        !pokemon.includes('ultra') &&
-        !pokemon.includes('gulping') &&
-        !pokemon.includes('gorging') &&
-        !pokemon.includes('noice') &&
-        !pokemon.includes('dada') &&
-        !pokemon.includes('stella')
-      ) {
-        if (pokemonCryNames.includes(pokedex))
-          this.scene.loadAudio(`${pokedex}`, 'audio/pokemon', `${pokedex}`, 'ogg');
-      }
+    for (const cry of pokemonCryNames) {
+      this.scene.loadAudio(cry, 'audio/pokemon', cry, 'ogg');
+    }
+  }
+
+  private loadItemAssets(): void {
+    for (const item of this.scene.getMasterData().getItemDataKeys()) {
+      this.scene.loadImage(item, 'ui/items', item);
     }
   }
 
@@ -454,14 +434,16 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
     this.scene.loadImage(TEXTURE.BG_PC, 'ui/bgs', 'bg_pc');
 
-    for (let i = 0; i <= PC_BG_CNT; i++) {
-      this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
-    }
-    this.scene.loadImage(`pc_poke-ball`, 'ui/pc', 'pc_poke-ball');
-    this.scene.loadImage(`pc_great-ball`, 'ui/pc', 'pc_great-ball');
+    // for (let i = 0; i <= PC_BG_CNT; i++) {
+    //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
+    // }
+
+    this.scene.loadImage(`pc_safari-ball`, 'ui/pc', 'pc_safari-ball');
     this.scene.loadImage(`pc_ultra-ball`, 'ui/pc', 'pc_ultra-ball');
     this.scene.loadImage(`pc_master-ball`, 'ui/pc', 'pc_master-ball');
-
+    this.scene.loadAtlas(TEXTURE.PC_FINGER_0, 'ui/pc', 'pc_finger_0', 'pc_finger_0');
+    this.scene.loadAtlas(TEXTURE.PC_FINGER_1, 'ui/pc', 'pc_finger_1', 'pc_finger_1');
+    this.scene.loadAtlas(TEXTURE.PC_BGS, 'ui/pc', 'pc_bgs', 'pc_bgs');
     this.scene.loadImage(TEXTURE.PC_INFO, 'ui/pc', 'pc_info');
 
     this.scene.loadImage(TEXTURE.BLANK, 'ui', 'blank');
@@ -503,13 +485,25 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_DUSK, 'ui/icons', 'icon_dusk');
     this.scene.loadImage(TEXTURE.ICON_NIGHT, 'ui/icons', 'icon_night');
     this.scene.loadImage(TEXTURE.ICON_SHINY, 'ui/icons', 'icon_shiny');
+    this.scene.loadImage(TEXTURE.ICON_OWNED, 'ui/icons', 'icon_owned');
+    this.scene.loadImage(TEXTURE.ICON_LV, 'ui/icons', 'icon_lv');
+    this.scene.loadImage(TEXTURE.ICON_RATE_UP, 'ui', 'up_rate');
+    this.scene.loadImage(TEXTURE.ICON_RATE_DOWN, 'ui', 'down_rate');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
 
+    this.scene.loadAtlas(TEXTURE.EMO, 'ui', 'emo', 'emo');
+    this.scene.loadAtlas(TEXTURE.SPARKLE, 'ui', 'sparkle', 'sparkle');
+
     this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
 
+    this.scene.loadAtlas(TEXTURE.SAFARI_BALL_THROW, 'ui/battle', 'safari-ball_0', 'safari-ball_0');
+    this.scene.loadImage(TEXTURE.SAFARI_BALL_OPEN, 'ui/battle', 'safari-ball_1');
+
     this.scene.loadImage(TEXTURE.GROUND_ITEM, 'ui', 'ground_item');
+
+    this.loadBattleAssets();
 
     this.loadPlayerCostumeAssets();
 
@@ -522,6 +516,37 @@ export class LoadingPhase implements IGamePhase {
     for (let i = 0; i <= MAX_DOOR; i++) {
       this.scene.loadAtlas(`door${i}`, 'ui/doors', `door_${i}`, ANIMATION.DOOR, 'ui/doors');
     }
+  }
+
+  private loadBattleAssets() {
+    const areas = ['field', 'forest', 'rocky', 'sand', 'snow', 'ice', 'water'] as const;
+    const times = ['day', 'dusk', 'night'] as const;
+    for (const a of areas) {
+      for (const t of times) {
+        this.scene.loadImage(`bg_${a}_${t}`, 'ui/battle', `bg_${a}_${t}`);
+        this.scene.loadImage(`pb_${a}_${t}`, 'ui/battle', `pb_${a}_${t}`);
+        this.scene.loadImage(`eb_${a}_${t}`, 'ui/battle', `eb_${a}_${t}`);
+      }
+    }
+    this.scene.loadImage('bg_cave_day', 'ui/battle', 'bg_cave_day');
+    this.scene.loadImage('pb_cave_day', 'ui/battle', 'pb_cave_day');
+    this.scene.loadImage('eb_cave_day', 'ui/battle', 'eb_cave_day');
+
+    // HUD / 박스
+    this.scene.loadImage('databox_safari', 'ui/battle', 'databox_safari');
+    this.scene.loadImage('databox_normal_foe', 'ui/battle', 'databox_normal_foe');
+    this.scene.loadImage('battle_bar', 'ui/battle', 'battle_bar');
+
+    // 그림자
+    this.scene.loadImage('battle_shadow_0', 'ui/battle', 'battle_shadow_0');
+    this.scene.loadImage('battle_shadow_1', 'ui/battle', 'battle_shadow_1');
+    this.scene.loadImage('battle_shadow_2', 'ui/battle', 'battle_shadow_2');
+
+    // 사파리볼 / 파티클 / 이모트
+    this.scene.loadImage(TEXTURE.SAFARI_STAR, 'ui/battle', 'safari_star');
+    this.scene.loadImage('safari_bait', 'ui/battle', 'safari_bait');
+    this.scene.loadImage('safari_rock', 'ui/battle', 'safari_rock');
+    this.scene.loadImage('safari_anger', 'ui/battle', 'safari_anger');
   }
 
   private loadMap() {
@@ -579,6 +604,16 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.DOOR_2, 'audio/se', 'door_2', 'ogg');
     this.scene.loadAudio(SFX.CONGRATULATIONS, 'audio/se', 'cong', 'ogg');
     this.scene.loadAudio(SFX.GET_0, 'audio/se', 'get_0', 'ogg');
+
+    this.scene.loadAudio(SFX.EMO, 'audio/se', 'emo', 'ogg');
+    this.scene.loadAudio(SFX.THROW, 'audio/se', 'throw', 'ogg');
+    this.scene.loadAudio(SFX.BALL_ENTER, 'audio/se', 'ball_enter', 'ogg');
+    this.scene.loadAudio(SFX.BALL_EXIT, 'audio/se', 'ball_exit', 'ogg');
+    this.scene.loadAudio(SFX.BALL_DROP, 'audio/se', 'ball_drop', 'ogg');
+    this.scene.loadAudio(SFX.BALL_SHAKE, 'audio/se', 'ball_shake', 'ogg');
+    this.scene.loadAudio(SFX.BALL_CATCH, 'audio/se', 'ball_catch', 'ogg');
+    this.scene.loadAudio(SFX.FLEE, 'audio/se', 'flee', 'ogg');
+    this.scene.loadAudio(SFX.REWARD, 'audio/se', 'reward', 'ogg');
   }
 
   private createSprite() {
@@ -588,6 +623,20 @@ export class LoadingPhase implements IGamePhase {
     this.createDoorSprite();
     this.createPokemonIconAnimations();
     this.createPokemonOverworldAnimations();
+    this.createEmoSprite();
+  }
+
+  private createEmoSprite() {
+    const FRAMES_PER_ROW = 4;
+    const ROWS = 4;
+    for (let row = 0; row < ROWS; row++) {
+      const frameNames: string[] = [];
+      for (let col = 0; col < FRAMES_PER_ROW; col++) {
+        frameNames.push(`emo-${row * FRAMES_PER_ROW + col}`);
+      }
+
+      createAnimationFromFrameNames(this.scene, TEXTURE.EMO, `emo_${row}`, frameNames, 8, 0);
+    }
   }
 
   private createDoorSprite() {

@@ -1,6 +1,4 @@
 import { CostumeData, CostumeGenderData, ItemData, PokemonData } from '@poposafari/types';
-import { toGenderCode } from '@poposafari/utils';
-import i18next from 'i18next';
 export const pokemonCryNames = [
   '0001',
   '0002',
@@ -1407,12 +1405,14 @@ export class MasterData {
   private _itemData: Record<string, ItemData> = {};
   private _pokemonData: Record<string, PokemonData> = {};
   private _costumeData!: CostumeData;
+  private _mapAreaData: Record<string, string> = {};
 
-  loadJsonDataFromCache(costumeData: any, itemData: any, pokemonData: any): void {
+  loadJsonDataFromCache(costumeData: any, itemData: any, pokemonData: any, mapAreaData: any): void {
     try {
       this.loadCostumeData(costumeData);
       this.loadItemData(itemData);
       this.loadPokemonData(pokemonData);
+      this.loadMapAreaData(mapAreaData);
 
       console.log('All Master data loaded.');
     } catch (error: any) {
@@ -1439,6 +1439,15 @@ export class MasterData {
     this._costumeData = data;
   }
 
+  loadMapAreaData(data: any): void {
+    Object.keys(this._mapAreaData).forEach((k) => delete this._mapAreaData[k]);
+    Object.assign(this._mapAreaData, data);
+  }
+
+  getMapArea(mapKey: string): string {
+    return this._mapAreaData[mapKey] ?? 'field';
+  }
+
   getItemData(item: string): ItemData | null {
     if (item in this._itemData) {
       return this._itemData[item];
@@ -1455,7 +1464,10 @@ export class MasterData {
     }
   }
 
-  /** _pokemonData의 모든 키를 배열로 반환 */
+  getItemDataKeys(): string[] {
+    return Object.keys(this._itemData);
+  }
+
   getPokemonDataKeys(): string[] {
     return Object.keys(this._pokemonData);
   }
@@ -1490,7 +1502,6 @@ export class MasterData {
     return [];
   }
 
-  /** 코스튬 마스터 전체 (로딩/스프라이트 생성 시 텍스처 키 목록 생성용) */
   getCostume(): CostumeData {
     return this._costumeData;
   }

@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { IGamePhase } from '@poposafari/core';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import type { InitPosConfig } from './maps/door';
 import type { InitOkPayload, RoomUserState } from './overworld-socket.types';
 import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
@@ -142,6 +142,7 @@ export class OverworldEntryPhase implements IGamePhase {
       }
       if (payload.timeOfDay) {
         DayNightFilter.setTimeOfDay(DayNightFilter.timeOfDayToValue(payload.timeOfDay));
+        this.scene.events.emit(GameEvent.GAME_TIME_CHANGED, payload.timeOfDay);
       }
 
       // 마지막 위치가 사파리존이면 맵 데이터를 미리 가져온다.

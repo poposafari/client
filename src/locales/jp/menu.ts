@@ -57,4 +57,8 @@ export const menu: TranslationMenu = {
   rewardHeldItem: 'もちもの',
   rewardNone: '-',
   rewardCandyGained: '{{name}}を{{count}}個てにいれた！',
+  tierCommon: 'ノーマル',
+  tierRare: 'レア',
+  tierEpic: 'エピック',
+  tierLegendary: 'レジェンド',
 };

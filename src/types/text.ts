@@ -12,6 +12,7 @@ export const enum TEXTCOLOR {
   ORANGE = '#fe6244',
   YELLOW = '#f8ed62',
   DARK_YELLOW = '#dab600',
+  COMMON = '#B0B0B0',
   RARE = '#60A5FA',
   EPIC = '#b973ff',
   LEGENDARY = '#FBBF24',

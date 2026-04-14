@@ -149,3 +149,7 @@ export function updatePokemonGenderIcon(gender: number, text: GText) {
     text.setVisible(false);
   }
 }
+
+export function getPokedexId(pokdexId: string) {
+  return pokdexId.split('_')[0];
+}

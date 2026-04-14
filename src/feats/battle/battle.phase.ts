@@ -109,6 +109,34 @@ export class BattlePhase implements IGamePhase {
           await this.ui.playBallCatchAnim();
           await this.ui.showCaughtTalk();
           const { pokemon, reward } = next.outcome;
+
+          const user = this.scene.getUser();
+          user?.addPokemonToBox({
+            id: pokemon.id,
+            pokedexId: pokemon.pokedexId,
+            level: pokemon.level,
+            gender: pokemon.gender,
+            isShiny: pokemon.isShiny,
+            nickname: pokemon.nickname,
+            abilityId: pokemon.abilityId,
+            natureId: pokemon.natureId,
+            skills: pokemon.skills,
+            heldItemId: pokemon.heldItemId ? pokemon.heldItemId : null,
+            boxNumber: pokemon.boxNumber,
+            gridNumber: pokemon.gridNumber,
+            ballId: pokemon.ballId,
+            caughtLocation: pokemon.caughtLocation,
+            caughtAt: new Date().toISOString(),
+          });
+
+          if (user && reward?.candyId && reward.candyQuantity > 0) {
+            const existing = user.getItemBag()?.get(reward.candyId);
+            user.updateItemQuantity(
+              reward.candyId,
+              (existing?.quantity ?? 0) + reward.candyQuantity,
+            );
+          }
+
           await new Promise<void>((resolve) => {
             this.scene.pushPhase(
               new RewardPhase(this.scene, {

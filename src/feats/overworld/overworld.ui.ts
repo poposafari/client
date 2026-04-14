@@ -123,6 +123,7 @@ export class OverworldUi extends BaseUi {
   onMenuRequested: (() => void) | null = null;
   onInteractivePhaseRequested: ((object: InteractiveObject, phaseKey: string) => void) | null =
     null;
+  onWildEncounterRequested: ((wild: WildPokemonObject) => void) | null = null;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
@@ -177,6 +178,37 @@ export class OverworldUi extends BaseUi {
     return null;
   }
 
+  private getFacingWildPokemon(): WildPokemonObject | null {
+    if (!this.player) return null;
+    const dir = this.player.getLastDirection();
+    if (dir === DIRECTION.NONE) return null;
+    const { x: px, y: py } = this.player.getTilePos();
+    const { dx, dy } = directionToDelta(dir);
+    const fx = px + dx;
+    const fy = py + dy;
+    for (const obj of this.safariObjects) {
+      if (!(obj instanceof WildPokemonObject)) continue;
+      const { x: ox, y: oy } = obj.getTilePos();
+      if (ox === fx && oy === fy) return obj;
+    }
+    return null;
+  }
+
+  private oppositeDirection(dir: DIRECTION): DIRECTION {
+    switch (dir) {
+      case DIRECTION.UP:
+        return DIRECTION.DOWN;
+      case DIRECTION.DOWN:
+        return DIRECTION.UP;
+      case DIRECTION.LEFT:
+        return DIRECTION.RIGHT;
+      case DIRECTION.RIGHT:
+        return DIRECTION.LEFT;
+      default:
+        return dir;
+    }
+  }
+
   createLayout(): void {}
 
   onInput(key: string): void {
@@ -221,7 +253,13 @@ export class OverworldUi extends BaseUi {
   private handleTalkAction(): void {
     if (!this.player || !this.player.isMovementFinish()) return;
     const obj = this.getFacingInteractiveObject();
-    if (!obj) return;
+    if (!obj) {
+      const wild = this.getFacingWildPokemon();
+      if (wild && wild.isCatchable() && !wild.isInteractionLocked()) {
+        void this.handleWildTalk(wild);
+      }
+      return;
+    }
     if (obj instanceof GroundItemObject) {
       this.handleGroundItemPick(obj);
       return;
@@ -235,6 +273,16 @@ export class OverworldUi extends BaseUi {
     this.runReaction(steps);
   }
 
+  private async handleWildTalk(wild: WildPokemonObject): Promise<void> {
+    if (!this.player) return;
+    if (!wild.tryLockInteraction()) return;
+
+    wild.freezeRandomWalk(true);
+    wild.faceDirection(this.oppositeDirection(this.player.getLastDirection()));
+    await wild.playEmote('emo_0', (sprite) => this.worldContainer?.add(sprite));
+    this.onWildEncounterRequested?.(wild);
+  }
+
   private async handleGroundItemPick(obj: GroundItemObject): Promise<void> {
     const uid = obj.getUid();
     const itemId = obj.getItemId();
@@ -243,7 +291,7 @@ export class OverworldUi extends BaseUi {
       if (!result) return;
 
       const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
-      const itemName = i18next.t(`item:${result.itemId}`, {
+      const itemName = i18next.t(`item:${result.itemId}.name`, {
         defaultValue: result.itemId,
       });
       this.scene.getAudio().playEffect(SFX.GET_0);
@@ -263,6 +311,18 @@ export class OverworldUi extends BaseUi {
     } catch (err) {
       console.warn('[Safari] pickGroundItem failed', err);
     }
+  }
+
+  resolveWildEncounter(
+    wild: WildPokemonObject,
+    reason: 'catch' | 'flee_wild' | 'flee_player',
+  ): void {
+    if (reason === 'flee_player') {
+      wild.freezeRandomWalk(false);
+      wild.unlockInteraction();
+      return;
+    }
+    this.removeSafariObject(wild as unknown as InteractiveObject);
   }
 
   private removeSafariObject(obj: InteractiveObject): void {
@@ -790,15 +850,12 @@ export class OverworldUi extends BaseUi {
     if (this.nameContainer) this.nameContainer.list.sort(byDepth);
   }
 
-  /**
-   * 사파리 야생 포켓몬의 랜덤 워크 tick. update() 본 경로와 OverworldPhase.tickBackground
-   * (메뉴/PC 등 다른 phase가 위에 있을 때) 양쪽에서 호출되며, 호출 경로 단일화를 위해 분리.
-   * 정렬과 카메라 갱신은 호출자(또는 update 본문)에서 수행한다.
-   */
   tickWildPokemons(delta: number): void {
     for (const obj of this.safariObjects) {
       if (obj instanceof WildPokemonObject) {
-        obj.freezeRandomWalk(false);
+        if (!obj.isInteractionLocked()) {
+          obj.freezeRandomWalk(false);
+        }
         obj.update(delta);
       }
     }
@@ -809,8 +866,7 @@ export class OverworldUi extends BaseUi {
 
     if (this.doorTransitionPending) {
       this.player.update(delta);
-      // door 전환 중에도 wild의 잔여 픽셀 이동은 마저 진행되도록 freeze 모드로 update.
-      // 상태 머신(IDLE/WALKING 전이, 신규 스텝 큐잉)은 멈추지만 super.update()는 호출됨.
+
       for (const obj of this.safariObjects) {
         if (obj instanceof WildPokemonObject) {
           obj.freezeRandomWalk(true);

@@ -34,6 +34,7 @@ export const menu: TranslationMenu = {
   pickStartingPokemon: '마음에 드는 스타팅 포켓몬을 골라주세요.',
   startingItem: '스타터 아이템',
   natureSymbol: '성격',
+  heldItemSymbol: '지닌물건',
   professor: '호박사',
   hisui: '히스이',
   galar: '가라르',
@@ -84,4 +85,8 @@ export const menu: TranslationMenu = {
   rewardHeldItem: '지닌물건',
   rewardNone: '-',
   rewardCandyGained: '{{name}} x {{count}}개 획득!',
+  tierCommon: '일반',
+  tierRare: '레어',
+  tierEpic: '에픽',
+  tierLegendary: '전설',
 };
