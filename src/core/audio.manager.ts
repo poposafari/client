@@ -17,7 +17,7 @@ export class AudioManager {
     this.effectVolume = Phaser.Math.Clamp(effectVolume * 0.1, 0, 1);
   }
 
-  public playEffect(key: SFX): void {
+  public playEffect(key: SFX | string): void {
     const volume = this.masterVolume * this.effectVolume;
 
     this.scene.sound.play(key as unknown as string, {

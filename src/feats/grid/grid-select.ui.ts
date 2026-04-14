@@ -1,7 +1,7 @@
 import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, KEY, SFX } from '@poposafari/types';
-import { addContainer, addImage, addWindow } from '@poposafari/utils';
+import { addContainer, addImage, addSprite, addWindow } from '@poposafari/utils';
 
 export interface IGridSelectItem {
   key: string;
@@ -20,13 +20,18 @@ const DEFAULT_DIRECTION_KEYS = {
   right: KEY.RIGHT,
 } as const;
 
+export type IGridSelectCursor =
+  | { type: 'image'; texture: string; scale?: number; offsetX?: number; offsetY?: number }
+  | { type: 'sprite'; texture: string; frame?: string; scale?: number; offsetX?: number; offsetY?: number }
+  | { type: 'window'; texture: string; size?: number; scale?: number; offsetX?: number; offsetY?: number }
+  | { type: 'both'; imageTexture: string; imageScale?: number; windowTexture: string; windowSize?: number; windowScale?: number; offsetX?: number; offsetY?: number };
+
 export interface IGridSelectConfig {
   x: number;
   y: number;
   outerWindowTexture: string;
   innerWindowTexture: string;
-  cursorTexture: string;
-  cursorWindowTexture: string;
+  cursor: IGridSelectCursor;
   itemScale: number;
   items: IGridSelectItem[];
   columns: number;
@@ -37,9 +42,6 @@ export interface IGridSelectConfig {
   innerCellHeight?: number;
   innerWindowScale?: number;
   outerWindowScale?: number;
-  cursorScale?: number;
-  cursorWindowSize?: number;
-  cursorWindowScale?: number;
 }
 
 export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
@@ -50,8 +52,8 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
   private cellHeight = 0;
   private totalContentWidth = 0;
   private totalContentHeight = 0;
-  private cursor!: GImage;
-  private cursorWindow!: GWindow;
+  protected cursor!: GImage | GSprite | GWindow;
+  private cursorWindow!: GWindow | null;
   private innerWindowTemplate!: GWindow;
   private _itemsOverride: IGridSelectItem[] | null = null;
 
@@ -187,33 +189,46 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
       this.itemContainers.push(cell);
     }
 
-    const cwSize = this.config.cursorWindowSize ?? 88;
-    const cwScale = this.config.cursorWindowScale ?? 2;
-    this.cursorWindow = addWindow(
-      this.scene,
-      this.config.cursorWindowTexture as never,
-      0,
-      0,
-      cwSize,
-      cwSize,
-      cwScale,
-      DEFAULT_SLICE,
-      DEFAULT_SLICE,
-      DEFAULT_SLICE,
-      DEFAULT_SLICE,
-    );
-    this.cursor = addImage(
-      this.scene,
-      this.config.cursorTexture as never,
-      undefined,
-      0,
-      0,
-    ).setScale(this.config.cursorScale ?? 1.2);
+    const cur = this.config.cursor;
+    this.cursorWindow = null;
 
-    this.cursorWindow.setPosition(0, 0);
-    this.cursor.setPosition(0, 0);
-    this.add(this.cursorWindow);
-    this.add(this.cursor);
+    if (cur.type === 'window' || cur.type === 'both') {
+      const texture = cur.type === 'both' ? cur.windowTexture : cur.texture;
+      const size = cur.type === 'both' ? (cur.windowSize ?? 88) : (cur.size ?? 88);
+      const scale = cur.type === 'both' ? (cur.windowScale ?? 2) : (cur.scale ?? 2);
+      this.cursorWindow = addWindow(
+        this.scene,
+        texture as never,
+        0,
+        0,
+        size,
+        size,
+        scale,
+        DEFAULT_SLICE,
+        DEFAULT_SLICE,
+        DEFAULT_SLICE,
+        DEFAULT_SLICE,
+      );
+      this.cursorWindow.setPosition(0, 0);
+      this.add(this.cursorWindow);
+    }
+
+    if (cur.type === 'sprite') {
+      const scale = cur.scale ?? 1.2;
+      this.cursor = addSprite(this.scene, cur.texture as never, cur.frame, 0, 0).setScale(scale);
+      this.cursor.setPosition(0, 0);
+      this.add(this.cursor);
+    } else if (cur.type === 'image' || cur.type === 'both') {
+      const texture = cur.type === 'both' ? cur.imageTexture : cur.texture;
+      const scale = cur.type === 'both' ? (cur.imageScale ?? 1.2) : (cur.scale ?? 1.2);
+      this.cursor = addImage(this.scene, texture as never, undefined, 0, 0).setScale(scale);
+      this.cursor.setPosition(0, 0);
+      this.add(this.cursor);
+    }
+
+    if (cur.type === 'window') {
+      this.cursor = this.cursorWindow as unknown as GImage;
+    }
 
     this.updateCursorPosition();
   }
@@ -251,7 +266,7 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     return clone;
   }
 
-  private updateCursorPosition(): void {
+  protected updateCursorPosition(): void {
     const cols = this.config.columns;
     const gapH = this.config.rowGap;
     const gapW = this.config.columnGap;
@@ -263,8 +278,10 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     const x = startX + col * (this.cellWidth + gapW);
     const y = startY + row * (this.cellHeight + gapH);
 
-    this.cursor.setPosition(x, y);
-    this.cursorWindow.setPosition(x, y);
+    const ox = this.config.cursor.offsetX ?? 0;
+    const oy = this.config.cursor.offsetY ?? 0;
+    this.cursor.setPosition(x + ox, y + oy);
+    this.cursorWindow?.setPosition(x + ox, y + oy);
   }
 
   getSelectedKey(): string {
@@ -354,6 +371,11 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
   }
 
   protected handleCursorMoved(_selectedKey: string): void {}
+
+  setCursorVisible(visible: boolean): void {
+    this.cursor?.setVisible(visible);
+    this.cursorWindow?.setVisible(visible);
+  }
 
   errorEffect(_errorMsg: string): void {}
 

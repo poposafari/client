@@ -11,6 +11,8 @@ export interface BaseObjectOptions {
 export interface ObjectName {
   text: string;
   color?: TEXTCOLOR;
+  /** true면 text를 이미 번역된 문자열로 취급하여 object: i18 번역을 스킵한다 */
+  raw?: boolean;
 }
 
 export class BaseObject {
@@ -21,6 +23,7 @@ export class BaseObject {
   protected tileX: number;
   protected tileY: number;
   protected nameKey: string;
+  protected nameRaw: boolean;
   protected nameColor: TEXTCOLOR;
 
   nameOffsetY: number = 100;
@@ -38,6 +41,7 @@ export class BaseObject {
     this.tileX = Math.floor(tileX);
     this.tileY = Math.floor(tileY);
     this.nameKey = name.text;
+    this.nameRaw = name.raw ?? false;
     this.nameColor = name.color ?? TEXTCOLOR.WHITE;
     this.nameOffsetY = nameOffsetY;
 
@@ -48,14 +52,8 @@ export class BaseObject {
     this.sprite = addSprite(scene, texture, undefined, tileX, tileY)
       .setOrigin(0.5, 1)
       .setScale(scale);
-    this.name = addObjText(
-      scene,
-      tileX,
-      tileY - this.nameOffsetY,
-      i18next.t(`object:${name.text}`),
-      20,
-      this.nameColor,
-    );
+    const displayName = this.nameRaw ? name.text : i18next.t(`object:${name.text}`);
+    this.name = addObjText(scene, tileX, tileY - this.nameOffsetY, displayName, 20, this.nameColor);
 
     this.name.setDepth(DEPTH.MESSAGE);
 
@@ -64,7 +62,7 @@ export class BaseObject {
 
   refreshNameText(): void {
     if (!this.nameKey || !this.name?.active) return;
-    this.name.setText(i18next.t(`object:${this.nameKey}`));
+    this.name.setText(this.nameRaw ? this.nameKey : i18next.t(`object:${this.nameKey}`));
   }
 
   getScene(): GameScene {
