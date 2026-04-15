@@ -92,6 +92,16 @@ export class BattlePhase implements IGamePhase {
           const res = await this.scene.getApi().safariCatch({
             uid: this.ctx.wild.uid,
           });
+          const user = this.scene.getUser();
+          const party = user?.getParty();
+          if (user && party && party.length > 0) {
+            user.setParty(
+              party.map((p) => ({
+                ...p,
+                friendship: Math.min((p.friendship ?? 0) + 2, 255),
+              })),
+            );
+          }
           outcome = res ? toCatchResult(res) : { kind: 'fail' };
         } catch (e) {
           outcome = { kind: 'fail' };
@@ -127,6 +137,7 @@ export class BattlePhase implements IGamePhase {
             ballId: pokemon.ballId,
             caughtLocation: pokemon.caughtLocation,
             caughtAt: new Date().toISOString(),
+            friendship: 0,
           });
 
           if (user && reward?.candyId && reward.candyQuantity > 0) {

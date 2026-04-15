@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { UserManager } from '@poposafari/core/user.manager';
 import { PokemonPcUi } from './pokemon-pc.ui';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import { PcLocalState } from './pc-local-state';
 import type { BoxMetaItem, PokemonBoxItem } from '@poposafari/types/dto';
 
@@ -68,11 +68,14 @@ export class PokemonPcPhase implements IGamePhase {
             heldItemId: p.heldItemId,
             partySlot: slotState.partySlot,
             ballId: p.ballId,
+            friendship: p.friendship,
           };
         }),
       );
 
       user?.setPokemonBox(this.pcState.getAllBoxPokemons());
+
+      this.scene.events.emit(GameEvent.PARTY_CHANGED);
     }
 
     this.scene.popPhase();

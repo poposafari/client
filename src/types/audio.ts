@@ -16,6 +16,9 @@ export const enum SFX {
   BALL_CATCH = 'ball_catch',
   FLEE = 'flee',
   REWARD = 'reward',
+  EVOL_0 = 'evol_0',
+  EVOL_1 = 'evol_1',
+  HATCH = 'hatch',
 }
 
 export const enum BGM {}

@@ -25,6 +25,7 @@ const DEFAULT_NINE_SLICE = { left: 16, right: 16, top: 16, bottom: 16 };
  */
 export class WindowStripContainer extends Phaser.GameObjects.Container {
   scene: GameScene;
+  private frame!: GWindow;
   private slotWindows: GWindow[] = [];
   private orientation!: WindowStripOrientation;
   private slotSize!: number;
@@ -64,7 +65,7 @@ export class WindowStripContainer extends Phaser.GameObjects.Container {
     if (orientation === 'vertical') {
       const frameWidth = slotSize + framePadding * 2;
       const frameHeight = frameSize;
-      const frame = addWindow(
+      this.frame = addWindow(
         this.scene,
         texture,
         0,
@@ -77,7 +78,7 @@ export class WindowStripContainer extends Phaser.GameObjects.Container {
         slice.top,
         slice.bottom,
       );
-      this.add(frame);
+      this.add(this.frame);
 
       for (let i = 0; i < slotCount; i++) {
         const y = i * (slotSize + spacing) - this.stripCenter;
@@ -100,7 +101,7 @@ export class WindowStripContainer extends Phaser.GameObjects.Container {
     } else {
       const frameWidth = frameSize;
       const frameHeight = slotSize + framePadding * 2;
-      const frame = addWindow(
+      this.frame = addWindow(
         this.scene,
         texture,
         0,
@@ -113,7 +114,7 @@ export class WindowStripContainer extends Phaser.GameObjects.Container {
         slice.top,
         slice.bottom,
       );
-      this.add(frame);
+      this.add(this.frame);
 
       for (let i = 0; i < slotCount; i++) {
         const x = i * (slotSize + spacing) - this.stripCenter;
@@ -134,6 +135,10 @@ export class WindowStripContainer extends Phaser.GameObjects.Container {
         this.add(win);
       }
     }
+  }
+
+  getFrame(): GWindow {
+    return this.frame;
   }
 
   getSlotCount(): number {

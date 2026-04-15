@@ -1,4 +1,5 @@
 import { ImageTextListContainer } from '@poposafari/containers/image-text-list.container';
+import { PartyListContainer } from '@poposafari/containers/party-list.container';
 import { WindowStripContainer } from '@poposafari/containers/window-strip.container';
 import { GameEvent, GameScene } from '@poposafari/scenes';
 import { DEPTH, MONEY_SYMBOL, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
@@ -6,7 +7,6 @@ import { addContainer, addImage, addText } from '@poposafari/utils';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from 'i18next';
 
-const MAX_PARTY_SIZE = 6;
 const MAX_QUICK_SLOT_SIZE = 6;
 
 const TIME_ICON_MAP: Record<string, TEXTURE> = {
@@ -22,8 +22,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private toggleIcons: GImage[] = [];
   private toggleIconTexts: GText[] = [];
 
-  private partyStrip!: WindowStripContainer;
-  private partyIcons: GImage[] = [];
+  private partyList!: PartyListContainer;
 
   private quickSlotStrip!: WindowStripContainer;
   private quickSlotIcons: GImage[] = [];
@@ -49,11 +48,13 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.createQuickSlot();
     this.createInfo();
 
-    this.add([this.toggleIconContainer, this.partyStrip, this.quickSlotStrip, this.infoList]);
+    this.add([this.toggleIconContainer, this.partyList, this.quickSlotStrip, this.infoList]);
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+    this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
     this.once('destroy', () => {
       this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+      this.scene.events.off(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
     });
 
     this.updateTime(DayNightFilter.getCurrentTimeLabel());
@@ -61,6 +62,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   private onGameTimeChanged = (timeOfDay: string): void => {
     this.updateTime(timeOfDay);
+  };
+
+  private onPartyChanged = (): void => {
+    this.partyList?.refresh();
   };
 
   private createToggleIcon() {
@@ -100,23 +105,23 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   }
 
   private createParty() {
-    this.partyStrip = new WindowStripContainer(this.scene);
-    this.partyStrip.create({
+    this.partyList = new PartyListContainer(this.scene);
+    this.partyList.create({
       orientation: 'vertical',
-      slotCount: MAX_PARTY_SIZE,
-      slotSize: 60,
+      slotSize: 90,
       spacing: 10,
+      iconScale: 1.4,
+      showLevel: true,
       nineSlice: { left: 8, right: 8, top: 8, bottom: 8 },
+      frameVisible: false,
+      levelSize: 40,
     });
+    this.partyList.setPosition(+905, 0);
+    this.partyList.refresh();
+  }
 
-    // TODO: 파티 포켓몬 아이콘 추가
-    // for (let i = 0; i < this.partyStrip.getSlotCount(); i++) {
-    //   const pos = this.partyStrip.getSlotCenter(i);
-    //   const icon = addImage(this.scene, TEXTURE.ICON_CHECK, pos.x, pos.y).setScale(2);
-    //   this.partyIcons.push(icon);
-    //   this.partyStrip.add(icon);
-    // }
-    this.partyStrip.setPosition(+905, 0);
+  refreshParty(): void {
+    this.partyList?.refresh();
   }
 
   private createQuickSlot() {

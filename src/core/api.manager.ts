@@ -40,11 +40,9 @@ export interface ApiSuccess<T> {
   data: T;
 }
 
-export interface ApiFail {
-  statusCode: number;
-  code: ErrorCode;
-  error: string;
-  message: string | null;
+export interface ApiFailBody {
+  success: false;
+  error: { code: string; message: string | null; status: number };
 }
 
 export type ApiResponse<T> =
@@ -71,16 +69,10 @@ export class ApiManager {
   private setupInterceptors() {
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError<ApiFail>) => {
-        if (error.response?.data) {
-          const errData = error.response.data;
-
-          if (
-            errData.code === ErrorCode.SESSION_MISSING ||
-            errData.code === ErrorCode.SESSION_EXPIRED
-          ) {
-            return Promise.reject(error);
-          }
+      async (error: AxiosError<ApiFailBody>) => {
+        const code = error.response?.data?.error?.code;
+        if (code === ErrorCode.SESSION_MISSING || code === ErrorCode.SESSION_EXPIRED) {
+          return Promise.reject(error);
         }
 
         return this.handleGlobalError(error);
@@ -144,6 +136,27 @@ export class ApiManager {
     const res = await this.client.post<ApiResponse<{ candyId: string; quantity: number }>>(
       '/pokemon/sell',
       { id },
+    );
+    return res.data.success ? res.data.data : null;
+  }
+
+  async enhancePokemon(
+    id: number,
+    candy: number,
+  ): Promise<{ id: number; level: number; candyId: string; candyRemaining: number } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ id: number; level: number; candyId: string; candyRemaining: number }>
+    >('/pokemon/enhance', { id, candy });
+    return res.data.success ? res.data.data : null;
+  }
+
+  async evolvePokemon(
+    id: number,
+    cost: string,
+  ): Promise<{ id: number; pokedexId: string } | null> {
+    const res = await this.client.post<ApiResponse<{ id: number; pokedexId: string }>>(
+      '/pokemon/evolve',
+      { id, cost },
     );
     return res.data.success ? res.data.data : null;
   }
@@ -279,35 +292,25 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  private handleGlobalError(error: AxiosError<ApiFail>) {
+  private handleGlobalError(error: AxiosError<ApiFailBody>) {
     let code: ErrorCode | string = ErrorCode.INTERNAL_SERVER_ERROR;
-    let message = i18next.t('error:unkown');
+    let message = i18next.t('error:INTERNAL_SERVER_ERROR');
     let status = 500;
 
     if (error.response) {
       status = error.response.status;
       const errData = error.response.data;
 
-      if (errData && errData.code) {
-        code = errData.code;
+      if (errData?.error?.code) {
+        code = errData.error.code;
       }
 
-      switch (code) {
-        case ErrorCode.INTERNAL_SERVER_ERROR:
-          message = i18next.t('error:INTERNAL_SERVER_ERROR');
-          break;
-        case ErrorCode.NOT_FOUND:
-          message = i18next.t('error:NOT_FOUND');
-          break;
-        case ErrorCode.DTO_INVALID:
-          message = i18next.t('error:DTO_INVALID');
-          break;
-        case ErrorCode.ACCOUNT_ALREADY_EXIST:
-          message = i18next.t('error:ACCOUNT_ALREADY_EXIST');
-          break;
-        case ErrorCode.USER_NOT_FOUND:
-          message = i18next.t('error:USER_NOT_FOUND');
-          break;
+      // i18n 키가 있으면 매핑된 메시지, 없으면 서버가 보내 준 원본 메시지(DEV 환경) 또는 기본값
+      const i18nKey = `error:${code}`;
+      if (i18next.exists(i18nKey)) {
+        message = i18next.t(i18nKey);
+      } else if (errData?.error?.message) {
+        message = errData.error.message;
       }
     } else if (error.request) {
       code = ErrorCode.NETWORK_ERROR;

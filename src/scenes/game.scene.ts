@@ -33,6 +33,7 @@ export enum GameEvent {
   LANGUAGE_CHANGED = 'LANGUAGE_CHANGED',
   WINDOW_CHANGED = 'WINDOW_CHANGED',
   GAME_TIME_CHANGED = 'GAME_TIME_CHANGED',
+  PARTY_CHANGED = 'PARTY_CHANGED',
 }
 
 export interface SafariWildInfo {

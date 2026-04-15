@@ -40,6 +40,7 @@ export interface GetMeRes {
     id: number;
     pokedexId: string;
     level: number;
+    friendship: number;
     gender: number;
     isShiny: boolean;
     nickname: string | null;
@@ -67,6 +68,7 @@ export interface PokemonBoxItem {
   id: number;
   pokedexId: string;
   level: number;
+  friendship: number;
   gender: number;
   isShiny: boolean;
   nickname: string | null;
