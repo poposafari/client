@@ -1,3 +1,4 @@
+import { PartyListContainer } from '@poposafari/containers/party-list.container';
 import type { GameScene } from '@poposafari/scenes/game.scene';
 import { GameEvent } from '@poposafari/scenes/game.scene';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
@@ -34,6 +35,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private playerHudContainer!: GContainer;
   private locationContainer!: GContainer;
   private rateContainer!: GContainer;
+  private partyList!: PartyListContainer;
 
   private wildNameText!: GText;
   private wildLevelText!: GText;
@@ -59,6 +61,12 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private baseCapture = 0;
   private baseFlee = 0;
   private partyBonus = 0;
+
+  // 서버 LEVEL_CURVE (server/lib/constants/level-curve.ts)와 동일하게 유지.
+  private static readonly PARTY_LEVEL_COEF = 0.0003;
+  private static readonly PARTY_LEVEL_CAP = 0.3;
+  private static readonly CAPTURE_RATE_CAP = 0.999;
+  private static readonly FLEE_RATE_CAP = 0.9;
 
   constructor(scene: GameScene) {
     super(scene, 0, 0);
@@ -240,9 +248,23 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       TEXTSHADOW.GRAY,
     );
 
+    this.partyList = new PartyListContainer(scene);
+    this.partyList.create({
+      orientation: 'horizontal',
+      slotSize: 90,
+      spacing: 20,
+      iconScale: 1.8,
+      showLevel: true,
+      nineSlice: { left: 8, right: 8, top: 8, bottom: 8 },
+      frameVisible: false,
+    });
+    this.partyList.setPosition(camW / 2 + 620 - PLAYER_HUD.x, 80);
+    this.partyList.refresh();
+
     this.playerHudContainer.add(playerBox);
     this.playerHudContainer.add(this.playerSafariTitle);
     this.playerHudContainer.add(this.playerLeftSafari);
+    this.playerHudContainer.add(this.partyList);
 
     this.add(this.playerHudContainer);
 
@@ -321,6 +343,10 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
+  refreshParty(): void {
+    this.partyList?.refresh();
+  }
+
   updateSafariBallCount(count: number): void {
     this.safariBallCount = count;
     this.playerLeftSafari.setText(i18next.t('menu:safariLeft', { count }));
@@ -365,7 +391,10 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     for (const p of party) {
       const masterPokemon = scene.getMasterData().getPokemonData(String(p.pokedexId));
       const rank: PokemonRank = masterPokemon?.rank ?? 'common';
-      const lvlBonus = Math.floor(p.level / 25) * 0.02;
+      const lvlBonus = Math.min(
+        BattleInfoUi.PARTY_LEVEL_CAP,
+        p.level * BattleInfoUi.PARTY_LEVEL_COEF,
+      );
       const shinyBonus = p.isShiny ? 0.03 : 0;
       const tBonus = tierBonus[rank] ?? 0;
       maxBonus = Math.max(maxBonus, lvlBonus + shinyBonus + tBonus);
@@ -385,8 +414,11 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       fleeMul = 2.0;
     }
 
-    const capture = Math.min(this.baseCapture * captureMul + this.partyBonus, 0.9);
-    const flee = Math.min(this.baseFlee * fleeMul, 0.9);
+    const capture = Math.min(
+      this.baseCapture * captureMul + this.partyBonus,
+      BattleInfoUi.CAPTURE_RATE_CAP,
+    );
+    const flee = Math.min(this.baseFlee * fleeMul, BattleInfoUi.FLEE_RATE_CAP);
     return { capture, flee };
   }
 

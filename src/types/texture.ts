@@ -14,6 +14,7 @@ export const enum TEXTURE {
   BG_6 = 'bg_6',
   BG_BLACK = 'bg_black',
   BG_PC = 'bg_pc',
+  BG_EVOLVE = 'bg_evolve',
 
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
@@ -71,6 +72,7 @@ export const enum TEXTURE {
 
   //pc
   PC_INFO = 'pc_info',
+  PARTICLE_EVOL = 'particle_evol',
   PC_BGS = 'pc_pgs',
   PC_FINGER_0 = 'pc_finger_0',
   PC_FINGER_1 = 'pc_finger_1',

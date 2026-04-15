@@ -9,7 +9,6 @@ import {
   SYMBOL_MALE,
   TEXTCOLOR,
   TEXTSHADOW,
-  TEXTSTROKE,
   TEXTSTYLE,
   TEXTURE,
   type PokemonBoxItem,
@@ -33,6 +32,10 @@ import { PcLocalState } from './pc-local-state';
 import { MenuListUi } from '../menu/menu-list.ui';
 import { MenuUi } from '../menu/menu-ui';
 import { NameInputUi } from './name-input.ui';
+import { EnhancePanelUi } from './enhance-panel.ui';
+import { EvolveSelectUi, parseCostParts } from './evolve-select.ui';
+import DayNightFilter from '@poposafari/utils/day-night-filter';
+import { EvolveUi } from './evolve.ui';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
 
@@ -76,11 +79,12 @@ export class PokemonPcUi extends BaseUi {
   private infoPokedexSymbol!: GText;
   private infoNatureSymbol!: GText;
   private infoAbilitySymbol!: GText;
-  private infoLevelSymbol!: GImage;
   private heldItemSymbol!: GText;
   private infoTier!: GText;
   private infoCandySymbol!: GImage;
   private infoCandy!: GText;
+  private infoFriendshipSymbol!: GImage;
+  private infoFriendship!: GText;
 
   private topName!: GText;
   private topCursor!: GSprite;
@@ -99,7 +103,11 @@ export class PokemonPcUi extends BaseUi {
   private confirmMenu: MenuUi;
   private wallpaperMenu: MenuListUi;
   private nameInput: NameInputUi;
+  private enhancePanel!: EnhancePanelUi;
+  private evolveSelect!: EvolveSelectUi;
+  private evolveUi!: EvolveUi;
   private menuOpen = false;
+  private inputLocked = false;
 
   private partyBaseY = 0;
 
@@ -160,6 +168,9 @@ export class PokemonPcUi extends BaseUi {
       showCancel: false,
     });
     this.nameInput = new NameInputUi(scene);
+    this.enhancePanel = new EnhancePanelUi(scene);
+    this.evolveSelect = new EvolveSelectUi(scene);
+    this.evolveUi = new EvolveUi(scene);
 
     // 이전 커서 상태 복원
     const user = this.scene.getUser();
@@ -192,10 +203,11 @@ export class PokemonPcUi extends BaseUi {
       this.infoNatureSymbol,
       this.infoAbilitySymbol,
       this.infoPokedexSymbol,
-      this.infoLevelSymbol,
       this.heldItemSymbol,
       this.infoCandySymbol,
       this.infoCandy,
+      this.infoFriendshipSymbol,
+      this.infoFriendship,
       this.infoType1,
       this.infoType2,
       this.heldItem,
@@ -299,6 +311,7 @@ export class PokemonPcUi extends BaseUi {
   }
 
   onInput(key: string): void {
+    if (this.inputLocked) return;
     if (this.focusArea === 'party') {
       this.handlePartyInput(key);
     } else if (this.focusArea === 'top') {
@@ -469,11 +482,12 @@ export class PokemonPcUi extends BaseUi {
     const candyKey = pokemonData ? `${pokemonData.type1}-candy` : '';
     const bag = this.scene.getUser()?.getItemBag();
     const hasCandy = (bag?.get(candyKey)?.quantity ?? 0) > 0;
+    const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
 
     items.push(
       { key: 'pc:grab', label: i18next.t('pc:grab') },
       { key: 'pc:heldItem', label: i18next.t('pc:heldItem'), disabled: !hasHeldItem },
-      { key: 'pc:evolve', label: i18next.t('pc:evolve') },
+      { key: 'pc:evolve', label: i18next.t('pc:evolve'), disabled: !canEvolve },
       { key: 'pc:strengthen', label: i18next.t('pc:strengthen'), disabled: !hasCandy },
       { key: 'pc:rename', label: i18next.t('pc:rename') },
       { key: 'pc:sendToProfessor', label: i18next.t('pc:sendToProfessor') },
@@ -511,8 +525,18 @@ export class PokemonPcUi extends BaseUi {
             this.inputManager.push(this.gridSelect);
           });
           break;
+        case 'pc:strengthen':
+          this.enhancePokemon(pokemon).then(() => {
+            this.inputManager.push(this.gridSelect);
+          });
+          break;
+        case 'pc:evolve':
+          this.evolvePokemon(pokemon).then(() => {
+            this.inputManager.push(this.gridSelect);
+          });
+          break;
         default:
-          // TODO: heldItem, evolve, strengthen
+          // TODO: heldItem
           this.inputManager.push(this.gridSelect);
           break;
       }
@@ -734,6 +758,10 @@ export class PokemonPcUi extends BaseUi {
         this.pcState.movePokemon(this.grabbedPokemonId, boxNumber, this.grabGridIndex);
       } else {
         this.pcState.movePokemon(this.grabbedPokemonId, boxNumber, this.grabGridIndex);
+        // 파티 → 빈 그리드 셀 이동 시, 비게 된 파티 슬롯 이후를 앞으로 당김
+        if (this.grabOrigin.partySlot !== null) {
+          this.pcState.compactPartyAfter(this.grabOrigin.partySlot);
+        }
       }
     }
 
@@ -861,6 +889,241 @@ export class PokemonPcUi extends BaseUi {
     );
   }
 
+  private static readonly POKEMON_MAX_LEVEL = 999;
+
+  private async enhancePokemon(pokemon: PokemonBoxItem): Promise<void> {
+    const masterPokemon = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    if (!masterPokemon) return;
+
+    const candyId = `${masterPokemon.type1}-candy`;
+    const user = this.scene.getUser();
+    const bag = user?.getItemBag();
+    const candyMax = bag?.get(candyId)?.quantity ?? 0;
+    if (candyMax <= 0) return;
+    if (pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL) return;
+
+    const questionUi = this.scene.getMessage('question');
+
+    let chosenAmount = 0;
+    while (true) {
+      const currentCandy = user?.getItemBag()?.get(candyId)?.quantity ?? 0;
+      const result = await this.enhancePanel.open({
+        candyId,
+        candyMax: currentCandy,
+        currentLevel: pokemon.level,
+        maxLevel: PokemonPcUi.POKEMON_MAX_LEVEL,
+      });
+
+      if (!result.confirmed) {
+        return;
+      }
+
+      // 확인 다이얼로그
+      await questionUi.showMessage(i18next.t('pc:confirmEnhance'), { resolveWhen: 'displayed' });
+      const YES_NO_ITEMS = [
+        { key: 'yes', label: i18next.t('menu:yes') },
+        { key: 'no', label: i18next.t('menu:no') },
+      ];
+      const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
+      this.confirmMenu.hide();
+      questionUi.hide();
+
+      if (choice?.key === 'yes') {
+        chosenAmount = result.amount;
+        break;
+      }
+      // 아니오면 다시 수량 입력 루프
+    }
+
+    // 애니메이션 종료 전까지 grid select 포함 어떤 입력도 받지 못하도록 잠금
+    this.inputLocked = true;
+    this.inputManager.push(this);
+
+    const api = this.scene.getApi();
+    const resp = await api.enhancePokemon(pokemon.id, chosenAmount);
+    if (!resp) {
+      this.inputManager.pop(this);
+      this.inputLocked = false;
+      return;
+    }
+
+    // 로컬 상태 동기화
+    const oldLevel = pokemon.level;
+    this.pcState.setLevel(resp.id, resp.level);
+    user?.updateItemQuantity(candyId, resp.candyRemaining);
+
+    const cachedBox = user?.getPokemonBox();
+    if (cachedBox) {
+      const idx = cachedBox.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], level: resp.level };
+    }
+    const party = user?.getParty();
+    if (party) {
+      const idx = party.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) party[idx] = { ...party[idx], level: resp.level };
+    }
+
+    // 레벨업 이펙트 + 카운터 틱업 애니메이션
+    await this.playEnhanceAnimation(oldLevel, resp.level);
+
+    this.refreshCurrentBox();
+    this.updateInfo(String(resp.id));
+
+    this.inputManager.pop(this);
+    this.inputLocked = false;
+  }
+
+  private async evolvePokemon(pokemon: PokemonBoxItem): Promise<void> {
+    const masterPokemon = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    if (!masterPokemon || masterPokemon.nextEvol.next.length === 0) return;
+
+    // 진화 옵션 구성
+    const options = masterPokemon.nextEvol.next.map((nextId, i) => ({
+      cost: masterPokemon.nextEvol.cost[i],
+      nextPokedexId: nextId,
+      type1: masterPokemon.type1,
+    }));
+
+    // 진화 선택 UI 열기
+    const selectedIndex = await this.evolveSelect.open(options, {
+      pokemonFriendship: pokemon.friendship ?? 0,
+      currentTimeOfDay: DayNightFilter.getCurrentTimeLabel(),
+    });
+    if (selectedIndex === null) return;
+
+    const selectedOption = options[selectedIndex];
+    const nextName = i18next.t(`pokemon:${selectedOption.nextPokedexId}.name`);
+
+    // 확인 메시지
+    const questionUi = this.scene.getMessage('question');
+    await questionUi.showMessage(i18next.t('pc:confirmEvolve', { name: nextName }), {
+      resolveWhen: 'displayed',
+    });
+    const YES_NO_ITEMS = [
+      { key: 'yes', label: i18next.t('menu:yes') },
+      { key: 'no', label: i18next.t('menu:no') },
+    ];
+    const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
+    this.confirmMenu.hide();
+    questionUi.hide();
+
+    if (choice?.key !== 'yes') return;
+
+    // 입력 잠금
+    this.inputLocked = true;
+    this.inputManager.push(this);
+
+    const api = this.scene.getApi();
+    let resp: { id: number; pokedexId: string } | null = null;
+    try {
+      resp = await api.evolvePokemon(pokemon.id, selectedOption.cost);
+    } catch (err: any) {
+      const talkUi = this.scene.getMessage('talk');
+      await talkUi.showMessage(err?.message ?? i18next.t('error:INTERNAL_SERVER_ERROR'));
+      this.inputManager.pop(this);
+      this.inputLocked = false;
+      return;
+    }
+    if (!resp) {
+      this.inputManager.pop(this);
+      this.inputLocked = false;
+      return;
+    }
+
+    // 진화 애니메이션 재생
+    await this.evolveUi.play(pokemon.pokedexId, resp.pokedexId);
+
+    // 로컬 상태 동기화
+    this.pcState.setPokedexId(resp.id, resp.pokedexId);
+
+    const user = this.scene.getUser();
+
+    // 진화 비용(아이템) 로컬 차감
+    const costParts = parseCostParts(selectedOption.cost, selectedOption.type1);
+    for (const p of costParts) {
+      if (p.itemId === null) continue;
+      user?.decreaseItemQuantity(p.itemId, p.count ?? 1);
+    }
+
+    const cachedBox = user?.getPokemonBox();
+    if (cachedBox) {
+      const idx = cachedBox.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], pokedexId: resp.pokedexId };
+    }
+    const party = user?.getParty();
+    if (party) {
+      const idx = party.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) party[idx] = { ...party[idx], pokedexId: resp.pokedexId };
+    }
+
+    this.refreshCurrentBox();
+    this.updateInfo(String(resp.id));
+
+    this.inputManager.pop(this);
+    this.inputLocked = false;
+  }
+
+  private playEnhanceAnimation(fromLevel: number, toLevel: number): Promise<void> {
+    return new Promise((resolve) => {
+      const delta = toLevel - fromLevel;
+      if (delta <= 0) {
+        resolve();
+        return;
+      }
+
+      // 레벨 숫자 tick-up
+      const totalDuration = Math.min(1200, 120 + delta * 20);
+      const ticks = Math.min(delta, 30);
+      const stepDuration = totalDuration / ticks;
+      let current = fromLevel;
+      let count = 0;
+
+      let tickDone = false;
+      let tweenDone = false;
+      let settled = false;
+      const tryResolve = () => {
+        if (settled) return;
+        if (!tickDone || !tweenDone) return;
+        settled = true;
+        this.infoLevel.clearTint();
+        resolve();
+      };
+
+      const timer = this.scene.time.addEvent({
+        delay: stepDuration,
+        repeat: ticks - 1,
+        callback: () => {
+          count++;
+          current = Math.round(fromLevel + (delta * count) / ticks);
+          this.infoLevel.setText(`(+${current})`);
+          this.scene.getAudio().playEffect(SFX.CURSOR_0);
+          if (count >= ticks) {
+            this.infoLevel.setText(`(+${toLevel})`);
+            tickDone = true;
+            timer.remove();
+            tryResolve();
+          }
+        },
+      });
+
+      // 텍스트 틴트 플래시
+      this.infoLevel.setTint(0xfff28a);
+
+      // 스프라이트 바운스 이펙트
+      this.scene.tweens.add({
+        targets: this.infoFront,
+        scale: this.infoFront.scale * 1.15,
+        duration: totalDuration / 2,
+        yoyo: true,
+        ease: EASE.LINEAR,
+        onComplete: () => {
+          tweenDone = true;
+          tryResolve();
+        },
+      });
+    });
+  }
+
   private switchBox(delta: number): void {
     if (this.totalBoxCount <= 1) return;
     const next = (this.currentBoxIndex + delta + this.totalBoxCount) % this.totalBoxCount;
@@ -976,8 +1239,8 @@ export class PokemonPcUi extends BaseUi {
       -20,
     ).setScale(2.6);
 
-    this.infoShinyIcon = addImage(this.scene, TEXTURE.ICON_SHINY, undefined, -400, -285).setScale(
-      3.2,
+    this.infoShinyIcon = addImage(this.scene, TEXTURE.ICON_SHINY, undefined, -395, -225).setScale(
+      3.4,
     );
 
     this.infoPokemonName = addText(
@@ -1024,14 +1287,10 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     ).setOrigin(1, 0);
 
-    this.infoLevelSymbol = addImage(this.scene, TEXTURE.ICON_LV, undefined, -925, -280).setScale(
-      3.2,
-    );
-
     this.infoLevel = addText(
       this.scene,
       -860,
-      -285,
+      -398,
       ``,
       70,
       100,
@@ -1040,12 +1299,27 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     );
 
-    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -920, -210).setScale(2.8);
+    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -920, -280).setScale(2.8);
     this.infoCandy = addText(
       this.scene,
       -885,
-      -215,
+      -285,
       `x100`,
+      70,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.infoFriendshipSymbol = addImage(this.scene, 'soothe-bell', undefined, -920, -215).setScale(
+      2.8,
+    );
+    this.infoFriendship = addText(
+      this.scene,
+      -885,
+      -210,
+      ` 100`,
       70,
       100,
       'left',
@@ -1198,19 +1472,21 @@ export class PokemonPcUi extends BaseUi {
     this.infoNatureSymbol.setText('');
     this.infoType1.setVisible(false);
     this.infoType2.setVisible(false);
-    this.infoLevelSymbol.setVisible(false);
     this.heldItemSymbol.setVisible(false);
     this.heldItem.setVisible(false);
     this.infoCandySymbol.setVisible(false);
     this.infoCandy.setVisible(false);
+    this.infoFriendshipSymbol.setVisible(false);
+    this.infoFriendship.setVisible(false);
   }
 
   private restoreInfoSymbols(): void {
     this.infoFront.setVisible(true);
     this.infoCapturePokeball.setVisible(true);
-    this.infoLevelSymbol.setVisible(true);
     this.heldItemSymbol.setVisible(true);
     this.heldItem.setVisible(true);
+    this.infoFriendshipSymbol.setVisible(true);
+    this.infoFriendship.setVisible(true);
     this.setSymbol();
   }
 
@@ -1233,7 +1509,8 @@ export class PokemonPcUi extends BaseUi {
 
     const name = pokemon.nickname ?? getPokemonI18Name(pokedexKey);
     this.infoPokemonName.setText(name);
-    this.infoLevel.setText(`${pokemon.level}`);
+    this.infoLevel.setText(`(+${pokemon.level})`);
+    this.infoFriendship.setText(`${pokemon.friendship ?? 0}`);
 
     const spriteTexture = getPokemonTexture(
       'sprite',
@@ -1271,7 +1548,7 @@ export class PokemonPcUi extends BaseUi {
       this.infoTier.setText('');
     }
 
-    this.infoShinyIcon.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 30);
+    this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);
 
     if (pokemonData) {
       const candyKey = `${pokemonData.type1}-candy`;

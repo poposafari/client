@@ -21,4 +21,8 @@ export const error: TranslationError = {
   INVALID_COSTUME: '올바르지 않은 코스튬입니다.',
   INVALID_NICKNAME: '닉네임은 2자 이상 12자 이하로\n입력하셔야 합니다.',
   KICKED: '다른 기기에서 접속했습니다.\n다시 로그인해 주세요.',
+  POKEMON_NOT_FOUND: '해당 포켓몬을 찾을 수 없습니다.',
+  EVOLUTION_NOT_AVAILABLE: '진화할 수 없는 포켓몬입니다.',
+  EVOLUTION_COST_INVALID: '올바르지 않은 진화 조건입니다.',
+  EVOLUTION_COST_NOT_ENOUGH: '진화에 필요한 재료가 부족합니다.',
 };

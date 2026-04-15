@@ -16,6 +16,8 @@ export const pc: Record<string, string> = {
   enterName: '名前を入力してください',
   enterBoxName: 'ボックス名を入力',
   enterPokemonName: 'ポケモンの名前を入力',
+  enhancePrompt: '強化する数値を決めてください',
+  confirmEnhance: '強化しますか？',
   confirm: '決定する',
   cancelAction: 'キャンセル',
 };

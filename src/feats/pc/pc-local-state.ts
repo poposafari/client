@@ -215,6 +215,14 @@ export class PcLocalState {
     return this.current.get(id) ?? null;
   }
 
+  compactPartyAfter(removedSlot: number): void {
+    for (const [, s] of this.current) {
+      if (s.partySlot !== null && s.partySlot > removedSlot) {
+        s.partySlot--;
+      }
+    }
+  }
+
   detachPokemon(id: number): void {
     const state = this.current.get(id);
     if (!state) return;
@@ -250,6 +258,20 @@ export class PcLocalState {
     const meta = this.getBoxMeta(boxNumber);
     meta.name = name;
     this.boxMeta.set(boxNumber, meta);
+  }
+
+  setLevel(id: number, level: number): void {
+    const pokemon = this.allPokemons.get(id);
+    if (pokemon) {
+      pokemon.level = level;
+    }
+  }
+
+  setPokedexId(id: number, pokedexId: string): void {
+    const pokemon = this.allPokemons.get(id);
+    if (pokemon) {
+      pokemon.pokedexId = pokedexId;
+    }
   }
 
   setNickname(id: number, nickname: string | null): void {

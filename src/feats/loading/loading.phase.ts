@@ -433,6 +433,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_6, 'ui/bgs', 'bg_6');
     this.scene.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
     this.scene.loadImage(TEXTURE.BG_PC, 'ui/bgs', 'bg_pc');
+    this.scene.loadImage(TEXTURE.BG_EVOLVE, 'ui/bgs', 'bg_evolve');
 
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
@@ -445,6 +446,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAtlas(TEXTURE.PC_FINGER_1, 'ui/pc', 'pc_finger_1', 'pc_finger_1');
     this.scene.loadAtlas(TEXTURE.PC_BGS, 'ui/pc', 'pc_bgs', 'pc_bgs');
     this.scene.loadImage(TEXTURE.PC_INFO, 'ui/pc', 'pc_info');
+    this.scene.loadImage(TEXTURE.PARTICLE_EVOL, 'ui/pc', 'particle_evol');
 
     this.scene.loadImage(TEXTURE.BLANK, 'ui', 'blank');
 
@@ -614,6 +616,9 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.BALL_CATCH, 'audio/se', 'ball_catch', 'ogg');
     this.scene.loadAudio(SFX.FLEE, 'audio/se', 'flee', 'ogg');
     this.scene.loadAudio(SFX.REWARD, 'audio/se', 'reward', 'ogg');
+    this.scene.loadAudio(SFX.EVOL_0, 'audio/se', 'evol_0', 'ogg');
+    this.scene.loadAudio(SFX.EVOL_1, 'audio/se', 'evol_1', 'ogg');
+    this.scene.loadAudio(SFX.HATCH, 'audio/se', 'hatch', 'wav');
   }
 
   private createSprite() {
