@@ -161,8 +161,47 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
+  async learnMove(
+    id: number,
+    move: string,
+  ): Promise<{ id: number; skills: string[] } | null> {
+    const res = await this.client.post<ApiResponse<{ id: number; skills: string[] }>>(
+      '/pokemon/learn-move',
+      { id, move },
+    );
+    return res.data.success ? res.data.data : null;
+  }
+
   async getItemBag(): Promise<ItemBagItem[] | null> {
     const res = await this.client.get<ApiResponse<ItemBagItem[]>>('/item/bag');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async giveHold(
+    userPokemonId: number,
+    heldItem: string,
+  ): Promise<{ pokemonId: number; heldItem: string; previousHeld: string | null } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ pokemonId: number; heldItem: string; previousHeld: string | null }>
+    >('/item/give-hold', { userPokemonId, heldItem });
+    return res.data.success ? res.data.data : null;
+  }
+
+  async registerItem(
+    itemId: string,
+  ): Promise<{ itemId: string; quantity: number; register: boolean } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ itemId: string; quantity: number; register: boolean }>
+    >('/item/register', { itemId });
+    return res.data.success ? res.data.data : null;
+  }
+
+  async unregisterItem(
+    itemId: string,
+  ): Promise<{ itemId: string; quantity: number; register: boolean } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ itemId: string; quantity: number; register: boolean }>
+    >('/item/unregister', { itemId });
     return res.data.success ? res.data.data : null;
   }
 

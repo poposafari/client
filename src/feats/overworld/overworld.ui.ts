@@ -124,6 +124,7 @@ export class OverworldUi extends BaseUi {
   onInteractivePhaseRequested: ((object: InteractiveObject, phaseKey: string) => void) | null =
     null;
   onWildEncounterRequested: ((wild: WildPokemonObject) => void) | null = null;
+  onRegisteredItemsRequested: (() => void) | null = null;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
@@ -231,8 +232,9 @@ export class OverworldUi extends BaseUi {
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMenuRequested?.();
         break;
-      case KEY.B:
-        this.toggleRideBicycle();
+      case KEY.A:
+        this.syncRegistedItemIcon(true);
+        this.onRegisteredItemsRequested?.();
         break;
       case KEY.J:
         this.handleKeyJ();
@@ -522,6 +524,10 @@ export class OverworldUi extends BaseUi {
     this.hud?.updateToggleIcon(TEXTURE.ICON_MENU, open);
   }
 
+  public syncRegistedItemIcon(open: boolean): void {
+    this.hud?.updateToggleIcon(TEXTURE.ICON_REGISTER, open);
+  }
+
   private syncRunningToggleIcon(): void {
     const isRunning =
       this.scene.getUser()?.getOverworldMovementState() === OverworldMovementState.RUNNING;
@@ -563,6 +569,18 @@ export class OverworldUi extends BaseUi {
     const speed =
       SPEED_BY_MOVEMENT_STATE[next] ?? SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
     this.player.setBaseSpeed(speed);
+
+    this.syncRunningToggleIcon();
+  }
+
+  useRegisteredItem(itemId: string): void {
+    switch (itemId) {
+      case 'bicycle':
+        this.toggleRideBicycle();
+        break;
+      default:
+        break;
+    }
   }
 
   enterRideBicycle(): void {
@@ -571,6 +589,8 @@ export class OverworldUi extends BaseUi {
     user.setOverworldMovementState(OverworldMovementState.RIDE);
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.RIDE] ?? 6;
     this.player.setBaseSpeed(speed);
+
+    this.syncRunningToggleIcon();
   }
 
   exitRideBicycle(): void {
@@ -579,6 +599,8 @@ export class OverworldUi extends BaseUi {
     user.setOverworldMovementState(OverworldMovementState.WALK);
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
     this.player.setBaseSpeed(speed);
+
+    this.syncRunningToggleIcon();
   }
 
   errorEffect(_errorMsg: string): void {}

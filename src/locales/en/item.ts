@@ -11,6 +11,11 @@ export const item: TranslationItem = {
     name: 'Poké Ball',
     description: 'A device for catching wild Pokémon.\nIt is shaped like a capsule.',
   },
+  'safari-ball': {
+    name: 'Safari Ball',
+    description:
+      'A special Poké Ball that is used only in the Safari Zone.\nIt is decorated in a camouflage pattern.',
+  },
   'great-ball': {
     name: 'Great Ball',
     description: 'A good Ball that offers a higher Pokémon catch rate\nthan a standard Poké Ball.',
@@ -504,4 +509,29 @@ export const item: TranslationItem = {
     name: 'Soothe Bell',
     description: 'A bell with a pleasant sound.\nWhen held, the Pokémon grows calmer and friendlier.',
   },
+  move_cut: { name: 'TM Cut', description: 'Teaches Cut to a Pokémon.' },
+  move_fly: { name: 'TM Fly', description: 'Teaches Fly to a Pokémon.' },
+  move_surf: { name: 'TM Surf', description: 'Teaches Surf to a Pokémon.' },
+  move_strength: { name: 'TM Strength', description: 'Teaches Strength to a Pokémon.' },
+  move_flash: { name: 'TM Flash', description: 'Teaches Flash to a Pokémon.' },
+  'move_rock-smash': { name: 'TM Rock Smash', description: 'Teaches Rock Smash to a Pokémon.' },
+  move_waterfall: { name: 'TM Waterfall', description: 'Teaches Waterfall to a Pokémon.' },
+  move_dive: { name: 'TM Dive', description: 'Teaches Dive to a Pokémon.' },
+  'move_mean-look': { name: 'TM Mean Look', description: 'Teaches Mean Look to a Pokémon.' },
+  move_defog: { name: 'TM Defog', description: 'Teaches Defog to a Pokémon.' },
+  'move_ancient-power': {
+    name: 'TM Ancient Power',
+    description: 'Teaches Ancient Power to a Pokémon.',
+  },
+  'move_double-hit': { name: 'TM Double Hit', description: 'Teaches Double Hit to a Pokémon.' },
+  'move_dragon-pulse': {
+    name: 'TM Dragon Pulse',
+    description: 'Teaches Dragon Pulse to a Pokémon.',
+  },
+  'move_hyper-drill': { name: 'TM Hyper Drill', description: 'Teaches Hyper Drill to a Pokémon.' },
+  move_mimic: { name: 'TM Mimic', description: 'Teaches Mimic to a Pokémon.' },
+  move_rollout: { name: 'TM Rollout', description: 'Teaches Rollout to a Pokémon.' },
+  move_stomp: { name: 'TM Stomp', description: 'Teaches Stomp to a Pokémon.' },
+  move_taunt: { name: 'TM Taunt', description: 'Teaches Taunt to a Pokémon.' },
+  'move_twin-beam': { name: 'TM Twin Beam', description: 'Teaches Twin Beam to a Pokémon.' },
 };

@@ -16,6 +16,10 @@ export const item: TranslationItem = {
     name: '몬스터볼',
     description: '야생 포켓몬에게 던져서 잡기 위한 볼.\n캡슐식으로 되어 있다.',
   },
+  'safari-ball': {
+    name: '사파리볼',
+    description: '사파리존에서만 사용할 수 있는\n위장 무늬가 그려진 특별한 볼.',
+  },
   'great-ball': {
     name: '수퍼볼',
     description: '몬스터볼보다도 더욱 포켓몬을 잡기 쉬워진\n약간 성능이 좋은 볼.',
@@ -640,5 +644,81 @@ export const item: TranslationItem = {
   'fairy-candy': {
     name: '페어리사탕',
     description: '페어리타입의 에너지가 담긴 사탕.',
+  },
+  move_cut: {
+    name: '기술머신 풀베기',
+    description: '포켓몬에게 풀베기를 가르친다.',
+  },
+  move_fly: {
+    name: '기술머신 비행',
+    description: '포켓몬에게 비행을 가르친다.',
+  },
+  move_surf: {
+    name: '기술머신 파도타기',
+    description: '포켓몬에게 파도타기를 가르친다.',
+  },
+  move_strength: {
+    name: '기술머신 괴력',
+    description: '포켓몬에게 괴력을 가르친다.',
+  },
+  move_flash: {
+    name: '기술머신 플래시',
+    description: '포켓몬에게 플래시를 가르친다.',
+  },
+  'move_rock-smash': {
+    name: '기술머신 바위깨기',
+    description: '포켓몬에게 바위깨기를 가르친다.',
+  },
+  move_waterfall: {
+    name: '기술머신 폭포오르기',
+    description: '포켓몬에게 폭포오르기를 가르친다.',
+  },
+  move_dive: {
+    name: '기술머신 다이빙',
+    description: '포켓몬에게 다이빙을 가르친다.',
+  },
+  'move_mean-look': {
+    name: '기술머신 검은눈빛',
+    description: '포켓몬에게 검은눈빛을 가르친다.',
+  },
+  move_defog: {
+    name: '기술머신 안개소거',
+    description: '포켓몬에게 안개소거를 가르친다.',
+  },
+  'move_ancient-power': {
+    name: '기술머신 원시의힘',
+    description: '포켓몬에게 원시의힘을 가르친다.',
+  },
+  'move_double-hit': {
+    name: '기술머신 2회타격',
+    description: '포켓몬에게 2회타격을 가르친다.',
+  },
+  'move_dragon-pulse': {
+    name: '기술머신 용의파동',
+    description: '포켓몬에게 용의파동을 가르친다.',
+  },
+  'move_hyper-drill': {
+    name: '기술머신 하이퍼드릴',
+    description: '포켓몬에게 하이퍼드릴을 가르친다.',
+  },
+  move_mimic: {
+    name: '기술머신 흉내내기',
+    description: '포켓몬에게 흉내내기를 가르친다.',
+  },
+  move_rollout: {
+    name: '기술머신 구르기',
+    description: '포켓몬에게 구르기를 가르친다.',
+  },
+  move_stomp: {
+    name: '기술머신 밟기',
+    description: '포켓몬에게 밟기를 가르친다.',
+  },
+  move_taunt: {
+    name: '기술머신 도발',
+    description: '포켓몬에게 도발을 가르친다.',
+  },
+  'move_twin-beam': {
+    name: '기술머신 트윈빔',
+    description: '포켓몬에게 트윈빔을 가르친다.',
   },
 };

@@ -117,6 +117,22 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
     return this.iconAnimKeyByKey.get(key);
   }
 
+  applyAlphaFilter(eligibleKeys: Set<string>): void {
+    const items = this.getItems();
+    for (const it of items) {
+      if (it.key.startsWith(EMPTY_SLOT_KEY_PREFIX)) continue;
+      it.image.setAlpha(eligibleKeys.has(it.key) ? 1 : 0.3);
+    }
+  }
+
+  clearAlphaFilter(): void {
+    const items = this.getItems();
+    for (const it of items) {
+      if (it.key.startsWith(EMPTY_SLOT_KEY_PREFIX)) continue;
+      it.image.setAlpha(1);
+    }
+  }
+
   protected handleDirectionInput(key: string): boolean {
     const dir = this.getDirectionKeys();
     const cols = this.config.columns;

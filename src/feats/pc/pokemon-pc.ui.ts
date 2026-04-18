@@ -5,6 +5,7 @@ import {
   EASE,
   IMenuItem,
   KEY,
+  PokemonHiddenMove,
   SFX,
   SYMBOL_MALE,
   TEXTCOLOR,
@@ -36,8 +37,11 @@ import { EnhancePanelUi } from './enhance-panel.ui';
 import { EvolveSelectUi, parseCostParts } from './evolve-select.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { EvolveUi } from './evolve.ui';
+import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
+import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
+export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
 
 const RANK_COLOR: Record<PokemonRank, string> = {
   common: TEXTCOLOR.COMMON,
@@ -73,8 +77,8 @@ export class PokemonPcUi extends BaseUi {
   private infoGender!: GText;
   private infoAbility!: GText;
   private infoNature!: GText;
-  private infoType1!: GImage;
-  private infoType2!: GImage;
+  private infoType1!: PokemonTypeContainer;
+  private infoType2!: PokemonTypeContainer;
   private heldItem!: GText;
   private infoPokedexSymbol!: GText;
   private infoNatureSymbol!: GText;
@@ -85,6 +89,7 @@ export class PokemonPcUi extends BaseUi {
   private infoCandy!: GText;
   private infoFriendshipSymbol!: GImage;
   private infoFriendship!: GText;
+  private infoSkills: PokemonSkillContainer[] = [];
 
   private topName!: GText;
   private topCursor!: GSprite;
@@ -132,14 +137,27 @@ export class PokemonPcUi extends BaseUi {
 
   onClose?: () => void;
 
+  /** selectForGive 모드에서 포켓몬이 선택되었을 때 호출 */
+  onPokemonSelected?: (pokemon: PokemonBoxItem) => void;
+
   /** 박스 전환 시 호출 — 외부에서 해당 박스의 PokemonBoxItem[]을 반환 */
   onBoxChange?: (boxIndex: number) => void;
 
-  constructor(scene: GameScene, pcState: PcLocalState) {
+  private mode: PcMode;
+  private teachMoveId: string | null = null;
+
+  constructor(
+    scene: GameScene,
+    pcState: PcLocalState,
+    mode: PcMode = 'manage',
+    teachMoveId: string | null = null,
+  ) {
     super(scene, scene.getInputManager(), DEPTH.MESSAGE - 1);
 
     this.scene = scene;
     this.pcState = pcState;
+    this.mode = mode;
+    this.teachMoveId = teachMoveId;
 
     this.createLayout();
 
@@ -210,6 +228,10 @@ export class PokemonPcUi extends BaseUi {
       this.infoFriendship,
       this.infoType1,
       this.infoType2,
+      this.infoSkills[0],
+      this.infoSkills[1],
+      this.infoSkills[2],
+      this.infoSkills[3],
       this.heldItem,
       this.topName,
       this.topCursor,
@@ -221,10 +243,40 @@ export class PokemonPcUi extends BaseUi {
     ]);
   }
 
+  private isEligibleForTeachMove(pokemon: PokemonBoxItem): boolean {
+    if (this.mode !== 'selectForTeachMove' || !this.teachMoveId) return true;
+    const data = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    if (!data) return false;
+    if (!(data.skills as readonly string[]).includes(this.teachMoveId)) return false;
+    const skills = (pokemon.skills as string[] | null | undefined) ?? [];
+    if (skills.includes(this.teachMoveId)) return false;
+    return skills.length < 4;
+  }
+
+  private applyTeachMoveFilterToGrid(): void {
+    if (this.mode !== 'selectForTeachMove') return;
+    const eligible = new Set<string>();
+    for (const p of this.boxPokemons) {
+      if (this.isEligibleForTeachMove(p)) eligible.add(String(p.id));
+    }
+    this.gridSelect.applyAlphaFilter(eligible);
+  }
+
+  private applyTeachMoveFilterToParty(): void {
+    if (this.mode !== 'selectForTeachMove') return;
+    const partyPokemons = this.pcState.getPartyPokemons();
+    for (let i = 0; i < 6; i++) {
+      const pokemon = partyPokemons[i];
+      if (!pokemon || !this.partySlotIcons[i]) continue;
+      this.partySlotIcons[i].setAlpha(this.isEligibleForTeachMove(pokemon) ? 1 : 0.3);
+    }
+  }
+
   private refreshCurrentBox(): void {
     const boxNumber = this.currentBoxIndex + 1;
     this.boxPokemons = this.pcState.getBoxPokemons(boxNumber);
     this.gridSelect.setPokemonItems(this.boxPokemons);
+    this.applyTeachMoveFilterToGrid();
 
     const meta = this.pcState.getBoxMeta(boxNumber);
     const displayName = meta.name || `${i18next.t('pc:box')} ${boxNumber}`;
@@ -246,12 +298,13 @@ export class PokemonPcUi extends BaseUi {
         const key = pokemon.pokedexId;
         const tex = getPokemonTexture('icon', key, { isShiny: pokemon.isShiny });
         this.partySlotIcons[i].setTexture(tex.key, tex.frame + '_0').setVisible(true);
-        this.partySlotLevels[i].setText(`Lv.${pokemon.level}`).setVisible(true);
+        this.partySlotLevels[i].setText(`(+${pokemon.level})`).setVisible(true);
       } else if (this.partySlotIcons[i]) {
         this.partySlotIcons[i].setVisible(false);
         this.partySlotLevels[i].setVisible(false);
       }
     }
+    this.applyTeachMoveFilterToParty();
   }
 
   private switchFocus(area: PcFocusArea): void {
@@ -343,12 +396,15 @@ export class PokemonPcUi extends BaseUi {
         }
         break;
       case KEY.Z:
-      case KEY.ENTER:
+      case KEY.ENTER: {
         // 빈 슬롯이면 무시
-        if (!this.pcState.getPokemonAtPartySlot(this.partyCursorIndex)) break;
+        const slotPokemon = this.pcState.getPokemonAtPartySlot(this.partyCursorIndex);
+        if (!slotPokemon) break;
+        if (this.mode === 'selectForTeachMove' && !this.isEligibleForTeachMove(slotPokemon)) break;
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.openPartyMenu();
         break;
+      }
       case KEY.X:
       case KEY.ESC:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
@@ -468,6 +524,19 @@ export class PokemonPcUi extends BaseUi {
     const pokemon = this.boxPokemons.find((p) => String(p.id) === selectedKey);
     if (!pokemon) return;
 
+    if (this.mode === 'selectForGive') {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.onPokemonSelected?.(pokemon);
+      return;
+    }
+
+    if (this.mode === 'selectForTeachMove') {
+      if (!this.isEligibleForTeachMove(pokemon)) return;
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.onPokemonSelected?.(pokemon);
+      return;
+    }
+
     const items: IMenuItem[] = [];
 
     const partySlot = this.pcState.getNextFreePartySlot();
@@ -547,6 +616,19 @@ export class PokemonPcUi extends BaseUi {
     const partyPokemons = this.pcState.getPartyPokemons();
     const pokemon = partyPokemons[this.partyCursorIndex];
     if (!pokemon) return;
+
+    if (this.mode === 'selectForGive') {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.onPokemonSelected?.(pokemon);
+      return;
+    }
+
+    if (this.mode === 'selectForTeachMove') {
+      if (!this.isEligibleForTeachMove(pokemon)) return;
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.onPokemonSelected?.(pokemon);
+      return;
+    }
 
     const items: IMenuItem[] = [
       { key: 'pc:removeFromParty', label: i18next.t('pc:removeFromParty') },
@@ -1419,8 +1501,16 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     );
 
-    this.infoType1 = addImage(this.scene, TEXTURE.TYPES, undefined, -890, +240).setScale(2);
-    this.infoType2 = addImage(this.scene, TEXTURE.TYPES, undefined, -755, +240).setScale(2);
+    // this.infoType1 = addImage(this.scene, TEXTURE.TYPES, undefined, -890, +240).setScale(2);
+    // this.infoType2 = addImage(this.scene, TEXTURE.TYPES, undefined, -755, +240).setScale(2);
+
+    this.infoType1 = new PokemonTypeContainer(this.scene, -890, +245);
+    this.infoType2 = new PokemonTypeContainer(this.scene, -755, +245);
+
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +245));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +200));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +155));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +110));
 
     this.setSymbol();
   }
@@ -1472,6 +1562,7 @@ export class PokemonPcUi extends BaseUi {
     this.infoNatureSymbol.setText('');
     this.infoType1.setVisible(false);
     this.infoType2.setVisible(false);
+    for (const skill of this.infoSkills) skill.clear();
     this.heldItemSymbol.setVisible(false);
     this.heldItem.setVisible(false);
     this.infoCandySymbol.setVisible(false);
@@ -1530,9 +1621,11 @@ export class PokemonPcUi extends BaseUi {
 
     const pokemonData = this.scene.getMasterData().getPokemonData(pokedexKey);
     if (pokemonData) {
-      this.infoType1.setFrame(getPokemonTypeFrame(pokemonData.type1)).setVisible(true);
+      // this.infoType1.setFrame(getPokemonTypeFrame(pokemonData.type1)).setVisible(true);
+      this.infoType1.setType(pokemonData.type1);
       if (pokemonData.type2) {
-        this.infoType2.setFrame(getPokemonTypeFrame(pokemonData.type2)).setVisible(true);
+        // this.infoType2.setFrame(getPokemonTypeFrame(pokemonData.type2)).setVisible(true);
+        this.infoType2.setType(pokemonData.type2);
       } else {
         this.infoType2.setVisible(false);
       }
@@ -1549,6 +1642,15 @@ export class PokemonPcUi extends BaseUi {
     }
 
     this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);
+
+    const skills = (pokemon.skills as PokemonHiddenMove[] | null | undefined) ?? [];
+    for (let i = 0; i < this.infoSkills.length; i++) {
+      if (i < skills.length) {
+        this.infoSkills[i].setType(skills[i]);
+      } else {
+        this.infoSkills[i].clear();
+      }
+    }
 
     if (pokemonData) {
       const candyKey = `${pokemonData.type1}-candy`;
@@ -1600,7 +1702,7 @@ export class PokemonPcUi extends BaseUi {
         40,
         100,
         'center',
-        TEXTSTYLE.WHITE,
+        TEXTSTYLE.YELLOW,
         TEXTSHADOW.GRAY,
       ).setVisible(false);
       this.partySlotIcons.push(icon);

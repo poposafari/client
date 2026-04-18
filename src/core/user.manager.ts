@@ -13,7 +13,7 @@ import { MasterData } from './master.data.ts';
 
 export interface ItemBagEntry {
   quantity: number;
-  slotNumber: number | null;
+  register: boolean;
 }
 
 export interface MappedProfile {
@@ -35,6 +35,7 @@ export class UserManager {
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
   private itemBag: Map<string, ItemBagEntry> | null = null;
+  private itemBagLoaded = false;
   private pokedex: PokedexEntry[] | null = null;
   private townMap: TownMapEntry[] | null = null;
   private costumeList: CostumeEntry[] | null = null;
@@ -118,17 +119,35 @@ export class UserManager {
     for (const item of data) {
       this.itemBag.set(String(item.itemId), {
         quantity: item.quantity,
-        slotNumber: item.slotNumber,
+        register: item.register,
       });
     }
+  }
+
+  isItemBagLoaded(): boolean {
+    return this.itemBagLoaded;
+  }
+
+  setItemBagLoaded(loaded: boolean): void {
+    this.itemBagLoaded = loaded;
+  }
+
+  clearItemBag(): void {
+    this.itemBag = new Map();
+    this.itemBagLoaded = false;
+  }
+
+  hydrateItemBag(data: ItemBagItem[]): void {
+    this.setItemBag(data);
+    this.itemBagLoaded = true;
   }
 
   getItemBagByCategory(
     masterData: MasterData,
     category: ItemCategory,
-  ): { itemId: string; quantity: number; slotNumber: number | null }[] {
+  ): { itemId: string; quantity: number; register: boolean }[] {
     if (!this.itemBag) return [];
-    const result: { itemId: string; quantity: number; slotNumber: number | null }[] = [];
+    const result: { itemId: string; quantity: number; register: boolean }[] = [];
     for (const [itemId, entry] of this.itemBag) {
       const data = masterData.getItemData(itemId);
       if (data && data.category === category) {
@@ -138,7 +157,7 @@ export class UserManager {
     return result;
   }
 
-  updateItemQuantity(itemId: string, quantity: number, slotNumber?: number | null): void {
+  updateItemQuantity(itemId: string, quantity: number, register?: boolean): void {
     if (!this.itemBag) return;
     if (quantity <= 0) {
       this.itemBag.delete(itemId);
@@ -147,7 +166,7 @@ export class UserManager {
     const existing = this.itemBag.get(itemId);
     this.itemBag.set(itemId, {
       quantity,
-      slotNumber: slotNumber !== undefined ? slotNumber : (existing?.slotNumber ?? null),
+      register: register !== undefined ? register : (existing?.register ?? false),
     });
   }
 

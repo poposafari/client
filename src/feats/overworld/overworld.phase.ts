@@ -2,6 +2,7 @@ import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { RoomUserState, UsersMovedPayload } from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
+import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
 import { StartingPhase } from '../starting/starting.phase';
@@ -30,6 +31,10 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi.setMapConfig(mapConfig);
     this.overworldUi.onMenuRequested = () => {
       this.scene.pushPhase(new OverworldMenuPhase(this.scene));
+    };
+    this.overworldUi.onRegisteredItemsRequested = () => {
+      if (!this.overworldUi) return;
+      this.scene.pushPhase(new RegisteredItemsPhase(this.scene, this.overworldUi));
     };
     this.overworldUi.onInteractivePhaseRequested = (_object, phaseKey) => {
       if (phaseKey === 'professor') {

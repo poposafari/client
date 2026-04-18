@@ -434,6 +434,8 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
     this.scene.loadImage(TEXTURE.BG_PC, 'ui/bgs', 'bg_pc');
     this.scene.loadImage(TEXTURE.BG_EVOLVE, 'ui/bgs', 'bg_evolve');
+    this.scene.loadImage(TEXTURE.BG_BAG_M, 'ui/bag', 'bg_m');
+    this.scene.loadImage(TEXTURE.BG_BAG_F, 'ui/bag', 'bg_f');
 
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
@@ -489,21 +491,31 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_SHINY, 'ui/icons', 'icon_shiny');
     this.scene.loadImage(TEXTURE.ICON_OWNED, 'ui/icons', 'icon_owned');
     this.scene.loadImage(TEXTURE.ICON_LV, 'ui/icons', 'icon_lv');
+    this.scene.loadImage(TEXTURE.ICON_REGISTER, 'ui/icons', 'icon_register');
     this.scene.loadImage(TEXTURE.ICON_RATE_UP, 'ui', 'up_rate');
     this.scene.loadImage(TEXTURE.ICON_RATE_DOWN, 'ui', 'down_rate');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
+    this.scene.loadImage(TEXTURE.CURSOR_BLACK, 'ui', 'cursor_b');
 
     this.scene.loadAtlas(TEXTURE.EMO, 'ui', 'emo', 'emo');
     this.scene.loadAtlas(TEXTURE.SPARKLE, 'ui', 'sparkle', 'sparkle');
 
     this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
+    this.scene.loadAtlas(TEXTURE.TYPES_EMPTY, 'ui', TEXTURE.TYPES_EMPTY, TEXTURE.TYPES_EMPTY);
 
     this.scene.loadAtlas(TEXTURE.SAFARI_BALL_THROW, 'ui/battle', 'safari-ball_0', 'safari-ball_0');
     this.scene.loadImage(TEXTURE.SAFARI_BALL_OPEN, 'ui/battle', 'safari-ball_1');
 
     this.scene.loadImage(TEXTURE.GROUND_ITEM, 'ui', 'ground_item');
+
+    this.scene.loadImage('pocket_pokeball', 'ui/bag', 'pocket_pokeball');
+    this.scene.loadImage('pocket_candy', 'ui/bag', 'pocket_candy');
+    this.scene.loadImage('pocket_etc', 'ui/bag', 'pocket_etc');
+    this.scene.loadImage('pocket_tms_hms', 'ui/bag', 'pocket_tms_hms');
+    this.scene.loadImage('pocket_key', 'ui/bag', 'pocket_key');
+    this.scene.loadImage(TEXTURE.REG, 'ui/bag', 'reg');
 
     this.loadBattleAssets();
 

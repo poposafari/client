@@ -5,6 +5,7 @@ import { OptionPhase } from '../option';
 import { BackTitleMenuUi } from './back-title-menu.ui';
 import { TitlePhase } from '../title';
 import { PokemonPcPhase } from '../pc/pokemon-pc.phase';
+import { BagPhase } from '../bag/bag.phase';
 import { MenuUi } from '../menu/menu-ui';
 import { InitPosConfig } from './maps/door';
 import { MAP } from '@poposafari/types';
@@ -45,6 +46,11 @@ export class OverworldMenuPhase implements IGamePhase {
 
     if (result.key === 'pc') {
       this.scene.pushPhase(new PokemonPcPhase(this.scene));
+      return;
+    }
+
+    if (result.key === 'bag') {
+      this.scene.pushPhase(new BagPhase(this.scene));
       return;
     }
 
