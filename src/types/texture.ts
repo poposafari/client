@@ -4,6 +4,7 @@ export const enum TEXTURE {
 
   BLANK = 'blank',
   TYPES = 'types',
+  TYPES_EMPTY = 'types_empty',
 
   BG_0 = 'bg_0',
   BG_1 = 'bg_1',
@@ -15,6 +16,8 @@ export const enum TEXTURE {
   BG_BLACK = 'bg_black',
   BG_PC = 'bg_pc',
   BG_EVOLVE = 'bg_evolve',
+  BG_BAG_M = 'bg_bag_m',
+  BG_BAG_F = 'bg_bag_f',
 
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
@@ -30,6 +33,7 @@ export const enum TEXTURE {
   KEYCAP = 'keycap',
 
   CURSOR_WHITE = 'cursor_w',
+  CURSOR_BLACK = 'cursor_b',
   CURSOR_FINGER = 'cursor_finger',
 
   SLIDER = 'slider',
@@ -60,6 +64,7 @@ export const enum TEXTURE {
   ICON_RATE_UP = 'up_rate',
   ICON_RATE_DOWN = 'down_rate',
   ICON_LV = 'icon_lv',
+  ICON_REGISTER = 'icon_register',
 
   GROUND_ITEM = 'ground_item',
   EMO = 'emo',
@@ -67,6 +72,7 @@ export const enum TEXTURE {
   SAFARI_BALL_THROW = 'safari-ball_0',
   SAFARI_BALL_OPEN = 'safari-ball_1',
   SAFARI_STAR = 'safari_star',
+  REG = 'reg',
 
   OVERWORLD_SHADOW = 'overworld_shadow',
 

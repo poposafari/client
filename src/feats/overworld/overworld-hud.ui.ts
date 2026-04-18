@@ -16,6 +16,28 @@ const TIME_ICON_MAP: Record<string, TEXTURE> = {
   night: TEXTURE.ICON_NIGHT,
 };
 
+type ToggleIconConfig = { texture: TEXTURE; guide: string };
+
+const TOGGLE_ICONS: ReadonlyArray<ToggleIconConfig> = [
+  { texture: TEXTURE.ICON_REGISTER, guide: 'A' },
+  { texture: TEXTURE.ICON_RUNNING, guide: 'R' },
+  { texture: TEXTURE.ICON_MENU, guide: 'S' },
+];
+
+const TOGGLE_ICON_LAYOUT = {
+  iconWidth: 70,
+  spacing: 40,
+  iconScale: 3.2,
+  iconY: -12,
+  guideOffsetX: 30,
+  guideKeycapY: -56,
+  guideTextY: -70,
+  guideScale: 2.2,
+  guideFontSize: 35,
+  rightPadding: 60,
+  y: +495,
+};
+
 export class OverworldHudUI extends Phaser.GameObjects.Container {
   scene: GameScene;
   private toggleIconContainer!: GContainer;
@@ -23,9 +45,6 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private toggleIconTexts: GText[] = [];
 
   private partyList!: PartyListContainer;
-
-  private quickSlotStrip!: WindowStripContainer;
-  private quickSlotIcons: GImage[] = [];
 
   private infoList!: ImageTextListContainer;
 
@@ -48,7 +67,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.createQuickSlot();
     this.createInfo();
 
-    this.add([this.toggleIconContainer, this.partyList, this.quickSlotStrip, this.infoList]);
+    this.add([this.toggleIconContainer, this.partyList, this.infoList]);
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
@@ -71,37 +90,53 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private createToggleIcon() {
     this.toggleIconContainer = addContainer(this.scene, 0, 0);
 
-    const iconWidth = 70;
-    const spacing = 15;
-    const textures = [TEXTURE.ICON_TALK, TEXTURE.ICON_RUNNING, TEXTURE.ICON_MENU];
-    const guideTextures = ['Z', 'R', 'S'];
-    let currentX = 0;
+    const {
+      iconWidth,
+      spacing,
+      iconScale,
+      iconY,
+      guideOffsetX,
+      guideKeycapY,
+      guideTextY,
+      guideScale,
+      guideFontSize,
+      rightPadding,
+      y,
+    } = TOGGLE_ICON_LAYOUT;
 
-    for (let i = 0; i < textures.length; i++) {
-      const texture = textures[i];
-      const guideTexture = guideTextures[i];
-      const icon = addImage(this.scene, texture, undefined, currentX, -12).setScale(2.8);
-      const guide = addImage(this.scene, TEXTURE.KEYCAP, undefined, currentX + 30, -40).setScale(
-        1.6,
-      );
+    const step = iconWidth + spacing;
+    const n = TOGGLE_ICONS.length;
+
+    for (let i = 0; i < n; i++) {
+      const { texture, guide } = TOGGLE_ICONS[i];
+      const x = -(n - 1 - i) * step;
+
+      const icon = addImage(this.scene, texture, undefined, x, iconY).setScale(iconScale);
+      const guideIcon = addImage(
+        this.scene,
+        TEXTURE.KEYCAP,
+        undefined,
+        x + guideOffsetX,
+        guideKeycapY,
+      ).setScale(guideScale);
       const guideText = addText(
         this.scene,
-        currentX + 30,
-        -47,
-        guideTexture,
-        20,
-        '100',
+        x + guideOffsetX,
+        guideTextY,
+        guide,
+        guideFontSize,
+        'bold',
         'center',
         TEXTSTYLE.WHITE,
         TEXTSHADOW.GRAY,
       );
       icon.setTint(0x7f7f7f);
       this.toggleIcons.push(icon);
-      currentX += iconWidth + spacing;
-      this.toggleIconContainer.add([icon, guide, guideText]);
+      this.toggleIconContainer.add([icon, guideIcon, guideText]);
     }
 
-    this.toggleIconContainer.setPosition(+735, +510);
+    const { width } = this.scene.cameras.main;
+    this.toggleIconContainer.setPosition(width / 2 - rightPadding, y);
   }
 
   private createParty() {
@@ -124,25 +159,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.partyList?.refresh();
   }
 
-  private createQuickSlot() {
-    this.quickSlotStrip = new WindowStripContainer(this.scene);
-    this.quickSlotStrip.create({
-      orientation: 'horizontal',
-      slotCount: MAX_QUICK_SLOT_SIZE,
-      slotSize: 60,
-      spacing: 10,
-      nineSlice: { left: 8, right: 8, top: 8, bottom: 8 },
-    });
-
-    // TODO: 퀵슬롯 아이콘 추가
-    // for (let i = 0; i < this.quickSlotStrip.getSlotCount(); i++) {
-    //   const pos = this.quickSlotStrip.getSlotCenter(i);
-    //   const icon = addImage(this.scene, TEXTURE.ICON_CHECK, pos.x, pos.y).setScale(2);
-    //   this.quickSlotIcons.push(icon);
-    //   this.quickSlotStrip.add(icon);
-    // }
-    this.quickSlotStrip.setPosition(0, +490);
-  }
+  private createQuickSlot() {}
 
   private createInfo() {
     const user = this.scene.getUser()?.getProfile();

@@ -44,6 +44,7 @@ export interface IMenuItem {
   icon?: TEXTURE;
   color?: string;
   disabled?: boolean;
+  registerIcon?: boolean;
 }
 
 export interface IMenuListConfig {

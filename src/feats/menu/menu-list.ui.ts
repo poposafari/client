@@ -28,6 +28,8 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     BORDER_PADDING: 40,
     SCROLL_OFFSET_X: 35,
     VALUE_PART_GAP: 16,
+    REG_ICON_GAP: 60,
+    REG_ICON_SCALE: 2,
   } as const;
 
   protected config: IMenuListConfig;
@@ -57,6 +59,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   public onSelect?: (item: IMenuItem) => void;
   public onCancel?: () => void;
   public onCursorMove?: (index: number, item: IMenuItem) => void;
+
+  private highlightColor: string | null = TEXTCOLOR.YELLOW;
+
+  private defaultColor: string = TEXTCOLOR.WHITE;
   protected resolveSelection: ((item: IMenuItem | null) => void) | null = null;
 
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuListConfig) {
@@ -197,7 +203,11 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       label.setOrigin(0, 0.5);
 
       const countContainer = addContainer(this.scene, 0, 0, 0);
-      slotContainer.add([label, countContainer]);
+      const regIcon = addImage(this.scene, TEXTURE.REG, undefined, 0, 0).setScale(
+        this.LAYOUT.REG_ICON_SCALE,
+      );
+      regIcon.setVisible(false);
+      slotContainer.add([label, countContainer, regIcon]);
       this.itemSlots.push(slotContainer);
       this.add(slotContainer);
     }
@@ -318,12 +328,16 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.scrollThumbBg.setPosition(0, trackTopY);
     }
 
+    const regIconX = scrollBarX - this.LAYOUT.REG_ICON_GAP;
+
     // 5. 슬롯 텍스트 위치 적용
     for (const slot of this.itemSlots) {
       const label = slot.list[0] as any;
       const countContainer = slot.list[1] as any;
+      const regIcon = slot.list[2] as any;
       if (label) label.setX(labelX);
       if (countContainer) countContainer.setX(countX);
+      if (regIcon) regIcon.setX(regIconX);
     }
   }
 
@@ -453,12 +467,15 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
         const isSelected = dataIndex === this.cursorIndex;
         const labelColor = item.disabled
           ? TEXTCOLOR.LIGHT_GRAY
-          : isSelected
-            ? TEXTCOLOR.YELLOW
-            : item.color || TEXTCOLOR.WHITE;
+          : isSelected && this.highlightColor
+            ? this.highlightColor
+            : item.color || this.defaultColor;
         if (labelObj.setColor) labelObj.setColor(labelColor);
 
         this.fillCountArea(slot, item, labelColor);
+
+        const regIcon = slot.list[2] as Phaser.GameObjects.Image | undefined;
+        if (regIcon && regIcon.setVisible) regIcon.setVisible(!!item.registerIcon);
       } else {
         slot.setVisible(false);
       }
@@ -552,6 +569,28 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   /** 옵션의 window 텍스처로 윈도우를 갱신 (언어/테마 변경 시 호출) */
   public updateWindow(): void {
     this.window.setTexture(this.scene.getOption().getWindow());
+  }
+
+  public setWindowVisible(visible: boolean): void {
+    this.window.setVisible(visible);
+  }
+
+  public setCursorTexture(textureKey: string): void {
+    this.cursor.setTexture(textureKey);
+  }
+
+  public setCursorScale(scale: number): void {
+    this.cursor.setScale(scale);
+  }
+
+  public setHighlightColor(color: string | null): void {
+    this.highlightColor = color;
+    this.refreshList();
+  }
+
+  public setDefaultColor(color: string): void {
+    this.defaultColor = color;
+    this.refreshList();
   }
 
   public waitForSelect(items?: IMenuItem[]): Promise<IMenuItem | null> {

@@ -52,14 +52,14 @@ export interface GetMeRes {
     ballId: number;
   }[];
   itemSlots: {
-    itemId: number;
+    itemId: string;
     quantity: number;
-    slotNumber: number | null;
+    register: boolean;
   }[];
   essentialItems: {
     itemId: string;
     quantity: number;
-    slotNumber: number | null;
+    register: boolean;
   }[];
 }
 
@@ -102,9 +102,9 @@ export interface NicknameChange {
 }
 
 export interface ItemBagItem {
-  itemId: number;
+  itemId: string;
   quantity: number;
-  slotNumber: number | null;
+  register: boolean;
 }
 
 export interface PokedexEntry {
