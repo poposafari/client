@@ -9,6 +9,8 @@ export const pc: Record<string, string> = {
   sendToProfessor: 'Send to Professor',
   confirmSendToProfessor: 'Send {{name}} to the Professor?',
   obtainedCandy: 'Obtained {{item}} x{{quantity}}!',
+  confirmTakeHeldItem: 'Take the {{item}}?',
+  obtainedHeldItem: 'Took the {{item}}!',
   removeFromParty: 'Remove from Party',
   cancel: 'Cancel',
   changeWallpaper: 'Change Wallpaper',

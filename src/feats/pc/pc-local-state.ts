@@ -281,6 +281,13 @@ export class PcLocalState {
     }
   }
 
+  setHeldItemId(id: number, heldItemId: string | null): void {
+    const pokemon = this.allPokemons.get(id);
+    if (pokemon) {
+      pokemon.heldItemId = heldItemId;
+    }
+  }
+
   getNicknameChanges(): { id: number; nickname: string | null }[] {
     const changes: { id: number; nickname: string | null }[] = [];
     for (const [id, pokemon] of this.allPokemons) {
