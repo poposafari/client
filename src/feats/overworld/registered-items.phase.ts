@@ -26,7 +26,7 @@ export class RegisteredItemsPhase implements IGamePhase {
 
     if (registered.length === 0) {
       await this.scene
-        .getMessage('notice')
+        .getMessage('talk')
         .showMessage(
           i18next.exists('msg:noRegisteredItem')
             ? i18next.t('msg:noRegisteredItem')

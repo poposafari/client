@@ -16,4 +16,5 @@ export const msg: TranslationMessage = {
   backToTitle: 'Return to title screen?',
   backToPlaza: 'Return to Popo Town?',
   mapPreparing: 'Preparing map...',
+  noRegisteredItem: 'No registered items.',
 };

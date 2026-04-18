@@ -10,6 +10,7 @@ import { MenuUi } from '../menu/menu-ui';
 import { InitPosConfig } from './maps/door';
 import { MAP } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
+import { OverworldUi } from './overworld.ui';
 
 const YES_NO_ITEMS = () => [
   { key: 'yes', label: i18next.t('menu:yes') },
@@ -23,7 +24,10 @@ export class OverworldMenuPhase implements IGamePhase {
 
   private savedCursorIndex: number | undefined = undefined;
 
-  constructor(private scene: GameScene) {}
+  constructor(
+    private scene: GameScene,
+    private overworldUi: OverworldUi | null = null,
+  ) {}
 
   private isInSafari(): boolean {
     const map = this.scene.getUser()?.getProfile().lastLocation.map ?? '';
@@ -50,7 +54,7 @@ export class OverworldMenuPhase implements IGamePhase {
     }
 
     if (result.key === 'bag') {
-      this.scene.pushPhase(new BagPhase(this.scene));
+      this.scene.pushPhase(new BagPhase(this.scene, this.overworldUi));
       return;
     }
 

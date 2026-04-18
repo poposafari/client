@@ -30,7 +30,7 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi.setMapView(mapView);
     this.overworldUi.setMapConfig(mapConfig);
     this.overworldUi.onMenuRequested = () => {
-      this.scene.pushPhase(new OverworldMenuPhase(this.scene));
+      this.scene.pushPhase(new OverworldMenuPhase(this.scene, this.overworldUi));
     };
     this.overworldUi.onRegisteredItemsRequested = () => {
       if (!this.overworldUi) return;

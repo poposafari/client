@@ -31,8 +31,8 @@ import {
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import { KeyItemRegistry } from '../key-items';
 
-/** 트리거 타입별 핸들러 (player, params) => void */
 const TRIGGER_HANDLERS: Record<
   string,
   (player: PlayerObject, params: Record<string, unknown>) => void
@@ -574,13 +574,7 @@ export class OverworldUi extends BaseUi {
   }
 
   useRegisteredItem(itemId: string): void {
-    switch (itemId) {
-      case 'bicycle':
-        this.toggleRideBicycle();
-        break;
-      default:
-        break;
-    }
+    void KeyItemRegistry.use(itemId, { scene: this.scene, overworldUi: this });
   }
 
   enterRideBicycle(): void {

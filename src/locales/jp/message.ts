@@ -16,4 +16,5 @@ export const msg: TranslationMessage = {
   backToTitle: 'タイトル画面に戻りますか？',
   backToPlaza: 'ポポタウンに戻りますか？',
   mapPreparing: 'マップを準備中...',
+  noRegisteredItem: '登録したアイテムがありません。',
 };
