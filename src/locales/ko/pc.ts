@@ -9,6 +9,8 @@ export const pc: Record<string, string> = {
   sendToProfessor: '박사에게 보낸다',
   confirmSendToProfessor: '{{name}}을(를) 박사에게 보내시겠습니까?',
   obtainedCandy: '{{item}} x{{quantity}}을(를) 손에 넣었다!',
+  confirmTakeHeldItem: '{{item}}을(를) 가져오시겠습니까?',
+  obtainedHeldItem: '{{item}}을(를) 가져왔다!',
   removeFromParty: '파티 해제',
   cancel: '그만둔다',
   changeWallpaper: '벽지 바꾸기',

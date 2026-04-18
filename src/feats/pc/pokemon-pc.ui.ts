@@ -604,12 +604,69 @@ export class PokemonPcUi extends BaseUi {
             this.inputManager.push(this.gridSelect);
           });
           break;
+        case 'pc:heldItem':
+          this.takeHeldItem(pokemon).then(() => {
+            this.inputManager.push(this.gridSelect);
+          });
+          break;
         default:
-          // TODO: heldItem
           this.inputManager.push(this.gridSelect);
           break;
       }
     });
+  }
+
+  private async takeHeldItem(pokemon: PokemonBoxItem): Promise<void> {
+    const heldItemId = pokemon.heldItemId;
+    if (!heldItemId) return;
+
+    const questionUi = this.scene.getMessage('question');
+    const itemName = i18next.t(`item:${heldItemId}.name`);
+
+    await questionUi.showMessage(i18next.t('pc:confirmTakeHeldItem', { item: itemName }), {
+      resolveWhen: 'displayed',
+    });
+
+    const YES_NO_ITEMS = [
+      { key: 'yes', label: i18next.t('menu:yes') },
+      { key: 'no', label: i18next.t('menu:no') },
+    ];
+
+    const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
+    this.confirmMenu.hide();
+    questionUi.hide();
+
+    if (choice?.key !== 'yes') return;
+
+    const api = this.scene.getApi();
+    const result = await api.takeHeldItem(pokemon.id);
+    if (!result) return;
+
+    this.pcState.setHeldItemId(result.pokemonId, null);
+
+    const user = this.scene.getUser();
+    if (user) {
+      const bag = user.getItemBag();
+      const existing = bag?.get(result.returnedItem);
+      user.updateItemQuantity(result.returnedItem, (existing?.quantity ?? 0) + 1);
+
+      const cachedBox = user.getPokemonBox();
+      if (cachedBox) {
+        const idx = cachedBox.findIndex((p) => p.id === result.pokemonId);
+        if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], heldItemId: null };
+      }
+      const party = user.getParty();
+      if (party) {
+        const idx = party.findIndex((p) => p.id === result.pokemonId);
+        if (idx >= 0) party[idx] = { ...party[idx], heldItemId: null };
+      }
+    }
+
+    this.refreshCurrentBox();
+    this.updateInfo(String(result.pokemonId));
+
+    const talkUi = this.scene.getMessage('talk');
+    await talkUi.showMessage(i18next.t('pc:obtainedHeldItem', { item: itemName }));
   }
 
   private openPartyMenu(): void {

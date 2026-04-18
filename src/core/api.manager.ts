@@ -187,6 +187,15 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
+  async takeHeldItem(
+    id: number,
+  ): Promise<{ pokemonId: number; returnedItem: string } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ pokemonId: number; returnedItem: string }>
+    >('/item/take-hold', { id });
+    return res.data.success ? res.data.data : null;
+  }
+
   async registerItem(
     itemId: string,
   ): Promise<{ itemId: string; quantity: number; register: boolean } | null> {
