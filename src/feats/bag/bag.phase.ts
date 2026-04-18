@@ -9,6 +9,8 @@ import { BagLocalState } from './bag-local-state';
 import { MenuUi } from '../menu/menu-ui';
 import { PokemonPcUi } from '../pc/pokemon-pc.ui';
 import { PcLocalState } from '../pc/pc-local-state';
+import { OverworldUi } from '../overworld/overworld.ui';
+import { KeyItemRegistry } from '../key-items';
 
 export class BagPhase implements IGamePhase {
   private ui: BagUi | null = null;
@@ -18,7 +20,10 @@ export class BagPhase implements IGamePhase {
   private savedCategoryIndex = 0;
   private localState = new BagLocalState();
 
-  constructor(private scene: GameScene) {}
+  constructor(
+    private scene: GameScene,
+    private overworldUi: OverworldUi | null = null,
+  ) {}
 
   async enter(): Promise<void> {
     const user = this.scene.getUser();
@@ -115,6 +120,13 @@ export class BagPhase implements IGamePhase {
     if (key === 'use') {
       if (selection.entry.itemId.startsWith('move_')) {
         await this.doTeachMove(selection.entry.itemId);
+        return true;
+      }
+      if (selection.category === 'key' && this.overworldUi) {
+        await KeyItemRegistry.use(selection.entry.itemId, {
+          scene: this.scene,
+          overworldUi: this.overworldUi,
+        });
         return true;
       }
       const talk = this.scene.getMessage('talk');

@@ -37,4 +37,5 @@ export const msg: TranslationMessage = {
   npc1_0: '네?\n저는 호박사님이 아니에요',
   npc1_1: '호박사님은 안쪽에 계십니다',
   mapPreparing: '맵 생성중...',
+  noRegisteredItem: '등록한 아이템이 없습니다.',
 };
