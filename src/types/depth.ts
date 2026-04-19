@@ -7,5 +7,6 @@ export enum DEPTH {
 
   HUD = 999,
   MESSAGE = 1001,
+  MESSAGE_TOP = 1002,
   API = 1003,
 }

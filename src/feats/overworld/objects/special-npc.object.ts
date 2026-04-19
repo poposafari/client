@@ -39,3 +39,27 @@ export class SafariNpcObject extends NpcObject {
     return [];
   }
 }
+
+export class MartNpcObject extends NpcObject {
+  scene: GameScene;
+  private readonly martItems: string[];
+
+  constructor(scene: GameScene, config: NpcConfig) {
+    super(scene, config);
+    this.scene = scene;
+    this.martItems = config.martItems ?? [];
+  }
+
+  override getPhaseRequest(): string | null {
+    return 'mart';
+  }
+
+  override reaction(direction: DIRECTION): ReactionStep[] {
+    this.lookAt(direction);
+    return [];
+  }
+
+  getMartItems(): string[] {
+    return this.martItems;
+  }
+}

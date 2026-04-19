@@ -18,6 +18,8 @@ export const enum TEXTURE {
   BG_EVOLVE = 'bg_evolve',
   BG_BAG_M = 'bg_bag_m',
   BG_BAG_F = 'bg_bag_f',
+  BG_MART = 'bg_mart',
+  BG_MART_SELL = 'bg_mart_sell',
 
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',

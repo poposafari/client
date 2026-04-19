@@ -214,6 +214,24 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
+  async buyItem(
+    item: string,
+    quantity: number,
+  ): Promise<{ money: number; item: { itemId: string; quantity: number; register: boolean } } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ money: number; item: { itemId: string; quantity: number; register: boolean } }>
+    >('/item/buy', { item, quantity });
+    return res.data.success ? res.data.data : null;
+  }
+
+  async sellItem(item: string, quantity: number): Promise<{ money: number } | null> {
+    const res = await this.client.post<ApiResponse<{ money: number }>>('/item/sell', {
+      item,
+      quantity,
+    });
+    return res.data.success ? res.data.data : null;
+  }
+
   async getPokedex(): Promise<PokedexEntry[] | null> {
     const res = await this.client.get<ApiResponse<PokedexEntry[]>>('/pokedex');
     return res.data.success ? res.data.data : null;

@@ -6,6 +6,8 @@ import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
 import { StartingPhase } from '../starting/starting.phase';
+import { MartPhase } from '../mart';
+import { MartNpcObject } from './objects/special-npc.object';
 import { BattlePhase } from '../battle';
 import { RewardPhase } from '../battle/reward/reward.phase';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
@@ -45,12 +47,15 @@ export class OverworldPhase implements IGamePhase {
         }
       } else if (phaseKey === 'safari') {
         this.scene.pushPhase(new SafariPhase(this.scene));
+      } else if (phaseKey === 'mart' && _object instanceof MartNpcObject) {
+        this.scene.pushPhase(
+          new MartPhase(this.scene, _object.getMartItems(), _object.getNpcKey()),
+        );
       }
     };
     this.overworldUi.onWildEncounterRequested = (wild) => {
       const wildInfo = wild.getWild();
-      // v1: area/time 매핑이 없으므로 기본값 사용 (Step 5 polish 항목).
-      // mapConfig.area 가 's001'/'s002' 라 battle bg 매트릭스(field/forest/...)와 키가 다르다.
+
       this.scene.pushPhase(
         new BattlePhase(this.scene, {
           wild: wildInfo,

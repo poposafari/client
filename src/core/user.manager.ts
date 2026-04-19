@@ -78,6 +78,10 @@ export class UserManager {
     return this.profile;
   }
 
+  setMoney(amount: number): void {
+    this.profile.money = amount;
+  }
+
   getEquippedCostumes(): GetMeRes['equippedCostumes'] {
     return this.equippedCostumes;
   }

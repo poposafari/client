@@ -7,6 +7,7 @@ import { option } from './option';
 import { pc } from './pc';
 import { pokemonType } from './pokemon-type';
 import { pokemonHiddenMove } from './pokemon-hidden-move';
+import { mart } from './mart';
 import { safari } from './safari';
 import { splash } from './splash';
 
@@ -18,6 +19,7 @@ export const enConfig = {
   costume: costume,
   option: option,
   pc: pc,
+  mart: mart,
   safari: safari,
   splash: splash,
   pokemonType: pokemonType,

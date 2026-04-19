@@ -25,7 +25,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     CURSOR_GAP_RATIO: 0.6,
     MIN_AUTO_WIDTH_RATIO: 4,
     VISUAL_SCALE: 4,
-    BORDER_PADDING: 40,
+    BORDER_PADDING: 60,
     SCROLL_OFFSET_X: 35,
     VALUE_PART_GAP: 16,
     REG_ICON_GAP: 60,
@@ -301,6 +301,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     return Math.max(maxContentWidth + this.metrics.paddingWidth, this.metrics.minAutoWidth);
   }
 
+  private getBorderPadding(): number {
+    return this.config.borderPadding ?? this.LAYOUT.BORDER_PADDING;
+  }
+
   private resizeLayout() {
     const width = this.config.width!;
     const height = this.config.height!;
@@ -321,8 +325,9 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     }
 
     if (this.scrollThumbBg) {
-      const trackHeight = height / 2 - 20;
-      const trackTopY = -height / 2 + 20;
+      const halfPadding = this.getBorderPadding() / 2;
+      const trackHeight = height / 2 - halfPadding;
+      const trackTopY = -height / 2 + halfPadding;
 
       this.scrollThumbBg.setSize(this.SCROLL_BAR_WIDTH, trackHeight);
       this.scrollThumbBg.setPosition(0, trackTopY);
@@ -511,7 +516,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.scrollThumb.setVisible(true);
     this.scrollThumbBg.setVisible(true);
 
-    const trackHeight = this.config.height! - this.LAYOUT.BORDER_PADDING;
+    const trackHeight = this.config.height! - this.getBorderPadding();
 
     let thumbHeight = (visibleCount / totalItems) * trackHeight;
     const minThumbHeight = this.FONT_SIZE;
