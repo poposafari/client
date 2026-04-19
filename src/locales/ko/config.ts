@@ -12,6 +12,7 @@ import { pc } from './pc';
 import { pokemon } from './pokemon';
 import { pokemonType } from './pokemon-type';
 import { pokemonHiddenMove } from './pokemon-hidden-move';
+import { mart } from './mart';
 import { safari } from './safari';
 import { splash } from './splash';
 
@@ -27,6 +28,7 @@ export const koConfig = {
   costume: costume,
   option: option,
   pc: pc,
+  mart: mart,
   safari: safari,
   splash: splash,
   object: object,

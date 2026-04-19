@@ -49,12 +49,14 @@ export type ReactionStep =
   | { key: 'question'; content: QuestionStepContent }
   | { key: 'notice'; content: NoticeStepContent };
 
-export type SpecialNpc = 'professor' | 'safari';
+export type SpecialNpc = 'professor' | 'safari' | 'mart';
 
 export interface NpcConfig {
   key: string;
   name: string;
   special?: SpecialNpc;
+  /** special === 'mart'일 때 상점이 판매하는 아이템 id 목록 */
+  martItems?: string[];
   x: number;
   y: number;
   /** NPC 생성 시 바라보는 방향 */

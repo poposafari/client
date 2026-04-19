@@ -55,6 +55,7 @@ export interface IMenuListConfig {
   visibleCount: number;
   itemHeight: number;
   showCancel?: boolean;
+  borderPadding?: number;
 }
 
 export interface IMenuConfig {

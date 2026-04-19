@@ -63,7 +63,7 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
   protected resolveSelection: ((item: IMenuItem | null) => void) | null = null;
 
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuConfig) {
-    super(scene, inputManager, DEPTH.MESSAGE);
+    super(scene, inputManager, DEPTH.MESSAGE_TOP);
     this.scene = scene;
     this.config = config;
 

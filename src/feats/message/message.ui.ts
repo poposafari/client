@@ -26,7 +26,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
   protected inputLocked: boolean = false;
 
   constructor(scene: GameScene) {
-    super(scene, scene.getInputManager(), DEPTH.MESSAGE);
+    super(scene, scene.getInputManager(), DEPTH.MESSAGE_TOP);
 
     this.scene = scene;
     this.createLayout();
@@ -38,7 +38,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
 
   createLayout() {
     const { width } = this.scene.cameras.main;
-    this.container = addContainer(this.scene, DEPTH.MESSAGE);
+    this.container = addContainer(this.scene, DEPTH.MESSAGE_TOP);
     this.window = addWindow(
       this.scene,
       this.scene.getOption().getWindow(),

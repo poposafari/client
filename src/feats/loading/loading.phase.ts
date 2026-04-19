@@ -436,6 +436,8 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_EVOLVE, 'ui/bgs', 'bg_evolve');
     this.scene.loadImage(TEXTURE.BG_BAG_M, 'ui/bag', 'bg_m');
     this.scene.loadImage(TEXTURE.BG_BAG_F, 'ui/bag', 'bg_f');
+    this.scene.loadImage(TEXTURE.BG_MART, 'ui/bgs', 'bg_mart');
+    this.scene.loadImage(TEXTURE.BG_MART_SELL, 'ui/bgs', 'bg_sell');
 
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
