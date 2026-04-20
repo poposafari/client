@@ -118,9 +118,12 @@ export class BattlePhase implements IGamePhase {
         if (next.outcome.kind === 'caught') {
           await this.ui.playBallCatchAnim();
           await this.ui.showCaughtTalk();
-          const { pokemon, reward } = next.outcome;
+          const { pokemon, reward, expReward } = next.outcome;
 
           const user = this.scene.getUser();
+          const beforeProfile = user?.getProfile();
+          const beforeLevel = beforeProfile?.level ?? 1;
+          const beforeExp = beforeProfile?.exp ?? 0;
           user?.addPokemonToBox({
             id: pokemon.id,
             pokedexId: pokemon.pokedexId,
@@ -153,10 +156,14 @@ export class BattlePhase implements IGamePhase {
               new RewardPhase(this.scene, {
                 pokemon,
                 rewards: [reward],
+                expReward,
+                beforeLevel,
+                beforeExp,
                 onComplete: resolve,
               }),
             );
           });
+          user?.setLevelAndExp(expReward.level, expReward.exp);
           return this.transition({ kind: 'exiting', reason: 'catch' });
         }
         if (next.outcome.kind === 'flee') {

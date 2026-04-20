@@ -4,3 +4,4 @@ export * from './phase';
 export * from './api.manager';
 export * from './audio.manager';
 export * from './option.manager';
+export * from './level-curve';

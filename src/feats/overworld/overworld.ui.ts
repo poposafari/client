@@ -8,7 +8,6 @@ import {
   OverworldDirection,
   OverworldMovementState,
   SFX,
-  TEXTCOLOR,
   TEXTURE,
 } from '@poposafari/types';
 import { DIRECTION, directionToDelta, OVERWORLD_ZOOM } from './overworld.constants';
@@ -868,8 +867,6 @@ export class OverworldUi extends BaseUi {
 
       if (this.mapConfig?.type === 'safari') {
         this.spawnSafariEntities();
-        // 야생 포켓몬 스폰 직후 1회 emit → 플레이어가 아직 움직이지 않아도
-        // 근처 wild들의 이름표 가시성이 초기 평가되도록 한다.
         this.scene.events.emit('player_tile_moved', {
           tileX: this.player.getTileX(),
           tileY: this.player.getTileY(),

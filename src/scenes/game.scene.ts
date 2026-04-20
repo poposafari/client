@@ -47,6 +47,7 @@ export interface SafariWildInfo {
   caught: number;
   bait: boolean;
   rock: boolean;
+  caughtCount: number;
   /** 클라이언트에서 최초 스폰 시 결정된 좌표. 재진입 시 그대로 재사용. */
   x?: number;
   y?: number;
