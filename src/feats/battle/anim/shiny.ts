@@ -36,7 +36,7 @@ export async function playShinySparkle(
   const cy = target.y + (target.parentContainer?.y ?? 0);
 
   const sparkle = scene.add
-    .sprite(cx, cy, TEXTURE.SPARKLE)
+    .sprite(cx, cy - 200, TEXTURE.SPARKLE)
     .setScrollFactor(0)
     .setDepth(DEPTH.HUD + 5)
     .setScale(4);

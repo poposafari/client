@@ -40,7 +40,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private wildNameText!: GText;
   private wildLevelText!: GText;
   private wildGenderText!: GText;
-  private wildOwned!: GImage;
+  private wildCatchCntIcon!: GImage;
+  private wildCatchCnt!: GText;
   private wildShiny!: GImage;
   private catchRateText!: GText;
   private fleeRateText!: GText;
@@ -90,10 +91,10 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     this.wildNameText = addText(
       scene,
-      -490,
-      -70,
+      -470,
+      -75,
       getPokemonI18Name(ctx.wild.pokedexId),
-      85,
+      90,
       '100',
       'left',
       TEXTSTYLE.BLACK,
@@ -101,25 +102,12 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     );
     this.wildHudContainer.add(this.wildNameText);
 
-    this.wildLevelText = addText(
-      scene,
-      +90,
-      -68,
-      `Lv.${ctx.wild.level}`,
-      70,
-      '100',
-      'left',
-      TEXTSTYLE.BLACK,
-      TEXTSHADOW.GRAY,
-    );
-    this.wildHudContainer.add(this.wildLevelText);
-
     this.wildGenderText = addText(
       scene,
-      +30,
-      -70,
+      this.wildNameText.x + this.wildNameText.displayWidth + 5,
+      -75,
       SYMBOL_MALE,
-      85,
+      90,
       '100',
       'left',
       TEXTSTYLE.BLACK,
@@ -128,17 +116,31 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     updatePokemonGenderIcon(ctx.wild.gender, this.wildGenderText);
     this.wildHudContainer.add(this.wildGenderText);
 
-    //TODO: 잡은 이력이 있다면 보이고, 그렇지 않다면 보이지 않아야 한다.
-    this.wildOwned = addImage(scene, TEXTURE.ICON_OWNED, undefined, -470, +5).setScale(2.2);
-    this.wildHudContainer.add(this.wildOwned);
+    this.wildLevelText = addText(
+      scene,
+      this.wildGenderText.x + this.wildGenderText.displayWidth + 5,
+      -72,
+      `(+${ctx.wild.level})`,
+      75,
+      '100',
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.wildHudContainer.add(this.wildLevelText);
+
+    this.wildCatchCntIcon = addImage(scene, TEXTURE.ICON_OWNED, undefined, -445, -10)
+      .setScale(2.4)
+      .setVisible(ctx.wild.caughtCount > 0);
+    this.wildHudContainer.add(this.wildCatchCntIcon);
 
     if (ctx.wild.isShiny) {
       this.wildShiny = addImage(
         scene,
         TEXTURE.ICON_SHINY,
         undefined,
-        this.wildNameText.x + this.wildNameText.displayWidth + 30,
-        -70,
+        this.wildLevelText.x + this.wildLevelText.displayWidth + 30,
+        -75,
       ).setScale(3);
       this.wildHudContainer.add(this.wildShiny);
     }

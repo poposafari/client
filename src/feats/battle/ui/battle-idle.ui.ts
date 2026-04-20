@@ -26,7 +26,7 @@ export class BattleIdleUi extends BaseUi implements IInputHandler {
   private onCursorChange: ((action: BattleAction) => void) | null = null;
 
   constructor(scene: GameScene, inputManager: InputManager) {
-    super(scene, inputManager, DEPTH.HUD + 3);
+    super(scene, inputManager, DEPTH.MESSAGE_TOP + 1);
     this.scene = scene;
     this.createLayout();
   }

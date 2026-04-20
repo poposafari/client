@@ -19,6 +19,8 @@ export interface ItemBagEntry {
 export interface MappedProfile {
   nickname: string;
   gender: 'male' | 'female';
+  level: number;
+  exp: number;
   money: number;
   playtime: number;
   hasStarter: boolean;
@@ -58,6 +60,8 @@ export class UserManager {
     this.profile = {
       nickname: p.nickname,
       gender: p.gender === 1 ? 'male' : 'female',
+      level: p.level,
+      exp: p.exp,
       money: p.money,
       playtime: p.playtime,
       hasStarter: p.hasStarter,
@@ -82,6 +86,11 @@ export class UserManager {
 
   setMoney(amount: number): void {
     this.profile.money = amount;
+  }
+
+  setLevelAndExp(level: number, exp: number): void {
+    this.profile.level = level;
+    this.profile.exp = exp;
   }
 
   getEquippedCostumes(): GetMeRes['equippedCostumes'] {

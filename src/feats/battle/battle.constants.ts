@@ -3,7 +3,7 @@ export const PLAYER_CONTAINER = { x: 900, yOffset: 0 }; // y = h/2
 export const WILD_CONTAINER = { x: 1000, yOffset: 0 };
 
 export const PLAYER_BASE = { x: -400, y: 182, scale: 2.8 };
-export const PLAYER_SPRITE = { x: -400, y: 90, scale: 4.8 };
+export const PLAYER_SPRITE = { x: -400, y: 70, scale: 5.4 };
 export const WILD_BASE = { x: 450, y: -110, scale: 3.2 };
 export const WILD_SHADOW = { x: 450, y: -155, scale: 2.2, height: 80, alpha: 0.3 };
 export const WILD_SPRITE = { x: 450, y: 0, scale: 2.6 };
