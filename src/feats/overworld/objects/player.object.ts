@@ -80,12 +80,12 @@ export class PlayerObject extends MovableObject {
         .sprite(px, py, outfitKeyResolved)
         .setOrigin(0.5, 1)
         .setScale(PLAYER_SCALE)
-        .setDepth(this.tileY);
+        .setDepth(this.tileY + 0.1);
       this.hairSprite = scene.add
         .sprite(px, py, hairKeyResolved)
         .setOrigin(0.5, 1)
         .setScale(PLAYER_SCALE)
-        .setDepth(this.tileY + 1);
+        .setDepth(this.tileY + 0.2);
     }
 
     this.smoothFrameNumbers = [12, 0, 4, 8];
@@ -105,8 +105,8 @@ export class PlayerObject extends MovableObject {
             : 2;
   }
 
-  protected override onTileMoved(tileX: number, tileY: number): void {
-    this.getScene().events.emit('player_tile_moved', { tileX, tileY });
+  protected override onTileMoved(tileX: number, tileY: number, direction: DIRECTION): void {
+    this.getScene().events.emit('player_tile_moved', { tileX, tileY, direction });
   }
 
   override setPosition(px: number, py: number): void {
@@ -121,8 +121,8 @@ export class PlayerObject extends MovableObject {
       const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
       this.hairSprite?.setPosition(px, py);
       this.outfitSprite?.setPosition(px, py);
-      this.outfitSprite?.setDepth(this.tileY);
-      this.hairSprite?.setDepth(this.tileY + 1);
+      this.outfitSprite?.setDepth(this.tileY + 0.1);
+      this.hairSprite?.setDepth(this.tileY + 0.2);
     }
   }
 
@@ -151,8 +151,8 @@ export class PlayerObject extends MovableObject {
 
   override setSpriteDepth(value: number): void {
     super.setSpriteDepth(value);
-    this.outfitSprite?.setDepth(value);
-    this.hairSprite?.setDepth(value + 1);
+    this.outfitSprite?.setDepth(value + 0.1);
+    this.hairSprite?.setDepth(value + 0.2);
   }
 
   override destroy(): void {

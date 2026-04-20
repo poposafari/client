@@ -96,7 +96,7 @@ export class MovableObject extends BaseObject {
         this.tileX + deltaPos.dx * this.currentMoveTiles,
         this.tileY + deltaPos.dy * this.currentMoveTiles,
       );
-      this.onTileMoved(this.tileX, this.tileY);
+      this.onTileMoved(this.tileX, this.tileY, this.currentDirection);
       this.movementCheck = false;
     }
 
@@ -140,6 +140,10 @@ export class MovableObject extends BaseObject {
     return this.movementCheck;
   }
 
+  isInMotion(): boolean {
+    return !this.movementCheck || this.movementDirectionQueue.length > 0;
+  }
+
   isMovementBlocking(): boolean {
     return this.movementBlocking;
   }
@@ -173,7 +177,7 @@ export class MovableObject extends BaseObject {
     }
   }
 
-  protected onTileMoved(_tileX: number, _tileY: number): void {}
+  protected onTileMoved(_tileX: number, _tileY: number, _direction: DIRECTION): void {}
 
   private getSmoothFrameNumberFromDirection(direction: DIRECTION): number | undefined {
     switch (direction) {

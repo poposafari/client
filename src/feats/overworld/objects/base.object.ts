@@ -128,7 +128,7 @@ export class BaseObject {
 
   setSpriteDepth(value: number): void {
     this.sprite.setDepth(value);
-    this.shadow.setDepth(value);
+    this.shadow.setDepth(value - 0.1);
   }
 
   refreshPosition(): void {
@@ -137,8 +137,8 @@ export class BaseObject {
     this.shadow.setPosition(px, py);
     this.name.setPosition(px, py - this.nameOffsetY);
     this.sprite.setDepth(this.tileY);
-    this.shadow.setDepth(this.tileY);
-    this.name.setDepth(this.tileY + 1);
+    this.shadow.setDepth(this.tileY - 0.1);
+    this.name.setDepth(this.tileY + 0.3);
   }
 
   destroy(): void {

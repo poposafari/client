@@ -3,6 +3,7 @@ import type { MapConfig, ReactionStep } from '@poposafari/core/map.registry';
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GetMeRes,
   KEY,
   OverworldDirection,
   OverworldMovementState,
@@ -16,6 +17,9 @@ import {
   DEFAULT_MOVE_DURATION_MS,
   MOVE_TYPE_DURATION_MS,
   type MovePayload,
+  type OtherPetChangedPayload,
+  type PetChangePayload,
+  type PetState,
   type RoomUserState,
   type UserMovedPayload,
 } from './overworld-socket.types';
@@ -25,6 +29,7 @@ import {
   GroundItemObject,
   InteractiveObject,
   OtherPlayerObject,
+  PetObject,
   PlayerObject,
   WildPokemonObject,
 } from './objects';
@@ -90,6 +95,23 @@ const SPEED_BY_MOVEMENT_STATE: Partial<Record<OverworldMovementState, number>> =
 
 type KeyState = { up: boolean; down: boolean; left: boolean; right: boolean };
 
+function parsePetField(value: string | PetState | null | undefined): PetState | null {
+  if (!value) return null;
+  if (typeof value === 'object') {
+    if (!value.pokedexId) return null;
+    return { pokedexId: value.pokedexId, isShiny: !!value.isShiny };
+  }
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === 'null') return null;
+  try {
+    const parsed = JSON.parse(trimmed) as Partial<PetState>;
+    if (!parsed || !parsed.pokedexId) return null;
+    return { pokedexId: String(parsed.pokedexId), isShiny: !!parsed.isShiny };
+  } catch {
+    return null;
+  }
+}
+
 const DIR_KEYS: { dir: DIRECTION; key: keyof KeyState }[] = [
   { dir: DIRECTION.UP, key: 'up' },
   { dir: DIRECTION.DOWN, key: 'down' },
@@ -119,6 +141,14 @@ export class OverworldUi extends BaseUi {
   private doorTransitionPending = false;
 
   private nextJumpEndGoesToSurf = false;
+
+  private pet: PetObject | null = null;
+  private petOwnerPokemonId: number | null = null;
+  private petOwnerSignature: string | null = null;
+  private petSummoning = false;
+  private petRecalling = false;
+  private unsubscribeParty: (() => void) | null = null;
+  private prevMovementState: OverworldMovementState | null = null;
 
   onMenuRequested: (() => void) | null = null;
   onInteractivePhaseRequested: ((object: InteractiveObject, phaseKey: string) => void) | null =
@@ -339,11 +369,32 @@ export class OverworldUi extends BaseUi {
     if (idx >= 0) this.safariObjects.splice(idx, 1);
     obj.destroy();
     this.refreshPlayerBlockingRefs();
+    this.refreshPetBlockingRefs();
+    this.refreshWildBlockingRefs();
   }
 
   private refreshPlayerBlockingRefs(): void {
     if (!this.player || !this.mapView) return;
     this.player.setBlockingRefs([...this.mapView.getNpcs(), ...this.safariObjects]);
+  }
+
+  private refreshPetBlockingRefs(): void {
+    if (!this.pet || !this.mapView) return;
+    this.pet.setBlockingRefs([...this.mapView.getNpcs(), ...this.safariObjects]);
+  }
+
+  private refreshWildBlockingRefs(): void {
+    if (!this.mapView) return;
+    const npcs = this.mapView.getNpcs();
+    for (const obj of this.safariObjects) {
+      if (obj instanceof WildPokemonObject) {
+        const others = this.safariObjects.filter((o) => o !== obj);
+        const refs: BaseObject[] = [...others, ...npcs];
+        if (this.player) refs.push(this.player);
+        if (this.pet) refs.push(this.pet);
+        obj.setBlockingRefs(refs);
+      }
+    }
   }
 
   /**
@@ -458,17 +509,9 @@ export class OverworldUi extends BaseUi {
       this.nameContainer.add(obj.getName());
     }
 
-    // wild의 blockingRefs: 다른 safari 객체 + player + npcs.
-    // otherPlayer는 tween 기반 + 동적 join/leave로 race 가능성이 있어 제외.
-    const npcs = this.mapView.getNpcs();
+    this.refreshWildBlockingRefs();
     for (const obj of this.safariObjects) {
-      if (obj instanceof WildPokemonObject) {
-        const others = this.safariObjects.filter((o) => o !== obj);
-        const refs: BaseObject[] = [...others, ...npcs];
-        if (this.player) refs.push(this.player);
-        obj.setBlockingRefs(refs);
-        obj.startRandomWalk();
-      }
+      if (obj instanceof WildPokemonObject) obj.startRandomWalk();
     }
 
     this.refreshPlayerBlockingRefs();
@@ -548,6 +591,7 @@ export class OverworldUi extends BaseUi {
     const speed =
       SPEED_BY_MOVEMENT_STATE[next] ?? SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
     this.player.setBaseSpeed(speed);
+    this.pet?.setBaseSpeed(next === OverworldMovementState.RUNNING ? 4 : 2);
   }
 
   /**
@@ -596,6 +640,185 @@ export class OverworldUi extends BaseUi {
 
     this.syncRunningToggleIcon();
   }
+
+  private handlePartyChanged = (party: GetMeRes['party']) => {
+    const first = party.find((p) => p.partySlot === 0) ?? null;
+    const newId = first?.id ?? null;
+    const newSig = first ? `${first.pokedexId}|${first.isShiny ? 1 : 0}` : null;
+
+    if (newId === this.petOwnerPokemonId && newSig === this.petOwnerSignature) return;
+
+    if (newId === null) {
+      const clearOwner = () => {
+        this.petOwnerPokemonId = null;
+        this.petOwnerSignature = null;
+        this.emitPetChange(null, false);
+      };
+      if (this.pet) {
+        this.recallPet(clearOwner);
+      } else {
+        clearOwner();
+      }
+      return;
+    }
+
+    // 진화(같은 party id, pokedexId/isShiny 변화) — 텍스처만 스왑, call/recall 스킵.
+    if (newId === this.petOwnerPokemonId && newSig !== this.petOwnerSignature) {
+      this.petOwnerSignature = newSig;
+      this.pet?.swap(String(first!.pokedexId), first!.isShiny);
+      this.emitPetChange(String(first!.pokedexId), first!.isShiny);
+      return;
+    }
+
+    // 교체/최초 소환: 기존 펫이 있으면 recall 애니메이션 없이 즉시 제거 후 call.
+    // RIDE/SURF/JUMP/FISHING 상태면 owner 갱신만 하고 실제 소환은 WALK/RUNNING 복귀 시로 미룬다.
+    const doSummon = () => {
+      this.petOwnerPokemonId = newId;
+      this.petOwnerSignature = newSig;
+      if (this.isFieldState()) {
+        this.summonPet(String(first!.pokedexId), first!.isShiny);
+      }
+      this.emitPetChange(String(first!.pokedexId), first!.isShiny);
+    };
+    if (this.pet) {
+      this.pet.destroy();
+      this.pet = null;
+      this.refreshWildBlockingRefs();
+    }
+    doSummon();
+  };
+
+  private emitPetChange(pokedexId: string | null, isShiny: boolean): void {
+    const socket = this.scene.getSocket();
+    if (!socket?.connected) return;
+    const payload: PetChangePayload = { pokedexId, isShiny };
+    socket.emit('pet-change', payload);
+  }
+
+  private isFieldStateValue(state: OverworldMovementState): boolean {
+    return state === OverworldMovementState.WALK || state === OverworldMovementState.RUNNING;
+  }
+
+  private isFieldState(): boolean {
+    const state = this.scene.getUser()?.getOverworldMovementState();
+    return state ? this.isFieldStateValue(state) : false;
+  }
+
+  private handleMovementStateTransition(currentState: OverworldMovementState | undefined): void {
+    if (currentState == null) return;
+    const prev = this.prevMovementState;
+    if (prev === currentState) return;
+    this.prevMovementState = currentState;
+
+    const wasField = prev != null && this.isFieldStateValue(prev);
+    const isField = this.isFieldStateValue(currentState);
+
+    if (wasField && !isField) {
+      // 필드 → 비필드: 펫 회수. petOwnerPokemonId/Signature는 유지해서 복귀 시 재소환.
+      if (this.pet) this.recallPet();
+      return;
+    }
+    if (!wasField && isField) {
+      // 비필드 → 필드: 저장된 owner sig가 있으면 자동 재소환.
+      if (this.petOwnerSignature && !this.pet && !this.petSummoning) {
+        const [pokedexId, shinyFlag] = this.petOwnerSignature.split('|');
+        this.summonPet(pokedexId, shinyFlag === '1');
+      }
+      return;
+    }
+    if (isField && this.pet) {
+      // WALK ↔ RUNNING: 속도 동기화만.
+      this.pet.setBaseSpeed(currentState === OverworldMovementState.RUNNING ? 4 : 2);
+    }
+  }
+
+  private isTileOccupiedForPet(tileX: number, tileY: number): boolean {
+    if (!this.mapView) return false;
+    if (!this.mapView.hasTileAt(tileX, tileY)) return true;
+    if (this.mapView.hasBlockingTileAt(tileX, tileY)) return true;
+    for (const npc of this.mapView.getNpcs()) {
+      const p = npc.getTilePos();
+      if (p.x === tileX && p.y === tileY) return true;
+    }
+    for (const obj of this.safariObjects) {
+      const p = obj.getTilePos();
+      if (p.x === tileX && p.y === tileY) return true;
+    }
+    return false;
+  }
+
+  private summonPet(pokedexId: string, isShiny: boolean): void {
+    if (!this.player || !this.mapView || !this.worldContainer) return;
+    if (this.petSummoning) return;
+
+    const dir = this.player.getLastDirection();
+    const { dx, dy } = directionToDelta(dir === DIRECTION.NONE ? DIRECTION.DOWN : dir);
+    const { x: px, y: py } = this.player.getTilePos();
+    let tileX = px - dx;
+    let tileY = py - dy;
+
+    if (this.isTileOccupiedForPet(tileX, tileY)) {
+      tileX = px;
+      tileY = py;
+    }
+
+    const playerDir = this.player.getLastDirection();
+    const initDir = playerDir === DIRECTION.NONE ? DIRECTION.DOWN : playerDir;
+    const refs = [...this.mapView.getNpcs(), ...this.safariObjects];
+
+    this.petSummoning = true;
+    const pet = PetObject.summon(
+      this.scene,
+      this.mapView,
+      tileX,
+      tileY,
+      pokedexId,
+      isShiny,
+      initDir,
+      refs,
+      (obj) => this.worldContainer?.add(obj),
+    );
+    this.pet = pet;
+    const user = this.scene.getUser();
+    pet.setBaseSpeed(user?.getOverworldMovementState() === OverworldMovementState.RUNNING ? 4 : 2);
+    this.petSummoning = false;
+    this.refreshWildBlockingRefs();
+  }
+
+  private recallPet(onComplete?: () => void): void {
+    const pet = this.pet;
+    if (!pet || !this.worldContainer) {
+      onComplete?.();
+      return;
+    }
+    if (this.petRecalling) {
+      // 회수 중복 호출 — 콜백만 즉시 흘려보내 체인이 끊기지 않게.
+      onComplete?.();
+      return;
+    }
+    this.petRecalling = true;
+
+    pet.recall(
+      (obj) => this.worldContainer?.add(obj),
+      () => {
+        if (this.pet === pet) {
+          this.pet = null;
+          this.refreshWildBlockingRefs();
+        }
+        this.petRecalling = false;
+        onComplete?.();
+      },
+    );
+  }
+
+  private handlePlayerTileMovedForPet = (payload: {
+    tileX: number;
+    tileY: number;
+    direction: DIRECTION;
+  }) => {
+    if (!this.pet || !this.player) return;
+    this.pet.followStep(payload.tileX, payload.tileY, payload.direction);
+  };
 
   errorEffect(_errorMsg: string): void {}
 
@@ -685,12 +908,19 @@ export class OverworldUi extends BaseUi {
           const hSprite = other.getHairSprite();
           if (hSprite) this.worldContainer!.add(hSprite);
           this.nameContainer!.add(other.getName());
+          other.setContainerAdd((obj) => this.worldContainer?.add(obj));
           this.otherPlayers.set(u.userId, other);
+
+          const initialPet = parsePetField(u.pet);
+          if (initialPet) {
+            other.setPet(initialPet.pokedexId, initialPet.isShiny, false);
+          }
         }
         this.scene.clearPendingRoomState();
       }
 
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMoved, this);
+      this.scene.events.on('player_tile_moved', this.handlePlayerTileMovedForPet);
 
       this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
 
@@ -704,12 +934,30 @@ export class OverworldUi extends BaseUi {
     this.hud.show();
     this.syncRunningToggleIcon();
 
+    const user = this.scene.getUser();
+    if (user) {
+      this.prevMovementState = user.getOverworldMovementState();
+      this.unsubscribeParty = user.onPartyChanged(this.handlePartyChanged);
+      this.handlePartyChanged(user.getParty());
+    }
+
     super.show();
   }
 
   hide(): void {
     this.doorTransitionPending = false;
     this.scene.cameras.main.setScroll(0, 0);
+
+    this.unsubscribeParty?.();
+    this.unsubscribeParty = null;
+
+    this.pet?.destroy();
+    this.pet = null;
+    this.petOwnerPokemonId = null;
+    this.petOwnerSignature = null;
+    this.petSummoning = false;
+    this.petRecalling = false;
+    this.prevMovementState = null;
 
     if (this.worldContainer) {
       this.worldContainer.removeAll(false);
@@ -723,6 +971,7 @@ export class OverworldUi extends BaseUi {
     }
 
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMoved, this);
+    this.scene.events.off('player_tile_moved', this.handlePlayerTileMovedForPet);
     this.cursorKeys = null;
 
     if (this.hud) {
@@ -776,8 +1025,24 @@ export class OverworldUi extends BaseUi {
     const hSprite = other.getHairSprite();
     if (hSprite) this.worldContainer.add(hSprite);
     this.nameContainer.add(other.getName());
+    other.setContainerAdd((obj) => this.worldContainer?.add(obj));
     this.otherPlayers.set(u.userId, other);
+
+    const initialPet = parsePetField(u.pet);
+    if (initialPet) {
+      other.setPet(initialPet.pokedexId, initialPet.isShiny, false);
+    }
     this.sortWorldContainerByDepth();
+  }
+
+  onOtherPetChanged(payload: OtherPetChangedPayload): void {
+    const other = this.otherPlayers.get(payload.userId);
+    if (!other) return;
+    if (!payload.pokedexId) {
+      other.clearPet(true);
+    } else {
+      other.setPet(payload.pokedexId, !!payload.isShiny, true);
+    }
   }
 
   /** 나간 다른 플레이어 제거 (user_left 수신 시 호출) */
@@ -882,6 +1147,8 @@ export class OverworldUi extends BaseUi {
 
     if (this.doorTransitionPending) {
       this.player.update(delta);
+      this.pet?.update(delta);
+      for (const other of this.otherPlayers.values()) other.update(delta);
 
       for (const obj of this.safariObjects) {
         if (obj instanceof WildPokemonObject) {
@@ -899,6 +1166,8 @@ export class OverworldUi extends BaseUi {
     }
 
     this.player.update(delta);
+    this.pet?.update(delta);
+    for (const other of this.otherPlayers.values()) other.update(delta);
 
     // 야생 포켓몬 랜덤 워크 진행. 메뉴/UI push 중에도 계속 움직이는 것이 정책.
     this.tickWildPokemons(delta);
@@ -929,6 +1198,10 @@ export class OverworldUi extends BaseUi {
         this.player.setBaseSpeed(speed);
       }
     }
+
+    // 상태 전이 감지: WALK/RUNNING ↔ RIDE/SURF/JUMP/FISHING. JUMP idle 핸들러가
+    // JUMP→WALK/SURF로 상태를 바꿨을 수 있으므로 그 직후 시점에서 다시 가져온다.
+    this.handleMovementStateTransition(user?.getOverworldMovementState());
 
     if (movementState === OverworldMovementState.JUMP) {
       this.lastFrameKeys = {

@@ -16,6 +16,7 @@ import {
   getSkinTextureKey,
 } from '../overworld-costume-keys';
 import { BaseObject } from './base.object';
+import { PetObject } from './pet.object';
 
 /** 플레이어 스프라이트 스케일 (PlayerObject와 동일) */
 const PLAYER_SCALE = 3;
@@ -67,6 +68,9 @@ export class OtherPlayerObject extends BaseObject {
   private lastDirection: MoveDir = 'down';
   private lastMoveType: string = 'walk';
   private animStep = 0;
+  private pet: PetObject | null = null;
+  private addToContainer: ((obj: Phaser.GameObjects.GameObject) => void) | null = null;
+  private lastPetSpeed = 2;
 
   private static readonly DEFAULT_MOVE_DURATION_MS = 120;
   private static readonly JUMP_ARC_HEIGHT = 60;
@@ -92,9 +96,7 @@ export class OtherPlayerObject extends BaseObject {
 
     this.skinKey = skinKey;
 
-    const hairKeyRequested = costume
-      ? getHairTextureKey(gender, costume.hair)
-      : defaults.hair;
+    const hairKeyRequested = costume ? getHairTextureKey(gender, costume.hair) : defaults.hair;
     const hairKeyResolved = scene.textures.exists(hairKeyRequested)
       ? hairKeyRequested
       : defaults.hair;
@@ -116,12 +118,12 @@ export class OtherPlayerObject extends BaseObject {
         .sprite(px, py, outfitKeyResolved)
         .setOrigin(0.5, 1)
         .setScale(scale)
-        .setDepth(this.tileY);
+        .setDepth(this.tileY + 0.1);
       this.hairSprite = scene.add
         .sprite(px, py, hairKeyResolved)
         .setOrigin(0.5, 1)
         .setScale(scale)
-        .setDepth(this.tileY + 1);
+        .setDepth(this.tileY + 0.2);
     }
   }
 
@@ -199,15 +201,15 @@ export class OtherPlayerObject extends BaseObject {
       const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
       this.outfitSprite?.setPosition(px, py);
       this.hairSprite?.setPosition(px, py);
-      this.outfitSprite?.setDepth(this.tileY);
-      this.hairSprite?.setDepth(this.tileY + 1);
+      this.outfitSprite?.setDepth(this.tileY + 0.1);
+      this.hairSprite?.setDepth(this.tileY + 0.2);
     }
   }
 
   override setSpriteDepth(value: number): void {
     super.setSpriteDepth(value);
-    this.outfitSprite?.setDepth(value);
-    this.hairSprite?.setDepth(value + 1);
+    this.outfitSprite?.setDepth(value + 0.1);
+    this.hairSprite?.setDepth(value + 0.2);
   }
 
   moveToTile(
@@ -231,6 +233,16 @@ export class OtherPlayerObject extends BaseObject {
 
     this.startMoveAnimation(moveType, dir);
     if (moveType && moveType !== 'jump') this.animStep++;
+
+    if (this.pet) {
+      const nonFieldMove = moveType === 'ride' || moveType === 'surf' || moveType === 'jump';
+      if (nonFieldMove) {
+        this.clearPet(false);
+      } else {
+        this.syncPetSpeed(moveType);
+        this.pet.followStep(targetX, targetY, toDIRECTION(dir));
+      }
+    }
 
     const targets: Phaser.GameObjects.GameObject[] = [this.shadow, this.sprite];
     if (this.outfitSprite) targets.push(this.outfitSprite);
@@ -333,8 +345,97 @@ export class OtherPlayerObject extends BaseObject {
     this.stopSpriteAnimation(this.getIdleFrameIndex(this.lastDirection, this.lastMoveType));
   }
 
+  setContainerAdd(addToContainer: (obj: Phaser.GameObjects.GameObject) => void): void {
+    this.addToContainer = addToContainer;
+  }
+
+  getPet(): PetObject | null {
+    return this.pet;
+  }
+
+  setPet(pokedexId: string, isShiny: boolean, withFx: boolean): void {
+    if (!this.addToContainer) return;
+    // 이미 같은 포켓몬이면 무시.
+    if (
+      this.pet &&
+      this.pet.getPokedexId?.() === pokedexId &&
+      this.pet.getIsShiny?.() === isShiny
+    ) {
+      return;
+    }
+
+    const spawn = () => {
+      if (!this.addToContainer) return;
+      const initDir = toDIRECTION(this.lastDirection);
+      // OtherPlayer의 이동은 서버 권위(tween)로 보장되므로 펫은 맵/차단 검사 없이 따라가게 한다.
+      if (withFx) {
+        this.pet = PetObject.summon(
+          this.scene,
+          null,
+          this.tileX,
+          this.tileY,
+          pokedexId,
+          isShiny,
+          initDir,
+          [],
+          this.addToContainer,
+        );
+      } else {
+        this.pet = new PetObject(
+          this.scene,
+          null,
+          this.tileX,
+          this.tileY,
+          pokedexId,
+          isShiny,
+          initDir,
+          [],
+        );
+        this.addToContainer(this.pet.getShadow());
+        this.addToContainer(this.pet.getSprite());
+      }
+      this.pet.setBaseSpeed(this.lastPetSpeed);
+    };
+
+    if (this.pet) {
+      this.clearPet(withFx, spawn);
+    } else {
+      spawn();
+    }
+  }
+
+  clearPet(withFx: boolean, onComplete?: () => void): void {
+    const pet = this.pet;
+    if (!pet) {
+      onComplete?.();
+      return;
+    }
+    this.pet = null;
+    if (withFx && this.addToContainer) {
+      pet.recall(this.addToContainer, () => onComplete?.());
+    } else {
+      pet.destroy();
+      onComplete?.();
+    }
+  }
+
+  update(delta: number): void {
+    this.pet?.update(delta);
+  }
+
+  private syncPetSpeed(moveType?: string): void {
+    if (!this.pet) return;
+    const speed = moveType === 'running' ? 4 : 2;
+    if (speed !== this.lastPetSpeed) {
+      this.lastPetSpeed = speed;
+      this.pet.setBaseSpeed(speed);
+    }
+  }
+
   override destroy(): void {
     this.stopMoveTween();
+    this.pet?.destroy();
+    this.pet = null;
     this.outfitSprite?.destroy();
     this.hairSprite?.destroy();
     this.outfitSprite = null;
