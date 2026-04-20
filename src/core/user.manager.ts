@@ -49,6 +49,8 @@ export class UserManager {
   /** 마지막으로 바라본 방향 (맵 전환 후 플레이어 초기 방향으로 사용) */
   private overworldDirection: OverworldDirection = OverworldDirection.DOWN;
 
+  private partyListeners: Array<(party: GetMeRes['party']) => void> = [];
+
   constructor() {}
 
   init(user: GetMeRes) {
@@ -92,6 +94,15 @@ export class UserManager {
 
   setParty(party: GetMeRes['party']): void {
     this.party = party;
+    for (const l of this.partyListeners) l(party);
+  }
+
+  onPartyChanged(listener: (party: GetMeRes['party']) => void): () => void {
+    this.partyListeners.push(listener);
+    return () => {
+      const i = this.partyListeners.indexOf(listener);
+      if (i >= 0) this.partyListeners.splice(i, 1);
+    };
   }
 
   getItemSlots(): string[] {

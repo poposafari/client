@@ -69,7 +69,7 @@ export class WildPokemonObject extends MovableObject {
 
     this.name.setVisible(false);
     this.scene.events.on('player_tile_moved', this.onPlayerTileMoved);
-    this.shadow.setVisible(true);
+    this.shadow.setVisible(true).setScale(3);
     this.refreshPosition();
 
     this.setBaseSpeed(1.4);
@@ -175,7 +175,7 @@ export class WildPokemonObject extends MovableObject {
     super.update(delta);
   }
 
-  protected override onTileMoved(tileX: number, tileY: number): void {
+  protected override onTileMoved(tileX: number, tileY: number, _direction: DIRECTION): void {
     this.lastMovedDirection = this.chosenDirection;
     this.scene.updateSafariWildPos(
       this.mapId,

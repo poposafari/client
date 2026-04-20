@@ -101,6 +101,12 @@ export class LoadingPhase implements IGamePhase {
     this.scene.load.multiatlas('pokemon.front', `${path}/pokemon.front.json`, path);
     this.scene.load.multiatlas('pokemon.icon', `${path}/pokemon.icon.json`, path);
     this.scene.load.multiatlas('pokemon.overworld', `${path}/pokemon.overworld.json`, path);
+    this.scene.load.atlas('pokemon_call', `${path}/pokemon_call.png`, `${path}/pokemon_call.json`);
+    this.scene.load.atlas(
+      'pokemon_recall',
+      `${path}/pokemon_recall.png`,
+      `${path}/pokemon_recall.json`,
+    );
 
     for (const cry of pokemonCryNames) {
       this.scene.loadAudio(cry, 'audio/pokemon', cry, 'ogg');
@@ -331,6 +337,32 @@ export class LoadingPhase implements IGamePhase {
         }
       }
     }
+  }
+
+  private createPokemonCallAnimation(): void {
+    const key = 'pokemon_call.play';
+    if (this.scene.anims.exists(key)) return;
+    const frames = [
+      'pokemon_call-0',
+      'pokemon_call-1',
+      'pokemon_call-2',
+      'pokemon_call-3',
+      'pokemon_call-4',
+    ];
+    createAnimationFromFrameNames(this.scene, 'pokemon_call', key, frames, 16, 0);
+  }
+
+  private createPokemonRecallAnimation(): void {
+    const key = 'pokemon_recall.play';
+    if (this.scene.anims.exists(key)) return;
+    const frames = [
+      'pokemon_recall-0',
+      'pokemon_recall-1',
+      'pokemon_recall-2',
+      'pokemon_recall-3',
+      'pokemon_recall-4',
+    ];
+    createAnimationFromFrameNames(this.scene, 'pokemon_recall', key, frames, 16, 0);
   }
 
   private loadPlayerCostumeAssets(): void {
@@ -642,6 +674,8 @@ export class LoadingPhase implements IGamePhase {
     this.createDoorSprite();
     this.createPokemonIconAnimations();
     this.createPokemonOverworldAnimations();
+    this.createPokemonCallAnimation();
+    this.createPokemonRecallAnimation();
     this.createEmoSprite();
   }
 

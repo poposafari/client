@@ -1,6 +1,10 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import type { RoomUserState, UsersMovedPayload } from './overworld-socket.types';
+import type {
+  OtherPetChangedPayload,
+  RoomUserState,
+  UsersMovedPayload,
+} from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
 import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
@@ -109,13 +113,18 @@ export class OverworldPhase implements IGamePhase {
           this.overworldUi?.onOtherPlayerMoved(u);
         }
       };
+      const onOtherPetChanged = (payload: OtherPetChangedPayload) => {
+        this.overworldUi?.onOtherPetChanged(payload);
+      };
       socket.on('user_joined', onUserJoined);
       socket.on('user_left', onUserLeft);
       socket.on('users_moved', onUsersMoved);
+      socket.on('other-pet-change', onOtherPetChanged);
       this.socketOffFns.push(
         () => socket.off('user_joined', onUserJoined),
         () => socket.off('user_left', onUserLeft),
         () => socket.off('users_moved', onUsersMoved),
+        () => socket.off('other-pet-change', onOtherPetChanged),
       );
     }
 
