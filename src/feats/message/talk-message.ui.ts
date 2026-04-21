@@ -5,8 +5,8 @@ import { MessageUi } from './message.ui';
 import { GameScene } from '@poposafari/scenes';
 
 export class TalkMessageUi extends MessageUi {
-  private endCursor!: Phaser.GameObjects.Image;
-  private cursorTween: Phaser.Tweens.Tween | null = null;
+  protected endCursor!: Phaser.GameObjects.Image;
+  protected cursorTween: Phaser.Tweens.Tween | null = null;
 
   constructor(scene: GameScene) {
     super(scene);
@@ -66,7 +66,7 @@ export class TalkMessageUi extends MessageUi {
     super.close();
   }
 
-  private playCursorAnim() {
+  protected playCursorAnim() {
     if (this.cursorTween) return;
 
     this.endCursor.setAlpha(1);
@@ -80,7 +80,7 @@ export class TalkMessageUi extends MessageUi {
     });
   }
 
-  private stopCursorAnim() {
+  protected stopCursorAnim() {
     if (this.cursorTween) {
       this.cursorTween.remove();
       this.cursorTween = null;

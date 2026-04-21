@@ -14,6 +14,7 @@ import {
   LoginPhase,
   MessageUi,
   NoticeMessageUi,
+  PocketTalkMessageUi,
   TalkMessageUi,
 } from '@poposafari/feats';
 import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui';
@@ -85,6 +86,7 @@ export class GameScene extends BaseScene {
   private safariInfo: Map<string, SafariMapInfo> = new Map();
 
   private talkUi!: TalkMessageUi;
+  private pocketTalkUi!: PocketTalkMessageUi;
   private noticeUi!: NoticeMessageUi;
   private questionUi!: QuestionMessageUi;
 
@@ -163,6 +165,7 @@ export class GameScene extends BaseScene {
     this.masterData = new MasterData();
 
     this.talkUi = new TalkMessageUi(this);
+    this.pocketTalkUi = new PocketTalkMessageUi(this);
     this.noticeUi = new NoticeMessageUi(this);
     this.questionUi = new QuestionMessageUi(this);
 
@@ -316,10 +319,12 @@ export class GameScene extends BaseScene {
   }
 
   getMessage(type: 'talk'): TalkMessageUi;
+  getMessage(type: 'pocketTalk'): PocketTalkMessageUi;
   getMessage(type: 'notice'): NoticeMessageUi;
   getMessage(type: 'question'): QuestionMessageUi;
-  getMessage(type: 'talk' | 'notice' | 'question'): MessageUi {
+  getMessage(type: 'talk' | 'pocketTalk' | 'notice' | 'question'): MessageUi {
     if (type === 'talk') return this.talkUi;
+    else if (type === 'pocketTalk') return this.pocketTalkUi;
     else if (type === 'notice') return this.noticeUi;
     else return this.questionUi;
   }

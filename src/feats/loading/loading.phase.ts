@@ -549,6 +549,12 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage('pocket_etc', 'ui/bag', 'pocket_etc');
     this.scene.loadImage('pocket_tms_hms', 'ui/bag', 'pocket_tms_hms');
     this.scene.loadImage('pocket_key', 'ui/bag', 'pocket_key');
+
+    this.scene.loadImage('icon_pocket_pokeball', 'ui/bag', 'icon_pocket_pokeball');
+    this.scene.loadImage('icon_pocket_candy', 'ui/bag', 'icon_pocket_candy');
+    this.scene.loadImage('icon_pocket_etc', 'ui/bag', 'icon_pocket_etc');
+    this.scene.loadImage('icon_pocket_tms_hms', 'ui/bag', 'icon_pocket_tms_hms');
+    this.scene.loadImage('icon_pocket_key', 'ui/bag', 'icon_pocket_key');
     this.scene.loadImage(TEXTURE.REG, 'ui/bag', 'reg');
 
     this.loadBattleAssets();
