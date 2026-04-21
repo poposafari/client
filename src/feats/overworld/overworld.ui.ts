@@ -4,6 +4,7 @@ import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   GetMeRes,
+  ItemCategory,
   KEY,
   OverworldDirection,
   OverworldMovementState,
@@ -328,9 +329,19 @@ export class OverworldUi extends BaseUi {
       this.scene.getAudio().playEffect(SFX.GET_0);
 
       this.removeSafariObject(obj);
+
       await this.scene
         .getMessage('talk')
         .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
+
+      const category = this.scene.getMasterData().getItemData(result.itemId)?.category ?? null;
+      if (category) {
+        await this.scene.getMessage('pocketTalk').showPocketMessage({
+          name: nickname,
+          item: itemName,
+          category: category as ItemCategory,
+        });
+      }
 
       // SafariInfo 동기화: picked = true
       const mapKey = this.mapConfig?.key;
