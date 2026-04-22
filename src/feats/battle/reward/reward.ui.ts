@@ -40,6 +40,10 @@ export interface RewardDisplayData {
   expReward: ExpReward;
   beforeLevel: number;
   beforeExp: number;
+  userSnapshot: {
+    gender: 'male' | 'female';
+    equippedCostumes: { costumeId: string }[];
+  };
 }
 
 const CONST = {
@@ -179,7 +183,7 @@ export class RewardUi extends BaseUi {
 
   private buildLayout(data: RewardDisplayData): void {
     const scene = this.scene as GameScene;
-    const { pokemon, rewards, expReward, beforeLevel, beforeExp } = data;
+    const { pokemon, rewards, expReward, beforeLevel, beforeExp, userSnapshot } = data;
     const pokemonData = scene.getMasterData().getPokemonData(pokemon.pokedexId);
     const rank: PokemonRank = pokemonData?.rank ?? 'common';
 
@@ -277,7 +281,7 @@ export class RewardUi extends BaseUi {
         16,
       ),
     );
-    this.buildUserSection(beforeLevel, beforeExp, expReward, expContainer);
+    this.buildUserSection(beforeLevel, beforeExp, expReward, userSnapshot, expContainer);
 
     // ── Z/Enter 힌트 (루트) ────────────────────────────────────────
     const hintText = addText(
@@ -520,15 +524,13 @@ export class RewardUi extends BaseUi {
     beforeLevel: number,
     beforeExp: number,
     expReward: ExpReward,
+    userSnapshot: RewardDisplayData['userSnapshot'],
     target: Phaser.GameObjects.Container,
   ): void {
     const scene = this.scene as GameScene;
 
     // ── 유저 overworld 스프라이트 (skin/hair/outfit 3레이어) ─────────
-    const user = scene.getUser();
-    const profile = user?.getProfile();
-    const gender = profile?.gender ?? 'male';
-    const equipped = user?.getEquippedCostumes() ?? [];
+    const { gender, equippedCostumes: equipped } = userSnapshot;
     const parts = equipped.length ? equippedCostumesToParts(equipped) : null;
     const defaults = getDefaultOverworldKeys(scene, gender);
 

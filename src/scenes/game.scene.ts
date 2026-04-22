@@ -35,6 +35,7 @@ export enum GameEvent {
   WINDOW_CHANGED = 'WINDOW_CHANGED',
   GAME_TIME_CHANGED = 'GAME_TIME_CHANGED',
   PARTY_CHANGED = 'PARTY_CHANGED',
+  PROFILE_CHANGED = 'PROFILE_CHANGED',
 }
 
 export interface SafariWildInfo {

@@ -139,6 +139,7 @@ export class OverworldUi extends BaseUi {
   private wasIdleLastFrame = true;
 
   private doorTransitionPending = false;
+  private wildEncounterPending = false;
 
   private nextJumpEndGoesToSurf = false;
 
@@ -244,6 +245,7 @@ export class OverworldUi extends BaseUi {
 
   onInput(key: string): void {
     if (this.doorTransitionPending) return;
+    if (this.wildEncounterPending) return;
     const user = this.scene.getUser();
     const state = user?.getOverworldMovementState();
     if (state === OverworldMovementState.JUMP) {
@@ -309,6 +311,7 @@ export class OverworldUi extends BaseUi {
     if (!this.player) return;
     if (!wild.tryLockInteraction()) return;
 
+    this.wildEncounterPending = true;
     wild.freezeRandomWalk(true);
     wild.faceDirection(this.oppositeDirection(this.player.getLastDirection()));
     await wild.playEmote('emo_0', (sprite) => this.worldContainer?.add(sprite));
@@ -359,6 +362,7 @@ export class OverworldUi extends BaseUi {
     wild: WildPokemonObject,
     reason: 'catch' | 'flee_wild' | 'flee_player',
   ): void {
+    this.wildEncounterPending = false;
     if (reason === 'flee_player') {
       wild.freezeRandomWalk(false);
       wild.unlockInteraction();
@@ -954,6 +958,7 @@ export class OverworldUi extends BaseUi {
 
   hide(): void {
     this.doorTransitionPending = false;
+    this.wildEncounterPending = false;
     this.scene.cameras.main.setScroll(0, 0);
 
     this.unsubscribeParty?.();
@@ -1188,6 +1193,12 @@ export class OverworldUi extends BaseUi {
     cam.setScroll(center.x - cam.width / 2, center.y - cam.height / 2);
 
     if (!this.scene.getInputManager().isTop(this)) return;
+
+    if (this.wildEncounterPending) {
+      this.lastFrameKeys = { up: false, down: false, left: false, right: false };
+      this.wasIdleLastFrame = this.player.isMovementFinish();
+      return;
+    }
 
     const isIdle = this.player.isMovementFinish();
 
