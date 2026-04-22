@@ -63,7 +63,7 @@ export class OverworldPhase implements IGamePhase {
       this.scene.pushPhase(
         new BattlePhase(this.scene, {
           wild: wildInfo,
-          area: this.scene.getMasterData().getMapArea(mapConfig.key),
+          area: this.scene.getMasterData().getMapArea(mapConfig.key.split('_')[0]),
           time: DayNightFilter.getBattleTime(),
           locationLabel: mapConfig.key,
           onResolved: (reason) => {

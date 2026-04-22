@@ -6,6 +6,7 @@ import { GameEvent, GameScene } from '@poposafari/scenes';
 import {
   ANIMATION,
   DEPTH,
+  EASE,
   MONEY_SYMBOL,
   TEXTSHADOW,
   TEXTSTROKE,
@@ -47,6 +48,13 @@ const TOGGLE_ICONS: ReadonlyArray<ToggleIconConfig> = [
   { texture: TEXTURE.ICON_RUNNING, guide: 'R' },
   { texture: TEXTURE.ICON_MENU, guide: 'S' },
 ];
+
+const LOCATION_BANNER = {
+  slideInMs: 400,
+  holdMs: 1500,
+  topMargin: 40,
+  labelFontSize: 70,
+} as const;
 
 const TOGGLE_ICON_LAYOUT = {
   iconWidth: 70,
@@ -91,6 +99,9 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private profileExpBarFill!: Phaser.GameObjects.Graphics;
 
   private timeTickEvent: Phaser.Time.TimerEvent | null = null;
+
+  private locationBanner: GContainer | null = null;
+  private locationBannerTween: Phaser.Tweens.Tween | null = null;
 
   constructor(scene: GameScene) {
     const { width, height } = scene.cameras.main;
@@ -140,6 +151,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
       this.timeTickEvent?.remove(false);
       this.timeTickEvent = null;
+      this.clearLocationBanner();
     });
 
     this.updateTime(DayNightFilter.getCurrentTimeLabel());
@@ -387,14 +399,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.profileExpBarBg.strokeRoundedRect(BAR_X - BAR_W / 2, BAR_Y, BAR_W, BAR_H, 5);
 
     this.profileExpBarFill = this.scene.add.graphics();
-    this.drawExpFill(
-      profile?.level ?? 1,
-      profile?.exp ?? 0,
-      BAR_W,
-      BAR_H,
-      BAR_X,
-      BAR_Y,
-    );
+    this.drawExpFill(profile?.level ?? 1, profile?.exp ?? 0, BAR_W, BAR_H, BAR_X, BAR_Y);
 
     this.profileContainer.add([
       this.profileAvatarContainer,
@@ -442,6 +447,62 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.setScale(zoom > 0 ? 1 / zoom : 1);
 
     this.setVisible(true);
+  }
+
+  showLocationBanner(area: string, mapKey: string): void {
+    this.clearLocationBanner();
+
+    const textureKey = `location_${area}`;
+    if (!this.scene.textures.exists(textureKey)) return;
+
+    const { height } = this.scene.cameras.main;
+    const halfH = height / 2;
+
+    const img = addImage(this.scene, textureKey, undefined, +30, 0).setScale(6.5);
+    const h = img.displayHeight;
+    const offscreenY = -halfH - h / 2;
+    const visibleY = -halfH + h / 2 + LOCATION_BANNER.topMargin;
+
+    const label = addText(
+      this.scene,
+      -330,
+      0,
+      i18next.t(`menu:${mapKey}`),
+      LOCATION_BANNER.labelFontSize,
+      '100',
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+
+    const container = addContainer(this.scene, DEPTH.HUD, -560, offscreenY);
+    container.add([img, label]);
+    this.add(container);
+    this.locationBanner = container;
+
+    this.locationBannerTween = this.scene.tweens.add({
+      targets: container,
+      y: visibleY,
+      duration: LOCATION_BANNER.slideInMs,
+      // ease: EASE.SINE_EASEOUT,
+      ease: EASE.LINEAR,
+      yoyo: true,
+      hold: LOCATION_BANNER.holdMs,
+      onComplete: () => {
+        if (this.locationBanner === container) this.clearLocationBanner();
+      },
+    });
+  }
+
+  private clearLocationBanner(): void {
+    if (this.locationBannerTween) {
+      this.locationBannerTween.stop();
+      this.locationBannerTween = null;
+    }
+    if (this.locationBanner) {
+      this.locationBanner.destroy();
+      this.locationBanner = null;
+    }
   }
 
   hide() {

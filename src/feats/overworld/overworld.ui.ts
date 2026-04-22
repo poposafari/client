@@ -946,6 +946,11 @@ export class OverworldUi extends BaseUi {
     this.hud.show();
     this.syncRunningToggleIcon();
 
+    if (this.mapConfig) {
+      const area = this.scene.getMasterData().getMapArea(this.mapConfig.key);
+      this.hud.showLocationBanner(area, this.mapConfig.key);
+    }
+
     const user = this.scene.getUser();
     if (user) {
       this.prevMovementState = user.getOverworldMovementState();
