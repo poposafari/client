@@ -35,7 +35,7 @@ export class OverworldMenuPhase implements IGamePhase {
   }
 
   async enter(): Promise<void> {
-    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 820 : 720);
+    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 720 : 620);
     this.yesOrNoMenu = new BackTitleMenuUi(this.scene);
     this.confirmMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
       y: +800,

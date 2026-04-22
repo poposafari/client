@@ -39,6 +39,7 @@ import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { EvolveUi } from './evolve.ui';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
 import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
+import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
@@ -131,8 +132,7 @@ export class PokemonPcUi extends BaseUi {
   private grabIcon!: GImage;
 
   // party slot icons
-  private partySlotIcons: GImage[] = [];
-  private partySlotLevels: GText[] = [];
+  private partySlots: PokemonSlotContainer[] = [];
   private partyCursor!: GSprite;
 
   onClose?: () => void;
@@ -235,8 +235,7 @@ export class PokemonPcUi extends BaseUi {
       this.heldItem,
       this.topName,
       this.topCursor,
-      ...this.partySlotIcons,
-      ...this.partySlotLevels,
+      ...this.partySlots,
       this.partyCursor,
       this.grabIcon,
       this.grabCursor,
@@ -267,8 +266,8 @@ export class PokemonPcUi extends BaseUi {
     const partyPokemons = this.pcState.getPartyPokemons();
     for (let i = 0; i < 6; i++) {
       const pokemon = partyPokemons[i];
-      if (!pokemon || !this.partySlotIcons[i]) continue;
-      this.partySlotIcons[i].setAlpha(this.isEligibleForTeachMove(pokemon) ? 1 : 0.3);
+      if (!pokemon || !this.partySlots[i]) continue;
+      this.partySlots[i].setIconAlpha(this.isEligibleForTeachMove(pokemon) ? 1 : 0.3);
     }
   }
 
@@ -293,16 +292,7 @@ export class PokemonPcUi extends BaseUi {
   private refreshPartySlots(): void {
     const partyPokemons = this.pcState.getPartyPokemons();
     for (let i = 0; i < 6; i++) {
-      const pokemon = partyPokemons[i];
-      if (pokemon && this.partySlotIcons[i]) {
-        const key = pokemon.pokedexId;
-        const tex = getPokemonTexture('icon', key, { isShiny: pokemon.isShiny });
-        this.partySlotIcons[i].setTexture(tex.key, tex.frame + '_0').setVisible(true);
-        this.partySlotLevels[i].setText(`(+${pokemon.level})`).setVisible(true);
-      } else if (this.partySlotIcons[i]) {
-        this.partySlotIcons[i].setVisible(false);
-        this.partySlotLevels[i].setVisible(false);
-      }
+      this.partySlots[i]?.setPokemon(partyPokemons[i] ?? null);
     }
     this.applyTeachMoveFilterToParty();
   }
@@ -1290,9 +1280,9 @@ export class PokemonPcUi extends BaseUi {
     this.bg = addBackground(this.scene, TEXTURE.BG_PC);
 
     this.createPcLayout();
+    this.createPartySlotLayout();
     this.createInfoLayout();
     this.createTopLayout();
-    this.createPartySlotLayout();
     this.createGrabLayout();
   }
 
@@ -1747,23 +1737,17 @@ export class PokemonPcUi extends BaseUi {
     const slotGap = 110;
 
     for (let i = 0; i < 6; i++) {
-      const x = baseX + i * slotGap;
-      const icon = addImage(this.scene, TEXTURE.BLANK, undefined, x, baseY)
-        .setScale(2.4)
-        .setVisible(false);
-      const lvText = addText(
-        this.scene,
-        x,
-        baseY + 35,
-        '',
-        40,
-        100,
-        'center',
-        TEXTSTYLE.YELLOW,
-        TEXTSHADOW.GRAY,
-      ).setVisible(false);
-      this.partySlotIcons.push(icon);
-      this.partySlotLevels.push(lvText);
+      const slot = new PokemonSlotContainer(this.scene, baseX + i * slotGap, baseY);
+      slot.create({
+        iconScale: 2.4,
+        showLevel: true,
+        levelOffsetY: 35,
+        levelSize: 40,
+        levelWeight: 100,
+        heldItemScale: 2.4,
+        heldItemOffset: { x: 30, y: 35 },
+      });
+      this.partySlots.push(slot);
     }
 
     this.partyCursor = addSprite(this.scene, TEXTURE.PC_FINGER_0, 'pc_finger_0-0', 0, baseY - 50)

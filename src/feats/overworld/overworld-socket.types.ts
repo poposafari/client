@@ -36,6 +36,14 @@ export interface InitOkPayload {
   gender?: string;
   lastLocation?: { map: string; x: number; y: number };
   timeOfDay?: string;
+  gameTimeStartedAt?: number;
+  gameTimeDuration?: number;
+}
+
+export interface GameTimeChangedPayload {
+  timeOfDay?: string;
+  startedAt?: number;
+  duration?: number;
 }
 
 export interface MovePayload {

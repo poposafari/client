@@ -142,6 +142,16 @@ export class OverworldEntryPhase implements IGamePhase {
       }
       if (payload.timeOfDay) {
         DayNightFilter.setTimeOfDay(DayNightFilter.timeOfDayToValue(payload.timeOfDay));
+        if (
+          typeof payload.gameTimeStartedAt === 'number' &&
+          typeof payload.gameTimeDuration === 'number'
+        ) {
+          this.scene.setGameTimeState({
+            phase: payload.timeOfDay,
+            startedAt: payload.gameTimeStartedAt,
+            duration: payload.gameTimeDuration,
+          });
+        }
         this.scene.events.emit(GameEvent.GAME_TIME_CHANGED, payload.timeOfDay);
       }
 
