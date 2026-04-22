@@ -132,6 +132,15 @@ export class OverworldUi extends BaseUi {
   private worldContainer: Phaser.GameObjects.Container | null = null;
   private nameContainer: Phaser.GameObjects.Container | null = null;
 
+  // 사파리 타일 점유 추적 (incremental spawn 용). 맵 입장 시 초기화, 퇴장 시 비움.
+  private spawnOccupied: Set<string> = new Set();
+  private spawnLandPool: { x: number; y: number }[] = [];
+  private spawnWaterPool: { x: number; y: number }[] = [];
+  private spawnPoolsInitialized = false;
+
+  // TTL/포획 경로 동시 종료 경합 방어: 핸들러/해소 양쪽 모두 봐야 한다.
+  private pendingDespawnUids: Set<string> = new Set();
+
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
 
   private keyPressStartTime: Partial<Record<DIRECTION, number>> = {};
@@ -363,12 +372,25 @@ export class OverworldUi extends BaseUi {
     reason: 'catch' | 'flee_wild' | 'flee_player',
   ): void {
     this.wildEncounterPending = false;
+    const uid = wild.getWild().uid;
+    // 배틀 도중 TTL로 이미 사라졌을 수 있음 — 모든 분기에서 idempotent 처리.
+    const stillThere = this.findWildByUid(uid);
+
     if (reason === 'flee_player') {
-      wild.freezeRandomWalk(false);
-      wild.unlockInteraction();
+      if (stillThere) {
+        stillThere.freezeRandomWalk(false);
+        stillThere.unlockInteraction();
+      }
       return;
     }
-    this.removeSafariObject(wild as unknown as InteractiveObject);
+
+    // catch / flee_wild
+    if (stillThere) {
+      const pos = { x: stillThere.getTilePos().x, y: stillThere.getTilePos().y };
+      this.removeSafariObject(stillThere as unknown as InteractiveObject);
+      this.markTileFree(pos);
+    }
+    this.pendingDespawnUids.delete(uid);
   }
 
   private removeSafariObject(obj: InteractiveObject): void {
@@ -411,6 +433,56 @@ export class OverworldUi extends BaseUi {
     }
   }
 
+  private static tileKey(p: { x: number; y: number }): string {
+    return `${p.x}:${p.y}`;
+  }
+
+  private static shuffleInPlace<T>(arr: T[]): T[] {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  /** 맵 입장 시 한 번 호출. land/water 풀과 점유 상태를 필드에 세팅. */
+  private initSpawnPools(): void {
+    if (!this.mapView) return;
+    this.spawnLandPool = OverworldUi.shuffleInPlace(
+      this.mapView.getSpawnTilePositions('land').slice(),
+    );
+    this.spawnWaterPool = OverworldUi.shuffleInPlace(
+      this.mapView.getSpawnTilePositions('water').slice(),
+    );
+    this.spawnOccupied.clear();
+    this.spawnPoolsInitialized = true;
+  }
+
+  /**
+   * 점유되지 않은 타일 하나를 반환. target이 'land'면 land 풀만, 'any'면 land → water 순으로 탐색.
+   * 호출자가 반환값의 좌표를 실제로 사용할 경우 반드시 markTileOccupied를 호출해야 한다.
+   */
+  private computeFreeSpawnTile(target: 'land' | 'any'): { x: number; y: number } | null {
+    const tryFrom = (pool: { x: number; y: number }[]): { x: number; y: number } | null => {
+      for (const p of pool) {
+        if (!this.spawnOccupied.has(OverworldUi.tileKey(p))) return p;
+      }
+      return null;
+    };
+    const land = tryFrom(this.spawnLandPool);
+    if (land) return land;
+    if (target === 'land') return null;
+    return tryFrom(this.spawnWaterPool);
+  }
+
+  private markTileOccupied(p: { x: number; y: number }): void {
+    this.spawnOccupied.add(OverworldUi.tileKey(p));
+  }
+
+  private markTileFree(p: { x: number; y: number }): void {
+    this.spawnOccupied.delete(OverworldUi.tileKey(p));
+  }
+
   /**
    * 사파리 맵 진입 시 safariInfo 기반으로 GroundItem/WildPokemon 객체를 스폰.
    * items는 properties.spawn === 'land' 타일에만, wilds는 land/water 모두 가능.
@@ -423,43 +495,20 @@ export class OverworldUi extends BaseUi {
     const info = this.scene.getSafariInfo().get(mapKey);
     if (!info) return;
 
-    const landTiles = this.mapView.getSpawnTilePositions('land');
-    const waterTiles = this.mapView.getSpawnTilePositions('water');
-
-    const shuffle = <T>(arr: T[]): T[] => {
-      const a = arr.slice();
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    };
-
-    const occupied = new Set<string>();
-    const keyOf = (p: { x: number; y: number }) => `${p.x}:${p.y}`;
+    this.initSpawnPools();
 
     const availableItems = info.items.filter((i) => !i.picked);
     const availableWilds = info.wilds.filter((w) => w.caught === 0);
 
-    // 이미 좌표가 할당된 엔티티들의 좌표를 먼저 occupied로 등록
+    // 기존 좌표가 있는 엔티티를 먼저 점유 마킹
     for (const it of availableItems) {
-      if (it.x != null && it.y != null) occupied.add(keyOf({ x: it.x, y: it.y }));
+      if (it.x != null && it.y != null) this.markTileOccupied({ x: it.x, y: it.y });
     }
     for (const w of availableWilds) {
-      if (w.x != null && w.y != null) occupied.add(keyOf({ x: w.x, y: w.y }));
+      if (w.x != null && w.y != null) this.markTileOccupied({ x: w.x, y: w.y });
     }
 
     // 1) Items — land only
-    const landPool = shuffle(landTiles);
-    let landIdx = 0;
-    const nextFreeLand = (): { x: number; y: number } | null => {
-      while (landIdx < landPool.length) {
-        const p = landPool[landIdx++];
-        if (!occupied.has(keyOf(p))) return p;
-      }
-      return null;
-    };
-
     for (const item of availableItems) {
       let px: number;
       let py: number;
@@ -467,7 +516,7 @@ export class OverworldUi extends BaseUi {
         px = item.x;
         py = item.y;
       } else {
-        const pos = nextFreeLand();
+        const pos = this.computeFreeSpawnTile('land');
         if (!pos) {
           console.warn(`[Safari] not enough land spawn tiles for items`);
           break;
@@ -476,7 +525,7 @@ export class OverworldUi extends BaseUi {
         py = pos.y;
         item.x = px;
         item.y = py;
-        occupied.add(keyOf(pos));
+        this.markTileOccupied(pos);
       }
 
       const obj = new GroundItemObject(this.scene, item.uid, item.itemId, px, py);
@@ -486,17 +535,7 @@ export class OverworldUi extends BaseUi {
       this.nameContainer.add(obj.getName());
     }
 
-    // 2) Wilds — land ∪ water (점유 좌표 제외)
-    const wildPool = shuffle([...landTiles, ...waterTiles].filter((p) => !occupied.has(keyOf(p))));
-    let wildIdx = 0;
-    const nextFreeWild = (): { x: number; y: number } | null => {
-      while (wildIdx < wildPool.length) {
-        const p = wildPool[wildIdx++];
-        if (!occupied.has(keyOf(p))) return p;
-      }
-      return null;
-    };
-
+    // 2) Wilds — land ∪ water
     for (const wild of availableWilds) {
       let px: number;
       let py: number;
@@ -504,7 +543,7 @@ export class OverworldUi extends BaseUi {
         px = wild.x;
         py = wild.y;
       } else {
-        const pos = nextFreeWild();
+        const pos = this.computeFreeSpawnTile('any');
         if (!pos) {
           console.warn(`[Safari] not enough spawn tiles for wilds`);
           break;
@@ -513,7 +552,7 @@ export class OverworldUi extends BaseUi {
         py = pos.y;
         wild.x = px;
         wild.y = py;
-        occupied.add(keyOf(pos));
+        this.markTileOccupied(pos);
       }
 
       const obj = new WildPokemonObject(this.scene, this.mapView, wild, mapKey, px, py, []);
@@ -521,6 +560,7 @@ export class OverworldUi extends BaseUi {
       this.worldContainer.add(obj.getShadow());
       this.worldContainer.add(obj.getSprite());
       this.nameContainer.add(obj.getName());
+      this.nameContainer.add(obj.getTimerText());
     }
 
     this.refreshWildBlockingRefs();
@@ -529,6 +569,146 @@ export class OverworldUi extends BaseUi {
     }
 
     this.refreshPlayerBlockingRefs();
+  }
+
+  // ── wild:spawn / wild:despawn 소켓 이벤트 처리 ──
+
+  private findWildByUid(uid: string): WildPokemonObject | null {
+    for (const obj of this.safariObjects) {
+      if (obj instanceof WildPokemonObject && obj.getWild().uid === uid) return obj;
+    }
+    return null;
+  }
+
+  handleWildSpawn(payload: { mapId: string; wild: import('@poposafari/scenes').SafariWildInfo }): void {
+    const mapKey = this.mapConfig?.key;
+    const info = this.scene.getSafariInfo().get(payload.mapId);
+
+    // 내가 해당 맵에 없는 경우: 다음 진입 시 반영되도록 safariInfo에만 merge.
+    if (info) {
+      if (!info.wilds.some((w) => w.uid === payload.wild.uid)) {
+        info.wilds.push(payload.wild);
+      }
+    }
+    if (mapKey !== payload.mapId) return;
+    if (!this.mapView || !this.worldContainer || !this.nameContainer) return;
+    if (!this.spawnPoolsInitialized) return;
+
+    // 중복 스폰 방지
+    if (this.findWildByUid(payload.wild.uid)) return;
+
+    const pos = this.computeFreeSpawnTile('any');
+    if (!pos) {
+      console.warn('[Safari] handleWildSpawn: no free tile for new wild');
+      return;
+    }
+    payload.wild.x = pos.x;
+    payload.wild.y = pos.y;
+    this.markTileOccupied(pos);
+
+    const obj = new WildPokemonObject(
+      this.scene,
+      this.mapView,
+      payload.wild,
+      payload.mapId,
+      pos.x,
+      pos.y,
+      [],
+    );
+    this.safariObjects.push(obj);
+    this.worldContainer.add(obj.getShadow());
+    this.worldContainer.add(obj.getSprite());
+    this.nameContainer.add(obj.getName());
+    this.nameContainer.add(obj.getTimerText());
+
+    this.refreshWildBlockingRefs();
+    this.refreshPlayerBlockingRefs();
+    this.refreshPetBlockingRefs();
+
+    // 스폰 연출: scale/alpha 0→본래값. WildPokemonObject의 기본 scale은 생성자에서 결정(1.4).
+    // 하드코딩하지 않고 현재 scale을 읽어 원복하도록 한다.
+    const sprite = obj.getSprite();
+    const shadow = obj.getShadow();
+    const nameTag = obj.getName();
+    const timerText = obj.getTimerText();
+    const targetScale = sprite.scaleX;
+    sprite.setAlpha(0);
+    sprite.setScale(0);
+    shadow.setAlpha(0);
+    nameTag.setAlpha(0);
+    timerText.setAlpha(0);
+    this.scene.tweens.add({
+      targets: [sprite, shadow, nameTag, timerText],
+      alpha: 1,
+      duration: 450,
+      ease: 'Sine.easeOut',
+    });
+    this.scene.tweens.add({
+      targets: sprite,
+      scale: targetScale,
+      duration: 450,
+      ease: 'Back.easeOut',
+      onComplete: () => obj.startRandomWalk(),
+    });
+  }
+
+  /** 클라이언트가 자체 타이머로 0을 감지했을 때 호출. 서버 despawn이 늦어도 선제적으로 정리. */
+  private handleWildTtlExpired = (payload: { mapId: string; wildUid: string }): void => {
+    this.handleWildDespawn({ mapId: payload.mapId, wildUid: payload.wildUid, reason: 'ttl' });
+  };
+
+  handleWildDespawn(payload: { mapId: string; wildUid: string; reason: string }): void {
+    // scene-wide 전역 상태에서도 제거
+    const info = this.scene.getSafariInfo().get(payload.mapId);
+    if (info) {
+      const i = info.wilds.findIndex((w) => w.uid === payload.wildUid);
+      if (i >= 0) info.wilds.splice(i, 1);
+    }
+
+    const mapKey = this.mapConfig?.key;
+    if (mapKey !== payload.mapId) return;
+
+    const obj = this.findWildByUid(payload.wildUid);
+    if (!obj) {
+      // 이미 제거된 상태 (ex: catch 경로로 먼저 removeSafariObject됨)
+      this.pendingDespawnUids.add(payload.wildUid);
+      return;
+    }
+
+    // 클라 자체 TTL 감지 또는 서버 이벤트가 중복 도착했을 때 페이드 재트리거 방지
+    if (obj instanceof WildPokemonObject) {
+      if (obj.isDespawning()) return;
+      obj.markDespawning();
+    }
+
+    // 배틀 중이라도 overworld의 wild 오브젝트만 페이드아웃.
+    // 배틀 UI는 그대로 유지하고, 사용자가 볼/bait/rock을 사용하면 서버가 flee로 응답하는 기획.
+
+    const pos = { x: obj.getTilePos().x, y: obj.getTilePos().y };
+    const sprite = obj.getSprite();
+    const shadow = obj.getShadow();
+    const nameTag = obj.getName();
+    const timerText = obj instanceof WildPokemonObject ? obj.getTimerText() : null;
+
+    // 서서히 사라지는 효과: alpha/scale 함께, 500ms
+    const fadeTargets: Phaser.GameObjects.GameObject[] = [sprite, shadow, nameTag];
+    if (timerText) fadeTargets.push(timerText);
+    this.scene.tweens.add({
+      targets: fadeTargets,
+      alpha: 0,
+      duration: 500,
+      ease: 'Sine.easeIn',
+    });
+    this.scene.tweens.add({
+      targets: sprite,
+      scale: 0,
+      duration: 500,
+      ease: 'Sine.easeIn',
+      onComplete: () => {
+        this.removeSafariObject(obj as unknown as InteractiveObject);
+        this.markTileFree(pos);
+      },
+    });
   }
 
   private runReaction(steps: ReactionStep[]): void {
@@ -933,6 +1113,7 @@ export class OverworldUi extends BaseUi {
 
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMoved, this);
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMovedForPet);
+      this.scene.events.on('wild_ttl_expired', this.handleWildTtlExpired);
 
       this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
 
@@ -990,6 +1171,7 @@ export class OverworldUi extends BaseUi {
 
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMoved, this);
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMovedForPet);
+    this.scene.events.off('wild_ttl_expired', this.handleWildTtlExpired);
     this.cursorKeys = null;
 
     if (this.hud) {
@@ -1001,6 +1183,11 @@ export class OverworldUi extends BaseUi {
       obj.destroy();
     }
     this.safariObjects = [];
+    this.spawnOccupied.clear();
+    this.spawnLandPool = [];
+    this.spawnWaterPool = [];
+    this.spawnPoolsInitialized = false;
+    this.pendingDespawnUids.clear();
     for (const door of this.doors) {
       door.destroy();
     }

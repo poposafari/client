@@ -1,7 +1,12 @@
 import type { IGamePhase } from '@poposafari/core';
 import { GameEvent, type GameScene } from '@poposafari/scenes/game.scene';
 import { BattleUi } from './battle.ui';
-import type { BattleContext, BattleModifiers, BattleState, CatchResult } from './battle.types';
+import type {
+  BattleContext,
+  BattleModifiers,
+  BattleState,
+  CatchResult,
+} from './battle.types';
 import { toCatchResult } from './battle.types';
 import { RewardPhase } from './reward/reward.phase';
 import { SFX } from '@poposafari/types';

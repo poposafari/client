@@ -65,6 +65,21 @@ export interface UsersMovedPayload {
   updates: UserMovedPayload[];
 }
 
+import type { SafariWildInfo } from '@poposafari/scenes';
+
+export interface WildSpawnPayload {
+  mapId: string;
+  wild: SafariWildInfo;
+}
+
+export type WildDespawnReason = 'ttl' | 'caught' | 'fled' | 'exit';
+
+export interface WildDespawnPayload {
+  mapId: string;
+  wildUid: string;
+  reason: WildDespawnReason;
+}
+
 export const MOVE_TYPE_DURATION_MS: Record<string, number> = {
   walk: 288,
   running: 144,

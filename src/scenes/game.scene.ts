@@ -55,6 +55,7 @@ export interface SafariWildInfo {
   y?: number;
   /** 마지막으로 실제 이동에 성공한 방향. 재진입 시 초기 애니메이션 방향 복원에 사용. */
   lastDirection?: DIRECTION;
+  expiresAt?: number;
 }
 
 export interface SafariItemInfo {

@@ -1,7 +1,7 @@
 import { GameScene } from '@poposafari/scenes';
 import type { SafariWildInfo } from '@poposafari/scenes';
 import { DEPTH, SFX, TEXTCOLOR, TEXTURE } from '@poposafari/types';
-import { addSprite, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
+import { addObjText, addSprite, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
 import { calcOverworldTilePos, DIRECTION } from '../overworld.constants';
 import { IOverworldBlockingRef, IOverworldMapAdapter, MovableObject } from './movable.object';
 import i18next from 'i18next';
@@ -32,6 +32,14 @@ export class WildPokemonObject extends MovableObject {
   private emoteSprite: Phaser.GameObjects.Sprite | null = null;
   private lastPlayerTileX: number | null = null;
   private lastPlayerTileY: number | null = null;
+
+  private expiresAt: number | null = null;
+  private timerText: Phaser.GameObjects.Text;
+  private lastTimerLabel = '';
+  /** 페이드아웃이 실제로 시작되면 true. OverworldUi.handleWildDespawn이 1회만 실행되도록. */
+  private despawning = false;
+  /** 클라 자체 TTL 감지로 `wild_ttl_expired`를 이미 emit했는지 (중복 emit 방지). */
+  private ttlExpiryEmitted = false;
   private readonly onPlayerTileMoved = (payload: { tileX: number; tileY: number }): void => {
     this.lastPlayerTileX = payload.tileX;
     this.lastPlayerTileY = payload.tileY;
@@ -67,6 +75,10 @@ export class WildPokemonObject extends MovableObject {
     this.lastMovedDirection = initialDir;
     this.chosenDirection = initialDir;
 
+    this.timerText = addObjText(scene, tileX, tileY, '', 14, TEXTCOLOR.WHITE);
+    this.timerText.setDepth(DEPTH.MESSAGE);
+    this.timerText.setVisible(false);
+
     this.name.setVisible(false);
     this.scene.events.on('player_tile_moved', this.onPlayerTileMoved);
     this.shadow.setVisible(true).setScale(3);
@@ -76,6 +88,28 @@ export class WildPokemonObject extends MovableObject {
 
     this.startSpriteAnimation(this.animKey(initialDir));
     this.idleMs = this.randomIdleMs();
+
+    if (wild.expiresAt) this.setExpiresAt(wild.expiresAt);
+  }
+
+  setExpiresAt(expiresAt: number | undefined): void {
+    this.expiresAt = expiresAt ?? null;
+    this.wild.expiresAt = expiresAt;
+    this.refreshTimer();
+  }
+
+  getTimerText(): Phaser.GameObjects.Text {
+    return this.timerText;
+  }
+
+  isDespawning(): boolean {
+    return this.despawning;
+  }
+
+  /** 중복 호출 방지용. OverworldUi가 페이드 시작 직전에 세팅. 걷기도 멈춘다. */
+  markDespawning(): void {
+    this.despawning = true;
+    this.state = 'STOPPED';
   }
 
   startRandomWalk(): void {
@@ -149,6 +183,7 @@ export class WildPokemonObject extends MovableObject {
 
     if (this.frozen) {
       super.update(delta);
+      this.refreshTimer();
       return;
     }
 
@@ -173,6 +208,53 @@ export class WildPokemonObject extends MovableObject {
     }
 
     super.update(delta);
+    this.refreshTimer();
+  }
+
+  /** 타이머 텍스트를 갱신. 이름표 바로 아래 위치를 따라다니게 한다.
+   *  남은 시간이 0이면 scene 이벤트(wild_ttl_expired)를 발송해 OverworldUi가 페이드아웃을 시작하게 한다. */
+  private refreshTimer(): void {
+    if (this.expiresAt == null) {
+      if (this.timerText.visible) this.timerText.setVisible(false);
+      return;
+    }
+
+    const remainingMs = this.expiresAt - Date.now();
+
+    // 클라 자체 TTL 감지: 이 wild에 대한 서버 despawn이 아직 안 왔어도
+    // 타이머가 0을 지나면 선제적으로 페이드아웃을 트리거한다.
+    // 실제 페이드 시작/`despawning` 세팅은 OverworldUi.handleWildDespawn이 하므로
+    // 여기서는 emit만 1회 발생하도록 한다. 이미 페이드 중이면 동작 없음.
+    if (remainingMs <= 0 && !this.despawning && !this.ttlExpiryEmitted) {
+      this.ttlExpiryEmitted = true;
+      this.timerText.setVisible(false);
+      this.scene.events.emit('wild_ttl_expired', {
+        mapId: this.mapId,
+        wildUid: this.wild.uid,
+      });
+      return;
+    }
+
+    // 이름표와 동일한 가시성 규칙 (거리 기반)
+    if (!this.name.visible) {
+      if (this.timerText.visible) this.timerText.setVisible(false);
+      return;
+    }
+
+    const totalSec = Math.max(0, Math.floor(remainingMs / 1000));
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    const label = `${m}:${s.toString().padStart(2, '0')}`;
+    if (label !== this.lastTimerLabel) {
+      this.timerText.setText(label);
+      this.lastTimerLabel = label;
+    }
+    if (totalSec < 15) this.timerText.setColor(TEXTCOLOR.RED);
+    else if (totalSec < 45) this.timerText.setColor(TEXTCOLOR.YELLOW);
+    else this.timerText.setColor(TEXTCOLOR.WHITE);
+
+    this.timerText.setPosition(this.name.x, this.name.y + 22);
+    this.timerText.setVisible(true);
   }
 
   protected override onTileMoved(tileX: number, tileY: number, _direction: DIRECTION): void {
@@ -192,6 +274,7 @@ export class WildPokemonObject extends MovableObject {
     this.scene.events.off('player_tile_moved', this.onPlayerTileMoved);
     this.emoteSprite?.destroy();
     this.emoteSprite = null;
+    this.timerText.destroy();
     super.destroy();
   }
 

@@ -4,6 +4,8 @@ import type {
   OtherPetChangedPayload,
   RoomUserState,
   UsersMovedPayload,
+  WildDespawnPayload,
+  WildSpawnPayload,
 } from './overworld-socket.types';
 import { OverworldMenuPhase } from './overworld-menu.phase';
 import { RegisteredItemsPhase } from './registered-items.phase';
@@ -116,15 +118,25 @@ export class OverworldPhase implements IGamePhase {
       const onOtherPetChanged = (payload: OtherPetChangedPayload) => {
         this.overworldUi?.onOtherPetChanged(payload);
       };
+      const onWildSpawn = (payload: WildSpawnPayload) => {
+        this.overworldUi?.handleWildSpawn(payload);
+      };
+      const onWildDespawn = (payload: WildDespawnPayload) => {
+        this.overworldUi?.handleWildDespawn(payload);
+      };
       socket.on('user_joined', onUserJoined);
       socket.on('user_left', onUserLeft);
       socket.on('users_moved', onUsersMoved);
       socket.on('other-pet-change', onOtherPetChanged);
+      socket.on('wild:spawn', onWildSpawn);
+      socket.on('wild:despawn', onWildDespawn);
       this.socketOffFns.push(
         () => socket.off('user_joined', onUserJoined),
         () => socket.off('user_left', onUserLeft),
         () => socket.off('users_moved', onUsersMoved),
         () => socket.off('other-pet-change', onOtherPetChanged),
+        () => socket.off('wild:spawn', onWildSpawn),
+        () => socket.off('wild:despawn', onWildDespawn),
       );
     }
 
