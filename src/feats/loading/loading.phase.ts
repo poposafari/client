@@ -559,6 +559,8 @@ export class LoadingPhase implements IGamePhase {
 
     this.loadBattleAssets();
 
+    this.loadLocationAssets();
+
     this.loadPlayerCostumeAssets();
 
     //npc
@@ -569,6 +571,36 @@ export class LoadingPhase implements IGamePhase {
     //door
     for (let i = 0; i <= MAX_DOOR; i++) {
       this.scene.loadAtlas(`door${i}`, 'ui/doors', `door_${i}`, ANIMATION.DOOR, 'ui/doors');
+    }
+  }
+
+  private loadLocationAssets() {
+    const areas = [
+      'beach_0',
+      'beach_1',
+      'cave_0',
+      'cave_1',
+      'default',
+      'desert',
+      'field',
+      'forest_0',
+      'forest_1',
+      'mountain_0',
+      'mountain_1',
+      'plaza',
+      'river_0',
+      'river_1',
+      'sky',
+      'snow_0',
+      'snow_1',
+      'underwater_0',
+      'underwater_1',
+      'volcanic_0',
+      'volcanic_1',
+    ];
+    for (const a of areas) {
+      const key = `location_${a}`;
+      this.scene.loadImage(key, 'ui/area', key);
     }
   }
 
