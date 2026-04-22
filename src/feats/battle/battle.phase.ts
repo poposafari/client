@@ -1,5 +1,5 @@
 import type { IGamePhase } from '@poposafari/core';
-import type { GameScene } from '@poposafari/scenes/game.scene';
+import { GameEvent, type GameScene } from '@poposafari/scenes/game.scene';
 import { BattleUi } from './battle.ui';
 import type { BattleContext, BattleModifiers, BattleState, CatchResult } from './battle.types';
 import { toCatchResult } from './battle.types';
@@ -124,6 +124,10 @@ export class BattlePhase implements IGamePhase {
           const beforeProfile = user?.getProfile();
           const beforeLevel = beforeProfile?.level ?? 1;
           const beforeExp = beforeProfile?.exp ?? 0;
+          const userSnapshot = {
+            gender: beforeProfile?.gender ?? 'male',
+            equippedCostumes: [...(user?.getEquippedCostumes() ?? [])],
+          };
           user?.addPokemonToBox({
             id: pokemon.id,
             pokedexId: pokemon.pokedexId,
@@ -159,11 +163,13 @@ export class BattlePhase implements IGamePhase {
                 expReward,
                 beforeLevel,
                 beforeExp,
+                userSnapshot,
                 onComplete: resolve,
               }),
             );
           });
           user?.setLevelAndExp(expReward.level, expReward.exp);
+          this.scene.events.emit(GameEvent.PROFILE_CHANGED);
           return this.transition({ kind: 'exiting', reason: 'catch' });
         }
         if (next.outcome.kind === 'flee') {

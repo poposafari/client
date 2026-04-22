@@ -2,7 +2,7 @@ import type { GameScene } from '@poposafari/scenes/game.scene';
 import { DEPTH, EASE, SFX, TEXTURE } from '@poposafari/types';
 import { addImage } from '@poposafari/utils';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
-import { BALL_ANIM, THROW_ITEM } from '../battle.constants';
+import { BALL_ANIM, THROW_ITEM, WILD_SHADOW, WILD_SPRITE } from '../battle.constants';
 
 const BALL_THROW_ANIM_KEY = 'battle_ball_throw';
 
@@ -160,7 +160,8 @@ export async function playBallThrow(
     }),
     tweenAsync(scene, {
       targets: wildShadow,
-      scale: 0.1,
+      scaleX: 0.1,
+      scaleY: 0.1,
       alpha: 0,
       duration: BALL_ANIM.enterShrinkMs,
     }),
@@ -298,8 +299,9 @@ export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Pr
     }),
     tweenAsync(scene, {
       targets: wildShadow,
-      scale: 2.2,
-      alpha: 0.3,
+      scaleX: WILD_SPRITE.scale,
+      scaleY: WILD_SPRITE.scale * 0.3,
+      alpha: WILD_SHADOW.alpha,
       duration: 300,
     }),
   ]);

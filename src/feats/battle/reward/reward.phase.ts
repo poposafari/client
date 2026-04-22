@@ -10,6 +10,10 @@ export interface RewardContext {
   expReward: ExpReward;
   beforeLevel: number;
   beforeExp: number;
+  userSnapshot: {
+    gender: 'male' | 'female';
+    equippedCostumes: { costumeId: string }[];
+  };
   onComplete: () => void;
 }
 
@@ -40,6 +44,7 @@ export class RewardPhase implements IGamePhase {
       expReward: this.ctx.expReward,
       beforeLevel: this.ctx.beforeLevel,
       beforeExp: this.ctx.beforeExp,
+      userSnapshot: this.ctx.userSnapshot,
     });
     await this.ui.waitForInput();
     this.ctx.onComplete();

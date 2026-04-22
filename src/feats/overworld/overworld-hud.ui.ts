@@ -1,6 +1,7 @@
 import { ImageTextListContainer } from '@poposafari/containers/image-text-list.container';
 import { PartyListContainer } from '@poposafari/containers/party-list.container';
 import { WindowStripContainer } from '@poposafari/containers/window-strip.container';
+import { LEVEL_CURVE } from '@poposafari/core';
 import { GameEvent, GameScene } from '@poposafari/scenes';
 import {
   ANIMATION,
@@ -23,6 +24,14 @@ import {
 } from './overworld-costume-keys';
 
 const MAX_QUICK_SLOT_SIZE = 6;
+
+const PROFILE_BAR = {
+  avatarRadius: 55,
+  width: 300,
+  height: 12,
+  x: +80,
+  y: +80,
+} as const;
 
 const TIME_ICON_MAP: Record<string, TEXTURE> = {
   dawn: TEXTURE.ICON_DAWN,
@@ -116,6 +125,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
+    this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
 
     this.timeTickEvent = this.scene.time.addEvent({
       delay: 1000,
@@ -127,6 +137,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.once('destroy', () => {
       this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
       this.scene.events.off(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
+      this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
       this.timeTickEvent?.remove(false);
       this.timeTickEvent = null;
     });
@@ -154,6 +165,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   private onPartyChanged = (): void => {
     this.partyList?.refresh();
+  };
+
+  private onProfileChanged = (): void => {
+    this.refreshProfile();
   };
 
   private createToggleIcon() {
@@ -291,11 +306,11 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   }
 
   private createProfile() {
-    const AVATAR_RADIUS = 55;
-    const BAR_W = 300;
-    const BAR_H = 12;
-    const BAR_X = +80;
-    const BAR_Y = +80;
+    const AVATAR_RADIUS = PROFILE_BAR.avatarRadius;
+    const BAR_W = PROFILE_BAR.width;
+    const BAR_H = PROFILE_BAR.height;
+    const BAR_X = PROFILE_BAR.x;
+    const BAR_Y = PROFILE_BAR.y;
 
     this.profileContainer = addContainer(this.scene, DEPTH.HUD, -860, +380);
 
@@ -372,7 +387,14 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.profileExpBarBg.strokeRoundedRect(BAR_X - BAR_W / 2, BAR_Y, BAR_W, BAR_H, 5);
 
     this.profileExpBarFill = this.scene.add.graphics();
-    this.drawExpFill(profile?.exp ?? 0, BAR_W, BAR_H, BAR_X, BAR_Y);
+    this.drawExpFill(
+      profile?.level ?? 1,
+      profile?.exp ?? 0,
+      BAR_W,
+      BAR_H,
+      BAR_X,
+      BAR_Y,
+    );
 
     this.profileContainer.add([
       this.profileAvatarContainer,
@@ -383,8 +405,17 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     ]);
   }
 
-  private drawExpFill(exp: number, barW: number, barH: number, barX: number, barY: number): void {
-    const ratio = Math.max(0, Math.min(1, (exp % 100) / 100));
+  private drawExpFill(
+    level: number,
+    exp: number,
+    barW: number,
+    barH: number,
+    barX: number,
+    barY: number,
+  ): void {
+    const ratio = LEVEL_CURVE.isMaxLevel(level)
+      ? 1
+      : Math.max(0, Math.min(1, exp / LEVEL_CURVE.expToNext(level)));
     this.profileExpBarFill.clear();
     if (ratio <= 0) return;
     this.profileExpBarFill.fillStyle(0x5aa7ff);
@@ -396,7 +427,14 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     if (!profile) return;
     this.profileLevelText?.setText(`${profile.level}`);
     this.profileNameText?.setText(profile.nickname ?? '');
-    this.drawExpFill(profile.exp, 200, 12, 0, +130);
+    this.drawExpFill(
+      profile.level,
+      profile.exp,
+      PROFILE_BAR.width,
+      PROFILE_BAR.height,
+      PROFILE_BAR.x,
+      PROFILE_BAR.y,
+    );
   }
 
   show() {
