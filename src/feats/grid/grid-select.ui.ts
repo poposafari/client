@@ -7,6 +7,9 @@ export interface IGridSelectItem {
   key: string;
   label: string;
   image: GImage;
+  overlayImage?: GImage;
+  overlayOffsetX?: number;
+  overlayOffsetY?: number;
 }
 
 const DEFAULT_SLICE = 16;
@@ -107,6 +110,14 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
       img.setPosition(x, y);
       cell.add(img);
 
+      const overlay = items[i].overlayImage;
+      if (overlay) {
+        const ox = items[i].overlayOffsetX ?? 0;
+        const oy = items[i].overlayOffsetY ?? 0;
+        overlay.setPosition(x + ox, y + oy);
+        cell.add(overlay);
+      }
+
       this.addAt(cell, 1 + i);
       this.itemContainers.push(cell);
     }
@@ -184,6 +195,14 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
       img.setScale(itemScale);
       img.setPosition(x, y);
       cell.add(img);
+
+      const overlay = items[i].overlayImage;
+      if (overlay) {
+        const ox = items[i].overlayOffsetX ?? 0;
+        const oy = items[i].overlayOffsetY ?? 0;
+        overlay.setPosition(x + ox, y + oy);
+        cell.add(overlay);
+      }
 
       this.add(cell);
       this.itemContainers.push(cell);

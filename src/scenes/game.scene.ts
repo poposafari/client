@@ -98,6 +98,8 @@ export class GameScene extends BaseScene {
 
   private currentSocketUserId: string | null = null;
 
+  private gameTimeState: { phase: string; startedAt: number; duration: number } | null = null;
+
   private onSocketKicked = async (): Promise<void> => {
     if (!this.socket) return;
     this.socket.off('kicked', this.onSocketKicked);
@@ -120,8 +122,19 @@ export class GameScene extends BaseScene {
   };
 
   private dayNightTween: Phaser.Tweens.Tween | null = null;
-  private onGameTimeChanged = (payload: { timeOfDay?: string }): void => {
+  private onGameTimeChanged = (payload: {
+    timeOfDay?: string;
+    startedAt?: number;
+    duration?: number;
+  }): void => {
     if (!payload?.timeOfDay) return;
+    if (typeof payload.startedAt === 'number' && typeof payload.duration === 'number') {
+      this.gameTimeState = {
+        phase: payload.timeOfDay,
+        startedAt: payload.startedAt,
+        duration: payload.duration,
+      };
+    }
     const target = DayNightFilter.timeOfDayToValue(payload.timeOfDay);
     if (this.dayNightTween) {
       this.dayNightTween.destroy();
@@ -143,6 +156,19 @@ export class GameScene extends BaseScene {
       },
     });
   };
+
+  setGameTimeState(state: { phase: string; startedAt: number; duration: number } | null): void {
+    this.gameTimeState = state;
+  }
+
+  getGameTimeState(): { phase: string; startedAt: number; duration: number } | null {
+    return this.gameTimeState;
+  }
+
+  getGameTimeRemainingMs(): number | null {
+    if (!this.gameTimeState) return null;
+    return Math.max(0, this.gameTimeState.startedAt + this.gameTimeState.duration - Date.now());
+  }
 
   constructor() {
     super('GameScene');

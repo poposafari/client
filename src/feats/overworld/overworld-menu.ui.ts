@@ -4,7 +4,6 @@ import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
 const BASE_MENU_ITEMS = () => [
-  { key: 'pokedex', label: i18next.t('menu:pokedex'), icon: TEXTURE.ICON_POKEDEX },
   { key: 'pc', label: i18next.t('menu:pc'), icon: TEXTURE.ICON_PC },
   { key: 'bag', label: i18next.t('menu:bag'), icon: TEXTURE.ICON_BAG_M },
   { key: 'option', label: i18next.t('menu:option'), icon: TEXTURE.ICON_OPTION },

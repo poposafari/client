@@ -8,6 +8,9 @@ import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-s
 const POKEMON_ICON_ANIM_PREFIX = 'pokemon.icon.';
 const GRID_SLOT_COUNT = 30;
 const EMPTY_SLOT_KEY_PREFIX = '__empty_';
+const HELD_ITEM_SCALE = 2.4;
+const HELD_ITEM_OFFSET_X = 30;
+const HELD_ITEM_OFFSET_Y = 50;
 
 function pokedexIdToKey(pokedexId: string): string {
   return getPokedexId(pokedexId);
@@ -32,10 +35,18 @@ function buildGridSlots(
       const key = pokemon.pokedexId;
       const textureKey = getPokemonTexture('icon', key, { isShiny: pokemon.isShiny });
       iconAnimKeyByKey.set(String(pokemon.id), POKEMON_ICON_ANIM_PREFIX + textureKey.frame);
+      const heldItemId = pokemon.heldItemId;
+      const hasHeldItem = !!heldItemId && scene.textures.exists(heldItemId);
+      const overlayImage = hasHeldItem
+        ? addImage(scene, heldItemId as string, undefined, 0, 0).setScale(HELD_ITEM_SCALE)
+        : undefined;
       slots.push({
         key: String(pokemon.id),
         label: pokemon.nickname ?? key,
         image: addSprite(scene, textureKey.key, textureKey.frame + '_0', 0, 0),
+        overlayImage,
+        overlayOffsetX: overlayImage ? HELD_ITEM_OFFSET_X : undefined,
+        overlayOffsetY: overlayImage ? HELD_ITEM_OFFSET_Y : undefined,
       });
     } else {
       slots.push({
@@ -121,7 +132,9 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
     const items = this.getItems();
     for (const it of items) {
       if (it.key.startsWith(EMPTY_SLOT_KEY_PREFIX)) continue;
-      it.image.setAlpha(eligibleKeys.has(it.key) ? 1 : 0.3);
+      const alpha = eligibleKeys.has(it.key) ? 1 : 0.3;
+      it.image.setAlpha(alpha);
+      it.overlayImage?.setAlpha(alpha);
     }
   }
 
@@ -130,6 +143,7 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
     for (const it of items) {
       if (it.key.startsWith(EMPTY_SLOT_KEY_PREFIX)) continue;
       it.image.setAlpha(1);
+      it.overlayImage?.setAlpha(1);
     }
   }
 
