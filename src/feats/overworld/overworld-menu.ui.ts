@@ -3,9 +3,13 @@ import { TEXTURE } from '@poposafari/types';
 import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
-const BASE_MENU_ITEMS = () => [
+const BASE_MENU_ITEMS = (gender: 'male' | 'female') => [
   { key: 'pc', label: i18next.t('menu:pc'), icon: TEXTURE.ICON_PC },
-  { key: 'bag', label: i18next.t('menu:bag'), icon: TEXTURE.ICON_BAG_M },
+  {
+    key: 'bag',
+    label: i18next.t('menu:bag'),
+    icon: gender === 'female' ? TEXTURE.ICON_BAG_F : TEXTURE.ICON_BAG_M,
+  },
   { key: 'option', label: i18next.t('menu:option'), icon: TEXTURE.ICON_OPTION },
   { key: 'title', label: i18next.t('menu:backToTitle'), icon: TEXTURE.ICON_EXIT_0 },
 ];
@@ -22,8 +26,8 @@ const CANCEL_ITEM = () => ({
   icon: TEXTURE.ICON_CANCEL,
 });
 
-const MENU_ITEMS = (inSafari: boolean) => {
-  const items = BASE_MENU_ITEMS();
+const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
+  const items = BASE_MENU_ITEMS(gender);
   if (inSafari) {
     items.push(PLAZA_ITEM());
   }
@@ -52,8 +56,9 @@ export class OverworldMenuUi extends MenuUi {
 
   async waitForInput(initialCursorIndex?: number): Promise<{ key: string; cursorIndex: number }> {
     const inSafari = this.isInSafari();
+    const gender = this.scene.getUser()?.getProfile().gender ?? 'male';
     const options = initialCursorIndex !== undefined ? { initialCursorIndex } : undefined;
-    const ret = await this.waitForSelect(MENU_ITEMS(inSafari), options);
+    const ret = await this.waitForSelect(MENU_ITEMS(inSafari, gender), options);
 
     this.hide();
 

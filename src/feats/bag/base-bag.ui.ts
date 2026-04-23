@@ -2,6 +2,7 @@ import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@popo
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  EASE,
   IMenuItem,
   ItemCategory,
   KEY,
@@ -11,7 +12,7 @@ import {
   TEXTSTYLE,
   TEXTURE,
 } from '@poposafari/types';
-import { addImage, addText } from '@poposafari/utils';
+import { addImage, addText, screenFadeIn } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { ItemDetailContainer } from '@poposafari/containers/item-detail.container';
 import { MenuListUi } from '../menu/menu-list.ui';
@@ -65,8 +66,15 @@ export interface BagMenuListLayout {
   borderPadding?: number;
 }
 
+export interface BagCategoryIconLayout {
+  x: number;
+  y: number;
+  scale: number;
+}
+
 const DEFAULT_HEADER_LAYOUT: BagHeaderLayout = { x: -505, y: -450 };
-const DEFAULT_POCKET_LAYOUT: BagPocketLayout = { x: -510, y: -160, scale: 3.2 };
+const DEFAULT_POCKET_LAYOUT: BagPocketLayout = { x: -510, y: -160, scale: 7.2 };
+const DEFAULT_CATEGORY_ICON_LAYOUT: BagCategoryIconLayout = { x: -855, y: -455, scale: 3 };
 const DEFAULT_DETAIL_LAYOUT: BagDetailLayout = {
   icon: { x: -790, y: 135, scale: 5 },
   name: { x: 0, y: 0, fontSize: 70 },
@@ -87,6 +95,9 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
 
   protected background!: GImage;
   protected headerText!: GText;
+  protected headerArrowLeft!: GImage;
+  protected headerArrowRight!: GImage;
+  protected headerPocketIcon!: GImage;
   protected pocket!: GImage;
   protected detail!: ItemDetailContainer;
   protected menuList!: MenuListUi;
@@ -101,6 +112,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
   };
 
   private resolveSelection: ((result: BagSelection | null) => void) | null = null;
+  private isPocketAnimating = false;
 
   protected registerLookup: (itemId: string) => boolean = () => false;
 
@@ -130,6 +142,9 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
   protected getMenuListLayout(): BagMenuListLayout {
     return DEFAULT_MENU_LIST_LAYOUT;
   }
+  protected getCategoryIconLayout(): BagCategoryIconLayout {
+    return DEFAULT_CATEGORY_ICON_LAYOUT;
+  }
 
   createLayout(): void {
     const screenWidth = this.scene.scale.width;
@@ -154,11 +169,41 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
     this.headerText.setOrigin(0.5, 0.5);
     this.add(this.headerText);
 
+    this.headerArrowLeft = addImage(
+      this.scene,
+      TEXTURE.CURSOR_BLACK,
+      undefined,
+      headerLayout.x - 240,
+      headerLayout.y - 5,
+    ).setScale(3);
+    this.headerArrowLeft.setFlipX(true);
+    this.add(this.headerArrowLeft);
+
+    const firstCat = this.getCategories()[0];
+    const categoryIconLayout = this.getCategoryIconLayout();
+    this.headerPocketIcon = addImage(
+      this.scene,
+      `icon_pocket_${firstCat}`,
+      undefined,
+      categoryIconLayout.x,
+      categoryIconLayout.y,
+    ).setScale(categoryIconLayout.scale);
+    this.add(this.headerPocketIcon);
+
+    this.headerArrowRight = addImage(
+      this.scene,
+      TEXTURE.CURSOR_BLACK,
+      undefined,
+      headerLayout.x + 240,
+      headerLayout.y - 5,
+    ).setScale(3);
+    this.add(this.headerArrowRight);
+
     const pocketLayout = this.getPocketLayout();
     const firstCategory = this.getCategories()[0];
     this.pocket = addImage(
       this.scene,
-      `pocket_${firstCategory}`,
+      `pocket_${this.getGenderKey()}_${firstCategory}`,
       undefined,
       pocketLayout.x,
       pocketLayout.y,
@@ -212,13 +257,14 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
   }
 
   onInput(key: string): void {
+    if (this.isPocketAnimating) return;
     switch (key) {
       case KEY.LEFT:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.scene.getAudio().playEffect(SFX.BAG_CURSOR);
         this.shiftCategory(-1);
         return;
       case KEY.RIGHT:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.scene.getAudio().playEffect(SFX.BAG_CURSOR);
         this.shiftCategory(1);
         return;
     }
@@ -257,9 +303,30 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
       this.renderCurrentCategory();
       this.menuList.show();
       this.show();
+      screenFadeIn(this.scene, { duration: 800 });
+      this.playPocketDropAnimation();
     }
     return new Promise((resolve) => {
       this.resolveSelection = resolve;
+    });
+  }
+
+  private playPocketDropAnimation(): void {
+    const pocketLayout = this.getPocketLayout();
+    const screenHeight = this.scene.scale.height;
+    const startY = -screenHeight / 2 - 200;
+    const endY = pocketLayout.y;
+
+    this.isPocketAnimating = true;
+    this.pocket.setY(startY);
+    this.scene.tweens.add({
+      targets: this.pocket,
+      y: endY,
+      duration: 800,
+      ease: EASE.BOUNCE_EASEOUT,
+      onComplete: () => {
+        this.isPocketAnimating = false;
+      },
     });
   }
 
@@ -272,6 +339,10 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
     return this.getCategories()[this.categoryIndex];
   }
 
+  private getGenderKey(): 'm' | 'f' {
+    return this.scene.getUser()?.getProfile().gender === 'female' ? 'f' : 'm';
+  }
+
   protected shiftCategory(delta: number): void {
     const cats = this.getCategories();
     this.categoryIndex = (this.categoryIndex + delta + cats.length) % cats.length;
@@ -281,7 +352,8 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
   protected renderCurrentCategory(): void {
     const cat = this.currentCategory();
     this.headerText.setText(i18next.t(`bag:category.${cat}`));
-    this.pocket.setTexture(`pocket_${cat}`);
+    this.pocket.setTexture(`pocket_${this.getGenderKey()}_${cat}`);
+    this.headerPocketIcon.setTexture(`icon_pocket_${cat}`);
 
     const entries = this.entriesByCategory[cat];
     const items: IMenuItem[] = entries.map((e) => ({

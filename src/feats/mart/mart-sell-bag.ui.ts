@@ -3,6 +3,7 @@ import { MasterData } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { ItemCategory, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import {
+  BagCategoryIconLayout,
   BagDetailLayout,
   BagEntry,
   BagHeaderLayout,
@@ -54,6 +55,11 @@ export class MartSellBagUi extends BaseBagUi {
 
   protected getPocketLayout(): BagPocketLayout {
     const base = super.getPocketLayout();
-    return { ...base, x: -600, y: -100 };
+    return { ...base, x: -645, y: -100 };
+  }
+
+  protected getCategoryIconLayout(): BagCategoryIconLayout {
+    const base = super.getCategoryIconLayout();
+    return { ...base, x: -890, y: -495, scale: 2.4 };
   }
 }

@@ -42,7 +42,7 @@ export class BagPhase implements IGamePhase {
     this.ui = new BagUi(this.scene, this.scene.getInputManager());
     this.ui.setRegisterLookup((itemId) => this.localState.isRegistered(itemId));
     this.actionMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
-      y: +1075,
+      y: +760,
       itemHeight: 80,
     });
     this.confirmMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
@@ -209,7 +209,9 @@ export class BagPhase implements IGamePhase {
         user.setParty(updatedParty);
 
         const talkUi = this.scene.getMessage('talk');
-        await talkUi.showMessage(i18next.t('bag:learnedMove', { name: pokemonName, item: itemName }));
+        await talkUi.showMessage(
+          i18next.t('bag:learnedMove', { name: pokemonName, item: itemName }),
+        );
         talkUi.hide();
         return;
       }

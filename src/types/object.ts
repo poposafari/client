@@ -1,3 +1,4 @@
+import { SFX } from './audio';
 import { TEXTSHADOW, TEXTSTROKE, TEXTSTYLE } from './text';
 import { TEXTURE } from './texture';
 
@@ -56,6 +57,7 @@ export interface IMenuListConfig {
   itemHeight: number;
   showCancel?: boolean;
   borderPadding?: number;
+  cursorSfx?: SFX;
 }
 
 export interface IMenuConfig {
