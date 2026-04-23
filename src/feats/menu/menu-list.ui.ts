@@ -126,13 +126,14 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   protected handleNavigationInput(key: string): boolean {
+    const cursorSfx = this.config.cursorSfx ?? SFX.CURSOR_0;
     switch (key) {
       case KEY.UP:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.scene.getAudio().playEffect(cursorSfx);
         this.moveCursor(-1);
         return true;
       case KEY.DOWN:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.scene.getAudio().playEffect(cursorSfx);
         this.moveCursor(1);
         return true;
       case KEY.Z:

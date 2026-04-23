@@ -463,6 +463,7 @@ export class PokemonPcUi extends BaseUi {
         break;
       case KEY.Z:
       case KEY.ENTER:
+        if (this.mode !== 'manage') break;
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.openTopMenu();
         break;

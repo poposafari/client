@@ -544,11 +544,17 @@ export class LoadingPhase implements IGamePhase {
 
     this.scene.loadImage(TEXTURE.GROUND_ITEM, 'ui', 'ground_item');
 
-    this.scene.loadImage('pocket_pokeball', 'ui/bag', 'pocket_pokeball');
-    this.scene.loadImage('pocket_candy', 'ui/bag', 'pocket_candy');
-    this.scene.loadImage('pocket_etc', 'ui/bag', 'pocket_etc');
-    this.scene.loadImage('pocket_tms_hms', 'ui/bag', 'pocket_tms_hms');
-    this.scene.loadImage('pocket_key', 'ui/bag', 'pocket_key');
+    this.scene.loadImage('pocket_m_pokeball', 'ui/bag', 'pocket_m_pokeball');
+    this.scene.loadImage('pocket_m_candy', 'ui/bag', 'pocket_m_candy');
+    this.scene.loadImage('pocket_m_etc', 'ui/bag', 'pocket_m_etc');
+    this.scene.loadImage('pocket_m_tms_hms', 'ui/bag', 'pocket_m_tms_hms');
+    this.scene.loadImage('pocket_m_key', 'ui/bag', 'pocket_m_key');
+
+    this.scene.loadImage('pocket_f_pokeball', 'ui/bag', 'pocket_f_pokeball');
+    this.scene.loadImage('pocket_f_candy', 'ui/bag', 'pocket_f_candy');
+    this.scene.loadImage('pocket_f_etc', 'ui/bag', 'pocket_f_etc');
+    this.scene.loadImage('pocket_f_tms_hms', 'ui/bag', 'pocket_f_tms_hms');
+    this.scene.loadImage('pocket_f_key', 'ui/bag', 'pocket_f_key');
 
     this.scene.loadImage('icon_pocket_pokeball', 'ui/bag', 'icon_pocket_pokeball');
     this.scene.loadImage('icon_pocket_candy', 'ui/bag', 'icon_pocket_candy');
@@ -707,6 +713,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.PC_CLOSE, 'audio/se', 'pc_close', 'ogg');
     this.scene.loadAudio(SFX.PC_PICK_UP, 'audio/se', 'pc_pick_up', 'ogg');
     this.scene.loadAudio(SFX.PC_PUT_DOWN, 'audio/se', 'pc_put_down', 'ogg');
+    this.scene.loadAudio(SFX.BAG_CURSOR, 'audio/se', 'bag_cursor', 'ogg');
   }
 
   private createSprite() {
