@@ -65,6 +65,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   private defaultColor: string = TEXTCOLOR.WHITE;
   protected resolveSelection: ((item: IMenuItem | null) => void) | null = null;
 
+  private isDraggingScroll = false;
+  private dragStartPointerLocalY = 0;
+  private dragStartThumbY = 0;
+
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuListConfig) {
     super(scene, inputManager, DEPTH.MESSAGE);
     this.scene = scene;
@@ -249,6 +253,28 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
     this.scrollBarContainer.add([this.scrollThumbBg, this.scrollThumb]);
     this.add(this.scrollBarContainer);
+
+    this.scrollThumbBg.setScrollFactor(0).setInteractive({ cursor: 'pointer' });
+    this.scrollThumbBg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (!this.isScrollInteractable()) return;
+      this.jumpScrollTo(pointer.y);
+    });
+
+    this.scrollThumb.setScrollFactor(0).setInteractive();
+    this.scrollThumb.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (!this.isScrollInteractable()) return;
+      this.beginScrollDrag(pointer);
+    });
+
+    this.scene.input.on('pointermove', this.onGlobalPointerMove, this);
+    this.scene.input.on('pointerup', this.onGlobalPointerUp, this);
+    this.scene.input.on('pointerupoutside', this.onGlobalPointerUp, this);
+
+    this.once(Phaser.GameObjects.Events.DESTROY, () => {
+      this.scene.input.off('pointermove', this.onGlobalPointerMove, this);
+      this.scene.input.off('pointerup', this.onGlobalPointerUp, this);
+      this.scene.input.off('pointerupoutside', this.onGlobalPointerUp, this);
+    });
   }
 
   public setItems(items: IMenuItem[]) {
@@ -621,6 +647,14 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.refreshList();
   }
 
+  public hide(): void {
+    if (this.isDraggingScroll) {
+      this.isDraggingScroll = false;
+      this.scrollThumb.setAlpha(1);
+    }
+    super.hide();
+  }
+
   public waitForSelect(items?: IMenuItem[]): Promise<IMenuItem | null> {
     if (items) this.setItems(items);
     this.show();
@@ -633,5 +667,76 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.items.forEach((item) => {
       item.label = i18next.t(item.key);
     });
+  }
+
+  private isScrollInteractable(): boolean {
+    return this.visible && this.items.length > this.config.visibleCount;
+  }
+
+  private getScrollGeometry() {
+    const trackHeight = this.config.height! - this.getBorderPadding();
+    const visibleCount = this.config.visibleCount;
+    const totalItems = Math.max(this.items.length, 1);
+    let thumbHeight = (visibleCount / totalItems) * trackHeight;
+    thumbHeight = Math.max(thumbHeight, this.FONT_SIZE);
+    thumbHeight = Math.min(thumbHeight, trackHeight);
+    const trackTopY = -trackHeight / 2;
+    const availableMoveSpace = trackHeight - thumbHeight;
+    const maxScrollIndex = Math.max(1, totalItems - visibleCount);
+    return { trackHeight, thumbHeight, trackTopY, availableMoveSpace, maxScrollIndex };
+  }
+
+  private worldToScrollLocalY(worldX: number, worldY: number): number {
+    const matrix = this.scrollBarContainer.getWorldTransformMatrix();
+    return matrix.applyInverse(worldX, worldY).y;
+  }
+
+  private beginScrollDrag(pointer: Phaser.Input.Pointer): void {
+    this.isDraggingScroll = true;
+    this.scrollThumb.setAlpha(0.6);
+    this.dragStartPointerLocalY = this.worldToScrollLocalY(pointer.x, pointer.y);
+    this.dragStartThumbY = this.scrollThumb.y;
+  }
+
+  private onGlobalPointerMove = (pointer: Phaser.Input.Pointer): void => {
+    if (!this.isDraggingScroll) return;
+    const localY = this.worldToScrollLocalY(pointer.x, pointer.y);
+    const delta = localY - this.dragStartPointerLocalY;
+    const { trackTopY, availableMoveSpace, maxScrollIndex } = this.getScrollGeometry();
+    let newThumbY = this.dragStartThumbY + delta;
+    newThumbY = Math.max(trackTopY, Math.min(newThumbY, trackTopY + availableMoveSpace));
+    const ratio = availableMoveSpace > 0 ? (newThumbY - trackTopY) / availableMoveSpace : 0;
+    this.applyScrollIndex(Math.round(ratio * maxScrollIndex));
+  };
+
+  private onGlobalPointerUp = (): void => {
+    if (!this.isDraggingScroll) return;
+    this.isDraggingScroll = false;
+    this.scrollThumb.setAlpha(1);
+  };
+
+  private jumpScrollTo(worldY: number): void {
+    const localY = this.worldToScrollLocalY(0, worldY);
+    const { trackTopY, availableMoveSpace, thumbHeight, maxScrollIndex } = this.getScrollGeometry();
+    let targetThumbY = localY - thumbHeight / 2;
+    targetThumbY = Math.max(trackTopY, Math.min(targetThumbY, trackTopY + availableMoveSpace));
+    const ratio = availableMoveSpace > 0 ? (targetThumbY - trackTopY) / availableMoveSpace : 0;
+    this.applyScrollIndex(Math.round(ratio * maxScrollIndex));
+  }
+
+  private applyScrollIndex(newScrollIndex: number): void {
+    const maxScroll = Math.max(0, this.items.length - this.config.visibleCount);
+    newScrollIndex = Math.max(0, Math.min(newScrollIndex, maxScroll));
+    if (newScrollIndex === this.scrollIndex) return;
+
+    const delta = newScrollIndex - this.scrollIndex;
+    this.scrollIndex = newScrollIndex;
+    this.cursorIndex = Math.max(0, Math.min(this.items.length - 1, this.cursorIndex + delta));
+
+    const cursorSfx = this.config.cursorSfx ?? SFX.CURSOR_0;
+    this.scene.getAudio().playEffect(cursorSfx);
+
+    this.refreshList();
+    if (this.onCursorMove) this.onCursorMove(this.cursorIndex, this.items[this.cursorIndex]);
   }
 }
