@@ -411,6 +411,9 @@ function getSpriteAnimationFrameSize(animation: ANIMATION | string) {
     case ANIMATION.DOOR:
       ret = 7;
       break;
+    case ANIMATION.OVERWORLD_SHINY:
+      ret = 15;
+      break;
   }
   return ret;
 }
@@ -444,6 +447,9 @@ function getSpriteAnimationFrameRate(animation: ANIMATION | string) {
       break;
     case ANIMATION.DOOR:
       ret = 10;
+      break;
+    case ANIMATION.OVERWORLD_SHINY:
+      ret = 12;
       break;
   }
   return ret;
@@ -499,6 +505,7 @@ function getSpriteAnimationFrameRepeat(animation: ANIMATION | string) {
     case ANIMATION.PLAYER_OVERWORLD_SURF_LEFT:
     case ANIMATION.PLAYER_OVERWORLD_SURF_RIGHT:
     case ANIMATION.PLAYER_OVERWORLD_SURF_UP:
+    case ANIMATION.OVERWORLD_SHINY:
       ret = -1;
       break;
   }

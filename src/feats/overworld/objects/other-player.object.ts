@@ -390,9 +390,12 @@ export class OtherPlayerObject extends BaseObject {
           isShiny,
           initDir,
           [],
+          this.addToContainer,
         );
         this.addToContainer(this.pet.getShadow());
         this.addToContainer(this.pet.getSprite());
+        const shiny = this.pet.getShinySprite();
+        if (shiny) this.addToContainer(shiny);
       }
       this.pet.setBaseSpeed(this.lastPetSpeed);
     };

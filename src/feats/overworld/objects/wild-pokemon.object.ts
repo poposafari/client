@@ -1,6 +1,6 @@
 import { GameScene } from '@poposafari/scenes';
 import type { SafariWildInfo } from '@poposafari/scenes';
-import { DEPTH, SFX, TEXTCOLOR, TEXTURE } from '@poposafari/types';
+import { ANIMATION, DEPTH, SFX, TEXTCOLOR, TEXTURE } from '@poposafari/types';
 import { addObjText, addSprite, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
 import { calcOverworldTilePos, DIRECTION } from '../overworld.constants';
 import { IOverworldBlockingRef, IOverworldMapAdapter, MovableObject } from './movable.object';
@@ -15,6 +15,7 @@ const STEP_MAX = 4;
 
 const DIRS: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT];
 const NAME_VISIBLE_RANGE = 3;
+const SHINY_SIZE_MARGIN = 0.6;
 
 export class WildPokemonObject extends MovableObject {
   private readonly wild: SafariWildInfo;
@@ -36,6 +37,7 @@ export class WildPokemonObject extends MovableObject {
   private expiresAt: number | null = null;
   private timerText: Phaser.GameObjects.Text;
   private lastTimerLabel = '';
+  private shinySprite: Phaser.GameObjects.Sprite | null = null;
   /** 페이드아웃이 실제로 시작되면 true. OverworldUi.handleWildDespawn이 1회만 실행되도록. */
   private despawning = false;
   /** 클라 자체 TTL 감지로 `wild_ttl_expired`를 이미 emit했는지 (중복 emit 방지). */
@@ -90,6 +92,17 @@ export class WildPokemonObject extends MovableObject {
     this.idleMs = this.randomIdleMs();
 
     if (wild.expiresAt) this.setExpiresAt(wild.expiresAt);
+
+    if (wild.isShiny) {
+      this.shinySprite = this.scene.add
+        .sprite(this.sprite.x, this.sprite.y, TEXTURE.OVERWORLD_SHINY)
+        .setOrigin(0.5, 1);
+      this.shinySprite.setDisplaySize(
+        this.sprite.displayWidth * SHINY_SIZE_MARGIN,
+        this.sprite.displayHeight * SHINY_SIZE_MARGIN,
+      );
+      this.shinySprite.play(ANIMATION.OVERWORLD_SHINY);
+    }
   }
 
   setExpiresAt(expiresAt: number | undefined): void {
@@ -209,6 +222,14 @@ export class WildPokemonObject extends MovableObject {
 
     super.update(delta);
     this.refreshTimer();
+    this.syncShinyOverlay();
+  }
+
+  private syncShinyOverlay(): void {
+    if (!this.shinySprite) return;
+    this.shinySprite.setPosition(this.sprite.x, this.sprite.y);
+    this.shinySprite.setDepth(this.sprite.depth + 0.05);
+    this.shinySprite.setVisible(this.sprite.visible);
   }
 
   /** 타이머 텍스트를 갱신. 이름표 바로 아래 위치를 따라다니게 한다.
@@ -275,6 +296,8 @@ export class WildPokemonObject extends MovableObject {
     this.emoteSprite?.destroy();
     this.emoteSprite = null;
     this.timerText.destroy();
+    this.shinySprite?.destroy();
+    this.shinySprite = null;
     super.destroy();
   }
 
