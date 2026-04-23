@@ -9,4 +9,5 @@ export enum DEPTH {
   MESSAGE = 1001,
   MESSAGE_TOP = 1002,
   API = 1003,
+  CURSOR = 9999,
 }

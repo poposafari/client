@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { CostumeData } from '@poposafari/types';
-import { ANIMATION, MAP, PC_BG_CNT, SFX, TEXTURE, TILE } from '@poposafari/types';
+import { ANIMATION, DEPTH, MAP, PC_BG_CNT, SFX, TEXTURE, TILE } from '@poposafari/types';
 import {
   createAnimationFromFrameNames,
   createSpriteAnimation,
@@ -34,8 +34,26 @@ export class LoadingPhase implements IGamePhase {
 
     await this.loadAssets();
     this.createSprite();
+    this.applyCustomCursor();
 
     this.scene.switchPhase(new WelcomePhase(this.scene));
+  }
+
+  private applyCustomCursor(): void {
+    this.scene.input.setDefaultCursor('none');
+
+    const cursor = this.scene.add
+      .image(0, 0, TEXTURE.CURSOR_MOUSE)
+      .setOrigin(0, 0.5)
+      .setScale(1.2)
+      .setAngle(100)
+      .setScrollFactor(0)
+      .setDepth(DEPTH.CURSOR)
+      .setVisible(false);
+
+    this.scene.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      cursor.setVisible(true).setPosition(p.x + 8, p.y + 5);
+    });
   }
 
   exit(): void {
@@ -532,6 +550,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
     this.scene.loadImage(TEXTURE.CURSOR_BLACK, 'ui', 'cursor_b');
+    this.scene.loadImage(TEXTURE.CURSOR_MOUSE, 'ui', 'cursor_mouse');
 
     this.scene.loadAtlas(TEXTURE.EMO, 'ui', 'emo', 'emo');
     this.scene.loadAtlas(TEXTURE.SPARKLE, 'ui', 'sparkle', 'sparkle');

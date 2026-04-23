@@ -37,6 +37,7 @@ export const enum TEXTURE {
   CURSOR_WHITE = 'cursor_w',
   CURSOR_BLACK = 'cursor_b',
   CURSOR_FINGER = 'cursor_finger',
+  CURSOR_MOUSE = 'cursor_mouse',
 
   SLIDER = 'slider',
   SLIDER_BG = 'slider_b',
