@@ -1,7 +1,7 @@
 import { InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { PokemonBoxItem } from '@poposafari/types';
-import { TEXTURE } from '@poposafari/types';
+import { SFX, TEXTURE } from '@poposafari/types';
 import { addImage, addSprite, getPokedexId, getPokemonTexture } from '@poposafari/utils';
 import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-select.ui';
 
@@ -63,12 +63,12 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
   private iconAnimKeyByKey = new Map<string, string>();
 
   onExitTop?: () => void;
-  onExitBottom?: () => void;
+  onExitRight?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager) {
     const config: IGridSelectConfig = {
       x: +340,
-      y: +5,
+      y: -5,
       outerWindowTexture: TEXTURE.BLANK,
       innerWindowTexture: TEXTURE.BLANK,
       cursor: {
@@ -155,15 +155,14 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
 
     // 첫 번째 행 + UP → 상단 UI로 탈출
     if (key === dir.up && this.cursorIndex < cols) {
+      (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
       this.onExitTop?.();
       return true;
     }
 
-    // 마지막 행 + DOWN → 하단 파티 슬롯으로 탈출
-    const rows = this.config.rows ?? 5;
-    const isLastRow = this.cursorIndex >= (rows - 1) * cols;
-    if (key === dir.down && isLastRow) {
-      this.onExitBottom?.();
+    if (key === dir.right && this.cursorIndex % cols === cols - 1) {
+      (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
+      this.onExitRight?.();
       return true;
     }
 
