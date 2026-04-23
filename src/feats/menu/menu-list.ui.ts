@@ -267,9 +267,31 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.resizeLayout();
     }
 
+    this.clampPositionToScreen();
+
     this.cursorIndex = 0;
     this.scrollIndex = 0;
     this.refreshList();
+  }
+
+  private clampPositionToScreen(): void {
+    const width = this.config.width!;
+    const halfWidth = width / 2;
+    const scrollExtraRight = this.LAYOUT.SCROLL_OFFSET_X + this.SCROLL_BAR_WIDTH;
+    const screenWidth = this.scene.scale.width;
+    const margin = 5;
+
+    let finalX = this.config.x;
+    const rightEdge = finalX + halfWidth + scrollExtraRight;
+    if (rightEdge > screenWidth - margin) {
+      finalX = screenWidth - margin - halfWidth - scrollExtraRight;
+    }
+    const leftEdge = finalX - halfWidth;
+    if (leftEdge < margin) {
+      finalX = margin + halfWidth;
+    }
+
+    this.setX(finalX);
   }
 
   private calculateOptimalWidth(): number {

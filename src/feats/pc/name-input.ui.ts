@@ -59,19 +59,7 @@ export class NameInputUi extends BaseUi {
   }
 
   createLayout(): void {
-    this.modalWindow = addWindow(
-      this.scene,
-      TEXTURE.WINDOW_0,
-      0,
-      0,
-      550,
-      350,
-      4,
-      16,
-      16,
-      16,
-      16,
-    );
+    this.modalWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 550, 350, 4, 16, 16, 16, 16);
 
     this.titleText = addText(
       this.scene,
@@ -85,19 +73,7 @@ export class NameInputUi extends BaseUi {
       TEXTSHADOW.GRAY,
     );
 
-    this.inputWindow = addWindow(
-      this.scene,
-      TEXTURE.WINDOW_0,
-      0,
-      0,
-      420,
-      70,
-      2,
-      16,
-      16,
-      16,
-      16,
-    );
+    this.inputWindow = addWindow(this.scene, TEXTURE.WINDOW_0, 0, 0, 420, 70, 2, 16, 16, 16, 16);
 
     this.inputField = addTextInput(this.scene, -190, 0, 25, '100', 420, 70, TEXTSTYLE.WHITE, {
       type: 'text',
@@ -108,7 +84,7 @@ export class NameInputUi extends BaseUi {
     // 결정하기 버튼
     this.confirmBtn = addWindow(
       this.scene,
-      TEXTURE.WINDOW_0,
+      this.scene.getOption().getWindow(),
       -120,
       +100,
       200,
@@ -118,7 +94,9 @@ export class NameInputUi extends BaseUi {
       16,
       16,
       16,
-    ).setInteractive({ cursor: 'pointer' });
+    )
+      .setScrollFactor(0)
+      .setInteractive({ cursor: 'pointer' });
 
     this.confirmBtnText = addText(
       this.scene,
@@ -135,7 +113,7 @@ export class NameInputUi extends BaseUi {
     // 취소하기 버튼
     this.cancelBtn = addWindow(
       this.scene,
-      TEXTURE.WINDOW_0,
+      this.scene.getOption().getWindow(),
       +120,
       +100,
       200,
@@ -145,7 +123,9 @@ export class NameInputUi extends BaseUi {
       16,
       16,
       16,
-    ).setInteractive({ cursor: 'pointer' });
+    )
+      .setScrollFactor(0)
+      .setInteractive({ cursor: 'pointer' });
 
     this.cancelBtnText = addText(
       this.scene,

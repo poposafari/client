@@ -216,6 +216,14 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     let targetX: number;
     if (this.config.x !== undefined) {
       targetX = this.config.x;
+      const rightEdge = targetX + finalWidth / 2;
+      if (rightEdge > this.scene.scale.width - this.LAYOUT.RIGHT_MARGIN) {
+        targetX = this.scene.scale.width - this.LAYOUT.RIGHT_MARGIN - finalWidth / 2;
+      }
+      const leftEdge = targetX - finalWidth / 2;
+      if (leftEdge < this.LAYOUT.LEFT_MARGIN) {
+        targetX = this.LAYOUT.LEFT_MARGIN + finalWidth / 2;
+      }
     } else {
       targetX = this.scene.scale.width - finalWidth / 2 - this.LAYOUT.RIGHT_MARGIN;
       const leftEdge = targetX - finalWidth / 2;

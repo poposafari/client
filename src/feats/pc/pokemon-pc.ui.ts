@@ -25,6 +25,7 @@ import {
   getPokemonI18Name,
   getPokemonTexture,
   getPokemonTypeFrame,
+  screenFadeIn,
   updatePokemonGenderIcon,
 } from '@poposafari/utils';
 import i18next from 'i18next';
@@ -65,6 +66,7 @@ export class PokemonPcUi extends BaseUi {
   private pcBg!: GSprite;
   private pcBgFrame!: GWindow;
   private partyWindow!: GWindow;
+  private partyTitle!: GText;
 
   private info!: GImage;
   private infoPokedex!: GText;
@@ -94,6 +96,8 @@ export class PokemonPcUi extends BaseUi {
 
   private topName!: GText;
   private topCursor!: GSprite;
+  private topArrowLeft!: GImage;
+  private topArrowRight!: GImage;
 
   private gridSelect!: PokemonPcGridSelectUi;
   private focusArea: PcFocusArea = 'grid';
@@ -135,6 +139,19 @@ export class PokemonPcUi extends BaseUi {
   private partySlots: PokemonSlotContainer[] = [];
   private partyCursor!: GSprite;
 
+  // PC set (bg frame + grid + top name): 하나로 묶어 함께 이동 가능
+  private pcSet!: GContainer;
+  private static readonly PC_SET_OFFSET_X = -80;
+  private static readonly PC_SET_OFFSET_Y = +60;
+
+  // Party set (partyWindow + partySlots + partyCursor): 하나로 묶어 함께 이동 가능
+  private partySet!: GContainer;
+  private static readonly PARTY_SET_OFFSET_X = +30;
+  private static readonly PARTY_SET_OFFSET_Y = 0;
+
+  // grabOverlay: grab cursor/icon을 담는 오버레이 컨테이너. pcSet 위치를 미러링.
+  private grabOverlay!: GContainer;
+
   onClose?: () => void;
 
   /** selectForGive 모드에서 포켓몬이 선택되었을 때 호출 */
@@ -163,7 +180,12 @@ export class PokemonPcUi extends BaseUi {
 
     this.gridSelect = new PokemonPcGridSelectUi(scene, scene.getInputManager());
     this.gridSelect.onExitTop = () => this.switchFocus('top');
-    this.gridSelect.onExitBottom = () => this.switchFocus('party');
+    this.gridSelect.onExitRight = () => {
+      const gridCols = 6;
+      const row = Math.floor(this.gridSelect.getSelectedIndex() / gridCols);
+      this.partyCursorIndex = Math.min(row, 5);
+      this.switchFocus('party');
+    };
     this.gridSelect.onCursorMoved = (selectedKey) => this.updateInfo(selectedKey);
     this.gridSelect.onConfirm = () => this.openGridMenu();
     this.gridSelect.onCancel = () => this.onClose?.();
@@ -179,8 +201,8 @@ export class PokemonPcUi extends BaseUi {
     this.topMenu = new MenuUi(scene, scene.getInputManager(), { y: +1070 });
     this.confirmMenu = new MenuUi(scene, scene.getInputManager(), { y: +805, itemHeight: 70 });
     this.wallpaperMenu = new MenuListUi(scene, scene.getInputManager(), {
-      x: +1540,
-      y: +700,
+      x: +1575,
+      y: +695,
       visibleCount: 6,
       itemHeight: 0,
       showCancel: false,
@@ -199,13 +221,32 @@ export class PokemonPcUi extends BaseUi {
     this.gridSelect.setCursorToIndex(savedGridIndex);
     this.updateInfo(this.gridSelect.getSelectedKey());
 
-    this.add([
-      this.bg,
+    this.pcSet = this.scene.add.container(PokemonPcUi.PC_SET_OFFSET_X, PokemonPcUi.PC_SET_OFFSET_Y);
+    this.pcSet.add([
       this.pcBgFrame,
       this.pcBg,
-      this.partyWindow,
-      this.info,
+      this.guideFrame,
       this.gridSelect,
+      this.topName,
+      this.topCursor,
+      this.topArrowLeft,
+      this.topArrowRight,
+    ]);
+
+    this.partySet = this.scene.add.container(
+      PokemonPcUi.PARTY_BASE_X + PokemonPcUi.PARTY_SET_OFFSET_X,
+      this.partyBaseY + PokemonPcUi.PARTY_SET_OFFSET_Y,
+    );
+    this.partySet.add([this.partyWindow, this.partyTitle, ...this.partySlots, this.partyCursor]);
+
+    this.grabOverlay = this.scene.add.container(this.pcSet.x, this.pcSet.y);
+    this.grabOverlay.add([this.grabIcon, this.grabCursor]);
+
+    this.add([
+      this.bg,
+      this.pcSet,
+      this.partySet,
+      this.info,
       this.infoPokedex,
       this.infoFront,
       this.infoPokemonName,
@@ -233,12 +274,7 @@ export class PokemonPcUi extends BaseUi {
       this.infoSkills[2],
       this.infoSkills[3],
       this.heldItem,
-      this.topName,
-      this.topCursor,
-      ...this.partySlots,
-      this.partyCursor,
-      this.grabIcon,
-      this.grabCursor,
+      this.grabOverlay,
     ]);
   }
 
@@ -284,8 +320,11 @@ export class PokemonPcUi extends BaseUi {
     this.refreshPartySlots();
     if (this.focusArea === 'top' || this.focusArea === 'grab') {
       this.clearInfo();
-    } else if (this.boxPokemons.length > 0) {
-      this.updateInfo(String(this.boxPokemons[0].id));
+    } else if (this.focusArea === 'party') {
+      this.updatePartySlotInfo();
+    } else {
+      // focusArea === 'grid' — 커서가 가리키는 슬롯 기준으로 갱신
+      this.updateInfo(this.gridSelect.getSelectedKey());
     }
   }
 
@@ -309,6 +348,8 @@ export class PokemonPcUi extends BaseUi {
     }
 
     this.focusArea = area;
+
+    this.syncTopArrowAlpha();
 
     // 새 포커스의 입력만 활성화
     if (area === 'grid') {
@@ -337,6 +378,8 @@ export class PokemonPcUi extends BaseUi {
     this.focusArea = 'grid';
     this.gridSelect.setVisible(true);
     this.inputManager.push(this.gridSelect);
+    this.scene.getAudio().playEffect(SFX.PC_ACCESS);
+    screenFadeIn(this.scene, { duration: 800 });
   }
 
   hide(): void {
@@ -350,6 +393,7 @@ export class PokemonPcUi extends BaseUi {
       this.inputManager.pop(this);
     }
     this.gridSelect.setVisible(false);
+    this.scene.getAudio().playEffect(SFX.PC_CLOSE);
     super.hide();
   }
 
@@ -366,10 +410,11 @@ export class PokemonPcUi extends BaseUi {
 
   private handlePartyInput(key: string): void {
     switch (key) {
-      case KEY.UP:
-        this.switchFocus('grid');
-        break;
       case KEY.LEFT:
+        this.switchFocus('grid');
+        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        break;
+      case KEY.UP:
         if (this.partyCursorIndex > 0) {
           this.partyCursorIndex--;
           this.updatePartyCursorPosition();
@@ -377,7 +422,7 @@ export class PokemonPcUi extends BaseUi {
           this.scene.getAudio().playEffect(SFX.CURSOR_0);
         }
         break;
-      case KEY.RIGHT:
+      case KEY.DOWN:
         if (this.partyCursorIndex < 5) {
           this.partyCursorIndex++;
           this.updatePartyCursorPosition();
@@ -408,6 +453,7 @@ export class PokemonPcUi extends BaseUi {
       case KEY.DOWN:
         this.switchFocus('grid');
         this.topCursor.setVisible(false);
+        this.scene.getAudio().playEffect(SFX.CURSOR_0);
         break;
       case KEY.LEFT:
         this.switchBox(-1);
@@ -435,8 +481,7 @@ export class PokemonPcUi extends BaseUi {
       case KEY.UP:
         if (this.grabInTop) {
         } else if (this.grabCursorInParty) {
-          this.grabCursorInParty = false;
-          this.grabGridIndex = 24 + Math.min(this.grabPartyIndex, 5);
+          if (this.grabPartyIndex > 0) this.grabPartyIndex--;
         } else {
           if (this.grabGridIndex < 6) {
             this.grabInTop = true;
@@ -451,11 +496,9 @@ export class PokemonPcUi extends BaseUi {
         if (this.grabInTop) {
           this.grabInTop = false;
         } else if (this.grabCursorInParty) {
+          if (this.grabPartyIndex < 5) this.grabPartyIndex++;
         } else {
-          if (this.grabGridIndex >= 24) {
-            this.grabCursorInParty = true;
-            this.grabPartyIndex = this.grabGridIndex % 6;
-          } else {
+          if (this.grabGridIndex < 24) {
             this.grabGridIndex += 6;
           }
         }
@@ -466,7 +509,9 @@ export class PokemonPcUi extends BaseUi {
         if (this.grabInTop) {
           this.switchBoxWhileGrabbing(-1);
         } else if (this.grabCursorInParty) {
-          if (this.grabPartyIndex > 0) this.grabPartyIndex--;
+          this.grabCursorInParty = false;
+          const row = Math.min(this.grabPartyIndex, 4);
+          this.grabGridIndex = row * 6 + 5;
         } else {
           if (this.grabGridIndex % 6 > 0) this.grabGridIndex--;
         }
@@ -477,10 +522,12 @@ export class PokemonPcUi extends BaseUi {
         if (this.grabInTop) {
           this.switchBoxWhileGrabbing(+1);
         } else if (this.grabCursorInParty) {
-          if (this.grabPartyIndex < 5) this.grabPartyIndex++;
         } else {
           if (this.grabGridIndex % 6 < 5) {
             this.grabGridIndex++;
+          } else {
+            this.grabCursorInParty = true;
+            this.grabPartyIndex = Math.floor(this.grabGridIndex / 6);
           }
         }
         this.updateGrabCursorPosition();
@@ -489,12 +536,10 @@ export class PokemonPcUi extends BaseUi {
       case KEY.Z:
       case KEY.ENTER:
         if (this.grabInTop) break;
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.placeGrabbedPokemon();
         break;
       case KEY.X:
       case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.cancelGrab();
         break;
     }
@@ -755,9 +800,13 @@ export class PokemonPcUi extends BaseUi {
   private openWallpaperMenu(): void {
     const items: IMenuItem[] = [];
     for (let i = 0; i < PokemonPcUi.PC_BGS_FRAME_COUNT; i++) {
+      const nameKey = `pc:wallpaperName_${i}`;
+      const label = i18next.exists(nameKey)
+        ? i18next.t(nameKey)
+        : `${i18next.t('pc:wallpaper')} ${i + 1}`;
       items.push({
         key: `wallpaper_${i}`,
-        label: `${i18next.t('pc:wallpaper')} ${i + 1}`,
+        label,
       });
     }
 
@@ -812,6 +861,7 @@ export class PokemonPcUi extends BaseUi {
     const slotState = this.pcState.getSlotState(pokemon.id);
     if (!slotState) return;
 
+    this.scene.getAudio().playEffect(SFX.PC_PICK_UP);
     this.grabbedPokemonId = pokemon.id;
     this.grabOrigin = {
       boxNumber: slotState.boxNumber,
@@ -860,6 +910,7 @@ export class PokemonPcUi extends BaseUi {
   private placeGrabbedPokemon(): void {
     if (!this.grabbedPokemonId || !this.grabOrigin) return;
 
+    this.scene.getAudio().playEffect(SFX.PC_PUT_DOWN);
     const boxNumber = this.currentBoxIndex + 1;
 
     if (this.grabCursorInParty) {
@@ -902,6 +953,7 @@ export class PokemonPcUi extends BaseUi {
   }
 
   private cancelGrab(): void {
+    this.scene.getAudio().playEffect(SFX.PC_PUT_DOWN);
     if (this.grabbedPokemonId && this.grabOrigin) {
       this.pcState.attachPokemon(
         this.grabbedPokemonId,
@@ -921,6 +973,7 @@ export class PokemonPcUi extends BaseUi {
     this.grabbedPokemonId = null;
     this.grabOrigin = null;
     this.grabInTop = false;
+    this.syncTopArrowAlpha();
 
     this.inputManager.pop(this);
 
@@ -1306,19 +1359,31 @@ export class PokemonPcUi extends BaseUi {
       16,
       16,
     );
-    this.partyBaseY = this.pcBgFrame.y + this.pcBgFrame.displayHeight / 2 + 60;
+    this.partyBaseY = 25;
     this.partyWindow = addWindow(
       this.scene,
       TEXTURE.WINDOW_PC,
-      +340,
-      this.partyBaseY,
-      700,
-      140,
+      0,
+      0,
+      170,
+      840,
       1.6,
       16,
       16,
       16,
       16,
+    );
+
+    this.partyTitle = addText(
+      this.scene,
+      0,
+      -460,
+      i18next.t('pc:party'),
+      60,
+      100,
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
     );
 
     this.info = addImage(this.scene, TEXTURE.PC_INFO, undefined, -445, 0).setScale(3.17);
@@ -1729,15 +1794,48 @@ export class PokemonPcUi extends BaseUi {
       .setScale(3.8)
       .setVisible(false);
     this.playFingerAnim(this.topCursor);
+
+    this.topArrowLeft = addImage(
+      this.scene,
+      TEXTURE.CURSOR_BLACK,
+      undefined,
+      this.topName.x - PokemonPcUi.TOP_ARROW_OFFSET_X,
+      this.topName.y - 10,
+    )
+      .setScale(5)
+      .setFlipX(true)
+      .setAlpha(PokemonPcUi.TOP_ARROW_DIM_ALPHA);
+    this.topArrowRight = addImage(
+      this.scene,
+      TEXTURE.CURSOR_BLACK,
+      undefined,
+      this.topName.x + PokemonPcUi.TOP_ARROW_OFFSET_X,
+      this.topName.y - 10,
+    )
+      .setScale(5)
+      .setAlpha(PokemonPcUi.TOP_ARROW_DIM_ALPHA);
+  }
+
+  private static readonly TOP_ARROW_OFFSET_X = 420;
+  private static readonly TOP_ARROW_DIM_ALPHA = 0.6;
+
+  private static readonly PARTY_BASE_X = 830;
+  private static readonly PARTY_SLOT_GAP = 120;
+  private static readonly PARTY_CURSOR_OFFSET_Y = -50;
+
+  // partySet 컨테이너 내부 로컬 좌표
+  private getPartySlotLocalPosition(partyIndex: number): { x: number; y: number } {
+    const centerOffset = (6 - 1) / 2;
+    return {
+      x: 0,
+      y: (partyIndex - centerOffset) * PokemonPcUi.PARTY_SLOT_GAP,
+    };
   }
 
   private createPartySlotLayout() {
-    const baseX = +75;
-    const baseY = this.partyBaseY;
-    const slotGap = 110;
-
     for (let i = 0; i < 6; i++) {
-      const slot = new PokemonSlotContainer(this.scene, baseX + i * slotGap, baseY);
+      const { x, y } = this.getPartySlotLocalPosition(i);
+      const slot = new PokemonSlotContainer(this.scene, x, y);
       slot.create({
         iconScale: 2.4,
         showLevel: true,
@@ -1750,18 +1848,23 @@ export class PokemonPcUi extends BaseUi {
       this.partySlots.push(slot);
     }
 
-    this.partyCursor = addSprite(this.scene, TEXTURE.PC_FINGER_0, 'pc_finger_0-0', 0, baseY - 50)
+    const first = this.getPartySlotLocalPosition(0);
+    this.partyCursor = addSprite(
+      this.scene,
+      TEXTURE.PC_FINGER_0,
+      'pc_finger_0-0',
+      first.x,
+      first.y + PokemonPcUi.PARTY_CURSOR_OFFSET_Y,
+    )
       .setScale(3.8)
       .setVisible(false);
     this.playFingerAnim(this.partyCursor);
   }
 
   private updatePartyCursorPosition(): void {
-    const baseX = +75;
-    const baseY = this.partyBaseY;
-    const slotGap = 110;
-    this.partyCursor.setX(baseX + this.partyCursorIndex * slotGap);
-    this.partyCursor.setY(baseY - 50);
+    const { x, y } = this.getPartySlotLocalPosition(this.partyCursorIndex);
+    this.partyCursor.setX(x);
+    this.partyCursor.setY(y + PokemonPcUi.PARTY_CURSOR_OFFSET_Y);
   }
 
   private updatePartySlotInfo(): void {
@@ -1838,14 +1941,15 @@ export class PokemonPcUi extends BaseUi {
       .setVisible(false);
   }
 
-  private getGridCellScenePosition(gridIndex: number): { x: number; y: number } {
+  // pcSet(=grabOverlay) 로컬 좌표 기준 그리드 셀 위치
+  private getGridCellLocalPosition(gridIndex: number): { x: number; y: number } {
     const gridX = 340; // GridSelectUi config.x
-    const gridY = 5; // GridSelectUi config.y
+    const gridY = -5; // GridSelectUi config.y
     const cols = 6;
     const cellW = 80;
     const cellH = 80;
-    const gapW = 70; // GridSelectUi config.columnGap
-    const gapH = 60; // GridSelectUi config.rowGap
+    const gapW = 70;
+    const gapH = 60;
     const totalContentW = cols * cellW + (cols - 1) * gapW;
     const rows = 5;
     const totalContentH = rows * cellH + (rows - 1) * gapH;
@@ -1854,36 +1958,50 @@ export class PokemonPcUi extends BaseUi {
     const startY = -totalContentH / 2 + cellH / 2;
     const row = Math.floor(gridIndex / cols);
     const col = gridIndex % cols;
-    const x = gridX + startX + col * (cellW + gapW);
-    const y = gridY + startY + row * (cellH + gapH);
-    return { x, y };
+    return {
+      x: gridX + startX + col * (cellW + gapW),
+      y: gridY + startY + row * (cellH + gapH),
+    };
   }
 
-  private getPartySlotScenePosition(partyIndex: number): { x: number; y: number } {
-    const baseX = 90;
-    const baseY = this.partyBaseY;
-    const slotGap = 100;
-    return { x: baseX + partyIndex * slotGap, y: baseY };
+  // grabOverlay 로컬 기준 파티 슬롯 위치 (partySet 씬 좌표를 grabOverlay 로컬로 변환)
+  private getPartySlotGrabLocalPosition(partyIndex: number): { x: number; y: number } {
+    const partyLocal = this.getPartySlotLocalPosition(partyIndex);
+    return {
+      x: this.partySet.x - this.grabOverlay.x + partyLocal.x,
+      y: this.partySet.y - this.grabOverlay.y + partyLocal.y,
+    };
   }
 
-  private static readonly GRAB_ICON_LIFT = 20;
+  private static readonly GRAB_ICON_LIFT = 40;
 
   private updateGrabCursorPosition(): void {
+    this.grabOverlay.setPosition(this.pcSet.x, this.pcSet.y);
+
     let pos: { x: number; y: number };
     if (this.grabInTop) {
       pos = { x: 285, y: -420 };
     } else if (this.grabCursorInParty) {
-      pos = this.getPartySlotScenePosition(this.grabPartyIndex);
+      pos = this.getPartySlotGrabLocalPosition(this.grabPartyIndex);
     } else {
-      pos = this.getGridCellScenePosition(this.grabGridIndex);
+      pos = this.getGridCellLocalPosition(this.grabGridIndex);
     }
-    this.grabCursor.setPosition(pos.x, pos.y - 50);
+    this.grabCursor.setPosition(pos.x, pos.y - 90);
     this.grabIcon.setPosition(pos.x, pos.y - PokemonPcUi.GRAB_ICON_LIFT);
+
+    this.syncTopArrowAlpha();
+  }
+
+  private syncTopArrowAlpha(): void {
+    const active = this.focusArea === 'top' || this.grabInTop;
+    const alpha = active ? 1 : PokemonPcUi.TOP_ARROW_DIM_ALPHA;
+    this.topArrowLeft.setAlpha(alpha);
+    this.topArrowRight.setAlpha(alpha);
   }
 
   private getGrabDropY(): number {
-    if (this.grabInTop) return -420;
-    if (this.grabCursorInParty) return this.getPartySlotScenePosition(this.grabPartyIndex).y;
-    return this.getGridCellScenePosition(this.grabGridIndex).y;
+    if (this.grabInTop) return -40;
+    if (this.grabCursorInParty) return this.getPartySlotGrabLocalPosition(this.grabPartyIndex).y;
+    return this.getGridCellLocalPosition(this.grabGridIndex).y;
   }
 }

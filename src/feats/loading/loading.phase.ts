@@ -703,6 +703,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.EVOL_0, 'audio/se', 'evol_0', 'ogg');
     this.scene.loadAudio(SFX.EVOL_1, 'audio/se', 'evol_1', 'ogg');
     this.scene.loadAudio(SFX.HATCH, 'audio/se', 'hatch', 'wav');
+    this.scene.loadAudio(SFX.PC_ACCESS, 'audio/se', 'pc_access', 'ogg');
+    this.scene.loadAudio(SFX.PC_CLOSE, 'audio/se', 'pc_close', 'ogg');
+    this.scene.loadAudio(SFX.PC_PICK_UP, 'audio/se', 'pc_pick_up', 'ogg');
+    this.scene.loadAudio(SFX.PC_PUT_DOWN, 'audio/se', 'pc_put_down', 'ogg');
   }
 
   private createSprite() {

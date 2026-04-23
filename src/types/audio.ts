@@ -19,6 +19,10 @@ export const enum SFX {
   EVOL_0 = 'evol_0',
   EVOL_1 = 'evol_1',
   HATCH = 'hatch',
+  PC_ACCESS = 'pc_access',
+  PC_CLOSE = 'pc_close',
+  PC_PICK_UP = 'pc_pick_up',
+  PC_PUT_DOWN = 'pc_put_down',
 }
 
 export const enum BGM {}
