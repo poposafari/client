@@ -72,6 +72,7 @@ export const enum TEXTURE {
   GROUND_ITEM = 'ground_item',
   EMO = 'emo',
   SPARKLE = 'sparkle',
+  OVERWORLD_SHINY = 'overworld_shiny',
   SAFARI_BALL_THROW = 'safari-ball_0',
   SAFARI_BALL_OPEN = 'safari-ball_1',
   SAFARI_STAR = 'safari_star',
@@ -115,6 +116,7 @@ export const enum ANIMATION {
   PLAYER_BACK_SKIN = 'player_back_skin',
   NPC = 'npc',
   DOOR = 'door',
+  OVERWORLD_SHINY = 'overworld_shiny',
 }
 
 export const enum TILE {

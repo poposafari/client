@@ -129,6 +129,8 @@ export class LoadingPhase implements IGamePhase {
     for (const cry of pokemonCryNames) {
       this.scene.loadAudio(cry, 'audio/pokemon', cry, 'ogg');
     }
+
+    this.scene.loadAtlas(TEXTURE.OVERWORLD_SHINY, path, 'overworld_shiny', 'overworld_shiny');
   }
 
   private loadItemAssets(): void {
@@ -745,6 +747,7 @@ export class LoadingPhase implements IGamePhase {
     this.createPokemonCallAnimation();
     this.createPokemonRecallAnimation();
     this.createEmoSprite();
+    createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
   }
 
   private createEmoSprite() {

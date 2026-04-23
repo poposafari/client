@@ -1,4 +1,5 @@
 import { GameScene } from '@poposafari/scenes';
+import { ANIMATION, TEXTURE } from '@poposafari/types';
 import { getPokemonTexture } from '@poposafari/utils';
 import {
   calcOverworldTilePos,
@@ -24,6 +25,8 @@ const PET_IDLE_OVERFLOW_GAIN = 0.15;
 const PET_IDLE_OVERFLOW_MAX_PX = 10;
 /** trailing offset lerp 속도(초당 비율). 방향 전환 시 스냅을 피하기 위해 값을 점차 타겟에 수렴시킨다. */
 const PET_TRAIL_SMOOTH_PER_SECOND = 17;
+/** shiny overlay를 포켓몬 표시 크기 대비 얼마나 크게 그릴지(여유 배수). */
+const SHINY_SIZE_MARGIN = 0.6;
 
 export class PetObject extends MovableObject {
   private frameBase: string;
@@ -39,6 +42,9 @@ export class PetObject extends MovableObject {
   /** 현재 적용 중인 trailing offset. 매 프레임 target 값으로 lerp된다. */
   private trailOffsetX = 0;
   private trailOffsetY = 0;
+
+  private shinySprite: Phaser.GameObjects.Sprite | null = null;
+  private addToContainerFn: ((obj: Phaser.GameObjects.GameObject) => void) | null = null;
 
   static summon(
     scene: GameScene,
@@ -60,9 +66,12 @@ export class PetObject extends MovableObject {
       isShiny,
       initDirection,
       blockingRefs,
+      addToContainer,
     );
     addToContainer(pet.getShadow());
     addToContainer(pet.getSprite());
+    const shiny = pet.getShinySprite();
+    if (shiny) addToContainer(shiny);
     pet.getSprite().setVisible(false);
     pet.getShadow().setVisible(false);
     pet.playFx('pokemon_call', 'pokemon_call.play', addToContainer, () => {
@@ -81,6 +90,7 @@ export class PetObject extends MovableObject {
     isShiny: boolean,
     initDirection: DIRECTION,
     blockingRefs: IOverworldBlockingRef[],
+    addToContainer?: (obj: Phaser.GameObjects.GameObject) => void,
   ) {
     const { key, frame } = getPokemonTexture('overworld', pokedexId, { isShiny });
     super(scene, mapAdapter, key, tileX, tileY, { text: '' }, initDirection, {
@@ -90,6 +100,7 @@ export class PetObject extends MovableObject {
     this.frameBase = frame;
     this.pokedexId = pokedexId;
     this.isShiny = isShiny;
+    this.addToContainerFn = addToContainer ?? null;
 
     this.name.setVisible(false);
     this.shadow.setVisible(true);
@@ -98,6 +109,26 @@ export class PetObject extends MovableObject {
     this.setBaseSpeed(2);
     this.startSpriteAnimation(this.animKey(initDirection));
     this.snapTrailOffsetToTarget();
+
+    if (isShiny) this.shinySprite = this.createShinySprite();
+  }
+
+  getShinySprite(): Phaser.GameObjects.Sprite | null {
+    return this.shinySprite;
+  }
+
+  private createShinySprite(): Phaser.GameObjects.Sprite {
+    const s = this.scene.add
+      .sprite(this.getSprite().x, this.getSprite().y, TEXTURE.OVERWORLD_SHINY)
+      .setOrigin(0.5, 1);
+    this.applyShinySize(s);
+    s.play(ANIMATION.OVERWORLD_SHINY);
+    return s;
+  }
+
+  private applyShinySize(s: Phaser.GameObjects.Sprite): void {
+    const sp = this.getSprite();
+    s.setDisplaySize(sp.displayWidth * SHINY_SIZE_MARGIN, sp.displayHeight * SHINY_SIZE_MARGIN);
   }
 
   recall(
@@ -117,6 +148,16 @@ export class PetObject extends MovableObject {
     this.isShiny = isShiny;
     this.getSprite().setTexture(key);
     this.startSpriteAnimation(this.animKey(this.getLastDirection()));
+
+    if (isShiny && !this.shinySprite) {
+      this.shinySprite = this.createShinySprite();
+      this.addToContainerFn?.(this.shinySprite);
+    } else if (!isShiny && this.shinySprite) {
+      this.shinySprite.destroy();
+      this.shinySprite = null;
+    } else if (isShiny && this.shinySprite) {
+      this.applyShinySize(this.shinySprite);
+    }
   }
 
   getPokedexId(): string {
@@ -222,10 +263,17 @@ export class PetObject extends MovableObject {
     this.getSprite().setPosition(x, y);
     this.getShadow().setPosition(x, y);
     this.getName().setPosition(x, y - this.nameOffsetY);
+    if (this.shinySprite) {
+      this.shinySprite.setPosition(x, y);
+      this.shinySprite.setDepth(this.getSprite().depth + 0.05);
+      this.shinySprite.setVisible(this.getSprite().visible);
+    }
   }
 
   destroy(): void {
     this.clearFx();
+    this.shinySprite?.destroy();
+    this.shinySprite = null;
     super.destroy();
   }
 
