@@ -973,6 +973,10 @@ export class OverworldUi extends BaseUi {
     if (prev === currentState) return;
     this.prevMovementState = currentState;
 
+    if (currentState === OverworldMovementState.RIDE && prev !== OverworldMovementState.RIDE) {
+      this.scene.getAudio().playEffect(SFX.BICYCLE);
+    }
+
     const wasField = prev != null && this.isFieldStateValue(prev);
     const isField = this.isFieldStateValue(currentState);
 

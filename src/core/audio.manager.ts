@@ -31,6 +31,27 @@ export class AudioManager {
     });
   }
 
+  public playEffectLoop(
+    key: SFX | string,
+    options?: { rate?: number; detune?: number },
+  ): Phaser.Sound.WebAudioSound {
+    const volume = this.masterVolume * this.effectVolume;
+    const sound = this.scene.sound.add(key as unknown as string, {
+      volume,
+      loop: true,
+      rate: options?.rate,
+      detune: options?.detune,
+    }) as Phaser.Sound.WebAudioSound;
+    sound.play();
+    return sound;
+  }
+
+  public stopEffectLoop(sound: Phaser.Sound.WebAudioSound | null): void {
+    if (!sound) return;
+    if (sound.isPlaying) sound.stop();
+    sound.destroy();
+  }
+
   public playBackground(key: BGM, duration: number = 1000): void {
     if (this.currentBgm && this.currentBgm.key === (key as unknown as string)) {
       if (!this.currentBgm.isPlaying) {

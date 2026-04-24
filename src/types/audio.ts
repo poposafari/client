@@ -24,6 +24,10 @@ export const enum SFX {
   PC_PICK_UP = 'pc_pick_up',
   PC_PUT_DOWN = 'pc_put_down',
   BAG_CURSOR = 'bag_cursor',
+  BICYCLE = 'bicycle',
+  EXP_GAIN = 'exp_gain',
+  EXP_FULL = 'exp_full',
+  MART = 'mart',
 }
 
 export const enum BGM {}
