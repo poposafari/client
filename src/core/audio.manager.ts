@@ -17,12 +17,17 @@ export class AudioManager {
     this.effectVolume = Phaser.Math.Clamp(effectVolume * 0.1, 0, 1);
   }
 
-  public playEffect(key: SFX | string): void {
+  public playEffect(
+    key: SFX | string,
+    options?: { rate?: number; detune?: number },
+  ): void {
     const volume = this.masterVolume * this.effectVolume;
 
     this.scene.sound.play(key as unknown as string, {
       volume,
       loop: false,
+      rate: options?.rate,
+      detune: options?.detune,
     });
   }
 

@@ -79,6 +79,7 @@ export const enum TEXTURE {
   REG = 'reg',
 
   OVERWORLD_SHADOW = 'overworld_shadow',
+  LIGHT = 'light',
 
   //pc
   PC_INFO = 'pc_info',
@@ -89,6 +90,8 @@ export const enum TEXTURE {
   PC_SAFARI_BALL = 'pc_safari-ball',
   PC_ULTRA_BALL = 'pc_ultra-ball',
   PC_MASTER_BALL = 'pc_master-ball',
+
+  PET_EMO = 'pet_emo',
 }
 
 export const enum ANIMATION {

@@ -1,0 +1,455 @@
+{
+  "frames": {
+    "pet_emo-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-1": {
+      "frame": {
+        "x": 15,
+        "y": 0,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 0,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-2": {
+      "frame": {
+        "x": 0,
+        "y": 16,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 16,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-3": {
+      "frame": {
+        "x": 15,
+        "y": 16,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 16,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-4": {
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 32,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-5": {
+      "frame": {
+        "x": 15,
+        "y": 32,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 32,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-6": {
+      "frame": {
+        "x": 0,
+        "y": 48,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 48,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-7": {
+      "frame": {
+        "x": 15,
+        "y": 48,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 48,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-8": {
+      "frame": {
+        "x": 0,
+        "y": 64,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 64,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-9": {
+      "frame": {
+        "x": 15,
+        "y": 64,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 64,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-10": {
+      "frame": {
+        "x": 0,
+        "y": 80,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 80,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-11": {
+      "frame": {
+        "x": 15,
+        "y": 80,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 80,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-12": {
+      "frame": {
+        "x": 0,
+        "y": 96,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 96,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-13": {
+      "frame": {
+        "x": 15,
+        "y": 96,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 96,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-14": {
+      "frame": {
+        "x": 0,
+        "y": 112,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 112,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-15": {
+      "frame": {
+        "x": 15,
+        "y": 112,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 112,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-16": {
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 128,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-17": {
+      "frame": {
+        "x": 15,
+        "y": 128,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 128,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-18": {
+      "frame": {
+        "x": 0,
+        "y": 144,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 144,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-19": {
+      "frame": {
+        "x": 15,
+        "y": 144,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 144,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-20": {
+      "frame": {
+        "x": 0,
+        "y": 160,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 160,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    },
+    "pet_emo-21": {
+      "frame": {
+        "x": 15,
+        "y": 160,
+        "w": 15,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 160,
+        "w": 15,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 176
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "pet_emo.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 30,
+      "h": 176
+    },
+    "scale": "1"
+  }
+}

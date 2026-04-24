@@ -1,5 +1,6 @@
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
-import { ANIMATION, TEXTURE } from '@poposafari/types';
+import { ANIMATION, DEPTH, SFX, TEXTURE } from '@poposafari/types';
 import { getPokemonTexture } from '@poposafari/utils';
 import {
   calcOverworldTilePos,
@@ -8,6 +9,14 @@ import {
   TILE_PIXEL,
 } from '../overworld.constants';
 import { IOverworldBlockingRef, IOverworldMapAdapter, MovableObject } from './movable.object';
+import {
+  PET_CRY_TONE_BY_EMOTION,
+  PET_EMOTION_DURATION_MAX_MS,
+  PET_EMOTION_DURATION_MIN_MS,
+  PetEmotionId,
+  petEmotionAnimKey,
+  randomPetEmotionId,
+} from './pet-emotion';
 
 const PET_SCALE = 1.4;
 
@@ -28,6 +37,30 @@ const PET_TRAIL_SMOOTH_PER_SECOND = 17;
 /** shiny overlay를 포켓몬 표시 크기 대비 얼마나 크게 그릴지(여유 배수). */
 const SHINY_SIZE_MARGIN = 0.6;
 
+/** 펫 머리 위(보이는 픽셀 상단) 기준 emote의 y 오프셋(px, setOrigin(0.5,1) 기준 emote 바닥 위치). */
+const PET_EMOTE_OFFSET_Y = 10;
+
+/** 펫 부르르 떨기 효과의 최대 진폭(px, 좌우). IDLE 상태에서만 적용된다. */
+const PET_TREMBLE_AMPLITUDE_PX = 6;
+/** 긍정 감정 점프 높이(px). */
+const PET_JUMP_HEIGHT_PX = 22;
+/** 한 번의 점프(올라갔다 내려옴) 시간(ms). */
+const PET_JUMP_DURATION_MS = 280;
+/** 감정별 부르르 떨기 주기(ms). 짧을수록 빠르게 진동한다. */
+const PET_TREMBLE_PERIOD_BY_EMOTION: Record<PetEmotionId, number> = {
+  1: 1200, // 조용함 — 거의 안 흔들림
+  2: 80, // 깜짝 놀람 — 매우 빠른 떨림
+  3: 400, // 궁금 — 중간
+  4: 250, // 흥얼 — 리듬감 있는 중빠르기
+  5: 500, // 하트 — 느린 맥동
+  6: 160, // 탈이 남 — 오들오들
+  7: 350, // 기분 좋음 — 가볍게
+  8: 120, // 매우 기쁨 — 들뜬 빠른 진동
+  9: 1500, // 슬픔 — 아주 느리게 축 늘어짐
+  10: 220, // 살짝 삐침 — 짧은 경련
+  11: 70, // 개빡침 — 격렬한 진동
+};
+
 export class PetObject extends MovableObject {
   private frameBase: string;
   private pokedexId: string;
@@ -45,6 +78,13 @@ export class PetObject extends MovableObject {
 
   private shinySprite: Phaser.GameObjects.Sprite | null = null;
   private addToContainerFn: ((obj: Phaser.GameObjects.GameObject) => void) | null = null;
+
+  private currentEmotion: PetEmotionId = 1;
+  private emotionTimer: Phaser.Time.TimerEvent | null = null;
+  private emoteSprite: Phaser.GameObjects.Sprite | null = null;
+  private trembleOffsetX = 0;
+  private isTrembling = false;
+  private jumpOffsetY = 0;
 
   static summon(
     scene: GameScene,
@@ -111,6 +151,105 @@ export class PetObject extends MovableObject {
     this.snapTrailOffsetToTarget();
 
     if (isShiny) this.shinySprite = this.createShinySprite();
+
+    this.rollEmotion();
+  }
+
+  getCurrentEmotion(): PetEmotionId {
+    return this.currentEmotion;
+  }
+
+  rollEmotion(): void {
+    this.currentEmotion = randomPetEmotionId();
+    this.scheduleNextEmotionRoll();
+  }
+
+  private scheduleNextEmotionRoll(): void {
+    this.emotionTimer?.remove(false);
+    const delay = Phaser.Math.Between(PET_EMOTION_DURATION_MIN_MS, PET_EMOTION_DURATION_MAX_MS);
+    this.emotionTimer = this.scene.time.addEvent({
+      delay,
+      callback: () => this.rollEmotion(),
+    });
+  }
+
+  faceDirection(direction: DIRECTION): void {
+    this.lastDirection = direction;
+    this.startSpriteAnimation(this.animKey(direction));
+  }
+
+  playTremble(durationMs: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.isTrembling = true;
+      this.scene.time.delayedCall(durationMs, () => {
+        this.isTrembling = false;
+        this.trembleOffsetX = 0;
+        resolve();
+      });
+    });
+  }
+
+  playJump(count: number): Promise<void> {
+    const jumps = Math.max(1, Math.floor(count));
+    return new Promise<void>((resolve) => {
+      this.scene.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: PET_JUMP_DURATION_MS,
+        repeat: jumps - 1,
+        onUpdate: (tween) => {
+          const v = tween.getValue() ?? 0;
+          // sin 곡선으로 올라갔다 내려오는 포물선
+          this.jumpOffsetY = -Math.sin(v * Math.PI) * PET_JUMP_HEIGHT_PX;
+        },
+        onComplete: () => {
+          this.jumpOffsetY = 0;
+          resolve();
+        },
+      });
+    });
+  }
+
+  playEmote(attach?: (sprite: Phaser.GameObjects.Sprite) => void): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.emoteSprite?.destroy();
+      const sp = this.getSprite();
+      const frameData = (sp.frame as unknown as { data?: { spriteSourceSize?: { y?: number } } })
+        .data;
+      const trimY = frameData?.spriteSourceSize?.y ?? 0;
+      const visibleTop = sp.y - sp.displayHeight + trimY * sp.scaleY;
+      const emoteX = sp.x;
+      const emoteY = visibleTop + PET_EMOTE_OFFSET_Y;
+      const sprite = this.scene.add
+        .sprite(emoteX, emoteY, TEXTURE.PET_EMO)
+        .setOrigin(0.5, 1)
+        .setScale(3)
+        .setDepth(DEPTH.FOREGROUND + 3);
+      this.emoteSprite = sprite;
+      attach?.(sprite);
+
+      this.scene.getAudio().playEffect(SFX.EMO);
+      const cryKey = pokemonCryNames.includes(this.pokedexId)
+        ? this.pokedexId
+        : this.pokedexId.split('_')[0];
+      if (pokemonCryNames.includes(cryKey)) {
+        const tone = PET_CRY_TONE_BY_EMOTION[this.currentEmotion];
+        this.scene.getAudio().playEffect(cryKey, tone);
+      }
+
+      let elapsedLoops = 0;
+      sprite.on(Phaser.Animations.Events.ANIMATION_REPEAT, () => {
+        elapsedLoops++;
+        if (elapsedLoops >= 2) {
+          sprite.off(Phaser.Animations.Events.ANIMATION_REPEAT);
+          sprite.stop();
+          sprite.destroy();
+          if (this.emoteSprite === sprite) this.emoteSprite = null;
+          resolve();
+        }
+      });
+      sprite.play(petEmotionAnimKey(this.currentEmotion));
+    });
   }
 
   getShinySprite(): Phaser.GameObjects.Sprite | null {
@@ -158,6 +297,8 @@ export class PetObject extends MovableObject {
     } else if (isShiny && this.shinySprite) {
       this.applyShinySize(this.shinySprite);
     }
+
+    this.rollEmotion();
   }
 
   getPokedexId(): string {
@@ -190,9 +331,20 @@ export class PetObject extends MovableObject {
   }
 
   update(delta: number): void {
+    this.updateTremble();
     this.smoothTrailOffset(delta);
     super.update(delta);
     this.renderAtLogical();
+  }
+
+  private updateTremble(): void {
+    if (!this.isTrembling) {
+      if (this.trembleOffsetX !== 0) this.trembleOffsetX = 0;
+      return;
+    }
+    const period = PET_TREMBLE_PERIOD_BY_EMOTION[this.currentEmotion] ?? 500;
+    const phase = (this.scene.time.now / period) * Math.PI * 2;
+    this.trembleOffsetX = Math.sin(phase) * PET_TREMBLE_AMPLITUDE_PX;
   }
 
   getSpritePos(): { x: number; y: number } {
@@ -258,13 +410,15 @@ export class PetObject extends MovableObject {
   private renderAtLogical(): void {
     const ox = this.trailOffsetX ?? 0;
     const oy = this.trailOffsetY ?? 0;
-    const x = this.logicalX + ox;
-    const y = this.logicalY + oy;
-    this.getSprite().setPosition(x, y);
-    this.getShadow().setPosition(x, y);
-    this.getName().setPosition(x, y - this.nameOffsetY);
+    const baseX = this.logicalX + ox;
+    const baseY = this.logicalY + oy;
+    const spriteX = baseX + this.trembleOffsetX;
+    const spriteY = baseY + this.jumpOffsetY;
+    this.getSprite().setPosition(spriteX, spriteY);
+    this.getShadow().setPosition(baseX, baseY);
+    this.getName().setPosition(baseX, baseY - this.nameOffsetY);
     if (this.shinySprite) {
-      this.shinySprite.setPosition(x, y);
+      this.shinySprite.setPosition(spriteX, spriteY);
       this.shinySprite.setDepth(this.getSprite().depth + 0.05);
       this.shinySprite.setVisible(this.getSprite().visible);
     }
@@ -272,6 +426,13 @@ export class PetObject extends MovableObject {
 
   destroy(): void {
     this.clearFx();
+    this.emotionTimer?.remove(false);
+    this.emotionTimer = null;
+    this.emoteSprite?.destroy();
+    this.emoteSprite = null;
+    this.isTrembling = false;
+    this.trembleOffsetX = 0;
+    this.jumpOffsetY = 0;
     this.shinySprite?.destroy();
     this.shinySprite = null;
     super.destroy();
