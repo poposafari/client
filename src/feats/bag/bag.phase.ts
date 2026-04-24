@@ -12,6 +12,7 @@ import { PokemonPcUi } from '../pc/pokemon-pc.ui';
 import { PcLocalState } from '../pc/pc-local-state';
 import { OverworldUi } from '../overworld/overworld.ui';
 import { KeyItemRegistry } from '../key-items';
+import { getPokemonI18Name } from '@poposafari/utils';
 
 export class BagPhase implements IGamePhase {
   private ui: BagUi | null = null;
@@ -295,8 +296,7 @@ export class BagPhase implements IGamePhase {
         }
 
         const pokemonName =
-          selectedPokemon.nickname ??
-          i18next.t(`pokemon:${selectedPokemon.pokedexId}.name`, selectedPokemon.pokedexId);
+          selectedPokemon.nickname ?? getPokemonI18Name(selectedPokemon.pokedexId);
         const itemName = i18next.exists(`item:${itemId}.name`)
           ? i18next.t(`item:${itemId}.name`)
           : itemId;

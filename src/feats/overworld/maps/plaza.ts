@@ -128,6 +128,41 @@ export const p001Config: MapConfig = {
         },
       ],
     },
+    // ── [TEST] 이동 NPC: 사람 ─────────────────────────────────────
+    {
+      key: 'npc1',
+      name: 'walking_researcher',
+      x: 27,
+      y: 17,
+      direction: DIRECTION.DOWN,
+      type: 'human',
+      path: [
+        { direction: DIRECTION.RIGHT, tiles: 2, delayMs: 800 },
+        { direction: DIRECTION.LEFT, tiles: 2, delayMs: 800 },
+      ],
+      reaction: [
+        { key: 'talk', content: { text: 'msg:npc1_0', name: 'NPC' } },
+        { key: 'talk', content: { text: 'msg:npc1_1', name: 'NPC' } },
+      ],
+    },
+    // ── [TEST] 이동 NPC: 포켓몬 ───────────
+    {
+      key: 'pikachu_npc',
+      name: 'wild_pikachu',
+      x: 36,
+      y: 20,
+      direction: DIRECTION.DOWN,
+      type: 'pokemon',
+      pokedexId: '0025',
+      isShiny: false,
+      path: [
+        { direction: DIRECTION.RIGHT, tiles: 1, delayMs: 600 },
+        { direction: DIRECTION.DOWN, tiles: 1, delayMs: 600 },
+        { direction: DIRECTION.LEFT, tiles: 1, delayMs: 600 },
+        { direction: DIRECTION.UP, tiles: 1, delayMs: 600 },
+      ],
+      reaction: [{ key: 'talk', content: { text: 'msg:npc1_0', name: 'Pikachu' } }],
+    },
   ],
 };
 

@@ -59,6 +59,10 @@ export class MovableObject extends BaseObject {
     this.blockingRefs = refs;
   }
 
+  clearMovementQueue(): void {
+    this.movementDirectionQueue.length = 0;
+  }
+
   ready(direction: DIRECTION, animationKey: string, tiles = 1): void {
     const tx = this.tileX + directionToDelta(direction).dx * tiles;
     const ty = this.tileY + directionToDelta(direction).dy * tiles;

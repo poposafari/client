@@ -2,9 +2,19 @@ import { MapConfig } from '@poposafari/core/map.registry';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH } from '@poposafari/types';
 import { MAP_LAYER_SCALE_ZOOMED } from './overworld.constants';
-import { NpcObject, ProfessorNpcObject, SafariNpcObject, TriggerObject } from './objects';
+import {
+  HumanNpcObject,
+  MovingNpcObject,
+  NpcObject,
+  PokemonNpcObject,
+  ProfessorNpcObject,
+  SafariNpcObject,
+  TriggerObject,
+} from './objects';
 import { MartNpcObject } from './objects/special-npc.object';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+
+export type MapNpc = NpcObject | MovingNpcObject;
 
 export class MapView {
   private scene!: GameScene;
@@ -19,7 +29,7 @@ export class MapView {
   private foreground1Container!: Phaser.GameObjects.Container;
 
   private triggers: TriggerObject[] = [];
-  private npcs: NpcObject[] = [];
+  private npcs: MapNpc[] = [];
   private readonly scale = MAP_LAYER_SCALE_ZOOMED;
 
   constructor(scene: GameScene) {
@@ -48,7 +58,7 @@ export class MapView {
     return this.triggers;
   }
 
-  getNpcs(): NpcObject[] {
+  getNpcs(): MapNpc[] {
     return this.npcs;
   }
 
@@ -104,6 +114,10 @@ export class MapView {
           this.npcs.push(new SafariNpcObject(this.scene, n));
         } else if (n.special === 'mart') {
           this.npcs.push(new MartNpcObject(this.scene, n));
+        } else if (n.type === 'pokemon') {
+          this.npcs.push(new PokemonNpcObject(this.scene, n, this));
+        } else if (n.type === 'human') {
+          this.npcs.push(new HumanNpcObject(this.scene, n, this));
         } else {
           this.npcs.push(new NpcObject(this.scene, n));
         }

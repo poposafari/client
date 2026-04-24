@@ -317,7 +317,9 @@ export class BattleUi {
 
   /** "신난다-\n{{name}}을(를) 붙잡았다!" — talk 메시지(Z/ENTER 대기). */
   async showCaughtTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageCaughtNew', { name: this.getWildName() });
+    await this.showTalk('menu:battleMessageCaughtNew', {
+      name: getPokemonI18Name(this.getWildName()),
+    });
   }
 
   /** "안돼! 포켓몬이\n볼에서 나와버렸다!" — talk 메시지. */
