@@ -119,9 +119,15 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       scene,
     );
 
-    this.wildSprite = addImage(scene, wildTex.key, wildTex.frame, WILD_SPRITE.x, WILD_SPRITE.y)
-      .setScale(WILD_SPRITE.scale)
-      .setOrigin(0.5, 1);
+    this.wildSprite = addImage(
+      scene,
+      wildTex.key,
+      wildTex.frame,
+      WILD_SPRITE.x,
+      WILD_SPRITE.y,
+    ).setScale(WILD_SPRITE.scale);
+
+    this.applyVisibleFeetOrigin(this.wildSprite);
 
     this.wildShadow = addImage(scene, wildTex.key, wildTex.frame, WILD_BASE.x, WILD_BASE.y)
       .setScale(WILD_SPRITE.scale, WILD_SPRITE.scale * 0.3)
@@ -228,6 +234,21 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
   }
   getThrowItem() {
     return this.throwItem;
+  }
+
+  resetWildOrigin(): void {
+    this.applyVisibleFeetOrigin(this.wildSprite);
+  }
+
+  private applyVisibleFeetOrigin(img: Phaser.GameObjects.Image, originX: number = 0.5): void {
+    const f = img.frame as Phaser.Textures.Frame;
+    if (f.trimmed && f.realWidth > 0 && f.realHeight > 0) {
+      const ox = (f.x + f.width * originX) / f.realWidth;
+      const oy = (f.y + f.height) / f.realHeight;
+      img.setOrigin(ox, oy);
+    } else {
+      img.setOrigin(originX, 1);
+    }
   }
 
   private resolvePlayerBackKeys(): {

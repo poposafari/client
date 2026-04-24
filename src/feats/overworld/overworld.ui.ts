@@ -41,6 +41,7 @@ import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { getPokemonI18Name } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 
 const TRIGGER_HANDLERS: Record<
   string,
@@ -720,8 +721,12 @@ export class OverworldUi extends BaseUi {
     this.refreshPlayerBlockingRefs();
     this.refreshPetBlockingRefs();
 
-    // 스폰 연출: scale/alpha 0→본래값. WildPokemonObject의 기본 scale은 생성자에서 결정(1.4).
-    // 하드코딩하지 않고 현재 scale을 읽어 원복하도록 한다.
+    const pokedexId = obj.getPokedexId();
+    const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
+    if (pokemonCryNames.includes(cryKey)) {
+      this.scene.getAudio().playEffect(cryKey);
+    }
+
     const sprite = obj.getSprite();
     const shadow = obj.getShadow();
     const nameTag = obj.getName();
