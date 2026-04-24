@@ -743,6 +743,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.PC_PICK_UP, 'audio/se', 'pc_pick_up', 'ogg');
     this.scene.loadAudio(SFX.PC_PUT_DOWN, 'audio/se', 'pc_put_down', 'ogg');
     this.scene.loadAudio(SFX.BAG_CURSOR, 'audio/se', 'bag_cursor', 'ogg');
+    this.scene.loadAudio(SFX.BICYCLE, 'audio/se', 'bicycle', 'ogg');
+    this.scene.loadAudio(SFX.MART, 'audio/se', 'mart', 'ogg');
+    this.scene.loadAudio(SFX.EXP_GAIN, 'audio/se', 'exp_gain', 'ogg');
+    this.scene.loadAudio(SFX.EXP_FULL, 'audio/se', 'exp_full', 'ogg');
   }
 
   private createSprite() {
@@ -762,7 +766,14 @@ export class LoadingPhase implements IGamePhase {
   private createPetEmoSprite() {
     for (const id of PET_EMOTION_IDS) {
       const frames = petEmotionFramePair(id);
-      createAnimationFromFrameNames(this.scene, TEXTURE.PET_EMO, petEmotionAnimKey(id), frames, 4, -1);
+      createAnimationFromFrameNames(
+        this.scene,
+        TEXTURE.PET_EMO,
+        petEmotionAnimKey(id),
+        frames,
+        4,
+        -1,
+      );
     }
   }
 

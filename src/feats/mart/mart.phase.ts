@@ -1,6 +1,6 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { ApiError, MONEY_SYMBOL } from '@poposafari/types';
+import { ApiError, MONEY_SYMBOL, SFX } from '@poposafari/types';
 import { MenuUi } from '@poposafari/feats/menu/menu-ui';
 import { BaseBagUi, BagEntry } from '@poposafari/feats/bag/base-bag.ui';
 import i18next from 'i18next';
@@ -176,6 +176,7 @@ export class MartPhase implements IGamePhase {
           await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'));
           continue;
         }
+        this.scene.getAudio().playEffect(SFX.MART);
         user.setMoney(result.money);
         user.updateItemQuantity(result.item.itemId, result.item.quantity, result.item.register);
         this.buyUi.refresh();
@@ -300,6 +301,7 @@ export class MartPhase implements IGamePhase {
           await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'));
           continue;
         }
+        this.scene.getAudio().playEffect(SFX.MART);
         user.setMoney(result.money);
         user.decreaseItemQuantity(itemId, qty);
         this.sellUi!.refreshMoney();

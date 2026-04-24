@@ -7,6 +7,7 @@ import {
   KEY,
   PokemonData,
   type PokemonRank,
+  SFX,
   SYMBOL_MALE,
   TEXTCOLOR,
   TEXTSHADOW,
@@ -665,29 +666,37 @@ export class RewardUi extends BaseUi {
     let curExp = beforeExp;
     let remaining = expReward.gained;
 
-    while (remaining > 0 && !LEVEL_CURVE.isMaxLevel(curLevel)) {
-      if (this.skipRequested) break;
+    const audio = (this.scene as GameScene).getAudio();
+    const willFill = !LEVEL_CURVE.isMaxLevel(curLevel);
+    const expGainLoop = willFill ? audio.playEffectLoop(SFX.EXP_GAIN) : null;
 
-      const need = LEVEL_CURVE.expToNext(curLevel);
-      const canTake = need - curExp;
-      const take = Math.min(remaining, canTake);
-      const nextExp = curExp + take;
-
-      await this.tweenInnerTo(nextExp / need, innerMaxW, 700 * (take / Math.max(1, need)));
-
-      curExp = nextExp;
-      remaining -= take;
-      this.updateExpText(curLevel, curExp);
-
-      if (curExp >= need && curLevel < LEVEL_CURVE.USER_LEVEL_MAX) {
+    try {
+      while (remaining > 0 && !LEVEL_CURVE.isMaxLevel(curLevel)) {
         if (this.skipRequested) break;
-        await this.playLevelUpEffect(curLevel + 1);
-        curLevel += 1;
-        curExp = 0;
-        this.expInner.width = 0;
-        this.levelText?.setText(`Lv.${curLevel}`);
-        this.updateExpText(curLevel, 0);
+
+        const need = LEVEL_CURVE.expToNext(curLevel);
+        const canTake = need - curExp;
+        const take = Math.min(remaining, canTake);
+        const nextExp = curExp + take;
+
+        await this.tweenInnerTo(nextExp / need, innerMaxW, 700 * (take / Math.max(1, need)));
+
+        curExp = nextExp;
+        remaining -= take;
+        this.updateExpText(curLevel, curExp);
+
+        if (curExp >= need && curLevel < LEVEL_CURVE.USER_LEVEL_MAX) {
+          if (this.skipRequested) break;
+          await this.playLevelUpEffect(curLevel + 1);
+          curLevel += 1;
+          curExp = 0;
+          this.expInner.width = 0;
+          this.levelText?.setText(`Lv.${curLevel}`);
+          this.updateExpText(curLevel, 0);
+        }
       }
+    } finally {
+      audio.stopEffectLoop(expGainLoop);
     }
 
     this.snapToFinal(innerMaxW);
@@ -736,6 +745,7 @@ export class RewardUi extends BaseUi {
 
   private async playLevelUpEffect(newLevel: number): Promise<void> {
     const scene = this.scene as GameScene;
+    scene.getAudio().playEffect(SFX.EXP_FULL);
     const flash = addText(
       scene,
       CONST.expBarX,
