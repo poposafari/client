@@ -1,6 +1,6 @@
 import { BaseUi } from '@poposafari/core';
 import type { MapConfig, ReactionStep } from '@poposafari/core/map.registry';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   GetMeRes,
@@ -28,6 +28,8 @@ import {
   DoorObject,
   GroundItemObject,
   InteractiveObject,
+  isPositivePetEmotion,
+  LightObject,
   OtherPlayerObject,
   PetObject,
   PlayerObject,
@@ -36,6 +38,7 @@ import {
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import { getPokemonI18Name } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
 
 const TRIGGER_HANDLERS: Record<
@@ -131,6 +134,8 @@ export class OverworldUi extends BaseUi {
   private safariObjects: BaseObject[] = [];
   private worldContainer: Phaser.GameObjects.Container | null = null;
   private nameContainer: Phaser.GameObjects.Container | null = null;
+  private lightContainer: Phaser.GameObjects.Container | null = null;
+  private lightObjects: LightObject[] = [];
 
   // 사파리 타일 점유 추적 (incremental spawn 용). 맵 입장 시 초기화, 퇴장 시 비움.
   private spawnOccupied: Set<string> = new Set();
@@ -149,6 +154,7 @@ export class OverworldUi extends BaseUi {
 
   private doorTransitionPending = false;
   private wildEncounterPending = false;
+  private petTalkPending = false;
 
   private nextJumpEndGoesToSurf = false;
 
@@ -255,6 +261,7 @@ export class OverworldUi extends BaseUi {
   onInput(key: string): void {
     if (this.doorTransitionPending) return;
     if (this.wildEncounterPending) return;
+    if (this.petTalkPending) return;
     const user = this.scene.getUser();
     const state = user?.getOverworldMovementState();
     if (state === OverworldMovementState.JUMP) {
@@ -297,6 +304,10 @@ export class OverworldUi extends BaseUi {
     if (!this.player || !this.player.isMovementFinish()) return;
     const obj = this.getFacingInteractiveObject();
     if (!obj) {
+      if (this.isFacingPet()) {
+        void this.handlePetTalk();
+        return;
+      }
       const wild = this.getFacingWildPokemon();
       if (wild && wild.isCatchable() && !wild.isInteractionLocked()) {
         void this.handleWildTalk(wild);
@@ -314,6 +325,61 @@ export class OverworldUi extends BaseUi {
       return;
     }
     this.runReaction(steps);
+  }
+
+  private isFacingPet(): boolean {
+    if (!this.player || !this.pet) return false;
+    const dir = this.player.getLastDirection();
+    if (dir === DIRECTION.NONE) return false;
+    const { x: px, y: py } = this.player.getTilePos();
+    const { dx, dy } = directionToDelta(dir);
+    const { x: tx, y: ty } = this.pet.getTilePos();
+    return tx === px + dx && ty === py + dy;
+  }
+
+  private getPetDisplayName(): string {
+    const first = this.scene
+      .getUser()
+      ?.getParty()
+      .find((p) => p.partySlot === 0);
+    if (!first) return '';
+    if (first.nickname) return first.nickname;
+
+    return getPokemonI18Name(first.pokedexId);
+  }
+
+  private async handlePetTalk(): Promise<void> {
+    const pet = this.pet;
+    if (!pet || !this.player) return;
+    if (this.petTalkPending) return;
+
+    this.petTalkPending = true;
+    try {
+      pet.faceDirection(this.oppositeDirection(this.player.getLastDirection()));
+
+      const emotion = pet.getCurrentEmotion();
+
+      if (isPositivePetEmotion(emotion)) {
+        const jumpCount = Phaser.Math.Between(2, 3);
+        await pet.playJump(jumpCount);
+      } else {
+        await pet.playTremble(500);
+      }
+
+      await pet.playEmote((sprite) => this.worldContainer?.add(sprite));
+
+      const variants = i18next.t(`petEmotion:${emotion}`, {
+        returnObjects: true,
+      }) as unknown;
+      if (Array.isArray(variants) && variants.length > 0) {
+        const idx = Math.floor(Math.random() * variants.length);
+        const name = this.getPetDisplayName();
+        const line = i18next.t(`petEmotion:${emotion}.${idx}`, { name });
+        await this.scene.getMessage('talk').showMessage(line);
+      }
+    } finally {
+      this.petTalkPending = false;
+    }
   }
 
   private async handleWildTalk(wild: WildPokemonObject): Promise<void> {
@@ -580,7 +646,10 @@ export class OverworldUi extends BaseUi {
     return null;
   }
 
-  handleWildSpawn(payload: { mapId: string; wild: import('@poposafari/scenes').SafariWildInfo }): void {
+  handleWildSpawn(payload: {
+    mapId: string;
+    wild: import('@poposafari/scenes').SafariWildInfo;
+  }): void {
     const mapKey = this.mapConfig?.key;
     const info = this.scene.getSafariInfo().get(payload.mapId);
 
@@ -1005,6 +1074,27 @@ export class OverworldUi extends BaseUi {
     );
   }
 
+  private spawnLights(): void {
+    if (!this.mapView || !this.lightContainer) return;
+    const positions = this.mapView.getLightTilePositions();
+    if (positions.length === 0) return;
+
+    const isNight = DayNightFilter.getCurrentTimeLabel() === 'night';
+    for (const { x, y } of positions) {
+      const light = new LightObject(this.scene, x, y, { offsetX: +5, offsetY: +110 });
+      light.getSprite().setVisible(isNight);
+      this.lightContainer.add(light.getSprite());
+      this.lightObjects.push(light);
+    }
+  }
+
+  private handleGameTimeChanged = (timeOfDay: string): void => {
+    const isNight = timeOfDay === 'night';
+    for (const light of this.lightObjects) {
+      light.getSprite().setVisible(isNight);
+    }
+  };
+
   private handlePlayerTileMovedForPet = (payload: {
     tileX: number;
     tileY: number;
@@ -1034,6 +1124,12 @@ export class OverworldUi extends BaseUi {
       this.nameContainer = this.scene.add.container(0, 0);
       this.nameContainer.setScale(OVERWORLD_ZOOM);
       this.nameContainer.setDepth(DEPTH.OVERWORLD_NAME);
+
+      this.lightContainer = this.scene.add.container(0, 0);
+      this.lightContainer.setScale(OVERWORLD_ZOOM);
+      this.lightContainer.setDepth(DEPTH.FOREGROUND + 0.1);
+
+      this.spawnLights();
 
       for (const npc of this.mapView.getNpcs()) {
         this.worldContainer!.add(npc.getShadow());
@@ -1114,6 +1210,7 @@ export class OverworldUi extends BaseUi {
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMoved, this);
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMovedForPet);
       this.scene.events.on('wild_ttl_expired', this.handleWildTtlExpired);
+      this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
 
       this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
 
@@ -1145,6 +1242,7 @@ export class OverworldUi extends BaseUi {
   hide(): void {
     this.doorTransitionPending = false;
     this.wildEncounterPending = false;
+    this.petTalkPending = false;
     this.scene.cameras.main.setScroll(0, 0);
 
     this.unsubscribeParty?.();
@@ -1169,9 +1267,20 @@ export class OverworldUi extends BaseUi {
       this.nameContainer = null;
     }
 
+    for (const light of this.lightObjects) {
+      light.destroy();
+    }
+    this.lightObjects = [];
+    if (this.lightContainer) {
+      this.lightContainer.removeAll(false);
+      this.lightContainer.destroy();
+      this.lightContainer = null;
+    }
+
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMoved, this);
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMovedForPet);
     this.scene.events.off('wild_ttl_expired', this.handleWildTtlExpired);
+    this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
     this.cursorKeys = null;
 
     if (this.hud) {
@@ -1386,7 +1495,7 @@ export class OverworldUi extends BaseUi {
 
     if (!this.scene.getInputManager().isTop(this)) return;
 
-    if (this.wildEncounterPending) {
+    if (this.wildEncounterPending || this.petTalkPending) {
       this.lastFrameKeys = { up: false, down: false, left: false, right: false };
       this.wasIdleLastFrame = this.player.isMovementFinish();
       return;

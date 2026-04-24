@@ -1,0 +1,70 @@
+export const petEmotion: Record<string, string[]> = {
+  '1': [
+    '{{name}} is quietly looking around.',
+    '{{name}} keeps its mouth shut, staying perfectly still.',
+    '{{name}} seems calm and collected.',
+    '{{name}} is sitting silently without a sound.',
+  ],
+  '2': [
+    '{{name}} is wearing a startled expression!',
+    '{{name}} took a step back in surprise.',
+    "{{name}}'s eyes went wide with shock!",
+    "{{name}}'s fur bristled in a sudden jolt.",
+  ],
+  '3': [
+    '{{name}} is tilting its head to the side.',
+    '{{name}} is sniffing the air as if wondering about something.',
+    "{{name}}'s eyes sparkle with curiosity at every little sound.",
+    "{{name}}'s gaze darts around busily.",
+  ],
+  '4': [
+    '{{name}} is humming a cheerful tune.',
+    '{{name}} is doing a tiny dance to an imaginary beat.',
+    'Little musical notes seem to float out of {{name}}.',
+    '{{name}} is singing happily, tail swaying to the rhythm.',
+  ],
+  '5': [
+    '{{name}} is gazing around with loving eyes.',
+    'Tiny hearts drift up around {{name}}.',
+    '{{name}} is rubbing its cheek contentedly.',
+    "{{name}}'s face is full of affection.",
+    '{{name}} is leaning its body comfortably to one side.',
+  ],
+  '6': [
+    "{{name}} doesn't look too well...",
+    '{{name}} seems to regret whatever it just ate.',
+    "{{name}}'s face looks a little pale.",
+    '{{name}} is making a strange, grumbling sound in its stomach.',
+  ],
+  '7': [
+    '{{name}} is smiling, in a good mood.',
+    '{{name}} is prancing around in light steps.',
+    "{{name}}'s expression is brighter than usual today.",
+    '{{name}} lets out a contented yawn.',
+  ],
+  '8': [
+    "{{name}} is so happy it's bouncing on the spot!",
+    '{{name}} is wagging its tail like crazy in celebration!',
+    "{{name}}'s eyes are sparkling like stars!",
+    "{{name}} can't hide the joy that's bursting out of it!",
+  ],
+  '9': [
+    '{{name}} lowers its head, looking down in the dumps...',
+    "A hint of sadness lingers in {{name}}'s eyes.",
+    '{{name}} let out a quiet sigh.',
+    "{{name}}'s shoulders slump heavily today.",
+  ],
+  '10': [
+    '{{name}} turned its head away, slightly sulking.',
+    '{{name}} looks like something rubbed it the wrong way.',
+    "{{name}}'s brow is faintly furrowed.",
+    '{{name}} muttered something small under its breath.',
+  ],
+  '11': [
+    '{{name}} seems absolutely furious!',
+    'Waves of anger radiate out from {{name}}!',
+    '{{name}} is baring its teeth with a low growl.',
+    '{{name}} stomps the ground, huffing loudly!',
+    '{{name}} looks ready to burst with rage at any moment...',
+  ],
+};

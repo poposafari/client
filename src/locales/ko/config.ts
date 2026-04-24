@@ -9,6 +9,7 @@ import { nature } from './nature';
 import { object } from './object';
 import { option } from './option';
 import { pc } from './pc';
+import { petEmotion } from './pet-emotion';
 import { pokemon } from './pokemon';
 import { pokemonType } from './pokemon-type';
 import { pokemonHiddenMove } from './pokemon-hidden-move';
@@ -28,6 +29,7 @@ export const koConfig = {
   costume: costume,
   option: option,
   pc: pc,
+  petEmotion: petEmotion,
   mart: mart,
   safari: safari,
   splash: splash,

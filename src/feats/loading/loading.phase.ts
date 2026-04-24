@@ -10,6 +10,11 @@ import {
 import { LoadingUi } from './loading.ui';
 import { WelcomePhase } from '../welcome/welcome.phase';
 import { p001Config } from '../overworld';
+import {
+  PET_EMOTION_IDS,
+  petEmotionAnimKey,
+  petEmotionFramePair,
+} from '../overworld/objects/pet-emotion';
 
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { s001Config, s002Config } from '../overworld/maps/safari';
@@ -491,6 +496,8 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_MART, 'ui/bgs', 'bg_mart');
     this.scene.loadImage(TEXTURE.BG_MART_SELL, 'ui/bgs', 'bg_sell');
 
+    this.scene.loadImage(TEXTURE.LIGHT, 'ui', 'light');
+
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
     // }
@@ -555,6 +562,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.CURSOR_MOUSE, 'ui', 'cursor_mouse');
 
     this.scene.loadAtlas(TEXTURE.EMO, 'ui', 'emo', 'emo');
+    this.scene.loadAtlas(TEXTURE.PET_EMO, 'ui/pokemons', 'pet_emo', 'pet_emo');
     this.scene.loadAtlas(TEXTURE.SPARKLE, 'ui', 'sparkle', 'sparkle');
 
     this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
@@ -747,7 +755,15 @@ export class LoadingPhase implements IGamePhase {
     this.createPokemonCallAnimation();
     this.createPokemonRecallAnimation();
     this.createEmoSprite();
+    this.createPetEmoSprite();
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
+  }
+
+  private createPetEmoSprite() {
+    for (const id of PET_EMOTION_IDS) {
+      const frames = petEmotionFramePair(id);
+      createAnimationFromFrameNames(this.scene, TEXTURE.PET_EMO, petEmotionAnimKey(id), frames, 4, -1);
+    }
   }
 
   private createEmoSprite() {

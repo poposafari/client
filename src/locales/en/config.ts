@@ -5,6 +5,7 @@ import { menu } from './menu';
 import { msg } from './message';
 import { option } from './option';
 import { pc } from './pc';
+import { petEmotion } from './pet-emotion';
 import { pokemonType } from './pokemon-type';
 import { pokemonHiddenMove } from './pokemon-hidden-move';
 import { mart } from './mart';
@@ -19,6 +20,7 @@ export const enConfig = {
   costume: costume,
   option: option,
   pc: pc,
+  petEmotion: petEmotion,
   mart: mart,
   safari: safari,
   splash: splash,
