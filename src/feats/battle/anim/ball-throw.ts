@@ -144,9 +144,9 @@ export async function playBallThrow(
     duration: 120,
     ease: EASE.SINE_EASEOUT,
   });
-  // origin (0.5,1)→(0.5,0.5) 전환 시 시각적 위치 보정
+
   const savedY = wild.y;
-  wild.y -= wild.displayHeight / 2;
+  wild.y -= (wild.originY - 0.5) * wild.displayHeight;
   wild.setOrigin(0.5, 0.5);
   wild.setTintFill(0xffffff);
   wildShadow.setTintFill(0x000000);
@@ -168,7 +168,7 @@ export async function playBallThrow(
   ]);
   wild.clearTint();
   wildShadow.clearTint();
-  wild.setOrigin(0.5, 1);
+  sprite.resetWildOrigin();
   wild.y = savedY;
   throwItem.setTexture(TEXTURE.SAFARI_BALL_THROW).setFrame(`${TEXTURE.SAFARI_BALL_THROW}-0`);
 
@@ -307,7 +307,7 @@ export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Pr
   ]);
 
   wild.clearTint();
-  wild.setOrigin(0.5, 1);
+  sprite.resetWildOrigin();
   wild.y = centerY + finalHeight / 2;
 
   resetThrowItem(throwItem);
