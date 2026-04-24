@@ -51,6 +51,17 @@ export type ReactionStep =
 
 export type SpecialNpc = 'professor' | 'safari' | 'mart';
 
+export type NpcType = 'human' | 'pokemon';
+
+/** MovingNpc 경로 한 스텝 */
+export interface NpcPathStep {
+  direction: DIRECTION;
+  /** 이동할 타일 수 (1 이상) */
+  tiles: number;
+  /** 이 스텝 시작 전 대기 시간 (ms). 0 이상. */
+  delayMs: number;
+}
+
 export interface NpcConfig {
   key: string;
   name: string;
@@ -63,6 +74,18 @@ export interface NpcConfig {
   direction: DIRECTION;
   /** Z/Enter 시 순차 재생할 대화 스크립트 */
   reaction: ReactionStep[];
+  /**
+   * 이동 NPC 타입. 생략 시 기존 정적 NpcObject로 생성된다.
+   * - 'human': 일반 사람 NPC. key를 텍스처로 사용.
+   * - 'pokemon': 포켓몬 NPC. pokemon.overworld 텍스처 + 대화 시 cry 재생.
+   */
+  type?: NpcType;
+  /** type이 지정된 경우 순환 이동 경로. 생략/빈 배열이면 제자리 대기. */
+  path?: NpcPathStep[];
+  /** type === 'pokemon'일 때 필수. 예: '0025', '0025_galar'. */
+  pokedexId?: string;
+  /** type === 'pokemon'일 때 선택. shiny 여부. */
+  isShiny?: boolean;
 }
 
 export interface TriggerConfig {

@@ -30,6 +30,7 @@ import {
   InteractiveObject,
   isPositivePetEmotion,
   LightObject,
+  MovingNpcObject,
   OtherPlayerObject,
   PetObject,
   PlayerObject,
@@ -203,7 +204,7 @@ export class OverworldUi extends BaseUi {
     return null;
   }
 
-  getFacingInteractiveObject(): InteractiveObject | null {
+  getFacingInteractiveObject(): InteractiveObject | MovingNpcObject | null {
     if (!this.player || !this.mapView) return null;
     const dir = this.player.getLastDirection();
     if (dir === DIRECTION.NONE) return null;
@@ -292,7 +293,7 @@ export class OverworldUi extends BaseUi {
         break;
       case KEY.Z:
       case KEY.ENTER:
-        this.handleTalkAction();
+        void this.handleTalkAction();
         break;
       // KEY.ESC 등 추가 키는 여기서 처리
       default:
@@ -300,7 +301,7 @@ export class OverworldUi extends BaseUi {
     }
   }
 
-  private handleTalkAction(): void {
+  private async handleTalkAction(): Promise<void> {
     if (!this.player || !this.player.isMovementFinish()) return;
     const obj = this.getFacingInteractiveObject();
     if (!obj) {
@@ -315,16 +316,41 @@ export class OverworldUi extends BaseUi {
       return;
     }
     if (obj instanceof GroundItemObject) {
-      this.handleGroundItemPick(obj);
+      void this.handleGroundItemPick(obj);
       return;
+    }
+
+    const movingNpc = obj instanceof MovingNpcObject ? obj : null;
+    if (movingNpc) {
+      movingNpc.pauseMovement();
+      await this.waitForMovingNpcIdle(movingNpc);
     }
     const steps = obj.reaction(this.player.getLastDirection());
-    const phaseKey = obj.getPhaseRequest?.() ?? null;
-    if (phaseKey) {
-      this.onInteractivePhaseRequested?.(obj, phaseKey);
-      return;
+    if (obj instanceof InteractiveObject) {
+      const phaseKey = obj.getPhaseRequest?.() ?? null;
+      if (phaseKey) {
+        this.onInteractivePhaseRequested?.(obj, phaseKey);
+        return;
+      }
     }
-    this.runReaction(steps);
+    try {
+      await this.runReaction(steps);
+    } finally {
+      movingNpc?.resumeMovement();
+    }
+  }
+
+  private waitForMovingNpcIdle(npc: MovingNpcObject): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const check = (): void => {
+        if (!npc.isInMotion()) {
+          resolve();
+          return;
+        }
+        this.scene.time.delayedCall(16, check);
+      };
+      check();
+    });
   }
 
   private isFacingPet(): boolean {
@@ -780,28 +806,26 @@ export class OverworldUi extends BaseUi {
     });
   }
 
-  private runReaction(steps: ReactionStep[]): void {
+  private async runReaction(steps: ReactionStep[]): Promise<void> {
     if (steps.length === 0) return;
-    (async () => {
-      for (const step of steps) {
-        const text = i18next.t(step.content.text);
-        const config = {
-          name: step.content.name,
-          speed: step.content.speed,
-          resolveWhen: step.content.resolveWhen,
-        };
-        if (step.key === 'talk') {
-          await this.scene.getMessage('talk').showMessage(text, config);
-        } else if (step.key === 'question') {
-          await this.scene.getMessage('question').showMessage(text, config);
-        } else {
-          await this.scene.getMessage('notice').showMessage(text, {
-            ...config,
-            window: step.content.window ?? TEXTURE.WINDOW_NOTICE_0,
-          });
-        }
+    for (const step of steps) {
+      const text = i18next.t(step.content.text);
+      const config = {
+        name: step.content.name,
+        speed: step.content.speed,
+        resolveWhen: step.content.resolveWhen,
+      };
+      if (step.key === 'talk') {
+        await this.scene.getMessage('talk').showMessage(text, config);
+      } else if (step.key === 'question') {
+        await this.scene.getMessage('question').showMessage(text, config);
+      } else {
+        await this.scene.getMessage('notice').showMessage(text, {
+          ...config,
+          window: step.content.window ?? TEXTURE.WINDOW_NOTICE_0,
+        });
       }
-    })();
+    }
   }
 
   private handleKeyJ(): void {
@@ -1460,6 +1484,30 @@ export class OverworldUi extends BaseUi {
     }
   }
 
+  tickBackgroundObjects(delta: number): void {
+    this.pet?.update(delta);
+    for (const other of this.otherPlayers.values()) other.update(delta);
+    this.tickMovingNpcs(delta);
+  }
+
+  private tickMovingNpcs(delta: number): void {
+    if (!this.mapView) return;
+    const npcs = this.mapView.getNpcs();
+    for (const npc of npcs) {
+      if (!(npc instanceof MovingNpcObject)) continue;
+
+      const refs: BaseObject[] = [];
+      if (this.player) refs.push(this.player);
+      if (this.pet) refs.push(this.pet);
+      for (const other of npcs) {
+        if (other !== npc) refs.push(other);
+      }
+      for (const obj of this.safariObjects) refs.push(obj);
+      npc.setBlockingRefs(refs);
+      npc.update(delta);
+    }
+  }
+
   update(_time: number, delta: number): void {
     if (!this.player || !this.cursorKeys) return;
 
@@ -1467,6 +1515,7 @@ export class OverworldUi extends BaseUi {
       this.player.update(delta);
       this.pet?.update(delta);
       for (const other of this.otherPlayers.values()) other.update(delta);
+      this.tickMovingNpcs(delta);
 
       for (const obj of this.safariObjects) {
         if (obj instanceof WildPokemonObject) {
@@ -1486,8 +1535,8 @@ export class OverworldUi extends BaseUi {
     this.player.update(delta);
     this.pet?.update(delta);
     for (const other of this.otherPlayers.values()) other.update(delta);
+    this.tickMovingNpcs(delta);
 
-    // 야생 포켓몬 랜덤 워크 진행. 메뉴/UI push 중에도 계속 움직이는 것이 정책.
     this.tickWildPokemons(delta);
 
     this.sortWorldContainerByDepth();

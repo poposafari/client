@@ -753,6 +753,7 @@ export class LoadingPhase implements IGamePhase {
     this.createPlayerOverworldSprite();
     this.createPlayerBackSprite();
     this.createNpcSprite();
+    this.createNpcWalkAnimations();
     this.createDoorSprite();
     this.createPokemonIconAnimations();
     this.createPokemonOverworldAnimations();
@@ -1318,6 +1319,35 @@ export class LoadingPhase implements IGamePhase {
   private createNpcSprite() {
     for (let i = 0; i <= MAX_NPC; i++) {
       createSpriteAnimation(this.scene, `npc${i}`, ANIMATION.NPC);
+    }
+  }
+
+  private createNpcWalkAnimations(): void {
+    const directionRanges = [
+      ['down', 0, 3],
+      ['left', 4, 7],
+      ['right', 8, 11],
+      ['up', 12, 15],
+    ] as const;
+
+    for (let i = 0; i <= MAX_NPC; i++) {
+      const textureKey = `npc${i}`;
+      const texture = this.scene.textures.get(textureKey);
+      if (!texture?.getFrameNames) continue;
+      const frameNames = texture.getFrameNames();
+
+      for (const [dir, start, end] of directionRanges) {
+        const frames: string[] = [];
+        for (let idx = start; idx <= end; idx++) {
+          const frameName = `npc-${idx}`;
+          if (!frameNames.includes(frameName)) break;
+          frames.push(frameName);
+        }
+        if (frames.length !== end - start + 1) continue;
+        const animKey = `${textureKey}_walk_${dir}`;
+        if (this.scene.anims.exists(animKey)) continue;
+        createAnimationFromFrameNames(this.scene, textureKey, animKey, frames, 8, -1);
+      }
     }
   }
 
