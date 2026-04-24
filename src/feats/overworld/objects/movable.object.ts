@@ -76,6 +76,12 @@ export class MovableObject extends BaseObject {
     }
     this.movementBlocking = false;
     this.movementDirectionQueue.push({ direction, animationKey, tiles });
+    this.scene.events.emit('entity_tile_pending', {
+      entity: this,
+      tileX: tx,
+      tileY: ty,
+      direction,
+    });
   }
 
   update(delta: number): void {
@@ -100,6 +106,8 @@ export class MovableObject extends BaseObject {
         this.tileX + deltaPos.dx * this.currentMoveTiles,
         this.tileY + deltaPos.dy * this.currentMoveTiles,
       );
+
+      this.setSpriteDepth(this.tileY);
       this.onTileMoved(this.tileX, this.tileY, this.currentDirection);
       this.movementCheck = false;
     }

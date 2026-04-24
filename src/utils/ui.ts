@@ -378,10 +378,9 @@ export function getSpriteAnimationFrames(
   return ret;
 }
 
-/** 로딩에서 사용하는 _0, _1 접미사 제거 (player_overworld_walk_down_0 → player_overworld_walk_down) */
 function normalizeOverworldAnimationKey(animation: ANIMATION | string): string {
   const s = String(animation);
-  const m = s.match(/^(.+)_[01]$/);
+  const m = s.match(/^(.+_(?:up|down|left|right))_[01]$/);
   return m ? m[1] : s;
 }
 
@@ -413,6 +412,10 @@ function getSpriteAnimationFrameSize(animation: ANIMATION | string) {
       break;
     case ANIMATION.OVERWORLD_SHINY:
       ret = 15;
+      break;
+    case ANIMATION.OVERWORLD_GRASS_1:
+    case ANIMATION.OVERWORLD_GRASS_2:
+      ret = 10;
       break;
   }
   return ret;
@@ -450,6 +453,10 @@ function getSpriteAnimationFrameRate(animation: ANIMATION | string) {
       break;
     case ANIMATION.OVERWORLD_SHINY:
       ret = 12;
+      break;
+    case ANIMATION.OVERWORLD_GRASS_1:
+    case ANIMATION.OVERWORLD_GRASS_2:
+      ret = 5;
       break;
   }
   return ret;

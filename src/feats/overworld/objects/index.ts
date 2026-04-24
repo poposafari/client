@@ -1,5 +1,6 @@
 export * from './base.object';
 export * from './door.object';
+export * from './grass.object';
 export * from './ground-item.object';
 export * from './human-npc.object';
 export * from './interactive.object';

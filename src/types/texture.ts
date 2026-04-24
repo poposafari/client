@@ -73,6 +73,10 @@ export const enum TEXTURE {
   EMO = 'emo',
   SPARKLE = 'sparkle',
   OVERWORLD_SHINY = 'overworld_shiny',
+  OVERWORLD_GRASS_1 = 'overworld_grass_1',
+  OVERWORLD_GRASS_1_B = 'overworld_grass_1_b',
+  OVERWORLD_GRASS_2 = 'overworld_grass_2',
+  OVERWORLD_GRASS_2_B = 'overworld_grass_2_b',
   SAFARI_BALL_THROW = 'safari-ball_0',
   SAFARI_BALL_OPEN = 'safari-ball_1',
   SAFARI_STAR = 'safari_star',
@@ -120,6 +124,10 @@ export const enum ANIMATION {
   NPC = 'npc',
   DOOR = 'door',
   OVERWORLD_SHINY = 'overworld_shiny',
+  OVERWORLD_GRASS_1 = 'overworld_grass_1',
+  OVERWORLD_GRASS_1_B = 'overworld_grass_1_b',
+  OVERWORLD_GRASS_2 = 'overworld_grass_2',
+  OVERWORLD_GRASS_2_B = 'overworld_grass_2_b',
 }
 
 export const enum TILE {
