@@ -26,6 +26,7 @@ import {
 import {
   BaseObject,
   DoorObject,
+  GrassObject,
   GroundItemObject,
   InteractiveObject,
   isPositivePetEmotion,
@@ -159,6 +160,11 @@ export class OverworldUi extends BaseUi {
   private petTalkPending = false;
 
   private nextJumpEndGoesToSurf = false;
+
+  /** 엔티티별 grass 이펙트. 각 엔티티가 grass 타일에 서 있으면 1개 유지. */
+  private grassByEntity: Map<BaseObject, GrassObject> = new Map();
+  /** 엔티티의 마지막 관측 tile — 변경된 경우에만 grass 갱신. */
+  private grassLastTile: Map<BaseObject, { x: number; y: number }> = new Map();
 
   private pet: PetObject | null = null;
   private petOwnerPokemonId: number | null = null;
@@ -805,6 +811,7 @@ export class OverworldUi extends BaseUi {
       duration: 500,
       ease: 'Sine.easeIn',
       onComplete: () => {
+        this.releaseGrassForEntity(obj);
         this.removeSafariObject(obj as unknown as InteractiveObject);
         this.markTileFree(pos);
       },
@@ -973,6 +980,7 @@ export class OverworldUi extends BaseUi {
       this.emitPetChange(String(first!.pokedexId), first!.isShiny);
     };
     if (this.pet) {
+      this.releaseGrassForEntity(this.pet);
       this.pet.destroy();
       this.pet = null;
       this.refreshWildBlockingRefs();
@@ -1097,6 +1105,7 @@ export class OverworldUi extends BaseUi {
     pet.recall(
       (obj) => this.worldContainer?.add(obj),
       () => {
+        this.releaseGrassForEntity(pet);
         if (this.pet === pet) {
           this.pet = null;
           this.refreshWildBlockingRefs();
@@ -1242,8 +1251,12 @@ export class OverworldUi extends BaseUi {
 
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMoved, this);
       this.scene.events.on('player_tile_moved', this.handlePlayerTileMovedForPet);
+      this.scene.events.on('entity_tile_pending', this.handleEntityTilePending);
       this.scene.events.on('wild_ttl_expired', this.handleWildTtlExpired);
       this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
+
+      // 초기 스폰 타일이 grass라면 즉시 반영
+      this.updateGrassForEntity(this.player, this.player.getTileX(), this.player.getTileY());
 
       this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
 
@@ -1289,6 +1302,8 @@ export class OverworldUi extends BaseUi {
     this.petRecalling = false;
     this.prevMovementState = null;
 
+    this.releaseAllGrass();
+
     if (this.worldContainer) {
       this.worldContainer.removeAll(false);
       this.worldContainer.destroy();
@@ -1312,6 +1327,7 @@ export class OverworldUi extends BaseUi {
 
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMoved, this);
     this.scene.events.off('player_tile_moved', this.handlePlayerTileMovedForPet);
+    this.scene.events.off('entity_tile_pending', this.handleEntityTilePending);
     this.scene.events.off('wild_ttl_expired', this.handleWildTtlExpired);
     this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
     this.cursorKeys = null;
@@ -1407,17 +1423,121 @@ export class OverworldUi extends BaseUi {
     if (this.nameContainer) {
       this.nameContainer.remove(other.getName());
     }
+    this.releaseGrassForEntity(other);
+    const otherPet = other.getPet();
+    if (otherPet) this.releaseGrassForEntity(otherPet);
     this.otherPlayers.delete(userId);
     other.destroy();
     this.sortWorldContainerByDepth();
   }
 
-  private handlePlayerTileMoved(): void {
+  private handlePlayerTileMoved(payload?: {
+    tileX: number;
+    tileY: number;
+    direction?: DIRECTION;
+  }): void {
     if (!this.player) return;
+
+    const tileX = payload?.tileX ?? this.player.getTileX();
+    const tileY = payload?.tileY ?? this.player.getTileY();
+    this.updateGrassForEntity(this.player, tileX, tileY, payload?.direction);
+
     const user = this.scene.getUser();
     if (user?.getOverworldMovementState() !== OverworldMovementState.JUMP) return;
     this.emitMoveToServer(this.player.getLastDirection());
   }
+
+  private syncGrassForEntity(entity: BaseObject | null | undefined): void {
+    if (!entity) return;
+    if (!entity.getSprite().active) {
+      this.releaseGrassForEntity(entity);
+      return;
+    }
+
+    const grass = this.grassByEntity.get(entity);
+    if (grass && !this.isEntityInMotion(entity)) grass.startBackAnim();
+
+    const cx = entity.getTileX();
+    const cy = entity.getTileY();
+    const last = this.grassLastTile.get(entity);
+    if (last && last.x === cx && last.y === cy) return;
+    this.grassLastTile.set(entity, { x: cx, y: cy });
+    this.updateGrassForEntity(entity, cx, cy);
+  }
+
+  private updateGrassForEntity(
+    entity: BaseObject,
+    tileX: number,
+    tileY: number,
+    direction?: DIRECTION,
+  ): void {
+    const variant = this.mapView?.getGrassVariantAt(tileX, tileY) ?? null;
+    const existing = this.grassByEntity.get(entity);
+
+    if (!variant) {
+      if (existing) {
+        existing.destroyAfterAnim();
+        this.grassByEntity.delete(entity);
+      }
+      return;
+    }
+
+    if (
+      existing &&
+      existing.getTileX() === tileX &&
+      existing.getTileY() === tileY &&
+      existing.getVariant() === variant
+    ) {
+      return;
+    }
+
+    existing?.destroyAfterAnim();
+
+    const deferBackAnim = direction === DIRECTION.UP;
+    const grass = new GrassObject(this.scene, tileX, tileY, variant, { deferBackAnim });
+    this.worldContainer?.add(grass.getSprite());
+    const back = grass.getBackSprite();
+    if (back) this.worldContainer?.add(back);
+    this.grassByEntity.set(entity, grass);
+  }
+
+  private isEntityInMotion(entity: BaseObject): boolean {
+    const m = entity as Partial<{ isInMotion(): boolean }>;
+    return m.isInMotion?.() ?? false;
+  }
+
+  private releaseGrassForEntity(entity: BaseObject): void {
+    const existing = this.grassByEntity.get(entity);
+    if (existing) {
+      existing.destroyAfterAnim();
+      this.grassByEntity.delete(entity);
+    }
+    this.grassLastTile.delete(entity);
+  }
+
+  private releaseAllGrass(): void {
+    for (const grass of this.grassByEntity.values()) grass.destroy();
+    this.grassByEntity.clear();
+    this.grassLastTile.clear();
+  }
+
+  private handleEntityTilePending = (payload: {
+    entity: BaseObject;
+    tileX: number;
+    tileY: number;
+    direction?: DIRECTION;
+  }): void => {
+    if (!this.mapView) return;
+    const variant = this.mapView.getGrassVariantAt(payload.tileX, payload.tileY);
+    if (!variant) return;
+
+    const prev = this.grassLastTile.get(payload.entity);
+    if (prev && prev.x === payload.tileX && prev.y === payload.tileY) return;
+
+    // 이후 syncGrassForEntity가 중복 spawn하지 않도록 캐시를 먼저 갱신.
+    this.grassLastTile.set(payload.entity, { x: payload.tileX, y: payload.tileY });
+    this.updateGrassForEntity(payload.entity, payload.tileX, payload.tileY, payload.direction);
+  };
 
   // [MOVE-DEBUG] emit 카운터
   private moveEmitCount = 0;
@@ -1485,13 +1605,19 @@ export class OverworldUi extends BaseUi {
           obj.freezeRandomWalk(false);
         }
         obj.update(delta);
+        this.syncGrassForEntity(obj);
       }
     }
   }
 
   tickBackgroundObjects(delta: number): void {
     this.pet?.update(delta);
-    for (const other of this.otherPlayers.values()) other.update(delta);
+    this.syncGrassForEntity(this.pet);
+    for (const other of this.otherPlayers.values()) {
+      other.update(delta);
+      this.syncGrassForEntity(other);
+      this.syncGrassForEntity(other.getPet());
+    }
     this.tickMovingNpcs(delta);
   }
 
@@ -1510,6 +1636,7 @@ export class OverworldUi extends BaseUi {
       for (const obj of this.safariObjects) refs.push(obj);
       npc.setBlockingRefs(refs);
       npc.update(delta);
+      this.syncGrassForEntity(npc);
     }
   }
 
@@ -1538,8 +1665,14 @@ export class OverworldUi extends BaseUi {
     }
 
     this.player.update(delta);
+    this.syncGrassForEntity(this.player);
     this.pet?.update(delta);
-    for (const other of this.otherPlayers.values()) other.update(delta);
+    this.syncGrassForEntity(this.pet);
+    for (const other of this.otherPlayers.values()) {
+      other.update(delta);
+      this.syncGrassForEntity(other);
+      this.syncGrassForEntity(other.getPet());
+    }
     this.tickMovingNpcs(delta);
 
     this.tickWildPokemons(delta);

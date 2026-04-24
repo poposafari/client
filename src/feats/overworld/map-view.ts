@@ -207,6 +207,16 @@ export class MapView {
     return positions;
   }
 
+  getGrassVariantAt(tileX: number, tileY: number): 1 | 2 | null {
+    if (!this.map) return null;
+    const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');
+    if (!tile || tile.index === -1) return null;
+    const type = tile.properties?.type;
+    if (type === 'grass_1') return 1;
+    if (type === 'grass_2') return 2;
+    return null;
+  }
+
   getLightTilePositions(): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
     if (!this.map) return positions;

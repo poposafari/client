@@ -564,6 +564,20 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAtlas(TEXTURE.EMO, 'ui', 'emo', 'emo');
     this.scene.loadAtlas(TEXTURE.PET_EMO, 'ui/pokemons', 'pet_emo', 'pet_emo');
     this.scene.loadAtlas(TEXTURE.SPARKLE, 'ui', 'sparkle', 'sparkle');
+    this.scene.loadAtlas(TEXTURE.OVERWORLD_GRASS_1, 'ui', 'overworld_grass_1', 'overworld_grass_1');
+    this.scene.loadAtlas(
+      TEXTURE.OVERWORLD_GRASS_1_B,
+      'ui',
+      'overworld_grass_1_b',
+      'overworld_grass_1_b',
+    );
+    this.scene.loadAtlas(TEXTURE.OVERWORLD_GRASS_2, 'ui', 'overworld_grass_2', 'overworld_grass_2');
+    this.scene.loadAtlas(
+      TEXTURE.OVERWORLD_GRASS_2_B,
+      'ui',
+      'overworld_grass_2_b',
+      'overworld_grass_2_b',
+    );
 
     this.scene.loadAtlas(TEXTURE.TYPES, 'ui', TEXTURE.TYPES, TEXTURE.TYPES);
     this.scene.loadAtlas(TEXTURE.TYPES_EMPTY, 'ui', TEXTURE.TYPES_EMPTY, TEXTURE.TYPES_EMPTY);
@@ -762,6 +776,10 @@ export class LoadingPhase implements IGamePhase {
     this.createEmoSprite();
     this.createPetEmoSprite();
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
+    createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1, ANIMATION.OVERWORLD_GRASS_1);
+    createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1_B, ANIMATION.OVERWORLD_GRASS_1_B);
+    createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2, ANIMATION.OVERWORLD_GRASS_2);
+    createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2_B, ANIMATION.OVERWORLD_GRASS_2_B);
   }
 
   private createPetEmoSprite() {

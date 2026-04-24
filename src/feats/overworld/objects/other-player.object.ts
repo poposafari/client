@@ -231,6 +231,13 @@ export class OtherPlayerObject extends BaseObject {
     const [px, py] = calcOverworldTilePos(targetX, targetY);
     const duration = durationMs ?? OtherPlayerObject.DEFAULT_MOVE_DURATION_MS;
 
+    this.scene.events.emit('entity_tile_pending', {
+      entity: this,
+      tileX: targetX,
+      tileY: targetY,
+      direction: toDIRECTION(dir),
+    });
+
     this.startMoveAnimation(moveType, dir);
     if (moveType && moveType !== 'jump') this.animStep++;
 
@@ -351,6 +358,10 @@ export class OtherPlayerObject extends BaseObject {
 
   getPet(): PetObject | null {
     return this.pet;
+  }
+
+  isInMotion(): boolean {
+    return this.moveTween !== null;
   }
 
   setPet(pokedexId: string, isShiny: boolean, withFx: boolean): void {
