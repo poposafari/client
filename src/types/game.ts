@@ -5,6 +5,8 @@ export const SYMBOL_MALE = '♂';
 export const MONEY_SYMBOL = '';
 export const SYMBOL_ARROW_UP = '▲';
 export const SYMBOL_ARROW_DOWN = '▼';
+export const SYMBOL_ARROW_LEFT = '←';
+export const SYMBOL_ARROW_RIGHT = '→';
 
 export const PC_BG_CNT = 39;
 
@@ -16,10 +18,7 @@ export enum OptionKey {
   SFX_VOLUME = 'sfx_volume',
   BGM_VOLUME = 'bgm_volume',
   WINDOW = 'window',
-  PC_TUTORIAL = 'pc_tutorial',
-  BATTLE_TUTORIAL = 'battle_tutorial',
-  BAG_TUTORIAL = 'bag_tutorial',
-  SAFFARI_TUTORIAL = 'safari_tutorial',
+  WILD_SPAWN_CRY = 'wild_spawn_cry',
   /** 언어 옵션 (i18nextLng). OptionManager 저장/조회용. */
   LANGUAGE = 'i18nextLng',
 }

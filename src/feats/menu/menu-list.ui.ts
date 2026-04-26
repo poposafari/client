@@ -426,7 +426,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       for (let i = 0; i < N; i++) {
         const text = list[i] as Phaser.GameObjects.Text;
         text.setText(parts[i].text);
-        if (text.setColor) text.setColor(parts[i].color ?? TEXTCOLOR.WHITE);
+        const newColor = parts[i].color ?? TEXTCOLOR.WHITE;
+        if (text.setColor && (text.style as { color?: string }).color !== newColor) {
+          text.setColor(newColor);
+        }
       }
       let x = 0;
       for (let i = N - 1; i >= 0; i--) {
@@ -457,7 +460,9 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       }
       const text = list[0] as Phaser.GameObjects.Text;
       text.setText(item.count || '');
-      if (text.setColor) text.setColor(labelColor);
+      if (text.setColor && (text.style as { color?: string }).color !== labelColor) {
+        text.setColor(labelColor);
+      }
       text.setX(0);
     }
   }
@@ -524,7 +529,9 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
           : isSelected && this.highlightColor
             ? this.highlightColor
             : item.color || this.defaultColor;
-        if (labelObj.setColor) labelObj.setColor(labelColor);
+        if (labelObj.setColor && labelObj.style?.color !== labelColor) {
+          labelObj.setColor(labelColor);
+        }
 
         this.fillCountArea(slot, item, labelColor);
 

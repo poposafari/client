@@ -1,5 +1,5 @@
 import { IGamePhase, LanguageItmes } from '@poposafari/core';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import { OptionUi } from './option.ui';
 import { OptionMenuUi, IOptionItem } from './option-menu.ui';
 import i18next from 'i18next';
@@ -44,31 +44,13 @@ function defaultOptionItems(): IOptionItem[] {
     },
     {
       key: OptionKey.WINDOW,
-      label: i18next.t('option:windowType'),
-      values: ['1', '2', '3', '4'],
+      label: i18next.t('option:frameType'),
+      values: ['1', '2', '3', '4'].map((n) => `${i18next.t('option:frameValue')} ${n}`),
       valueIndex: 0,
     },
     {
-      key: OptionKey.PC_TUTORIAL,
-      label: i18next.t('option:pcTutorial'),
-      values: [i18next.t('option:on'), i18next.t('option:off')],
-      valueIndex: 0,
-    },
-    {
-      key: OptionKey.BATTLE_TUTORIAL,
-      label: i18next.t('option:battleTutorial'),
-      values: [i18next.t('option:on'), i18next.t('option:off')],
-      valueIndex: 0,
-    },
-    {
-      key: OptionKey.BAG_TUTORIAL,
-      label: i18next.t('option:bagTutorial'),
-      values: [i18next.t('option:on'), i18next.t('option:off')],
-      valueIndex: 0,
-    },
-    {
-      key: OptionKey.SAFFARI_TUTORIAL,
-      label: i18next.t('option:safariTutorial'),
+      key: OptionKey.WILD_SPAWN_CRY,
+      label: i18next.t('option:wildSpawnCry'),
       values: [i18next.t('option:on'), i18next.t('option:off')],
       valueIndex: 0,
     },
@@ -78,6 +60,10 @@ function defaultOptionItems(): IOptionItem[] {
 export class OptionPhase implements IGamePhase {
   private ui!: OptionUi;
   private optionMenu!: OptionMenuUi;
+  /** 옵션 phase 동안 windowType이 한 번이라도 바뀌었으면 exit 시 1회만 emit. */
+  private windowDirty = false;
+  /** 옵션 phase 동안 언어가 한 번이라도 바뀌었으면 exit 시 1회만 emit. */
+  private languageDirty = false;
 
   constructor(private scene: GameScene) {}
 
@@ -114,6 +100,14 @@ export class OptionPhase implements IGamePhase {
     });
     this.ui = new OptionUi(this.scene);
 
+    this.optionMenu.onWindowPreview = () => {
+      this.windowDirty = true;
+    };
+    this.optionMenu.onLanguagePreview = () => {
+      this.languageDirty = true;
+      this.refreshOwnLanguage();
+    };
+
     this.ui.show();
     this.optionMenu.setOptionItems(this.buildOptionItems(), [
       this.ui.topWindow,
@@ -132,15 +126,22 @@ export class OptionPhase implements IGamePhase {
     this.ui.destroy();
 
     this.scene.getOption().saveToCache();
+
+    if (this.windowDirty) this.scene.emitEvent(GameEvent.WINDOW_CHANGED);
+    if (this.languageDirty) this.scene.emitEvent(GameEvent.LANGUAGE_CHANGED);
   }
 
-  onRefreshLanguage?(): void {
+  private refreshOwnLanguage(): void {
     this.optionMenu.setOptionItems(
       this.buildOptionItems(),
       [this.ui.topWindow, this.ui.bottomWindow],
       true,
     );
     this.ui.onRefreshLanguage();
+  }
+
+  onRefreshLanguage?(): void {
+    this.refreshOwnLanguage();
   }
 
   onPause?(): void {}

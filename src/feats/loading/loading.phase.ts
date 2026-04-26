@@ -39,7 +39,7 @@ export class LoadingPhase implements IGamePhase {
 
     await this.loadAssets();
     this.createSprite();
-    this.applyCustomCursor();
+    // this.applyCustomCursor();
 
     this.scene.switchPhase(new WelcomePhase(this.scene));
   }

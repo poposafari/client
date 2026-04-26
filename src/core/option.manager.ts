@@ -11,10 +11,7 @@ export class OptionManager {
     [OptionKey.SFX_VOLUME]: 3,
     [OptionKey.BGM_VOLUME]: 3,
     [OptionKey.WINDOW]: 0,
-    [OptionKey.PC_TUTORIAL]: 0,
-    [OptionKey.BATTLE_TUTORIAL]: 0,
-    [OptionKey.BAG_TUTORIAL]: 0,
-    [OptionKey.SAFFARI_TUTORIAL]: 0,
+    [OptionKey.WILD_SPAWN_CRY]: 0,
     [OptionKey.LANGUAGE]: 0,
   };
 
@@ -71,13 +68,7 @@ export class OptionManager {
         return value >= 0 && value <= 10;
       case OptionKey.WINDOW:
         return value >= 0 && value <= 3;
-      case OptionKey.PC_TUTORIAL:
-        return value >= 0 && value <= 1;
-      case OptionKey.BATTLE_TUTORIAL:
-        return value >= 0 && value <= 1;
-      case OptionKey.BAG_TUTORIAL:
-        return value >= 0 && value <= 1;
-      case OptionKey.SAFFARI_TUTORIAL:
+      case OptionKey.WILD_SPAWN_CRY:
         return value >= 0 && value <= 1;
       case OptionKey.LANGUAGE:
         return value >= 0 && value < LanguageItmes.length;
