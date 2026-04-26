@@ -2,16 +2,24 @@ import { BaseUi } from '@poposafari/core';
 import type { MapConfig, ReactionStep } from '@poposafari/core/map.registry';
 import { GameEvent, GameScene, type SafariWildInfo } from '@poposafari/scenes';
 import {
+  ANIMATION,
   DEPTH,
   GetMeRes,
   ItemCategory,
   KEY,
   OverworldDirection,
   OverworldMovementState,
+  PokemonHiddenMove,
   SFX,
   TEXTURE,
 } from '@poposafari/types';
-import { DIRECTION, directionToDelta, OVERWORLD_ZOOM } from './overworld.constants';
+import { MenuUi } from '@poposafari/feats/menu/menu-ui';
+import {
+  calcOverworldTilePos,
+  DIRECTION,
+  directionToDelta,
+  OVERWORLD_ZOOM,
+} from './overworld.constants';
 import { MapView } from './map-view';
 import {
   DEFAULT_MOVE_DURATION_MS,
@@ -89,6 +97,9 @@ const DEFAULT_TILE_Y = 4;
 /** IDLE일 때 이 시간 이상 누르면 이동, 미만이면 제자리에서 방향만 전환 */
 const HOLD_THRESHOLD_MS = 120;
 
+/** base_surf 스프라이트 Y 오프셋 (음수=화면 위로, 양수=화면 아래로) */
+const BASE_SURF_Y_OFFSET = +20;
+
 /** 움직임 상태별 타일당 이동 속도 (MovableObject baseSpeed) */
 const SPEED_BY_MOVEMENT_STATE: Partial<Record<OverworldMovementState, number>> = {
   [OverworldMovementState.WALK]: 2,
@@ -158,8 +169,12 @@ export class OverworldUi extends BaseUi {
   private doorTransitionPending = false;
   private wildEncounterPending = false;
   private petTalkPending = false;
+  private surfPromptPending = false;
 
   private nextJumpEndGoesToSurf = false;
+  private baseSurfSprite: Phaser.GameObjects.Sprite | null = null;
+  /** 파도타기 진입 jump 도중에 user.activeSurfPokemonId 로 옮길 후보 id. */
+  private pendingSurfPokemonId: number | null = null;
 
   /** 엔티티별 grass 이펙트. 각 엔티티가 grass 타일에 서 있으면 1개 유지. */
   private grassByEntity: Map<BaseObject, GrassObject> = new Map();
@@ -179,6 +194,14 @@ export class OverworldUi extends BaseUi {
     null;
   onWildEncounterRequested: ((wild: WildPokemonObject) => void) | null = null;
   onRegisteredItemsRequested: (() => void) | null = null;
+  onHiddenMoveSurfRequested:
+    | ((caster: {
+        pokedexId: string;
+        isShiny: boolean;
+        isFemale: boolean;
+        nickname: string | null;
+      }) => void)
+    | null = null;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
@@ -270,6 +293,7 @@ export class OverworldUi extends BaseUi {
     if (this.doorTransitionPending) return;
     if (this.wildEncounterPending) return;
     if (this.petTalkPending) return;
+    if (this.surfPromptPending) return;
     const user = this.scene.getUser();
     const state = user?.getOverworldMovementState();
     if (state === OverworldMovementState.JUMP) {
@@ -319,6 +343,11 @@ export class OverworldUi extends BaseUi {
       const wild = this.getFacingWildPokemon();
       if (wild && wild.isCatchable() && !wild.isInteractionLocked()) {
         void this.handleWildTalk(wild);
+        return;
+      }
+      if (this.isFacingSurfTile()) {
+        void this.handleSurfRequest();
+        return;
       }
       return;
     }
@@ -368,6 +397,57 @@ export class OverworldUi extends BaseUi {
     const { dx, dy } = directionToDelta(dir);
     const { x: tx, y: ty } = this.pet.getTilePos();
     return tx === px + dx && ty === py + dy;
+  }
+
+  private isFacingSurfTile(): boolean {
+    if (!this.player || !this.mapView) return false;
+    const user = this.scene.getUser();
+    if (user?.getOverworldMovementState() === OverworldMovementState.SURF) return false;
+    const dir = this.player.getLastDirection();
+    if (dir === DIRECTION.NONE) return false;
+    const { x: px, y: py } = this.player.getTilePos();
+    const { dx, dy } = directionToDelta(dir);
+    return this.mapView.hasSurfTileAt(px + dx, py + dy);
+  }
+
+  private async handleSurfRequest(): Promise<void> {
+    if (this.surfPromptPending) return;
+    const user = this.scene.getUser();
+    if (!user) return;
+    const party = user.getParty();
+    const surfPokemon = party.find((p) => {
+      const skills = (p.skills as PokemonHiddenMove[] | null | undefined) ?? [];
+      return skills.includes('move_surf');
+    });
+    if (!surfPokemon) return;
+
+    this.surfPromptPending = true;
+    const question = this.scene.getMessage('question');
+    const yesNoMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
+      y: +800,
+      itemHeight: 70,
+    });
+    try {
+      await question.showMessage(i18next.t('msg:surfPrompt'), { resolveWhen: 'displayed' });
+      const choice = await yesNoMenu.waitForSelect([
+        { key: 'yes', label: i18next.t('menu:yes') },
+        { key: 'no', label: i18next.t('menu:no') },
+      ]);
+      yesNoMenu.hide();
+      question.hide();
+      if (choice?.key === 'yes') {
+        this.pendingSurfPokemonId = surfPokemon.id;
+        this.onHiddenMoveSurfRequested?.({
+          pokedexId: surfPokemon.pokedexId,
+          isShiny: !!surfPokemon.isShiny,
+          isFemale: surfPokemon.gender === 2,
+          nickname: surfPokemon.nickname,
+        });
+      }
+    } finally {
+      yesNoMenu.destroy();
+      this.surfPromptPending = false;
+    }
   }
 
   private getPetDisplayName(): string {
@@ -902,6 +982,78 @@ export class OverworldUi extends BaseUi {
     }
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.JUMP] ?? 3;
     this.player.setBaseSpeed(speed);
+    this.scene.getAudio().playEffect(SFX.JUMP);
+    return true;
+  }
+
+  enterSurfWithBase(): boolean {
+    if (!this.player) return false;
+    const dir = this.player.getLastDirection();
+    const { dx, dy } = directionToDelta(dir);
+    const { x: px, y: py } = this.player.getTilePos();
+    this.spawnBaseSurfAt(px + dx * 2, py + dy * 2, dir);
+    return this.surf();
+  }
+
+  private spawnBaseSurfAt(tileX: number, tileY: number, direction: DIRECTION): void {
+    if (!this.worldContainer) return;
+    if (this.baseSurfSprite) {
+      this.baseSurfSprite.destroy();
+      this.baseSurfSprite = null;
+    }
+    const [px, py] = calcOverworldTilePos(tileX, tileY);
+    const sprite = this.scene.add
+      .sprite(px, py + BASE_SURF_Y_OFFSET, TEXTURE.BASE_SURF, 'base_surf-0')
+      .setOrigin(0.5, 1)
+      .setScale(1.6);
+    sprite.play(this.baseSurfAnimKey(direction));
+    this.worldContainer.add(sprite);
+    this.baseSurfSprite = sprite;
+  }
+
+  private baseSurfAnimKey(dir: DIRECTION): string {
+    switch (dir) {
+      case DIRECTION.UP:
+        return ANIMATION.BASE_SURF_UP;
+      case DIRECTION.LEFT:
+        return ANIMATION.BASE_SURF_LEFT;
+      case DIRECTION.RIGHT:
+        return ANIMATION.BASE_SURF_RIGHT;
+      case DIRECTION.DOWN:
+      default:
+        return ANIMATION.BASE_SURF_DOWN;
+    }
+  }
+
+  private syncBaseSurfWithPlayer(): void {
+    if (!this.baseSurfSprite || !this.player) return;
+    const groundPos = this.player.getSpritePos();
+    this.baseSurfSprite.setPosition(groundPos.x, groundPos.y + BASE_SURF_Y_OFFSET);
+    this.baseSurfSprite.setDepth(this.player.getSprite().depth - 0.1);
+    const animKey = this.baseSurfAnimKey(this.player.getLastDirection());
+    if (this.baseSurfSprite.anims.currentAnim?.key !== animKey) {
+      this.baseSurfSprite.play(animKey);
+    }
+  }
+
+  private removeBaseSurf(): void {
+    if (!this.baseSurfSprite) return;
+    this.baseSurfSprite.destroy();
+    this.baseSurfSprite = null;
+  }
+
+  private tryExitSurfByJump(dir: DIRECTION): boolean {
+    if (!this.player || !this.mapView) return false;
+    const user = this.scene.getUser();
+    if (user?.getOverworldMovementState() !== OverworldMovementState.SURF) return false;
+    const { dx, dy } = directionToDelta(dir);
+    const { x: px, y: py } = this.player.getTilePos();
+    if (!this.mapView.hasSurfTileAt(px + dx, py + dy)) return false;
+    this.player.setDirectionOnly(dir);
+    if (!this.player.jump(dir)) return false;
+    const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.JUMP] ?? 3;
+    this.player.setBaseSpeed(speed);
+    this.scene.getAudio().playEffect(SFX.JUMP);
     return true;
   }
 
@@ -1055,6 +1207,24 @@ export class OverworldUi extends BaseUi {
 
     if (currentState === OverworldMovementState.RIDE && prev !== OverworldMovementState.RIDE) {
       this.scene.getAudio().playEffect(SFX.BICYCLE);
+    }
+
+    // 파도타기 종료(SURF/JUMP-from-surf → WALK/RUNNING/RIDE 등)에서 base_surf 제거.
+    if (
+      this.baseSurfSprite &&
+      currentState !== OverworldMovementState.SURF &&
+      currentState !== OverworldMovementState.JUMP
+    ) {
+      this.removeBaseSurf();
+    }
+
+    if (
+      prev === OverworldMovementState.SURF &&
+      currentState !== OverworldMovementState.SURF &&
+      currentState !== OverworldMovementState.JUMP
+    ) {
+      this.player?.refreshPosition();
+      this.scene.getUser()?.setActiveSurfPokemonId(null);
     }
 
     const wasField = prev != null && this.isFieldStateValue(prev);
@@ -1241,6 +1411,25 @@ export class OverworldUi extends BaseUi {
       const hair = this.player.getHairSprite();
       if (hair) this.worldContainer.add(hair);
 
+      if (this.mapView.getTileSpawnAt(tileX, tileY) === 'water') {
+        user?.setOverworldMovementState(OverworldMovementState.SURF);
+        const surfSpeed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.SURF] ?? 4;
+        this.player.setBaseSpeed(surfSpeed);
+        const party = user?.getParty() ?? [];
+        const surfPokemon = party.find((p) => {
+          const skills = (p.skills as PokemonHiddenMove[] | null | undefined) ?? [];
+          return skills.includes('move_surf');
+        });
+        if (surfPokemon) {
+          user?.setActiveSurfPokemonId(surfPokemon.id);
+        }
+        const dir = this.player.getLastDirection();
+        this.spawnBaseSurfAt(tileX, tileY, dir);
+        this.player.refreshPosition();
+        this.player.setDirectionOnly(dir);
+        this.syncBaseSurfWithPlayer();
+      }
+
       if (this.mapConfig?.type === 'safari') {
         this.spawnSafariEntities();
         this.scene.events.emit('player_tile_moved', {
@@ -1323,6 +1512,13 @@ export class OverworldUi extends BaseUi {
       this.prevMovementState = user.getOverworldMovementState();
       this.unsubscribeParty = user.onPartyChanged(this.handlePartyChanged);
       this.handlePartyChanged(user.getParty());
+    }
+
+    if (this.player) {
+      const sprite = this.player.getSprite();
+      const center = sprite.getCenter(undefined, true);
+      const cam = this.scene.cameras.main;
+      cam.setScroll(center.x - cam.width / 2, center.y - cam.height / 2);
     }
 
     super.show();
@@ -1720,6 +1916,13 @@ export class OverworldUi extends BaseUi {
 
     this.tickWildPokemons(delta);
 
+    if (
+      this.baseSurfSprite &&
+      this.scene.getUser()?.getOverworldMovementState() === OverworldMovementState.SURF
+    ) {
+      this.syncBaseSurfWithPlayer();
+    }
+
     this.sortWorldContainerByDepth();
 
     const sprite = this.player.getSprite();
@@ -1746,10 +1949,21 @@ export class OverworldUi extends BaseUi {
         user?.setOverworldMovementState(OverworldMovementState.SURF);
         const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.SURF] ?? 4;
         this.player.setBaseSpeed(speed);
+        this.player.refreshPosition();
+        this.player.setDirectionOnly(this.player.getLastDirection());
+        user?.setActiveSurfPokemonId(this.pendingSurfPokemonId);
+        this.pendingSurfPokemonId = null;
       } else {
+        const wasJumpFromSurf = this.player.isJumpFromSurf();
         user?.setOverworldMovementState(OverworldMovementState.WALK);
         const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
         this.player.setBaseSpeed(speed);
+        if (wasJumpFromSurf) {
+          this.player.clearJumpFromSurf();
+          this.player.refreshPosition();
+          this.player.setDirectionOnly(this.player.getLastDirection());
+          user?.setActiveSurfPokemonId(null);
+        }
       }
     }
 
@@ -1805,6 +2019,10 @@ export class OverworldUi extends BaseUi {
       for (const { dir, key } of DIR_KEYS) {
         if (!keys[key]) continue;
         if (!this.wasIdleLastFrame) {
+          if (this.tryExitSurfByJump(dir)) {
+            delete this.keyPressStartTime[dir];
+            break;
+          }
           this.player.move(dir);
           if (!this.player.isMovementBlocking()) this.emitMoveToServer(dir);
           delete this.keyPressStartTime[dir];
@@ -1846,6 +2064,8 @@ export class OverworldUi extends BaseUi {
               });
             });
             return;
+          } else if (this.tryExitSurfByJump(dir)) {
+            // jumped out of surf; skip normal move
           } else {
             this.player.move(dir);
             if (!this.player.isMovementBlocking()) this.emitMoveToServer(dir);

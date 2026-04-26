@@ -96,6 +96,12 @@ export const enum TEXTURE {
   PC_MASTER_BALL = 'pc_master-ball',
 
   PET_EMO = 'pet_emo',
+
+  BG_HM = 'bg_hm',
+  PARTICLE_HM_0 = 'particle_hm_0',
+  PARTICLE_HM_1 = 'particle_hm_1',
+
+  BASE_SURF = 'base_surf',
 }
 
 export const enum ANIMATION {
@@ -128,6 +134,10 @@ export const enum ANIMATION {
   OVERWORLD_GRASS_1_B = 'overworld_grass_1_b',
   OVERWORLD_GRASS_2 = 'overworld_grass_2',
   OVERWORLD_GRASS_2_B = 'overworld_grass_2_b',
+  BASE_SURF_DOWN = 'base_surf_down',
+  BASE_SURF_LEFT = 'base_surf_left',
+  BASE_SURF_RIGHT = 'base_surf_right',
+  BASE_SURF_UP = 'base_surf_up',
 }
 
 export const enum TILE {

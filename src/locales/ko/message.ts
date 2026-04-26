@@ -38,4 +38,7 @@ export const msg: TranslationMessage = {
   npc1_1: '호박사님은 안쪽에 계십니다',
   mapPreparing: '맵 생성중...',
   noRegisteredItem: '등록한 아이템이 없습니다.',
+  surfPrompt: '물은 깊고 푸른색이다.\n파도타기를 사용하시겠습니까?',
+  surfInUse: '파도타기를 사용하고 있습니다.',
+  usedHiddenMove: '{{name}}은(는)\n{{move}}을(를) 사용했다!',
 };

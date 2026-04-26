@@ -31,6 +31,34 @@ export class AudioManager {
     });
   }
 
+  public playEffectAwaitable(
+    key: SFX | string,
+    options?: { rate?: number; detune?: number },
+  ): Promise<void> {
+    const volume = this.masterVolume * this.effectVolume;
+    const sound = this.scene.sound.add(key as unknown as string, {
+      volume,
+      loop: false,
+      rate: options?.rate,
+      detune: options?.detune,
+    }) as Phaser.Sound.WebAudioSound;
+
+    return new Promise<void>((resolve) => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        sound.destroy();
+        resolve();
+      };
+      sound.once('complete', finish);
+      sound.once('stop', finish);
+      sound.play();
+      const fallbackMs = Math.max(300, Math.ceil((sound.duration || 1) * 1000) + 100);
+      this.scene.time.delayedCall(fallbackMs, finish);
+    });
+  }
+
   public playEffectLoop(
     key: SFX | string,
     options?: { rate?: number; detune?: number },

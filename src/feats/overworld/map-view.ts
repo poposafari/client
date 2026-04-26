@@ -182,6 +182,16 @@ export class MapView {
     });
   }
 
+  hasSurfTileAt(tileX: number, tileY: number): boolean {
+    if (!this.map) return false;
+    const tx = Math.floor(tileX);
+    const ty = Math.floor(tileY);
+    return this.map.layers.some((layer) => {
+      const tile = layer.data[ty]?.[tx];
+      return tile != null && tile.index !== -1 && tile.properties?.event === 'surf';
+    });
+  }
+
   getTileSpawnAt(tileX: number, tileY: number): 'land' | 'water' | null {
     if (!this.map) return null;
     const tx = Math.floor(tileX);

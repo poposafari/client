@@ -50,6 +50,8 @@ export class UserManager {
   private overworldMovementState: OverworldMovementState = OverworldMovementState.WALK;
   /** 마지막으로 바라본 방향 (맵 전환 후 플레이어 초기 방향으로 사용) */
   private overworldDirection: OverworldDirection = OverworldDirection.DOWN;
+  /** 현재 파도타기를 시전 중인 파티 포켓몬의 DB id. SURF 상태일 때만 유효. */
+  private activeSurfPokemonId: number | null = null;
 
   private partyListeners: Array<(party: GetMeRes['party']) => void> = [];
 
@@ -264,5 +266,13 @@ export class UserManager {
 
   setOverworldDirection(direction: OverworldDirection): void {
     this.overworldDirection = direction;
+  }
+
+  getActiveSurfPokemonId(): number | null {
+    return this.activeSurfPokemonId;
+  }
+
+  setActiveSurfPokemonId(id: number | null): void {
+    this.activeSurfPokemonId = id;
   }
 }
