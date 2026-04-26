@@ -1,6 +1,6 @@
 import type { CurrentUserCostume, UserGender } from '@poposafari/types';
 import { GameScene } from '@poposafari/scenes';
-import { TEXTCOLOR } from '@poposafari/types';
+import { ANIMATION, TEXTCOLOR, TEXTURE } from '@poposafari/types';
 import { calcOverworldTilePos, DIRECTION } from '../overworld.constants';
 import {
   getRideAnimationKey,
@@ -20,6 +20,8 @@ import { PetObject } from './pet.object';
 
 /** 플레이어 스프라이트 스케일 (PlayerObject와 동일) */
 const PLAYER_SCALE = 3;
+
+const BASE_SURF_Y_OFFSET = +20;
 
 export interface OtherPlayerObjectOptions {
   scale?: number;
@@ -69,8 +71,10 @@ export class OtherPlayerObject extends BaseObject {
   private lastMoveType: string = 'walk';
   private animStep = 0;
   private pet: PetObject | null = null;
+  private petOwnerSignature: string | null = null;
   private addToContainer: ((obj: Phaser.GameObjects.GameObject) => void) | null = null;
   private lastPetSpeed = 2;
+  private baseSurfSprite: Phaser.GameObjects.Sprite | null = null;
 
   private static readonly DEFAULT_MOVE_DURATION_MS = 120;
   private static readonly JUMP_ARC_HEIGHT = 60;
@@ -224,6 +228,7 @@ export class OtherPlayerObject extends BaseObject {
     if (dir !== this.lastDirection) this.animStep = 0;
     this.lastDirection = dir;
     const moveType = options?.moveType;
+    const prevMoveType = this.lastMoveType;
     if (moveType) this.lastMoveType = moveType;
 
     const targetX = Math.floor(tileX);
@@ -240,15 +245,24 @@ export class OtherPlayerObject extends BaseObject {
 
     this.startMoveAnimation(moveType, dir);
     if (moveType && moveType !== 'jump') this.animStep++;
+    if (prevMoveType !== 'surf' && moveType === 'surf') {
+      this.spawnBaseSurfAtCurrent(dir);
+    } else if (this.baseSurfSprite && moveType && moveType !== 'surf' && moveType !== 'jump') {
+      this.removeBaseSurf();
+    }
 
+    const nonFieldMove = moveType === 'ride' || moveType === 'surf' || moveType === 'jump';
     if (this.pet) {
-      const nonFieldMove = moveType === 'ride' || moveType === 'surf' || moveType === 'jump';
       if (nonFieldMove) {
         this.clearPet(false);
       } else {
         this.syncPetSpeed(moveType);
         this.pet.followStep(targetX, targetY, toDIRECTION(dir));
       }
+    } else if (this.petOwnerSignature && !nonFieldMove) {
+      const [pokedexId, shinyFlag] = this.petOwnerSignature.split('|');
+      this.setPet(pokedexId, shinyFlag === '1', false);
+      (this.pet as PetObject | null)?.followStep(targetX, targetY, toDIRECTION(dir));
     }
 
     const targets: Phaser.GameObjects.GameObject[] = [this.shadow, this.sprite];
@@ -375,6 +389,8 @@ export class OtherPlayerObject extends BaseObject {
       return;
     }
 
+    this.petOwnerSignature = `${pokedexId}|${isShiny ? '1' : '0'}`;
+
     const spawn = () => {
       if (!this.addToContainer) return;
       const initDir = toDIRECTION(this.lastDirection);
@@ -433,8 +449,59 @@ export class OtherPlayerObject extends BaseObject {
     }
   }
 
+  dismissPet(withFx: boolean): void {
+    this.petOwnerSignature = null;
+    this.clearPet(withFx);
+  }
+
+  private baseSurfAnimKeyOf(direction: MoveDir): string {
+    switch (direction) {
+      case 'up':
+        return ANIMATION.BASE_SURF_UP;
+      case 'left':
+        return ANIMATION.BASE_SURF_LEFT;
+      case 'right':
+        return ANIMATION.BASE_SURF_RIGHT;
+      case 'down':
+      default:
+        return ANIMATION.BASE_SURF_DOWN;
+    }
+  }
+
+  private spawnBaseSurfAtCurrent(direction: MoveDir): void {
+    if (!this.addToContainer) return;
+    if (this.baseSurfSprite) {
+      this.baseSurfSprite.destroy();
+      this.baseSurfSprite = null;
+    }
+    const sprite = this.scene.add
+      .sprite(this.sprite.x, this.sprite.y + BASE_SURF_Y_OFFSET, TEXTURE.BASE_SURF, 'base_surf-0')
+      .setOrigin(0.5, 1)
+      .setScale(1.6)
+      .setDepth(this.sprite.depth - 0.1);
+    sprite.play(this.baseSurfAnimKeyOf(direction));
+    this.addToContainer(sprite);
+    this.baseSurfSprite = sprite;
+  }
+
+  private removeBaseSurf(): void {
+    this.baseSurfSprite?.destroy();
+    this.baseSurfSprite = null;
+  }
+
+  private syncBaseSurf(): void {
+    if (!this.baseSurfSprite) return;
+    this.baseSurfSprite.setPosition(this.sprite.x, this.sprite.y + BASE_SURF_Y_OFFSET);
+    this.baseSurfSprite.setDepth(this.sprite.depth - 0.1);
+    const animKey = this.baseSurfAnimKeyOf(this.lastDirection);
+    if (this.baseSurfSprite.anims.currentAnim?.key !== animKey) {
+      this.baseSurfSprite.play(animKey);
+    }
+  }
+
   update(delta: number): void {
     this.pet?.update(delta);
+    if (this.baseSurfSprite) this.syncBaseSurf();
   }
 
   private syncPetSpeed(moveType?: string): void {
@@ -448,8 +515,10 @@ export class OtherPlayerObject extends BaseObject {
 
   override destroy(): void {
     this.stopMoveTween();
+    this.removeBaseSurf();
     this.pet?.destroy();
     this.pet = null;
+    this.petOwnerSignature = null;
     this.outfitSprite?.destroy();
     this.hairSprite?.destroy();
     this.outfitSprite = null;

@@ -100,6 +100,9 @@ const HOLD_THRESHOLD_MS = 120;
 /** base_surf 스프라이트 Y 오프셋 (음수=화면 위로, 양수=화면 아래로) */
 const BASE_SURF_Y_OFFSET = +20;
 
+const SURF_BOB_AMPLITUDE = 2;
+const SURF_BOB_PERIOD_MS = 1100;
+
 /** 움직임 상태별 타일당 이동 속도 (MovableObject baseSpeed) */
 const SPEED_BY_MOVEMENT_STATE: Partial<Record<OverworldMovementState, number>> = {
   [OverworldMovementState.WALK]: 2,
@@ -175,6 +178,9 @@ export class OverworldUi extends BaseUi {
   private baseSurfSprite: Phaser.GameObjects.Sprite | null = null;
   /** 파도타기 진입 jump 도중에 user.activeSurfPokemonId 로 옮길 후보 id. */
   private pendingSurfPokemonId: number | null = null;
+
+  /** SURF 상태 동안 누적되는 bob 위상(ms). SURF 종료 시 0으로 리셋. */
+  private surfBobPhaseMs = 0;
 
   /** 엔티티별 grass 이펙트. 각 엔티티가 grass 타일에 서 있으면 1개 유지. */
   private grassByEntity: Map<BaseObject, GrassObject> = new Map();
@@ -978,6 +984,8 @@ export class OverworldUi extends BaseUi {
     this.nextJumpEndGoesToSurf = true;
     if (!this.player.jump(direction)) {
       this.nextJumpEndGoesToSurf = false;
+      this.pendingSurfPokemonId = null;
+      this.removeBaseSurf();
       return false;
     }
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.JUMP] ?? 3;
@@ -1025,15 +1033,26 @@ export class OverworldUi extends BaseUi {
     }
   }
 
-  private syncBaseSurfWithPlayer(): void {
+  private syncBaseSurfWithPlayer(bobOffset = 0): void {
     if (!this.baseSurfSprite || !this.player) return;
     const groundPos = this.player.getSpritePos();
-    this.baseSurfSprite.setPosition(groundPos.x, groundPos.y + BASE_SURF_Y_OFFSET);
+    this.baseSurfSprite.setPosition(groundPos.x, groundPos.y + BASE_SURF_Y_OFFSET + bobOffset);
     this.baseSurfSprite.setDepth(this.player.getSprite().depth - 0.1);
     const animKey = this.baseSurfAnimKey(this.player.getLastDirection());
     if (this.baseSurfSprite.anims.currentAnim?.key !== animKey) {
       this.baseSurfSprite.play(animKey);
     }
+  }
+
+  private tickSurfBobPhase(delta: number): number {
+    const state = this.scene.getUser()?.getOverworldMovementState();
+    if (state !== OverworldMovementState.SURF) {
+      this.surfBobPhaseMs = 0;
+      return 0;
+    }
+    this.surfBobPhaseMs = (this.surfBobPhaseMs + delta) % SURF_BOB_PERIOD_MS;
+    const t = (this.surfBobPhaseMs / SURF_BOB_PERIOD_MS) * Math.PI * 2;
+    return Math.sin(t) * SURF_BOB_AMPLITUDE;
   }
 
   private removeBaseSurf(): void {
@@ -1076,6 +1095,9 @@ export class OverworldUi extends BaseUi {
     if (!user || !this.player) return;
 
     const current = user.getOverworldMovementState();
+
+    if (current === OverworldMovementState.SURF) return;
+
     const next =
       current === OverworldMovementState.RUNNING
         ? OverworldMovementState.WALK
@@ -1098,6 +1120,9 @@ export class OverworldUi extends BaseUi {
     if (!user || !this.player) return;
 
     const current = user.getOverworldMovementState();
+
+    if (current === OverworldMovementState.SURF) return;
+
     const next =
       current === OverworldMovementState.RIDE
         ? OverworldMovementState.WALK
@@ -1118,6 +1143,7 @@ export class OverworldUi extends BaseUi {
   enterRideBicycle(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
+    if (user.getOverworldMovementState() === OverworldMovementState.SURF) return;
     user.setOverworldMovementState(OverworldMovementState.RIDE);
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.RIDE] ?? 6;
     this.player.setBaseSpeed(speed);
@@ -1641,7 +1667,7 @@ export class OverworldUi extends BaseUi {
     const other = this.otherPlayers.get(payload.userId);
     if (!other) return;
     if (!payload.pokedexId) {
-      other.clearPet(true);
+      other.dismissPet(true);
     } else {
       other.setPet(payload.pokedexId, !!payload.isShiny, true);
     }
@@ -1903,6 +1929,9 @@ export class OverworldUi extends BaseUi {
       return;
     }
 
+    const surfBobOffset = this.tickSurfBobPhase(delta);
+    this.player.setSurfBobOffset(surfBobOffset);
+
     this.player.update(delta);
     this.syncGrassForEntity(this.player);
     this.pet?.update(delta);
@@ -1920,7 +1949,7 @@ export class OverworldUi extends BaseUi {
       this.baseSurfSprite &&
       this.scene.getUser()?.getOverworldMovementState() === OverworldMovementState.SURF
     ) {
-      this.syncBaseSurfWithPlayer();
+      this.syncBaseSurfWithPlayer(surfBobOffset);
     }
 
     this.sortWorldContainerByDepth();
@@ -1928,7 +1957,8 @@ export class OverworldUi extends BaseUi {
     const sprite = this.player.getSprite();
     const center = sprite.getCenter(undefined, true);
     const cam = this.scene.cameras.main;
-    cam.setScroll(center.x - cam.width / 2, center.y - cam.height / 2);
+
+    cam.setScroll(center.x - cam.width / 2, center.y - surfBobOffset - cam.height / 2);
 
     if (!this.scene.getInputManager().isTop(this)) return;
 

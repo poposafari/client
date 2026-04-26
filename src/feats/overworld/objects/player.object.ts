@@ -32,6 +32,7 @@ export class PlayerObject extends MovableObject {
   private outfitKey = '';
 
   private jumpFromSurf = false;
+  private surfBobOffset = 0;
 
   constructor(
     scene: GameScene,
@@ -110,9 +111,24 @@ export class PlayerObject extends MovableObject {
 
   private getSurfYOffset(): number {
     const state = this.getScene().getUser()?.getOverworldMovementState();
-    if (state === OverworldMovementState.SURF) return SURF_Y_OFFSET;
+    if (state === OverworldMovementState.SURF) return SURF_Y_OFFSET + this.surfBobOffset;
     if (state === OverworldMovementState.JUMP && this.jumpFromSurf) return SURF_Y_OFFSET;
     return 0;
+  }
+
+  setSurfBobOffset(offset: number): void {
+    if (offset === this.surfBobOffset) return;
+    const sprite = this.getSprite();
+    const logicalY = sprite.y - this.getSurfYOffset();
+    this.surfBobOffset = offset;
+    const newY = logicalY + this.getSurfYOffset();
+    sprite.setPosition(sprite.x, newY);
+    this.hairSprite?.setPosition(sprite.x, newY);
+    this.outfitSprite?.setPosition(sprite.x, newY);
+  }
+
+  getSurfBobOffset(): number {
+    return this.surfBobOffset;
   }
 
   isJumpFromSurf(): boolean {
