@@ -91,6 +91,15 @@ export enum DOOR {
   S002_DOWN_0 = 's002_down_0',
   S002_DOWN_1 = 's002_down_1',
   S002_DOWN_2 = 's002_down_2',
+
+  S003_LEFT_0 = 's003_left_0',
+  S003_LEFT_1 = 's003_left_1',
+  S003_LEFT_2 = 's003_left_2',
+  S003_RIGHT_0 = 's003_right_0',
+  S003_RIGHT_1 = 's003_right_1',
+  S003_RIGHT_2 = 's003_right_2',
+  S003_DOWN_0 = 's003_down_0',
+  S003_DOWN_1 = 's003_down_1',
 }
 
 export enum INIT_POS {
@@ -153,6 +162,15 @@ export enum INIT_POS {
   S002_DOWN_0 = 's002_down_0',
   S002_DOWN_1 = 's002_down_1',
   S002_DOWN_2 = 's002_down_2',
+
+  S003_LEFT_0 = 's003_left_0',
+  S003_LEFT_1 = 's003_left_1',
+  S003_LEFT_2 = 's003_left_2',
+  S003_RIGHT_0 = 's003_right_0',
+  S003_RIGHT_1 = 's003_right_1',
+  S003_RIGHT_2 = 's003_right_2',
+  S003_DOWN_0 = 's003_down_0',
+  S003_DOWN_1 = 's003_down_1',
 }
 
 export interface DoorConfig {
@@ -820,6 +838,63 @@ export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {
     y: 50,
     offsetY: 0,
   },
+
+  [DOOR.S003_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 21,
+    offsetY: 0,
+  },
+  [DOOR.S003_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 22,
+    offsetY: 0,
+  },
+  [DOOR.S003_LEFT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 23,
+    offsetY: 0,
+  },
+  [DOOR.S003_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 36,
+    offsetY: 0,
+  },
+  [DOOR.S003_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 37,
+    offsetY: 0,
+  },
+  [DOOR.S003_RIGHT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 38,
+    offsetY: 0,
+  },
+  [DOOR.S003_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 29,
+    y: 46,
+    offsetY: 0,
+  },
+  [DOOR.S003_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 30,
+    y: 46,
+    offsetY: 0,
+  },
 };
 
 export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
@@ -1109,5 +1184,46 @@ export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
     location: MAP.SAFARI_002,
     x: 30,
     y: 50,
+  },
+
+  [INIT_POS.S003_LEFT_0]: {
+    location: MAP.SAFARI_003,
+    x: 16,
+    y: 21,
+  },
+  [INIT_POS.S003_LEFT_1]: {
+    location: MAP.SAFARI_003,
+    x: 16,
+    y: 22,
+  },
+  [INIT_POS.S003_LEFT_2]: {
+    location: MAP.SAFARI_003,
+    x: 16,
+    y: 23,
+  },
+  [INIT_POS.S003_RIGHT_0]: {
+    location: MAP.SAFARI_003,
+    x: 47,
+    y: 36,
+  },
+  [INIT_POS.S003_RIGHT_1]: {
+    location: MAP.SAFARI_003,
+    x: 47,
+    y: 37,
+  },
+  [INIT_POS.S003_RIGHT_2]: {
+    location: MAP.SAFARI_003,
+    x: 47,
+    y: 38,
+  },
+  [INIT_POS.S003_DOWN_0]: {
+    location: MAP.SAFARI_003,
+    x: 29,
+    y: 45,
+  },
+  [INIT_POS.S003_DOWN_1]: {
+    location: MAP.SAFARI_003,
+    x: 30,
+    y: 45,
   },
 };

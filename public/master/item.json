@@ -1376,7 +1376,7 @@
     "comment": "노말 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "fire-candy": {
@@ -1386,7 +1386,7 @@
     "comment": "불 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "water-candy": {
@@ -1396,7 +1396,7 @@
     "comment": "물 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "grass-candy": {
@@ -1406,7 +1406,7 @@
     "comment": "풀 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "electric-candy": {
@@ -1416,7 +1416,7 @@
     "comment": "전기 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "ice-candy": {
@@ -1426,7 +1426,7 @@
     "comment": "얼음 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "fighting-candy": {
@@ -1436,7 +1436,7 @@
     "comment": "격투 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "poison-candy": {
@@ -1446,7 +1446,7 @@
     "comment": "독 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "ground-candy": {
@@ -1456,7 +1456,7 @@
     "comment": "땅 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "flying-candy": {
@@ -1466,7 +1466,7 @@
     "comment": "비행 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "psychic-candy": {
@@ -1476,7 +1476,7 @@
     "comment": "에스퍼 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "bug-candy": {
@@ -1486,7 +1486,7 @@
     "comment": "벌레 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "rock-candy": {
@@ -1496,7 +1496,7 @@
     "comment": "바위 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "ghost-candy": {
@@ -1506,7 +1506,7 @@
     "comment": "고스트 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "dragon-candy": {
@@ -1516,7 +1516,7 @@
     "comment": "드래곤 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "dark-candy": {
@@ -1526,7 +1526,7 @@
     "comment": "악 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "steel-candy": {
@@ -1536,7 +1536,7 @@
     "comment": "강철 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   },
   "fairy-candy": {
@@ -1546,7 +1546,7 @@
     "comment": "페어리 사탕",
     "purchasable": false,
     "sellPrice": 0,
-    "sellable": true,
+    "sellable": false,
     "tier": "common"
   }
 }

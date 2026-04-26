@@ -55,6 +55,8 @@ export interface SafariWildInfo {
   y?: number;
   /** 마지막으로 실제 이동에 성공한 방향. 재진입 시 초기 애니메이션 방향 복원에 사용. */
   lastDirection?: DIRECTION;
+  /** 클라이언트에서 최초 스폰 시 결정된 타일 타입. 재진입 시 동일 타입 유지에 사용. */
+  spawnTile?: 'land' | 'water';
   expiresAt?: number;
 }
 

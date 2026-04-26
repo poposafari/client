@@ -182,10 +182,19 @@ export class MapView {
     });
   }
 
-  /**
-   * tile.properties.spawn === filter 인 좌표 목록 반환.
-   * filter가 'any'면 spawn 속성이 있는 모든 좌표(land + water).
-   */
+  getTileSpawnAt(tileX: number, tileY: number): 'land' | 'water' | null {
+    if (!this.map) return null;
+    const tx = Math.floor(tileX);
+    const ty = Math.floor(tileY);
+    for (const layer of this.map.layers) {
+      const tile = layer.data[ty]?.[tx];
+      if (!tile || tile.index === -1) continue;
+      const spawn = tile.properties?.spawn;
+      if (spawn === 'land' || spawn === 'water') return spawn;
+    }
+    return null;
+  }
+
   getSpawnTilePositions(filter: 'land' | 'water' | 'any'): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
     if (!this.map) return positions;

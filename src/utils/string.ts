@@ -66,7 +66,7 @@ export interface PokemonTexture {
  * @param options - 옵션 (이로치 여부, 암컷 여부)
  */
 export function getPokemonTexture(
-  type: 'icon' | 'sprite' | 'overworld',
+  type: 'icon' | 'sprite' | 'overworld' | 'overworld_swimming',
   pokemonKey: string,
   options: { isShiny?: boolean; isFemale?: boolean } = {},
   scene?: Phaser.Scene,
@@ -82,6 +82,9 @@ export function getPokemonTexture(
       break;
     case 'overworld':
       atlasKey = 'pokemon.overworld';
+      break;
+    case 'overworld_swimming':
+      atlasKey = 'pokemon.overworld_swimming';
       break;
     default:
       // 타입 안정성을 위해 에러 처리 혹은 기본값 설정
@@ -111,6 +114,15 @@ export function getPokemonTexture(
       // _female 을 제거한 기본 프레임으로 폴백
       const maleName = options.isShiny ? `shiny/${pokemonKey}` : pokemonKey;
       frameName = maleName;
+    }
+  }
+
+  if (type === 'overworld_swimming' && scene) {
+    const texture = scene.textures.get(atlasKey);
+    const frames = texture?.getFrameNames?.() ?? [];
+    const exists = frames.some((f) => f.startsWith(`${frameName}_`));
+    if (!exists) {
+      atlasKey = 'pokemon.overworld';
     }
   }
 

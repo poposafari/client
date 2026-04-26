@@ -103,7 +103,8 @@ export interface MapConfig {
   key: string;
   //   sound: BGM;
   isIndoor: boolean;
-  area: string;
+
+  area: { land: string; water: string };
   type: 'plaza' | 'gate' | 'safari';
   dayNightFilter?: boolean;
   allowRide?: boolean;

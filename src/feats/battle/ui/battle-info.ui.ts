@@ -118,7 +118,9 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     this.wildLevelText = addText(
       scene,
-      this.wildGenderText.x + this.wildGenderText.displayWidth + 5,
+      ctx.wild.gender
+        ? this.wildGenderText.x + this.wildGenderText.displayWidth + 5
+        : this.wildNameText.x + this.wildNameText.displayWidth + 5,
       -72,
       `(+${ctx.wild.level})`,
       75,

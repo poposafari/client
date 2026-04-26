@@ -176,4 +176,5 @@ export const enum MAP {
   //safari
   SAFARI_001 = 's001',
   SAFARI_002 = 's002',
+  SAFARI_003 = 's003',
 }

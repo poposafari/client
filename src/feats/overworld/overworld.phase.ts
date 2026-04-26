@@ -62,10 +62,16 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi.onWildEncounterRequested = (wild) => {
       const wildInfo = wild.getWild();
 
+      const player = this.overworldUi?.getPlayer();
+      const tileSpawn = player
+        ? mapView.getTileSpawnAt(player.getTileX(), player.getTileY())
+        : null;
+      const area = tileSpawn === 'water' ? mapConfig.area.water : mapConfig.area.land;
+
       this.scene.pushPhase(
         new BattlePhase(this.scene, {
           wild: wildInfo,
-          area: this.scene.getMasterData().getMapArea(mapConfig.key.split('_')[0]),
+          area,
           time: DayNightFilter.getBattleTime(),
           locationLabel: mapConfig.key,
           onResolved: (reason) => {
