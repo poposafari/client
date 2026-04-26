@@ -7,6 +7,7 @@ import {
   GetMeRes,
   ItemCategory,
   KEY,
+  OptionKey,
   OverworldDirection,
   OverworldMovementState,
   PokemonHiddenMove,
@@ -856,10 +857,15 @@ export class OverworldUi extends BaseUi {
     this.refreshPlayerBlockingRefs();
     this.refreshPetBlockingRefs();
 
-    const pokedexId = obj.getPokedexId();
-    const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-    if (pokemonCryNames.includes(cryKey)) {
-      this.scene.getAudio().playEffect(cryKey);
+    if (
+      this.scene.getOption().getOption(OptionKey.WILD_SPAWN_CRY) === 0 &&
+      this.scene.getAudio().isAudible()
+    ) {
+      const pokedexId = obj.getPokedexId();
+      const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
+      if (pokemonCryNames.includes(cryKey)) {
+        this.scene.getAudio().playEffect(cryKey);
+      }
     }
 
     const sprite = obj.getSprite();
@@ -1853,6 +1859,7 @@ export class OverworldUi extends BaseUi {
       for (const npc of this.mapView.getNpcs()) npc.refreshNameText();
     }
     for (const door of this.doors) door.refreshNameText();
+    for (const obj of this.safariObjects) obj.refreshNameText();
     this.player?.refreshNameText();
   }
 

@@ -17,10 +17,12 @@ export class AudioManager {
     this.effectVolume = Phaser.Math.Clamp(effectVolume * 0.1, 0, 1);
   }
 
-  public playEffect(
-    key: SFX | string,
-    options?: { rate?: number; detune?: number },
-  ): void {
+  public isAudible(): boolean {
+    const ctx = (this.scene.sound as Phaser.Sound.WebAudioSoundManager).context;
+    return ctx?.state === 'running';
+  }
+
+  public playEffect(key: SFX | string, options?: { rate?: number; detune?: number }): void {
     const volume = this.masterVolume * this.effectVolume;
 
     this.scene.sound.play(key as unknown as string, {

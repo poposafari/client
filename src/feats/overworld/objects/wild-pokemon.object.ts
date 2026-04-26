@@ -298,6 +298,11 @@ export class WildPokemonObject extends MovableObject {
     this.refreshNameVisibility();
   }
 
+  override refreshNameText(): void {
+    if (!this.name?.active) return;
+    this.name.setText(getPokemonI18Name(this.wild.pokedexId));
+  }
+
   override destroy(): void {
     this.state = 'STOPPED';
     this.scene.events.off('player_tile_moved', this.onPlayerTileMoved);

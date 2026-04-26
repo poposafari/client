@@ -1,4 +1,4 @@
-import { GameEvent, GameScene } from '@poposafari/scenes';
+import { GameScene } from '@poposafari/scenes';
 import { InputManager, LanguageItmes } from '@poposafari/core';
 import {
   KEY,
@@ -8,6 +8,8 @@ import {
   TEXTCOLOR,
   OptionKey,
   LANGUAGE_KEY,
+  SYMBOL_ARROW_LEFT,
+  SYMBOL_ARROW_RIGHT,
 } from '@poposafari/types';
 import { MenuListUi } from '../menu/menu-list.ui';
 import i18next from '@poposafari/i18n';
@@ -19,16 +21,32 @@ export interface IOptionItem {
   valueIndex: number;
 }
 
+const ARROW_STYLE_KEYS: ReadonlySet<string> = new Set<string>([OptionKey.WINDOW, LANGUAGE_KEY]);
+
 function optionItemsToMenuItems(options: IOptionItem[]) {
   return options.map((opt) => {
-    const valueParts: { text: string; color?: string }[] = [];
-    opt.values.forEach((val, vi) => {
-      if (vi > 0) valueParts.push({ text: ' ', color: TEXTCOLOR.WHITE });
-      valueParts.push({
-        text: val,
-        color: vi === opt.valueIndex ? TEXTCOLOR.YELLOW : TEXTCOLOR.WHITE,
+    let valueParts: { text: string; color?: string }[];
+
+    if (ARROW_STYLE_KEYS.has(opt.key)) {
+      const current = opt.values[opt.valueIndex] ?? '';
+      valueParts = [
+        { text: SYMBOL_ARROW_LEFT, color: TEXTCOLOR.WHITE },
+        { text: ' ', color: TEXTCOLOR.WHITE },
+        { text: current, color: TEXTCOLOR.YELLOW },
+        { text: ' ', color: TEXTCOLOR.WHITE },
+        { text: SYMBOL_ARROW_RIGHT, color: TEXTCOLOR.WHITE },
+      ];
+    } else {
+      valueParts = [];
+      opt.values.forEach((val, vi) => {
+        if (vi > 0) valueParts.push({ text: ' ', color: TEXTCOLOR.WHITE });
+        valueParts.push({
+          text: val,
+          color: vi === opt.valueIndex ? TEXTCOLOR.YELLOW : TEXTCOLOR.WHITE,
+        });
       });
-    });
+    }
+
     return {
       key: opt.key,
       label: opt.label,
@@ -40,6 +58,9 @@ function optionItemsToMenuItems(options: IOptionItem[]) {
 export class OptionMenuUi extends MenuListUi {
   private optionData: IOptionItem[] = [];
   private changeWindows: GWindow[] = [];
+
+  public onWindowPreview?: () => void;
+  public onLanguagePreview?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuListConfig) {
     super(scene, inputManager, { ...config, showCancel: true });
@@ -134,13 +155,13 @@ export class OptionMenuUi extends MenuListUi {
     for (const window of this.changeWindows) {
       window.setTexture(this.scene.getOption().getWindow());
     }
-    (this.scene as GameScene).emitEvent(GameEvent.WINDOW_CHANGED);
+    this.onWindowPreview?.();
   }
 
   private changeLanguage(idx: number): void {
     const language = LanguageItmes[idx];
     i18next.changeLanguage(language).then(() => {
-      (this.scene as GameScene).emitEvent(GameEvent.LANGUAGE_CHANGED);
+      this.onLanguagePreview?.();
     });
   }
 }
