@@ -181,9 +181,11 @@ export class PokemonPcUi extends BaseUi {
     this.gridSelect = new PokemonPcGridSelectUi(scene, scene.getInputManager());
     this.gridSelect.onExitTop = () => this.switchFocus('top');
     this.gridSelect.onExitRight = () => {
+      const partyCount = this.pcState.getPartyCount();
+      if (partyCount === 0) return;
       const gridCols = 6;
       const row = Math.floor(this.gridSelect.getSelectedIndex() / gridCols);
-      this.partyCursorIndex = Math.min(row, 5);
+      this.partyCursorIndex = Math.min(row, partyCount - 1);
       this.switchFocus('party');
     };
     this.gridSelect.onCursorMoved = (selectedKey) => this.updateInfo(selectedKey);
@@ -422,14 +424,16 @@ export class PokemonPcUi extends BaseUi {
           this.scene.getAudio().playEffect(SFX.CURSOR_0);
         }
         break;
-      case KEY.DOWN:
-        if (this.partyCursorIndex < 5) {
+      case KEY.DOWN: {
+        const maxIdx = this.pcState.getPartyCount() - 1;
+        if (this.partyCursorIndex < maxIdx) {
           this.partyCursorIndex++;
           this.updatePartyCursorPosition();
           this.updatePartySlotInfo();
           this.scene.getAudio().playEffect(SFX.CURSOR_0);
         }
         break;
+      }
       case KEY.Z:
       case KEY.ENTER: {
         // 빈 슬롯이면 무시
@@ -497,7 +501,8 @@ export class PokemonPcUi extends BaseUi {
         if (this.grabInTop) {
           this.grabInTop = false;
         } else if (this.grabCursorInParty) {
-          if (this.grabPartyIndex < 5) this.grabPartyIndex++;
+          const maxIdx = this.pcState.getPartyCount() - 1;
+          if (this.grabPartyIndex < maxIdx) this.grabPartyIndex++;
         } else {
           if (this.grabGridIndex < 24) {
             this.grabGridIndex += 6;
@@ -527,8 +532,11 @@ export class PokemonPcUi extends BaseUi {
           if (this.grabGridIndex % 6 < 5) {
             this.grabGridIndex++;
           } else {
-            this.grabCursorInParty = true;
-            this.grabPartyIndex = Math.floor(this.grabGridIndex / 6);
+            const partyCount = this.pcState.getPartyCount();
+            if (partyCount > 0) {
+              this.grabCursorInParty = true;
+              this.grabPartyIndex = Math.min(Math.floor(this.grabGridIndex / 6), partyCount - 1);
+            }
           }
         }
         this.updateGrabCursorPosition();
@@ -747,7 +755,15 @@ export class PokemonPcUi extends BaseUi {
             this.pcState.moveToBox(pokemon.id, boxNumber, freeGrid);
             this.refreshCurrentBox();
             const partyCount = this.pcState.getPartyCount();
-            if (this.partyCursorIndex >= partyCount && partyCount > 0) {
+            if (partyCount === 0) {
+              this.partyCursor.setVisible(false);
+              this.focusArea = 'grid';
+              this.gridSelect.setCursorVisible(true);
+              this.updateInfo(this.gridSelect.getSelectedKey());
+              this.inputManager.push(this.gridSelect);
+              break;
+            }
+            if (this.partyCursorIndex >= partyCount) {
               this.partyCursorIndex = partyCount - 1;
             }
             this.updatePartyCursorPosition();
@@ -876,6 +892,18 @@ export class PokemonPcUi extends BaseUi {
 
     // pcState에서 포켓몬을 떼어냄 (원래 자리 비움)
     this.pcState.detachPokemon(pokemon.id);
+
+    // 빈 파티 슬롯에 잡기 커서가 머물지 않도록 보정
+    if (this.grabCursorInParty) {
+      const partyCount = this.pcState.getPartyCount();
+      if (partyCount === 0) {
+        this.grabCursorInParty = false;
+        this.grabGridIndex = this.gridSelect.getSelectedIndex();
+      } else if (this.grabPartyIndex > partyCount - 1) {
+        this.grabPartyIndex = partyCount - 1;
+      }
+    }
+
     this.refreshCurrentBox();
 
     // 잡은 포켓몬 아이콘 설정

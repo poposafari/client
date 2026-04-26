@@ -6,7 +6,7 @@ import { DOOR, INIT_POS } from './door';
 export const p001Config: MapConfig = {
   key: 'p001',
   isIndoor: false,
-  area: 'p001',
+  area: { land: 'p001', water: 'p001' },
   type: 'plaza',
   dayNightFilter: true,
   allowRide: true,
@@ -169,7 +169,7 @@ export const p001Config: MapConfig = {
 export const p002Config: MapConfig = {
   key: 'p002',
   isIndoor: true,
-  area: 'p002',
+  area: { land: 'p002', water: 'p002' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -216,7 +216,7 @@ export const p002Config: MapConfig = {
 export const p003Config: MapConfig = {
   key: 'p003',
   isIndoor: true,
-  area: 'p003',
+  area: { land: 'p003', water: 'p003' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -240,7 +240,7 @@ export const p003Config: MapConfig = {
 export const p004Config: MapConfig = {
   key: 'p004',
   isIndoor: true,
-  area: 'p004',
+  area: { land: 'p004', water: 'p004' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -264,7 +264,7 @@ export const p004Config: MapConfig = {
 export const p005Config: MapConfig = {
   key: 'p005',
   isIndoor: true,
-  area: 'p005',
+  area: { land: 'p005', water: 'p005' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -287,7 +287,7 @@ export const p005Config: MapConfig = {
 export const p006Config: MapConfig = {
   key: 'p006',
   isIndoor: true,
-  area: 'p006',
+  area: { land: 'p006', water: 'p006' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -311,7 +311,7 @@ export const p006Config: MapConfig = {
 export const p007Config: MapConfig = {
   key: 'p007',
   isIndoor: true,
-  area: 'p007',
+  area: { land: 'p007', water: 'p007' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -336,7 +336,7 @@ export const p007Config: MapConfig = {
 export const p008Config: MapConfig = {
   key: 'p008',
   isIndoor: true,
-  area: 'p008',
+  area: { land: 'p008', water: 'p008' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -359,7 +359,7 @@ export const p008Config: MapConfig = {
 export const p009Config: MapConfig = {
   key: 'p009',
   isIndoor: true,
-  area: 'p009',
+  area: { land: 'p009', water: 'p009' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -383,7 +383,7 @@ export const p009Config: MapConfig = {
 export const p010Config: MapConfig = {
   key: 'p010',
   isIndoor: true,
-  area: 'p010',
+  area: { land: 'p010', water: 'p010' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -406,7 +406,7 @@ export const p010Config: MapConfig = {
 export const p011Config: MapConfig = {
   key: 'p011',
   isIndoor: true,
-  area: 'p011',
+  area: { land: 'p011', water: 'p011' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -432,7 +432,7 @@ export const p011Config: MapConfig = {
 export const p012Config: MapConfig = {
   key: 'p012',
   isIndoor: true,
-  area: 'p012',
+  area: { land: 'p012', water: 'p012' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -457,7 +457,7 @@ export const p012Config: MapConfig = {
 export const p013Config: MapConfig = {
   key: 'p013',
   isIndoor: true,
-  area: 'p013',
+  area: { land: 'p013', water: 'p013' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -485,7 +485,7 @@ export const p013Config: MapConfig = {
 export const p014Config: MapConfig = {
   key: 'p014',
   isIndoor: true,
-  area: 'p014',
+  area: { land: 'p014', water: 'p014' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -513,7 +513,7 @@ export const p014Config: MapConfig = {
 export const p015Config: MapConfig = {
   key: 'p015',
   isIndoor: true,
-  area: 'p015',
+  area: { land: 'p015', water: 'p015' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -542,7 +542,7 @@ export const p015Config: MapConfig = {
 export const p016Config: MapConfig = {
   key: 'p016',
   isIndoor: true,
-  area: 'p016',
+  area: { land: 'p016', water: 'p016' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -569,7 +569,7 @@ export const p016Config: MapConfig = {
 export const p017Config: MapConfig = {
   key: 'p017',
   isIndoor: true,
-  area: 'p017',
+  area: { land: 'p017', water: 'p017' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -592,7 +592,7 @@ export const p017Config: MapConfig = {
 export const p019Config: MapConfig = {
   key: 'p019',
   isIndoor: true,
-  area: 'p019',
+  area: { land: 'p019', water: 'p019' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -618,7 +618,7 @@ export const p019Config: MapConfig = {
 export const p020Config: MapConfig = {
   key: 'p020',
   isIndoor: true,
-  area: 'p020',
+  area: { land: 'p020', water: 'p020' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -645,7 +645,7 @@ export const p020Config: MapConfig = {
 export const p021Config: MapConfig = {
   key: 'p021',
   isIndoor: true,
-  area: 'p021',
+  area: { land: 'p021', water: 'p021' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -671,7 +671,7 @@ export const p021Config: MapConfig = {
 export const p022Config: MapConfig = {
   key: 'p022',
   isIndoor: true,
-  area: 'p022',
+  area: { land: 'p022', water: 'p022' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,
@@ -699,7 +699,7 @@ export const p022Config: MapConfig = {
 export const p023Config: MapConfig = {
   key: 'p023',
   isIndoor: true,
-  area: 'p023',
+  area: { land: 'p023', water: 'p023' },
   type: 'plaza',
   dayNightFilter: false,
   allowRide: false,

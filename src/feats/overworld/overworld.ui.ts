@@ -1,6 +1,6 @@
 import { BaseUi } from '@poposafari/core';
 import type { MapConfig, ReactionStep } from '@poposafari/core/map.registry';
-import { GameEvent, GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene, type SafariWildInfo } from '@poposafari/scenes';
 import {
   DEPTH,
   GetMeRes,
@@ -558,19 +558,22 @@ export class OverworldUi extends BaseUi {
   }
 
   /**
-   * 점유되지 않은 타일 하나를 반환. target이 'land'면 land 풀만, 'any'면 land → water 순으로 탐색.
+   * 점유되지 않은 타일 하나를 반환.
+   * - 'land' | 'water': 해당 풀에서만 탐색.
+   * - 'any': land → water 순으로 fallback 탐색.
    * 호출자가 반환값의 좌표를 실제로 사용할 경우 반드시 markTileOccupied를 호출해야 한다.
    */
-  private computeFreeSpawnTile(target: 'land' | 'any'): { x: number; y: number } | null {
+  private computeFreeSpawnTile(target: 'land' | 'water' | 'any'): { x: number; y: number } | null {
     const tryFrom = (pool: { x: number; y: number }[]): { x: number; y: number } | null => {
       for (const p of pool) {
         if (!this.spawnOccupied.has(OverworldUi.tileKey(p))) return p;
       }
       return null;
     };
+    if (target === 'land') return tryFrom(this.spawnLandPool);
+    if (target === 'water') return tryFrom(this.spawnWaterPool);
     const land = tryFrom(this.spawnLandPool);
     if (land) return land;
-    if (target === 'land') return null;
     return tryFrom(this.spawnWaterPool);
   }
 
@@ -580,6 +583,30 @@ export class OverworldUi extends BaseUi {
 
   private markTileFree(p: { x: number; y: number }): void {
     this.spawnOccupied.delete(OverworldUi.tileKey(p));
+  }
+
+  private computeWildSpawn(
+    wild: SafariWildInfo,
+  ): { pos: { x: number; y: number }; tile: 'land' | 'water' } | null {
+    const pokemonData = this.scene.getMasterData().getPokemonData(wild.pokedexId);
+    const allowed: ('land' | 'water')[] =
+      pokemonData?.spawn && pokemonData.spawn.length > 0 ? pokemonData.spawn : ['land', 'water'];
+
+    const order: ('land' | 'water')[] = [];
+    if (wild.spawnTile) {
+      order.push(wild.spawnTile);
+    } else {
+      const first = allowed[Math.floor(Math.random() * allowed.length)];
+      order.push(first);
+    }
+    const other: 'land' | 'water' = order[0] === 'land' ? 'water' : 'land';
+    if (allowed.includes(other) && !order.includes(other)) order.push(other);
+
+    for (const tile of order) {
+      const pos = this.computeFreeSpawnTile(tile);
+      if (pos) return { pos, tile };
+    }
+    return null;
   }
 
   /**
@@ -634,27 +661,39 @@ export class OverworldUi extends BaseUi {
       this.nameContainer.add(obj.getName());
     }
 
-    // 2) Wilds — land ∪ water
+    // 2) Wilds — pokemonData.spawn 기반으로 land/water 결정
     for (const wild of availableWilds) {
       let px: number;
       let py: number;
+      let spawnTile: 'land' | 'water' = wild.spawnTile ?? 'land';
       if (wild.x != null && wild.y != null) {
         px = wild.x;
         py = wild.y;
       } else {
-        const pos = this.computeFreeSpawnTile('any');
-        if (!pos) {
-          console.warn(`[Safari] not enough spawn tiles for wilds`);
-          break;
+        const result = this.computeWildSpawn(wild);
+        if (!result) {
+          console.warn(`[Safari] no free spawn tile for wild ${wild.pokedexId} (uid=${wild.uid})`);
+          continue;
         }
-        px = pos.x;
-        py = pos.y;
+        px = result.pos.x;
+        py = result.pos.y;
+        spawnTile = result.tile;
         wild.x = px;
         wild.y = py;
-        this.markTileOccupied(pos);
+        wild.spawnTile = spawnTile;
+        this.markTileOccupied(result.pos);
       }
 
-      const obj = new WildPokemonObject(this.scene, this.mapView, wild, mapKey, px, py, []);
+      const obj = new WildPokemonObject(
+        this.scene,
+        this.mapView,
+        wild,
+        mapKey,
+        px,
+        py,
+        [],
+        spawnTile,
+      );
       this.safariObjects.push(obj);
       this.worldContainer.add(obj.getShadow());
       this.worldContainer.add(obj.getSprite());
@@ -699,23 +738,27 @@ export class OverworldUi extends BaseUi {
     // 중복 스폰 방지
     if (this.findWildByUid(payload.wild.uid)) return;
 
-    const pos = this.computeFreeSpawnTile('any');
-    if (!pos) {
-      console.warn('[Safari] handleWildSpawn: no free tile for new wild');
+    const result = this.computeWildSpawn(payload.wild);
+    if (!result) {
+      console.warn(
+        `[Safari] handleWildSpawn: no free tile for ${payload.wild.pokedexId} (uid=${payload.wild.uid})`,
+      );
       return;
     }
-    payload.wild.x = pos.x;
-    payload.wild.y = pos.y;
-    this.markTileOccupied(pos);
+    payload.wild.x = result.pos.x;
+    payload.wild.y = result.pos.y;
+    payload.wild.spawnTile = result.tile;
+    this.markTileOccupied(result.pos);
 
     const obj = new WildPokemonObject(
       this.scene,
       this.mapView,
       payload.wild,
       payload.mapId,
-      pos.x,
-      pos.y,
+      result.pos.x,
+      result.pos.y,
       [],
+      result.tile,
     );
     this.safariObjects.push(obj);
     this.worldContainer.add(obj.getShadow());

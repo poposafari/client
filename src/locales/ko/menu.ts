@@ -47,6 +47,7 @@ export const menu: TranslationMenu = {
   p005: '사파리 존',
   s001: '사파리 존 1',
   s002: '매우 매우 매우 이상한 숲',
+  s003: '작은 호수',
   safariBall: '사파리 볼',
   safariLeft: '{{count}}개 남음',
   abilitySymbol: '특성',

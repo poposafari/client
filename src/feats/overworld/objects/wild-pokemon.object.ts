@@ -21,6 +21,7 @@ export class WildPokemonObject extends MovableObject {
   private readonly wild: SafariWildInfo;
   private readonly mapId: string;
   private readonly frameBase: string;
+  private readonly textureKey: string;
 
   private state: WalkState = 'IDLE';
   private frozen = false;
@@ -56,10 +57,16 @@ export class WildPokemonObject extends MovableObject {
     tileX: number,
     tileY: number,
     blockingRefs: IOverworldBlockingRef[],
+    spawnTile: 'land' | 'water' = 'land',
   ) {
-    const { key, frame } = getPokemonTexture('overworld', wild.pokedexId, {
-      isShiny: wild.isShiny,
-    });
+    const textureType = spawnTile === 'water' ? 'overworld_swimming' : 'overworld';
+    // scene 인자를 함께 넘겨야 swimming 아뜰라스에 프레임이 없을 때 'pokemon.overworld'로 폴백된다.
+    const { key, frame } = getPokemonTexture(
+      textureType,
+      wild.pokedexId,
+      { isShiny: wild.isShiny },
+      scene,
+    );
     const initialDir = wild.lastDirection ?? DIRECTION.DOWN;
     super(
       scene,
@@ -74,6 +81,7 @@ export class WildPokemonObject extends MovableObject {
     this.wild = wild;
     this.mapId = mapId;
     this.frameBase = frame;
+    this.textureKey = key;
     this.lastMovedDirection = initialDir;
     this.chosenDirection = initialDir;
 
@@ -333,7 +341,7 @@ export class WildPokemonObject extends MovableObject {
   }
 
   private animKey(dir: DIRECTION): string {
-    return `pokemon.overworld.${this.frameBase}.${dir}`;
+    return `${this.textureKey}.${this.frameBase}.${dir}`;
   }
 
   private randomIdleMs(): number {

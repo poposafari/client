@@ -17,7 +17,7 @@ import {
 } from '../overworld/objects/pet-emotion';
 
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
-import { s001Config, s002Config } from '../overworld/maps/safari';
+import { s001Config, s002Config, s003Config } from '../overworld/maps/safari';
 
 const MAX_NPC = 2;
 const MAX_DOOR = 19;
@@ -124,6 +124,11 @@ export class LoadingPhase implements IGamePhase {
     this.scene.load.multiatlas('pokemon.front', `${path}/pokemon.front.json`, path);
     this.scene.load.multiatlas('pokemon.icon', `${path}/pokemon.icon.json`, path);
     this.scene.load.multiatlas('pokemon.overworld', `${path}/pokemon.overworld.json`, path);
+    this.scene.load.multiatlas(
+      'pokemon.overworld_swimming',
+      `${path}/pokemon.overworld_swimming.json`,
+      path,
+    );
     this.scene.load.atlas('pokemon_call', `${path}/pokemon_call.png`, `${path}/pokemon_call.json`);
     this.scene.load.atlas(
       'pokemon_recall',
@@ -324,7 +329,14 @@ export class LoadingPhase implements IGamePhase {
 
   /** pokemon.overworld: 0~3=DOWN, 4~7=LEFT, 8~11=RIGHT, 12~15=UP. 방향별 애니메이션 등록 */
   private createPokemonOverworldAnimations(): void {
-    const textureKey = 'pokemon.overworld';
+    this.createPokemonOverworldAnimationsFor('pokemon.overworld', 'pokemon.overworld');
+    this.createPokemonOverworldAnimationsFor(
+      'pokemon.overworld_swimming',
+      'pokemon.overworld_swimming',
+    );
+  }
+
+  private createPokemonOverworldAnimationsFor(textureKey: string, animKeyPrefix: string): void {
     const texture = this.scene.textures.get(textureKey);
     if (!texture?.getFrameNames) return;
 
@@ -332,7 +344,7 @@ export class LoadingPhase implements IGamePhase {
     const byBase = new Map<string, Map<number, string>>();
 
     for (const name of frameNames) {
-      const match = name.match(/^(.+)_(\d+)$/);
+      const match = name.match(/^(.+)_(\d+)(?:\.png)?$/);
       if (!match) continue;
       const base = match[1];
       const index = parseInt(match[2], 10);
@@ -357,7 +369,7 @@ export class LoadingPhase implements IGamePhase {
           frames.push(frame);
         }
         if (frames.length === end - start + 1) {
-          const animKey = `pokemon.overworld.${base}.${dir}`;
+          const animKey = `${animKeyPrefix}.${base}.${dir}`;
           createAnimationFromFrameNames(this.scene, textureKey, animKey, frames, 8, -1);
         }
       }
@@ -700,6 +712,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadMap(MAP.PLAZA_001, 'ui/maps', MAP.PLAZA_001);
     this.scene.loadMap(MAP.SAFARI_001, 'ui/maps', MAP.SAFARI_001);
     this.scene.loadMap(MAP.SAFARI_002, 'ui/maps', MAP.SAFARI_002);
+    this.scene.loadMap(MAP.SAFARI_003, 'ui/maps', MAP.SAFARI_003);
 
     // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
     // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
@@ -728,6 +741,7 @@ export class LoadingPhase implements IGamePhase {
     mapRegistry.register(p001Config);
     mapRegistry.register(s001Config);
     mapRegistry.register(s002Config);
+    mapRegistry.register(s003Config);
   }
 
   private loadAudio() {
