@@ -510,6 +510,10 @@ export class LoadingPhase implements IGamePhase {
 
     this.scene.loadImage(TEXTURE.LIGHT, 'ui', 'light');
 
+    this.scene.loadImage(TEXTURE.BG_HM, 'ui/hm', 'bg_hm');
+    this.scene.loadImage(TEXTURE.PARTICLE_HM_0, 'ui/hm', 'particle_hm_0');
+    this.scene.loadImage(TEXTURE.PARTICLE_HM_1, 'ui/hm', 'particle_hm_1');
+
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
     // }
@@ -583,6 +587,7 @@ export class LoadingPhase implements IGamePhase {
       'overworld_grass_1_b',
       'overworld_grass_1_b',
     );
+    this.scene.loadAtlas(TEXTURE.BASE_SURF, 'ui', 'base_surf', 'base_surf');
     this.scene.loadAtlas(TEXTURE.OVERWORLD_GRASS_2, 'ui', 'overworld_grass_2', 'overworld_grass_2');
     this.scene.loadAtlas(
       TEXTURE.OVERWORLD_GRASS_2_B,
@@ -775,6 +780,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.MART, 'audio/se', 'mart', 'ogg');
     this.scene.loadAudio(SFX.EXP_GAIN, 'audio/se', 'exp_gain', 'ogg');
     this.scene.loadAudio(SFX.EXP_FULL, 'audio/se', 'exp_full', 'ogg');
+    this.scene.loadAudio(SFX.JUMP, 'audio/se', 'jump', 'ogg');
   }
 
   private createSprite() {
@@ -789,11 +795,27 @@ export class LoadingPhase implements IGamePhase {
     this.createPokemonRecallAnimation();
     this.createEmoSprite();
     this.createPetEmoSprite();
+    this.createBaseSurfAnimations();
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1, ANIMATION.OVERWORLD_GRASS_1);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1_B, ANIMATION.OVERWORLD_GRASS_1_B);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2, ANIMATION.OVERWORLD_GRASS_2);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2_B, ANIMATION.OVERWORLD_GRASS_2_B);
+  }
+
+  private createBaseSurfAnimations(): void {
+    const ranges: Array<{ anim: ANIMATION; start: number; end: number }> = [
+      { anim: ANIMATION.BASE_SURF_DOWN, start: 0, end: 3 },
+      { anim: ANIMATION.BASE_SURF_LEFT, start: 4, end: 7 },
+      { anim: ANIMATION.BASE_SURF_RIGHT, start: 8, end: 11 },
+      { anim: ANIMATION.BASE_SURF_UP, start: 12, end: 15 },
+    ];
+    for (const { anim, start, end } of ranges) {
+      if (this.scene.anims.exists(anim)) continue;
+      const frames: string[] = [];
+      for (let i = start; i <= end; i++) frames.push(`base_surf-${i}`);
+      createAnimationFromFrameNames(this.scene, TEXTURE.BASE_SURF, anim, frames, 8, -1);
+    }
   }
 
   private createPetEmoSprite() {

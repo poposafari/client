@@ -739,7 +739,7 @@ export class PokemonPcUi extends BaseUi {
 
     this.inputManager.pop(this);
 
-    this.partyMenu.waitForSelect(items).then((selected) => {
+    this.partyMenu.waitForSelect(items).then(async (selected) => {
       this.partyMenu.hide();
 
       if (!selected || selected.key === 'pc:cancel') {
@@ -749,6 +749,13 @@ export class PokemonPcUi extends BaseUi {
 
       switch (selected.key) {
         case 'pc:removeFromParty': {
+          const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
+          if (activeSurfId === pokemon.id) {
+            const talkUi = this.scene.getMessage('talk');
+            await talkUi.showMessage(i18next.t('msg:surfInUse'));
+            this.inputManager.push(this);
+            break;
+          }
           const boxNumber = this.currentBoxIndex + 1;
           const freeGrid = this.pcState.getNextFreeGridSlot(boxNumber);
           if (freeGrid !== null) {
@@ -771,9 +778,17 @@ export class PokemonPcUi extends BaseUi {
           this.inputManager.push(this);
           break;
         }
-        case 'pc:grab':
+        case 'pc:grab': {
+          const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
+          if (activeSurfId === pokemon.id) {
+            const talkUi = this.scene.getMessage('talk');
+            await talkUi.showMessage(i18next.t('msg:surfInUse'));
+            this.inputManager.push(this);
+            break;
+          }
           this.startGrab(pokemon);
           break;
+        }
         default:
           this.inputManager.push(this);
           break;
@@ -936,8 +951,18 @@ export class PokemonPcUi extends BaseUi {
     this.inputManager.push(this);
   }
 
-  private placeGrabbedPokemon(): void {
+  private async placeGrabbedPokemon(): Promise<void> {
     if (!this.grabbedPokemonId || !this.grabOrigin) return;
+
+    if (this.grabCursorInParty) {
+      const targetPokemon = this.pcState.getPokemonAtPartySlot(this.grabPartyIndex);
+      const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
+      if (targetPokemon && activeSurfId === targetPokemon.id) {
+        const talkUi = this.scene.getMessage('talk');
+        await talkUi.showMessage(i18next.t('msg:surfInUse'));
+        return;
+      }
+    }
 
     this.scene.getAudio().playEffect(SFX.PC_PUT_DOWN);
     const boxNumber = this.currentBoxIndex + 1;

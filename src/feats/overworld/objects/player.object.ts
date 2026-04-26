@@ -19,6 +19,7 @@ import type { IOverworldBlockingRef, IOverworldMapAdapter } from './movable.obje
 import { MovableObject } from './movable.object';
 
 const PLAYER_SCALE = 3;
+const SURF_Y_OFFSET = 0;
 
 export class PlayerObject extends MovableObject {
   private rideStopFrameNumbers: number[] = [];
@@ -30,6 +31,8 @@ export class PlayerObject extends MovableObject {
   private hairKey = '';
   private outfitKey = '';
 
+  private jumpFromSurf = false;
+
   constructor(
     scene: GameScene,
     mapAdapter: IOverworldMapAdapter | null,
@@ -40,9 +43,7 @@ export class PlayerObject extends MovableObject {
     const user = scene.getUser();
     const profile = user?.getProfile();
     const equippedCostumes = user?.getEquippedCostumes();
-    const costume = equippedCostumes?.length
-      ? equippedCostumesToParts(equippedCostumes)
-      : null;
+    const costume = equippedCostumes?.length ? equippedCostumesToParts(equippedCostumes) : null;
     const gender = profile?.gender ?? 'male';
     const defaults = getDefaultOverworldKeys(scene, gender);
 
@@ -55,9 +56,7 @@ export class PlayerObject extends MovableObject {
       blockingRefs: options?.blockingRefs,
     });
 
-    const hairKeyRequested = costume
-      ? getHairTextureKey(gender, costume.hair)
-      : defaults.hair;
+    const hairKeyRequested = costume ? getHairTextureKey(gender, costume.hair) : defaults.hair;
     const hairKeyResolved = scene.textures.exists(hairKeyRequested)
       ? hairKeyRequested
       : defaults.hair;
@@ -109,21 +108,42 @@ export class PlayerObject extends MovableObject {
     this.getScene().events.emit('player_tile_moved', { tileX, tileY, direction });
   }
 
+  private getSurfYOffset(): number {
+    const state = this.getScene().getUser()?.getOverworldMovementState();
+    if (state === OverworldMovementState.SURF) return SURF_Y_OFFSET;
+    if (state === OverworldMovementState.JUMP && this.jumpFromSurf) return SURF_Y_OFFSET;
+    return 0;
+  }
+
+  isJumpFromSurf(): boolean {
+    return this.jumpFromSurf;
+  }
+
+  clearJumpFromSurf(): void {
+    this.jumpFromSurf = false;
+  }
+
   override setPosition(px: number, py: number): void {
-    super.setPosition(px, py);
-    this.hairSprite?.setPosition(px, py);
-    this.outfitSprite?.setPosition(px, py);
+    const adjustedY = py + this.getSurfYOffset();
+    super.setPosition(px, adjustedY);
+    this.hairSprite?.setPosition(px, adjustedY);
+    this.outfitSprite?.setPosition(px, adjustedY);
+  }
+
+  override getSpritePos(): { x: number; y: number } {
+    const pos = super.getSpritePos();
+    return { x: pos.x, y: pos.y - this.getSurfYOffset() };
   }
 
   override refreshPosition(): void {
     super.refreshPosition();
-    if (this.hairSprite || this.outfitSprite) {
-      const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
-      this.hairSprite?.setPosition(px, py);
-      this.outfitSprite?.setPosition(px, py);
-      this.outfitSprite?.setDepth(this.tileY + 0.1);
-      this.hairSprite?.setDepth(this.tileY + 0.2);
-    }
+    const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
+    const adjustedY = py + this.getSurfYOffset();
+    this.getSprite().setPosition(px, adjustedY);
+    this.hairSprite?.setPosition(px, adjustedY);
+    this.outfitSprite?.setPosition(px, adjustedY);
+    this.outfitSprite?.setDepth(this.tileY + 0.1);
+    this.hairSprite?.setDepth(this.tileY + 0.2);
   }
 
   override startSpriteAnimation(key: string): void {
@@ -189,6 +209,7 @@ export class PlayerObject extends MovableObject {
     const destX = this.tileX + delta.dx * 2;
     const destY = this.tileY + delta.dy * 2;
     if (!this.canLandAt(destX, destY)) return false;
+    this.jumpFromSurf = user.getOverworldMovementState() === OverworldMovementState.SURF;
     user.setOverworldMovementState(OverworldMovementState.JUMP);
     const textureKey = this.getSprite().texture.key;
     const animationKey = getRunningAnimationKey(textureKey, direction, this.animStep);
@@ -213,7 +234,10 @@ export class PlayerObject extends MovableObject {
           return undefined;
       }
     }
-    if (state === OverworldMovementState.SURF && this.surfStopFrameNumbers.length === 4) {
+    const isSurfPose =
+      state === OverworldMovementState.SURF ||
+      (state === OverworldMovementState.JUMP && this.jumpFromSurf);
+    if (isSurfPose && this.surfStopFrameNumbers.length === 4) {
       switch (direction) {
         case DIRECTION.UP:
           return this.surfStopFrameNumbers[0];

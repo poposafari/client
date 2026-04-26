@@ -16,6 +16,7 @@ import { MartPhase } from '../mart';
 import { MartNpcObject } from './objects/special-npc.object';
 import { BattlePhase } from '../battle';
 import { RewardPhase } from '../battle/reward/reward.phase';
+import { HiddenMovePhase } from '../hidden-move/hidden-move.phase';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export class OverworldPhase implements IGamePhase {
@@ -43,6 +44,17 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi.onRegisteredItemsRequested = () => {
       if (!this.overworldUi) return;
       this.scene.pushPhase(new RegisteredItemsPhase(this.scene, this.overworldUi));
+    };
+    this.overworldUi.onHiddenMoveSurfRequested = (caster) => {
+      this.scene.pushPhase(
+        new HiddenMovePhase(this.scene, {
+          hiddenMove: 'move_surf',
+          caster,
+          onComplete: () => {
+            this.overworldUi?.enterSurfWithBase();
+          },
+        }),
+      );
     };
     this.overworldUi.onInteractivePhaseRequested = (_object, phaseKey) => {
       if (phaseKey === 'professor') {
