@@ -41,8 +41,10 @@ export interface ApiSuccess<T> {
 }
 
 export interface ApiFailBody {
-  success: false;
-  error: { code: string; message: string | null; status: number };
+  statusCode: number;
+  code: string;
+  error: string;
+  message: string;
 }
 
 export type ApiResponse<T> =
@@ -70,7 +72,7 @@ export class ApiManager {
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError<ApiFailBody>) => {
-        const code = error.response?.data?.error?.code;
+        const code = error.response?.data?.code;
         if (code === ErrorCode.SESSION_MISSING || code === ErrorCode.SESSION_EXPIRED) {
           return Promise.reject(error);
         }
@@ -150,10 +152,7 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async evolvePokemon(
-    id: number,
-    cost: string,
-  ): Promise<{ id: number; pokedexId: string } | null> {
+  async evolvePokemon(id: number, cost: string): Promise<{ id: number; pokedexId: string } | null> {
     const res = await this.client.post<ApiResponse<{ id: number; pokedexId: string }>>(
       '/pokemon/evolve',
       { id, cost },
@@ -161,10 +160,7 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async learnMove(
-    id: number,
-    move: string,
-  ): Promise<{ id: number; skills: string[] } | null> {
+  async learnMove(id: number, move: string): Promise<{ id: number; skills: string[] } | null> {
     const res = await this.client.post<ApiResponse<{ id: number; skills: string[] }>>(
       '/pokemon/learn-move',
       { id, move },
@@ -187,12 +183,11 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async takeHeldItem(
-    id: number,
-  ): Promise<{ pokemonId: number; returnedItem: string } | null> {
-    const res = await this.client.post<
-      ApiResponse<{ pokemonId: number; returnedItem: string }>
-    >('/item/take-hold', { id });
+  async takeHeldItem(id: number): Promise<{ pokemonId: number; returnedItem: string } | null> {
+    const res = await this.client.post<ApiResponse<{ pokemonId: number; returnedItem: string }>>(
+      '/item/take-hold',
+      { id },
+    );
     return res.data.success ? res.data.data : null;
   }
 
@@ -217,7 +212,10 @@ export class ApiManager {
   async buyItem(
     item: string,
     quantity: number,
-  ): Promise<{ money: number; item: { itemId: string; quantity: number; register: boolean } } | null> {
+  ): Promise<{
+    money: number;
+    item: { itemId: string; quantity: number; register: boolean };
+  } | null> {
     const res = await this.client.post<
       ApiResponse<{ money: number; item: { itemId: string; quantity: number; register: boolean } }>
     >('/item/buy', { item, quantity });
@@ -367,16 +365,16 @@ export class ApiManager {
       status = error.response.status;
       const errData = error.response.data;
 
-      if (errData?.error?.code) {
-        code = errData.error.code;
+      if (errData?.code) {
+        code = errData.code;
       }
 
       // i18n 키가 있으면 매핑된 메시지, 없으면 서버가 보내 준 원본 메시지(DEV 환경) 또는 기본값
       const i18nKey = `error:${code}`;
       if (i18next.exists(i18nKey)) {
         message = i18next.t(i18nKey);
-      } else if (errData?.error?.message) {
-        message = errData.error.message;
+      } else if (errData?.message) {
+        message = errData.message;
       }
     } else if (error.request) {
       code = ErrorCode.NETWORK_ERROR;
