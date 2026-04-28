@@ -14,10 +14,14 @@ export class TitlePhase implements IGamePhase {
 
   private savedCursorIndex: number | undefined = undefined;
 
-  constructor(private scene: GameScene) {}
+  constructor(
+    private scene: GameScene,
+    private opts: { forceContinueEnabled?: boolean } = {},
+  ) {}
 
   async enter(): Promise<void> {
-    this.ui = new TitleUi(this.scene, this.scene.getUser() ? true : false);
+    const continueEnabled = this.opts.forceContinueEnabled || !!this.scene.getUser();
+    this.ui = new TitleUi(this.scene, continueEnabled);
     this.blocker = new ApiBlockingUi(this.scene);
 
     this.ui.show();
@@ -30,6 +34,15 @@ export class TitlePhase implements IGamePhase {
 
     try {
       if (result.input === 'continue') {
+        if (!this.scene.getUser()) {
+          this.blocker.blockInput();
+          try {
+            const me = await this.scene.getApi().getMe();
+            if (me) this.scene.createUserManager(me);
+          } finally {
+            this.blocker.unblockInput();
+          }
+        }
         if (this.scene.getUser()) {
           this.scene.switchPhase(new OverworldEntryPhase(this.scene));
           return;
@@ -38,7 +51,8 @@ export class TitlePhase implements IGamePhase {
         return;
       }
       if (result.input === 'newgame') {
-        if (!this.scene.getUser()) {
+        const hasAvatar = !!this.scene.getUser() || !!this.opts.forceContinueEnabled;
+        if (!hasAvatar) {
           this.scene.switchPhase(new CreateAvatarPhase(this.scene));
           return;
         }

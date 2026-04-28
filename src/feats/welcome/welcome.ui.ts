@@ -32,13 +32,17 @@ export class WelcomeUi extends BaseUi implements IInputHandler {
 
   async showWelcomeMsg() {
     const talk = this.scene.getMessage('talk');
-
-    await talk.showMessage(i18next.t('msg:welcome_0'), { name: '테스트맨' });
-    await talk.showMessage(i18next.t('msg:welcome_1'), { name: '테스트맨' });
-    await talk.showMessage(i18next.t('msg:welcome_2'), { name: '테스트맨' });
-    await talk.showMessage(i18next.t('msg:welcome_3'), { name: '테스트맨' });
-    await talk.showMessage(i18next.t('msg:welcome_4'), { name: '테스트맨' });
-    await talk.showMessage(i18next.t('msg:welcome_5'), { name: '테스트맨' });
+    await talk.showMessage(
+      [
+        i18next.t('msg:welcome_0'),
+        i18next.t('msg:welcome_1'),
+        i18next.t('msg:welcome_2'),
+        i18next.t('msg:welcome_3'),
+        i18next.t('msg:welcome_4'),
+        i18next.t('msg:welcome_5'),
+      ],
+      { name: '테스트맨' },
+    );
   }
 
   show(): void {

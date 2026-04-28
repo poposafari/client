@@ -9,6 +9,7 @@ export const option: TranslationOption = {
   frameType: 'フレームタイプ',
   frameValue: 'タイプ',
   wildSpawnCry: '野生ポケモンの出現音',
+  battleTutorial: 'バトルチュートリアル',
   on: 'オン',
   off: 'オフ',
   speedNormal: 'ふつう',

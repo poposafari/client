@@ -56,6 +56,8 @@ export class TalkMessageUi extends MessageUi {
     this.endCursor.setPosition(cursorX + 30, cursorY);
     this.endCursor.setVisible(true);
     this.playCursorAnim();
+
+    super.onTypingComplete();
   }
 
   protected close(): void {

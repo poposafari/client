@@ -75,6 +75,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private toggleIconContainer!: GContainer;
   private toggleIcons: GImage[] = [];
   private toggleIconTexts: GText[] = [];
+  private toggleIconGroups: Array<Array<GImage | GText>> = [];
 
   private partyList!: PartyListContainer;
 
@@ -228,6 +229,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       );
       icon.setTint(0x7f7f7f);
       this.toggleIcons.push(icon);
+      this.toggleIconGroups.push([icon, guideIcon, guideText]);
       this.toggleIconContainer.add([icon, guideIcon, guideText]);
     }
 
@@ -507,6 +509,22 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   hide() {
     this.setVisible(false);
+  }
+
+  setNewbieMode(enabled: boolean): void {
+    const runningIdx = TOGGLE_ICONS.findIndex((c) => c.texture === TEXTURE.ICON_RUNNING);
+    this.toggleIconGroups.forEach((group, i) => {
+      const visible = !enabled || i === runningIdx;
+      for (const obj of group) {
+        obj.setVisible(visible);
+      }
+    });
+    const otherVisible = !enabled;
+    this.partyList?.setVisible(otherVisible);
+    this.timeContainer?.setVisible(otherVisible);
+    this.xyText?.setVisible(otherVisible);
+    this.infoList?.setVisible(otherVisible);
+    this.profileContainer?.setVisible(otherVisible);
   }
 
   updateToggleIcon(texture: TEXTURE, onoff: boolean) {

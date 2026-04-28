@@ -9,6 +9,7 @@ export const option: TranslationOption = {
   frameType: 'Frame Type',
   frameValue: 'Type',
   wildSpawnCry: 'Wild Pokémon Spawn Cry',
+  battleTutorial: 'Battle Tutorial',
   on: 'On',
   off: 'Off',
   speedNormal: 'Normal',

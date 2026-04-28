@@ -20,6 +20,7 @@ import {
 import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui';
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
+import { CountdownPhase } from '@poposafari/feats/countdown';
 import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
 import { DIRECTION } from '@poposafari/feats/overworld/overworld.constants';
 import { BaseScene } from '@poposafari/scenes';
@@ -95,8 +96,14 @@ export class GameScene extends BaseScene {
   private questionUi!: QuestionMessageUi;
 
   private fadeInOnNextOverworldEnter = false;
+  private pendingScreenFadeIn = false;
 
   private socket: Socket | null = null;
+
+  private static readonly IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+  private static readonly IDLE_CHECK_INTERVAL_MS = 10 * 1000;
+  private lastActivityTime = Date.now();
+  private idleCheckIntervalId: ReturnType<typeof setInterval> | null = null;
 
   private pendingRoomState: RoomUserState[] | null = null;
 
@@ -188,7 +195,9 @@ export class GameScene extends BaseScene {
   create() {
     this.audio = new AudioManager(this);
     this.option = new OptionManager(this.audio);
-    this.inputManager = new InputManager(this);
+    this.inputManager = new InputManager(this, () => this.markActivity());
+
+    this.input.on('pointerdown', () => this.markActivity());
     this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
@@ -325,7 +334,36 @@ export class GameScene extends BaseScene {
       this.socket.on('connect', this.onSocketConnect);
       this.socket.on('connect_error', this.onSocketConnectError);
       this.socket.on('game_time_changed', this.onGameTimeChanged);
+      this.startIdleCheck();
+    } else {
+      this.stopIdleCheck();
     }
+  }
+
+  markActivity(): void {
+    this.lastActivityTime = Date.now();
+  }
+
+  private startIdleCheck(): void {
+    this.stopIdleCheck();
+    this.markActivity();
+    this.idleCheckIntervalId = setInterval(() => {
+      this.checkIdle();
+    }, GameScene.IDLE_CHECK_INTERVAL_MS);
+  }
+
+  private stopIdleCheck(): void {
+    if (this.idleCheckIntervalId !== null) {
+      clearInterval(this.idleCheckIntervalId);
+      this.idleCheckIntervalId = null;
+    }
+  }
+
+  private checkIdle(): void {
+    if (Date.now() - this.lastActivityTime < GameScene.IDLE_TIMEOUT_MS) return;
+    const top = this.getCurrentPhase();
+    if (top instanceof CountdownPhase) return;
+    this.pushPhase(new CountdownPhase(this));
   }
 
   setPendingRoomState(users: RoomUserState[]): void {
@@ -427,6 +465,16 @@ export class GameScene extends BaseScene {
   consumeFadeInOnOverworldEnter(): boolean {
     const v = this.fadeInOnNextOverworldEnter;
     this.fadeInOnNextOverworldEnter = false;
+    return v;
+  }
+
+  setPendingScreenFadeIn(): void {
+    this.pendingScreenFadeIn = true;
+  }
+
+  consumePendingScreenFadeIn(): boolean {
+    const v = this.pendingScreenFadeIn;
+    this.pendingScreenFadeIn = false;
     return v;
   }
 
