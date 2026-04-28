@@ -21,6 +21,7 @@ import { GameScene } from '@poposafari/scenes';
 export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
   scene: GameScene;
   private inputResolver: ((result: RegisterLocalUiInput) => void) | null = null;
+  private isReady = false;
 
   private bg!: GImage;
 
@@ -48,9 +49,18 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.modalErrorMsg.setText('');
 
     this.scene.getAudio().playEffect(SFX.OPEN_0);
-    for (const container of [this.modalContainer, this.labelContainer, this.btnContainer]) {
-      runFloatEffect(scene, container, +100, 1000);
-    }
+    const containers = [this.modalContainer, this.labelContainer, this.btnContainer];
+    containers.forEach((container, idx) => {
+      const isLast = idx === containers.length - 1;
+      runFloatEffect(
+        scene,
+        container,
+        +100,
+        700,
+        0,
+        isLast ? () => (this.isReady = true) : undefined,
+      );
+    });
   }
 
   onInput(key: string): void {}
@@ -88,8 +98,8 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       80,
       'bold',
       'center',
-      TEXTSTYLE.SIG_0,
-      TEXTSHADOW.SIG_1,
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
     );
     this.modalErrorMsg = addText(
       this.scene,
@@ -296,6 +306,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.btnTitles[0].clearTint();
     });
     this.btnWindows[0].on('pointerup', () => {
+      if (!this.isReady) return;
       this.validateAndSubmit();
     });
 
@@ -308,6 +319,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.btnTitles[1].clearTint();
     });
     this.btnWindows[1].on('pointerup', () => {
+      if (!this.isReady) return;
       if (this.inputResolver) {
         this.inputResolver('login');
         this.inputResolver = null;

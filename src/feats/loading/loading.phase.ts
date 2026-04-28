@@ -571,6 +571,8 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_REGISTER, 'ui/icons', 'icon_register');
     this.scene.loadImage(TEXTURE.ICON_RATE_UP, 'ui', 'up_rate');
     this.scene.loadImage(TEXTURE.ICON_RATE_DOWN, 'ui', 'down_rate');
+    this.scene.loadImage(TEXTURE.ICON_DISCORD, 'ui/icons', 'icon_discord');
+    this.scene.loadImage(TEXTURE.ICON_GOOGLE, 'ui/icons', 'icon_google');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');

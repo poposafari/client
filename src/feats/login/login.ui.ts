@@ -18,11 +18,13 @@ import {
 } from '@poposafari/utils';
 import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
 import { GameScene } from '@poposafari/scenes';
+import { VITE_API_BASE_URL } from '@poposafari/env';
 
 export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
   scene: GameScene;
   private audio: AudioManager;
   private inputResolver: ((result: LoginLocalUiInput) => void) | null = null;
+  private isReady = false;
 
   private bg!: GImage;
   private title!: GImage;
@@ -40,6 +42,11 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
   private btnTitles: GText[] = [];
   private btnWindows: GWindow[] = [];
 
+  private oauthContainer!: GContainer;
+  private oauthIcons: GImage[] = [];
+  private oauthLabel!: GText;
+  private oauthWindow!: GWindow;
+
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
     this.scene = scene;
@@ -51,9 +58,23 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.modalErrorMsg.setText('');
 
     this.audio.playEffect(SFX.OPEN_0);
-    for (const container of [this.modalContainer, this.labelContainer, this.btnContainer]) {
-      runFloatEffect(scene, container, +100, 1000);
-    }
+    const containers = [
+      this.modalContainer,
+      this.labelContainer,
+      this.btnContainer,
+      this.oauthContainer,
+    ];
+    containers.forEach((container, idx) => {
+      const isLast = idx === containers.length - 1;
+      runFloatEffect(
+        scene,
+        container,
+        +100,
+        700,
+        0,
+        isLast ? () => (this.isReady = true) : undefined,
+      );
+    });
   }
 
   onInput(key: string): void {}
@@ -65,8 +86,16 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.createModal();
     this.createLabel();
     this.createButton();
+    this.createOauth();
 
-    this.add([this.bg, this.title, this.modalContainer, this.labelContainer, this.btnContainer]);
+    this.add([
+      this.bg,
+      this.title,
+      this.modalContainer,
+      this.labelContainer,
+      this.btnContainer,
+      this.oauthContainer,
+    ]);
   }
 
   private createModal() {
@@ -78,7 +107,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       0,
       650,
       650,
-      4,
+      3.2,
       16,
       16,
       16,
@@ -92,13 +121,13 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       80,
       'bold',
       'center',
-      TEXTSTYLE.SIG_0,
-      TEXTSHADOW.SIG_1,
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
     );
     this.modalErrorMsg = addText(
       this.scene,
       -250,
-      +85,
+      +100,
       '에러_테스트',
       40,
       'bold',
@@ -106,6 +135,8 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       TEXTSTYLE.ERROR,
       TEXTSHADOW.ERROR,
     ).setOrigin(0, 0);
+
+    this.modalContainer.setY(-20);
 
     this.modalContainer.add([this.modalWindow, this.modalTitle, this.modalErrorMsg]);
   }
@@ -262,6 +293,55 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     ]);
   }
 
+  private createOauth() {
+    this.oauthContainer = addContainer(this.scene, DEPTH.DEFAULT + 1);
+    this.oauthContainer.setY(+500);
+
+    this.oauthLabel = addText(
+      this.scene,
+      0,
+      -140,
+      '-------- 또는 --------',
+      40,
+      100,
+      'center',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.oauthWindow = addWindow(
+      this.scene,
+      this.scene.getOption().getWindow(),
+      0,
+      -90,
+      650,
+      200,
+      3.2,
+      16,
+      16,
+      16,
+      16,
+    );
+
+    this.oauthIcons.push(
+      addImage(this.scene, TEXTURE.ICON_GOOGLE, undefined, -50, -65).setInteractive({
+        cursor: 'pointer',
+      }),
+    );
+    this.oauthIcons.push(
+      addImage(this.scene, TEXTURE.ICON_DISCORD, undefined, +50, -65).setInteractive({
+        cursor: 'pointer',
+      }),
+    );
+
+    this.oauthContainer.add([
+      this.oauthWindow,
+      this.oauthLabel,
+      this.oauthIcons[0],
+      this.oauthIcons[1],
+    ]);
+  }
+
   private createMouseEvent() {
     this.btnWindows[0].on('pointerover', () => {
       this.btnWindows[0].setTint(0xcccccc);
@@ -272,6 +352,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.btnTitles[0].clearTint();
     });
     this.btnWindows[0].on('pointerup', () => {
+      if (!this.isReady) return;
       this.validateAndSubmit();
     });
 
@@ -284,10 +365,35 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.btnTitles[1].clearTint();
     });
     this.btnWindows[1].on('pointerup', () => {
+      if (!this.isReady) return;
       if (this.inputResolver) {
         this.inputResolver('register');
         this.inputResolver = null;
       }
+    });
+
+    this.oauthIcons[0].on('pointerover', () => {
+      this.oauthIcons[0].setTint(0xcccccc);
+    });
+    this.oauthIcons[0].on('pointerout', () => {
+      this.oauthIcons[0].clearTint();
+    });
+    this.oauthIcons[0].on('pointerup', () => {
+      if (!this.isReady) return;
+      const apiBase = VITE_API_BASE_URL ?? 'http://localhost:9000/api';
+      window.location.href = `${apiBase}/auth/oauth/google/authorize`;
+    });
+
+    this.oauthIcons[1].on('pointerover', () => {
+      this.oauthIcons[1].setTint(0xcccccc);
+    });
+    this.oauthIcons[1].on('pointerout', () => {
+      this.oauthIcons[1].clearTint();
+    });
+    this.oauthIcons[1].on('pointerup', () => {
+      if (!this.isReady) return;
+      const apiBase = VITE_API_BASE_URL ?? 'http://localhost:9000/api';
+      window.location.href = `${apiBase}/auth/oauth/discord/authorize`;
     });
   }
 

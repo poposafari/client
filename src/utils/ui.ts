@@ -272,8 +272,9 @@ export function runFloatEffect(
   scene: Phaser.Scene,
   target: any,
   offsetY: number = 50,
-  duration: number = 700,
+  duration: number = 500,
   delay: number = 0,
+  onComplete?: () => void,
 ) {
   const destY = target.y;
   target.y = destY + offsetY;
@@ -286,6 +287,7 @@ export function runFloatEffect(
     duration: duration,
     delay: delay,
     ease: Phaser.Math.Easing.Sine.Out,
+    onComplete: onComplete,
   });
 }
 

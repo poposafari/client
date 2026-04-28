@@ -16,6 +16,7 @@ export class WelcomePhase implements IGamePhase {
   async enter(): Promise<void> {
     const inputManager = this.scene.getInputManager();
     this.blocker = new ApiBlockingUi(this.scene);
+    const oauthErrorKey = this.consumeOAuthErrorFromUrl();
 
     try {
       const res = await this.scene.getApi().getMe();
@@ -38,7 +39,9 @@ export class WelcomePhase implements IGamePhase {
         // isUser = false 상태로 계속 진행 → 아래에서 WelcomeUi 표시
       } else {
         this.blocker.unblockInput();
-        this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: errorCode }));
+        this.scene.switchPhase(
+          new LoginPhase(this.scene, { initialErrorKey: oauthErrorKey ?? errorCode }),
+        );
         return;
       }
     }
@@ -51,6 +54,18 @@ export class WelcomePhase implements IGamePhase {
       this.blocker.unblockInput();
       this.scene.pushPhase(new TitlePhase(this.scene));
     }
+  }
+
+  private consumeOAuthErrorFromUrl(): string | undefined {
+    if (typeof window === 'undefined') return undefined;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code || !code.startsWith('OAUTH_')) return undefined;
+    params.delete('code');
+    const cleaned = params.toString();
+    const newUrl = window.location.pathname + (cleaned ? `?${cleaned}` : '') + window.location.hash;
+    window.history.replaceState(null, '', newUrl);
+    return 'error:OAUTH_FAILED';
   }
 
   exit(): void {

@@ -25,4 +25,5 @@ export const error: TranslationError = {
   EVOLUTION_NOT_AVAILABLE: '진화할 수 없는 포켓몬입니다.',
   EVOLUTION_COST_INVALID: '올바르지 않은 진화 조건입니다.',
   EVOLUTION_COST_NOT_ENOUGH: '진화에 필요한 재료가 부족합니다.',
+  OAUTH_FAILED: '외부 로그인에 실패했습니다.\n다시 시도해주세요.',
 };

@@ -19,4 +19,5 @@ export const error: TranslationError = {
   invalidCostume: 'Invalid costume.',
   invalidNickname: 'Nickname must be 2 to 12 characters.',
   kicked: 'You were logged in from another device.\nPlease log in again.',
+  OAUTH_FAILED: 'External login failed.\nPlease try again.',
 };

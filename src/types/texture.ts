@@ -68,6 +68,8 @@ export const enum TEXTURE {
   ICON_RATE_DOWN = 'down_rate',
   ICON_LV = 'icon_lv',
   ICON_REGISTER = 'icon_register',
+  ICON_DISCORD = 'icon_discord',
+  ICON_GOOGLE = 'icon_google',
 
   GROUND_ITEM = 'ground_item',
   EMO = 'emo',

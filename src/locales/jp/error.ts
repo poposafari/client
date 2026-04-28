@@ -19,4 +19,5 @@ export const error: TranslationError = {
   invalidCostume: '無効なコスチュームです。',
   invalidNickname: 'ニックネームは2文字以上12文字以下で\n入力してください。',
   kicked: '他の端末でログインされました。\n再度ログインしてください。',
+  OAUTH_FAILED: '外部ログインに失敗しました。\nもう一度お試しください。',
 };
