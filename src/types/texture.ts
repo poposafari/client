@@ -184,6 +184,7 @@ export const enum MAP {
   //gate
 
   //safari
+  SAFARI_000 = 's000',
   SAFARI_001 = 's001',
   SAFARI_002 = 's002',
   SAFARI_003 = 's003',

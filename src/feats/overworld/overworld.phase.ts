@@ -1,5 +1,5 @@
 import { IGamePhase } from '@poposafari/core';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import type {
   OtherPetChangedPayload,
   RoomUserState,
@@ -18,16 +18,29 @@ import { BattlePhase } from '../battle';
 import { RewardPhase } from '../battle/reward/reward.phase';
 import { HiddenMovePhase } from '../hidden-move/hidden-move.phase';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import i18next from '@poposafari/i18n';
+import { screenFadeIn } from '@poposafari/utils/screen-fade';
 
 export class OverworldPhase implements IGamePhase {
   private overworldUi: OverworldUi | null = null;
   private socketOffFns: Array<() => void> = [];
+  private currentLocation: string = '';
+  private onProfileChanged = (): void => {
+    this.applyNewbieMode();
+  };
 
   constructor(private scene: GameScene) {}
+
+  private applyNewbieMode(): void {
+    const profile = this.scene.getUser()?.getProfile();
+    const isNewbie = this.currentLocation === 's000' && profile?.hasStarter === true;
+    this.overworldUi?.setNewbieMode(isNewbie);
+  }
 
   async enter(): Promise<void> {
     const mapRegistry = this.scene.getMapRegistry();
     const location = this.scene.getUser()?.getProfile()?.lastLocation?.map ?? 'p003';
+    this.currentLocation = location;
     const mapConfig = mapRegistry.get(location);
 
     if (!mapConfig) {
@@ -170,6 +183,26 @@ export class OverworldPhase implements IGamePhase {
         });
       }
     }
+
+    this.applyNewbieMode();
+    this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
+
+    if (this.scene.consumePendingScreenFadeIn()) {
+      await screenFadeIn(this.scene);
+    }
+
+    const profile = this.scene.getUser()?.getProfile();
+    if (location === 's000' && profile?.hasStarter) {
+      const talk = this.scene.getMessage('talk');
+      await talk.showMessage(
+        [
+          i18next.t('msg:s000_welcome_0'),
+          i18next.t('msg:s000_welcome_1'),
+          i18next.t('msg:s000_welcome_2'),
+        ],
+        { name: '' },
+      );
+    }
   }
 
   update(time: number, delta: number): void {
@@ -186,6 +219,7 @@ export class OverworldPhase implements IGamePhase {
   }
 
   exit(): void {
+    this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
     this.socketOffFns.forEach((fn) => fn());
     this.socketOffFns = [];
     this.overworldUi?.destroy();

@@ -1,26 +1,36 @@
 import type { IGamePhase } from '@poposafari/core';
 import { GameEvent, type GameScene } from '@poposafari/scenes/game.scene';
 import { BattleUi } from './battle.ui';
-import type {
-  BattleContext,
-  BattleModifiers,
-  BattleState,
-  CatchResult,
-} from './battle.types';
+import type { BattleContext, BattleModifiers, BattleState, CatchResult } from './battle.types';
 import { toCatchResult } from './battle.types';
 import { RewardPhase } from './reward/reward.phase';
-import { SFX } from '@poposafari/types';
+import { BattleTutorialPhase } from './tutorial/battle-tutorial.phase';
+import { MAP, OptionKey, SFX } from '@poposafari/types';
+import i18next from '@poposafari/i18n';
+import { screenFadeOut } from '@poposafari/utils/screen-fade';
 
 export class BattlePhase implements IGamePhase {
   private readonly ui: BattleUi;
   private state: BattleState = { kind: 'intro' };
   private modifiers: BattleModifiers = { bait: false, rock: false };
+  /** 튜토리얼 phase를 첫 idle 진입 시 1회만 push하기 위한 플래그. */
+  private tutorialShown = false;
 
   constructor(
     private readonly scene: GameScene,
     private readonly ctx: BattleContext,
   ) {
     this.ui = new BattleUi(scene);
+  }
+
+  private isS000Tutorial(): boolean {
+    return (
+      this.ctx.locationLabel === 's000' && this.scene.getUser()?.getProfile().hasStarter === true
+    );
+  }
+
+  private isBattleTutorialEnabled(): boolean {
+    return this.scene.getOption().getOption(OptionKey.BATTLE_TUTORIAL) === 0;
   }
 
   enter(): void {
@@ -53,6 +63,13 @@ export class BattlePhase implements IGamePhase {
 
       case 'idle': {
         this.ui.setModifiers(this.modifiers);
+
+        if (!this.tutorialShown && this.isBattleTutorialEnabled()) {
+          this.tutorialShown = true;
+          await new Promise<void>((resolve) => {
+            this.scene.pushPhase(new BattleTutorialPhase(this.scene, { onComplete: resolve }));
+          });
+        }
         await this.ui.showIdlePrompt();
         const action = await this.ui.waitForCommand();
         switch (action.type) {
@@ -175,6 +192,7 @@ export class BattlePhase implements IGamePhase {
           });
           user?.setLevelAndExp(expReward.level, expReward.exp);
           this.scene.events.emit(GameEvent.PROFILE_CHANGED);
+
           return this.transition({ kind: 'exiting', reason: 'catch' });
         }
         if (next.outcome.kind === 'flee') {
@@ -198,6 +216,23 @@ export class BattlePhase implements IGamePhase {
         this.ctx.onResolved?.(next.reason);
         this.scene.popPhase();
         await this.ui.playExitFadeOut();
+
+        if (next.reason === 'catch' && this.isS000Tutorial()) {
+          const talk = this.scene.getMessage('talk');
+          await talk.showMessage(i18next.t('msg:s000_caught_0'), { name: '', showHint: false });
+          await talk.showMessage(i18next.t('msg:s000_caught_1'), { name: '', showHint: false });
+          await talk.showMessage(i18next.t('msg:s000_caught_2'), { name: '', showHint: false });
+          this.scene.getUser()?.setHasStarter(false);
+          this.scene.events.emit(GameEvent.PROFILE_CHANGED);
+
+          await screenFadeOut(this.scene);
+          this.scene.setPendingScreenFadeIn();
+          this.scene.requestMapTransition({
+            location: MAP.PLAZA_001,
+            x: 50,
+            y: 30,
+          });
+        }
         return;
       }
     }

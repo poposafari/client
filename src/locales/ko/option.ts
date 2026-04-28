@@ -11,6 +11,7 @@ export const option: TranslationOption = {
   frameType: '프레임 타입',
   frameValue: '타입',
   wildSpawnCry: '야생 포켓몬 스폰 소리',
+  battleTutorial: '배틀 튜토리얼',
   on: '켜기',
   off: '끄기',
   speedNormal: '보통',

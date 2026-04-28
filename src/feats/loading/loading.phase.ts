@@ -17,7 +17,7 @@ import {
 } from '../overworld/objects/pet-emotion';
 
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
-import { s001Config, s002Config, s003Config } from '../overworld/maps/safari';
+import { s000Config, s001Config, s002Config, s003Config } from '../overworld/maps/safari';
 
 const MAX_NPC = 2;
 const MAX_DOOR = 19;
@@ -715,6 +715,7 @@ export class LoadingPhase implements IGamePhase {
 
     //plaza
     this.scene.loadMap(MAP.PLAZA_001, 'ui/maps', MAP.PLAZA_001);
+    this.scene.loadMap(MAP.SAFARI_000, 'ui/maps', MAP.SAFARI_000);
     this.scene.loadMap(MAP.SAFARI_001, 'ui/maps', MAP.SAFARI_001);
     this.scene.loadMap(MAP.SAFARI_002, 'ui/maps', MAP.SAFARI_002);
     this.scene.loadMap(MAP.SAFARI_003, 'ui/maps', MAP.SAFARI_003);
@@ -744,6 +745,7 @@ export class LoadingPhase implements IGamePhase {
     // register maps
     const mapRegistry = this.scene.getMapRegistry();
     mapRegistry.register(p001Config);
+    mapRegistry.register(s000Config);
     mapRegistry.register(s001Config);
     mapRegistry.register(s002Config);
     mapRegistry.register(s003Config);

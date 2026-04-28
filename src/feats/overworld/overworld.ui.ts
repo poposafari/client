@@ -143,6 +143,7 @@ const DIR_KEYS: { dir: DIRECTION; key: keyof KeyState }[] = [
 export class OverworldUi extends BaseUi {
   scene!: GameScene;
   private hud: OverworldHudUI | null = null;
+  private newbieRestricted: boolean = false;
   private mapView: MapView | null = null;
   private mapConfig: MapConfig | null = null;
   private player: PlayerObject | null = null;
@@ -222,6 +223,11 @@ export class OverworldUi extends BaseUi {
 
   setMapConfig(config: MapConfig): void {
     this.mapConfig = config;
+  }
+
+  setNewbieMode(enabled: boolean): void {
+    this.newbieRestricted = enabled;
+    this.hud?.setNewbieMode(enabled);
   }
 
   getMapView(): MapView | null {
@@ -315,11 +321,13 @@ export class OverworldUi extends BaseUi {
         this.syncRunningToggleIcon();
         break;
       case KEY.S:
+        if (this.newbieRestricted) break;
         this.syncMenuToggleIcon(true);
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMenuRequested?.();
         break;
       case KEY.A:
+        if (this.newbieRestricted) break;
         this.syncRegistedItemIcon(true);
         this.onRegisteredItemsRequested?.();
         break;
@@ -1831,6 +1839,7 @@ export class OverworldUi extends BaseUi {
       `[MOVE-DEBUG] #${this.moveEmitCount} emit dir=${dir} type=${moveType} clientPos=(${pos?.x},${pos?.y})`,
     );
 
+    this.scene.markActivity();
     socket.emit('move', payload);
   }
 

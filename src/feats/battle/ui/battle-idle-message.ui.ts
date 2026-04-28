@@ -25,7 +25,7 @@ export class BattleIdleMessageUi extends MessageUi {
   }
 
   public override async showMessage(content: string, config: MessageConfig = {}): Promise<void> {
-    return super.showMessage(content, { resolveWhen: 'displayed', ...config });
+    return super.showMessage(content, { resolveWhen: 'displayed', showHint: false, ...config });
   }
 
   forceClose(): void {

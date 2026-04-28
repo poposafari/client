@@ -10,11 +10,12 @@ export class InputManager {
 
   private readonly maxProcessPerFrame = 2;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, onActivity?: () => void) {
     scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       if (event.repeat) {
         return;
       }
+      onActivity?.();
       this.inputQueue.push(event.code);
     });
   }

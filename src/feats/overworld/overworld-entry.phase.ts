@@ -53,9 +53,7 @@ export class OverworldEntryPhase implements IGamePhase {
     }
   }
 
-  private setupConnectErrorHandler(
-    socket: ReturnType<typeof io>,
-  ): void {
+  private setupConnectErrorHandler(socket: ReturnType<typeof io>): void {
     const handler = async (err: Error & { message?: string }) => {
       const msg = err?.message ?? '';
       if (!AUTH_ERROR_MESSAGES.includes(msg)) return;
@@ -78,9 +76,7 @@ export class OverworldEntryPhase implements IGamePhase {
       s.disconnect();
       this.scene.setSocket(null);
     }
-    this.scene.switchPhase(
-      new LoginPhase(this.scene, { initialErrorKey: 'error:sessionExpired' }),
-    );
+    this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: 'error:sessionExpired' }));
   }
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {
@@ -102,8 +98,17 @@ export class OverworldEntryPhase implements IGamePhase {
         this.scene.setPendingRoomState(payload.users);
       }
     };
-    const onChangeMapOk = (_payload: { mapId: string; x: number; y: number }) => {
+    const onChangeMapOk = (payload: { mapId: string; x: number; y: number }) => {
       this.removeListeners();
+
+      const profile = this.scene.getUser()?.getProfile();
+      if (profile && payload?.mapId) {
+        profile.lastLocation = {
+          map: payload.mapId,
+          x: payload.x,
+          y: payload.y,
+        };
+      }
       this.ui?.hide();
       this.ui?.destroy();
       this.ui = null;

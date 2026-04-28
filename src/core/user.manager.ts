@@ -57,6 +57,29 @@ export class UserManager {
 
   constructor() {}
 
+  reset(): void {
+    this.profile = undefined as unknown as MappedProfile;
+    this.equippedCostumes = undefined as unknown as GetMeRes['equippedCostumes'];
+    this.party = undefined as unknown as GetMeRes['party'];
+    this.itemSlots = undefined as unknown as string[];
+
+    this.pokemonBox = null;
+    this.itemBag = null;
+    this.itemBagLoaded = false;
+    this.pokedex = null;
+    this.townMap = null;
+    this.costumeList = null;
+
+    this.pcBoxIndex = 0;
+    this.pcGridIndex = 0;
+
+    this.overworldMovementState = OverworldMovementState.WALK;
+    this.overworldDirection = OverworldDirection.DOWN;
+    this.activeSurfPokemonId = null;
+
+    this.partyListeners = [];
+  }
+
   init(user: GetMeRes) {
     const p = user.profile;
     this.profile = {
@@ -93,6 +116,10 @@ export class UserManager {
   setLevelAndExp(level: number, exp: number): void {
     this.profile.level = level;
     this.profile.exp = exp;
+  }
+
+  setHasStarter(value: boolean): void {
+    this.profile.hasStarter = value;
   }
 
   getEquippedCostumes(): GetMeRes['equippedCostumes'] {

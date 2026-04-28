@@ -136,7 +136,7 @@ export class BattleUi {
     const msg = i18next.t('menu:battleMessageAppear', { name });
     this.base?.hideMessageBox();
     try {
-      await this.scene.getMessage('talk').showMessage(msg);
+      await this.scene.getMessage('talk').showMessage(msg, { showHint: false });
     } finally {
       this.base?.showMessageBox();
     }
@@ -216,7 +216,9 @@ export class BattleUi {
     this.idleMessage?.forceClose();
     this.base?.hideMessageBox();
     try {
-      await this.scene.getMessage('talk').showMessage(i18next.t('menu:battleMessageFlee'));
+      await this.scene
+        .getMessage('talk')
+        .showMessage(i18next.t('menu:battleMessageFlee'), { showHint: false });
     } finally {
       this.base?.showMessageBox();
     }
@@ -231,7 +233,9 @@ export class BattleUi {
       try {
         await this.scene
           .getMessage('talk')
-          .showMessage(i18next.t('menu:battleMessageFleePlayer', { nickname }));
+          .showMessage(i18next.t('menu:battleMessageFleePlayer', { nickname }), {
+            showHint: false,
+          });
       } finally {
         this.base?.showMessageBox();
       }
@@ -286,7 +290,7 @@ export class BattleUi {
     this.idleMessage?.forceClose();
     this.base?.hideMessageBox();
     try {
-      await this.scene.getMessage('talk').showMessage(i18next.t(key, vars));
+      await this.scene.getMessage('talk').showMessage(i18next.t(key, vars), { showHint: false });
     } finally {
       this.base?.showMessageBox();
     }

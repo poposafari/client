@@ -1,8 +1,7 @@
 import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { ErrorCode } from '@poposafari/types';
 import { CreateAvatarUi } from './create-avatar.ui';
-import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
+import { TitlePhase } from '../title';
 
 export class CreateAvatarPhase implements IGamePhase {
   private ui!: CreateAvatarUi;
@@ -25,12 +24,8 @@ export class CreateAvatarPhase implements IGamePhase {
 
         await this.scene.getApi().createUser(inputResult);
 
-        const me = await this.scene.getApi().getMe();
-        if (me) {
-          this.scene.createUserManager(me);
-        }
-
-        this.scene.switchPhase(new OverworldEntryPhase(this.scene));
+        this.scene.getUser()?.reset();
+        this.scene.switchPhase(new TitlePhase(this.scene, { forceContinueEnabled: true }));
         return;
       } catch (error: any) {
         this.ui.errorEffect(error.message);

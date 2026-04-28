@@ -1,17 +1,9 @@
-import { io } from 'socket.io-client';
 import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { LoginPhase } from '../login';
 import { WelcomeUi } from './welcome.ui';
 import { ApiError, ErrorCode } from '@poposafari/types';
 import { TitlePhase } from '../title';
-import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
-
-const SOCKET_SERVER_URL =
-  VITE_SOCKET_SERVER_URL ??
-  (typeof window !== 'undefined'
-    ? `${window.location.protocol}//${window.location.hostname}:9010`
-    : 'http://localhost:9010');
 
 export class WelcomePhase implements IGamePhase {
   private ui!: WelcomeUi;
@@ -32,7 +24,6 @@ export class WelcomePhase implements IGamePhase {
 
       if (res) {
         this.scene.createUserManager(res);
-        await this.connectSocket();
         this.blocker.unblockInput();
         this.scene.pushPhase(new TitlePhase(this.scene));
         return;
@@ -60,15 +51,6 @@ export class WelcomePhase implements IGamePhase {
       this.blocker.unblockInput();
       this.scene.pushPhase(new TitlePhase(this.scene));
     }
-  }
-
-  private async connectSocket(): Promise<void> {
-    const token = await this.scene.getApi().getConnToken();
-    const socket = io(SOCKET_SERVER_URL, {
-      auth: { token },
-      transports: ['websocket', 'polling'],
-    });
-    this.scene.setSocket(socket);
   }
 
   exit(): void {

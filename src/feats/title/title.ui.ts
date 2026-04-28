@@ -109,6 +109,18 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     }
   }
 
+  setExistUser(exist: boolean): void {
+    const idx = this.ignoreTitleKeys.indexOf('menu:continue');
+    if (exist && idx >= 0) {
+      this.ignoreTitleKeys.splice(idx, 1);
+    } else if (!exist && idx < 0) {
+      this.ignoreTitleKeys.push('menu:continue');
+    }
+    this.ignoreTitles = this.ignoreTitleKeys.map((k) => i18next.t(k));
+    this.findInitialValidCursor();
+    this.updateCursor();
+  }
+
   private moveCursor(step: number): void {
     const len = this.mainTexts.length;
     let nextIndex = this.currentCursor;

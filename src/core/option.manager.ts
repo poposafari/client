@@ -12,6 +12,7 @@ export class OptionManager {
     [OptionKey.BGM_VOLUME]: 3,
     [OptionKey.WINDOW]: 0,
     [OptionKey.WILD_SPAWN_CRY]: 0,
+    [OptionKey.BATTLE_TUTORIAL]: 0,
     [OptionKey.LANGUAGE]: 0,
   };
 
@@ -69,6 +70,8 @@ export class OptionManager {
       case OptionKey.WINDOW:
         return value >= 0 && value <= 3;
       case OptionKey.WILD_SPAWN_CRY:
+        return value >= 0 && value <= 1;
+      case OptionKey.BATTLE_TUTORIAL:
         return value >= 0 && value <= 1;
       case OptionKey.LANGUAGE:
         return value >= 0 && value < LanguageItmes.length;
