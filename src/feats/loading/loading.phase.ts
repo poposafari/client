@@ -145,7 +145,40 @@ export class LoadingPhase implements IGamePhase {
 
   private loadItemAssets(): void {
     for (const item of this.scene.getMasterData().getItemDataKeys()) {
-      this.scene.loadImage(item, 'ui/items', item);
+      if (item.startsWith('move_')) {
+        const moveName = item.split('_')[1];
+        let moveKey = 'normal';
+
+        switch (moveName) {
+          case 'fly':
+            moveKey = 'flying';
+            break;
+          case 'surf':
+          case 'waterfall':
+          case 'dive':
+            moveKey = 'water';
+            break;
+          case 'rock-smash':
+            moveKey = 'fighting';
+            break;
+          case 'ancient-power':
+          case 'rollout':
+            moveKey = 'rock';
+            break;
+          case 'dragon-pulse':
+            moveKey = 'dragon';
+            break;
+          case 'taunt':
+            moveKey = 'dark';
+            break;
+          case 'twin-beam':
+            moveKey = 'psychic';
+            break;
+        }
+        this.scene.loadImage(`move_${moveKey}`, 'ui/items', `move_${moveKey}`);
+      } else {
+        this.scene.loadImage(item, 'ui/items', item);
+      }
     }
   }
 

@@ -417,7 +417,7 @@ function getSpriteAnimationFrameSize(animation: ANIMATION | string) {
       break;
     case ANIMATION.OVERWORLD_GRASS_1:
     case ANIMATION.OVERWORLD_GRASS_2:
-      ret = 10;
+      ret = 3;
       break;
   }
   return ret;
