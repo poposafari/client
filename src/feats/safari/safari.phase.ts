@@ -4,6 +4,7 @@ import { MenuUi } from '@poposafari/feats/menu/menu-ui';
 import { IMenuItem, MAP } from '@poposafari/types';
 import { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import { SafariZoneListUi } from './safari-zone-list.ui';
+import { showApiErrorAsTalk } from '@poposafari/utils';
 import i18next from 'i18next';
 
 interface SafariZone {
@@ -91,9 +92,10 @@ export class SafariPhase implements IGamePhase {
           };
           this.scene.startMapTransitionWithFade(initPos);
           return;
-        } catch {
+        } catch (e) {
           this.menuUi!.hide();
           question.hide();
+          await showApiErrorAsTalk(this.scene, e);
           continue;
         }
       }

@@ -141,7 +141,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       addTextInput(this.scene, -230, -60, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'text',
         placeholder: i18next.t('menu:enterYourUsername'),
-        minLength: 5,
+        minLength: 6,
         maxLength: 20,
       }),
     );
@@ -166,7 +166,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       addTextInput(this.scene, -230, +80, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
         placeholder: i18next.t('menu:enterYourPassword'),
-        minLength: 5,
+        minLength: 8,
         maxLength: 20,
       }),
     );
@@ -203,7 +203,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       addTextInput(this.scene, -230, +220, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
         placeholder: i18next.t('menu:enterYourPassword'),
-        minLength: 5,
+        minLength: 8,
         maxLength: 20,
       }),
     );

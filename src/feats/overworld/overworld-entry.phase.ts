@@ -76,7 +76,7 @@ export class OverworldEntryPhase implements IGamePhase {
       s.disconnect();
       this.scene.setSocket(null);
     }
-    this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: 'error:sessionExpired' }));
+    this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: 'error:SESSION_EXPIRED' }));
   }
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {

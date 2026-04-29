@@ -1,4 +1,5 @@
 export * from './debug';
+export * from './error';
 export * from './fade-to-black.pipeline';
 export * from './screen-fade';
 export * from './string';

@@ -53,6 +53,7 @@ export type ApiResponse<T> =
 
 export class ApiManager {
   private client: AxiosInstance;
+  private onSessionInvalid: (() => void) | null = null;
   private static readonly TIMEOUT = 10000;
 
   constructor(private baseUrl: string = 'http://localhost:9000/api') {
@@ -68,15 +69,18 @@ export class ApiManager {
     this.setupInterceptors();
   }
 
+  setOnSessionInvalid(handler: (() => void) | null) {
+    this.onSessionInvalid = handler;
+  }
+
   private setupInterceptors() {
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError<ApiFailBody>) => {
+      (error: AxiosError<ApiFailBody>) => {
         const code = error.response?.data?.code;
-        if (code === ErrorCode.SESSION_MISSING || code === ErrorCode.SESSION_EXPIRED) {
-          return Promise.reject(error);
+        if (code === ErrorCode.SESSION_EXPIRED && this.onSessionInvalid) {
+          this.onSessionInvalid();
         }
-
         return this.handleGlobalError(error);
       },
     );

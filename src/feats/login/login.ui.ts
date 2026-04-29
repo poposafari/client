@@ -11,8 +11,6 @@ import {
   addTextInput,
   addWindow,
   getBackgroundKey,
-  isValidPassword,
-  isValidUsername,
   runFloatEffect,
   runShakeEffect,
 } from '@poposafari/utils';
@@ -166,8 +164,8 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       addTextInput(this.scene, -230, -20, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'text',
         placeholder: i18next.t('menu:enterYourUsername'),
-        minLength: 5,
-        maxLength: 20,
+        minLength: 1,
+        maxLength: 64,
       }),
     );
 
@@ -203,8 +201,8 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       addTextInput(this.scene, -230, +130, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
         placeholder: i18next.t('menu:enterYourPassword'),
-        minLength: 5,
-        maxLength: 20,
+        minLength: 1,
+        maxLength: 128,
       }),
     );
 
@@ -417,11 +415,8 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       return;
     }
 
-    if (!isValidUsername(username) || !isValidPassword(password)) {
-      this.errorEffect(i18next.t('error:EMPTY_USERNAME'));
-      return;
-    }
-
+    // 로그인은 가입 정책을 클라이언트에서 검증하지 않는다.
+    // 자격증명 일치 여부는 서버가 판단(FAILED_ACCOUNT).
     if (this.inputResolver) {
       this.inputResolver({
         username,

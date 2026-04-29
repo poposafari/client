@@ -26,6 +26,7 @@ import {
   getPokemonTexture,
   getPokemonTypeFrame,
   screenFadeIn,
+  showApiErrorAsTalk,
   updatePokemonGenderIcon,
 } from '@poposafari/utils';
 import i18next from 'i18next';
@@ -1253,9 +1254,8 @@ export class PokemonPcUi extends BaseUi {
     let resp: { id: number; pokedexId: string } | null = null;
     try {
       resp = await api.evolvePokemon(pokemon.id, selectedOption.cost);
-    } catch (err: any) {
-      const talkUi = this.scene.getMessage('talk');
-      await talkUi.showMessage(err?.message ?? i18next.t('error:INTERNAL_SERVER_ERROR'));
+    } catch (err) {
+      await showApiErrorAsTalk(this.scene, err);
       this.inputManager.pop(this);
       this.inputLocked = false;
       return;

@@ -119,7 +119,19 @@ export class GameScene extends BaseScene {
       await this.getApi().invalidateSession();
     } catch {}
     this.clearUser();
-    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:kicked' }));
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:KICKED' }));
+  };
+
+  private handleSessionInvalid = (): void => {
+    const top = this.getCurrentPhase();
+    if (top instanceof LoginPhase) return;
+
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+    this.clearUser();
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:SESSION_EXPIRED' }));
   };
 
   private onSocketDisconnect = (reason: string): void => {
@@ -199,6 +211,7 @@ export class GameScene extends BaseScene {
 
     this.input.on('pointerdown', () => this.markActivity());
     this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
+    this.api.setOnSessionInvalid(() => this.handleSessionInvalid());
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
     this.masterData = new MasterData();

@@ -49,7 +49,7 @@ import {
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
-import { getPokemonI18Name } from '@poposafari/utils';
+import { getPokemonI18Name, showApiErrorAsTalk } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 
@@ -558,6 +558,7 @@ export class OverworldUi extends BaseUi {
       }
     } catch (err) {
       console.warn('[Safari] pickGroundItem failed', err);
+      await showApiErrorAsTalk(this.scene, err);
     }
   }
 

@@ -31,7 +31,7 @@ export class WelcomePhase implements IGamePhase {
       }
     } catch (error: any) {
       this.isUser = false;
-      const errorCode = error instanceof ApiError ? error.code : error.code;
+      const errorCode = error instanceof ApiError ? error.code : error?.response?.data?.code;
 
       // 계정은 있지만 캐릭터 미생성 → 캐릭터 생성 화면으로 분기
       if (errorCode === ErrorCode.USER_NOT_FOUND) {
@@ -39,9 +39,13 @@ export class WelcomePhase implements IGamePhase {
         // isUser = false 상태로 계속 진행 → 아래에서 WelcomeUi 표시
       } else {
         this.blocker.unblockInput();
-        this.scene.switchPhase(
-          new LoginPhase(this.scene, { initialErrorKey: oauthErrorKey ?? errorCode }),
-        );
+        let initialErrorKey: string | undefined;
+        if (oauthErrorKey) {
+          initialErrorKey = oauthErrorKey;
+        } else if (errorCode && errorCode !== ErrorCode.SESSION_MISSING) {
+          initialErrorKey = `error:${errorCode}`;
+        }
+        this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey }));
         return;
       }
     }

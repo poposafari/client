@@ -18,6 +18,7 @@ import {
   addTextInput,
   addWindow,
   getBackgroundKey,
+  isValidNickname,
   runShakeEffect,
   toGenderCode,
 } from '@poposafari/utils';
@@ -325,17 +326,17 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
     const outfitId = this.boxOutfit.getSelectedId();
 
     if (!nickname || nickname.trim() === '') {
-      this.errorEffect(i18next.t('error:emptyNickname'));
+      this.errorEffect(i18next.t('error:EMPTY_NICKNAME'));
       return;
     }
 
-    if (nickname.length <= 2 || nickname.length >= 12) {
-      this.errorEffect(i18next.t('error:invalidNickname'));
+    if (!isValidNickname(nickname)) {
+      this.errorEffect(i18next.t('error:INVALID_NICKNAME'));
       return;
     }
 
     if (!skinId || !hairId || !hairColorId || !outfitId) {
-      this.errorEffect(i18next.t('error:invalidCostume'));
+      this.errorEffect(i18next.t('error:INVALID_COSTUME'));
       return;
     }
 
@@ -353,7 +354,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
 
   onRefreshLanguage(): void {
     this.topTitle.setText(i18next.t('menu:createAvatar'));
-    this.errorMsg.setText(i18next.t('error:emptyNickname'));
+    this.errorMsg.setText(i18next.t('error:EMPTY_NICKNAME'));
     this.mainRightNicknameInput.placeholder = i18next.t('menu:enterYourNickname');
   }
 
