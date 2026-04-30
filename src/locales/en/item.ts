@@ -22,7 +22,8 @@ export const item: TranslationItem = {
   },
   'ultra-ball': {
     name: 'Ultra Ball',
-    description: 'An ultra-performance Ball that offers a higher\nPokémon catch rate than a Great Ball.',
+    description:
+      'An ultra-performance Ball that offers a higher\nPokémon catch rate than a Great Ball.',
   },
   'occa-berry': {
     name: 'Occa Berry',
@@ -106,11 +107,13 @@ export const item: TranslationItem = {
   },
   'water-stone': {
     name: 'Water Stone',
-    description: 'A peculiar stone that can make certain\nPokémon evolve. It is transparent and blue.',
+    description:
+      'A peculiar stone that can make certain\nPokémon evolve. It is transparent and blue.',
   },
   'thunder-stone': {
     name: 'Thunder Stone',
-    description: 'A peculiar stone that can make certain\nPokémon evolve. It has a lightning pattern.',
+    description:
+      'A peculiar stone that can make certain\nPokémon evolve. It has a lightning pattern.',
   },
   'leaf-stone': {
     name: 'Leaf Stone',
@@ -118,7 +121,8 @@ export const item: TranslationItem = {
   },
   'moon-stone': {
     name: 'Moon Stone',
-    description: 'A peculiar stone that can make certain\nPokémon evolve. It is as black as the night sky.',
+    description:
+      'A peculiar stone that can make certain\nPokémon evolve. It is as black as the night sky.',
   },
   'sun-stone': {
     name: 'Sun Stone',
@@ -134,7 +138,8 @@ export const item: TranslationItem = {
   },
   'dawn-stone': {
     name: 'Dawn Stone',
-    description: 'A peculiar stone that can make certain\nPokémon evolve. It is beautiful like a pupil.',
+    description:
+      'A peculiar stone that can make certain\nPokémon evolve. It is beautiful like a pupil.',
   },
   'oval-stone': {
     name: 'Oval Stone',
@@ -142,7 +147,8 @@ export const item: TranslationItem = {
   },
   'ice-stone': {
     name: 'Ice Stone',
-    description: 'A peculiar stone that can make certain\nPokémon evolve. It has a snowflake pattern.',
+    description:
+      'A peculiar stone that can make certain\nPokémon evolve. It has a snowflake pattern.',
   },
   'metal-coat': {
     name: 'Metal Coat',
@@ -198,7 +204,8 @@ export const item: TranslationItem = {
   },
   'prism-scale': {
     name: 'Prism Scale',
-    description: 'A peculiar scale that can make certain\nPokémon evolve. It shines with a rainbow glow.',
+    description:
+      'A peculiar scale that can make certain\nPokémon evolve. It shines with a rainbow glow.',
   },
   'whipped-dream': {
     name: 'Whipped Dream',
@@ -210,11 +217,13 @@ export const item: TranslationItem = {
   },
   'cracked-pot': {
     name: 'Cracked Pot',
-    description: 'A peculiar pot that can make certain\nPokémon evolve. Cracked but tea tastes better.',
+    description:
+      'A peculiar pot that can make certain\nPokémon evolve. Cracked but tea tastes better.',
   },
   'chipped-pot': {
     name: 'Chipped Pot',
-    description: 'A peculiar pot that can make certain\nPokémon evolve. Chipped but tea tastes better.',
+    description:
+      'A peculiar pot that can make certain\nPokémon evolve. Chipped but tea tastes better.',
   },
   'tart-apple': {
     name: 'Tart Apple',
@@ -260,16 +269,46 @@ export const item: TranslationItem = {
     name: 'Galarica Wreath',
     description: 'A wreath woven from Galarica twigs.\nGalarian Slowpoke is happy when given one.',
   },
-  'linking-cord': { name: 'Linking Cord', description: '' },
-  'black-augurite': { name: 'Black Augurite', description: '' },
-  'peat-block': { name: 'Peat Block', description: '' },
-  'scroll-of-darkness': { name: 'Scroll of Darkness', description: '' },
-  'scroll-of-waters': { name: 'Scroll of Waters', description: '' },
-  'malicious-armor': { name: 'Malicious Armor', description: '' },
-  'auspicious-armor': { name: 'Auspicious Armor', description: '' },
-  'syrupy-apple': { name: 'Syrupy Apple', description: '' },
-  'unremarkable-teacup': { name: 'Unremarkable Teacup', description: '' },
-  'masterpiece-teacup': { name: 'Masterpiece Teacup', description: '' },
+  'linking-cord': {
+    name: 'Linking Cord',
+    description: '',
+  },
+  'black-augurite': {
+    name: 'Black Augurite',
+    description: '',
+  },
+  'peat-block': {
+    name: 'Peat Block',
+    description: '',
+  },
+  'scroll-of-darkness': {
+    name: 'Scroll of Darkness',
+    description: '',
+  },
+  'scroll-of-waters': {
+    name: 'Scroll of Waters',
+    description: '',
+  },
+  'malicious-armor': {
+    name: 'Malicious Armor',
+    description: '',
+  },
+  'auspicious-armor': {
+    name: 'Auspicious Armor',
+    description: '',
+  },
+  'syrupy-apple': {
+    name: 'Syrupy Apple',
+    description: '',
+  },
+  'unremarkable-teacup': {
+    name: 'Unremarkable Teacup',
+    description: '',
+  },
+  'masterpiece-teacup': {
+    name: 'Masterpiece Teacup',
+    description: '',
+  },
   repel: {
     name: 'Repel',
     description: 'An item that prevents weak wild Pokémon\nfrom appearing for a while.',
@@ -372,7 +411,8 @@ export const item: TranslationItem = {
   },
   'ability-capsule': {
     name: 'Ability Capsule',
-    description: 'A capsule that allows a Pokémon with two Abilities\nto switch to the other Ability.',
+    description:
+      'A capsule that allows a Pokémon with two Abilities\nto switch to the other Ability.',
   },
   'ability-patch': {
     name: 'Ability Patch',
@@ -438,7 +478,10 @@ export const item: TranslationItem = {
     name: 'Fossilized Dino',
     description: 'A fossil from an ancient sea Pokémon.\nIts full form is a mystery.',
   },
-  'fairy-feather': { name: 'Fairy Feather', description: '' },
+  'fairy-feather': {
+    name: 'Fairy Feather',
+    description: '',
+  },
   bicycle: {
     name: 'Bicycle',
     description: 'A folding bicycle that can run\nfaster than Running Shoes.',
@@ -449,7 +492,8 @@ export const item: TranslationItem = {
   },
   'reveal-glass': {
     name: 'Reveal Glass',
-    description: 'A strange mirror that returns Pokémon\nto their original form by revealing the truth.',
+    description:
+      'A strange mirror that returns Pokémon\nto their original form by revealing the truth.',
   },
   'dna-splicers': {
     name: 'DNA Splicers',
@@ -461,7 +505,7 @@ export const item: TranslationItem = {
   },
   'red-nectar': {
     name: 'Red Nectar',
-    description: 'Flower nectar from Ula\'ula Meadow.\nIt changes the form of certain Pokémon.',
+    description: "Flower nectar from Ula'ula Meadow.\nIt changes the form of certain Pokémon.",
   },
   'purple-nectar': {
     name: 'Purple Nectar',
@@ -477,26 +521,48 @@ export const item: TranslationItem = {
   },
   'rusted-sword': {
     name: 'Rusted Sword',
-    description: 'A sword said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
+    description:
+      'A sword said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
   },
   'rusted-shield': {
     name: 'Rusted Shield',
-    description: 'A shield said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
+    description:
+      'A shield said to have been used by a hero of old\nto stop a disaster. Now rusted and worn.',
   },
   'rotom-catalog': {
     name: 'Rotom Catalog',
-    description: 'A catalog of appliances Rotom likes.\nUsing it lets you put Rotom in or take it out of appliances.',
+    description:
+      'A catalog of appliances Rotom likes.\nUsing it lets you put Rotom in or take it out of appliances.',
   },
   'reins-of-unity': {
     name: 'Reins of Unity',
-    description: 'Cloth that shines when held to the light.\nOffered to the King of Bounty in thanks long ago.',
+    description:
+      'Cloth that shines when held to the light.\nOffered to the King of Bounty in thanks long ago.',
   },
-  'adamant-crystal': { name: 'Adamant Crystal', description: '' },
-  'lustrous-globe': { name: 'Lustrous Globe', description: '' },
-  'griseous-core': { name: 'Griseous Core', description: '' },
-  'cornerstone-mask': { name: 'Cornerstone Mask', description: '' },
-  'wellspring-mask': { name: 'Wellspring Mask', description: '' },
-  'hearthflame-mask': { name: 'Hearthflame Mask', description: '' },
+  'adamant-crystal': {
+    name: 'Adamant Crystal',
+    description: '',
+  },
+  'lustrous-globe': {
+    name: 'Lustrous Globe',
+    description: '',
+  },
+  'griseous-core': {
+    name: 'Griseous Core',
+    description: '',
+  },
+  'cornerstone-mask': {
+    name: 'Cornerstone Mask',
+    description: '',
+  },
+  'wellspring-mask': {
+    name: 'Wellspring Mask',
+    description: '',
+  },
+  'hearthflame-mask': {
+    name: 'Hearthflame Mask',
+    description: '',
+  },
   'red-orb': {
     name: 'Red Orb',
     description: 'A glowing red orb said to be deeply\nconnected to Hoenn region legend.',
@@ -507,31 +573,155 @@ export const item: TranslationItem = {
   },
   'soothe-bell': {
     name: 'Soothe Bell',
-    description: 'A bell with a pleasant sound.\nWhen held, the Pokémon grows calmer and friendlier.',
+    description:
+      'A bell with a pleasant sound.\nWhen held, the Pokémon grows calmer and friendlier.',
   },
-  move_cut: { name: 'TM Cut', description: 'Teaches Cut to a Pokémon.' },
-  move_fly: { name: 'TM Fly', description: 'Teaches Fly to a Pokémon.' },
-  move_surf: { name: 'TM Surf', description: 'Teaches Surf to a Pokémon.' },
-  move_strength: { name: 'TM Strength', description: 'Teaches Strength to a Pokémon.' },
-  move_flash: { name: 'TM Flash', description: 'Teaches Flash to a Pokémon.' },
-  'move_rock-smash': { name: 'TM Rock Smash', description: 'Teaches Rock Smash to a Pokémon.' },
-  move_waterfall: { name: 'TM Waterfall', description: 'Teaches Waterfall to a Pokémon.' },
-  move_dive: { name: 'TM Dive', description: 'Teaches Dive to a Pokémon.' },
-  'move_mean-look': { name: 'TM Mean Look', description: 'Teaches Mean Look to a Pokémon.' },
-  move_defog: { name: 'TM Defog', description: 'Teaches Defog to a Pokémon.' },
+  'normal-candy': {
+    name: 'Normal Candy',
+    description: 'A candy filled with Normal-type energy.',
+  },
+  'fire-candy': {
+    name: 'Fire Candy',
+    description: 'A candy filled with Fire-type energy.',
+  },
+  'water-candy': {
+    name: 'Water Candy',
+    description: 'A candy filled with Water-type energy.',
+  },
+  'electric-candy': {
+    name: 'Electric Candy',
+    description: 'A candy filled with Electric-type energy.',
+  },
+  'grass-candy': {
+    name: 'Grass Candy',
+    description: 'A candy filled with Grass-type energy.',
+  },
+  'ice-candy': {
+    name: 'Ice Candy',
+    description: 'A candy filled with Ice-type energy.',
+  },
+  'fighting-candy': {
+    name: 'Fighting Candy',
+    description: 'A candy filled with Fighting-type energy.',
+  },
+  'poison-candy': {
+    name: 'Poison Candy',
+    description: 'A candy filled with Poison-type energy.',
+  },
+  'ground-candy': {
+    name: 'Ground Candy',
+    description: 'A candy filled with Ground-type energy.',
+  },
+  'flying-candy': {
+    name: 'Flying Candy',
+    description: 'A candy filled with Flying-type energy.',
+  },
+  'psychic-candy': {
+    name: 'Psychic Candy',
+    description: 'A candy filled with Psychic-type energy.',
+  },
+  'bug-candy': {
+    name: 'Bug Candy',
+    description: 'A candy filled with Bug-type energy.',
+  },
+  'rock-candy': {
+    name: 'Rock Candy',
+    description: 'A candy filled with Rock-type energy.',
+  },
+  'ghost-candy': {
+    name: 'Ghost Candy',
+    description: 'A candy filled with Ghost-type energy.',
+  },
+  'dragon-candy': {
+    name: 'Dragon Candy',
+    description: 'A candy filled with Dragon-type energy.',
+  },
+  'dark-candy': {
+    name: 'Dark Candy',
+    description: 'A candy filled with Dark-type energy.',
+  },
+  'steel-candy': {
+    name: 'Steel Candy',
+    description: 'A candy filled with Steel-type energy.',
+  },
+  'fairy-candy': {
+    name: 'Fairy Candy',
+    description: 'A candy filled with Fairy-type energy.',
+  },
+  move_cut: {
+    name: 'TM Cut',
+    description: 'Teaches Cut to a Pokémon.',
+  },
+  move_fly: {
+    name: 'TM Fly',
+    description: 'Teaches Fly to a Pokémon.',
+  },
+  move_surf: {
+    name: 'TM Surf',
+    description: 'Teaches Surf to a Pokémon.',
+  },
+  move_strength: {
+    name: 'TM Strength',
+    description: 'Teaches Strength to a Pokémon.',
+  },
+  move_flash: {
+    name: 'TM Flash',
+    description: 'Teaches Flash to a Pokémon.',
+  },
+  'move_rock-smash': {
+    name: 'TM Rock Smash',
+    description: 'Teaches Rock Smash to a Pokémon.',
+  },
+  move_waterfall: {
+    name: 'TM Waterfall',
+    description: 'Teaches Waterfall to a Pokémon.',
+  },
+  move_dive: {
+    name: 'TM Dive',
+    description: 'Teaches Dive to a Pokémon.',
+  },
+  'move_mean-look': {
+    name: 'TM Mean Look',
+    description: 'Teaches Mean Look to a Pokémon.',
+  },
+  move_defog: {
+    name: 'TM Defog',
+    description: 'Teaches Defog to a Pokémon.',
+  },
   'move_ancient-power': {
     name: 'TM Ancient Power',
     description: 'Teaches Ancient Power to a Pokémon.',
   },
-  'move_double-hit': { name: 'TM Double Hit', description: 'Teaches Double Hit to a Pokémon.' },
+  'move_double-hit': {
+    name: 'TM Double Hit',
+    description: 'Teaches Double Hit to a Pokémon.',
+  },
   'move_dragon-pulse': {
     name: 'TM Dragon Pulse',
     description: 'Teaches Dragon Pulse to a Pokémon.',
   },
-  'move_hyper-drill': { name: 'TM Hyper Drill', description: 'Teaches Hyper Drill to a Pokémon.' },
-  move_mimic: { name: 'TM Mimic', description: 'Teaches Mimic to a Pokémon.' },
-  move_rollout: { name: 'TM Rollout', description: 'Teaches Rollout to a Pokémon.' },
-  move_stomp: { name: 'TM Stomp', description: 'Teaches Stomp to a Pokémon.' },
-  move_taunt: { name: 'TM Taunt', description: 'Teaches Taunt to a Pokémon.' },
-  'move_twin-beam': { name: 'TM Twin Beam', description: 'Teaches Twin Beam to a Pokémon.' },
+  'move_hyper-drill': {
+    name: 'TM Hyper Drill',
+    description: 'Teaches Hyper Drill to a Pokémon.',
+  },
+  move_mimic: {
+    name: 'TM Mimic',
+    description: 'Teaches Mimic to a Pokémon.',
+  },
+  move_rollout: {
+    name: 'TM Rollout',
+    description: 'Teaches Rollout to a Pokémon.',
+  },
+  move_stomp: {
+    name: 'TM Stomp',
+    description: 'Teaches Stomp to a Pokémon.',
+  },
+  move_taunt: {
+    name: 'TM Taunt',
+    description: 'Teaches Taunt to a Pokémon.',
+  },
+  'move_twin-beam': {
+    name: 'TM Twin Beam',
+    description: 'Teaches Twin Beam to a Pokémon.',
+  },
 };

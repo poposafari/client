@@ -265,44 +265,47 @@ export const item: TranslationItem = {
     description: '가라두구가지를 엮어서 만든 머리 장식.\n가라르지방의 야돈에게 씌워주면 기뻐한다.',
   },
   'linking-cord': {
-    name: 'linking-cord',
-    description: '',
+    name: '연결의 끈',
+    description:
+      '모종의 유대감이 느껴지는 신비한 에너지가 담긴 끈. 어떤 포켓몬들이 좋아하는 물건이다.',
   },
   'black-augurite': {
-    name: 'black-augurite',
-    description: '',
+    name: '검은 휘석',
+    description:
+      '조각내면 예리하게 날이 서는 유리 같은 성질을 띠는 검은 돌. 어떤 포켓몬이 좋아하는 물건이다.',
   },
   'peat-block': {
-    name: 'peat-block',
-    description: '',
+    name: '피트 블록',
+    description:
+      '진흙 같은 석탄 덩어리. 말리면 연료로도 쓸 수 있다. 어떤 포켓몬이 좋아하는 물건이다.',
   },
   'scroll-of-darkness': {
-    name: 'scroll-of-darkness',
-    description: '',
+    name: '악의 족자',
+    description: '치고마에게 사용하면 우라오스 일격의 태세로 진화할 수 있다.',
   },
   'scroll-of-waters': {
-    name: 'scroll-of-waters',
-    description: '',
+    name: '물의 족자',
+    description: '치고마에게 사용하면 우라오스 연격의 태세로 진화할 수 있다.',
   },
   'malicious-armor': {
-    name: 'malicious-armor',
-    description: '',
+    name: '저주받은 갑옷',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷. 저주의 감정이 담겨 있다.',
   },
   'auspicious-armor': {
-    name: 'auspicious-armor',
-    description: '',
+    name: '축복받은 갑옷',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷. 축복의 감정이 담겨 있다.',
   },
   'syrupy-apple': {
-    name: 'syrupy-apple',
-    description: '',
+    name: '꿀맛사과',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 사과. 엄청나게 꿀맛이다.',
   },
   'unremarkable-teacup': {
-    name: 'unremarkable-teacup',
-    description: '',
+    name: '범작찻잔',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔. 깨졌지만 차는 맛있어진다.',
   },
   'masterpiece-teacup': {
-    name: 'masterpiece-teacup',
-    description: '',
+    name: '걸작찻잔',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔. 이가 빠졌지만 차는 맛있어진다.',
   },
   repel: {
     name: '벌레회피스프레이',
@@ -538,28 +541,31 @@ export const item: TranslationItem = {
       '빛에 비추면 반짝이는 천.\n과거에 인간들이 풍요의 왕에게\n감사하는 마음을 담아 바쳤다고 한다.',
   },
   'adamant-crystal': {
-    name: 'adamant-crystal',
-    description: '',
+    name: '큰금강옥',
+    description: '눈부시게 빛나는 큰 구슬. 디아루가에게 사용하면 힘이 넘쳐서 모습이 바뀐다.',
   },
   'lustrous-globe': {
-    name: 'lustrous-globe',
-    description: '',
+    name: '큰백옥',
+    description: '눈부시게 빛나는 큰 구슬. 펄기아에게 사용하면 힘이 넘쳐서 모습이 바뀐다.',
   },
   'griseous-core': {
-    name: 'griseous-core',
-    description: '',
+    name: '큰백금옥',
+    description: '눈부시게 빛나는 큰 구슬. 기라티나에게 사용하면 힘이 넘쳐서 모습이 바뀐다.',
   },
   'cornerstone-mask': {
-    name: 'cornerstone-mask',
-    description: '',
+    name: '주춧돌의가면',
+    description:
+      '결정이 장식되어 있는 목각 가면. 오거폰에게 지니게 하면 바위타입을 두르고 싸울 수 있다.',
   },
   'wellspring-mask': {
-    name: 'wellspring-mask',
-    description: '',
+    name: '우물의가면',
+    description:
+      '결정이 장식되어 있는 목각 가면. 오거폰에게 지니게 하면 물타입을 두르고 싸울 수 있다.',
   },
   'hearthflame-mask': {
-    name: 'hearthflame-mask',
-    description: '',
+    name: '화덕의가면',
+    description:
+      '결정이 장식되어 있는 목각 가면. 오거폰에게 지니게 하면 불꽃타입을 두르고 싸울 수 있다.',
   },
   'red-orb': {
     name: '주홍구슬',

@@ -4867,636 +4867,716 @@ export const pokemon: TranslationPokemon = {
   '0899': {
     name: '신비록',
     species: '큰뿔포켓몬',
-    description: '',
+    description:
+      '눈에 보이지 않는 벽을 만들어 낼 때 검은 구슬이 신비하게 빛난다. 떨어진 수염은 따뜻해서 겨울옷의 귀중한 재료가 된다.',
   },
   '0900': {
     name: '사마자르',
     species: '큰도끼포켓몬',
-    description: '',
+    description:
+      '사나우면서 거칠고 난폭한 존재. 크고 무거운 바위로 된 도끼를 휘둘러서 먹잇감을 쓰러뜨린다.',
   },
   '0901': {
     name: '다투곰',
     species: '이탄포켓몬',
-    description: '',
+    description:
+      '히스이 땅에 펼쳐진 습지의 토양 덕분에 튼튼한 몸과 함께, 이탄을 자유롭게 다루는 새로운 재주를 익히게 된 것으로 추측된다.',
   },
   '0902': {
     name: '대쓰여너',
     species: '큰물고기포켓몬',
-    description: '',
+    description:
+      '물길을 거슬러 오르는 여정에서 뜻을 이루지 못하고 죽은 동료들의 혼을 두르고 있다. 히스이에 흐르는 하천에서는 대적할 자가 없다.',
   },
   '0903': {
     name: '포푸니크',
     species: '클라이밍포켓몬',
-    description: '',
+    description:
+      '다른 종을 압도하는 신체 능력과 맹독을 가지고 있어 한랭한 고지대에서는 맞수가 없다. 무리를 이루지 않고 고독함을 즐긴다.',
   },
   '0904': {
     name: '장침바루',
     species: '침붕포켓몬몬',
-    description: '',
+    description:
+      '창과 같은 침과 흉포한 성질 때문에 "바다 도깨비"라는 이명이 있는 포켓몬. 독을 마셔서 자신의 양식으로 삼는다.',
   },
   '0905': {
     name: '러브로스',
     species: '애증포켓몬',
-    description: '',
+    description:
+      '바다를 건너 날아와 혹독한 겨울의 끝을 알린다. 자애로움이 히스이 땅에 새로운 생명을 싹틔우게 했다는 전승이 있다.',
   },
   '0906': {
     name: '나오하',
     species: '풀고양이포켓몬',
-    description: '',
+    description:
+      '복슬복슬한 털은 식물에 가까운 성분으로 이루어져 있다. 수시로 세수를 하면서 건조해지는 것을 방지한다.',
   },
   '0907': {
     name: '나로테',
     species: '풀고양이포켓몬',
-    description: '',
+    description: '긴 털 아래 숨긴 덩굴을 능숙하게 다뤄서 단단한 꽃봉오리로 상대를 가격한다.',
   },
   '0908': {
     name: '마스카나',
     species: '매지션포켓몬',
-    description: '',
+    description:
+      '꽃이 떠 있는 것처럼 보이는 것은 망토 뒷면의 털이 빛을 반사해서 줄기를 보이지 않게 하기 때문이다.',
   },
   '0909': {
     name: '뜨아거',
     species: '불꽃악어포켓몬',
-    description: '',
+    description: '따뜻한 바위 위에 드러누워서 네모난 비늘을 통해 흡수한 열로 불꽃 에너지를 만든다.',
   },
   '0910': {
     name: '악뜨거',
     species: '불꽃악어포켓몬',
-    description: '',
+    description: '불꽃 에너지와 남아도는 생명력이 섞여서 머리 위에 알 모양의 불덩이가 생겨났다.',
   },
   '0911': {
     name: '라우드본',
     species: '싱어포켓몬',
-    description: '',
+    description:
+      '노랫소리에 따라 모습이 바뀌는 불새는 머리 위에 있던 불덩이에 영혼이 깃든 것이라고 한다.',
   },
   '0912': {
     name: '꾸왁스',
     species: '꼬마오리포켓몬',
-    description: '',
+    description:
+      '옛날에 머나먼 땅에서 찾아와 정착했다. 날개에서 분비되는 젤은 물과 먼지를 튕겨 낸다.',
   },
   '0913': {
     name: '아꾸왁',
     species: '레슨포켓몬',
-    description: '',
+    description:
+      '열심히 얕은 여울을 달리며 하반신을 단련하고, 동료들끼리 발 기술의 화려함을 겨룬다.',
   },
   '0914': {
     name: '웨이니발',
     species: '댄서포켓몬',
-    description: '',
+    description:
+      '발차기 한 번에 트럭을 굴려 버릴 정도로 강한 다릿심을 활용하여 이국적인 춤을 선보인다.',
   },
   '0915': {
     name: '맛보돈',
     species: '돼지포켓몬',
-    description: '',
+    description:
+      '하루 종일 먹이를 찾는다. 뛰어난 후각을 가졌지만 먹이를 찾는 일 외에는 사용하지 않는다.',
   },
   '0916': {
     name: '퍼퓨돈',
     species: '돼지포켓몬',
-    description: '',
+    description: '곱고 윤기가 흐르는 피부를 자랑한다. 꼬리 끝에서 응축된 향기를 내보낸다.',
   },
   '0917': {
     name: '타랜툴라',
     species: '실타래포켓몬',
-    description: '',
+    description: '몸을 감싸고 있는 실타래는 천적인 스라크의 낫을 튕겨 낼 정도의 탄력을 자랑한다.',
   },
   '0918': {
     name: '트래피더',
     species: '트랩포켓몬',
-    description: '',
+    description:
+      '나뭇가지나 천장에 실로 달라붙어 소리 없이 행동한다. 먹잇감에게 들키기 전에 쓰러뜨린다.',
   },
   '0919': {
     name: '콩알뚜기',
     species: '메뚜기포켓몬',
-    description: '',
+    description: '제3의 다리가 접혀 있다. 위기에 처하면 10m 이상을 점프하는 다릿심을 가지고 있다.',
   },
   '0920': {
     name: '엑스레그',
     species: '메뚜기포켓몬',
-    description: '',
+    description:
+      '진심을 다하게 되면 접었던 다리로 일어나 결전 모드로 변하여 단시간에 적을 제압한다.',
   },
   '0921': {
     name: '빠모',
     species: '쥐포켓몬',
-    description: '',
+    description:
+      '볼의 전기 주머니가 아직 발달하지 않았다. 앞발의 볼록살을 열심히 비벼야 겨우 전기가 만들어진다.',
   },
   '0922': {
     name: '빠모트',
     species: '쥐포켓몬',
-    description: '',
+    description: '무리가 공격을 받으면 전격을 날리는 격투기로 먼저 싸움을 걸고 적을 쓰러뜨린다.',
   },
   '0923': {
     name: '빠르모트',
     species: '손길포켓몬',
-    description: '',
+    description:
+      '평소에는 느긋하지만 싸움이 시작되면 전광석화와도 같은 몸놀림으로 적을 때려눕힌다.',
   },
   '0924': {
     name: '두리쥐',
     species: '커플포켓몬',
-    description: '',
+    description:
+      '호흡이 척척 맞는 콤비네이션으로 집의 재료가 될 만한 것을 앞니로 잘라 내어 가지고 간다.',
   },
   '0925': {
     name: '파밀리쥐',
     species: '패밀리포켓몬',
-    description: '',
+    description: '어느새 아이가 2마리로 늘었다. 가족처럼 보이기도 하나 진상은 밝혀지지 않았다.',
   },
   '0926': {
     name: '쫀도기',
     species: '강아지포켓몬',
-    description: '',
+    description:
+      '만지면 촉촉하고 매끈매끈하다. 숨결에 포함되어 있는 효모로 주위의 것들을 발효시킨다.',
   },
   '0927': {
     name: '바우첼',
     species: '개포켓몬',
-    description: '',
+    description: '몸에서 나는 좋은 향기가 밀의 성장을 돕기 때문에 농촌에서 소중히 여겨진다.',
   },
   '0928': {
     name: '미니브',
     species: '올리브포켓몬',
-    description: '',
+    description:
+      '머리의 열매에서 오일을 나오게 해서 적으로부터 몸을 지킨다. 오일은 펄쩍 뛸 만큼 떫고 쓰다.',
   },
   '0929': {
     name: '올리뇨',
     species: '올리브포켓몬',
-    description: '',
+    description: '신선한 향기가 나는 맛있는 오일을 나눠 준다. 오래전부터 인간과 공존해 왔다.',
   },
   '0930': {
     name: '올리르바',
     species: '올리브포켓몬',
-    description: '',
+    description:
+      '온화하면서도 매우 자비롭다. 영양이 풍부한 맛있는 오일을 약해진 포켓몬에게 나눠 준다.',
   },
   '0931': {
     name: '시비꼬',
     species: '잉꼬포켓몬',
-    description: '',
+    description: '마을에서 사는 것을 선호한다. 깃털 색에 따라 그룹을 만들고는 영역 다툼을 벌인다.',
   },
   '0932': {
     name: '베베솔트',
     species: '암염포켓몬',
-    description: '',
+    description:
+      '땅속의 암염층에서 태어났다. 귀한 소금을 나눠 주기 때문에 옛날에는 특히 더 귀하게 여겨졌다.',
   },
   '0933': {
     name: '스태솔트',
     species: '암염포켓몬',
-    description: '',
+    description:
+      '분출한 소금을 먹이에게 끼얹어서 소금절이로 만들어 버린다. 체내의 수분을 빼앗는 것이다.',
   },
   '0934': {
     name: '콜로솔트',
     species: '암염포켓몬',
-    description: '',
+    description: '손끝을 문질러서 나온 소금을 다친 포켓몬에게 뿌리면 심한 상처도 금방 낫는다.',
   },
   '0935': {
     name: '카르본',
     species: '불의아이포켓몬',
-    description: '',
+    description:
+      '불탄 숯에 영혼이 깃들어서 포켓몬이 되었다. 타오르는 투지로 강한 상대에게도 싸움을 건다.',
   },
   '0936': {
     name: '카디나르마',
     species: '불의전사포켓몬',
-    description: '',
+    description: '많은 무공을 세운 전사의 갑옷에 의해 진화한 모습. 충성심이 강한 포켓몬이다.',
   },
   '0937': {
     name: '파라블레이즈',
     species: '불의검사포켓몬',
-    description: '',
+    description: '양팔의 불꽃 검은 뜻을 다 이루지 못한 채 쓰러진 검사의 원념에 의해 타오르고 있다.',
   },
   '0938': {
     name: '빈나두',
     species: '전기올챙이포켓몬',
-    description: '',
+    description:
+      '꼬리를 흔들어서 전기를 발생시킨다. 위험을 감지하면 머리를 깜빡여서 동료에게 알린다.',
   },
   '0939': {
     name: '찌리배리',
     species: '전기개구리포켓몬',
-    description: '',
+    description: '말랑말랑한 몸을 늘였다 줄였다 하면 배에 달린 배꼽 발전기가 큰 전력을 발생시킨다.',
   },
   '0940': {
     name: '찌리비',
     species: '바다제비포켓몬',
-    description: '',
+    description:
+      '날개의 뼈는 바람을 받으면 전기를 만들어 낸다. 바다에 뛰어들어 먹이를 감전시켜서 잡는다.',
   },
   '0941': {
     name: '찌리비크',
     species: '군함조포켓몬',
-    description: '',
+    description:
+      '목의 주머니를 부풀려서 전기를 증폭시킨다. 바람을 타고 하루에 700km를 비행할 수 있다.',
   },
   '0942': {
     name: '오라티프',
     species: '애송이포켓몬',
-    description: '',
+    description:
+      '상대에게 얕보이지 않기 위해 항상 얼굴을 찌푸리고 있지만 우는 아이는 그 모습을 보고 웃게 된다.',
   },
   '0943': {
     name: '마피티프',
     species: '두목포켓몬',
-    description: '',
+    description:
+      '커다란 목 주머니에 에너지를 비축할 수 있다. 단숨에 이를 방출하여 적을 날려 버린다.',
   },
   '0944': {
     name: '땃쭈르',
     species: '독쥐포켓몬',
-    description: '',
+    description: '온화하지만 화가 나게 하면 독이 밴 날카로운 앞니로 물어서 상대를 마비시킨다.',
   },
   '0945': {
     name: '태깅구르',
     species: '독원숭이포켓몬',
-    description: '',
+    description: '먹이에 따라 색이 변하는 독성의 침을 손가락에 묻혀서 숲의 나무들에 무늬를 그린다.',
   },
   '0946': {
     name: '그푸리',
     species: '회전초포켓몬',
-    description: '',
+    description: '성불하지 못한 영혼이 바람에 날리다가 마른 풀과 엉키면서 포켓몬이 되었다.',
   },
   '0947': {
     name: '공푸리',
     species: '회전초포켓몬',
-    description: '',
+    description: '머리의 가지를 열어서 먹이를 삼킨다. 생기를 실컷 흡수한 다음 그대로 뱉어 버린다.',
   },
   '0948': {
     name: '들눈해',
     species: '목이버섯포켓몬',
-    description: '',
+    description: '축축한 숲속에 산다. 떨어져 나온 몸의 하늘하늘한 부분은 쫄깃쫄깃하고 아주 맛있다.',
   },
   '0949': {
     name: '육파리',
     species: '목이버섯포켓몬',
-    description: '',
+    description:
+      '깊은 숲속에 집단으로 살며 군체를 형성한다. 외부인이 접근하는 것을 극도로 싫어한다.',
   },
   '0950': {
     name: '절벼게',
     species: '매복포켓몬',
-    description: '',
+    description:
+      '거꾸로 매달린 채 절벽 위에서 먹이를 노리지만, 머리에 피가 몰리기 때문에 오랫동안은 버틸 수 없다.',
   },
   '0951': {
     name: '캡싸이',
     species: '하바네로포켓몬',
-    description: '',
+    description: '태양 빛을 쬐면 쬘수록 체내의 매운 성분이 늘어나서 기술이 점점 더 매워진다.',
   },
   '0952': {
     name: '스코빌런',
     species: '하바네로포켓몬',
-    description: '',
+    description:
+      '레드 헤드가 매운 성분을 불꽃 에너지로 변환시켜 불같이 매운 화염방사를 사방에 흩뿌린다.',
   },
   '0953': {
     name: '구르데',
     species: '굴리기포켓몬',
-    description: '',
+    description:
+      '에스퍼 에너지를 섞어서 흙과 모래로 진흙구슬을 만든다. 진흙구슬을 목숨보다 소중히 여긴다.',
   },
   '0954': {
     name: '베라카스',
     species: '굴리기포켓몬',
-    description: '',
+    description:
+      '구슬을 지탱하는 몸은 거의 움직이지 않기 때문에, 구슬 안에 본체가 있는 것으로 여겨지고 있다.',
   },
   '0955': {
     name: '하느라기',
     species: '프릴포켓몬',
-    description: '',
+    description:
+      '배의 하늘하늘한 부분에서 나오는 사이코 파워를 통해, 겨우 1cm지만 발끝이 지상에 떠 있다.',
   },
   '0956': {
     name: '클레스퍼트라',
     species: '타조포켓몬',
-    description: '',
+    description:
+      '커다란 눈동자에서 사이코 파워를 발산하여 상대를 움직일 수 없게 한다. 겉보기와 다르게 성질이 사납다.',
   },
   '0957': {
     name: '어리짱',
     species: '대장장이포켓몬',
-    description: '',
+    description:
+      '손수 만든 해머를 휘둘러 몸을 지키려 하나 금속을 먹는 포켓몬에게 자주 빼앗기고 만다.',
   },
   '0958': {
     name: '벼리짱',
     species: '해머포켓몬',
-    description: '',
+    description: '크고 튼튼한 해머를 만들기 위해 절각참 무리를 습격해서 금속을 모은다.',
   },
   '0959': {
     name: '두드리짱',
     species: '해머포켓몬',
-    description: '',
+    description: '지능이 높고 매우 호쾌하다. 해머로 바위를 날려서 하늘을 나는 아머까오를 노린다.',
   },
   '0960': {
     name: '바다그다',
     species: '정원장어포켓몬',
-    description: '',
+    description: '20m 떨어진 가비루사에게서 나는 냄새도 맡을 수 있어서 모래 속에 몸을 숨긴다.',
   },
   '0961': {
     name: '바닥트리오',
     species: '정원장어포켓몬',
-    description: '',
+    description:
+      '겉보기와 다르게 성질이 사납다. 기다란 몸으로 먹잇감을 죄어서 굴 안으로 끌고 들어간다.',
   },
   '0962': {
     name: '떨구새',
     species: '낙하물포켓몬',
-    description: '',
+    description:
+      '가슴의 깃털과 떨어진 깃털로 만든 주머니에 물건을 넣고는 높은 곳에서 떨어뜨리며 논다.',
   },
   '0963': {
     name: '맨돌핀',
     species: '돌고래포켓몬',
-    description: '',
+    description:
+      '꼬리지느러미에 있는 물의 고리를 가지고 동료와 노는 것을 좋아한다. 초음파로 생명체의 기분을 감지한다.',
   },
   '0964': {
     name: '돌핀맨',
     species: '돌고래포켓몬',
-    description: '',
+    description:
+      '도움을 구하는 동료의 소리를 들으면 모습을 바꾼다. 그 순간은 누구에게도 보여 주지 않는다.',
   },
   '0965': {
     name: '부르롱',
     species: '단기통포켓몬',
-    description: '',
+    description:
+      '고철 처리장에 방치된 엔진에 정체불명의 독포켓몬이 들어가 탄생한 것으로 전해지고 있다.',
   },
   '0966': {
     name: '부르르룸',
     species: '다기통포켓몬',
-    description: '',
+    description:
+      '독소와 바위 성분이 섞인 가스를 8개로 늘어난 실린더에서 폭발시켜 에너지를 만들어 낸다.',
   },
   '0967': {
     name: '모토마',
     species: '라이드포켓몬',
-    description: '',
+    description:
+      '먼 옛날부터 인간을 등에 태우고 다녔다고 한다. 1만 년 전 벽화에도 그 모습이 그려져 있다.',
   },
   '0968': {
     name: '꿈트렁',
     species: '지렁이포켓몬',
-    description: '',
+    description: '적에게 공격을 받으면 털을 주먹처럼 사용하여 폭풍같은 기세로 펀치를 날린다.',
   },
   '0969': {
     name: '초롱순',
     species: '광석포켓몬',
-    description: '',
+    description: '동굴의 벽에서 영양분을 흡수한다. 독의 결정으로 만들어진 꽃잎을 몸에 두르고 있다.',
   },
   '0970': {
     name: '킬라플로르',
     species: '광석포켓몬',
-    description: '',
+    description: '위험을 감지하면 결정으로 된 꽃잎을 펼친 뒤 원뿔 모양의 몸에서 빔을 발사한다.',
   },
   '0971': {
     name: '망망이',
     species: '유령개포켓몬',
-    description: '',
+    description: '사람과의 접점 없이 숨을 거둔 들개포켓몬이 환생한 것으로 여겨지고 있다.',
   },
   '0972': {
     name: '묘두기',
     species: '유령개포켓몬',
-    description: '',
+    description: '평소에는 묘지에서 자고 있다. 수많은 개포켓몬 중에서도 가장 주인에게 충직하다.',
   },
   '0973': {
     name: '꼬이밍고',
     species: '싱크로포켓몬',
-    description: '',
+    description:
+      '배에 비축해 둔 에너지가 부리를 통해 새어 나오지 않게 하기 위해 목 아래쪽을 꼬아 놓은 듯 하다.',
   },
   '0974': {
     name: '터벅고래',
     species: '육지고래포켓몬',
-    description: '',
+    description: '먼 옛날에 바다에서 올라와 육지에 살게 되었다. 고래왕자의 근연종이라고 한다.',
   },
   '0975': {
     name: '우락고래',
     species: '육지고래포켓몬',
-    description: '',
+    description: '빙설 지대를 떼 지어 다닌다. 강인한 근육과 두꺼운 피하지방으로 몸을 보호한다.',
   },
   '0976': {
     name: '가비루사',
     species: '분리포켓몬',
-    description: '',
+    description:
+      '불필요한 살을 분리하면 정신이 예민해져 사이코 파워가 상승한다. 떨어진 살은 담백하고 맛있다.',
   },
   '0977': {
     name: '어써러셔',
     species: '큰메기포켓몬',
-    description: '',
+    description: '대식가지만 먹이를 잡는 것이 서툴다. 싸리용과 콤비를 이뤄 먹이를 사냥한다.',
   },
   '0978': {
     name: '싸리용',
     species: '의태포켓몬',
-    description: '',
+    description: '작은 몸집의 드래곤포켓몬. 어써러셔의 입안에 살며 외부의 적으로부터 몸을 지킨다.',
   },
   '0979': {
     name: '저승갓숭',
     species: '분노숭이포켓몬',
-    description: '',
+    description:
+      '분노의 불티지가 임계점을 돌파하면서 육체라는 틀에 얽메이지 않는 파워를 손에 넣게 되었다.',
   },
   '0980': {
     name: '토오',
     species: '가시물고기포켓몬',
-    description: '',
+    description:
+      '적에게 공격을 받으면 몸에서 굵은 가시를 내지르며 반격한다. 몸이 끊어질 각오가 필요한 위험한 기술이다.',
   },
   '0981': {
     name: '키키링',
     species: '긴목포켓몬',
-    description: '',
+    description: '머리와 꼬리 2개의 뇌파가 동기화하여 에스퍼 파워가 키링키의 10배로 강화되었다.',
   },
   '0982': {
     name: '노고고치',
     species: '땅뱀포켓몬',
-    description: '',
+    description:
+      '단단한 꼬리로 땅속 깊은 곳에 있는 암반을 뚫어서 보금자리를 만든다. 굴의 깊이는 무려 10km에 이른다.',
   },
   '0983': {
     name: '대도각참',
     species: '대도포켓몬',
-    description: '',
+    description: '큰 군세의 정점에 올라선 단 한 마리의 절각참만이 대도각참으로 진화할 수 있다.',
   },
   '0984': {
     name: '위대한엄니',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '근년에 목격된 사례가 있다. "위대한엄니"라는 이름은 어떤 책에 기록된 생물에게서 따온 것이다.',
   },
   '0985': {
     name: '우렁찬꼬리',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '목격된 사례는 과거에 단 1건뿐이다. 오래된 탐험기에 기록된 정체불명의 생물을 닮은 포켓몬.',
   },
   '0986': {
     name: '사나운버섯',
     species: '패러독스포켓몬',
-    description: '',
+    description: '어떤 책에 "사나운버섯"이라는 이름으로 기록된 생물이 이 포켓몬일 가능성이 있다.',
   },
   '0987': {
     name: '날개치는머리',
     species: '패러독스포켓몬',
-    description: '',
+    description: '어떤 서적에 등장하는 "날개치는머리"라는 생물과 비슷한 특징을 가진 포켓몬.',
   },
   '0988': {
     name: '땅을기는날개',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '오래된 책에 "땅을기는날개"라는 이름으로 소개된 생물과 닮은 점이 있는 정체불명의 포켓몬.',
   },
   '0989': {
     name: '모래털가죽',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '포획된 사례는 없으며 데이터도 부족하다. 어느 탐험기에 기록된 생물과 특징이 일치한다.',
   },
   '0990': {
     name: '무쇠바퀴',
     species: '패러독스포켓몬',
-    description: '',
+    description: '오컬트 잡지에서 소개된 적 있는 우주인이 보낸 과학 병기와 많이 닮았다.',
   },
   '0991': {
     name: '무쇠보따리',
     species: '패러독스포켓몬',
-    description: '',
+    description: '오컬트 잡지의 기사에 실렸던 태곳적 문명이 만들어 냈다는 로봇과 모습이 닮았다.',
   },
   '0992': {
     name: '무쇠손',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '어떤 운동선수를 개조한 모습이라며 오컬트 잡지에서 대서특필했던 사이보그와 닮았다.',
   },
   '0993': {
     name: '무쇠머리',
     species: '패러독스포켓몬',
-    description: '',
+    description: '로봇과 사랑에 빠진 삼삼드래의 자식이라며 오컬트 잡지에서 다뤘던 포켓몬을 닮았다.',
   },
   '0994': {
     name: '무쇠독나방',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '인류를 감시하기 위한 UFO라며 오컬트 잡지에서 소개된 적 있는 미지의 물체와 닮았다.',
   },
   '0995': {
     name: '무쇠가시',
     species: '패러독스포켓몬',
-    description: '',
+    description: '10억 년 후의 마기라스라며 괴상한 잡지에서 다뤘던 포켓몬과 닮은 점이 있다.',
   },
   '0996': {
     name: '드니차',
     species: '얼음지느러미포켓몬',
-    description: '',
+    description:
+      '등지느러미로 열을 흡수해서 얼음 에너지로 변환한다. 고온일수록 에너지가 많이 모인다.',
   },
   '0997': {
     name: '드니꽁',
     species: '얼음지느러미포켓몬',
-    description: '',
+    description:
+      '주변의 공기를 얼려서 얼음 마스크로 얼굴을 보호하고 등지느러미를 얼음 검으로 바꾼다.',
   },
   '0998': {
     name: '드닐레이브',
     species: '빙룡포켓몬',
-    description: '',
+    description: '극저온의 냉기를 입에서 분사한다. 작열하는 마그마조차도 순식간에 얼려 버린다.',
   },
   '0999': {
     name: '모으령',
     species: '보물상자포켓몬',
-    description: '',
+    description:
+      '약 1500년 전의 보물 상자 안에서 태어났다. 보물을 훔치려 드는 괘씸한 자의 생기를 흡수한다.',
   },
   '1000': {
     name: '타부자고',
     species: '보물생명체포켓몬',
-    description: '',
+    description:
+      '몸은 1000개의 코인으로 이뤄져 있다고 한다. 붙임성이 좋아서 누구와도 금방 친해진다.',
   },
   '1001': {
     name: '총지엔',
     species: '재액포켓몬',
-    description: '',
+    description:
+      '왕의 악행을 목간에 기록했다는 이유로 처벌을 받은 사람의 원한이 마른 잎을 두르고 포켓몬이 되었다.',
   },
   '1002': {
     name: '파오젠',
     species: '재액포켓몬',
-    description: '',
+    description: '100t의 눈을 조종한다. 눈사태를 일으키고는 그 안을 드나들며 천진난만하게 논다.',
   },
   '1003': {
     name: '딩루',
     species: '재액포켓몬',
-    description: '',
+    description:
+      '옛날 의식에 사용되었던 그릇에 공포가 깃들게 되었고 이것이 흙과 돌을 둘러 포켓몬이 되었다.',
   },
   '1004': {
     name: '위유이',
     species: '재액포켓몬',
-    description: '',
+    description:
+      '3000도의 불꽃을 조종한다. 바위와 자갈을 녹여서 만든 마그마의 바다를 유유히 헤엄친다.',
   },
   '1005': {
     name: '고동치는달',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '수수께끼로 가득한 탐험기에 "고동치는달"이라는 이름으로 기록된 생물일 가능성이 있다.',
   },
   '1006': {
     name: '무쇠무인',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '오컬트 잡지의 기사에 실렸던 매드 사이언티스트의 발명품과 비슷한 특징이 몇 가지 존재한다.',
   },
   '1007': {
     name: '코라이돈',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '모토마를 닮았지만 그보다 훨씬 튼튼하고 흉포하다. 생태 등은 밝혀진 것이 전혀 없다.',
   },
   '1008': {
     name: '미라이돈',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '오래된 서적에 "무쇠이무기"라는 이름으로 기록된 존재인 것 같다. 벼락으로 대지를 잿더미로 만들었다고 한다.',
   },
   '1009': {
     name: '굽이치는물결',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      "This ferocious creature is shrouded in mystery. It's named after an aquatic monster mentioned in an old expedition journal.",
   },
   '1010': {
     name: '무쇠잎새',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      'Many of its physical characteristics match those of a Virizion from the future that was covered in a paranormal magazine.',
   },
   '1011': {
     name: '과미르',
     species: '사과사탕포켓몬',
-    description: '',
+    description:
+      '어떤 지역에서만 재배되는 특별한 사과에 의해 진화했다. 두 마리가 하나인 포켓몬이다.',
   },
   '1012': {
     name: '차데스',
     species: '말차포켓몬',
-    description: '',
+    description:
+      '다도의 길을 통달하지 못한 채 죽은 다도가의 원통함이 말차에 깃들어서 포켓몬이 되었다고 한다.',
   },
   '1013': {
     name: '그우린차',
     species: '말차포켓몬',
-    description: '',
+    description: '차로 위장하여 실수로 마셔 버린 상대의 생기를 흡수하려 하나 금방 들통나 버린다.',
   },
   '1014': {
     name: '조타구',
     species: '수하포켓몬',
-    description: '',
+    description:
+      '목에 달린 독소로 된 사슬에 의해 온몸의 근육이 자극을 받아 듬직한 체격으로 변했다.',
   },
   '1015': {
     name: '이야후',
     species: '수하포켓몬',
-    description: '',
+    description: '능력을 끌어올리는 독소로 된 사슬에 뇌가 자극을 받아 사이코 파워가 개화했다.',
   },
   '1016': {
     name: '기로치',
     species: '수하포켓몬',
-    description: '',
+    description:
+      '몸을 휘감고 있는 사슬에서 나오는 독소에 자극을 받아 아름다운 모습과 소리를 손에 넣었다.',
   },
   '1017': {
     name: '오거폰',
     species: '가면포켓몬',
-    description: '',
+    description:
+      '쓰고 있는 가면에 따라 타입이 변한다. 날렵한 움직임과 발차기 기술로 상대를 농락한다.',
   },
   '1018': {
     name: '브리두라스',
     species: '합금포켓몬',
-    description: '',
+    description:
+      '주위로부터 정전기를 모은다. 네발로 엎드려서 발사하는 빔은 절대적인 위력을 자랑한다.',
   },
   '1019': {
     name: '과미드라',
     species: '사과이무기포켓몬',
-    description: '',
+    description:
+      '7마리의 미드라가 꿀엿으로 만든 사과 안에서 지낸다. 가운데에 있는 미드라가 사령탑이다.',
   },
   '1020': {
     name: '꿰뚫는화염',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '목격 보고는 매우 드물다. 불기둥을 뿜어내며 날뛰는 모습이 담긴 짧은 영상이 존재한다.',
   },
   '1021': {
     name: '날뛰는우레',
     species: '패러독스포켓몬',
-    description: '',
+    description:
+      '털에서 내뿜는 벼락으로 주변을 모조리 태워 버린다고 전해진다. 자세한 정보는 밝혀진 것이 없다.',
   },
   '1022': {
     name: '무쇠암석',
     species: '패러독스포켓몬',
-    description: '',
+    description: '악의 조직에 개조당한 테라키온이라며 괴상한 잡지에서 다뤘던 포켓몬을 닮았다.',
   },
   '1023': {
     name: '무쇠감투',
     species: '패러독스포켓몬',
-    description: '',
+    description: '코바르온 형태의 최신 병기라며 오컬트 잡지에 소개됐던 정체불명의 물체를 닮았다.',
   },
   '1024': {
     name: '테라파고스',
     species: '테라스탈포켓몬',
-    description: '',
+    description:
+      '에너지를 단단한 결정으로 바꾸는 능력으로 몸을 지킨다. 테라스탈의 근원이 되는 포켓몬이다.',
   },
   '1025': {
     name: '복숭악동',
     species: '지배포켓몬',
-    description: '',
+    description:
+      '복숭아처럼 생긴 껍질은 그야말로 맹독의 저장고다. 독이 든 떡을 만들어서 사람과 포켓몬에게 대접한다.',
   },
 };
