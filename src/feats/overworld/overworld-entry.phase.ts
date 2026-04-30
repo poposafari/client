@@ -2,7 +2,11 @@ import { io } from 'socket.io-client';
 import { IGamePhase } from '@poposafari/core';
 import { GameEvent, GameScene } from '@poposafari/scenes';
 import type { InitPosConfig } from './maps/door';
-import type { InitOkPayload, RoomUserState } from './overworld-socket.types';
+import type {
+  ChangeMapOkPayload,
+  InitOkPayload,
+  RoomUserState,
+} from './overworld-socket.types';
 import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
 import { LoginPhase } from '../login';
 import { OverworldPhase } from './overworld.phase';
@@ -98,7 +102,7 @@ export class OverworldEntryPhase implements IGamePhase {
         this.scene.setPendingRoomState(payload.users);
       }
     };
-    const onChangeMapOk = (payload: { mapId: string; x: number; y: number }) => {
+    const onChangeMapOk = (payload: ChangeMapOkPayload) => {
       this.removeListeners();
 
       const profile = this.scene.getUser()?.getProfile();
@@ -109,6 +113,22 @@ export class OverworldEntryPhase implements IGamePhase {
           y: payload.y,
         };
       }
+
+      if (
+        payload?.weather &&
+        typeof payload.weatherStartedAt === 'number' &&
+        typeof payload.weatherDuration === 'number'
+      ) {
+        const weatherState = {
+          mapId: payload.mapId,
+          weather: payload.weather,
+          startedAt: payload.weatherStartedAt,
+          duration: payload.weatherDuration,
+        };
+        this.scene.setWeatherState(weatherState);
+        this.scene.events.emit(GameEvent.WEATHER_CHANGED, weatherState);
+      }
+
       this.ui?.hide();
       this.ui?.destroy();
       this.ui = null;
@@ -158,6 +178,22 @@ export class OverworldEntryPhase implements IGamePhase {
           });
         }
         this.scene.events.emit(GameEvent.GAME_TIME_CHANGED, payload.timeOfDay);
+      }
+
+      if (
+        payload.weather &&
+        typeof payload.weatherStartedAt === 'number' &&
+        typeof payload.weatherDuration === 'number' &&
+        payload.lastLocation?.map
+      ) {
+        const weatherState = {
+          mapId: payload.lastLocation.map,
+          weather: payload.weather,
+          startedAt: payload.weatherStartedAt,
+          duration: payload.weatherDuration,
+        };
+        this.scene.setWeatherState(weatherState);
+        this.scene.events.emit(GameEvent.WEATHER_CHANGED, weatherState);
       }
 
       // 마지막 위치가 사파리존이면 맵 데이터를 미리 가져온다.

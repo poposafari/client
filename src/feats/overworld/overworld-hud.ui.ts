@@ -41,6 +41,28 @@ const TIME_ICON_MAP: Record<string, TEXTURE> = {
   night: TEXTURE.ICON_NIGHT,
 };
 
+const WEATHER_ICON_MAP: Record<string, TEXTURE> = {
+  sunny: TEXTURE.ICON_SUNNY,
+  rainy: TEXTURE.ICON_RAINY,
+  stormy: TEXTURE.ICON_STORMY,
+  foggy: TEXTURE.ICON_FOGGY,
+};
+
+const SNOW_LAND_WEATHER_OVERRIDES: Record<string, TEXTURE> = {
+  rainy: TEXTURE.ICON_SNOWY,
+  stormy: TEXTURE.ICON_BLIZZARD,
+};
+
+const SAND_LAND_WEATHER_OVERRIDES: Record<string, TEXTURE> = {
+  rainy: TEXTURE.ICON_SANDWIND,
+  stormy: TEXTURE.ICON_SANDSTORM,
+};
+
+const FOGGY_TINT_BY_LAND = {
+  snow: 0xcccccc,
+  sand: 0xd2b48c,
+} as const;
+
 type ToggleIconConfig = { texture: TEXTURE; guide: string };
 
 const TOGGLE_ICONS: ReadonlyArray<ToggleIconConfig> = [
@@ -85,6 +107,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private timeIcon!: GImage;
   private timeText!: GText;
 
+  private weatherContainer!: GContainer;
+  private weatherIcon!: GImage;
+  private weatherText!: GText;
+
   private xyText!: GText;
 
   private profileContainer!: GContainer;
@@ -122,6 +148,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.createParty();
     this.createQuickSlot();
     this.createTime();
+    this.createWeather();
     this.createXY();
     this.createInfo();
     this.createProfile();
@@ -130,24 +157,30 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.toggleIconContainer,
       this.partyList,
       this.timeContainer,
+      this.weatherContainer,
       this.xyText,
       this.infoList,
       this.profileContainer,
     ]);
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+    this.scene.events.on(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
     this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
     this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
 
     this.timeTickEvent = this.scene.time.addEvent({
       delay: 1000,
       loop: true,
-      callback: this.refreshRemainingTime,
+      callback: () => {
+        this.refreshRemainingTime();
+        this.refreshRemainingWeather();
+      },
       callbackScope: this,
     });
 
     this.once('destroy', () => {
       this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+      this.scene.events.off(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
       this.scene.events.off(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
       this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
       this.timeTickEvent?.remove(false);
@@ -157,11 +190,20 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
     this.updateTime(DayNightFilter.getCurrentTimeLabel());
     this.refreshRemainingTime();
+
+    const initialWeather = this.scene.getWeatherState()?.weather;
+    this.updateWeather(initialWeather);
+    this.refreshRemainingWeather();
   }
 
   private onGameTimeChanged = (timeOfDay: string): void => {
     this.updateTime(timeOfDay);
     this.refreshRemainingTime();
+  };
+
+  private onWeatherChanged = (state: { weather: string }): void => {
+    this.updateWeather(state?.weather);
+    this.refreshRemainingWeather();
   };
 
   private refreshRemainingTime = (): void => {
@@ -174,6 +216,21 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       .padStart(2, '0');
     const ss = (totalSec % 60).toString().padStart(2, '0');
     this.timeText.setText(`${mm}:${ss}`);
+  };
+
+  private refreshRemainingWeather = (): void => {
+    const remaining = this.scene.getWeatherRemainingMs();
+    if (!this.weatherText) return;
+    if (remaining === null) {
+      this.weatherText.setText('--:--');
+      return;
+    }
+    const totalSec = Math.ceil(remaining / 1000);
+    const mm = Math.floor(totalSec / 60)
+      .toString()
+      .padStart(2, '0');
+    const ss = (totalSec % 60).toString().padStart(2, '0');
+    this.weatherText.setText(`${mm}:${ss}`);
   };
 
   private onPartyChanged = (): void => {
@@ -277,6 +334,23 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.timeContainer.add([this.timeIcon, this.timeText]);
   }
 
+  private createWeather() {
+    this.weatherContainer = addContainer(this.scene, DEPTH.HUD, -810, -140);
+    this.weatherIcon = addImage(this.scene, TEXTURE.ICON_SUNNY, undefined, 0, 0).setScale(2);
+    this.weatherText = addText(
+      this.scene,
+      0,
+      0,
+      '--:--',
+      30,
+      '100',
+      'center',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    ).setOrigin(0.5, 0.5);
+    this.weatherContainer.add([this.weatherIcon, this.weatherText]);
+  }
+
   private createXY() {
     const user = this.scene.getUser()?.getProfile();
     const x = user?.lastLocation.x ?? 0;
@@ -307,8 +381,13 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       windowScale: 2,
       nineSlice: { left: 16, right: 16, top: 16, bottom: 16 },
       rows: [
-        { key: 'location', texture: TEXTURE.ICON_LOCATION, text: i18next.t(`menu:${location}`) },
-        { key: 'money', texture: TEXTURE.ICON_MONEY, text: `${MONEY_SYMBOL} ${money}` },
+        {
+          key: 'location',
+          texture: TEXTURE.ICON_LOCATION,
+          text: i18next.t(`menu:${location}`),
+          scale: 1.2,
+        },
+        { key: 'money', texture: TEXTURE.ICON_MONEY, text: `${MONEY_SYMBOL} ${money}`, scale: 1.2 },
       ],
       gapBetweenImageAndText: 15,
       padding: 10,
@@ -316,7 +395,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       rowGap: 3,
       imageSize: 45,
     });
-    this.infoList.setPosition(-950, -190);
+    this.infoList.setPosition(-950, -90);
   }
 
   private createProfile() {
@@ -522,6 +601,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     const otherVisible = !enabled;
     this.partyList?.setVisible(otherVisible);
     this.timeContainer?.setVisible(otherVisible);
+    this.weatherContainer?.setVisible(otherVisible);
     this.xyText?.setVisible(otherVisible);
     this.infoList?.setVisible(otherVisible);
     this.profileContainer?.setVisible(otherVisible);
@@ -553,6 +633,37 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     if (timeOfDay) {
       const texture = TIME_ICON_MAP[timeOfDay] ?? TEXTURE.ICON_DAY;
       this.timeIcon.setTexture(texture);
+    }
+  }
+
+  updateWeather(weather?: string): void {
+    if (!this.weatherIcon) return;
+
+    const mapId = this.scene.getWeatherState()?.mapId;
+    const land = mapId ? this.scene.getMapRegistry().get(mapId)?.area?.land : undefined;
+
+    let texture: TEXTURE = TEXTURE.ICON_SUNNY;
+    let tint: number | null = null;
+
+    if (weather) {
+      if (land === 'snow') {
+        texture =
+          SNOW_LAND_WEATHER_OVERRIDES[weather] ?? WEATHER_ICON_MAP[weather] ?? TEXTURE.ICON_SUNNY;
+        if (weather === 'foggy') tint = FOGGY_TINT_BY_LAND.snow;
+      } else if (land === 'desert' || land === 'sand') {
+        texture =
+          SAND_LAND_WEATHER_OVERRIDES[weather] ?? WEATHER_ICON_MAP[weather] ?? TEXTURE.ICON_SUNNY;
+        if (weather === 'foggy') tint = FOGGY_TINT_BY_LAND.sand;
+      } else {
+        texture = WEATHER_ICON_MAP[weather] ?? TEXTURE.ICON_SUNNY;
+      }
+    }
+
+    this.weatherIcon.setTexture(texture);
+    if (tint !== null) {
+      this.weatherIcon.setTint(tint);
+    } else {
+      this.weatherIcon.clearTint();
     }
   }
 }

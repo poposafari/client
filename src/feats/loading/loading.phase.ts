@@ -18,6 +18,15 @@ import {
 
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { s000Config, s001Config, s002Config, s003Config } from '../overworld/maps/safari';
+import {
+  FOG_TEXTURE_KEYS,
+  RAIN_ANIM_KEY,
+  RAIN_TEXTURE_KEY,
+  SAND_TEXTURE_KEYS,
+  SAND_TILE_TEXTURE_KEY,
+  SNOW_TEXTURE_KEYS,
+  SNOW_TILE_TEXTURE_KEY,
+} from '@poposafari/utils/weather-overlay';
 
 const MAX_NPC = 2;
 const MAX_DOOR = 19;
@@ -96,6 +105,7 @@ export class LoadingPhase implements IGamePhase {
           this.loadPokemonAssets();
           this.loadItemAssets();
           this.loadImageAndSprite();
+          this.loadWeatherAssets();
           this.loadMap();
           this.loadAudio();
           this.scene.load.start();
@@ -435,6 +445,38 @@ export class LoadingPhase implements IGamePhase {
     createAnimationFromFrameNames(this.scene, 'pokemon_recall', key, frames, 16, 0);
   }
 
+  private loadWeatherAssets(): void {
+    this.scene.loadAtlas(
+      RAIN_TEXTURE_KEY,
+      'ui/weather',
+      RAIN_TEXTURE_KEY,
+      RAIN_TEXTURE_KEY,
+      'ui/weather',
+    );
+
+    for (const key of FOG_TEXTURE_KEYS) {
+      this.scene.loadImage(key, 'ui/weather', key);
+    }
+
+    for (const key of SNOW_TEXTURE_KEYS) {
+      this.scene.loadImage(key, 'ui/weather', key);
+    }
+
+    this.scene.loadImage(SNOW_TILE_TEXTURE_KEY, 'ui/weather', SNOW_TILE_TEXTURE_KEY);
+
+    for (const key of SAND_TEXTURE_KEYS) {
+      this.scene.loadImage(key, 'ui/weather', key);
+    }
+
+    this.scene.loadImage(SAND_TILE_TEXTURE_KEY, 'ui/weather', SAND_TILE_TEXTURE_KEY);
+  }
+
+  private createWeatherAnimations(): void {
+    if (this.scene.anims.exists(RAIN_ANIM_KEY)) return;
+    const frames = ['rain-0', 'rain-1', 'rain-2', 'rain-3'];
+    createAnimationFromFrameNames(this.scene, RAIN_TEXTURE_KEY, RAIN_ANIM_KEY, frames, 16, 0);
+  }
+
   private loadPlayerCostumeAssets(): void {
     const costume = this.scene.getMasterData().getCostume();
     const backBase = 'ui/players/back';
@@ -606,6 +648,15 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_RATE_DOWN, 'ui', 'down_rate');
     this.scene.loadImage(TEXTURE.ICON_DISCORD, 'ui/icons', 'icon_discord');
     this.scene.loadImage(TEXTURE.ICON_GOOGLE, 'ui/icons', 'icon_google');
+
+    this.scene.loadImage(TEXTURE.ICON_SUNNY, 'ui/weather', 'icon_sunny');
+    this.scene.loadImage(TEXTURE.ICON_RAINY, 'ui/weather', 'icon_rainy');
+    this.scene.loadImage(TEXTURE.ICON_STORMY, 'ui/weather', 'icon_stormy');
+    this.scene.loadImage(TEXTURE.ICON_FOGGY, 'ui/weather', 'icon_foggy');
+    this.scene.loadImage(TEXTURE.ICON_SNOWY, 'ui/weather', 'icon_snowy');
+    this.scene.loadImage(TEXTURE.ICON_BLIZZARD, 'ui/weather', 'icon_blizzard');
+    this.scene.loadImage(TEXTURE.ICON_SANDWIND, 'ui/weather', 'icon_sandwind');
+    this.scene.loadImage(TEXTURE.ICON_SANDSTORM, 'ui/weather', 'icon_sandstorm');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
@@ -833,6 +884,7 @@ export class LoadingPhase implements IGamePhase {
     this.createEmoSprite();
     this.createPetEmoSprite();
     this.createBaseSurfAnimations();
+    this.createWeatherAnimations();
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_SHINY, ANIMATION.OVERWORLD_SHINY);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1, ANIMATION.OVERWORLD_GRASS_1);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1_B, ANIMATION.OVERWORLD_GRASS_1_B);

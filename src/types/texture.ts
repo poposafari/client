@@ -71,6 +71,15 @@ export const enum TEXTURE {
   ICON_DISCORD = 'icon_discord',
   ICON_GOOGLE = 'icon_google',
 
+  ICON_SUNNY = 'icon_sunny',
+  ICON_RAINY = 'icon_rainy',
+  ICON_STORMY = 'icon_stormy',
+  ICON_FOGGY = 'icon_foggy',
+  ICON_SANDWIND = 'icon_sandwind',
+  ICON_SANDSTORM = 'icon_sandstorm',
+  ICON_SNOWY = 'icon_snowy',
+  ICON_BLIZZARD = 'icon_blizzard',
+
   GROUND_ITEM = 'ground_item',
   EMO = 'emo',
   SPARKLE = 'sparkle',

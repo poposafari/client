@@ -4,6 +4,7 @@ export enum DEPTH {
   GROUND = 0,
   FOREGROUND = 998,
   OVERWORLD_NAME = 998.5,
+  WEATHER = 998.7,
 
   HUD = 999,
   MESSAGE = 1001,

@@ -38,12 +38,31 @@ export interface InitOkPayload {
   timeOfDay?: string;
   gameTimeStartedAt?: number;
   gameTimeDuration?: number;
+  weather?: string;
+  weatherStartedAt?: number;
+  weatherDuration?: number;
+}
+
+export interface ChangeMapOkPayload {
+  mapId: string;
+  x: number;
+  y: number;
+  weather?: string;
+  weatherStartedAt?: number;
+  weatherDuration?: number;
 }
 
 export interface GameTimeChangedPayload {
   timeOfDay?: string;
   startedAt?: number;
   duration?: number;
+}
+
+export interface WeatherChangedPayload {
+  mapId: string;
+  weather: string;
+  startedAt: number;
+  duration: number;
 }
 
 export interface MovePayload {

@@ -29,12 +29,14 @@ import { debugLog } from '@poposafari/utils/debug';
 import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import HazeDistortionFilter from '@poposafari/utils/haze-distortion-filter';
 import WipeRightToLeftShader from '@poposafari/utils/wipe-rl-shader';
 
 export enum GameEvent {
   LANGUAGE_CHANGED = 'LANGUAGE_CHANGED',
   WINDOW_CHANGED = 'WINDOW_CHANGED',
   GAME_TIME_CHANGED = 'GAME_TIME_CHANGED',
+  WEATHER_CHANGED = 'WEATHER_CHANGED',
   PARTY_CHANGED = 'PARTY_CHANGED',
   PROFILE_CHANGED = 'PROFILE_CHANGED',
 }
@@ -110,6 +112,12 @@ export class GameScene extends BaseScene {
   private currentSocketUserId: string | null = null;
 
   private gameTimeState: { phase: string; startedAt: number; duration: number } | null = null;
+  private weatherState: {
+    mapId: string;
+    weather: string;
+    startedAt: number;
+    duration: number;
+  } | null = null;
 
   private onSocketKicked = async (): Promise<void> => {
     if (!this.socket) return;
@@ -193,6 +201,49 @@ export class GameScene extends BaseScene {
     return Math.max(0, this.gameTimeState.startedAt + this.gameTimeState.duration - Date.now());
   }
 
+  private onWeatherChanged = (payload: {
+    mapId?: string;
+    weather?: string;
+    startedAt?: number;
+    duration?: number;
+  }): void => {
+    if (
+      !payload?.mapId ||
+      !payload?.weather ||
+      typeof payload.startedAt !== 'number' ||
+      typeof payload.duration !== 'number'
+    ) {
+      return;
+    }
+    this.weatherState = {
+      mapId: payload.mapId,
+      weather: payload.weather,
+      startedAt: payload.startedAt,
+      duration: payload.duration,
+    };
+    this.events.emit(GameEvent.WEATHER_CHANGED, this.weatherState);
+  };
+
+  setWeatherState(
+    state: { mapId: string; weather: string; startedAt: number; duration: number } | null,
+  ): void {
+    this.weatherState = state;
+  }
+
+  getWeatherState(): {
+    mapId: string;
+    weather: string;
+    startedAt: number;
+    duration: number;
+  } | null {
+    return this.weatherState;
+  }
+
+  getWeatherRemainingMs(): number | null {
+    if (!this.weatherState) return null;
+    return Math.max(0, this.weatherState.startedAt + this.weatherState.duration - Date.now());
+  }
+
   constructor() {
     super('GameScene');
   }
@@ -237,6 +288,7 @@ export class GameScene extends BaseScene {
       renderer.pipelines.addPostPipeline(FadeToBlackPipeline.KEY, FadeToBlackPipeline);
       this.cameras.main.setPostPipeline(FadeToBlackPipeline.KEY);
       renderer.pipelines.addPostPipeline(DayNightFilter.KEY, DayNightFilter);
+      renderer.pipelines.addPostPipeline(HazeDistortionFilter.KEY, HazeDistortionFilter);
       renderer.pipelines.addPostPipeline(WipeRightToLeftShader.KEY, WipeRightToLeftShader);
     }
 
@@ -339,6 +391,7 @@ export class GameScene extends BaseScene {
       this.socket.off('connect', this.onSocketConnect);
       this.socket.off('connect_error', this.onSocketConnectError);
       this.socket.off('game_time_changed', this.onGameTimeChanged);
+      this.socket.off('weather_changed', this.onWeatherChanged);
     }
     this.socket = socket;
     if (this.socket) {
@@ -347,6 +400,7 @@ export class GameScene extends BaseScene {
       this.socket.on('connect', this.onSocketConnect);
       this.socket.on('connect_error', this.onSocketConnectError);
       this.socket.on('game_time_changed', this.onGameTimeChanged);
+      this.socket.on('weather_changed', this.onWeatherChanged);
       this.startIdleCheck();
     } else {
       this.stopIdleCheck();
