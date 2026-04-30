@@ -155,13 +155,7 @@ export class WildPokemonObject extends MovableObject {
     this.lastDirection = direction;
     this.lastMovedDirection = direction;
     this.chosenDirection = direction;
-    const animKey = this.animKey(direction);
-    if (this.scene.anims.exists(animKey)) {
-      this.sprite.anims.stop();
-      const anim = this.scene.anims.get(animKey);
-      const firstFrame = anim?.frames[0];
-      if (firstFrame) this.sprite.setFrame(firstFrame.frame.name);
-    }
+    this.startSpriteAnimation(this.animKey(direction));
   }
 
   tryLockInteraction(): boolean {
