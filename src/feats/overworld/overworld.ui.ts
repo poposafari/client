@@ -19,6 +19,7 @@ import {
   calcOverworldTilePos,
   DIRECTION,
   directionToDelta,
+  MAP_LAYER_SCALE_ZOOMED,
   OVERWORLD_ZOOM,
 } from './overworld.constants';
 import { MapView } from './map-view';
@@ -49,6 +50,7 @@ import {
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import { landToBiome, WeatherOverlay } from '@poposafari/utils/weather-overlay';
 import { getPokemonI18Name, showApiErrorAsTalk } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
@@ -155,6 +157,7 @@ export class OverworldUi extends BaseUi {
   private nameContainer: Phaser.GameObjects.Container | null = null;
   private lightContainer: Phaser.GameObjects.Container | null = null;
   private lightObjects: LightObject[] = [];
+  private weatherOverlay: WeatherOverlay | null = null;
 
   // 사파리 타일 점유 추적 (incremental spawn 용). 맵 입장 시 초기화, 퇴장 시 비움.
   private spawnOccupied: Set<string> = new Set();
@@ -1391,6 +1394,10 @@ export class OverworldUi extends BaseUi {
     }
   };
 
+  private handleWeatherChanged = (state: { weather: string }): void => {
+    this.weatherOverlay?.setWeather(state.weather);
+  };
+
   private handlePlayerTileMovedForPet = (payload: {
     tileX: number;
     tileY: number;
@@ -1527,6 +1534,23 @@ export class OverworldUi extends BaseUi {
       this.scene.events.on('entity_tile_pending', this.handleEntityTilePending);
       this.scene.events.on('wild_ttl_expired', this.handleWildTtlExpired);
       this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
+      this.scene.events.on(GameEvent.WEATHER_CHANGED, this.handleWeatherChanged, this);
+
+      // 날씨 오버레이 — 현재 맵의 land 지형으로 biome 도출 후 즉시 반영
+      const biome = landToBiome(this.mapConfig?.area?.land);
+      this.weatherOverlay = new WeatherOverlay(this.scene, biome);
+      // 맵 전역 spawn(눈 등)을 위해 현재 맵의 월드 영역을 알려줌. 레이어 컨테이너의 스케일을 곱해야 실제 월드 dim.
+      const tilemap = this.mapView?.getTilemap();
+      if (tilemap) {
+        this.weatherOverlay.setMapBounds(
+          0,
+          0,
+          tilemap.widthInPixels * MAP_LAYER_SCALE_ZOOMED,
+          tilemap.heightInPixels * MAP_LAYER_SCALE_ZOOMED,
+        );
+      }
+      const cur = this.scene.getWeatherState();
+      if (cur) this.weatherOverlay.setWeather(cur.weather);
 
       // 초기 스폰 타일이 grass라면 즉시 반영
       this.updateGrassForEntity(this.player, this.player.getTileX(), this.player.getTileY());
@@ -1610,6 +1634,12 @@ export class OverworldUi extends BaseUi {
     this.scene.events.off('entity_tile_pending', this.handleEntityTilePending);
     this.scene.events.off('wild_ttl_expired', this.handleWildTtlExpired);
     this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
+    this.scene.events.off(GameEvent.WEATHER_CHANGED, this.handleWeatherChanged, this);
+
+    if (this.weatherOverlay) {
+      this.weatherOverlay.destroy();
+      this.weatherOverlay = null;
+    }
     this.cursorKeys = null;
 
     if (this.hud) {
@@ -1893,6 +1923,7 @@ export class OverworldUi extends BaseUi {
   }
 
   tickBackgroundObjects(delta: number): void {
+    this.weatherOverlay?.tick(delta);
     this.pet?.update(delta);
     this.syncGrassForEntity(this.pet);
     for (const other of this.otherPlayers.values()) {
@@ -1923,6 +1954,7 @@ export class OverworldUi extends BaseUi {
   }
 
   update(_time: number, delta: number): void {
+    this.weatherOverlay?.tick(delta);
     if (!this.player || !this.cursorKeys) return;
 
     if (this.doorTransitionPending) {
