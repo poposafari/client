@@ -436,7 +436,7 @@ export class ApiBlockingUi extends BaseUi implements IInputHandler {
       this.scene,
       0,
       0,
-      i18next.t('menu:loading'),
+      i18next.t('etc:loading'),
       70,
       '100',
       'center',

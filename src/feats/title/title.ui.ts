@@ -39,17 +39,17 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
   private splashText!: GText;
 
   private static readonly MAIN_TITLE_KEYS = [
-    'menu:continue',
-    'menu:newgame',
-    'menu:mysteryGift',
-    'menu:option',
-    'menu:logout',
+    'etc:continue',
+    'etc:newgame',
+    'etc:mysteryGift',
+    'etc:option',
+    'etc:logout',
   ] as const;
 
   private mainContainer!: GContainer;
   private mainTexts: GText[] = [];
   private mainTitles: string[] = TitleUi.MAIN_TITLE_KEYS.map((k) => i18next.t(k));
-  private ignoreTitleKeys: string[] = ['menu:mysteryGift'];
+  private ignoreTitleKeys: string[] = ['etc:mysteryGift'];
   private ignoreTitles: string[] = [];
 
   private bottomContainer!: GContainer;
@@ -85,11 +85,11 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
 
         if (select !== 'none' && this.inputResolver) {
           const inputMap: Record<string, TitleUiInput> = {
-            [i18next.t('menu:continue')]: 'continue',
-            [i18next.t('menu:newgame')]: 'newgame',
-            [i18next.t('menu:mysteryGift')]: 'mystery_gift',
-            [i18next.t('menu:option')]: 'option',
-            [i18next.t('menu:logout')]: 'logout',
+            [i18next.t('etc:continue')]: 'continue',
+            [i18next.t('etc:newgame')]: 'newgame',
+            [i18next.t('etc:mysteryGift')]: 'mystery_gift',
+            [i18next.t('etc:option')]: 'option',
+            [i18next.t('etc:logout')]: 'logout',
           };
           const input = inputMap[select] ?? 'logout';
           this.inputResolver({ input, cursorIndex: this.currentCursor });
@@ -105,16 +105,16 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
 
   private isExistUser(exist: boolean) {
     if (!exist) {
-      this.ignoreTitleKeys.push('menu:continue');
+      this.ignoreTitleKeys.push('etc:continue');
     }
   }
 
   setExistUser(exist: boolean): void {
-    const idx = this.ignoreTitleKeys.indexOf('menu:continue');
+    const idx = this.ignoreTitleKeys.indexOf('etc:continue');
     if (exist && idx >= 0) {
       this.ignoreTitleKeys.splice(idx, 1);
     } else if (!exist && idx < 0) {
-      this.ignoreTitleKeys.push('menu:continue');
+      this.ignoreTitleKeys.push('etc:continue');
     }
     this.ignoreTitles = this.ignoreTitleKeys.map((k) => i18next.t(k));
     this.findInitialValidCursor();

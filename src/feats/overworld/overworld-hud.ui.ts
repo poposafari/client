@@ -384,7 +384,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
         {
           key: 'location',
           texture: TEXTURE.ICON_LOCATION,
-          text: i18next.t(`menu:${location}`),
+          text: i18next.t(`map:${location}`),
           scale: 1.2,
         },
         { key: 'money', texture: TEXTURE.ICON_MONEY, text: `${MONEY_SYMBOL} ${money}`, scale: 1.2 },
@@ -548,7 +548,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.scene,
       -330,
       0,
-      i18next.t(`menu:${mapKey}`),
+      i18next.t(`map:${mapKey}`),
       LOCATION_BANNER.labelFontSize,
       '100',
       'left',
@@ -620,7 +620,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   refreshInfo(mapKey: string, tileX: number, tileY: number, money: number): void {
     const loc = this.infoList.getRow('location');
-    if (loc) loc.text.setText(mapKey ? i18next.t(`menu:${mapKey}`) : '');
+    if (loc) loc.text.setText(mapKey ? i18next.t(`map:${mapKey}`) : '');
 
     if (this.xyText) this.xyText.setText(`x:${tileX}, y:${tileY}`);
 

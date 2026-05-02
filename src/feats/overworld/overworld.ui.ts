@@ -446,10 +446,10 @@ export class OverworldUi extends BaseUi {
       itemHeight: 70,
     });
     try {
-      await question.showMessage(i18next.t('msg:surfPrompt'), { resolveWhen: 'displayed' });
+      await question.showMessage(i18next.t('etc:surfPrompt'), { resolveWhen: 'displayed' });
       const choice = await yesNoMenu.waitForSelect([
-        { key: 'yes', label: i18next.t('menu:yes') },
-        { key: 'no', label: i18next.t('menu:no') },
+        { key: 'yes', label: i18next.t('etc:yes') },
+        { key: 'no', label: i18next.t('etc:no') },
       ]);
       yesNoMenu.hide();
       question.hide();
@@ -1142,7 +1142,7 @@ export class OverworldUi extends BaseUi {
     if (current === OverworldMovementState.SURF) return;
 
     if (current !== OverworldMovementState.RIDE && this.mapConfig?.allowRide === false) {
-      await this.scene.getMessage('talk').showMessage(i18next.t('msg:cantRideHere'));
+      await this.scene.getMessage('talk').showMessage(i18next.t('etc:cantRideHere'));
       return;
     }
 
@@ -1168,7 +1168,7 @@ export class OverworldUi extends BaseUi {
     if (!user || !this.player) return;
     if (user.getOverworldMovementState() === OverworldMovementState.SURF) return;
     if (this.mapConfig?.allowRide === false) {
-      await this.scene.getMessage('talk').showMessage(i18next.t('msg:cantRideHere'));
+      await this.scene.getMessage('talk').showMessage(i18next.t('etc:cantRideHere'));
       return;
     }
     user.setOverworldMovementState(OverworldMovementState.RIDE);

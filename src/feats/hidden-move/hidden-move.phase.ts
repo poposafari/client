@@ -37,12 +37,13 @@ export class HiddenMovePhase implements IGamePhase {
   }
 
   private async run(): Promise<void> {
-    const displayName =
-      this.ctx.caster.nickname ?? getPokemonI18Name(this.ctx.caster.pokedexId);
+    const displayName = this.ctx.caster.nickname ?? getPokemonI18Name(this.ctx.caster.pokedexId);
     const moveName = i18next.t(`pokemonHiddenMove:${this.ctx.hiddenMove}`);
     await this.scene
       .getMessage('talk')
-      .showMessage(i18next.t('msg:usedHiddenMove', { name: displayName, move: moveName }));
+      .showMessage(
+        i18next.t('pokemonHiddenMove:usedHiddenMove', { name: displayName, move: moveName }),
+      );
 
     this.ui = new HiddenMoveUi(this.scene);
     await this.ui.play(this.ctx.caster);

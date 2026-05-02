@@ -219,9 +219,14 @@ export class BattlePhase implements IGamePhase {
 
         if (next.reason === 'catch' && this.isS000Tutorial()) {
           const talk = this.scene.getMessage('talk');
-          await talk.showMessage(i18next.t('msg:s000_caught_0'), { name: '', showHint: false });
-          await talk.showMessage(i18next.t('msg:s000_caught_1'), { name: '', showHint: false });
-          await talk.showMessage(i18next.t('msg:s000_caught_2'), { name: '', showHint: false });
+          await talk.showMessage(
+            [
+              i18next.t('etc:s000_caught_0'),
+              i18next.t('etc:s000_caught_1'),
+              i18next.t('etc:s000_caught_2'),
+            ],
+            { name: '', showHint: false },
+          );
           this.scene.getUser()?.setHasStarter(false);
           this.scene.events.emit(GameEvent.PROFILE_CHANGED);
 

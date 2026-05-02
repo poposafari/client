@@ -2,11 +2,7 @@ import { io } from 'socket.io-client';
 import { IGamePhase } from '@poposafari/core';
 import { GameEvent, GameScene } from '@poposafari/scenes';
 import type { InitPosConfig } from './maps/door';
-import type {
-  ChangeMapOkPayload,
-  InitOkPayload,
-  RoomUserState,
-} from './overworld-socket.types';
+import type { ChangeMapOkPayload, InitOkPayload, RoomUserState } from './overworld-socket.types';
 import { VITE_SOCKET_SERVER_URL } from '@poposafari/env';
 import { LoginPhase } from '../login';
 import { OverworldPhase } from './overworld.phase';
@@ -80,12 +76,14 @@ export class OverworldEntryPhase implements IGamePhase {
       s.disconnect();
       this.scene.setSocket(null);
     }
-    this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: 'error:SESSION_EXPIRED' }));
+    this.scene.switchPhase(
+      new LoginPhase(this.scene, { initialErrorKey: 'error:SESSION_EXPIRED' }),
+    );
   }
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {
     if (!socket.connected) {
-      this.ui?.setMessage?.('msg:mapPreparing');
+      this.ui?.setMessage?.('etc:mapPreparing');
       socket.once('connect', () => this.enterChangeMap(socket));
       this.offFns.push(() => socket.off('connect'));
       return;
@@ -136,7 +134,7 @@ export class OverworldEntryPhase implements IGamePhase {
     };
     const onChangeMapError = (payload: { message?: string }) => {
       this.removeListeners();
-      this.ui?.setMessage?.('msg:mapPreparing');
+      this.ui?.setMessage?.('etc:mapPreparing');
       console.error('[OverworldEntry] change_map_error:', payload?.message);
     };
 
@@ -216,7 +214,7 @@ export class OverworldEntryPhase implements IGamePhase {
     };
     const onInitError = (payload: { message?: string }) => {
       this.removeListeners();
-      this.ui?.setMessage?.('msg:mapPreparing');
+      this.ui?.setMessage?.('etc:mapPreparing');
       console.error('[OverworldEntry] init_error:', payload?.message);
       this.ui?.hide();
       this.ui?.destroy();

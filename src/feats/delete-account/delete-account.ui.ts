@@ -8,8 +8,8 @@ import i18next from 'i18next';
 export type DeleteAccountResult = 'confirmed' | 'cancelled';
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class DeleteAccountUi extends BaseUi implements IInputHandler {
@@ -56,9 +56,9 @@ export class DeleteAccountUi extends BaseUi implements IInputHandler {
       return choice?.key === 'yes';
     };
 
-    if (!(await ask('msg:deleteAccount_0'))) return 'cancelled';
-    if (!(await ask('msg:deleteAccount_1'))) return 'cancelled';
-    if (!(await ask('msg:deleteAccount_2'))) return 'cancelled';
+    if (!(await ask('etc:deleteAccount_0'))) return 'cancelled';
+    if (!(await ask('etc:deleteAccount_1'))) return 'cancelled';
+    if (!(await ask('etc:deleteAccount_2'))) return 'cancelled';
 
     return 'confirmed';
   }

@@ -8,16 +8,16 @@ export interface BattleTutorialContext {
 }
 
 const TUTORIAL_LINES = [
-  'msg:s000_battle_intro_0',
-  'msg:s000_battle_intro_1',
-  'msg:s000_tutorial_ball_0',
-  'msg:s000_tutorial_ball_1',
-  'msg:s000_tutorial_feed_0',
-  'msg:s000_tutorial_feed_1',
-  'msg:s000_tutorial_mud_0',
-  'msg:s000_tutorial_mud_1',
-  'msg:s000_tutorial_run_0',
-  'msg:s000_tutorial_run_1',
+  'etc:s000_battle_intro_0',
+  'etc:s000_battle_intro_1',
+  'etc:s000_tutorial_ball_0',
+  'etc:s000_tutorial_ball_1',
+  'etc:s000_tutorial_feed_0',
+  'etc:s000_tutorial_feed_1',
+  'etc:s000_tutorial_mud_0',
+  'etc:s000_tutorial_mud_1',
+  'etc:s000_tutorial_run_0',
+  'etc:s000_tutorial_run_1',
 ];
 
 export class BattleTutorialPhase implements IGamePhase {

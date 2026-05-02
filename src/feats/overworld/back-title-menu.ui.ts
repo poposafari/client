@@ -3,8 +3,8 @@ import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class BackTitleMenuUi extends MenuUi {
@@ -17,7 +17,7 @@ export class BackTitleMenuUi extends MenuUi {
 
   async waitForInput(): Promise<any> {
     const question = this.scene.getMessage('question');
-    await question.showMessage(i18next.t('msg:backToTitle'), {
+    await question.showMessage(i18next.t('etc:backToTitlePrompt'), {
       resolveWhen: 'displayed',
     });
 

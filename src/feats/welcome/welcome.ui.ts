@@ -34,12 +34,10 @@ export class WelcomeUi extends BaseUi implements IInputHandler {
     const talk = this.scene.getMessage('talk');
     await talk.showMessage(
       [
-        i18next.t('msg:welcome_0'),
-        i18next.t('msg:welcome_1'),
-        i18next.t('msg:welcome_2'),
-        i18next.t('msg:welcome_3'),
-        i18next.t('msg:welcome_4'),
-        i18next.t('msg:welcome_5'),
+        i18next.t('etc:welcome_0'),
+        i18next.t('etc:welcome_1'),
+        i18next.t('etc:welcome_2'),
+        i18next.t('etc:welcome_3'),
       ],
       { name: '테스트맨' },
     );

@@ -54,10 +54,10 @@ const RANK_COLOR: Record<PokemonRank, string> = {
 };
 
 const RANK_LOCALE: Record<PokemonRank, string> = {
-  common: 'menu:tierCommon',
-  rare: 'menu:tierRare',
-  epic: 'menu:tierEpic',
-  legendary: 'menu:tierLegendary',
+  common: 'etc:tierCommon',
+  rare: 'etc:tierRare',
+  epic: 'etc:tierEpic',
+  legendary: 'etc:tierLegendary',
 };
 
 export class PokemonPcUi extends BaseUi {
@@ -673,8 +673,8 @@ export class PokemonPcUi extends BaseUi {
     });
 
     const YES_NO_ITEMS = [
-      { key: 'yes', label: i18next.t('menu:yes') },
-      { key: 'no', label: i18next.t('menu:no') },
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
     ];
 
     const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
@@ -753,7 +753,7 @@ export class PokemonPcUi extends BaseUi {
           const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
           if (activeSurfId === pokemon.id) {
             const talkUi = this.scene.getMessage('talk');
-            await talkUi.showMessage(i18next.t('msg:surfInUse'));
+            await talkUi.showMessage(i18next.t('pc:surfInUse'));
             this.inputManager.push(this);
             break;
           }
@@ -783,7 +783,7 @@ export class PokemonPcUi extends BaseUi {
           const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
           if (activeSurfId === pokemon.id) {
             const talkUi = this.scene.getMessage('talk');
-            await talkUi.showMessage(i18next.t('msg:surfInUse'));
+            await talkUi.showMessage(i18next.t('pc:surfInUse'));
             this.inputManager.push(this);
             break;
           }
@@ -960,7 +960,7 @@ export class PokemonPcUi extends BaseUi {
       const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
       if (targetPokemon && activeSurfId === targetPokemon.id) {
         const talkUi = this.scene.getMessage('talk');
-        await talkUi.showMessage(i18next.t('msg:surfInUse'));
+        await talkUi.showMessage(i18next.t('pc:surfInUse'));
         return;
       }
     }
@@ -1088,8 +1088,8 @@ export class PokemonPcUi extends BaseUi {
     });
 
     const YES_NO_ITEMS = [
-      { key: 'yes', label: i18next.t('menu:yes') },
-      { key: 'no', label: i18next.t('menu:no') },
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
     ];
 
     const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
@@ -1158,8 +1158,8 @@ export class PokemonPcUi extends BaseUi {
       // 확인 다이얼로그
       await questionUi.showMessage(i18next.t('pc:confirmEnhance'), { resolveWhen: 'displayed' });
       const YES_NO_ITEMS = [
-        { key: 'yes', label: i18next.t('menu:yes') },
-        { key: 'no', label: i18next.t('menu:no') },
+        { key: 'yes', label: i18next.t('etc:yes') },
+        { key: 'no', label: i18next.t('etc:no') },
       ];
       const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
       this.confirmMenu.hide();
@@ -1237,8 +1237,8 @@ export class PokemonPcUi extends BaseUi {
       resolveWhen: 'displayed',
     });
     const YES_NO_ITEMS = [
-      { key: 'yes', label: i18next.t('menu:yes') },
-      { key: 'no', label: i18next.t('menu:no') },
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
     ];
     const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
     this.confirmMenu.hide();
@@ -1683,9 +1683,9 @@ export class PokemonPcUi extends BaseUi {
 
   setSymbol() {
     this.infoPokedexSymbol.setText(`No.`);
-    this.infoNatureSymbol.setText(i18next.t(`menu:natureSymbol`));
-    this.infoAbilitySymbol.setText(i18next.t(`menu:abilitySymbol`));
-    this.heldItemSymbol.setText(i18next.t(`menu:heldItemSymbol`));
+    this.infoNatureSymbol.setText(i18next.t(`etc:natureSymbol`));
+    this.infoAbilitySymbol.setText(i18next.t(`etc:abilitySymbol`));
+    this.heldItemSymbol.setText(i18next.t(`etc:heldItemSymbol`));
 
     const maxWidth = Math.max(
       this.infoNatureSymbol.displayWidth,
@@ -1780,7 +1780,7 @@ export class PokemonPcUi extends BaseUi {
     this.infoShinyIcon.setVisible(pokemon.isShiny);
     this.infoCaptureDate.setText(pokemon.caughtAt?.split('T')[0] ?? '');
     this.infoCaptureLocation.setX(this.infoCaptureDate.x + this.infoCaptureDate.displayWidth + 20);
-    this.infoCaptureLocation.setText(i18next.t(`menu:${pokemon.caughtLocation}`));
+    this.infoCaptureLocation.setText(i18next.t(`map:${pokemon.caughtLocation}`));
     this.infoAbility.setText(i18next.t(`ability:${pokemon.abilityId}`));
     this.infoNature.setText(i18next.t(`nature:${pokemon.natureId}`));
     this.heldItem.setText(pokemon.heldItemId ? i18next.t(`item:${pokemon.heldItemId}.name`) : '-');

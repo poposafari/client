@@ -183,8 +183,8 @@ export class BagPhase implements IGamePhase {
           { resolveWhen: 'displayed' },
         );
         const YES_NO_ITEMS = [
-          { key: 'yes', label: i18next.t('menu:yes') },
-          { key: 'no', label: i18next.t('menu:no') },
+          { key: 'yes', label: i18next.t('etc:yes') },
+          { key: 'no', label: i18next.t('etc:no') },
         ];
         const choice = await this.confirmMenu!.waitForSelect(YES_NO_ITEMS);
         this.confirmMenu!.hide();
@@ -260,8 +260,8 @@ export class BagPhase implements IGamePhase {
             resolveWhen: 'displayed',
           });
           const YES_NO_ITEMS = [
-            { key: 'yes', label: i18next.t('menu:yes') },
-            { key: 'no', label: i18next.t('menu:no') },
+            { key: 'yes', label: i18next.t('etc:yes') },
+            { key: 'no', label: i18next.t('etc:no') },
           ];
           const choice = await this.confirmMenu!.waitForSelect(YES_NO_ITEMS);
           this.confirmMenu!.hide();

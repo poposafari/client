@@ -13,8 +13,8 @@ import i18next from '@poposafari/i18n';
 import { OverworldUi } from './overworld.ui';
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class OverworldMenuPhase implements IGamePhase {
@@ -86,7 +86,7 @@ export class OverworldMenuPhase implements IGamePhase {
     }
     if (result.key === 'plaza') {
       const question = this.scene.getMessage('question');
-      await question.showMessage(i18next.t('msg:backToPlaza'), {
+      await question.showMessage(i18next.t('etc:backToPlazaPrompt'), {
         resolveWhen: 'displayed',
       });
       const ret = await this.confirmMenu!.waitForSelect(YES_NO_ITEMS());

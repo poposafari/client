@@ -115,7 +115,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.scene,
       0,
       -240,
-      i18next.t('menu:login'),
+      i18next.t('etc:login'),
       80,
       'bold',
       'center',
@@ -149,7 +149,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
         this.scene,
         -250,
         -80,
-        i18next.t('menu:username') + ' :',
+        i18next.t('etc:username') + ' :',
         40,
         '100',
         'left',
@@ -163,7 +163,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.labelInputs.push(
       addTextInput(this.scene, -230, -20, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'text',
-        placeholder: i18next.t('menu:enterYourUsername'),
+        placeholder: i18next.t('etc:enterYourUsername'),
         minLength: 1,
         maxLength: 64,
       }),
@@ -174,7 +174,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
         this.scene,
         -250,
         +70,
-        i18next.t('menu:password') + ' :',
+        i18next.t('etc:password') + ' :',
         40,
         '100',
         'left',
@@ -200,7 +200,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.labelInputs.push(
       addTextInput(this.scene, -230, +130, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
-        placeholder: i18next.t('menu:enterYourPassword'),
+        placeholder: i18next.t('etc:enterYourPassword'),
         minLength: 1,
         maxLength: 128,
       }),
@@ -243,7 +243,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
         this.scene,
         -140,
         0,
-        i18next.t('menu:login'),
+        i18next.t('etc:login'),
         40,
         '100',
         'center',
@@ -274,7 +274,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
         this.scene,
         +140,
         0,
-        i18next.t('menu:register'),
+        i18next.t('etc:register'),
         40,
         '100',
         'center',
@@ -440,12 +440,12 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
   }
 
   onRefreshLanguage(): void {
-    this.modalTitle.setText(i18next.t('menu:login'));
+    this.modalTitle.setText(i18next.t('etc:login'));
     this.modalErrorMsg.setText('');
-    this.labels[0].setText(i18next.t('menu:username') + ' :');
-    this.labels[1].setText(i18next.t('menu:password') + ' :');
-    this.btnTitles[0].setText(i18next.t('menu:login'));
-    this.btnTitles[1].setText(i18next.t('menu:register'));
+    this.labels[0].setText(i18next.t('etc:username') + ' :');
+    this.labels[1].setText(i18next.t('etc:password') + ' :');
+    this.btnTitles[0].setText(i18next.t('etc:login'));
+    this.btnTitles[1].setText(i18next.t('etc:register'));
   }
 
   show(): void {

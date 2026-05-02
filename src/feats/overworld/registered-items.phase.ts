@@ -28,8 +28,8 @@ export class RegisteredItemsPhase implements IGamePhase {
       await this.scene
         .getMessage('talk')
         .showMessage(
-          i18next.exists('msg:noRegisteredItem')
-            ? i18next.t('msg:noRegisteredItem')
+          i18next.exists('etc:noRegisteredItem')
+            ? i18next.t('etc:noRegisteredItem')
             : 'No registered items.',
         );
       this.scene.popPhase();

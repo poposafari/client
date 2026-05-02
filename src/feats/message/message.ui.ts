@@ -79,7 +79,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
       this.scene,
       +940,
       -220,
-      i18next.t('msg:pressZOrEnter'),
+      i18next.t('etc:pressZOrEnter'),
       90,
       '100',
       'left',

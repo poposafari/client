@@ -24,10 +24,10 @@ import { LOCATION_HUD, PLAYER_HUD, WILD_HUD } from '../battle.constants';
 import i18next from 'i18next';
 
 const TIME_I18N_KEY: Record<string, string> = {
-  dawn: 'menu:timeDawn',
-  day: 'menu:timeDay',
-  dusk: 'menu:timeDusk',
-  night: 'menu:timeNight',
+  dawn: 'etc:timeDawn',
+  day: 'etc:timeDay',
+  dusk: 'etc:timeDusk',
+  night: 'etc:timeNight',
 };
 
 export class BattleInfoUi extends Phaser.GameObjects.Container {
@@ -229,7 +229,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       scene,
       -220,
       -50,
-      i18next.t('menu:safariBall'),
+      i18next.t('battle:safariBall'),
       70,
       '100',
       'left',
@@ -244,7 +244,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       scene,
       -220,
       +10,
-      i18next.t('menu:safariLeft', { count: this.safariBallCount }),
+      i18next.t('battle:safariLeft', { count: this.safariBallCount }),
       70,
       '100',
       'left',
@@ -319,14 +319,14 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   }
 
   private buildLocationString(): string {
-    const mapName = i18next.t(`menu:${this.locationLabel}`);
-    const timeKey = TIME_I18N_KEY[this.currentTime] ?? 'menu:timeDay';
+    const mapName = i18next.t(`map:${this.locationLabel}`);
+    const timeKey = TIME_I18N_KEY[this.currentTime] ?? 'etc:timeDay';
     const timeName = i18next.t(timeKey);
     return `${mapName} - ${timeName}`;
   }
 
   private buildTurnString(): string {
-    return i18next.t('menu:battleTurn', { turn: this.battleTurn });
+    return i18next.t('battle:turn', { turn: this.battleTurn });
   }
 
   incrementTurn(): void {
@@ -353,7 +353,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
   updateSafariBallCount(count: number): void {
     this.safariBallCount = count;
-    this.playerLeftSafari.setText(i18next.t('menu:safariLeft', { count }));
+    this.playerLeftSafari.setText(i18next.t('battle:safariLeft', { count }));
   }
 
   getSafariBallCount(): number {
@@ -430,9 +430,9 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   updateRateDisplay(modifiers: BattleModifiers): void {
     const { capture, flee } = this.computeRates(modifiers);
     this.catchRateText?.setText(
-      i18next.t('menu:battleCatchRate', { rate: (capture * 100).toFixed(1) }),
+      i18next.t('battle:catchRate', { rate: (capture * 100).toFixed(1) }),
     );
-    this.fleeRateText?.setText(i18next.t('menu:battleFleeRate', { rate: (flee * 100).toFixed(1) }));
+    this.fleeRateText?.setText(i18next.t('battle:fleeRate', { rate: (flee * 100).toFixed(1) }));
     this.catchPreviewText?.setText('');
     this.fleePreviewText?.setText('');
     this.catchArrowIcon?.setVisible(false);

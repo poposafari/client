@@ -27,7 +27,7 @@ export class OverworldEntryUi extends BaseUi {
       this.scene,
       0,
       0,
-      i18next.t('msg:mapPreparing'),
+      i18next.t('etc:mapPreparing'),
       80,
       '100',
       'center',

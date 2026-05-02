@@ -146,7 +146,7 @@ export function getPokemonI18Name(pokedexId: string) {
   }
 
   return prefix.length
-    ? i18next.t(`menu:${prefix}`) + ' ' + i18next.t(`pokemon:${pokedex}.name`)
+    ? i18next.t(`etc:${prefix}`) + ' ' + i18next.t(`pokemon:${pokedex}.name`)
     : i18next.t(`pokemon:${pokedex}.name`);
 }
 

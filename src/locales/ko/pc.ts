@@ -12,6 +12,7 @@ export const pc: Record<string, string> = {
   obtainedCandy: '{{item}} x{{quantity}}을(를) 손에 넣었다!',
   confirmTakeHeldItem: '{{item}}을(를) 가져오시겠습니까?',
   obtainedHeldItem: '{{item}}을(를) 가져왔다!',
+  surfInUse: '파도타기를 사용하고 있습니다.',
   removeFromParty: '파티 해제',
   cancel: '그만둔다',
   changeWallpaper: '벽지 바꾸기',

@@ -71,10 +71,10 @@ export function parseCostParts(cost: string, type1: string): ParsedCostPart[] {
     if (timeMatch) {
       const period = timeMatch[1] as EvolveTimeOfDay;
       const periodI18Key: Record<string, string> = {
-        day: 'menu:timeDay',
-        night: 'menu:timeNight',
-        dawn: 'menu:timeDawn',
-        dusk: 'menu:timeDusk',
+        day: 'etc:timeDay',
+        night: 'etc:timeNight',
+        dawn: 'etc:timeDawn',
+        dusk: 'etc:timeDusk',
       };
       return {
         labelText: i18next.t(periodI18Key[period]),
@@ -296,7 +296,7 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
   /** 한 행이 실제 그려낼 내부 컨텐츠 너비 (패딩 제외) */
   private measureContentWidth(item: EvolveItem, dummy: Phaser.GameObjects.Text): number {
     if (item.kind === 'cancel') {
-      dummy.setText(i18next.t('menu:cancel'));
+      dummy.setText(i18next.t('etc:cancel'));
       return dummy.width;
     }
 
@@ -505,7 +505,7 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
         this.scene,
         x,
         0,
-        i18next.t('menu:cancel'),
+        i18next.t('etc:cancel'),
         FONT_SIZE,
         '100',
         'left',

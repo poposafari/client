@@ -12,6 +12,7 @@ export const pc: Record<string, string> = {
   obtainedCandy: 'Obtained {{item}} x{{quantity}}!',
   confirmTakeHeldItem: 'Take the {{item}}?',
   obtainedHeldItem: 'Took the {{item}}!',
+  surfInUse: 'Currently using Surf.',
   removeFromParty: 'Remove from Party',
   cancel: 'Cancel',
   changeWallpaper: 'Change Wallpaper',

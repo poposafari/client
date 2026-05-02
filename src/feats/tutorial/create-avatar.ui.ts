@@ -108,7 +108,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
       this.scene,
       -910,
       0,
-      i18next.t('menu:createAvatar'),
+      i18next.t('etc:createAvatar'),
       80,
       '100',
       'left',
@@ -204,7 +204,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
       this.femaleBtn.updateCursor(false);
       this.preview.updateGender('male');
     });
-    this.createBtn.create(TEXTURE.WINDOW_0, 2, i18next.t('menu:create'), 50, false, () => {
+    this.createBtn.create(TEXTURE.WINDOW_0, 2, i18next.t('etc:create'), 50, false, () => {
       this.validateAndSubmit();
     });
 
@@ -249,7 +249,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
       TEXTSTYLE.WHITE,
       {
         type: 'text',
-        placeholder: i18next.t('menu:enterYourNickname'),
+        placeholder: i18next.t('etc:enterYourNickname'),
         minLength: 2,
         maxLength: 12,
       },
@@ -307,7 +307,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
 
   async showGuideMsg() {
     const talk = this.scene.getMessage('talk');
-    await talk.showMessage(i18next.t('msg:createAvatar_0'), { name: '테스트맨' });
+    await talk.showMessage(i18next.t('etc:createAvatar_intro'), { name: '테스트맨' });
     this.showContent();
   }
 
@@ -353,9 +353,9 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
   }
 
   onRefreshLanguage(): void {
-    this.topTitle.setText(i18next.t('menu:createAvatar'));
+    this.topTitle.setText(i18next.t('etc:createAvatar'));
     this.errorMsg.setText(i18next.t('error:EMPTY_NICKNAME'));
-    this.mainRightNicknameInput.placeholder = i18next.t('menu:enterYourNickname');
+    this.mainRightNicknameInput.placeholder = i18next.t('etc:enterYourNickname');
   }
 
   show(): void {

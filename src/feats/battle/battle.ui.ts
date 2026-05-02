@@ -133,7 +133,7 @@ export class BattleUi {
 
   async playAppear(ctx: BattleContext): Promise<void> {
     const name = getPokemonI18Name(ctx.wild.pokedexId);
-    const msg = i18next.t('menu:battleMessageAppear', { name });
+    const msg = i18next.t('battle:messageAppear', { name });
     this.base?.hideMessageBox();
     try {
       await this.scene.getMessage('talk').showMessage(msg, { showHint: false });
@@ -150,7 +150,7 @@ export class BattleUi {
 
       this.playPlayerHudSlideIn();
     }
-    await this.idleMessage.showMessage(i18next.t('menu:battleMessageIdle', { nickname }));
+    await this.idleMessage.showMessage(i18next.t('battle:messageIdle', { nickname }));
   }
 
   /** BALL/FEED/MUD 선택 시 "{nickname}은 ~를 던졌다" 메시지를 타이핑 연출로 표시. */
@@ -158,10 +158,10 @@ export class BattleUi {
     const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
     const key =
       kind === 'ball'
-        ? 'menu:battleMessageThrewBall'
+        ? 'battle:messageThrewBall'
         : kind === 'feed'
-          ? 'menu:battleMessageThrewFeed'
-          : 'menu:battleMessageThrewMud';
+          ? 'battle:messageThrewFeed'
+          : 'battle:messageThrewMud';
     this.base?.hideMessageBox();
     await this.idleMessage.showMessage(i18next.t(key, { nickname }));
   }
@@ -197,9 +197,7 @@ export class BattleUi {
   async playResult(outcome: CatchResult): Promise<void> {
     if (outcome.kind === 'caught') {
       await playBallCatch(this.scene, this.sprite);
-      this.base?.setMessage(
-        i18next.t('menu:battleMessageCaught', { name: this.ctx.wild.pokedexId }),
-      );
+      this.base?.setMessage(i18next.t('battle:messageCaught', { name: this.ctx.wild.pokedexId }));
       return;
     }
     if (outcome.kind === 'flee') {
@@ -208,7 +206,7 @@ export class BattleUi {
       return;
     }
     await playBallFail(this.scene, this.sprite);
-    this.base?.setMessage(i18next.t('menu:battleMessageFail'));
+    this.base?.setMessage(i18next.t('battle:messageFail'));
   }
 
   /** "야생 포켓몬이 도망쳤다!" 메시지. BALL fail-flee 와 FEED/MUD 유도 flee 양쪽에서 사용. */
@@ -218,7 +216,7 @@ export class BattleUi {
     try {
       await this.scene
         .getMessage('talk')
-        .showMessage(i18next.t('menu:battleMessageFlee'), { showHint: false });
+        .showMessage(i18next.t('battle:messageFlee'), { showHint: false });
     } finally {
       this.base?.showMessageBox();
     }
@@ -233,7 +231,7 @@ export class BattleUi {
       try {
         await this.scene
           .getMessage('talk')
-          .showMessage(i18next.t('menu:battleMessageFleePlayer', { nickname }), {
+          .showMessage(i18next.t('battle:messageFleePlayer', { nickname }), {
             showHint: false,
           });
       } finally {
@@ -304,56 +302,56 @@ export class BattleUi {
   /** "{{nickname}}은(는)\n사파리볼을 사용했다." — idle 상단 메시지. */
   async showUsedBallMessage(): Promise<void> {
     const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
-    await this.showIdleMessageBy('menu:battleMessageUsedBall', { nickname });
+    await this.showIdleMessageBy('battle:messageUsedBall', { nickname });
   }
 
   /** "{{nickname}}은(는)\n먹이를 던졌다." — idle 상단 메시지. */
   async showThrewFeedIdle(): Promise<void> {
     const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
-    await this.showIdleMessageBy('menu:battleMessageThrewFeedNew', { nickname });
+    await this.showIdleMessageBy('battle:messageThrewFeedNew', { nickname });
   }
 
   /** "{{nickname}}은(는)\n진흙을 던졌다." — idle 상단 메시지. */
   async showThrewMudIdle(): Promise<void> {
     const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
-    await this.showIdleMessageBy('menu:battleMessageThrewMudNew', { nickname });
+    await this.showIdleMessageBy('battle:messageThrewMudNew', { nickname });
   }
 
   /** "신난다-\n{{name}}을(를) 붙잡았다!" — talk 메시지(Z/ENTER 대기). */
   async showCaughtTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageCaughtNew', {
+    await this.showTalk('battle:messageCaughtNew', {
       name: getPokemonI18Name(this.getWildName()),
     });
   }
 
   /** "안돼! 포켓몬이\n볼에서 나와버렸다!" — talk 메시지. */
   async showBallEscapeTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageBallEscape');
+    await this.showTalk('battle:messageBallEscape');
   }
 
   /** "{{name}}은(는)\n상황을 살피고 있다." — talk 메시지. */
   async showWatchingTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageWatching', {
+    await this.showTalk('battle:messageWatching', {
       name: getPokemonI18Name(this.getWildName()),
     });
   }
 
   /** "{{name}}은(는)\n먹이를 먹는데 푹 빠졌다." — talk 메시지. */
   async showEatingFocusTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageEatingFocus', {
+    await this.showTalk('battle:messageEatingFocus', {
       name: getPokemonI18Name(this.getWildName()),
     });
   }
 
   /** "{{name}}은(는)\n화내고 있다." — talk 메시지. */
   async showAngryTalk(): Promise<void> {
-    await this.showTalk('menu:battleMessageAngry', { name: getPokemonI18Name(this.getWildName()) });
+    await this.showTalk('battle:messageAngry', { name: getPokemonI18Name(this.getWildName()) });
   }
 
   /** "{{name}}은(는) 도망쳤다!" — talk 메시지(야생 flee). */
   async showWildFledTalk(): Promise<void> {
     this.scene.getAudio().playEffect(SFX.FLEE);
-    await this.showTalk('menu:battleMessageWildFled', {
+    await this.showTalk('battle:messageWildFled', {
       name: getPokemonI18Name(this.getWildName()),
     });
   }

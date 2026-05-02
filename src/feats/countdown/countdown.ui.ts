@@ -37,7 +37,7 @@ export class CountdownUi {
       this.scene,
       cx,
       cy + 80,
-      i18next.t('msg:idleHintAnyKey'),
+      i18next.t('etc:idleHintAnyKey'),
       55,
       '100',
       'center',
@@ -49,7 +49,7 @@ export class CountdownUi {
 
   setRemainingSeconds(seconds: number): void {
     if (!this.mainText) return;
-    this.mainText.setText(i18next.t('msg:idleCountdown', { seconds }));
+    this.mainText.setText(i18next.t('etc:idleCountdown', { seconds }));
   }
 
   hide(): void {

@@ -3,6 +3,7 @@ export type TranslationPokemonHiddenMove = {
 };
 
 export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
+  usedHiddenMove: '{{name}}\nused {{move}}!',
   move_cut: 'Cut',
   move_fly: 'Fly',
   move_surf: 'Surf',

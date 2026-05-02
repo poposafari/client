@@ -14,8 +14,8 @@ const MAX_BUY_QUANTITY = 99;
 const MAX_USER_MONEY = 999_999_999;
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class MartPhase implements IGamePhase {

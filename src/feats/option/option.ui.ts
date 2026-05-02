@@ -63,7 +63,7 @@ export class OptionUi extends BaseUi implements IInputHandler, IRefreshableLangu
       this.scene,
       -910,
       0,
-      i18next.t('menu:option'),
+      i18next.t('etc:option'),
       80,
       '100',
       'left',
@@ -95,7 +95,7 @@ export class OptionUi extends BaseUi implements IInputHandler, IRefreshableLangu
       this.scene,
       this.inputGuideKeycap.displayWidth + this.inputGuideKeycap.x + 50,
       0,
-      i18next.t('menu:cancel'),
+      i18next.t('etc:cancel'),
       60,
       '100',
       'left',
@@ -108,8 +108,8 @@ export class OptionUi extends BaseUi implements IInputHandler, IRefreshableLangu
   }
 
   onRefreshLanguage(): void {
-    this.topTitle.setText(i18next.t('menu:option'));
-    this.inputGuideText.setText(i18next.t('menu:cancel'));
+    this.topTitle.setText(i18next.t('etc:option'));
+    this.inputGuideText.setText(i18next.t('etc:cancel'));
   }
 
   show(): void {

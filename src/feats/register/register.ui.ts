@@ -94,7 +94,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.scene,
       0,
       -320,
-      i18next.t('menu:register'),
+      i18next.t('etc:register'),
       80,
       'bold',
       'center',
@@ -126,7 +126,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         -250,
         -120,
-        i18next.t('menu:username') + ' :',
+        i18next.t('etc:username') + ' :',
         40,
         '100',
         'left',
@@ -140,7 +140,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.labelInputs.push(
       addTextInput(this.scene, -230, -60, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'text',
-        placeholder: i18next.t('menu:enterYourUsername'),
+        placeholder: i18next.t('etc:enterYourUsername'),
         minLength: 6,
         maxLength: 20,
       }),
@@ -151,7 +151,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         -250,
         +20,
-        i18next.t('menu:password') + ' :',
+        i18next.t('etc:password') + ' :',
         40,
         '100',
         'left',
@@ -165,7 +165,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.labelInputs.push(
       addTextInput(this.scene, -230, +80, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
-        placeholder: i18next.t('menu:enterYourPassword'),
+        placeholder: i18next.t('etc:enterYourPassword'),
         minLength: 8,
         maxLength: 20,
       }),
@@ -176,7 +176,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         -250,
         +160,
-        i18next.t('menu:repassword') + ' :',
+        i18next.t('etc:repassword') + ' :',
         40,
         '100',
         'left',
@@ -202,7 +202,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.labelInputs.push(
       addTextInput(this.scene, -230, +220, 25, '100', 500, 70, TEXTSTYLE.WHITE, {
         type: 'password',
-        placeholder: i18next.t('menu:enterYourPassword'),
+        placeholder: i18next.t('etc:enterYourPassword'),
         minLength: 8,
         maxLength: 20,
       }),
@@ -248,7 +248,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         -140,
         0,
-        i18next.t('menu:register'),
+        i18next.t('etc:register'),
         40,
         '100',
         'center',
@@ -279,7 +279,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         +140,
         0,
-        i18next.t('menu:login'),
+        i18next.t('etc:login'),
         40,
         '100',
         'center',
@@ -382,11 +382,11 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   onRefreshLanguage(): void {
-    this.modalTitle.setText(i18next.t('menu:register'));
+    this.modalTitle.setText(i18next.t('etc:register'));
     this.modalErrorMsg.setText('');
-    this.labels[0].setText(i18next.t('menu:username') + ' :');
-    this.labels[1].setText(i18next.t('menu:password') + ' :');
-    this.labels[2].setText(i18next.t('menu:repassword') + ' :');
+    this.labels[0].setText(i18next.t('etc:username') + ' :');
+    this.labels[1].setText(i18next.t('etc:password') + ' :');
+    this.labels[2].setText(i18next.t('etc:repassword') + ' :');
   }
 
   show(): void {

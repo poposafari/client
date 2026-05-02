@@ -281,7 +281,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.items = [...items];
 
     if (this.config.showCancel) {
-      this.items.push({ key: 'cancel', label: i18next.t('menu:cancel') });
+      this.items.push({ key: 'cancel', label: i18next.t('etc:cancel') });
     }
 
     if (this.isAutoWidth) {

@@ -4,25 +4,25 @@ import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
 const BASE_MENU_ITEMS = (gender: 'male' | 'female') => [
-  { key: 'pc', label: i18next.t('menu:pc'), icon: TEXTURE.ICON_PC },
+  { key: 'pc', label: i18next.t('etc:pc'), icon: TEXTURE.ICON_PC },
   {
     key: 'bag',
-    label: i18next.t('menu:bag'),
+    label: i18next.t('etc:bag'),
     icon: gender === 'female' ? TEXTURE.ICON_BAG_F : TEXTURE.ICON_BAG_M,
   },
-  { key: 'option', label: i18next.t('menu:option'), icon: TEXTURE.ICON_OPTION },
-  { key: 'title', label: i18next.t('menu:backToTitle'), icon: TEXTURE.ICON_EXIT_0 },
+  { key: 'option', label: i18next.t('etc:option'), icon: TEXTURE.ICON_OPTION },
+  { key: 'title', label: i18next.t('etc:backToTitle'), icon: TEXTURE.ICON_EXIT_0 },
 ];
 
 const PLAZA_ITEM = () => ({
   key: 'plaza',
-  label: i18next.t('menu:backToPlaza'),
+  label: i18next.t('etc:backToPlaza'),
   icon: TEXTURE.ICON_EXIT_1,
 });
 
 const CANCEL_ITEM = () => ({
   key: 'cancel',
-  label: i18next.t('menu:cancel'),
+  label: i18next.t('etc:cancel'),
   icon: TEXTURE.ICON_CANCEL,
 });
 
@@ -36,8 +36,8 @@ const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
 };
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class OverworldMenuUi extends MenuUi {
@@ -71,7 +71,7 @@ export class OverworldMenuUi extends MenuUi {
   async runBackToTitle(): Promise<boolean> {
     const question = this.scene.getMessage('question');
 
-    await question.showMessage(i18next.t('msg:backToTitle'), {
+    await question.showMessage(i18next.t('etc:backToTitlePrompt'), {
       resolveWhen: 'displayed',
     });
 

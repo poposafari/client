@@ -7,10 +7,10 @@ import type { BattleAction } from '../battle.types';
 import { COMMAND_MENU } from '../battle.constants';
 
 const LABEL_KEYS = [
-  'menu:battleSelectBall',
-  'menu:battleSelectFeed',
-  'menu:battleSelectMud',
-  'menu:battleSelectRun',
+  'battle:selectBall',
+  'battle:selectFeed',
+  'battle:selectMud',
+  'battle:selectRun',
 ] as const;
 
 export class BattleIdleUi extends BaseUi implements IInputHandler {

@@ -11,7 +11,6 @@ import { OverworldMenuPhase } from './overworld-menu.phase';
 import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
-import { StartingPhase } from '../starting/starting.phase';
 import { MartPhase } from '../mart';
 import { MartNpcObject } from './objects/special-npc.object';
 import { BattlePhase } from '../battle';
@@ -70,13 +69,7 @@ export class OverworldPhase implements IGamePhase {
       );
     };
     this.overworldUi.onInteractivePhaseRequested = (_object, phaseKey) => {
-      if (phaseKey === 'professor') {
-        if (!this.scene.getUser()?.getProfile().hasStarter) {
-          this.scene.pushPhase(new StartingPhase(this.scene));
-        } else {
-          console.log('너 뉴비 아닌데? ');
-        }
-      } else if (phaseKey === 'safari') {
+      if (phaseKey === 'safari') {
         this.scene.pushPhase(new SafariPhase(this.scene));
       } else if (phaseKey === 'mart' && _object instanceof MartNpcObject) {
         this.scene.pushPhase(
@@ -196,9 +189,9 @@ export class OverworldPhase implements IGamePhase {
       const talk = this.scene.getMessage('talk');
       await talk.showMessage(
         [
-          i18next.t('msg:s000_welcome_0'),
-          i18next.t('msg:s000_welcome_1'),
-          i18next.t('msg:s000_welcome_2'),
+          i18next.t('etc:s000_welcome_0'),
+          i18next.t('etc:s000_welcome_1'),
+          i18next.t('etc:s000_welcome_2'),
         ],
         { name: '' },
       );

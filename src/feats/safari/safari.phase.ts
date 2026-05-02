@@ -16,13 +16,13 @@ interface SafariZone {
 }
 
 const SAFARI_ZONES: SafariZone[] = [
-  { key: 's001', labelKey: 'safari:zone1', mapId: MAP.SAFARI_001, spawnX: 10, spawnY: 10 },
-  { key: 's002', labelKey: 'safari:zone2', mapId: MAP.SAFARI_002, spawnX: 10, spawnY: 10 },
+  { key: 's001', labelKey: 'map:s001', mapId: MAP.SAFARI_001, spawnX: 10, spawnY: 10 },
+  { key: 's002', labelKey: 'map:s002', mapId: MAP.SAFARI_002, spawnX: 10, spawnY: 10 },
 ];
 
 const YES_NO_ITEMS = () => [
-  { key: 'yes', label: i18next.t('menu:yes') },
-  { key: 'no', label: i18next.t('menu:no') },
+  { key: 'yes', label: i18next.t('etc:yes') },
+  { key: 'no', label: i18next.t('etc:no') },
 ];
 
 export class SafariPhase implements IGamePhase {

@@ -126,10 +126,10 @@ const RANK_COLOR: Record<PokemonRank, string> = {
 };
 
 const RANK_LOCALE: Record<PokemonRank, string> = {
-  common: 'menu:tierCommon',
-  rare: 'menu:tierRare',
-  epic: 'menu:tierEpic',
-  legendary: 'menu:tierLegendary',
+  common: 'etc:tierCommon',
+  rare: 'etc:tierRare',
+  epic: 'etc:tierEpic',
+  legendary: 'etc:tierLegendary',
 };
 
 export class RewardUi extends BaseUi {
@@ -409,32 +409,32 @@ export class RewardUi extends BaseUi {
     // Row2: 지닌물건 | 스킬 (단일 텍스트)
     const heldItem = pokemon.heldItemId
       ? i18next.t(`item:${pokemon.heldItemId}.name`, { defaultValue: pokemon.heldItemId })
-      : i18next.t('menu:rewardNone');
+      : i18next.t('etc:noneSymbol');
     const skillText =
       pokemon.skills.length > 0
         ? i18next.t(`pokemonHiddenMove:${pokemon.skills[0]}`, { defaultValue: pokemon.skills[0] })
-        : i18next.t('menu:rewardNone');
+        : i18next.t('etc:noneSymbol');
 
     this.addInfoPair(
       xBase,
       CONST.infoRow1Y,
-      i18next.t('menu:rewardNature'),
+      i18next.t('etc:natureSymbol'),
       i18next.t(`nature:${pokemon.natureId}`, { defaultValue: pokemon.natureId }),
       target,
     );
     this.addInfoPair(
       xBase + CONST.infoColGap,
       CONST.infoRow1Y,
-      i18next.t('menu:rewardAbility'),
+      i18next.t('etc:abilitySymbol'),
       i18next.t(`ability:${pokemon.abilityId}`, { defaultValue: pokemon.abilityId }),
       target,
     );
 
-    this.addInfoPair(xBase, CONST.infoRow2Y, i18next.t('menu:rewardHeldItem'), heldItem, target);
+    this.addInfoPair(xBase, CONST.infoRow2Y, i18next.t('etc:heldItemSymbol'), heldItem, target);
     this.addInfoPair(
       xBase + CONST.infoColGap,
       CONST.infoRow2Y,
-      i18next.t('menu:rewardSkills'),
+      i18next.t('etc:skillSymbol'),
       skillText,
       target,
     );
