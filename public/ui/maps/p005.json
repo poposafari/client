@@ -1,0 +1,938 @@
+{
+  "compressionlevel": -1,
+  "height": 12,
+  "infinite": false,
+  "layers": [
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14120, 14121,
+        14122, 14123, 14124, 14120, 14121, 14122, 14123, 14124, 14125, 14126, 0,
+        0, 14144, 14145, 14146, 14147, 14148, 14144, 14145, 14146, 14147, 14148,
+        14149, 14150, 0, 0, 14168, 14169, 14170, 14171, 14172, 14168, 14169,
+        14170, 14171, 14172, 14173, 14174, 0, 0, 14124, 14125, 14126, 14120,
+        14121, 14122, 14123, 14117, 14120, 14121, 14122, 14123, 0, 0, 14148,
+        14149, 14150, 14144, 14145, 14146, 14147, 14117, 14142, 14145, 14146,
+        14147, 0, 0, 14172, 14173, 14174, 14168, 14169, 14170, 14171, 14142,
+        14168, 14169, 14170, 14171, 0, 0, 14117, 14117, 14117, 14142, 14117,
+        14117, 14117, 14117, 14117, 14148, 14149, 14150, 0, 0, 14142, 14142,
+        14117, 14117, 14117, 14117, 14117, 14117, 14117, 14172, 14173, 14174, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 12,
+      "id": 1,
+      "name": "L0_floor",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        14028, 14029, 14029, 14030, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14052, 14053,
+        14053, 14054, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14052, 14053, 14053, 14054,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14076, 14077, 14077, 14078, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        12548, 12549, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 12,
+      "id": 2,
+      "name": "L1_floor",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5717, 5718,
+        5724, 9461, 9523, 0, 0, 0, 0, 9766, 6157, 6158, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8456,
+        7357, 7358, 8456, 0, 0, 0, 0, 0, 8601, 8602, 8603, 0, 0, 8456, 7419,
+        7420, 8456, 0, 0, 0, 0, 0, 8143, 8144, 8145, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 8205, 8206, 8207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6518, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0
+      ],
+      "height": 12,
+      "id": 3,
+      "name": "L2_object",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        64, 4490, 4491, 4491, 4491, 4491, 4491, 4491, 4491, 4491, 4491, 4491,
+        4492, 64, 64, 4552, 4553, 4553, 4553, 4553, 4553, 4553, 4553, 4553,
+        4553, 4553, 4554, 64, 64, 4614, 4615, 4615, 4615, 4615, 4615, 4615,
+        4615, 4615, 4615, 4615, 4616, 64, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 64, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 64, 64, 0, 0, 10505, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64,
+        64, 0, 10443, 0, 0, 0, 0, 0, 0, 0, 10494, 10558, 0, 64, 64, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64,
+        64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 64, 64, 64, 64, 64, 64,
+        64, 64, 64, 64, 64, 64, 64
+      ],
+      "height": 12,
+      "id": 4,
+      "name": "L3_object",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 14309, 14309, 14309, 14309, 14309, 14309, 0,
+        0, 0, 14309, 14309, 14309, 14309, 14309, 14309, 0, 0, 0, 0, 14309,
+        14309, 14309, 14309, 14309, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14309,
+        14309, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14309, 14309, 0, 14309,
+        14309, 0, 0, 0, 0, 0, 0, 14309, 14309, 14309, 14309, 14309, 0, 14309,
+        14309, 0, 0, 0, 0, 0, 0, 14309, 14309, 14309, 14309, 14309, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 14309, 14309, 14309, 14309, 14309, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 14309, 14309, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14309,
+        14309, 14309, 14309, 14309, 14309, 14309, 14309, 14309, 14309, 14309,
+        14309, 14309, 14309, 14309, 0
+      ],
+      "height": 12,
+      "id": 5,
+      "name": "event",
+      "opacity": 0,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 9393, 9394, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 302,
+        9455, 9456, 0, 0, 611, 6033, 6034, 0, 0, 5655, 5656, 5662, 0, 0, 0, 0,
+        0, 0, 9704, 6095, 6096, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        8539, 8540, 8541, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6456, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 12,
+      "id": 6,
+      "name": "foreground_0",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ],
+      "height": 12,
+      "id": 7,
+      "name": "foreground_1",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 14,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextlayerid": 8,
+  "nextobjectid": 1,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "tiledversion": "1.10.2",
+  "tileheight": 16,
+  "tilesets": [
+    {
+      "columns": 24,
+      "image": "../../png/indoor/floor.png",
+      "imageheight": 2016,
+      "imagewidth": 384,
+      "name": "indoor_floor",
+      "tilecount": 3024,
+      "tiles": [
+        {
+          "id": 1263,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1264,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2743,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2744,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2745,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2767,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2768,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2769,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2791,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2792,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2793,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2832,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2835,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2836,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2837,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2838,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2839,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2840,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2841,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2857,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2859,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2860,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2861,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2862,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2863,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2864,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2865,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2883,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2884,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2885,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2886,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2887,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2888,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2889,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "tilewidth": 16,
+      "tileheight": 16,
+      "type": "tileset",
+      "firstgid": 11285
+    },
+    {
+      "columns": 62,
+      "image": "../../png/indoor/object.png",
+      "imageheight": 2912,
+      "imagewidth": 992,
+      "name": "indoor_object",
+      "tilecount": 11284,
+      "tiles": [
+        {
+          "id": 63,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4489,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4490,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4491,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4551,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4552,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4553,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4613,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4614,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4615,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5716,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5717,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5723,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6156,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6157,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6517,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7356,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7357,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7418,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7419,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8142,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8143,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8144,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8204,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8205,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8206,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8455,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8600,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8601,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8602,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9460,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9522,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9765,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10442,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10493,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10504,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10557,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "tilewidth": 16,
+      "tileheight": 16,
+      "type": "tileset",
+      "firstgid": 1
+    },
+    {
+      "columns": 7,
+      "image": "../../png/event.png",
+      "imageheight": 48,
+      "imagewidth": 112,
+      "name": "indoor_event",
+      "tilecount": 21,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "tilewidth": 16,
+      "tileheight": 16,
+      "type": "tileset",
+      "firstgid": 14309
+    }
+  ],
+  "tilewidth": 16,
+  "type": "map",
+  "version": "1.10",
+  "width": 14
+}

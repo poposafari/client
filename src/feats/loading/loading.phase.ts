@@ -9,7 +9,17 @@ import {
 } from '@poposafari/utils';
 import { LoadingUi } from './loading.ui';
 import { WelcomePhase } from '../welcome/welcome.phase';
-import { p001Config } from '../overworld';
+import {
+  p001Config,
+  p002Config,
+  p003Config,
+  p004Config,
+  p005Config,
+  p006Config,
+  p007Config,
+  p008Config,
+  p009Config,
+} from '../overworld';
 import {
   PET_EMOTION_IDS,
   petEmotionAnimKey,
@@ -801,6 +811,15 @@ export class LoadingPhase implements IGamePhase {
 
     //plaza
     this.scene.loadMap(MAP.PLAZA_001, 'ui/maps', MAP.PLAZA_001);
+    this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
+    this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
+    this.scene.loadMap(MAP.PLAZA_004, 'ui/maps', MAP.PLAZA_004);
+    this.scene.loadMap(MAP.PLAZA_005, 'ui/maps', MAP.PLAZA_005);
+    this.scene.loadMap(MAP.PLAZA_006, 'ui/maps', MAP.PLAZA_006);
+    this.scene.loadMap(MAP.PLAZA_007, 'ui/maps', MAP.PLAZA_007);
+    this.scene.loadMap(MAP.PLAZA_008, 'ui/maps', MAP.PLAZA_008);
+    this.scene.loadMap(MAP.PLAZA_009, 'ui/maps', MAP.PLAZA_009);
+
     this.scene.loadMap(MAP.SAFARI_000, 'ui/maps', MAP.SAFARI_000);
     this.scene.loadMap(MAP.SAFARI_001, 'ui/maps', MAP.SAFARI_001);
     this.scene.loadMap(MAP.SAFARI_002, 'ui/maps', MAP.SAFARI_002);
@@ -831,6 +850,15 @@ export class LoadingPhase implements IGamePhase {
     // register maps
     const mapRegistry = this.scene.getMapRegistry();
     mapRegistry.register(p001Config);
+    mapRegistry.register(p002Config);
+    mapRegistry.register(p003Config);
+    mapRegistry.register(p004Config);
+    mapRegistry.register(p005Config);
+    mapRegistry.register(p006Config);
+    mapRegistry.register(p007Config);
+    mapRegistry.register(p008Config);
+    mapRegistry.register(p009Config);
+
     mapRegistry.register(s000Config);
     mapRegistry.register(s001Config);
     mapRegistry.register(s002Config);

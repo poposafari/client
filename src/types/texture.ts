@@ -177,20 +177,6 @@ export const enum MAP {
   PLAZA_007 = 'p007',
   PLAZA_008 = 'p008',
   PLAZA_009 = 'p009',
-  PLAZA_010 = 'p010',
-  PLAZA_011 = 'p011',
-  PLAZA_012 = 'p012',
-  PLAZA_013 = 'p013',
-  PLAZA_014 = 'p014',
-  PLAZA_015 = 'p015',
-  PLAZA_016 = 'p016',
-  PLAZA_017 = 'p017',
-  PLAZA_018 = 'p018',
-  PLAZA_019 = 'p019',
-  PLAZA_020 = 'p020',
-  PLAZA_021 = 'p021',
-  PLAZA_022 = 'p022',
-  PLAZA_023 = 'p023',
 
   //gate
 

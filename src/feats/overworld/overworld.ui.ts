@@ -1133,13 +1133,18 @@ export class OverworldUi extends BaseUi {
    * RIDE → WALK, 그 외 → RIDE.
    * 추후에는 자전거 아이템 사용 시 enterRideBicycle(), 해제 시 exitRideBicycle() 호출.
    */
-  toggleRideBicycle(): void {
+  async toggleRideBicycle(): Promise<void> {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
 
     const current = user.getOverworldMovementState();
 
     if (current === OverworldMovementState.SURF) return;
+
+    if (current !== OverworldMovementState.RIDE && this.mapConfig?.allowRide === false) {
+      await this.scene.getMessage('talk').showMessage(i18next.t('msg:cantRideHere'));
+      return;
+    }
 
     const next =
       current === OverworldMovementState.RIDE
@@ -1158,10 +1163,14 @@ export class OverworldUi extends BaseUi {
     void KeyItemRegistry.use(itemId, { scene: this.scene, overworldUi: this });
   }
 
-  enterRideBicycle(): void {
+  async enterRideBicycle(): Promise<void> {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
     if (user.getOverworldMovementState() === OverworldMovementState.SURF) return;
+    if (this.mapConfig?.allowRide === false) {
+      await this.scene.getMessage('talk').showMessage(i18next.t('msg:cantRideHere'));
+      return;
+    }
     user.setOverworldMovementState(OverworldMovementState.RIDE);
     const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.RIDE] ?? 6;
     this.player.setBaseSpeed(speed);
@@ -1459,6 +1468,15 @@ export class OverworldUi extends BaseUi {
       const hair = this.player.getHairSprite();
       if (hair) this.worldContainer.add(hair);
 
+      if (
+        this.mapConfig?.allowRide === false &&
+        user?.getOverworldMovementState() === OverworldMovementState.RIDE
+      ) {
+        user.setOverworldMovementState(OverworldMovementState.WALK);
+        const walkSpeed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
+        this.player.setBaseSpeed(walkSpeed);
+      }
+
       if (this.mapView.getTileSpawnAt(tileX, tileY) === 'water') {
         user?.setOverworldMovementState(OverworldMovementState.SURF);
         const surfSpeed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.SURF] ?? 4;
@@ -1536,21 +1554,22 @@ export class OverworldUi extends BaseUi {
       this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.handleGameTimeChanged, this);
       this.scene.events.on(GameEvent.WEATHER_CHANGED, this.handleWeatherChanged, this);
 
-      // 날씨 오버레이 — 현재 맵의 land 지형으로 biome 도출 후 즉시 반영
-      const biome = landToBiome(this.mapConfig?.area?.land);
-      this.weatherOverlay = new WeatherOverlay(this.scene, biome);
-      // 맵 전역 spawn(눈 등)을 위해 현재 맵의 월드 영역을 알려줌. 레이어 컨테이너의 스케일을 곱해야 실제 월드 dim.
-      const tilemap = this.mapView?.getTilemap();
-      if (tilemap) {
-        this.weatherOverlay.setMapBounds(
-          0,
-          0,
-          tilemap.widthInPixels * MAP_LAYER_SCALE_ZOOMED,
-          tilemap.heightInPixels * MAP_LAYER_SCALE_ZOOMED,
-        );
+      if (this.mapConfig?.weatherFilter !== false) {
+        const biome = landToBiome(this.mapConfig?.area?.land);
+        this.weatherOverlay = new WeatherOverlay(this.scene, biome);
+        // 맵 전역 spawn(눈 등)을 위해 현재 맵의 월드 영역을 알려줌. 레이어 컨테이너의 스케일을 곱해야 실제 월드 dim.
+        const tilemap = this.mapView?.getTilemap();
+        if (tilemap) {
+          this.weatherOverlay.setMapBounds(
+            0,
+            0,
+            tilemap.widthInPixels * MAP_LAYER_SCALE_ZOOMED,
+            tilemap.heightInPixels * MAP_LAYER_SCALE_ZOOMED,
+          );
+        }
+        const cur = this.scene.getWeatherState();
+        if (cur) this.weatherOverlay.setWeather(cur.weather);
       }
-      const cur = this.scene.getWeatherState();
-      if (cur) this.weatherOverlay.setWeather(cur.weather);
 
       // 초기 스폰 타일이 grass라면 즉시 반영
       this.updateGrassForEntity(this.player, this.player.getTileX(), this.player.getTileY());

@@ -107,6 +107,7 @@ export interface MapConfig {
   area: { land: string; water: string };
   type: 'plaza' | 'gate' | 'safari';
   dayNightFilter?: boolean;
+  weatherFilter?: boolean;
   allowRide?: boolean;
   battleArea?: string;
 

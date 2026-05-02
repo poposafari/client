@@ -36,9 +36,7 @@ export class PokemonNpcObject extends MovingNpcObject {
     this.pokedexId = config.pokedexId;
     this.frameBase = frame;
     this.reactionSteps = config.reaction ?? [];
-    // stopFrameNumbers는 의도적으로 비워둔다 — MovableObject.update가 매 프레임
-    // stopSpriteAnimation을 호출하지 않도록 해서, 마지막 walk 애니메이션이 그대로 유지된다.
-    // (WildPokemonObject와 동일한 패턴)
+    // path 유무와 관계없이 walk anim을 무한 재생 — 경로 없으면 제자리 애니, 경로 있으면 step 사이에도 anim 유지.
     this.lookAt(config.direction);
   }
 
@@ -56,16 +54,11 @@ export class PokemonNpcObject extends MovingNpcObject {
     this.startSpriteAnimation(animKey);
   }
 
-  /** WildPokemonObject.faceDirection 패턴: 해당 방향 anim의 첫 프레임으로 정지. (대화용) */
   override lookAt(direction: DIRECTION): void {
     this.lastDirection = direction;
     const animKey = this.getWalkAnimationKey(direction);
     if (!this.scene.anims.exists(animKey)) return;
-    const sprite = this.getSprite();
-    sprite.anims.stop();
-    const anim = this.scene.anims.get(animKey);
-    const firstFrame = anim?.frames[0];
-    if (firstFrame) sprite.setFrame(firstFrame.frame.name);
+    this.startSpriteAnimation(animKey);
   }
 
   override reaction(direction: DIRECTION): ReactionStep[] {

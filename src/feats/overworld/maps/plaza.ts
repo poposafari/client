@@ -55,20 +55,13 @@ export const p001Config: MapConfig = {
   ],
 
   doors: [
-    { startId: DOOR.P001_PROF_0, destId: INIT_POS.P002_DOWN_0 },
-    { startId: DOOR.P001_POKEMART_0, destId: INIT_POS.P004_DOWN_0 },
-    { startId: DOOR.P001_BIKE_SHOP_0, destId: INIT_POS.P005_DOWN_0 },
-    { startId: DOOR.P001_CENTER_0, destId: INIT_POS.P006_DOWN_0 },
-    { startId: DOOR.P001_CENTER_1, destId: INIT_POS.P006_DOWN_0 },
-    { startId: DOOR.P001_NPC0_0, destId: INIT_POS.P007_DOWN_0 },
-    { startId: DOOR.P001_AVATAR_0, destId: INIT_POS.P009_DOWN_0 },
-    { startId: DOOR.P001_NPC1_0, destId: INIT_POS.P010_DOWN_0 },
-    { startId: DOOR.P001_CAFE_0, destId: INIT_POS.P011_DOWN_0 },
-    { startId: DOOR.P001_MUSEUM_0, destId: INIT_POS.P013_DOWN_0 },
-    { startId: DOOR.P001_DEPARTMENT_STORE_0, destId: INIT_POS.P015_DOWN_0 },
-    { startId: DOOR.P001_NPC2_0, destId: INIT_POS.P019_DOWN_0 },
-    { startId: DOOR.P001_NPC3_0, destId: INIT_POS.P020_DOWN_0 },
-    { startId: DOOR.P001_NPC4_0, destId: INIT_POS.P022_DOWN_0 },
+    { startId: DOOR.P001_BOUTIQUE, destId: INIT_POS.P002_DOWN_0 },
+    { startId: DOOR.P001_MART, destId: INIT_POS.P003_DOWN_0 },
+    { startId: DOOR.P001_BIKE, destId: INIT_POS.P004_DOWN_0 },
+    { startId: DOOR.P001_NPC1, destId: INIT_POS.P005_DOWN_0 },
+    { startId: DOOR.P001_NPC2, destId: INIT_POS.P006_DOWN_0 },
+    { startId: DOOR.P001_LAB, destId: INIT_POS.P008_DOWN_0 },
+    { startId: DOOR.P001_NPC3, destId: INIT_POS.P009_DOWN_0 },
   ],
 
   npcs: [
@@ -76,10 +69,22 @@ export const p001Config: MapConfig = {
       key: 'npc2',
       name: '사파리존 테스트',
       special: 'safari',
-      x: 30,
-      y: 17,
+      x: 43,
+      y: 21,
       direction: DIRECTION.DOWN,
       reaction: [],
+    },
+    {
+      key: '',
+      name: '',
+      x: 42,
+      y: 21,
+      direction: DIRECTION.DOWN,
+      type: 'pokemon',
+      pokedexId: '0823',
+      isShiny: false,
+      path: [],
+      reaction: [{ key: 'talk', content: { text: 'msg:npc1_0', name: 'Pikachu' } }],
     },
     {
       key: 'npc2',
@@ -172,6 +177,7 @@ export const p002Config: MapConfig = {
   area: { land: 'p002', water: 'p002' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -181,36 +187,16 @@ export const p002Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P002_RIGHT_0, destId: INIT_POS.P003_RIGHT_0 },
-    { startId: DOOR.P002_DOWN_0, destId: INIT_POS.P001_PROF_0 },
-    { startId: DOOR.P002_DOWN_1, destId: INIT_POS.P001_PROF_0 },
-    { startId: DOOR.P002_DOWN_2, destId: INIT_POS.P001_PROF_0 },
+    { startId: DOOR.P002_DOWN_0, destId: INIT_POS.P001_BOUTIQUE },
+    { startId: DOOR.P002_DOWN_1, destId: INIT_POS.P001_BOUTIQUE },
   ],
-  npcs: [
-    {
-      key: 'npc0',
-      name: 'professor',
-      special: 'professor',
-      x: 18,
-      y: 6,
-      direction: DIRECTION.DOWN,
-      reaction: [],
-    },
-    {
-      key: 'npc1',
-      name: 'researcher_0',
-      x: 12,
-      y: 17,
-      direction: DIRECTION.UP,
-      reaction: [
-        { key: 'talk', content: { text: 'msg:npc1_0', name: 'NPC' } },
-        { key: 'talk', content: { text: 'msg:npc1_1', name: 'NPC' } },
-      ],
-    },
-  ],
+  npcs: [],
 };
 
 export const p003Config: MapConfig = {
@@ -219,8 +205,8 @@ export const p003Config: MapConfig = {
   area: { land: 'p003', water: 'p003' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
-  // battleArea: 'p003',
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
     { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
@@ -229,12 +215,16 @@ export const p003Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P003_RIGHT_0, destId: INIT_POS.P002_RIGHT_0 },
-    { startId: DOOR.P003_RIGHT_1, destId: INIT_POS.P002_RIGHT_0 },
+    { startId: DOOR.P003_DOWN_0, destId: INIT_POS.P001_MART },
+    { startId: DOOR.P003_DOWN_1, destId: INIT_POS.P001_MART },
   ],
+  npcs: [],
 };
 
 export const p004Config: MapConfig = {
@@ -243,6 +233,7 @@ export const p004Config: MapConfig = {
   area: { land: 'p004', water: 'p004' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -252,13 +243,16 @@ export const p004Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P004_DOWN_0, destId: INIT_POS.P001_POKEMART_0 },
-    { startId: DOOR.P004_DOWN_1, destId: INIT_POS.P001_POKEMART_0 },
-    { startId: DOOR.P004_DOWN_2, destId: INIT_POS.P001_POKEMART_0 },
+    { startId: DOOR.P004_DOWN_0, destId: INIT_POS.P001_BIKE },
+    { startId: DOOR.P004_DOWN_1, destId: INIT_POS.P001_BIKE },
   ],
+  npcs: [],
 };
 
 export const p005Config: MapConfig = {
@@ -267,6 +261,7 @@ export const p005Config: MapConfig = {
   area: { land: 'p005', water: 'p005' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -276,12 +271,16 @@ export const p005Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P005_DOWN_0, destId: INIT_POS.P001_BIKE_SHOP_0 },
-    { startId: DOOR.P005_DOWN_1, destId: INIT_POS.P001_BIKE_SHOP_0 },
+    { startId: DOOR.P005_DOWN_0, destId: INIT_POS.P001_NPC1 },
+    { startId: DOOR.P005_DOWN_1, destId: INIT_POS.P001_NPC1 },
   ],
+  npcs: [],
 };
 
 export const p006Config: MapConfig = {
@@ -290,6 +289,7 @@ export const p006Config: MapConfig = {
   area: { land: 'p006', water: 'p006' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -299,13 +299,17 @@ export const p006Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P006_DOWN_0, destId: INIT_POS.P001_CENTER_0 },
-    { startId: DOOR.P006_DOWN_1, destId: INIT_POS.P001_CENTER_0 },
-    { startId: DOOR.P006_DOWN_2, destId: INIT_POS.P001_CENTER_0 },
+    { startId: DOOR.P006_DOWN_0, destId: INIT_POS.P001_NPC2 },
+    { startId: DOOR.P006_DOWN_1, destId: INIT_POS.P001_NPC2 },
+    { startId: DOOR.P006_RIGHT_0, destId: INIT_POS.P007_LEFT_0 },
   ],
+  npcs: [],
 };
 
 export const p007Config: MapConfig = {
@@ -314,6 +318,7 @@ export const p007Config: MapConfig = {
   area: { land: 'p007', water: 'p007' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -323,14 +328,16 @@ export const p007Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P007_DOWN_0, destId: INIT_POS.P001_NPC0_0 },
-    { startId: DOOR.P007_DOWN_1, destId: INIT_POS.P001_NPC0_0 },
-    { startId: DOOR.P007_DOWN_2, destId: INIT_POS.P001_NPC0_0 },
-    { startId: DOOR.P007_RIGHT_0, destId: INIT_POS.P008_RIGHT_0 },
+    { startId: DOOR.P007_LEFT_0, destId: INIT_POS.P006_RIGHT_0 },
+    { startId: DOOR.P007_LEFT_1, destId: INIT_POS.P006_RIGHT_0 },
   ],
+  npcs: [],
 };
 
 export const p008Config: MapConfig = {
@@ -339,6 +346,7 @@ export const p008Config: MapConfig = {
   area: { land: 'p008', water: 'p008' },
   type: 'plaza',
   dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -348,12 +356,16 @@ export const p008Config: MapConfig = {
     { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
     { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
   ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
+  foreground: [
+    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
+  ],
 
   doors: [
-    { startId: DOOR.P008_RIGHT_0, destId: INIT_POS.P007_RIGHT_0 },
-    { startId: DOOR.P008_RIGHT_1, destId: INIT_POS.P007_RIGHT_0 },
+    { startId: DOOR.P008_DOWN_0, destId: INIT_POS.P001_LAB },
+    { startId: DOOR.P008_DOWN_1, destId: INIT_POS.P001_LAB },
   ],
+  npcs: [],
 };
 
 export const p009Config: MapConfig = {
@@ -362,104 +374,7 @@ export const p009Config: MapConfig = {
   area: { land: 'p009', water: 'p009' },
   type: 'plaza',
   dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
-
-  doors: [
-    { startId: DOOR.P009_DOWN_0, destId: INIT_POS.P001_AVATAR_0 },
-    { startId: DOOR.P009_DOWN_1, destId: INIT_POS.P001_AVATAR_0 },
-    { startId: DOOR.P009_DOWN_2, destId: INIT_POS.P001_AVATAR_0 },
-  ],
-};
-
-export const p010Config: MapConfig = {
-  key: 'p010',
-  isIndoor: true,
-  area: { land: 'p010', water: 'p010' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
-
-  doors: [
-    { startId: DOOR.P010_DOWN_0, destId: INIT_POS.P001_NPC1_0 },
-    { startId: DOOR.P010_DOWN_1, destId: INIT_POS.P001_NPC1_0 },
-  ],
-};
-
-export const p011Config: MapConfig = {
-  key: 'p011',
-  isIndoor: true,
-  area: { land: 'p011', water: 'p011' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
-
-  doors: [
-    { startId: DOOR.P011_DOWN_0, destId: INIT_POS.P001_CAFE_0 },
-    { startId: DOOR.P011_DOWN_1, destId: INIT_POS.P001_CAFE_0 },
-    { startId: DOOR.P011_DOWN_2, destId: INIT_POS.P001_CAFE_0 },
-    { startId: DOOR.P011_LEFT_0, destId: INIT_POS.P012_LEFT_0 },
-    { startId: DOOR.P011_RIGHT_0, destId: INIT_POS.P012_RIGHT_0 },
-  ],
-};
-
-export const p012Config: MapConfig = {
-  key: 'p012',
-  isIndoor: true,
-  area: { land: 'p012', water: 'p012' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [{ idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND }],
-
-  doors: [
-    { startId: DOOR.P012_LEFT_0, destId: INIT_POS.P011_LEFT_0 },
-    { startId: DOOR.P012_LEFT_1, destId: INIT_POS.P011_LEFT_0 },
-    { startId: DOOR.P012_RIGHT_0, destId: INIT_POS.P011_RIGHT_0 },
-    { startId: DOOR.P012_RIGHT_1, destId: INIT_POS.P011_RIGHT_0 },
-  ],
-};
-
-export const p013Config: MapConfig = {
-  key: 'p013',
-  isIndoor: true,
-  area: { land: 'p013', water: 'p013' },
-  type: 'plaza',
-  dayNightFilter: false,
+  weatherFilter: false,
   allowRide: false,
   tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
   layers: [
@@ -475,249 +390,8 @@ export const p013Config: MapConfig = {
   ],
 
   doors: [
-    { startId: DOOR.P013_DOWN_0, destId: INIT_POS.P001_MUSEUM_0 },
-    { startId: DOOR.P013_DOWN_1, destId: INIT_POS.P001_MUSEUM_0 },
-    { startId: DOOR.P013_LEFT_0, destId: INIT_POS.P014_LEFT_0 },
-    { startId: DOOR.P013_RIGHT_0, destId: INIT_POS.P014_RIGHT_0 },
+    { startId: DOOR.P009_DOWN_0, destId: INIT_POS.P001_NPC3 },
+    { startId: DOOR.P009_DOWN_1, destId: INIT_POS.P001_NPC3 },
   ],
-};
-
-export const p014Config: MapConfig = {
-  key: 'p014',
-  isIndoor: true,
-  area: { land: 'p014', water: 'p014' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P014_LEFT_0, destId: INIT_POS.P013_LEFT_0 },
-    { startId: DOOR.P014_LEFT_1, destId: INIT_POS.P013_LEFT_0 },
-    { startId: DOOR.P014_RIGHT_0, destId: INIT_POS.P013_RIGHT_0 },
-    { startId: DOOR.P014_RIGHT_1, destId: INIT_POS.P013_RIGHT_0 },
-  ],
-};
-
-export const p015Config: MapConfig = {
-  key: 'p015',
-  isIndoor: true,
-  area: { land: 'p015', water: 'p015' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P015_DOWN_0, destId: INIT_POS.P001_DEPARTMENT_STORE_0 },
-    { startId: DOOR.P015_DOWN_1, destId: INIT_POS.P001_DEPARTMENT_STORE_0 },
-    { startId: DOOR.P015_DOWN_2, destId: INIT_POS.P001_DEPARTMENT_STORE_0 },
-    { startId: DOOR.P015_RIGHT_0, destId: INIT_POS.P016_LEFT_0 },
-    { startId: DOOR.P015_RIGHT_1, destId: INIT_POS.P016_LEFT_0 },
-  ],
-};
-
-export const p016Config: MapConfig = {
-  key: 'p016',
-  isIndoor: true,
-  area: { land: 'p016', water: 'p016' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P016_LEFT_0, destId: INIT_POS.P015_RIGHT_0 },
-    { startId: DOOR.P016_RIGHT_0, destId: INIT_POS.P017_LEFT_0 },
-    { startId: DOOR.P016_RIGHT_1, destId: INIT_POS.P017_LEFT_0 },
-  ],
-};
-
-export const p017Config: MapConfig = {
-  key: 'p017',
-  isIndoor: true,
-  area: { land: 'p017', water: 'p017' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [{ startId: DOOR.P017_LEFT_0, destId: INIT_POS.P016_RIGHT_0 }],
-};
-
-export const p019Config: MapConfig = {
-  key: 'p019',
-  isIndoor: true,
-  area: { land: 'p019', water: 'p019' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P019_DOWN_0, destId: INIT_POS.P001_NPC2_0 },
-    { startId: DOOR.P019_DOWN_1, destId: INIT_POS.P001_NPC2_0 },
-  ],
-};
-
-export const p020Config: MapConfig = {
-  key: 'p020',
-  isIndoor: true,
-  area: { land: 'p020', water: 'p020' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P020_DOWN_0, destId: INIT_POS.P001_NPC3_0 },
-    { startId: DOOR.P020_DOWN_1, destId: INIT_POS.P001_NPC3_0 },
-    { startId: DOOR.P020_RIGHT_0, destId: INIT_POS.P021_RIGHT_0 },
-  ],
-};
-
-export const p021Config: MapConfig = {
-  key: 'p021',
-  isIndoor: true,
-  area: { land: 'p021', water: 'p021' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P021_RIGHT_0, destId: INIT_POS.P020_RIGHT_0 },
-    { startId: DOOR.P021_RIGHT_1, destId: INIT_POS.P020_RIGHT_0 },
-  ],
-};
-
-export const p022Config: MapConfig = {
-  key: 'p022',
-  isIndoor: true,
-  area: { land: 'p022', water: 'p022' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P022_DOWN_0, destId: INIT_POS.P001_NPC4_0 },
-    { startId: DOOR.P022_DOWN_1, destId: INIT_POS.P001_NPC4_0 },
-    { startId: DOOR.P022_DOWN_2, destId: INIT_POS.P001_NPC4_0 },
-    { startId: DOOR.P022_LEFT_0, destId: INIT_POS.P023_RIGHT_0 },
-  ],
-};
-
-export const p023Config: MapConfig = {
-  key: 'p023',
-  isIndoor: true,
-  area: { land: 'p023', water: 'p023' },
-  type: 'plaza',
-  dayNightFilter: false,
-  allowRide: false,
-  tilesets: [TILE.INDOOR_FLOOR, TILE.INDOOR_OBJECT, TILE.INDOOR_EVENT],
-  layers: [
-    { idx: 0, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND },
-    { idx: 1, texture: TILE.INDOOR_FLOOR, depth: DEPTH.GROUND + 1 },
-    { idx: 2, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 2 },
-    { idx: 3, texture: TILE.INDOOR_OBJECT, depth: DEPTH.GROUND + 3 },
-    { idx: 4, texture: TILE.INDOOR_EVENT, depth: DEPTH.GROUND + 4 },
-  ],
-  foreground: [
-    { idx: 5, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-    { idx: 6, texture: [TILE.INDOOR_OBJECT], depth: DEPTH.FOREGROUND },
-  ],
-
-  doors: [
-    { startId: DOOR.P023_RIGHT_0, destId: INIT_POS.P022_LEFT_0 },
-    { startId: DOOR.P023_RIGHT_1, destId: INIT_POS.P022_LEFT_0 },
-  ],
+  npcs: [],
 };
