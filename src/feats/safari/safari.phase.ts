@@ -18,6 +18,7 @@ interface SafariZone {
 const SAFARI_ZONES: SafariZone[] = [
   { key: 's001', labelKey: 'map:s001', mapId: MAP.SAFARI_001, spawnX: 10, spawnY: 10 },
   { key: 's002', labelKey: 'map:s002', mapId: MAP.SAFARI_002, spawnX: 10, spawnY: 10 },
+  { key: 's003', labelKey: 'map:s003', mapId: MAP.SAFARI_003, spawnX: 10, spawnY: 10 },
 ];
 
 const YES_NO_ITEMS = () => [
@@ -34,8 +35,7 @@ export class SafariPhase implements IGamePhase {
   async enter(): Promise<void> {
     const talk = this.scene.getMessage('talk');
 
-    await talk.showMessage(i18next.t('safari:greeting1'));
-    await talk.showMessage(i18next.t('safari:greeting2'));
+    await talk.showMessage([i18next.t('safari:greeting1'), i18next.t('safari:greeting2')]);
 
     this.zoneListUi = new SafariZoneListUi(this.scene);
     this.menuUi = new MenuUi(this.scene, this.scene.getInputManager(), {

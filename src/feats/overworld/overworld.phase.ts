@@ -50,6 +50,12 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi = new OverworldUi(this.scene);
     this.overworldUi.setMapView(mapView);
     this.overworldUi.setMapConfig(mapConfig);
+
+    if (mapConfig.bgm) {
+      this.scene.getAudio().playBackground(mapConfig.bgm);
+    } else {
+      this.scene.getAudio().stopBackground();
+    }
     this.overworldUi.onMenuRequested = () => {
       this.scene.pushPhase(new OverworldMenuPhase(this.scene, this.overworldUi));
     };

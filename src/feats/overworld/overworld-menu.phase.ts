@@ -77,6 +77,7 @@ export class OverworldMenuPhase implements IGamePhase {
           this.scene.setSocket(null);
         }
 
+        this.scene.getAudio().stopBackground();
         this.scene.clearUser();
         this.scene.switchPhase(new TitlePhase(this.scene, { forceContinueEnabled: true }));
         return;

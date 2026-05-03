@@ -1,6 +1,6 @@
 import { DIRECTION } from '@poposafari/feats/overworld';
 import { DOOR, INIT_POS } from '@poposafari/feats/overworld/maps/door';
-import { TEXTURE } from '@poposafari/types';
+import { BGM, TEXTURE } from '@poposafari/types';
 
 export interface LayerConfig {
   idx: number;
@@ -21,7 +21,7 @@ export interface DoorConfig {
 
 /** talk 단계: TalkMessageUi.showMessage(content, config)에 넣을 데이터 */
 export interface TalkStepContent {
-  text: string;
+  text: string[];
   name?: string;
   speed?: number;
   resolveWhen?: 'close' | 'displayed';
@@ -29,7 +29,7 @@ export interface TalkStepContent {
 
 /** question 단계: QuestionMessageUi용. 추후 choices·선택 인덱스 반환 확장 가능 */
 export interface QuestionStepContent {
-  text: string;
+  text: string[];
   name?: string;
   speed?: number;
   resolveWhen?: 'close' | 'displayed';
@@ -37,7 +37,7 @@ export interface QuestionStepContent {
 }
 
 export interface NoticeStepContent {
-  text: string;
+  text: string[];
   name?: string;
   speed?: number;
   resolveWhen?: 'close' | 'displayed';
@@ -56,7 +56,7 @@ export type NpcType = 'human' | 'pokemon';
 /** MovingNpc 경로 한 스텝 */
 export interface NpcPathStep {
   direction: DIRECTION;
-  /** 이동할 타일 수 (1 이상) */
+  /** 이동할 타일 수. 0이면 해당 방향으로 프레임만 변경하고 이동하지 않는다. */
   tiles: number;
   /** 이 스텝 시작 전 대기 시간 (ms). 0 이상. */
   delayMs: number;
@@ -101,7 +101,7 @@ export interface TriggerConfig {
 
 export interface MapConfig {
   key: string;
-  //   sound: BGM;
+  bgm?: BGM;
   isIndoor: boolean;
 
   area: { land: string; water: string };
@@ -110,6 +110,7 @@ export interface MapConfig {
   weatherFilter?: boolean;
   allowRide?: boolean;
   battleArea?: string;
+  showLocationBanner?: boolean;
 
   tilesets: string[];
   layers: LayerConfig[];

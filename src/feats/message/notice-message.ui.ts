@@ -21,7 +21,10 @@ export class NoticeMessageUi extends MessageUi {
     throw new Error('Method not implemented.');
   }
 
-  public override async showMessage(content: string, config: MessageConfig = {}): Promise<void> {
+  public override async showMessage(
+    content: string | string[],
+    config: MessageConfig = {},
+  ): Promise<void> {
     const configWithWindow: MessageConfig = {
       ...config,
       speed: 0,

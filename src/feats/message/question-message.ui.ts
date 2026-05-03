@@ -21,7 +21,7 @@ export class QuestionMessageUi extends MessageUi {
     throw new Error('Method not implemented.');
   }
 
-  public async showMessage(content: string, config: MessageConfig = {}): Promise<void> {
+  public async showMessage(content: string | string[], config: MessageConfig = {}): Promise<void> {
     return super.showMessage(content, config);
   }
 

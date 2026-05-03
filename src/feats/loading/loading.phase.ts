@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { CostumeData } from '@poposafari/types';
-import { ANIMATION, DEPTH, MAP, PC_BG_CNT, SFX, TEXTURE, TILE } from '@poposafari/types';
+import { ANIMATION, BGM, DEPTH, MAP, PC_BG_CNT, SFX, TEXTURE, TILE } from '@poposafari/types';
 import {
   createAnimationFromFrameNames,
   createSpriteAnimation,
@@ -38,7 +38,7 @@ import {
   SNOW_TILE_TEXTURE_KEY,
 } from '@poposafari/utils/weather-overlay';
 
-const MAX_NPC = 2;
+const MAX_NPC = 34;
 const MAX_DOOR = 19;
 
 /** id like "skin_0" | "outfit_0" | "hair_0" -> numeric suffix "0" */
@@ -195,7 +195,7 @@ export class LoadingPhase implements IGamePhase {
             moveKey = 'psychic';
             break;
         }
-        this.scene.loadImage(`move_${moveKey}`, 'ui/items', `move_${moveKey}`);
+        this.scene.loadImage(`move_${moveName}`, 'ui/items', `move_${moveKey}`);
       } else {
         this.scene.loadImage(item, 'ui/items', item);
       }
@@ -897,6 +897,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.EXP_GAIN, 'audio/se', 'exp_gain', 'ogg');
     this.scene.loadAudio(SFX.EXP_FULL, 'audio/se', 'exp_full', 'ogg');
     this.scene.loadAudio(SFX.JUMP, 'audio/se', 'jump', 'ogg');
+
+    this.scene.loadAudio(BGM.P001, 'audio/bgm', 'p001', 'ogg');
+    this.scene.loadAudio(BGM.P009, 'audio/bgm', 'p009', 'wav');
+    this.scene.loadAudio(BGM.POKEMART, 'audio/bgm', 'pokemart', 'ogg');
   }
 
   private createSprite() {

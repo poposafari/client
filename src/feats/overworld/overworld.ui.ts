@@ -967,8 +967,9 @@ export class OverworldUi extends BaseUi {
 
   private async runReaction(steps: ReactionStep[]): Promise<void> {
     if (steps.length === 0) return;
+
     for (const step of steps) {
-      const text = i18next.t(step.content.text);
+      const text = step.content.text.map((key) => i18next.t(key));
       const config = {
         name: step.content.name,
         speed: step.content.speed,
@@ -1586,7 +1587,7 @@ export class OverworldUi extends BaseUi {
     this.hud.show();
     this.syncRunningToggleIcon();
 
-    if (this.mapConfig) {
+    if (this.mapConfig && this.mapConfig.showLocationBanner !== false) {
       const area = this.scene.getMasterData().getMapArea(this.mapConfig.key);
       this.hud.showLocationBanner(area, this.mapConfig.key);
     }
