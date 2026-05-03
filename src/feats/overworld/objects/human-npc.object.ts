@@ -3,6 +3,7 @@ import { GameScene } from '@poposafari/scenes';
 import { DIRECTION } from '../overworld.constants';
 import { MovingNpcObject } from './moving-npc.object';
 import type { IOverworldBlockingRef, IOverworldMapAdapter } from './movable.object';
+import { TEXTURE } from '@poposafari/types';
 
 const HUMAN_NPC_SCALE = 1.5;
 // 0~3=DOWN, 4~7=LEFT, 8~11=RIGHT, 12~15=UP
@@ -23,6 +24,11 @@ export class HumanNpcObject extends MovingNpcObject {
       path: config.path,
       scale: HUMAN_NPC_SCALE,
     });
+
+    if (config.key === TEXTURE.BLANK) {
+      this.shadow.setVisible(false);
+    }
+
     this.reactionSteps = config.reaction ?? [];
     this.stopFrameNumbers = HUMAN_STOP_FRAMES;
     this.lookAt(config.direction);

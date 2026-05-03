@@ -31,4 +31,8 @@ export const enum SFX {
   JUMP = 'jump',
 }
 
-export const enum BGM {}
+export const enum BGM {
+  P001 = 'p001',
+  P009 = 'p009',
+  POKEMART = 'pokemart',
+}

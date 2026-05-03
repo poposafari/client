@@ -137,7 +137,7 @@ export class MovingNpcObject extends MovableObject {
         }
         if (this.scene.time.now - this.waitStartMs < step.delayMs) return;
         this.currentStepDirection = step.direction;
-        this.currentStepTilesRemaining = Math.max(1, Math.floor(step.tiles));
+        this.currentStepTilesRemaining = Math.max(0, Math.floor(step.tiles));
         this.onBeforeStepStart(step.direction);
         this.facingStartMs = this.scene.time.now;
         this.pathState = 'facing';
@@ -145,6 +145,11 @@ export class MovingNpcObject extends MovableObject {
       }
       case 'facing': {
         if (this.scene.time.now - this.facingStartMs < FACE_CHANGE_DELAY_MS) return;
+        if (this.currentStepTilesRemaining <= 0) {
+          this.pathIndex = (this.pathIndex + 1) % this.path.length;
+          this.pathState = 'idle';
+          return;
+        }
         this.tryPushNextTile();
         return;
       }

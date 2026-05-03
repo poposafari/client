@@ -1,9 +1,10 @@
 import { MapConfig } from '@poposafari/core/map.registry';
-import { DEPTH, TILE } from '@poposafari/types';
+import { BGM, DEPTH, TILE } from '@poposafari/types';
 import { DOOR, INIT_POS } from './door';
 
 export const s000Config: MapConfig = {
   key: 's000',
+  bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'field', water: 'water' },
   type: 'safari',
@@ -54,8 +55,9 @@ export const s000Config: MapConfig = {
 
 export const s001Config: MapConfig = {
   key: 's001',
+  bgm: BGM.P001,
   isIndoor: false,
-  area: { land: 'field', water: 'water' },
+  area: { land: 'forest', water: 'water' },
   type: 'safari',
   dayNightFilter: true,
   allowRide: true,
@@ -104,8 +106,9 @@ export const s001Config: MapConfig = {
 
 export const s002Config: MapConfig = {
   key: 's002',
+  bgm: BGM.P001,
   isIndoor: false,
-  area: { land: 'field', water: 'water' },
+  area: { land: 'forest', water: 'water' },
   type: 'safari',
   dayNightFilter: true,
   allowRide: true,
@@ -156,6 +159,7 @@ export const s002Config: MapConfig = {
 
 export const s003Config: MapConfig = {
   key: 's003',
+  bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'field', water: 'water' },
   type: 'safari',

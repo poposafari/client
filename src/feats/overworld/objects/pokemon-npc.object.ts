@@ -11,7 +11,7 @@ const POKEMON_NPC_SCALE = 1.4;
 export class PokemonNpcObject extends MovingNpcObject {
   private readonly pokedexId: string;
   private readonly frameBase: string;
-  private readonly reactionSteps: ReactionStep[];
+  private cryActive = false;
 
   constructor(
     scene: GameScene,
@@ -35,7 +35,6 @@ export class PokemonNpcObject extends MovingNpcObject {
 
     this.pokedexId = config.pokedexId;
     this.frameBase = frame;
-    this.reactionSteps = config.reaction ?? [];
     // path 유무와 관계없이 walk anim을 무한 재생 — 경로 없으면 제자리 애니, 경로 있으면 step 사이에도 anim 유지.
     this.lookAt(config.direction);
   }
@@ -44,10 +43,6 @@ export class PokemonNpcObject extends MovingNpcObject {
     return `pokemon.overworld.${this.frameBase}.${direction}`;
   }
 
-  /**
-   * step 시작 시 호출. 정적으로 face를 잡지 않고 walk anim을 그대로 재생해두어,
-   * 차단(blocked) 상태로 넘어가도 anim이 멈추지 않고 계속 돌아가게 한다.
-   */
   protected override onBeforeStepStart(direction: DIRECTION): void {
     this.lastDirection = direction;
     const animKey = this.getWalkAnimationKey(direction);
@@ -64,14 +59,21 @@ export class PokemonNpcObject extends MovingNpcObject {
   override reaction(direction: DIRECTION): ReactionStep[] {
     this.lookAt(this.oppositeDirection(direction));
     this.playCry();
-    return this.reactionSteps;
+    return [];
   }
 
   private playCry(): void {
+    if (this.cryActive) return;
     const cryKey = pokemonCryNames.includes(this.pokedexId)
       ? this.pokedexId
       : this.pokedexId.split('_')[0];
     if (!pokemonCryNames.includes(cryKey)) return;
-    this.scene.getAudio().playEffect(cryKey);
+    this.cryActive = true;
+    void this.scene
+      .getAudio()
+      .playEffectAwaitable(cryKey)
+      .finally(() => {
+        this.cryActive = false;
+      });
   }
 }
