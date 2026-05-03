@@ -16,6 +16,7 @@ import {
 import { addContainer, addImage, addText } from '@poposafari/utils';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from 'i18next';
+import { HudTooltipManager } from './hud-tooltip.manager';
 import {
   equippedCostumesToParts,
   getDefaultOverworldKeys,
@@ -56,6 +57,23 @@ const SNOW_LAND_WEATHER_OVERRIDES: Record<string, TEXTURE> = {
 const SAND_LAND_WEATHER_OVERRIDES: Record<string, TEXTURE> = {
   rainy: TEXTURE.ICON_SANDWIND,
   stormy: TEXTURE.ICON_SANDSTORM,
+};
+
+const SNOW_LAND_WEATHER_LABEL: Record<string, string> = {
+  rainy: 'snowy',
+  stormy: 'blizzard',
+};
+
+const SAND_LAND_WEATHER_LABEL: Record<string, string> = {
+  rainy: 'sandwind',
+  stormy: 'sandstorm',
+};
+
+const TIME_LABEL_KEY: Record<string, string> = {
+  dawn: 'etc:timeDawn',
+  day: 'etc:timeDay',
+  dusk: 'etc:timeDusk',
+  night: 'etc:timeNight',
 };
 
 const FOGGY_TINT_BY_LAND = {
@@ -130,6 +148,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private locationBanner: GContainer | null = null;
   private locationBannerTween: Phaser.Tweens.Tween | null = null;
 
+  private tooltipManager!: HudTooltipManager;
+
   constructor(scene: GameScene) {
     const { width, height } = scene.cameras.main;
     super(scene, width / 2, height / 2);
@@ -163,6 +183,9 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.profileContainer,
     ]);
 
+    this.tooltipManager = new HudTooltipManager(this.scene, this);
+    this.registerTooltips();
+
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.scene.events.on(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
     this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
@@ -186,6 +209,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.timeTickEvent?.remove(false);
       this.timeTickEvent = null;
       this.clearLocationBanner();
+      this.tooltipManager?.destroy();
     });
 
     this.updateTime(DayNightFilter.getCurrentTimeLabel());
@@ -240,6 +264,48 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private onProfileChanged = (): void => {
     this.refreshProfile();
   };
+
+  private getTimeTooltipText(): string {
+    const phase = this.scene.getGameTimeState()?.phase ?? DayNightFilter.getCurrentTimeLabel();
+    const key = TIME_LABEL_KEY[phase] ?? TIME_LABEL_KEY.day;
+    return i18next.t(key);
+  }
+
+  private getWeatherTooltipText(): string {
+    const state = this.scene.getWeatherState();
+    const weather = state?.weather;
+    if (!weather) return i18next.t('etc:weather_sunny');
+
+    const land = state?.mapId
+      ? this.scene.getMapRegistry().get(state.mapId)?.area?.land
+      : undefined;
+
+    let label = weather;
+    if (land === 'snow') {
+      label = SNOW_LAND_WEATHER_LABEL[weather] ?? weather;
+    } else if (land === 'desert' || land === 'sand') {
+      label = SAND_LAND_WEATHER_LABEL[weather] ?? weather;
+    }
+    return i18next.t(`etc:weather_${label}`);
+  }
+
+  private registerTooltips(): void {
+    const TOGGLE_TOOLTIP_KEYS = ['etc:tooltip_register', 'etc:tooltip_running', 'etc:tooltip_menu'];
+    this.toggleIcons.forEach((icon, i) => {
+      const key = TOGGLE_TOOLTIP_KEYS[i];
+      if (key) this.tooltipManager.register(icon, key);
+    });
+
+    if (this.timeIcon) this.tooltipManager.register(this.timeIcon, () => this.getTimeTooltipText());
+    if (this.weatherIcon)
+      this.tooltipManager.register(this.weatherIcon, () => this.getWeatherTooltipText());
+
+    const locationRow = this.infoList?.getRow('location');
+    if (locationRow) this.tooltipManager.register(locationRow.image, 'etc:tooltip_location');
+
+    const moneyRow = this.infoList?.getRow('money');
+    if (moneyRow) this.tooltipManager.register(moneyRow.image, 'etc:tooltip_money');
+  }
 
   private createToggleIcon() {
     this.toggleIconContainer = addContainer(this.scene, 0, 0);

@@ -17,7 +17,8 @@ export const etc: TranslationEtc = {
     'このゲームは ポケットモンスターシリーズに とうじょうする\nサファリゾーンを ちゅうしんに かいはつされた ポケモンファンゲームです。',
   welcome_2:
     'このゲームは しゅうえきを えておらず Pokémonおよび つかわれた\nリソースの しょゆうけんを しゅちょうしません。',
-  welcome_3: 'まだ かいはつちゅうですが プレイすることが できます。\nたのしんで プレイしてください！',
+  welcome_3:
+    'まだ かいはつちゅうですが プレイすることが できます。\nたのしんで プレイしてください！',
   createAvatar_intro: 'あなたの アバターを つくってください',
   createAvatar: 'アバターさくせい',
   enterYourNickname: 'ニックネームを にゅうりょく',
@@ -66,16 +67,36 @@ export const etc: TranslationEtc = {
   s000_welcome_1: 'ここは あなたの はじめての ポケモンを\nえらぶための とくべつな サファリです。',
   s000_welcome_2: 'つかまえたい ポケモンに ちかづいて\nZまたは ENTERキーを おしてみてください！',
   s000_battle_intro_0: 'やせいの ポケモンと であった！',
-  s000_battle_intro_1: 'ここは チュートリアルなので\nそれぞれの こうどうを かんたんに せつめいします。',
-  s000_tutorial_ball_0: 'まず 「つかまえる」は サファリボールを なげて\nポケモンを ほかくする こうどうです。',
-  s000_tutorial_ball_1: 'サファリでは ふつうの バトルではなく\nサファリボールだけで ポケモンを つかまえます。',
+  s000_battle_intro_1:
+    'ここは チュートリアルなので\nそれぞれの こうどうを かんたんに せつめいします。',
+  s000_tutorial_ball_0:
+    'まず 「つかまえる」は サファリボールを なげて\nポケモンを ほかくする こうどうです。',
+  s000_tutorial_ball_1:
+    'サファリでは ふつうの バトルではなく\nサファリボールだけで ポケモンを つかまえます。',
   s000_tutorial_feed_0: '「エサ」は ポケモンに エサを なげて\nにげる かくりつを さげるかわりに、',
-  s000_tutorial_feed_1: 'ほかく かくりつも いっしょに さがります。\nしんちょうに つかってください。',
+  s000_tutorial_feed_1:
+    'ほかく かくりつも いっしょに さがります。\nしんちょうに つかってください。',
   s000_tutorial_mud_0: '「どろ」は ポケモンに どろを なげて\nほかく かくりつを あげますが、',
   s000_tutorial_mud_1: 'ポケモンが おこって\nにげる かくりつも いっしょに あがります。',
   s000_tutorial_run_0: '「にげる」は バトルを あきらめて\nあんぜんに ぬけだす こうどうです。',
-  s000_tutorial_run_1: 'ただし こんかいの チュートリアルでは\nかならず いっぴき つかまえなければ なりません！',
+  s000_tutorial_run_1:
+    'ただし こんかいの チュートリアルでは\nかならず いっぴき つかまえなければ なりません！',
   deleteAccount_0: 'すべての データを\nさくじょしますか？',
   deleteAccount_1: 'ふっきゅうは できません。\nそれでも よろしいですか？',
   deleteAccount_2: 'ほんとうに？\nそれでも さくじょしますか？',
+  tooltip_register: 'とうろくアイテム(A)',
+  tooltip_running: 'はしる(R)',
+  tooltip_menu: 'メニュー(S)',
+  tooltip_time: 'ゲームない じかん',
+  tooltip_weather: 'てんき',
+  tooltip_location: 'いまの ばしょ',
+  tooltip_money: 'しょじきん',
+  weather_sunny: 'はれ',
+  weather_rainy: 'あめ',
+  weather_stormy: 'あらし',
+  weather_foggy: 'きり',
+  weather_snowy: 'ゆき',
+  weather_blizzard: 'ふぶき',
+  weather_sandwind: 'すなかぜ',
+  weather_sandstorm: 'すなあらし',
 };
