@@ -4,8 +4,8 @@ import { MenuListUi } from '../menu/menu-list.ui';
 export class SafariZoneListUi extends MenuListUi {
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), {
-      x: +1550,
-      y: +400,
+      x: +1665,
+      y: +390,
       visibleCount: 6,
       itemHeight: 0,
       showCancel: true,

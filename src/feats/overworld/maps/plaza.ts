@@ -231,24 +231,6 @@ export const p001Config: MapConfig = {
       path: [],
       reaction: [{ key: 'talk', content: { text: ['msg:npc1_0', 'msg:npc1_1'], name: 'NPC' } }],
     },
-    // ── [TEST] 이동 NPC: 포켓몬 ───────────
-    {
-      key: 'pikachu_npc',
-      name: 'wild_pikachu',
-      x: 36,
-      y: 20,
-      direction: DIRECTION.DOWN,
-      type: 'pokemon',
-      pokedexId: '0025',
-      isShiny: false,
-      path: [
-        { direction: DIRECTION.RIGHT, tiles: 1, delayMs: 600 },
-        { direction: DIRECTION.DOWN, tiles: 1, delayMs: 600 },
-        { direction: DIRECTION.LEFT, tiles: 1, delayMs: 600 },
-        { direction: DIRECTION.UP, tiles: 1, delayMs: 600 },
-      ],
-      reaction: [{ key: 'talk', content: { text: ['msg:npc1_0', 'msg:npc1_1'], name: 'NPC' } }],
-    },
   ],
 };
 

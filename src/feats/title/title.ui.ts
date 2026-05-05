@@ -174,7 +174,6 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
 
   createTopLayout() {
     const splashBundle = i18next.getResourceBundle(i18next.resolvedLanguage || 'en', 'splash');
-    console.log(splashBundle);
     const { text: splashContent, fontSize: splashFontSize } = getRandomSplash(splashBundle);
 
     this.topContainer = addContainer(this.scene, DEPTH.DEFAULT);

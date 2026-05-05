@@ -1883,12 +1883,11 @@ export class OverworldUi extends BaseUi {
       moveType,
     };
 
-    // [MOVE-DEBUG] 클라이언트 좌표 + emit 횟수 로그
     this.moveEmitCount++;
     const pos = this.player?.getTilePos();
-    console.log(
-      `[MOVE-DEBUG] #${this.moveEmitCount} emit dir=${dir} type=${moveType} clientPos=(${pos?.x},${pos?.y})`,
-    );
+    // console.log(
+    //   `[MOVE-DEBUG] #${this.moveEmitCount} emit dir=${dir} type=${moveType} clientPos=(${pos?.x},${pos?.y})`,
+    // );
 
     this.scene.markActivity();
     socket.emit('move', payload);
