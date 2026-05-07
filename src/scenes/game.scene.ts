@@ -1,5 +1,6 @@
 import type { Socket } from 'socket.io-client';
 import {
+  ApiLoadingIndicatorUi,
   ApiManager,
   AudioManager,
   IGamePhase,
@@ -97,9 +98,11 @@ export class GameScene extends BaseScene {
   private pocketTalkUi!: PocketTalkMessageUi;
   private noticeUi!: NoticeMessageUi;
   private questionUi!: QuestionMessageUi;
+  private apiLoadingIndicator!: ApiLoadingIndicatorUi;
 
   private fadeInOnNextOverworldEnter = false;
   private pendingScreenFadeIn = false;
+  private mapTransitionInProgress = false;
 
   private socket: Socket | null = null;
 
@@ -287,6 +290,10 @@ export class GameScene extends BaseScene {
     this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
     this.api.setOnSessionInvalid(() => this.handleSessionInvalid());
     this.api.setOnMaintenance(() => this.handleMaintenance());
+
+    this.apiLoadingIndicator = new ApiLoadingIndicatorUi(this);
+    this.api.setOnRequestStart(() => this.apiLoadingIndicator.start());
+    this.api.setOnRequestEnd(() => this.apiLoadingIndicator.end());
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
     this.masterData = new MasterData();
@@ -570,6 +577,8 @@ export class GameScene extends BaseScene {
   }
 
   startMapTransitionWithFade(initPosConfig: InitPosConfig, fadeMs = 300): void {
+    if (this.mapTransitionInProgress) return;
+    this.mapTransitionInProgress = true;
     const pipeline = this.getFadeToBlackPipeline();
     if (!pipeline) {
       this.requestMapTransition(initPosConfig);
@@ -590,12 +599,16 @@ export class GameScene extends BaseScene {
 
   requestMapTransition(initPosConfig: InitPosConfig): void {
     const user = this.getUser();
-    if (!user) return;
+    if (!user) {
+      this.mapTransitionInProgress = false;
+      return;
+    }
     user.getProfile().lastLocation = {
       map: initPosConfig.location,
       x: initPosConfig.x,
       y: initPosConfig.y,
     };
+    this.mapTransitionInProgress = false;
     this.switchPhase(new OverworldEntryPhase(this, initPosConfig));
   }
 }

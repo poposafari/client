@@ -55,6 +55,8 @@ export class ApiManager {
   private client: AxiosInstance;
   private onSessionInvalid: (() => void) | null = null;
   private onMaintenance: (() => void) | null = null;
+  private onRequestStart: (() => void) | null = null;
+  private onRequestEnd: (() => void) | null = null;
   private static readonly TIMEOUT = 10000;
 
   constructor(private baseUrl: string = 'http://localhost:9000/api') {
@@ -78,10 +80,33 @@ export class ApiManager {
     this.onMaintenance = handler;
   }
 
+  setOnRequestStart(handler: (() => void) | null) {
+    this.onRequestStart = handler;
+  }
+
+  setOnRequestEnd(handler: (() => void) | null) {
+    this.onRequestEnd = handler;
+  }
+
   private setupInterceptors() {
+    this.client.interceptors.request.use(
+      (config) => {
+        this.onRequestStart?.();
+        return config;
+      },
+      (error) => {
+        this.onRequestEnd?.();
+        return Promise.reject(error);
+      },
+    );
+
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        this.onRequestEnd?.();
+        return response;
+      },
       (error: AxiosError<ApiFailBody>) => {
+        this.onRequestEnd?.();
         if (error.response?.status === 503 && this.onMaintenance) {
           this.onMaintenance();
         }

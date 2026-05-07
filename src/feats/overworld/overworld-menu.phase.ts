@@ -1,4 +1,4 @@
-import { IGamePhase } from '@poposafari/core';
+import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { OverworldMenuUi } from './overworld-menu.ui';
 import { OptionPhase } from '../option';
@@ -21,6 +21,7 @@ export class OverworldMenuPhase implements IGamePhase {
   private ui!: OverworldMenuUi;
   private yesOrNoMenu!: BackTitleMenuUi;
   private confirmMenu: MenuUi | null = null;
+  private blocker: ApiBlockingUi | null = null;
 
   private savedCursorIndex: number | undefined = undefined;
 
@@ -41,6 +42,7 @@ export class OverworldMenuPhase implements IGamePhase {
       y: +800,
       itemHeight: 80,
     });
+    this.blocker = new ApiBlockingUi(this.scene);
     await this.runMenuOnce();
   }
 
@@ -96,24 +98,28 @@ export class OverworldMenuPhase implements IGamePhase {
       const choice = ret?.key ?? 'no';
 
       if (choice === 'yes') {
+        this.blocker!.blockInput();
+        let exitData;
         try {
-          const exitData = await this.scene.getApi().exitSafari();
-          if (!exitData) {
-            await this.runMenuOnce();
-            return;
-          }
-          this.scene.clearSafariInfo();
-          const initPos: InitPosConfig = {
-            location: exitData.mapId as MAP,
-            x: exitData.entry.x,
-            y: exitData.entry.y,
-          };
-          this.scene.startMapTransitionWithFade(initPos);
-          return;
+          exitData = await this.scene.getApi().exitSafari();
         } catch {
+          this.blocker!.unblockInput();
           await this.runMenuOnce();
           return;
         }
+        this.blocker!.unblockInput();
+        if (!exitData) {
+          await this.runMenuOnce();
+          return;
+        }
+        this.scene.clearSafariInfo();
+        const initPos: InitPosConfig = {
+          location: exitData.mapId as MAP,
+          x: exitData.entry.x,
+          y: exitData.entry.y,
+        };
+        this.scene.startMapTransitionWithFade(initPos);
+        return;
       }
       await this.runMenuOnce();
       return;
@@ -129,6 +135,8 @@ export class OverworldMenuPhase implements IGamePhase {
       this.confirmMenu.hide();
       this.confirmMenu.destroy();
     }
+    this.blocker?.destroy();
+    this.blocker = null;
   }
 
   update?(time: number, delta: number): void {}

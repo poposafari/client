@@ -170,16 +170,26 @@ export class OverworldPhase implements IGamePhase {
       );
     }
 
-    if (this.scene.consumeFadeInOnOverworldEnter()) {
+    {
+      const shouldFadeIn = this.scene.consumeFadeInOnOverworldEnter();
       const pipeline = this.scene.getFadeToBlackPipeline();
       if (pipeline) {
-        pipeline.setProgress(1);
-        this.scene.tweens.add({
-          targets: pipeline,
-          progress: 0,
-          duration: 300,
-          ease: 'Linear',
-        });
+        if (shouldFadeIn) {
+          pipeline.setProgress(1);
+          this.scene.tweens.add({
+            targets: pipeline,
+            progress: 0,
+            duration: 300,
+            ease: 'Linear',
+          });
+        } else if (pipeline.progress > 0.01) {
+          this.scene.tweens.add({
+            targets: pipeline,
+            progress: 0,
+            duration: 300,
+            ease: 'Linear',
+          });
+        }
       }
     }
 

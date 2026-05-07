@@ -178,6 +178,7 @@ export class OverworldUi extends BaseUi {
   private wildEncounterPending = false;
   private petTalkPending = false;
   private surfPromptPending = false;
+  private talkActionPending = false;
 
   private nextJumpEndGoesToSurf = false;
   private baseSurfSprite: Phaser.GameObjects.Sprite | null = null;
@@ -310,6 +311,7 @@ export class OverworldUi extends BaseUi {
     if (this.wildEncounterPending) return;
     if (this.petTalkPending) return;
     if (this.surfPromptPending) return;
+    if (this.talkActionPending) return;
     const user = this.scene.getUser();
     const state = user?.getOverworldMovementState();
     if (state === OverworldMovementState.JUMP) {
@@ -351,46 +353,52 @@ export class OverworldUi extends BaseUi {
   }
 
   private async handleTalkAction(): Promise<void> {
+    if (this.talkActionPending) return;
     if (!this.player || !this.player.isMovementFinish()) return;
-    const obj = this.getFacingInteractiveObject();
-    if (!obj) {
-      if (this.isFacingPet()) {
-        void this.handlePetTalk();
-        return;
-      }
-      const wild = this.getFacingWildPokemon();
-      if (wild && wild.isCatchable() && !wild.isInteractionLocked()) {
-        void this.handleWildTalk(wild);
-        return;
-      }
-      if (this.isFacingSurfTile()) {
-        void this.handleSurfRequest();
-        return;
-      }
-      return;
-    }
-    if (obj instanceof GroundItemObject) {
-      void this.handleGroundItemPick(obj);
-      return;
-    }
-
-    const movingNpc = obj instanceof MovingNpcObject ? obj : null;
-    if (movingNpc) {
-      movingNpc.pauseMovement();
-      await this.waitForMovingNpcIdle(movingNpc);
-    }
-    const steps = obj.reaction(this.player.getLastDirection());
-    if (obj instanceof InteractiveObject) {
-      const phaseKey = obj.getPhaseRequest?.() ?? null;
-      if (phaseKey) {
-        this.onInteractivePhaseRequested?.(obj, phaseKey);
-        return;
-      }
-    }
+    this.talkActionPending = true;
     try {
-      await this.runReaction(steps);
+      const obj = this.getFacingInteractiveObject();
+      if (!obj) {
+        if (this.isFacingPet()) {
+          await this.handlePetTalk();
+          return;
+        }
+        const wild = this.getFacingWildPokemon();
+        if (wild && wild.isCatchable() && !wild.isInteractionLocked()) {
+          await this.handleWildTalk(wild);
+          return;
+        }
+        if (this.isFacingSurfTile()) {
+          await this.handleSurfRequest();
+          return;
+        }
+        return;
+      }
+      if (obj instanceof GroundItemObject) {
+        await this.handleGroundItemPick(obj);
+        return;
+      }
+
+      const movingNpc = obj instanceof MovingNpcObject ? obj : null;
+      if (movingNpc) {
+        movingNpc.pauseMovement();
+        await this.waitForMovingNpcIdle(movingNpc);
+      }
+      const steps = obj.reaction(this.player.getLastDirection());
+      if (obj instanceof InteractiveObject) {
+        const phaseKey = obj.getPhaseRequest?.() ?? null;
+        if (phaseKey) {
+          this.onInteractivePhaseRequested?.(obj, phaseKey);
+          return;
+        }
+      }
+      try {
+        await this.runReaction(steps);
+      } finally {
+        movingNpc?.resumeMovement();
+      }
     } finally {
-      movingNpc?.resumeMovement();
+      this.talkActionPending = false;
     }
   }
 
@@ -1613,6 +1621,8 @@ export class OverworldUi extends BaseUi {
     this.doorTransitionPending = false;
     this.wildEncounterPending = false;
     this.petTalkPending = false;
+    this.surfPromptPending = false;
+    this.talkActionPending = false;
     this.scene.cameras.main.setScroll(0, 0);
 
     this.unsubscribeParty?.();

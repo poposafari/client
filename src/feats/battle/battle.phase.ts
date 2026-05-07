@@ -1,4 +1,4 @@
-import type { IGamePhase } from '@poposafari/core';
+import { ApiBlockingUi, type IGamePhase } from '@poposafari/core';
 import { GameEvent, type GameScene } from '@poposafari/scenes/game.scene';
 import { BattleUi } from './battle.ui';
 import type { BattleContext, BattleModifiers, BattleState, CatchResult } from './battle.types';
@@ -11,6 +11,7 @@ import { screenFadeOut } from '@poposafari/utils/screen-fade';
 
 export class BattlePhase implements IGamePhase {
   private readonly ui: BattleUi;
+  private readonly blocker: ApiBlockingUi;
   private state: BattleState = { kind: 'intro' };
   private modifiers: BattleModifiers = { bait: false, rock: false };
   /** 튜토리얼 phase를 첫 idle 진입 시 1회만 push하기 위한 플래그. */
@@ -21,6 +22,7 @@ export class BattlePhase implements IGamePhase {
     private readonly ctx: BattleContext,
   ) {
     this.ui = new BattleUi(scene);
+    this.blocker = new ApiBlockingUi(scene);
   }
 
   private isS000Tutorial(): boolean {
@@ -39,6 +41,7 @@ export class BattlePhase implements IGamePhase {
 
   exit(): void {
     this.ui.hide();
+    this.blocker.destroy();
   }
 
   private async run(): Promise<void> {
@@ -110,6 +113,7 @@ export class BattlePhase implements IGamePhase {
 
         // API 호출을 애니메이션 전에 수행하여 결과에 따라 shake 횟수를 결정한다.
         let outcome: CatchResult;
+        this.blocker.blockInput();
         try {
           const res = await this.scene.getApi().safariCatch({
             uid: this.ctx.wild.uid,
@@ -127,6 +131,8 @@ export class BattlePhase implements IGamePhase {
           outcome = res ? toCatchResult(res) : { kind: 'fail' };
         } catch (e) {
           outcome = { kind: 'fail' };
+        } finally {
+          this.blocker.unblockInput();
         }
 
         const shakeCount = outcome.kind === 'caught' ? 3 : Math.floor(Math.random() * 4);
@@ -255,6 +261,7 @@ export class BattlePhase implements IGamePhase {
     }
 
     let result: 'stay' | 'flee' = 'stay';
+    this.blocker.blockInput();
     try {
       const api = this.scene.getApi();
       const res =
@@ -262,7 +269,10 @@ export class BattlePhase implements IGamePhase {
           ? await api.safariBait({ uid: this.ctx.wild.uid })
           : await api.safariRock({ uid: this.ctx.wild.uid });
       if (res?.result === 'flee') result = 'flee';
-    } catch {}
+    } catch {
+    } finally {
+      this.blocker.unblockInput();
+    }
 
     if (kind === 'bait') {
       await this.ui.showEatingFocusTalk();

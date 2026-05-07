@@ -411,6 +411,10 @@ export class PokemonPcUi extends BaseUi {
     }
   }
 
+  public lockInput(): void {
+    this.inputLocked = true;
+  }
+
   private handlePartyInput(key: string): void {
     switch (key) {
       case KEY.LEFT:

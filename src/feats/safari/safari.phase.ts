@@ -1,4 +1,4 @@
-import { IGamePhase } from '@poposafari/core';
+import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { MenuUi } from '@poposafari/feats/menu/menu-ui';
 import { IMenuItem, MAP } from '@poposafari/types';
@@ -29,6 +29,7 @@ const YES_NO_ITEMS = () => [
 export class SafariPhase implements IGamePhase {
   private zoneListUi: SafariZoneListUi | null = null;
   private menuUi: MenuUi | null = null;
+  private blocker: ApiBlockingUi | null = null;
 
   constructor(private scene: GameScene) {}
 
@@ -42,6 +43,7 @@ export class SafariPhase implements IGamePhase {
       y: +800,
       itemHeight: 70,
     });
+    this.blocker = new ApiBlockingUi(this.scene);
 
     await this.showZoneSelection();
   }
@@ -74,30 +76,34 @@ export class SafariPhase implements IGamePhase {
       const choice = await this.menuUi!.waitForSelect(YES_NO_ITEMS());
 
       if (choice?.key === 'yes') {
+        this.blocker!.blockInput();
+        let result;
         try {
-          const result = await this.scene.getApi().enterSafari(zone.key, true);
-          if (!result) {
-            this.menuUi!.hide();
-            question.hide();
-            continue;
-          }
-
-          this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
-
-          const entry = result.mapInfo.entry;
-          const initPos: InitPosConfig = {
-            location: zone.mapId,
-            x: entry?.x ?? zone.spawnX,
-            y: entry?.y ?? zone.spawnY,
-          };
-          this.scene.startMapTransitionWithFade(initPos);
-          return;
+          result = await this.scene.getApi().enterSafari(zone.key, true);
         } catch (e) {
+          this.blocker!.unblockInput();
           this.menuUi!.hide();
           question.hide();
           await showApiErrorAsTalk(this.scene, e);
           continue;
         }
+        this.blocker!.unblockInput();
+        if (!result) {
+          this.menuUi!.hide();
+          question.hide();
+          continue;
+        }
+
+        this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
+
+        const entry = result.mapInfo.entry;
+        const initPos: InitPosConfig = {
+          location: zone.mapId,
+          x: entry?.x ?? zone.spawnX,
+          y: entry?.y ?? zone.spawnY,
+        };
+        this.scene.startMapTransitionWithFade(initPos);
+        return;
       }
 
       this.menuUi!.hide();
@@ -113,6 +119,8 @@ export class SafariPhase implements IGamePhase {
     this.menuUi?.hide();
     this.menuUi?.destroy();
     this.menuUi = null;
+    this.blocker?.destroy();
+    this.blocker = null;
   }
 
   update?(time: number, delta: number): void {}

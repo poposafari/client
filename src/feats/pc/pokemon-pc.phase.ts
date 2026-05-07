@@ -8,6 +8,7 @@ import type { BoxMetaItem, PokemonBoxItem } from '@poposafari/types/dto';
 export class PokemonPcPhase implements IGamePhase {
   private pokemonPcUi: PokemonPcUi | null = null;
   private pcState: PcLocalState = new PcLocalState();
+  private closing = false;
 
   constructor(private scene: GameScene) {}
 
@@ -38,6 +39,10 @@ export class PokemonPcPhase implements IGamePhase {
   }
 
   private async closePc() {
+    if (this.closing) return;
+    this.closing = true;
+    this.pokemonPcUi?.lockInput();
+
     const changes = this.pcState.getChanges();
     const boxMetaChanges = this.pcState.getBoxMetaChanges();
     const nicknameChanges = this.pcState.getNicknameChanges();
