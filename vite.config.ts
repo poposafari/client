@@ -1,8 +1,25 @@
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import path from 'path';
+import { execSync } from 'node:child_process';
+
+const buildSha = (() => {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.slice(0, 7);
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    return 'unknown';
+  }
+})();
+const buildAt = new Date().toISOString();
 
 export default defineConfig({
+  define: {
+    __BUILD_SHA__: JSON.stringify(buildSha),
+    __BUILD_AT__: JSON.stringify(buildAt),
+  },
   plugins: [
     // 브라우저 화면에 오버레이로 타입 에러를 띄워줌 (개발 편의성 UP)
     checker({ typescript: true }),
