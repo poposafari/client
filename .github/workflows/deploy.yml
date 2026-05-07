@@ -1,0 +1,80 @@
+name: Deploy Client to Lightsail
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build (.env.production 주입)
+        env:
+          VITE_API_BASE_URL: https://api.poposafari.net/api
+          VITE_SOCKET_SERVER_URL: https://socket.poposafari.net
+        run: pnpm build
+
+      - name: Notify Discord (start)
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"content\":\"🎨 클라이언트 배포 시작 SHA \`${{ steps.meta.outputs.sha }}\`\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.LIGHTSAIL_SSH_KEY }}" > ~/.ssh/lightsail.pem
+          chmod 600 ~/.ssh/lightsail.pem
+          ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Rsync to staging dir
+        run: |
+          # 1) 임시 디렉토리(.new)에 먼저 업로드 — 라이브 디렉토리 영향 0
+          ssh -i ~/.ssh/lightsail.pem ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} \
+            'sudo rm -rf /var/www/poposafari.new && \
+             sudo mkdir -p /var/www/poposafari.new && \
+             sudo chown ubuntu:ubuntu /var/www/poposafari.new'
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/lightsail.pem" \
+            dist/ \
+            ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/var/www/poposafari.new/
+
+      - name: Atomic swap + 이전 버전 보존
+        run: |
+          # 2) 라이브 → .old, .new → 라이브 (mv는 same-fs rename이라 inode 단위 atomic)
+          ssh -i ~/.ssh/lightsail.pem ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} \
+            'sudo rm -rf /var/www/poposafari.old && \
+             sudo mv /var/www/poposafari /var/www/poposafari.old && \
+             sudo mv /var/www/poposafari.new /var/www/poposafari'
+
+      - name: Notify Discord (success)
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"content\":\"✅ 클라이언트 배포 완료 SHA \`${{ steps.meta.outputs.sha }}\`\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+
+      - name: Notify Discord (failure)
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"content\":\"❌ 클라이언트 배포 실패 — 즉시 확인 필요 (@here)\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
