@@ -65,6 +65,13 @@ jobs:
              sudo mv /var/www/poposafari /var/www/poposafari.old && \
              sudo mv /var/www/poposafari.new /var/www/poposafari'
 
+      - name: Nginx restart (bind mount inode 재바인딩)
+        run: |
+          # docker bind mount는 mount 시점의 inode를 잡아 dir mv 후에도 옛 inode를 따라간다.
+          # restart로 컨테이너가 새 디렉토리 inode를 다시 잡게 한다 (1~2초 다운타임).
+          ssh -i ~/.ssh/lightsail.pem ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} \
+            'cd ~/poposafari/server/docker/prod && docker compose restart nginx'
+
       - name: Notify Discord (success)
         if: success()
         run: |
