@@ -99,4 +99,7 @@ export const etc: TranslationEtc = {
   weather_blizzard: 'ふぶき',
   weather_sandwind: 'すなかぜ',
   weather_sandstorm: 'すなあらし',
+  maintenance_title: '🛠️ メンテナンスちゅう',
+  maintenance_desc: 'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
+  maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
 };

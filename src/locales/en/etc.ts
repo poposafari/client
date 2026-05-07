@@ -94,4 +94,7 @@ export const etc: TranslationEtc = {
   weather_blizzard: 'Blizzard',
   weather_sandwind: 'Sandwind',
   weather_sandstorm: 'Sandstorm',
+  maintenance_title: '🛠️ Under Maintenance',
+  maintenance_desc: "We're sorry for the inconvenience.\nWe'll be back as soon as the maintenance is complete.",
+  maintenance_refresh_hint: 'Please refresh (F5) once maintenance is over',
 };

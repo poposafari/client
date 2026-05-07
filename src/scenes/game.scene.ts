@@ -21,6 +21,7 @@ import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
 import { CountdownPhase } from '@poposafari/feats/countdown';
+import { MaintenancePhase } from '@poposafari/feats/maintenance';
 import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
 import { DIRECTION } from '@poposafari/feats/overworld/overworld.constants';
 import { BaseScene } from '@poposafari/scenes';
@@ -119,10 +120,21 @@ export class GameScene extends BaseScene {
     duration: number;
   } | null = null;
 
-  private onSocketKicked = async (): Promise<void> => {
+  private onSocketKicked = async (payload?: {
+    reason?: string;
+    message?: string;
+  }): Promise<void> => {
     if (!this.socket) return;
     this.socket.off('kicked', this.onSocketKicked);
     this.socket = null;
+
+    if (payload?.reason === 'MAINTENANCE') {
+      const top = this.getCurrentPhase();
+      if (top instanceof MaintenancePhase) return;
+      this.switchPhase(new MaintenancePhase(this));
+      return;
+    }
+
     try {
       await this.getApi().invalidateSession();
     } catch {}
@@ -140,6 +152,17 @@ export class GameScene extends BaseScene {
     }
     this.clearUser();
     this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:SESSION_EXPIRED' }));
+  };
+
+  private handleMaintenance = (): void => {
+    const top = this.getCurrentPhase();
+    if (top instanceof MaintenancePhase) return;
+
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+    this.switchPhase(new MaintenancePhase(this));
   };
 
   private onSocketDisconnect = (reason: string): void => {
@@ -263,6 +286,7 @@ export class GameScene extends BaseScene {
     this.input.on('pointerdown', () => this.markActivity());
     this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
     this.api.setOnSessionInvalid(() => this.handleSessionInvalid());
+    this.api.setOnMaintenance(() => this.handleMaintenance());
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
     this.masterData = new MasterData();

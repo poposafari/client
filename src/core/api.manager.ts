@@ -54,6 +54,7 @@ export type ApiResponse<T> =
 export class ApiManager {
   private client: AxiosInstance;
   private onSessionInvalid: (() => void) | null = null;
+  private onMaintenance: (() => void) | null = null;
   private static readonly TIMEOUT = 10000;
 
   constructor(private baseUrl: string = 'http://localhost:9000/api') {
@@ -73,10 +74,17 @@ export class ApiManager {
     this.onSessionInvalid = handler;
   }
 
+  setOnMaintenance(handler: (() => void) | null) {
+    this.onMaintenance = handler;
+  }
+
   private setupInterceptors() {
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError<ApiFailBody>) => {
+        if (error.response?.status === 503 && this.onMaintenance) {
+          this.onMaintenance();
+        }
         const code = error.response?.data?.code;
         if (code === ErrorCode.SESSION_EXPIRED && this.onSessionInvalid) {
           this.onSessionInvalid();
