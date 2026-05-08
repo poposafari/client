@@ -74,31 +74,34 @@ export class SafariPhase implements IGamePhase {
       const choice = await this.menuUi!.waitForSelect(YES_NO_ITEMS());
 
       if (choice?.key === 'yes') {
-        let result;
-        try {
-          result = await this.scene.getApi().enterSafari(zone.key, true);
-        } catch (e) {
-          this.menuUi!.hide();
-          question.hide();
-          await showApiErrorAsTalk(this.scene, e);
-          continue;
-        }
-        if (!result) {
-          this.menuUi!.hide();
-          question.hide();
-          continue;
-        }
+        this.menuUi!.hide();
+        question.hide();
 
-        this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
+        let pendingError: unknown = null;
+        const ok = await this.scene.startMapTransitionWithFade(async () => {
+          let result;
+          try {
+            result = await this.scene.getApi().enterSafari(zone.key, true);
+          } catch (e) {
+            pendingError = e;
+            return null;
+          }
+          if (!result) return null;
 
-        const entry = result.mapInfo.entry;
-        const initPos: InitPosConfig = {
-          location: zone.mapId,
-          x: entry?.x ?? zone.spawnX,
-          y: entry?.y ?? zone.spawnY,
-        };
-        this.scene.startMapTransitionWithFade(initPos);
-        return;
+          this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
+
+          const entry = result.mapInfo.entry;
+          const initPos: InitPosConfig = {
+            location: zone.mapId,
+            x: entry?.x ?? zone.spawnX,
+            y: entry?.y ?? zone.spawnY,
+          };
+          return initPos;
+        });
+
+        if (ok) return;
+        if (pendingError) await showApiErrorAsTalk(this.scene, pendingError);
+        continue;
       }
 
       this.menuUi!.hide();

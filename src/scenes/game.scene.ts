@@ -577,25 +577,57 @@ export class GameScene extends BaseScene {
     return v;
   }
 
-  startMapTransitionWithFade(initPosConfig: InitPosConfig, fadeMs = 300): void {
-    if (this.mapTransitionInProgress) return;
+  async startMapTransitionWithFade(
+    initPosOrFactory: InitPosConfig | (() => Promise<InitPosConfig | null>),
+    fadeMs = 300,
+  ): Promise<boolean> {
+    if (this.mapTransitionInProgress) return false;
     this.mapTransitionInProgress = true;
+
     const pipeline = this.getFadeToBlackPipeline();
-    if (!pipeline) {
-      this.requestMapTransition(initPosConfig);
-      return;
+    if (pipeline) {
+      pipeline.setProgress(0);
+      await new Promise<void>((resolve) => {
+        this.tweens.add({
+          targets: pipeline,
+          progress: 1,
+          duration: fadeMs,
+          ease: 'Linear',
+          onComplete: () => resolve(),
+        });
+      });
     }
-    pipeline.setProgress(0);
-    this.tweens.add({
-      targets: pipeline,
-      progress: 1,
-      duration: fadeMs,
-      ease: 'Linear',
-      onComplete: () => {
-        this.fadeInOnNextOverworldEnter = true;
-        this.requestMapTransition(initPosConfig);
-      },
-    });
+
+    let cfg: InitPosConfig | null;
+    if (typeof initPosOrFactory === 'function') {
+      try {
+        cfg = await initPosOrFactory();
+      } catch {
+        cfg = null;
+      }
+    } else {
+      cfg = initPosOrFactory;
+    }
+
+    if (!cfg) {
+      if (pipeline) {
+        await new Promise<void>((resolve) => {
+          this.tweens.add({
+            targets: pipeline,
+            progress: 0,
+            duration: fadeMs,
+            ease: 'Linear',
+            onComplete: () => resolve(),
+          });
+        });
+      }
+      this.mapTransitionInProgress = false;
+      return false;
+    }
+
+    this.fadeInOnNextOverworldEnter = true;
+    this.requestMapTransition(cfg);
+    return true;
   }
 
   requestMapTransition(initPosConfig: InitPosConfig): void {

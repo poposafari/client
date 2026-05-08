@@ -1,5 +1,5 @@
 import { InputManager } from '@poposafari/core';
-import { KEY, TEXTURE } from '@poposafari/types';
+import { EASE, KEY, TEXTURE } from '@poposafari/types';
 import { MessageConfig, MessageUi } from './message.ui';
 import { GameScene } from '@poposafari/scenes';
 

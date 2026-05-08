@@ -96,24 +96,24 @@ export class OverworldMenuPhase implements IGamePhase {
       const choice = ret?.key ?? 'no';
 
       if (choice === 'yes') {
-        let exitData;
-        try {
-          exitData = await this.scene.getApi().exitSafari();
-        } catch {
-          await this.runMenuOnce();
-          return;
-        }
-        if (!exitData) {
-          await this.runMenuOnce();
-          return;
-        }
-        this.scene.clearSafariInfo();
-        const initPos: InitPosConfig = {
-          location: exitData.mapId as MAP,
-          x: exitData.entry.x,
-          y: exitData.entry.y,
-        };
-        this.scene.startMapTransitionWithFade(initPos);
+        const ok = await this.scene.startMapTransitionWithFade(async () => {
+          let exitData;
+          try {
+            exitData = await this.scene.getApi().exitSafari();
+          } catch {
+            return null;
+          }
+          if (!exitData) return null;
+          this.scene.clearSafariInfo();
+          const initPos: InitPosConfig = {
+            location: exitData.mapId as MAP,
+            x: exitData.entry.x,
+            y: exitData.entry.y,
+          };
+          return initPos;
+        });
+        if (ok) return;
+        await this.runMenuOnce();
         return;
       }
       await this.runMenuOnce();

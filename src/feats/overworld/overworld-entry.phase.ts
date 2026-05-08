@@ -83,7 +83,6 @@ export class OverworldEntryPhase implements IGamePhase {
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {
     if (!socket.connected) {
-      this.ui?.setMessage?.('etc:mapPreparing');
       socket.once('connect', () => this.enterChangeMap(socket));
       this.offFns.push(() => socket.off('connect'));
       return;
@@ -134,7 +133,6 @@ export class OverworldEntryPhase implements IGamePhase {
     };
     const onChangeMapError = (payload: { message?: string }) => {
       this.removeListeners();
-      this.ui?.setMessage?.('etc:mapPreparing');
       console.error('[OverworldEntry] change_map_error:', payload?.message);
     };
 
@@ -214,7 +212,6 @@ export class OverworldEntryPhase implements IGamePhase {
     };
     const onInitError = (payload: { message?: string }) => {
       this.removeListeners();
-      this.ui?.setMessage?.('etc:mapPreparing');
       console.error('[OverworldEntry] init_error:', payload?.message);
       this.ui?.hide();
       this.ui?.destroy();

@@ -2155,18 +2155,26 @@ export class OverworldUi extends BaseUi {
                 return;
               }
               const targetMapId = result.location as string;
-              if (targetMapId.startsWith('s') && !this.scene.getSafariInfo().has(targetMapId)) {
-                try {
-                  const safariResult = await this.scene.getApi().enterSafari(targetMapId, false);
-                  if (safariResult) {
-                    this.scene.mergeSafariInfo({ [safariResult.mapId]: safariResult.mapInfo });
+              await this.scene.startMapTransitionWithFade(async () => {
+                if (
+                  targetMapId.startsWith('s') &&
+                  !this.scene.getSafariInfo().has(targetMapId)
+                ) {
+                  try {
+                    const safariResult = await this.scene
+                      .getApi()
+                      .enterSafari(targetMapId, false);
+                    if (safariResult) {
+                      this.scene.mergeSafariInfo({
+                        [safariResult.mapId]: safariResult.mapInfo,
+                      });
+                    }
+                  } catch {
+                    return null;
                   }
-                } catch {
-                  this.doorTransitionPending = false;
-                  return;
                 }
-              }
-              this.scene.startMapTransitionWithFade(result);
+                return result;
+              });
               this.scene.time.delayedCall(0, () => {
                 this.doorTransitionPending = false;
               });
