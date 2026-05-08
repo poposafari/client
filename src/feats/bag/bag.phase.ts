@@ -1,7 +1,8 @@
-import { IGamePhase } from '@poposafari/core';
+import { ApiManager, IGamePhase } from '@poposafari/core';
+import { UserManager } from '@poposafari/core/user.manager';
 import { GameScene } from '@poposafari/scenes';
 import { ItemCategory, IMenuItem } from '@poposafari/types';
-import type { PokemonBoxItem } from '@poposafari/types/dto';
+import type { BoxMetaItem, PokemonBoxItem } from '@poposafari/types/dto';
 import i18next from '@poposafari/i18n';
 import { BagUi } from './bag.ui';
 import { BagEntry, BagSelection } from './base-bag.ui';
@@ -13,6 +14,22 @@ import { PcLocalState } from '../pc/pc-local-state';
 import { OverworldUi } from '../overworld/overworld.ui';
 import { KeyItemRegistry } from '../key-items';
 import { getPokemonI18Name } from '@poposafari/utils';
+
+async function loadBoxAndMeta(
+  user: UserManager,
+  api: ApiManager,
+): Promise<{ boxPokemons: PokemonBoxItem[]; boxMeta: BoxMetaItem[] } | null> {
+  const cachedBox = user.getPokemonBox();
+  const cachedMeta = user.getBoxMeta();
+  const [boxRes, metaRes] = await Promise.all([
+    cachedBox ? Promise.resolve(cachedBox) : api.getPokemonBox(),
+    cachedMeta ? Promise.resolve(cachedMeta) : api.getBoxMeta(),
+  ]);
+  if (!boxRes) return null;
+  if (!cachedBox) user.setPokemonBox(boxRes);
+  if (!cachedMeta && metaRes !== null) user.setBoxMeta(metaRes);
+  return { boxPokemons: boxRes, boxMeta: metaRes ?? [] };
+}
 
 export class BagPhase implements IGamePhase {
   private ui: BagUi | null = null;
@@ -144,15 +161,9 @@ export class BagPhase implements IGamePhase {
     const api = this.scene.getApi();
     if (!user) return;
 
-    let boxPokemons = user.getPokemonBox();
-    const metaPromise = api.getBoxMeta();
-    if (!boxPokemons) {
-      const fetched = await api.getPokemonBox();
-      if (!fetched) return;
-      user.setPokemonBox(fetched);
-      boxPokemons = fetched;
-    }
-    const boxMeta = (await metaPromise) ?? [];
+    const loaded = await loadBoxAndMeta(user, api);
+    if (!loaded) return;
+    const { boxPokemons, boxMeta } = loaded;
 
     const pcState = new PcLocalState();
     pcState.init(boxPokemons, user.getParty(), boxMeta);
@@ -228,15 +239,9 @@ export class BagPhase implements IGamePhase {
     const api = this.scene.getApi();
     if (!user) return;
 
-    let boxPokemons = user.getPokemonBox();
-    const metaPromise = api.getBoxMeta();
-    if (!boxPokemons) {
-      const fetched = await api.getPokemonBox();
-      if (!fetched) return;
-      user.setPokemonBox(fetched);
-      boxPokemons = fetched;
-    }
-    const boxMeta = (await metaPromise) ?? [];
+    const loaded = await loadBoxAndMeta(user, api);
+    if (!loaded) return;
+    const { boxPokemons, boxMeta } = loaded;
 
     const pcState = new PcLocalState();
     pcState.init(boxPokemons, user.getParty(), boxMeta);

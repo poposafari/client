@@ -330,4 +330,12 @@ export class PcLocalState {
     }
     return changes;
   }
+
+  getBoxMetaSnapshot(): BoxMetaItem[] {
+    const snapshot: BoxMetaItem[] = [];
+    for (const [boxNumber, meta] of this.boxMeta) {
+      snapshot.push({ boxNumber, wallpaper: meta.wallpaper, name: meta.name });
+    }
+    return snapshot;
+  }
 }

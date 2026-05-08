@@ -17,18 +17,23 @@ export class PokemonPcPhase implements IGamePhase {
     const user = this.scene.getUser();
     if (!user) return;
 
-    const cached = user.getPokemonBox();
-    if (cached) {
-      api.getBoxMeta().then((meta) => {
-        this.initPcUi(cached, user, meta ?? []);
-      });
-    } else {
-      Promise.all([api.getPokemonBox(), api.getBoxMeta()]).then(([boxPokemons, meta]) => {
-        if (!boxPokemons) return;
-        user.setPokemonBox(boxPokemons);
-        this.initPcUi(boxPokemons, user, meta ?? []);
-      });
+    const cachedBox = user.getPokemonBox();
+    const cachedMeta = user.getBoxMeta();
+
+    if (cachedBox && cachedMeta) {
+      this.initPcUi(cachedBox, user, cachedMeta);
+      return;
     }
+
+    Promise.all([
+      cachedBox ? Promise.resolve(cachedBox) : api.getPokemonBox(),
+      cachedMeta ? Promise.resolve(cachedMeta) : api.getBoxMeta(),
+    ]).then(([boxRes, metaRes]) => {
+      if (!boxRes) return;
+      if (!cachedBox) user.setPokemonBox(boxRes);
+      if (!cachedMeta && metaRes !== null) user.setBoxMeta(metaRes);
+      this.initPcUi(boxRes, user, metaRes ?? []);
+    });
   }
 
   private initPcUi(boxPokemons: PokemonBoxItem[], user: UserManager, boxMeta: BoxMetaItem[]): void {
@@ -79,6 +84,7 @@ export class PokemonPcPhase implements IGamePhase {
       );
 
       user?.setPokemonBox(this.pcState.getAllBoxPokemons());
+      user?.setBoxMeta(this.pcState.getBoxMetaSnapshot());
 
       this.scene.events.emit(GameEvent.PARTY_CHANGED);
     }

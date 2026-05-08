@@ -1,4 +1,5 @@
 import {
+  BoxMetaItem,
   CostumeEntry,
   GetMeRes,
   ItemBagItem,
@@ -36,6 +37,7 @@ export class UserManager {
 
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
+  private boxMeta: BoxMetaItem[] | null = null;
   private itemBag: Map<string, ItemBagEntry> | null = null;
   private itemBagLoaded = false;
   private pokedex: PokedexEntry[] | null = null;
@@ -64,6 +66,7 @@ export class UserManager {
     this.itemSlots = undefined as unknown as string[];
 
     this.pokemonBox = null;
+    this.boxMeta = null;
     this.itemBag = null;
     this.itemBagLoaded = false;
     this.pokedex = null;
@@ -161,6 +164,14 @@ export class UserManager {
   addPokemonToBox(pokemon: PokemonBoxItem): void {
     if (!this.pokemonBox) return;
     this.pokemonBox.push(pokemon);
+  }
+
+  getBoxMeta(): BoxMetaItem[] | null {
+    return this.boxMeta;
+  }
+
+  setBoxMeta(data: BoxMetaItem[]): void {
+    this.boxMeta = data;
   }
 
   getItemBag(): Map<string, ItemBagEntry> | null {
