@@ -1,4 +1,4 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { TitleUi } from './title.ui';
 import { LoginPhase } from '../login';
@@ -10,7 +10,6 @@ import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
 
 export class TitlePhase implements IGamePhase {
   private ui!: TitleUi;
-  private blocker!: ApiBlockingUi;
 
   private savedCursorIndex: number | undefined = undefined;
 
@@ -22,7 +21,6 @@ export class TitlePhase implements IGamePhase {
   async enter(): Promise<void> {
     const continueEnabled = this.opts.forceContinueEnabled || !!this.scene.getUser();
     this.ui = new TitleUi(this.scene, continueEnabled);
-    this.blocker = new ApiBlockingUi(this.scene);
 
     this.ui.show();
     await this.runMenuOnce();
@@ -35,13 +33,8 @@ export class TitlePhase implements IGamePhase {
     try {
       if (result.input === 'continue') {
         if (!this.scene.getUser()) {
-          this.blocker.blockInput();
-          try {
-            const me = await this.scene.getApi().getMe();
-            if (me) this.scene.createUserManager(me);
-          } finally {
-            this.blocker.unblockInput();
-          }
+          const me = await this.scene.getApi().getMe();
+          if (me) this.scene.createUserManager(me);
         }
         if (this.scene.getUser()) {
           this.scene.switchPhase(new OverworldEntryPhase(this.scene));
@@ -68,7 +61,6 @@ export class TitlePhase implements IGamePhase {
         return;
       }
       // logout
-      this.blocker.blockInput();
       const socket = this.scene.getSocket();
       if (socket) {
         socket.disconnect();
@@ -76,7 +68,6 @@ export class TitlePhase implements IGamePhase {
       }
       await this.scene.getApi().logout();
       this.scene.clearUser();
-      this.blocker.unblockInput();
       this.scene.switchPhase(new LoginPhase(this.scene));
     } catch (error: any) {
       await this.ui.waitForError(error);
@@ -87,7 +78,6 @@ export class TitlePhase implements IGamePhase {
   exit(): void {
     this.ui.hide();
     this.ui.destroy();
-    this.blocker.destroy();
   }
 
   onResume(): void {

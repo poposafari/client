@@ -1,16 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import i18next from 'i18next';
-import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
-import {
-  ApiError,
-  DEPTH,
-  ErrorCode,
-  TEXTSHADOW,
-  TEXTSTYLE,
-  TEXTURE,
-  UserPokemon,
-} from '@poposafari/types';
-import { addText, addWindow } from '@poposafari/utils';
+import { ApiError, ErrorCode, UserPokemon } from '@poposafari/types';
 import {
   CostumeEntry,
   CreateUserReq,
@@ -33,7 +23,7 @@ import {
   StartingPokemon,
   TownMapEntry,
 } from '@poposafari/types/dto';
-import { GameScene, SafariMapInfo, SafariWildInfo, SafariItemInfo } from '@poposafari/scenes';
+import { SafariMapInfo, SafariWildInfo, SafariItemInfo } from '@poposafari/scenes';
 
 export interface ApiSuccess<T> {
   success: true;
@@ -90,8 +80,9 @@ export class ApiManager {
 
   private setupInterceptors() {
     this.client.interceptors.request.use(
-      (config) => {
+      async (config) => {
         this.onRequestStart?.();
+        // await new Promise((r) => setTimeout(r, 2000));
         return config;
       },
       (error) => {
@@ -425,80 +416,5 @@ export class ApiManager {
     }
 
     return Promise.reject(new ApiError(code, message, status));
-  }
-}
-
-export class ApiBlockingUi extends BaseUi implements IInputHandler {
-  scene: GameScene;
-
-  private window!: GWindow;
-  private text!: GText;
-  private timerEvent: Phaser.Time.TimerEvent | null = null;
-
-  constructor(scene: GameScene) {
-    super(scene, scene.getInputManager(), DEPTH.API);
-
-    this.scene = scene;
-    this.createLayout();
-  }
-
-  onInput(key: string): void {}
-
-  errorEffect(errorMsg: string): void {
-    throw new Error('Method not implemented.');
-  }
-  waitForInput(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  createLayout() {
-    this.window = addWindow(
-      this.scene,
-      this.scene.getOption().getWindow(),
-      0,
-      0,
-      500,
-      200,
-      4,
-      16,
-      16,
-      16,
-      16,
-    );
-    this.text = addText(
-      this.scene,
-      0,
-      0,
-      i18next.t('etc:loading'),
-      70,
-      '100',
-      'center',
-      TEXTSTYLE.WHITE,
-      TEXTSHADOW.GRAY,
-    );
-
-    this.add([this.window, this.text]);
-  }
-
-  public blockInput(delayMs: number = 0) {
-    this.show();
-
-    this.setVisible(false);
-
-    if (delayMs > 0) {
-      this.timerEvent = this.scene.time.delayedCall(delayMs, () => {
-        this.setVisible(true);
-      });
-    } else {
-      this.setVisible(true);
-    }
-  }
-
-  public unblockInput() {
-    if (this.timerEvent) {
-      this.timerEvent.remove();
-      this.timerEvent = null;
-    }
-    this.hide();
   }
 }

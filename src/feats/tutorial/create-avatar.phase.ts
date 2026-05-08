@@ -1,17 +1,15 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { CreateAvatarUi } from './create-avatar.ui';
 import { TitlePhase } from '../title';
 
 export class CreateAvatarPhase implements IGamePhase {
   private ui!: CreateAvatarUi;
-  private blocker!: ApiBlockingUi;
 
   constructor(private scene: GameScene) {}
 
   async enter(): Promise<void> {
     this.ui = new CreateAvatarUi(this.scene);
-    this.blocker = new ApiBlockingUi(this.scene);
 
     this.ui.show();
 
@@ -20,7 +18,6 @@ export class CreateAvatarPhase implements IGamePhase {
     while (1) {
       try {
         const inputResult = await this.ui.waitForInput();
-        this.blocker.blockInput();
 
         await this.scene.getApi().createUser(inputResult);
 
@@ -29,8 +26,6 @@ export class CreateAvatarPhase implements IGamePhase {
         return;
       } catch (error: any) {
         this.ui.errorEffect(error.message);
-      } finally {
-        this.blocker.unblockInput();
       }
     }
   }
@@ -40,8 +35,6 @@ export class CreateAvatarPhase implements IGamePhase {
       this.ui.hide();
       this.ui.destroy();
     }
-    this.blocker.hide();
-    this.blocker.destroy();
   }
 
   onRefreshLanguage(): void {

@@ -1,4 +1,4 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { ItemCategory, IMenuItem } from '@poposafari/types';
 import type { PokemonBoxItem } from '@poposafari/types/dto';
@@ -18,7 +18,6 @@ export class BagPhase implements IGamePhase {
   private ui: BagUi | null = null;
   private actionMenu: MenuUi | null = null;
   private confirmMenu: MenuUi | null = null;
-  private blocker: ApiBlockingUi | null = null;
 
   private savedCategoryIndex = 0;
   private localState = new BagLocalState();
@@ -51,7 +50,6 @@ export class BagPhase implements IGamePhase {
       y: +805,
       itemHeight: 70,
     });
-    this.blocker = new ApiBlockingUi(this.scene);
 
     this.refreshUiFromUser();
     this.runLoop();
@@ -193,13 +191,7 @@ export class BagPhase implements IGamePhase {
         questionUi.hide();
         if (choice?.key !== 'yes') continue;
 
-        this.blocker!.blockInput();
-        let res;
-        try {
-          res = await api.learnMove(selectedPokemon.id, itemId);
-        } finally {
-          this.blocker!.unblockInput();
-        }
+        const res = await api.learnMove(selectedPokemon.id, itemId);
         if (!res) return;
 
         user.decreaseItemQuantity(itemId, 1);
@@ -278,13 +270,7 @@ export class BagPhase implements IGamePhase {
         }
 
         const pokemonId = selectedPokemon.id;
-        this.blocker!.blockInput();
-        let res;
-        try {
-          res = await api.giveHold(pokemonId, itemId);
-        } finally {
-          this.blocker!.unblockInput();
-        }
+        const res = await api.giveHold(pokemonId, itemId);
         if (!res) return;
 
         user.decreaseItemQuantity(itemId, 1);
@@ -339,16 +325,11 @@ export class BagPhase implements IGamePhase {
     const changes = this.localState.getChanges();
     if (changes.length === 0) return;
 
-    this.blocker!.blockInput();
-    try {
-      for (const { itemId, register } of changes) {
-        const res = register ? await api.registerItem(itemId) : await api.unregisterItem(itemId);
-        if (!res) continue;
-        user.updateItemQuantity(res.itemId, res.quantity, res.register);
-        this.localState.markCommitted(res.itemId, res.register);
-      }
-    } finally {
-      this.blocker!.unblockInput();
+    for (const { itemId, register } of changes) {
+      const res = register ? await api.registerItem(itemId) : await api.unregisterItem(itemId);
+      if (!res) continue;
+      user.updateItemQuantity(res.itemId, res.quantity, res.register);
+      this.localState.markCommitted(res.itemId, res.register);
     }
   }
 
@@ -362,8 +343,6 @@ export class BagPhase implements IGamePhase {
     this.confirmMenu?.hide();
     this.confirmMenu?.destroy();
     this.confirmMenu = null;
-    this.blocker?.destroy();
-    this.blocker = null;
   }
 
   onRefreshLanguage?(): void {

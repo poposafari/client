@@ -1,4 +1,4 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { ApiError, MONEY_SYMBOL, SFX } from '@poposafari/types';
 import { MenuUi } from '@poposafari/feats/menu/menu-ui';
@@ -24,7 +24,6 @@ export class MartPhase implements IGamePhase {
   private bagUi: BaseBagUi | null = null;
   private buyUi: MartBuyUi | null = null;
   private sellUi: MartSellUi | null = null;
-  private blocker: ApiBlockingUi | null = null;
 
   constructor(
     private scene: GameScene,
@@ -38,7 +37,6 @@ export class MartPhase implements IGamePhase {
       itemHeight: 70,
     });
     this.quantityUi = new MartQuantityUi(this.scene, this.scene.getInputManager());
-    this.blocker = new ApiBlockingUi(this.scene);
 
     await this.runMainLoop();
   }
@@ -172,17 +170,14 @@ export class MartPhase implements IGamePhase {
         continue;
       }
 
-      this.blocker!.blockInput();
       let result;
       try {
         result = await this.scene.getApi().buyItem(itemId, qty);
       } catch (e) {
-        this.blocker!.unblockInput();
         const msg = this.resolveErrorMessage(e);
         await talk.showMessage(msg);
         continue;
       }
-      this.blocker!.unblockInput();
       if (!result) {
         await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'));
         continue;
@@ -302,17 +297,14 @@ export class MartPhase implements IGamePhase {
         continue;
       }
 
-      this.blocker!.blockInput();
       let result;
       try {
         result = await this.scene.getApi().sellItem(itemId, qty);
       } catch (e) {
-        this.blocker!.unblockInput();
         const msg = this.resolveErrorMessage(e);
         await talk.showMessage(msg);
         continue;
       }
-      this.blocker!.unblockInput();
       if (!result) {
         await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'));
         continue;
@@ -383,8 +375,6 @@ export class MartPhase implements IGamePhase {
     this.sellUi?.hide();
     this.sellUi?.destroy();
     this.sellUi = null;
-    this.blocker?.destroy();
-    this.blocker = null;
   }
 
   onPause?(): void {}

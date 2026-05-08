@@ -1,4 +1,4 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { RegisterUi } from './register.ui';
 import { LoginPhase } from '../login';
@@ -6,20 +6,16 @@ import { WelcomePhase } from '../welcome/welcome.phase';
 
 export class RegisterPhase implements IGamePhase {
   private ui!: RegisterUi;
-  private blocker!: ApiBlockingUi;
 
   constructor(private scene: GameScene) {}
 
   async enter(): Promise<void> {
     this.ui = new RegisterUi(this.scene);
-    this.blocker = new ApiBlockingUi(this.scene);
 
     this.ui.show();
 
     while (1) {
       const inputResult = await this.ui.waitForInput();
-
-      this.blocker.blockInput();
 
       try {
         if (inputResult === 'login') {
@@ -33,8 +29,6 @@ export class RegisterPhase implements IGamePhase {
       } catch (error: any) {
         console.log(error.message);
         this.ui.errorEffect(error.message);
-      } finally {
-        this.blocker.unblockInput();
       }
     }
   }
@@ -42,8 +36,6 @@ export class RegisterPhase implements IGamePhase {
   exit(): void {
     this.ui.hide();
     this.ui.destroy();
-    this.blocker.hide();
-    this.blocker.destroy();
   }
 
   onRefreshLanguage(): void {

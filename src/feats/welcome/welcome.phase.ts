@@ -1,4 +1,4 @@
-import { ApiBlockingUi, IGamePhase } from '@poposafari/core';
+import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { LoginPhase } from '../login';
 import { WelcomeUi } from './welcome.ui';
@@ -7,7 +7,6 @@ import { TitlePhase } from '../title';
 
 export class WelcomePhase implements IGamePhase {
   private ui!: WelcomeUi;
-  private blocker!: ApiBlockingUi;
 
   private isUser: boolean = true;
 
@@ -15,17 +14,13 @@ export class WelcomePhase implements IGamePhase {
 
   async enter(): Promise<void> {
     const inputManager = this.scene.getInputManager();
-    this.blocker = new ApiBlockingUi(this.scene);
     const oauthErrorKey = this.consumeOAuthErrorFromUrl();
 
     try {
       const res = await this.scene.getApi().getMe();
 
-      this.blocker.blockInput();
-
       if (res) {
         this.scene.createUserManager(res);
-        this.blocker.unblockInput();
         this.scene.pushPhase(new TitlePhase(this.scene));
         return;
       }
@@ -35,10 +30,8 @@ export class WelcomePhase implements IGamePhase {
 
       // 계정은 있지만 캐릭터 미생성 → 캐릭터 생성 화면으로 분기
       if (errorCode === ErrorCode.USER_NOT_FOUND) {
-        this.blocker.unblockInput();
         // isUser = false 상태로 계속 진행 → 아래에서 WelcomeUi 표시
       } else {
-        this.blocker.unblockInput();
         let initialErrorKey: string | undefined;
         if (oauthErrorKey) {
           initialErrorKey = oauthErrorKey;
@@ -55,7 +48,6 @@ export class WelcomePhase implements IGamePhase {
       this.ui.show();
 
       await this.ui.showWelcomeMsg();
-      this.blocker.unblockInput();
       this.scene.pushPhase(new TitlePhase(this.scene));
     }
   }
@@ -77,7 +69,5 @@ export class WelcomePhase implements IGamePhase {
       this.ui.hide();
       this.ui.destroy();
     }
-    this.blocker.hide();
-    this.blocker.destroy();
   }
 }
