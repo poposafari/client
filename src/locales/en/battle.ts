@@ -1,12 +1,12 @@
 import type { TranslationBattle } from '../ko/battle';
 
 export const battle: TranslationBattle = {
-  selectBall: 'Ball',
-  selectFeed: 'Bait',
-  selectMud: 'Mud',
-  selectRun: 'Run',
+  selectBall: 'BALL',
+  selectFeed: 'BAIT',
+  selectMud: 'MUD',
+  selectRun: 'RUN',
   messageCaught: 'Caught {{name}}!',
-  messageFail: "Oh no! The Pokémon\nbroke free of the ball!",
+  messageFail: 'Oh no! The Pokémon\nbroke free of the ball!',
   messageFlee: 'The wild Pokémon fled!',
   messageAppear: 'Oh! A wild {{name}} appeared!',
   messageIdle: 'What will {{nickname}} throw?',
@@ -16,7 +16,7 @@ export const battle: TranslationBattle = {
   messageFleePlayer: 'Got away safely.',
   messageUsedBall: '{{nickname}} used\na Safari Ball.',
   messageCaughtNew: 'Gotcha!\n{{name}} was caught!',
-  messageBallEscape: "Oh no! The Pokémon\nbroke free of the ball!",
+  messageBallEscape: 'Oh no! The Pokémon\nbroke free of the ball!',
   messageWatching: '{{name}} is\nwatching carefully.',
   messageThrewFeedNew: '{{nickname}} threw\nsome Bait.',
   messageEatingFocus: '{{name}} is\nbusy eating!',
@@ -26,7 +26,7 @@ export const battle: TranslationBattle = {
   turn: 'Turn {{turn}}',
   catchRate: 'Catch Rate - {{rate}}%',
   fleeRate: 'Flee Rate - {{rate}}%',
-  safariBall: 'Safari Ball',
-  safariLeft: '{{count}} left',
+  safariBall: 'SAFARI BALL',
+  safariLeft: '{{count}} LEFT',
   rewardExpGained: 'EXP Gained',
 };

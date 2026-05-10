@@ -86,12 +86,12 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     // ── 야생 HUD ───────────────────────────────────
     this.wildHudContainer = addContainer(scene, 0, WILD_HUD.x, height / 2 + WILD_HUD.yOffset);
 
-    const wildBox = addImage(scene, 'databox_normal_foe', undefined, -84, -50).setScale(3.2);
+    const wildBox = addImage(scene, 'databox_normal_foe', undefined, -30, -50).setScale(3.2);
     this.wildHudContainer.add(wildBox);
 
     this.wildNameText = addText(
       scene,
-      -470,
+      -410,
       -75,
       getPokemonI18Name(ctx.wild.pokedexId),
       90,
@@ -131,7 +131,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     );
     this.wildHudContainer.add(this.wildLevelText);
 
-    this.wildCatchCntIcon = addImage(scene, TEXTURE.ICON_OWNED, undefined, -445, -10)
+    this.wildCatchCntIcon = addImage(scene, TEXTURE.ICON_OWNED, undefined, -400, -10)
       .setScale(2.4)
       .setVisible(ctx.wild.caughtCount > 0);
     this.wildHudContainer.add(this.wildCatchCntIcon);
@@ -224,11 +224,11 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     // ── 플레이어 HUD ───────────────────────────────
     this.playerHudContainer = addContainer(scene, 0, PLAYER_HUD.x, height / 2 + PLAYER_HUD.yOffset);
 
-    const playerBox = addImage(scene, 'databox_safari', undefined, +79, 0).setScale(3.2);
+    const playerBox = addImage(scene, 'databox_safari', undefined, +50, 0).setScale(3.2);
     this.playerSafariTitle = addText(
       scene,
-      -220,
-      -50,
+      -250,
+      -60,
       i18next.t('battle:safariBall'),
       70,
       '100',
@@ -242,8 +242,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     this.playerLeftSafari = addText(
       scene,
-      -220,
-      +10,
+      -250,
+      +0,
       i18next.t('battle:safariLeft', { count: this.safariBallCount }),
       70,
       '100',
@@ -262,7 +262,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       nineSlice: { left: 8, right: 8, top: 8, bottom: 8 },
       frameVisible: false,
     });
-    this.partyList.setPosition(camW / 2 + 620 - PLAYER_HUD.x, 80);
+    this.partyList.setPosition(camW / 2 + 600 - PLAYER_HUD.x, 80);
     this.partyList.refresh();
 
     this.playerHudContainer.add(playerBox);
