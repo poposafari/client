@@ -30,4 +30,5 @@ export const battle: TranslationBattle = {
   fleeRate: '도주율 - {{rate}}%',
   safariBall: '사파리 볼',
   safariLeft: '{{count}}개 남음',
+  rewardExpGained: '획득 경험치',
 };

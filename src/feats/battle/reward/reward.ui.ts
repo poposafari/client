@@ -576,7 +576,7 @@ export class RewardUi extends BaseUi {
       scene,
       CONST.expGainedLabelX,
       CONST.expGainedY,
-      i18next.t('menu:rewardExpGained', { defaultValue: '획득 경험치' }),
+      i18next.t('battle:rewardExpGained'),
       50,
       '100',
       'left',

@@ -28,4 +28,5 @@ export const battle: TranslationBattle = {
   fleeRate: 'Flee Rate - {{rate}}%',
   safariBall: 'Safari Ball',
   safariLeft: '{{count}} left',
+  rewardExpGained: 'EXP Gained',
 };

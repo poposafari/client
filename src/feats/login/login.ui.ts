@@ -299,7 +299,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.scene,
       0,
       -140,
-      '-------- 또는 --------',
+      '-------- OR --------',
       40,
       100,
       'center',

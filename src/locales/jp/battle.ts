@@ -28,4 +28,5 @@ export const battle: TranslationBattle = {
   fleeRate: 'とうそうりつ - {{rate}}%',
   safariBall: 'サファリボール',
   safariLeft: 'のこり {{count}}こ',
+  rewardExpGained: 'けいけんち',
 };
