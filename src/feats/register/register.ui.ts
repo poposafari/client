@@ -279,7 +279,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
         this.scene,
         +140,
         0,
-        i18next.t('etc:login'),
+        i18next.t('etc:backToLogin'),
         40,
         '100',
         'center',

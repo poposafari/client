@@ -6,6 +6,7 @@ export const etc: TranslationEtc = {
   no: 'いいえ',
   cancel: 'やめる',
   login: 'ログイン',
+  backToLogin: 'ログインに もどる',
   register: 'かいいんとうろく',
   username: 'ユーザーめい',
   password: 'パスワード',
