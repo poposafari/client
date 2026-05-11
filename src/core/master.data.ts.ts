@@ -1399,18 +1399,76 @@ export const bigSizePokemonOverworldPokedex = [
   '1021',
 ];
 
+export const STARTER_POKEDEX_IDS: readonly string[] = [
+  '0001',
+  '0004',
+  '0007',
+  '0152',
+  '0155',
+  '0158',
+  '0252',
+  '0255',
+  '0258',
+  '0387',
+  '0390',
+  '0393',
+  '0495',
+  '0498',
+  '0501',
+  '0650',
+  '0653',
+  '0656',
+  '0722',
+  '0725',
+  '0728',
+  '0810',
+  '0813',
+  '0816',
+  '0906',
+  '0909',
+  '0912',
+];
+
+type WildSlot = {
+  sunny?: { id: string; weight: number }[];
+  rainy?: { id: string; weight: number }[];
+  stormy?: { id: string; weight: number }[];
+  foggy?: { id: string; weight: number }[];
+};
+export type MapMasterEntry = {
+  type?: string;
+  cost?: number;
+  wild?: {
+    min?: number;
+    max?: number;
+    dawn?: WildSlot;
+    day?: WildSlot;
+    dusk?: WildSlot;
+    night?: WildSlot;
+  };
+  item?: unknown;
+};
+
 export class MasterData {
   private _itemData: Record<string, ItemData> = {};
   private _pokemonData: Record<string, PokemonData> = {};
   private _costumeData!: CostumeData;
   private _mapAreaData: Record<string, string> = {};
+  private _mapData: Record<string, MapMasterEntry> = {};
 
-  loadJsonDataFromCache(costumeData: any, itemData: any, pokemonData: any, mapAreaData: any): void {
+  loadJsonDataFromCache(
+    costumeData: any,
+    itemData: any,
+    pokemonData: any,
+    mapAreaData: any,
+    mapData: any,
+  ): void {
     try {
       this.loadCostumeData(costumeData);
       this.loadItemData(itemData);
       this.loadPokemonData(pokemonData);
       this.loadMapAreaData(mapAreaData);
+      this.loadMapData(mapData);
 
       console.log('All Master data loaded.');
     } catch (error: any) {
@@ -1444,6 +1502,38 @@ export class MasterData {
 
   getMapArea(mapKey: string): string {
     return this._mapAreaData[mapKey] ?? 'field';
+  }
+
+  loadMapData(data: any): void {
+    Object.keys(this._mapData).forEach((k) => delete this._mapData[k]);
+    if (data) Object.assign(this._mapData, data);
+  }
+
+  getMap(mapKey: string): MapMasterEntry | null {
+    return this._mapData[mapKey] ?? null;
+  }
+
+  getWildPokedexIdsForMap(mapKey: string): string[] {
+    if (mapKey === 's000') return [...STARTER_POKEDEX_IDS];
+
+    const entry = this._mapData[mapKey];
+    if (!entry?.wild) return [];
+
+    const ids = new Set<string>();
+    const phases: (keyof NonNullable<MapMasterEntry['wild']>)[] = ['dawn', 'day', 'dusk', 'night'];
+    const weathers: (keyof WildSlot)[] = ['sunny', 'rainy', 'stormy', 'foggy'];
+    for (const phase of phases) {
+      const slot = entry.wild[phase] as WildSlot | undefined;
+      if (!slot) continue;
+      for (const weather of weathers) {
+        const list = slot[weather];
+        if (!list) continue;
+        for (const w of list) {
+          if (w?.id) ids.add(w.id);
+        }
+      }
+    }
+    return [...ids];
   }
 
   getItemData(item: string): ItemData | null {

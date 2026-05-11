@@ -234,7 +234,16 @@ export class PetObject extends MovableObject {
         : this.pokedexId.split('_')[0];
       if (pokemonCryNames.includes(cryKey)) {
         const tone = PET_CRY_TONE_BY_EMOTION[this.currentEmotion];
-        this.scene.getAudio().playEffect(cryKey, tone);
+        const audio = this.scene.getAudio();
+        if (this.scene.cache.audio.has(cryKey)) {
+          audio.playEffect(cryKey, tone);
+        } else {
+          this.scene.load.audio(cryKey, `audio/pokemon/${cryKey}.ogg`);
+          this.scene.load.once(`filecomplete-audio-${cryKey}`, () => {
+            if (this.scene.cache.audio.has(cryKey)) audio.playEffect(cryKey, tone);
+          });
+          this.scene.load.start();
+        }
       }
 
       let elapsedLoops = 0;

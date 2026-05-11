@@ -884,7 +884,16 @@ export class OverworldUi extends BaseUi {
       const pokedexId = obj.getPokedexId();
       const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
       if (pokemonCryNames.includes(cryKey)) {
-        this.scene.getAudio().playEffect(cryKey);
+        const audio = this.scene.getAudio();
+        if (this.scene.cache.audio.has(cryKey)) {
+          audio.playEffect(cryKey);
+        } else {
+          this.scene.load.audio(cryKey, `audio/pokemon/${cryKey}.ogg`);
+          this.scene.load.once(`filecomplete-audio-${cryKey}`, () => {
+            if (this.scene.cache.audio.has(cryKey)) audio.playEffect(cryKey);
+          });
+          this.scene.load.start();
+        }
       }
     }
 

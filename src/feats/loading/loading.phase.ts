@@ -26,7 +26,7 @@ import {
   petEmotionFramePair,
 } from '../overworld/objects/pet-emotion';
 
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { STARTER_POKEDEX_IDS } from '@poposafari/core/master.data.ts';
 import { s000Config, s001Config, s002Config, s003Config } from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
@@ -90,8 +90,9 @@ export class LoadingPhase implements IGamePhase {
     const pokemon = this.scene.cache.json.get('pokemon');
     const costume = this.scene.cache.json.get('costume');
     const mapArea = this.scene.cache.json.get('map-area');
+    const map = this.scene.cache.json.get('map');
 
-    this.scene.getMasterData().loadJsonDataFromCache(costume, item, pokemon, mapArea);
+    this.scene.getMasterData().loadJsonDataFromCache(costume, item, pokemon, mapArea, map);
   }
 
   /** 1차: JSON만 로드(0→50%). 2차: Master 반영 후 포켓몬+나머지(50→100%). */
@@ -137,6 +138,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadJson('pokemon', 'master', 'pokemon');
     this.scene.loadJson('costume', 'master', 'costume');
     this.scene.loadJson('map-area', 'master', 'map-area');
+    this.scene.loadJson('map', 'master', 'map');
   }
 
   private loadPokemonAssets(): void {
@@ -156,8 +158,10 @@ export class LoadingPhase implements IGamePhase {
       `${path}/pokemon_recall.json`,
     );
 
-    for (const cry of pokemonCryNames) {
-      this.scene.loadAudio(cry, 'audio/pokemon', cry, 'ogg');
+    for (const id of STARTER_POKEDEX_IDS) {
+      if (!this.scene.cache.audio.has(id)) {
+        this.scene.loadAudio(id, 'audio/pokemon', id, 'ogg');
+      }
     }
 
     this.scene.loadAtlas(TEXTURE.OVERWORLD_SHINY, path, 'overworld_shiny', 'overworld_shiny');

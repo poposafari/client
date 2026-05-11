@@ -19,11 +19,13 @@ import { HiddenMovePhase } from '../hidden-move/hidden-move.phase';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from '@poposafari/i18n';
 import { screenFadeIn } from '@poposafari/utils/screen-fade';
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 
 export class OverworldPhase implements IGamePhase {
   private overworldUi: OverworldUi | null = null;
   private socketOffFns: Array<() => void> = [];
   private currentLocation: string = '';
+  private unsubscribePartyCry: (() => void) | null = null;
   private onProfileChanged = (): void => {
     this.applyNewbieMode();
   };
@@ -34,6 +36,36 @@ export class OverworldPhase implements IGamePhase {
     const profile = this.scene.getUser()?.getProfile();
     const isNewbie = this.currentLocation === 's000' && profile?.hasStarter === true;
     this.overworldUi?.setNewbieMode(isNewbie);
+  }
+
+  private prefetchWildCries(mapId: string): void {
+    const ids = this.scene.getMasterData().getWildPokedexIdsForMap(mapId);
+    if (ids.length === 0) return;
+
+    let queued = 0;
+    for (const id of ids) {
+      const key = pokemonCryNames.includes(id) ? id : id.split('_')[0];
+      if (!pokemonCryNames.includes(key)) continue;
+      if (this.scene.cache.audio.has(key)) continue;
+      this.scene.loadAudio(key, 'audio/pokemon', key, 'ogg');
+      queued++;
+    }
+    if (queued > 0) this.scene.load.start();
+  }
+
+  private prefetchPartyCries(): void {
+    const party = this.scene.getUser()?.getParty();
+    if (!party || party.length === 0) return;
+
+    let queued = 0;
+    for (const p of party) {
+      const key = pokemonCryNames.includes(p.pokedexId) ? p.pokedexId : p.pokedexId.split('_')[0];
+      if (!pokemonCryNames.includes(key)) continue;
+      if (this.scene.cache.audio.has(key)) continue;
+      this.scene.loadAudio(key, 'audio/pokemon', key, 'ogg');
+      queued++;
+    }
+    if (queued > 0) this.scene.load.start();
   }
 
   async enter(): Promise<void> {
@@ -50,6 +82,13 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi = new OverworldUi(this.scene);
     this.overworldUi.setMapView(mapView);
     this.overworldUi.setMapConfig(mapConfig);
+
+    this.prefetchWildCries(location);
+    this.prefetchPartyCries();
+    const user = this.scene.getUser();
+    if (user) {
+      this.unsubscribePartyCry = user.onPartyChanged(() => this.prefetchPartyCries());
+    }
 
     if (mapConfig.bgm) {
       this.scene.getAudio().playBackground(mapConfig.bgm);
@@ -229,6 +268,8 @@ export class OverworldPhase implements IGamePhase {
 
   exit(): void {
     this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
+    this.unsubscribePartyCry?.();
+    this.unsubscribePartyCry = null;
     this.socketOffFns.forEach((fn) => fn());
     this.socketOffFns = [];
     this.overworldUi?.destroy();
