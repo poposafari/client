@@ -16,7 +16,7 @@ import {
   playFeedThrow,
   playMudThrow,
 } from './anim/ball-throw';
-import WipeRightToLeftShader from '@poposafari/utils/wipe-rl-shader';
+import { EncounterTransition } from '@poposafari/utils/encounter-transition';
 import { PLAYER_HUD } from './battle.constants';
 import { SFX } from '@poposafari/types';
 import { getPokemonI18Name } from '@poposafari/utils';
@@ -32,6 +32,8 @@ export class BattleUi {
   private ctx!: BattleContext;
   private firstIdlePrompt = true;
   private currentModifiers: import('./battle.types').BattleModifiers = { bait: false, rock: false };
+  /** playPreIntro에서 생성되어 playIntro 진입 시 dismiss되는 트랜지션. */
+  private pendingTransition: EncounterTransition | null = null;
 
   constructor(private readonly scene: GameScene) {
     this.onGameTimeChanged = this.onGameTimeChanged.bind(this);
@@ -67,30 +69,11 @@ export class BattleUi {
   }
 
   async playPreIntro(): Promise<void> {
-    const cam = this.scene.cameras.main;
-
-    for (let i = 0; i < 2; i++) {
-      await new Promise<void>((resolve) => {
-        cam.flash(100, 0, 0, 0);
-        cam.once('cameraflashcomplete', () => resolve());
-      });
-    }
-
-    const wipeSeconds = 0.6;
-    cam.setPostPipeline(WipeRightToLeftShader.KEY);
-    const pipe = cam.getPostPipeline(WipeRightToLeftShader.KEY as unknown as string) as
-      | WipeRightToLeftShader
-      | WipeRightToLeftShader[]
-      | null;
-    const p = Array.isArray(pipe) ? pipe[0] : pipe;
-    if (p) {
-      p.setDuration(wipeSeconds * 2);
-      p.resetTime();
-    }
-    await new Promise<void>((resolve) =>
-      this.scene.time.delayedCall(wipeSeconds * 1000, () => resolve()),
-    );
-    cam.removePostPipeline(WipeRightToLeftShader.KEY);
+    return new Promise<void>((resolve) => {
+      const transition = new EncounterTransition({ order: 'split' });
+      this.pendingTransition = transition;
+      transition.play(this.scene, () => resolve());
+    });
   }
 
   private playPlayerHudSlideIn(): void {
@@ -106,6 +89,8 @@ export class BattleUi {
   }
 
   hide(): void {
+    this.pendingTransition?.cancel();
+    this.pendingTransition = null;
     this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged);
     if (!this.built) return;
     this.base.hide();
@@ -121,6 +106,10 @@ export class BattleUi {
   }
 
   async playIntro(): Promise<void> {
+    // displayBattleIntro가 자체 black overlay를 만들기 직전에 우리 overlay 제거.
+    // 같은 JS tick 안에서 동기로 처리되어 프레임 갭 없음.
+    this.pendingTransition?.dismiss();
+    this.pendingTransition = null;
     await displayBattleIntro(
       this.scene,
       this.base,

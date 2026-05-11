@@ -15,7 +15,7 @@ export const INTRO_SLIDE = {
   wildFromX: -500,
   wildToX: 1000,
   durationMs: 1200,
-  blackoverlayMs: 1000,
+  blackoverlayMs: 1400,
 };
 
 // ───────── HUD ─────────
