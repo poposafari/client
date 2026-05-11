@@ -1782,7 +1782,12 @@ export class PokemonPcUi extends BaseUi {
     this.infoFront.setTexture(spriteTexture.key, spriteTexture.frame);
     updatePokemonGenderIcon(pokemon.gender, this.infoGender);
     this.infoShinyIcon.setVisible(pokemon.isShiny);
-    this.infoCaptureDate.setText(pokemon.caughtAt?.split('T')[0] ?? '');
+    const caught = pokemon.caughtAt ? new Date(pokemon.caughtAt) : null;
+    this.infoCaptureDate.setText(
+      caught && !isNaN(caught.getTime())
+        ? `${caught.getFullYear()}-${String(caught.getMonth() + 1).padStart(2, '0')}-${String(caught.getDate()).padStart(2, '0')}`
+        : '',
+    );
     this.infoCaptureLocation.setX(this.infoCaptureDate.x + this.infoCaptureDate.displayWidth + 20);
     this.infoCaptureLocation.setText(i18next.t(`map:${pokemon.caughtLocation}`));
     this.infoAbility.setText(i18next.t(`ability:${pokemon.abilityId}`));

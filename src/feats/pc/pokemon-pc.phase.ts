@@ -79,6 +79,8 @@ export class PokemonPcPhase implements IGamePhase {
             partySlot: slotState.partySlot,
             ballId: p.ballId,
             friendship: p.friendship,
+            caughtLocation: p.caughtLocation,
+            caughtAt: p.caughtAt,
           };
         }),
       );

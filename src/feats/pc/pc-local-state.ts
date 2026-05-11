@@ -63,8 +63,6 @@ export class PcLocalState {
         ...p,
         boxNumber: null,
         gridNumber: null,
-        caughtLocation: '',
-        caughtAt: '',
       });
       this.originalNicknames.set(p.id, p.nickname);
     }

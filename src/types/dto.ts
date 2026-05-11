@@ -52,6 +52,8 @@ export interface GetMeRes {
     heldItemId: string | null;
     partySlot: number | null;
     ballId: number;
+    caughtLocation: string;
+    caughtAt: string;
   }[];
   itemSlots: {
     itemId: string;
