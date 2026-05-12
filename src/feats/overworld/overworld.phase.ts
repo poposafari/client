@@ -264,6 +264,10 @@ export class OverworldPhase implements IGamePhase {
 
   onResume(): void {
     this.overworldUi?.syncMenuToggleIcon(false);
+    const mapConfig = this.scene.getMapRegistry().get(this.currentLocation);
+    if (mapConfig?.bgm) {
+      this.scene.getAudio().playBackground(mapConfig.bgm);
+    }
   }
 
   exit(): void {

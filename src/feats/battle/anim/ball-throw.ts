@@ -3,6 +3,7 @@ import { DEPTH, EASE, SFX, TEXTURE } from '@poposafari/types';
 import { addImage } from '@poposafari/utils';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import { BALL_ANIM, THROW_ITEM, WILD_SHADOW, WILD_SPRITE } from '../battle.constants';
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 
 const BALL_THROW_ANIM_KEY = 'battle_ball_throw';
 
@@ -58,6 +59,315 @@ function throwParabola(
       onComplete: () => resolve(),
     });
   });
+}
+
+async function playBallBurstParticles(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+  const throwItem = sprite.getThrowItem();
+  const wildContainer = sprite.getWildContainer();
+  const burstX = throwItem.x + (0.5 - throwItem.originX) * throwItem.displayWidth;
+  const burstY = throwItem.y + (0.5 - throwItem.originY) * throwItem.displayHeight;
+
+  const particleCount = 7;
+  const outerRadius = 360;
+  const innerRadius = 185;
+  const expandMs = 350;
+  const contractMs = 350;
+  const rotationDeg = 140;
+
+  type BurstParticle = {
+    img: Phaser.GameObjects.Image;
+    baseAngleDeg: number;
+    radius: number;
+  };
+  const particles: BurstParticle[] = [];
+  const peakAlpha = 0.55;
+  const bigTint = 0xa6f062;
+  const smallTint = 0xffdb4d;
+
+  for (let i = 0; i < particleCount; i++) {
+    const angleStep = 360 / particleCount;
+    const big = addImage(scene, TEXTURE.BALL_BURST_PARTICLE, undefined, burstX, burstY)
+      .setScale(3)
+      .setAlpha(0)
+      .setTint(bigTint)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    wildContainer.add(big);
+    wildContainer.moveBelow(big, throwItem);
+    particles.push({ img: big, baseAngleDeg: angleStep * i, radius: outerRadius });
+
+    const small = addImage(scene, TEXTURE.BALL_BURST_PARTICLE_S, undefined, burstX, burstY)
+      .setScale(2.4)
+      .setAlpha(0)
+      .setTint(smallTint)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    wildContainer.add(small);
+    wildContainer.moveBelow(small, throwItem);
+    particles.push({
+      img: small,
+      baseAngleDeg: angleStep * i + angleStep / 2,
+      radius: innerRadius,
+    });
+  }
+
+  const dazzleStartScale = 0.1;
+  const dazzlePeakScale = 4;
+  const dazzleEndScale = 6;
+  const dazzlePeakAlpha = 0.6;
+  const dazzle = addImage(scene, TEXTURE.BALL_BURST_DAZZLE, undefined, burstX, burstY)
+    .setScale(dazzleStartScale)
+    .setAlpha(0)
+    .setTint(0xf6f2d9)
+    .setBlendMode(Phaser.BlendModes.ADD);
+  wildContainer.add(dazzle);
+  wildContainer.moveBelow(dazzle, throwItem);
+
+  const totalMs = expandMs + contractMs;
+  const fadeInMs = 300;
+  const holdMs = 300;
+  const fadeOutStart = fadeInMs + holdMs;
+  const fadeOutMs = Math.max(1, totalMs - fadeOutStart);
+  const holdCurve = (elapsedMs: number): number => {
+    if (elapsedMs < fadeInMs) return elapsedMs / fadeInMs;
+    if (elapsedMs < fadeOutStart) return 1;
+    return Math.max(0, 1 - (elapsedMs - fadeOutStart) / fadeOutMs);
+  };
+
+  const expandProxy = { t: 0 };
+  await tweenAsync(scene, {
+    targets: expandProxy,
+    t: 1,
+    duration: expandMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = expandProxy.t;
+      const alphaMul = holdCurve(t * expandMs);
+      for (const p of particles) {
+        const ang = Phaser.Math.DegToRad(p.baseAngleDeg + rotationDeg * t);
+        p.img.x = burstX + Math.cos(ang) * p.radius * t;
+        p.img.y = burstY + Math.sin(ang) * p.radius * t;
+        p.img.alpha = peakAlpha * alphaMul;
+      }
+      dazzle.setScale(dazzleStartScale + (dazzlePeakScale - dazzleStartScale) * t);
+      dazzle.alpha = dazzlePeakAlpha * alphaMul;
+    },
+  });
+
+  const contractProxy = { t: 0 };
+  await tweenAsync(scene, {
+    targets: contractProxy,
+    t: 1,
+    duration: contractMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = contractProxy.t;
+      const r = 1 - t;
+      const alphaMul = holdCurve(expandMs + t * contractMs);
+      for (const p of particles) {
+        const ang = Phaser.Math.DegToRad(p.baseAngleDeg + rotationDeg * (1 + t));
+        p.img.x = burstX + Math.cos(ang) * p.radius * r;
+        p.img.y = burstY + Math.sin(ang) * p.radius * r;
+        p.img.alpha = peakAlpha * alphaMul;
+      }
+      dazzle.setScale(dazzlePeakScale + (dazzleEndScale - dazzlePeakScale) * t);
+      dazzle.alpha = dazzlePeakAlpha * alphaMul;
+    },
+  });
+
+  particles.forEach((p) => p.img.destroy());
+  dazzle.destroy();
+
+  const ringStartScale = 0.1;
+  const ringEndScale = 5.0;
+  const ringPeakAlpha = 0.6;
+  const ringFadeInMs = 200;
+  const ringFadeOutMs = 300;
+  const ringTotalMs = ringFadeInMs + ringFadeOutMs;
+  const ringFadeInRatio = ringFadeInMs / ringTotalMs;
+  const ring = addImage(scene, TEXTURE.BALL_BURST_RING, undefined, burstX, burstY)
+    .setScale(ringStartScale)
+    .setAlpha(0)
+    .setBlendMode(Phaser.BlendModes.ADD);
+  wildContainer.add(ring);
+  wildContainer.moveBelow(ring, throwItem);
+
+  const ringProxy = { t: 0 };
+  await tweenAsync(scene, {
+    targets: ringProxy,
+    t: 1,
+    duration: ringTotalMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = ringProxy.t;
+      ring.setScale(ringStartScale + (ringEndScale - ringStartScale) * t);
+      ring.alpha =
+        t < ringFadeInRatio
+          ? ringPeakAlpha * (t / ringFadeInRatio)
+          : ringPeakAlpha * (1 - (t - ringFadeInRatio) / (1 - ringFadeInRatio));
+    },
+  });
+
+  ring.destroy();
+}
+
+async function playBallExitParticles(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+  const throwItem = sprite.getThrowItem();
+  const wildContainer = sprite.getWildContainer();
+  const burstX = throwItem.x + (0.5 - throwItem.originX) * throwItem.displayWidth;
+  const burstY = throwItem.y + (0.5 - throwItem.originY) * throwItem.displayHeight;
+
+  const particleCount = 10;
+  const outerRadius = 600;
+  const innerRadius = 410;
+  const durationMs = 700;
+  const peakAlpha = 1;
+  const bigTint = 0xa6f062;
+  const smallTint = 0xffdb4d;
+
+  type ExitParticle = {
+    img: Phaser.GameObjects.Image;
+    angleDeg: number;
+    radius: number;
+  };
+  const particles: ExitParticle[] = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    const big = addImage(scene, TEXTURE.BALL_BURST_PARTICLE, undefined, burstX, burstY)
+      .setScale(2.8)
+      .setAlpha(0)
+      .setTint(bigTint);
+    wildContainer.add(big);
+    particles.push({
+      img: big,
+      angleDeg: Phaser.Math.FloatBetween(0, 360),
+      radius: outerRadius + Phaser.Math.FloatBetween(-40, 40),
+    });
+
+    const small = addImage(scene, TEXTURE.BALL_BURST_PARTICLE_S, undefined, burstX, burstY)
+      .setScale(2.2)
+      .setAlpha(0)
+      .setTint(smallTint);
+    wildContainer.add(small);
+    particles.push({
+      img: small,
+      angleDeg: Phaser.Math.FloatBetween(0, 360),
+      radius: innerRadius + Phaser.Math.FloatBetween(-30, 30),
+    });
+  }
+
+  const particleFadeInMs = 80;
+  const particleHoldMs = 220;
+  const particleFadeOutStart = particleFadeInMs + particleHoldMs;
+  const particleFadeOutMs = Math.max(1, durationMs - particleFadeOutStart);
+  const particleAlphaCurve = (elapsedMs: number): number => {
+    if (elapsedMs < particleFadeInMs) return elapsedMs / particleFadeInMs;
+    if (elapsedMs < particleFadeOutStart) return 1;
+    return Math.max(0, 1 - (elapsedMs - particleFadeOutStart) / particleFadeOutMs);
+  };
+
+  const particleProxy = { t: 0 };
+  const particleTween = tweenAsync(scene, {
+    targets: particleProxy,
+    t: 1,
+    duration: durationMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = particleProxy.t;
+      const alphaMul = particleAlphaCurve(t * durationMs);
+      for (const p of particles) {
+        const ang = Phaser.Math.DegToRad(p.angleDeg);
+        p.img.x = burstX + Math.cos(ang) * p.radius * t;
+        p.img.y = burstY + Math.sin(ang) * p.radius * t;
+        p.img.alpha = peakAlpha * alphaMul;
+      }
+    },
+  });
+
+  const centerStartScale = 0.5;
+  const centerEndScale = 9;
+  const centerPeakAlpha = 0.85;
+  const centerFadeInMs = 150;
+  const centerHoldMs = 150;
+  const centerFadeOutStart = centerFadeInMs + centerHoldMs;
+  const centerFadeOutMs = Math.max(1, durationMs - centerFadeOutStart);
+  const centerAlphaCurve = (elapsedMs: number): number => {
+    if (elapsedMs < centerFadeInMs) return elapsedMs / centerFadeInMs;
+    if (elapsedMs < centerFadeOutStart) return 1;
+    return Math.max(0, 1 - (elapsedMs - centerFadeOutStart) / centerFadeOutMs);
+  };
+  const centerGlow = addImage(scene, TEXTURE.BALL_BURST_PARTICLE, undefined, burstX, burstY)
+    .setScale(centerStartScale)
+    .setAlpha(0)
+    .setBlendMode(Phaser.BlendModes.ADD);
+  wildContainer.add(centerGlow);
+  if (particles.length > 0) {
+    wildContainer.moveBelow(centerGlow, particles[0].img);
+  }
+
+  const centerProxy = { t: 0 };
+  const centerTween = tweenAsync(scene, {
+    targets: centerProxy,
+    t: 1,
+    duration: durationMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = centerProxy.t;
+      centerGlow.setScale(centerStartScale + (centerEndScale - centerStartScale) * t);
+      centerGlow.alpha = centerPeakAlpha * centerAlphaCurve(t * durationMs);
+    },
+  }).then(() => {
+    centerGlow.destroy();
+  });
+
+  const rayBaseAngles = [165, 180, -15, 15, -75, -105];
+  const rayBaseRadius = 300;
+  const rayPromises: Promise<void>[] = [];
+
+  for (const baseAngleDeg of rayBaseAngles) {
+    const angleDeg = baseAngleDeg + Phaser.Math.FloatBetween(-12, 12);
+    const startDelay = Phaser.Math.Between(0, 100);
+    const duration = Phaser.Math.Between(300, 500);
+    const radius = rayBaseRadius + Phaser.Math.FloatBetween(-80, 80);
+    const thicknessScale = 4.6;
+    const lengthScale = 2.4;
+
+    const ray = addImage(scene, TEXTURE.BALL_BURST_RAY, undefined, burstX, burstY)
+      .setOrigin(0.5, 1)
+      .setScale(thicknessScale, lengthScale)
+      .setAlpha(0)
+      .setAngle(angleDeg + 90);
+    wildContainer.add(ray);
+    wildContainer.moveBelow(ray, centerGlow);
+
+    rayPromises.push(
+      new Promise<void>((resolve) => {
+        scene.time.delayedCall(startDelay, () => {
+          ray.setAlpha(peakAlpha);
+          const proxy = { t: 0 };
+          scene.tweens.add({
+            targets: proxy,
+            t: 1,
+            duration,
+            ease: EASE.LINEAR,
+            onUpdate: () => {
+              const t = proxy.t;
+              const ang = Phaser.Math.DegToRad(angleDeg);
+              ray.x = burstX + Math.cos(ang) * radius * t;
+              ray.y = burstY + Math.sin(ang) * radius * t;
+              ray.alpha = peakAlpha * (1 - t);
+            },
+            onComplete: () => {
+              ray.destroy();
+              resolve();
+            },
+          });
+        });
+      }),
+    );
+  }
+
+  await Promise.all([particleTween, centerTween, ...rayPromises]);
+
+  particles.forEach((p) => p.img.destroy());
 }
 
 /**
@@ -145,7 +455,9 @@ export async function playBallThrow(
     ease: EASE.SINE_EASEOUT,
   });
 
+  const savedX = wild.x;
   const savedY = wild.y;
+  wild.x -= (wild.originX - 0.5) * wild.displayWidth;
   wild.y -= (wild.originY - 0.5) * wild.displayHeight;
   wild.setOrigin(0.5, 0.5);
   wild.setTintFill(0xffffff);
@@ -165,14 +477,44 @@ export async function playBallThrow(
       alpha: 0,
       duration: BALL_ANIM.enterShrinkMs,
     }),
+    // throwItem 중앙에서 파티클 버스트 → 시계방향 회전 → 중앙으로 수렴
+    playBallBurstParticles(scene, sprite),
   ]);
   wild.clearTint();
   wildShadow.clearTint();
   sprite.resetWildOrigin();
+  wild.x = savedX;
   wild.y = savedY;
   throwItem.setTexture(TEXTURE.SAFARI_BALL_THROW).setFrame(`${TEXTURE.SAFARI_BALL_THROW}-0`);
 
-  await delay(scene, 500);
+  const ballGlowMs = 500;
+  const ballGlowPeakAlpha = 1.0;
+  const ballGlow = addImage(
+    scene,
+    TEXTURE.SAFARI_BALL_THROW,
+    `${TEXTURE.SAFARI_BALL_THROW}-0`,
+    throwItem.x,
+    throwItem.y,
+  )
+    .setScale(throwItem.scaleX, throwItem.scaleY)
+    .setOrigin(throwItem.originX, throwItem.originY)
+    .setAlpha(0)
+    .setTintFill(0xffd84d);
+  sprite.getWildContainer().add(ballGlow);
+
+  const ballGlowProxy = { t: 0 };
+  await tweenAsync(scene, {
+    targets: ballGlowProxy,
+    t: 1,
+    duration: ballGlowMs,
+    ease: EASE.LINEAR,
+    onUpdate: () => {
+      const t = ballGlowProxy.t;
+      const k = t < 0.5 ? t * 2 : (1 - t) * 2;
+      ballGlow.alpha = ballGlowPeakAlpha * k;
+    },
+  });
+  ballGlow.destroy();
 
   // 5. drop — 수동 멀티 바운스 (각 착지마다 효과음)
   const dropTargetY = THROW_ITEM.endY + 130;
@@ -274,26 +616,41 @@ export async function playBallCatch(scene: GameScene, sprite: BattleSpriteUi): P
 }
 
 /** 포획 실패 연출: 볼이 튕겨 사라지고 야생 + 그림자 재등장. */
-export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+export async function playBallFail(
+  scene: GameScene,
+  sprite: BattleSpriteUi,
+  pokedexId: string,
+): Promise<void> {
   const throwItem = sprite.getThrowItem();
   const wild = sprite.getWildSprite();
   const wildShadow = sprite.getWildShadow();
 
   throwItem.setTexture(TEXTURE.SAFARI_BALL_OPEN);
   scene.getAudio().playEffect(SFX.BALL_EXIT);
-  await delay(scene, 200);
 
-  const finalHeight = wild.height * 2.4;
-  const centerY = wild.y - finalHeight / 2;
+  playBallExitParticles(scene, sprite);
+
+  resetThrowItem(throwItem);
+
+  const savedX = wild.x;
+  const savedY = wild.y;
+  const finalWidth = wild.width * WILD_SPRITE.scale;
+  const finalHeight = wild.height * WILD_SPRITE.scale;
+  const centerX = savedX - (wild.originX - 0.5) * finalWidth;
+  const centerY = savedY - (wild.originY - 0.5) * finalHeight;
+  wild.x = centerX;
   wild.y = centerY;
   wild.setOrigin(0.5, 0.5);
   wild.setTintFill(0xffffff);
   wildShadow.setTintFill(0x000000);
 
+  const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
+  scene.getAudio().playEffect(cryKey);
+
   await Promise.all([
     tweenAsync(scene, {
       targets: wild,
-      scale: 2.4,
+      scale: WILD_SPRITE.scale,
       alpha: 1,
       duration: 300,
     }),
@@ -308,9 +665,8 @@ export async function playBallFail(scene: GameScene, sprite: BattleSpriteUi): Pr
 
   wild.clearTint();
   sprite.resetWildOrigin();
-  wild.y = centerY + finalHeight / 2;
-
-  resetThrowItem(throwItem);
+  wild.x = savedX;
+  wild.y = savedY;
 }
 
 /** FEED 연출: safari_bait 던지기 + 이모트. */

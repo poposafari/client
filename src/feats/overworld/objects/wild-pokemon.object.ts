@@ -180,7 +180,7 @@ export class WildPokemonObject extends MovableObject {
         .sprite(px, py - this.sprite.displayHeight + 30, TEXTURE.EMO)
         .setOrigin(0.5, 1)
         .setScale(1.4)
-        .setDepth(DEPTH.FOREGROUND + 3);
+        .setDepth(DEPTH.HUD);
       this.emoteSprite = sprite;
       attach?.(sprite);
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {

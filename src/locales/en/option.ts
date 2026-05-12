@@ -10,6 +10,8 @@ export const option: TranslationOption = {
   frameValue: 'Type',
   wildSpawnCry: 'Wild Pokémon Spawn Cry',
   battleTutorial: 'Battle Tutorial',
+  battleBgm: 'Battle BGM',
+  battleBgmValue: 'BGM',
   on: 'On',
   off: 'Off',
   speedNormal: 'Normal',

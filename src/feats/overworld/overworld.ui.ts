@@ -54,6 +54,7 @@ import { landToBiome, WeatherOverlay } from '@poposafari/utils/weather-overlay';
 import { getPokemonI18Name, showApiErrorAsTalk } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { BattlePhase } from '@poposafari/feats/battle';
 
 const TRIGGER_HANDLERS: Record<
   string,
@@ -879,7 +880,8 @@ export class OverworldUi extends BaseUi {
 
     if (
       this.scene.getOption().getOption(OptionKey.WILD_SPAWN_CRY) === 0 &&
-      this.scene.getAudio().isAudible()
+      this.scene.getAudio().isAudible() &&
+      !this.scene.hasPhaseOfType(BattlePhase)
     ) {
       const pokedexId = obj.getPokedexId();
       const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];

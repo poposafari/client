@@ -5,7 +5,7 @@ import type { BattleContext, BattleModifiers, BattleState, CatchResult } from '.
 import { toCatchResult } from './battle.types';
 import { RewardPhase } from './reward/reward.phase';
 import { BattleTutorialPhase } from './tutorial/battle-tutorial.phase';
-import { MAP, OptionKey, SFX } from '@poposafari/types';
+import { BGM, MAP, OptionKey, SFX } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
 import { screenFadeOut } from '@poposafari/utils/screen-fade';
 
@@ -139,7 +139,15 @@ export class BattlePhase implements IGamePhase {
       case 'result': {
         if (next.outcome.kind === 'caught') {
           await this.ui.playBallCatchAnim();
-          await this.ui.showCaughtTalk();
+
+          const audio = this.scene.getAudio();
+          audio.stopBackground(1000);
+          const sfxDone = audio.playEffectAwaitable(SFX.CONGRATULATIONS);
+
+          await this.ui.showCaughtTalk(sfxDone);
+
+          audio.playBackground(BGM.BATTLE_VICTORY);
+
           const { pokemon, reward, expReward } = next.outcome;
 
           const user = this.scene.getUser();
@@ -190,6 +198,10 @@ export class BattlePhase implements IGamePhase {
               }),
             );
           });
+
+          // Reward UI 종료 → 승리 BGM 을 서서히 페이드 아웃하며 배틀 종료로 진행.
+          audio.stopBackground(1500);
+
           user?.setLevelAndExp(expReward.level, expReward.exp);
           this.scene.events.emit(GameEvent.PROFILE_CHANGED);
 

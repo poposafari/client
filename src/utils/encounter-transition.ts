@@ -18,6 +18,8 @@ export interface EncounterTransitionOptions {
   holdMs?: number;
   /** 각 타일이 등장할 때 alpha 0→1 페이드인 시간(ms). 0이면 즉시 등장. 기본 200 */
   tileFadeInMs?: number;
+  /** onStart 발화 후 플리커 시작 전까지의 대기 시간(ms). BGM을 플리커 전에 먼저 들리게 할 때 사용. 기본 0 */
+  preDelayMs?: number;
   /** 트랜지션 시작 시점에 호출 (사운드 트리거용) */
   onStart?: () => void;
 }
@@ -27,12 +29,13 @@ type ResolvedOptions = Required<Omit<EncounterTransitionOptions, 'onStart'>> &
 
 const DEFAULT_OPTIONS: Required<Omit<EncounterTransitionOptions, 'onStart'>> = {
   flickerCount: 2,
-  flickerDurationMs: 150,
+  flickerDurationMs: 200,
   durationMs: 1000,
   tileSize: 180,
   order: 'split',
   holdMs: 300,
   tileFadeInMs: 70,
+  preDelayMs: 0,
 };
 
 const TRANSITION_DEPTH = 99999;
@@ -80,6 +83,13 @@ export class EncounterTransition {
 
   private async run(): Promise<void> {
     this.opts.onStart?.();
+    if (this.opts.preDelayMs > 0) {
+      await new Promise<void>((resolve) => {
+        const t = this.scene.time.delayedCall(this.opts.preDelayMs, () => resolve());
+        this.timers.push(t);
+      });
+      if (this.cancelled) return;
+    }
     await this.runFlicker();
     if (this.cancelled) return;
     this.startTileFill();

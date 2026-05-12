@@ -607,6 +607,12 @@ export class LoadingPhase implements IGamePhase {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
     // }
 
+    this.scene.loadImage(TEXTURE.BALL_BURST_DAZZLE, 'ui/battle', TEXTURE.BALL_BURST_DAZZLE);
+    this.scene.loadImage(TEXTURE.BALL_BURST_RING, 'ui/battle', TEXTURE.BALL_BURST_RING);
+    this.scene.loadImage(TEXTURE.BALL_BURST_PARTICLE_S, 'ui/battle', TEXTURE.BALL_BURST_PARTICLE_S);
+    this.scene.loadImage(TEXTURE.BALL_BURST_PARTICLE, 'ui/battle', TEXTURE.BALL_BURST_PARTICLE);
+    this.scene.loadImage(TEXTURE.BALL_BURST_RAY, 'ui/battle', TEXTURE.BALL_BURST_RAY);
+
     this.scene.loadImage(`pc_safari-ball`, 'ui/pc', 'pc_safari-ball');
     this.scene.loadImage(`pc_ultra-ball`, 'ui/pc', 'pc_ultra-ball');
     this.scene.loadImage(`pc_master-ball`, 'ui/pc', 'pc_master-ball');
@@ -902,6 +908,11 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.EXP_FULL, 'audio/se', 'exp_full', 'ogg');
     this.scene.loadAudio(SFX.JUMP, 'audio/se', 'jump', 'ogg');
 
+    this.scene.loadAudio(BGM.BATTLE_0, 'audio/bgm', 'battle_0', 'ogg');
+    this.scene.loadAudio(BGM.BATTLE_1, 'audio/bgm', 'battle_1', 'ogg');
+    this.scene.loadAudio(BGM.BATTLE_2, 'audio/bgm', 'battle_2', 'ogg');
+    this.scene.loadAudio(BGM.BATTLE_STRONG, 'audio/bgm', 'battle_strong', 'ogg');
+    this.scene.loadAudio(BGM.BATTLE_VICTORY, 'audio/bgm', 'battle_victory', 'ogg');
     this.scene.loadAudio(BGM.P001, 'audio/bgm', 'p001', 'ogg');
     this.scene.loadAudio(BGM.P009, 'audio/bgm', 'p009', 'wav');
     this.scene.loadAudio(BGM.POKEMART, 'audio/bgm', 'pokemart', 'ogg');

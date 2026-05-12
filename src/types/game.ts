@@ -20,6 +20,7 @@ export enum OptionKey {
   WINDOW = 'window',
   WILD_SPAWN_CRY = 'wild_spawn_cry',
   BATTLE_TUTORIAL = 'battle_tutorial',
+  BATTLE_BGM = 'battle_bgm',
   /** 언어 옵션 (i18nextLng). OptionManager 저장/조회용. */
   LANGUAGE = 'i18nextLng',
 }

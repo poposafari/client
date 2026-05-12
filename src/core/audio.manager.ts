@@ -82,6 +82,10 @@ export class AudioManager {
     sound.destroy();
   }
 
+  public stopEffect(key: SFX | string): void {
+    this.scene.sound.stopByKey(key as unknown as string);
+  }
+
   public playBackground(key: BGM, duration: number = 1000): void {
     if (this.currentBgm && this.currentBgm.key === (key as unknown as string)) {
       if (!this.currentBgm.isPlaying) {
@@ -151,13 +155,26 @@ export class AudioManager {
     }
   }
 
-  public stopBackground(): void {
-    if (this.currentBgm) {
-      this.scene.tweens.killTweensOf(this.currentBgm);
-      this.currentBgm.stop();
-      this.currentBgm.destroy();
-      this.currentBgm = null;
+  public stopBackground(fadeDurationMs: number = 0): void {
+    if (!this.currentBgm) return;
+    const bgm = this.currentBgm;
+    this.currentBgm = null;
+    this.scene.tweens.killTweensOf(bgm);
+    if (fadeDurationMs <= 0) {
+      bgm.stop();
+      bgm.destroy();
+      return;
     }
+    this.scene.tweens.add({
+      targets: bgm,
+      volume: 0,
+      duration: fadeDurationMs,
+      ease: 'Linear',
+      onComplete: () => {
+        bgm.stop();
+        bgm.destroy();
+      },
+    });
   }
 
   public setMasterVolume(value: number): void {

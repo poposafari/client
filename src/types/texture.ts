@@ -112,6 +112,12 @@ export const enum TEXTURE {
   PARTICLE_HM_0 = 'particle_hm_0',
   PARTICLE_HM_1 = 'particle_hm_1',
 
+  BALL_BURST_DAZZLE = 'ball_burst_dazzle',
+  BALL_BURST_PARTICLE_S = 'ball_burst_particle_s',
+  BALL_BURST_PARTICLE = 'ball_burst_particle',
+  BALL_BURST_RING = 'ball_burst_ring',
+  BALL_BURST_RAY = 'ball_burst_ray',
+
   BASE_SURF = 'base_surf',
 }
 

@@ -21,7 +21,11 @@ export interface IOptionItem {
   valueIndex: number;
 }
 
-const ARROW_STYLE_KEYS: ReadonlySet<string> = new Set<string>([OptionKey.WINDOW, LANGUAGE_KEY]);
+const ARROW_STYLE_KEYS: ReadonlySet<string> = new Set<string>([
+  OptionKey.WINDOW,
+  OptionKey.BATTLE_BGM,
+  LANGUAGE_KEY,
+]);
 
 function optionItemsToMenuItems(options: IOptionItem[]) {
   return options.map((opt) => {

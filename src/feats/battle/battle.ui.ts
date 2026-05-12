@@ -18,7 +18,7 @@ import {
 } from './anim/ball-throw';
 import { EncounterTransition } from '@poposafari/utils/encounter-transition';
 import { PLAYER_HUD } from './battle.constants';
-import { SFX } from '@poposafari/types';
+import { BGM, OptionKey, SFX } from '@poposafari/types';
 import { getPokemonI18Name } from '@poposafari/utils';
 
 export class BattleUi {
@@ -68,9 +68,23 @@ export class BattleUi {
     this.firstIdlePrompt = true;
   }
 
+  private resolveBattleBgm(): BGM {
+    const data = this.scene.getMasterData().getPokemonData(this.ctx.wild.pokedexId);
+    if (data?.rank === 'epic') return BGM.BATTLE_STRONG;
+    const selected = Number(this.scene.getOption().getOption(OptionKey.BATTLE_BGM) ?? 0);
+    if (selected === 1) return BGM.BATTLE_1;
+    if (selected === 2) return BGM.BATTLE_2;
+    return BGM.BATTLE_0;
+  }
+
   async playPreIntro(): Promise<void> {
+    const bgm = this.resolveBattleBgm();
     return new Promise<void>((resolve) => {
-      const transition = new EncounterTransition({ order: 'split' });
+      const transition = new EncounterTransition({
+        order: 'split',
+        preDelayMs: 400,
+        onStart: () => this.scene.getAudio().playBackground(bgm, 100),
+      });
       this.pendingTransition = transition;
       transition.play(this.scene, () => resolve());
     });
@@ -91,6 +105,7 @@ export class BattleUi {
   hide(): void {
     this.pendingTransition?.cancel();
     this.pendingTransition = null;
+    this.scene.getAudio().stopBackground();
     this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged);
     if (!this.built) return;
     this.base.hide();
@@ -190,11 +205,11 @@ export class BattleUi {
       return;
     }
     if (outcome.kind === 'flee') {
-      await playBallFail(this.scene, this.sprite);
+      await playBallFail(this.scene, this.sprite, this.ctx.wild.pokedexId);
       await this.playWildFleeMessage();
       return;
     }
-    await playBallFail(this.scene, this.sprite);
+    await playBallFail(this.scene, this.sprite, this.ctx.wild.pokedexId);
     this.base?.setMessage(i18next.t('battle:messageFail'));
   }
 
@@ -213,6 +228,7 @@ export class BattleUi {
 
   async playExit(reason: 'catch' | 'flee_wild' | 'flee_player'): Promise<void> {
     if (reason === 'flee_player') {
+      this.scene.getAudio().stopBackground(1500);
       const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
       this.scene.getAudio().playEffect(SFX.FLEE);
       this.idleMessage?.forceClose();
@@ -226,6 +242,8 @@ export class BattleUi {
       } finally {
         this.base?.showMessageBox();
       }
+    } else {
+      this.scene.getAudio().stopBackground();
     }
 
     const pipeline = this.scene.getFadeToBlackPipeline();
@@ -273,11 +291,17 @@ export class BattleUi {
     return this.ctx.wild.pokedexId;
   }
 
-  private async showTalk(key: string, vars?: Record<string, string>): Promise<void> {
+  private async showTalk(
+    key: string,
+    vars?: Record<string, string>,
+    unlockInputAfter?: Promise<void>,
+  ): Promise<void> {
     this.idleMessage?.forceClose();
     this.base?.hideMessageBox();
     try {
-      await this.scene.getMessage('talk').showMessage(i18next.t(key, vars), { showHint: false });
+      await this.scene
+        .getMessage('talk')
+        .showMessage(i18next.t(key, vars), { showHint: false, unlockInputAfter });
     } finally {
       this.base?.showMessageBox();
     }
@@ -306,11 +330,12 @@ export class BattleUi {
     await this.showIdleMessageBy('battle:messageThrewMudNew', { nickname });
   }
 
-  /** "신난다-\n{{name}}을(를) 붙잡았다!" — talk 메시지(Z/ENTER 대기). */
-  async showCaughtTalk(): Promise<void> {
-    await this.showTalk('battle:messageCaughtNew', {
-      name: getPokemonI18Name(this.getWildName()),
-    });
+  async showCaughtTalk(unlockInputAfter?: Promise<void>): Promise<void> {
+    await this.showTalk(
+      'battle:messageCaughtNew',
+      { name: getPokemonI18Name(this.getWildName()) },
+      unlockInputAfter,
+    );
   }
 
   /** "안돼! 포켓몬이\n볼에서 나와버렸다!" — talk 메시지. */
@@ -340,6 +365,7 @@ export class BattleUi {
   /** "{{name}}은(는) 도망쳤다!" — talk 메시지(야생 flee). */
   async showWildFledTalk(): Promise<void> {
     this.scene.getAudio().playEffect(SFX.FLEE);
+    this.scene.getAudio().stopBackground(1500);
     await this.showTalk('battle:messageWildFled', {
       name: getPokemonI18Name(this.getWildName()),
     });
@@ -362,6 +388,6 @@ export class BattleUi {
 
   /** 볼 포획 실패 연출(튕김). 메시지는 phase 가 별도로 제어한다. */
   async playBallFailAnim(): Promise<void> {
-    await playBallFail(this.scene, this.sprite);
+    await playBallFail(this.scene, this.sprite, this.ctx.wild.pokedexId);
   }
 }

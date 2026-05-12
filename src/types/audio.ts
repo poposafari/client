@@ -32,6 +32,11 @@ export const enum SFX {
 }
 
 export const enum BGM {
+  BATTLE_0 = 'battle_0',
+  BATTLE_1 = 'battle_1',
+  BATTLE_2 = 'battle_2',
+  BATTLE_STRONG = 'battle_strong',
+  BATTLE_VICTORY = 'battle_victory',
   P001 = 'p001',
   P009 = 'p009',
   POKEMART = 'pokemart',

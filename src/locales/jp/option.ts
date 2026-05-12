@@ -10,6 +10,8 @@ export const option: TranslationOption = {
   frameValue: 'タイプ',
   wildSpawnCry: 'やせい ポケモンの しゅつげんおん',
   battleTutorial: 'バトル チュートリアル',
+  battleBgm: 'バトル BGM',
+  battleBgmValue: 'BGM',
   on: 'オン',
   off: 'オフ',
   speedNormal: 'ふつう',

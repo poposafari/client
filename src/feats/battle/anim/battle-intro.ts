@@ -41,19 +41,29 @@ export async function displayBattleIntro(
   info.show();
 
   const playerC = sprite.getPlayerContainer();
+  const playerBase = sprite.getPlayerBase();
+  const playerLayers = sprite.getPlayerSpriteLayers();
   const wildC = sprite.getWildContainer();
   const wildSprite = sprite.getWildSprite();
+  const wildBase = sprite.getWildBase();
   const wildShadow = sprite.getWildShadow();
   wildShadow.setVisible(false);
 
-  // 플레이어 컨테이너는 최종 위치. (인트로 동안 슬라이드 없음)
+  // 플레이어 컨테이너는 최종 위치. 내부 base/sprite 가 함께 우→좌 슬라이드.
   playerC.x = INTRO_SLIDE.playerToX;
+  const playerOffsetFromX = INTRO_SLIDE.playerFromX - INTRO_SLIDE.playerToX;
+  const playerBaseToX = playerBase.x;
+  const playerLayersToX = playerLayers.map((l) => l.x);
+  playerBase.x = playerOffsetFromX;
+  for (const layer of playerLayers) layer.x = playerOffsetFromX;
 
-  // 야생 컨테이너는 최종 위치. 내부 sprite 만 왼→오 슬라이드.
+  // 야생 컨테이너는 최종 위치. 내부 base/sprite 가 함께 좌→우 슬라이드.
   wildC.x = INTRO_SLIDE.wildToX;
-  const wildSpriteFromX = INTRO_SLIDE.wildFromX - INTRO_SLIDE.wildToX;
+  const wildOffsetFromX = INTRO_SLIDE.wildFromX - INTRO_SLIDE.wildToX;
   const wildSpriteToX = wildSprite.x;
-  wildSprite.x = wildSpriteFromX;
+  const wildBaseToX = wildBase.x;
+  wildSprite.x = wildOffsetFromX;
+  wildBase.x = wildOffsetFromX;
   wildSprite.setTint(0x000000);
 
   // HUD 초기 위치: wild=fromX, player=fromX (오프스크린 유지, idle 프롬프트 시점에 슬라이드)
@@ -75,6 +85,26 @@ export async function displayBattleIntro(
     duration: INTRO_SLIDE.durationMs,
     ease: EASE.QUAD_EASEOUT,
   });
+  const slideWildBase = tweenAsync(scene, {
+    targets: wildBase,
+    x: wildBaseToX,
+    duration: INTRO_SLIDE.durationMs,
+    ease: EASE.QUAD_EASEOUT,
+  });
+  const slidePlayerBase = tweenAsync(scene, {
+    targets: playerBase,
+    x: playerBaseToX,
+    duration: INTRO_SLIDE.durationMs,
+    ease: EASE.QUAD_EASEOUT,
+  });
+  const slidePlayerLayers = playerLayers.map((layer, i) =>
+    tweenAsync(scene, {
+      targets: layer,
+      x: playerLayersToX[i],
+      duration: INTRO_SLIDE.durationMs,
+      ease: EASE.QUAD_EASEOUT,
+    }),
+  );
   const recolorWild = tweenAsync(scene, {
     targets: tintProxy,
     v: 1,
@@ -86,7 +116,14 @@ export async function displayBattleIntro(
     },
   });
 
-  await Promise.all([fadeOverlay, slideWildSprite, recolorWild]);
+  await Promise.all([
+    fadeOverlay,
+    slideWildSprite,
+    slideWildBase,
+    slidePlayerBase,
+    ...slidePlayerLayers,
+    recolorWild,
+  ]);
   wildSprite.clearTint();
   blackOverlay.destroy();
 

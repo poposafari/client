@@ -49,6 +49,12 @@ function defaultOptionItems(): IOptionItem[] {
       valueIndex: 0,
     },
     {
+      key: OptionKey.BATTLE_BGM,
+      label: i18next.t('option:battleBgm'),
+      values: ['1', '2', '3'].map((n) => `${i18next.t('option:battleBgmValue')} ${n}`),
+      valueIndex: 0,
+    },
+    {
       key: OptionKey.WILD_SPAWN_CRY,
       label: i18next.t('option:wildSpawnCry'),
       values: [i18next.t('option:on'), i18next.t('option:off')],

@@ -545,6 +545,13 @@ export class GameScene extends BaseScene {
     return this.phaseStack.length > 0 ? this.phaseStack[this.phaseStack.length - 1] : undefined;
   }
 
+  hasPhaseOfType<T extends IGamePhase>(ctor: new (...args: any[]) => T): boolean {
+    for (const phase of this.phaseStack) {
+      if (phase instanceof ctor) return true;
+    }
+    return false;
+  }
+
   emitEvent(event: GameEvent) {
     switch (event) {
       case GameEvent.LANGUAGE_CHANGED:

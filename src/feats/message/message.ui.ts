@@ -13,6 +13,11 @@ export interface MessageConfig {
   window?: TEXTURE | string;
   resolveWhen?: 'close' | 'displayed';
   showHint?: boolean;
+  /**
+   * 이 Promise 가 resolve 되기 전까지 Z/ENTER 등 입력을 무시한다.
+   * (타이핑 스킵·close 둘 다 차단) 기본 100ms 잠금에 추가로 적용된다.
+   */
+  unlockInputAfter?: Promise<void>;
 }
 
 export abstract class MessageUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
@@ -116,7 +121,13 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
     this.cancelHintTimer();
 
     this.inputLocked = true;
-    this.scene.time.delayedCall(100, () => {
+    const baseUnlock = new Promise<void>((resolve) => {
+      this.scene.time.delayedCall(100, () => resolve());
+    });
+    const finalUnlock = config.unlockInputAfter
+      ? Promise.all([baseUnlock, config.unlockInputAfter]).then(() => undefined)
+      : baseUnlock;
+    finalUnlock.then(() => {
       this.inputLocked = false;
     });
 

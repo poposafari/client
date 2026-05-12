@@ -44,6 +44,49 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
     const scene = this.scene as GameScene;
     const { height } = scene.cameras.main;
 
+    // ── 야생 컨테이너 ─────────────────────────────────
+    this.wildContainer = addContainer(
+      scene,
+      0,
+      WILD_CONTAINER.x,
+      height / 2 + WILD_CONTAINER.yOffset,
+    );
+
+    const wildBaseKey = `eb_${ctx.area}_${ctx.time}`;
+    this.wildBase = addImage(scene, wildBaseKey, undefined, WILD_BASE.x, WILD_BASE.y).setScale(
+      WILD_BASE.scale,
+    );
+    this.wildContainer.add(this.wildBase);
+
+    const wildTex = getPokemonTexture(
+      'sprite',
+      ctx.wild.pokedexId,
+      { isShiny: ctx.wild.isShiny, isFemale: ctx.wild.gender === 2 },
+      scene,
+    );
+
+    this.wildSprite = addImage(
+      scene,
+      wildTex.key,
+      wildTex.frame,
+      WILD_SPRITE.x,
+      WILD_SPRITE.y,
+    ).setScale(WILD_SPRITE.scale);
+
+    this.applyVisibleFeetOrigin(this.wildSprite);
+
+    this.wildShadow = addImage(scene, wildTex.key, wildTex.frame, WILD_BASE.x, WILD_BASE.y)
+      .setScale(WILD_SPRITE.scale, WILD_SPRITE.scale * 0.3)
+      .setOrigin(0.5, 0.5)
+      .setFlipY(true)
+      .setTintFill(0x000000)
+      .setAlpha(WILD_SHADOW.alpha);
+
+    this.wildContainer.add(this.wildShadow);
+    this.wildContainer.add(this.wildSprite);
+
+    this.add(this.wildContainer);
+
     // ── 플레이어 컨테이너 ─────────────────────────────
     this.playerContainer = addContainer(
       scene,
@@ -97,49 +140,6 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
     }
 
     this.add(this.playerContainer);
-
-    // ── 야생 컨테이너 ─────────────────────────────────
-    this.wildContainer = addContainer(
-      scene,
-      0,
-      WILD_CONTAINER.x,
-      height / 2 + WILD_CONTAINER.yOffset,
-    );
-
-    const wildBaseKey = `eb_${ctx.area}_${ctx.time}`;
-    this.wildBase = addImage(scene, wildBaseKey, undefined, WILD_BASE.x, WILD_BASE.y).setScale(
-      WILD_BASE.scale,
-    );
-    this.wildContainer.add(this.wildBase);
-
-    const wildTex = getPokemonTexture(
-      'sprite',
-      ctx.wild.pokedexId,
-      { isShiny: ctx.wild.isShiny, isFemale: ctx.wild.gender === 2 },
-      scene,
-    );
-
-    this.wildSprite = addImage(
-      scene,
-      wildTex.key,
-      wildTex.frame,
-      WILD_SPRITE.x,
-      WILD_SPRITE.y,
-    ).setScale(WILD_SPRITE.scale);
-
-    this.applyVisibleFeetOrigin(this.wildSprite);
-
-    this.wildShadow = addImage(scene, wildTex.key, wildTex.frame, WILD_BASE.x, WILD_BASE.y)
-      .setScale(WILD_SPRITE.scale, WILD_SPRITE.scale * 0.3)
-      .setOrigin(0.5, 0.5)
-      .setFlipY(true)
-      .setTintFill(0x000000)
-      .setAlpha(WILD_SHADOW.alpha);
-
-    this.wildContainer.add(this.wildShadow);
-    this.wildContainer.add(this.wildSprite);
-
-    this.add(this.wildContainer);
 
     // ── 던질 아이템 (볼/먹이/돌 공용 슬롯). 시작 위치 = throw start. ──
     this.throwItem = addSprite(
@@ -219,6 +219,16 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
   // Step 3 연출에서 직접 다룰 핸들들 노출.
   getPlayerContainer() {
     return this.playerContainer;
+  }
+  getPlayerBase() {
+    return this.playerBase;
+  }
+  /** skin/outfit/hair 순서의 백뷰 레이어. outfit/hair 는 장착 시에만 존재. */
+  getPlayerSpriteLayers(): Phaser.GameObjects.Sprite[] {
+    const layers: Phaser.GameObjects.Sprite[] = [this.playerSprite];
+    if (this.playerOutfit) layers.push(this.playerOutfit);
+    if (this.playerHair) layers.push(this.playerHair);
+    return layers;
   }
   getWildContainer() {
     return this.wildContainer;
