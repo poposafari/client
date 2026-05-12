@@ -103,7 +103,7 @@ const TOGGLE_ICON_LAYOUT = {
   iconY: -12,
   guideOffsetX: 30,
   guideKeycapY: -56,
-  guideTextY: -70,
+  guideTextY: -65,
   guideScale: 2.2,
   guideFontSize: 35,
   rightPadding: 60,

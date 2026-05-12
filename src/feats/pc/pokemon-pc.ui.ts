@@ -43,6 +43,7 @@ import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
 import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
 import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
+import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
@@ -65,6 +66,7 @@ export class PokemonPcUi extends BaseUi {
   scene: GameScene;
   private bg!: GImage;
   private guideFrame!: GWindow;
+  private inputGuide!: KeyGuideBarContainer;
   private pcBg!: GSprite;
   private pcBgFrame!: GWindow;
   private partyWindow!: GWindow;
@@ -279,6 +281,7 @@ export class PokemonPcUi extends BaseUi {
       this.infoSkills[3],
       this.heldItem,
       this.grabOverlay,
+      this.inputGuide,
     ]);
   }
 
@@ -1488,6 +1491,35 @@ export class PokemonPcUi extends BaseUi {
       16,
       16,
     );
+
+    // 바를 화면 우측에 배치. align: 'right' → setPosition(x,y) 의 (x,y) 가 바의 우측 끝.
+    // maxWidth 는 BaseUi 좌측 끝(- cameraHalfWidth) + 좌측 패딩 30 ~ 우측 끝 사이의 가용 폭.
+    const barRightX = +930; // 화면 우측(+960) 안쪽 30px
+    const leftPadding = 30;
+    const cameraHalfWidth = this.scene.cameras.main.width / 2; // BaseUi 원점 = 카메라 중심
+    const barMaxWidth = barRightX - (-cameraHalfWidth + leftPadding);
+
+    this.inputGuide = new KeyGuideBarContainer(this.scene);
+    this.inputGuide.create({
+      entries: [
+        { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
+        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
+        { keys: ['X', 'ESC'], description: i18next.t('etc:saveAndQuit') },
+      ],
+      keycapTextSize: 30,
+      keycapPaddingX: 50,
+      keycapPaddingY: 40,
+      keycapScale: 2,
+      keycapTextYOffset: -5,
+      descriptionTextSize: 40,
+      gapKeyToDescription: 5,
+      gapBetweenEntries: 25,
+      gapInsideEntry: 4,
+      align: 'right',
+      maxWidth: barMaxWidth, // 콘텐츠 총 폭이 이보다 길면 자동 축소(setScale).
+    });
+
+    this.inputGuide.setPosition(barRightX, +500);
   }
 
   private createInfoLayout() {

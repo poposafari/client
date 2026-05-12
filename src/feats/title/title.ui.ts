@@ -23,8 +23,13 @@ import {
 } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { TalkMessageUi } from '../message';
+import {
+  KeyGuideBarContainer,
+  type KeyGuideBarOptions,
+} from '@poposafari/containers/key-guide-bar.container';
 
 export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
+  scene: GameScene;
   private audio: AudioManager;
   private talk!: TalkMessageUi;
 
@@ -54,9 +59,11 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
 
   private bottomContainer!: GContainer;
   private versionText!: GText;
+  private inputGuide!: KeyGuideBarContainer;
 
   constructor(scene: GameScene, existUser: boolean) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
+    this.scene = scene;
     this.audio = scene.getAudio();
     this.talk = scene.getMessage('talk');
 
@@ -168,8 +175,15 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.createTopLayout();
     this.createMainLayout();
     this.createBottomLayout();
+    this.createInputGuide();
 
-    this.add([this.bg, this.topContainer, this.mainContainer, this.bottomContainer]);
+    this.add([
+      this.bg,
+      this.topContainer,
+      this.mainContainer,
+      this.bottomContainer,
+      this.inputGuide,
+    ]);
   }
 
   createTopLayout() {
@@ -239,6 +253,41 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.bottomContainer.setPosition(-930, +480);
 
     this.bottomContainer.add([this.versionText]);
+  }
+
+  /**
+   * 우하단 입력 가이드 바.
+   * 타이틀 화면은 UP/DOWN 으로 메뉴 이동, Z/ENTER 로 선택 — 취소/종료 없음 → 2 entry.
+   * BaseUi 직속 자식으로 두어 좌하단 versionText (bottomContainer) 와 균형 잡힌 좌·우 배치.
+   */
+  private createInputGuide() {
+    this.inputGuide = new KeyGuideBarContainer(this.scene);
+    this.inputGuide.create(this.buildInputGuideOptions());
+    this.inputGuide.setPosition(+930, +500);
+  }
+
+  /**
+   * inputGuide 옵션 — 초기 빌드와 언어 변경 시 recreate 양쪽에서 사용.
+   * i18next.t() 가 호출 시점의 현재 언어로 평가되므로 동일 함수가 양쪽에서 올바른 텍스트를 만든다.
+   */
+  private buildInputGuideOptions(): KeyGuideBarOptions {
+    return {
+      entries: [
+        { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
+        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
+      ],
+      keycapTextSize: 36,
+      keycapPaddingX: 50,
+      keycapPaddingY: 40,
+      keycapScale: 2,
+      keycapTextYOffset: -5,
+      descriptionTextSize: 50,
+      gapKeyToDescription: 8,
+      gapBetweenEntries: 30,
+      gapInsideEntry: 4,
+      align: 'right',
+      maxWidth: this.scene.cameras.main.width - 60,
+    };
   }
 
   private handleSelect(): string {
@@ -317,6 +366,9 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
 
     this.ignoreTitles = this.ignoreTitleKeys.map((k) => i18next.t(k));
     this.updateCursor();
+
+    // 키캡(`방향키` 등)의 폭이 언어에 따라 달라지므로 전체 재빌드. transform(setPosition) 유지됨.
+    this.inputGuide.recreate(this.buildInputGuideOptions());
   }
 
   show(): void {
