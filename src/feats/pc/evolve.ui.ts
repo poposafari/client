@@ -153,8 +153,8 @@ export class EvolveUi extends BaseUi implements IInputHandler {
 
     const endMessage = i18next.t('pc:evolveEnd', { from: startName, to: nextName });
     const congDone = this.playSoundAsync(SFX.CONGRATULATIONS);
-    const talkDone = this.showTalk(talk, endMessage).then(() => this.showFakeMessage(endMessage));
-    await Promise.all([congDone, talkDone]);
+    await this.showTalk(talk, endMessage, congDone);
+    this.showFakeMessage(endMessage);
 
     (talk as Phaser.GameObjects.Container).setDepth(originalTalkDepth);
 
@@ -175,9 +175,13 @@ export class EvolveUi extends BaseUi implements IInputHandler {
     this.fakeText.setText('');
   }
 
-  private async showTalk(talk: TalkMessageUi, content: string): Promise<void> {
+  private async showTalk(
+    talk: TalkMessageUi,
+    content: string,
+    unlockInputAfter?: Promise<void>,
+  ): Promise<void> {
     (talk as unknown as Phaser.GameObjects.Container).setDepth(TALK_DEPTH_DURING_EVOLVE);
-    await talk.showMessage(content);
+    await talk.showMessage(content, { unlockInputAfter });
   }
 
   private resolveCryKey(pokedexId: string): string {

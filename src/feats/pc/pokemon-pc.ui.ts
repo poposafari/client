@@ -39,6 +39,7 @@ import { EnhancePanelUi } from './enhance-panel.ui';
 import { EvolveSelectUi, parseCostParts } from './evolve-select.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { EvolveUi } from './evolve.ui';
+import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
 import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
 import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
@@ -1270,6 +1271,8 @@ export class PokemonPcUi extends BaseUi {
       return;
     }
 
+    await this.ensureCriesLoaded(pokemon.pokedexId, resp.pokedexId);
+
     // 진화 애니메이션 재생
     await this.evolveUi.play(pokemon.pokedexId, resp.pokedexId);
 
@@ -1301,6 +1304,33 @@ export class PokemonPcUi extends BaseUi {
 
     this.inputManager.pop(this);
     this.inputLocked = false;
+  }
+
+  private async ensureCriesLoaded(...pokedexIds: string[]): Promise<void> {
+    const keysToLoad = new Set<string>();
+    for (const id of pokedexIds) {
+      const key = pokemonCryNames.includes(id) ? id : id.split('_')[0];
+      if (!pokemonCryNames.includes(key)) continue;
+      if (this.scene.cache.audio.has(key)) continue;
+      keysToLoad.add(key);
+    }
+    if (keysToLoad.size === 0) return;
+
+    const waits = [...keysToLoad].map(
+      (key) =>
+        new Promise<void>((resolve) => {
+          const event = `filecomplete-audio-${key}`;
+          const handler = () => resolve();
+          this.scene.load.once(event, handler);
+          this.scene.time.delayedCall(5000, () => {
+            this.scene.load.off(event, handler);
+            resolve();
+          });
+          this.scene.load.audio(key, `audio/pokemon/${key}.ogg`);
+        }),
+    );
+    this.scene.load.start();
+    await Promise.all(waits);
   }
 
   private playEnhanceAnimation(fromLevel: number, toLevel: number): Promise<void> {
