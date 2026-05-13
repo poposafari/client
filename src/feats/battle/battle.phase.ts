@@ -176,6 +176,7 @@ export class BattlePhase implements IGamePhase {
             caughtAt: new Date().toISOString(),
             friendship: 0,
           });
+          user?.incrementPokedexCount(pokemon.pokedexId);
 
           if (user && reward?.candyId && reward.candyQuantity > 0) {
             const existing = user.getItemBag()?.get(reward.candyId);

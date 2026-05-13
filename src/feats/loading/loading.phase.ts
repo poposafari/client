@@ -596,6 +596,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_BAG_F, 'ui/bag', 'bg_f');
     this.scene.loadImage(TEXTURE.BG_MART, 'ui/bgs', 'bg_mart');
     this.scene.loadImage(TEXTURE.BG_MART_SELL, 'ui/bgs', 'bg_sell');
+    this.scene.loadImage(TEXTURE.BG_POKE_RADER, 'ui/bgs', 'bg_poke-rader');
 
     this.scene.loadImage(TEXTURE.LIGHT, 'ui', 'light');
 
@@ -668,6 +669,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_RATE_DOWN, 'ui', 'down_rate');
     this.scene.loadImage(TEXTURE.ICON_DISCORD, 'ui/icons', 'icon_discord');
     this.scene.loadImage(TEXTURE.ICON_GOOGLE, 'ui/icons', 'icon_google');
+    this.scene.loadImage(TEXTURE.ICON_POKE_RADER, 'ui/icons', 'icon_poke-rader');
 
     this.scene.loadImage(TEXTURE.ICON_SUNNY, 'ui/weather', 'icon_sunny');
     this.scene.loadImage(TEXTURE.ICON_RAINY, 'ui/weather', 'icon_rainy');

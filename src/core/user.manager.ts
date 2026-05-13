@@ -106,6 +106,7 @@ export class UserManager {
       ...(user.itemSlots as unknown as ItemBagItem[]),
       ...(user.essentialItems as unknown as ItemBagItem[]),
     ]);
+    this.pokedex = user.pokedex;
   }
 
   getProfile(): MappedProfile {
@@ -252,6 +253,16 @@ export class UserManager {
 
   setPokedex(data: PokedexEntry[]): void {
     this.pokedex = data;
+  }
+
+  incrementPokedexCount(pokedexId: string): void {
+    if (!this.pokedex) return;
+    const existing = this.pokedex.find((p) => p.pokedexId === pokedexId);
+    if (existing) {
+      existing.caughtCount += 1;
+    } else {
+      this.pokedex.push({ pokedexId, caughtCount: 1 });
+    }
   }
 
   getTownMap(): TownMapEntry[] | null {

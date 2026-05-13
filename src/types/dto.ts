@@ -65,6 +65,10 @@ export interface GetMeRes {
     quantity: number;
     register: boolean;
   }[];
+  pokedex: {
+    pokedexId: string;
+    caughtCount: number;
+  }[];
 }
 
 // ── Lazy Load API 응답 타입 ──
@@ -112,9 +116,9 @@ export interface ItemBagItem {
 }
 
 export interface PokedexEntry {
-  pokedexId: number;
+  pokedexId: string;
   caughtCount: number;
-  registeredAt: string;
+  registeredAt?: string;
 }
 
 export interface TownMapEntry {

@@ -1436,6 +1436,7 @@ type WildSlot = {
   foggy?: { id: string; weight: number }[];
 };
 export type MapMasterEntry = {
+  comment?: string;
   type?: string;
   cost?: number;
   wild?: {

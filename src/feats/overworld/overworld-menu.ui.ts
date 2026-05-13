@@ -20,6 +20,12 @@ const PLAZA_ITEM = () => ({
   icon: TEXTURE.ICON_EXIT_1,
 });
 
+const POKE_RADER_ITEM = () => ({
+  key: 'pokeRader',
+  label: i18next.t('etc:pokeRader'),
+  icon: TEXTURE.ICON_POKE_RADER,
+});
+
 const CANCEL_ITEM = () => ({
   key: 'cancel',
   label: i18next.t('etc:cancel'),
@@ -29,6 +35,7 @@ const CANCEL_ITEM = () => ({
 const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
   const items = BASE_MENU_ITEMS(gender);
   if (inSafari) {
+    items.push(POKE_RADER_ITEM());
     items.push(PLAZA_ITEM());
   }
   items.push(CANCEL_ITEM());

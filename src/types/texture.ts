@@ -20,6 +20,7 @@ export const enum TEXTURE {
   BG_BAG_F = 'bg_bag_f',
   BG_MART = 'bg_mart',
   BG_MART_SELL = 'bg_mart_sell',
+  BG_POKE_RADER = 'bg_poke-rader',
 
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
@@ -70,6 +71,7 @@ export const enum TEXTURE {
   ICON_REGISTER = 'icon_register',
   ICON_DISCORD = 'icon_discord',
   ICON_GOOGLE = 'icon_google',
+  ICON_POKE_RADER = 'icon_poke-rader',
 
   ICON_SUNNY = 'icon_sunny',
   ICON_RAINY = 'icon_rainy',
