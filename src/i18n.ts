@@ -4,6 +4,7 @@ import { enConfig } from './locales/en/config';
 import { jpConfig } from './locales/jp/config';
 import { koConfig } from './locales/ko/config';
 import { TEXTFONT } from './types';
+import { particleFormatters } from './utils/korean-particle';
 
 const fonts = [new FontFace(TEXTFONT.BW, 'url(./font/pokemon-bw.ttf')];
 
@@ -36,6 +37,14 @@ export async function initI18n(): Promise<void> {
     fallbackLng: 'en',
     load: 'languageOnly',
     supportedLngs: ['en', 'ko', 'jp'],
+    interpolation: {
+      format: (value, format) => {
+        if (typeof value === 'string' && format && particleFormatters[format]) {
+          return particleFormatters[format](value);
+        }
+        return value;
+      },
+    },
     resources: {
       en: {
         ...enConfig,

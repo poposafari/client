@@ -6,7 +6,7 @@ export const mart = {
   sell: '팔러 왔다',
   cancel: '아무것도 아닙니다',
   confirmBuy: '{{name}} {{qty}}개.\n그럼 합계가  {{total}}입니다!',
-  confirmSell: '{{name}} {{qty}}개.\n그럼  {{total}}으로 쳐드리겠습니다!',
+  confirmSell: '{{name}} {{qty}}개.\n그럼  {{total, (으)로}} 쳐드리겠습니다!',
   thanksBuy: '네 여기 있습니다.\n대단히 감사합니다',
   thanksSell: '네 여기 있습니다.\n대단히 감사드립니다',
   notEnoughMoney: '돈이 부족합니다.',

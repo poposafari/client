@@ -3,7 +3,7 @@ export type TranslationPokemonHiddenMove = {
 };
 
 export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
-  usedHiddenMove: '{{name}}은(는)\n{{move}}을(를) 사용했다!',
+  usedHiddenMove: '{{name, 은/는}}\n{{move, 을/를}} 사용했다!',
   move_cut: '풀베기',
   move_fly: '공중날기',
   move_surf: '파도타기',
