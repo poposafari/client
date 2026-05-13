@@ -2166,7 +2166,7 @@ export class OverworldUi extends BaseUi {
                 return;
               }
               const targetMapId = result.location as string;
-              await this.scene.startMapTransitionWithFade(async () => {
+              const ok = await this.scene.startMapTransitionWithFade(async () => {
                 if (
                   targetMapId.startsWith('s') &&
                   !this.scene.getSafariInfo().has(targetMapId)
@@ -2186,9 +2186,9 @@ export class OverworldUi extends BaseUi {
                 }
                 return result;
               });
-              this.scene.time.delayedCall(0, () => {
+              if (!ok) {
                 this.doorTransitionPending = false;
-              });
+              }
             });
             return;
           } else if (this.tryExitSurfByJump(dir)) {
