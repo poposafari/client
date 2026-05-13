@@ -23,7 +23,7 @@ export class OverworldMenuPhase implements IGamePhase {
   private yesOrNoMenu!: BackTitleMenuUi;
   private confirmMenu: MenuUi | null = null;
 
-  private savedCursorIndex: number | undefined = undefined;
+  private static savedCursorKey: string | undefined = undefined;
 
   constructor(
     private scene: GameScene,
@@ -46,8 +46,8 @@ export class OverworldMenuPhase implements IGamePhase {
   }
 
   private async runMenuOnce(): Promise<void> {
-    const result = await this.ui.waitForInput(this.savedCursorIndex);
-    this.savedCursorIndex = result.cursorIndex;
+    const result = await this.ui.waitForInput(OverworldMenuPhase.savedCursorKey);
+    OverworldMenuPhase.savedCursorKey = result.cursorKey;
 
     if (result.key === 'pc') {
       this.scene.pushPhase(new PokemonPcPhase(this.scene));

@@ -61,17 +61,20 @@ export class OverworldMenuUi extends MenuUi {
     return map.startsWith('s');
   }
 
-  async waitForInput(initialCursorIndex?: number): Promise<{ key: string; cursorIndex: number }> {
+  async waitForInput(initialCursorKey?: string): Promise<{ key: string; cursorKey: string }> {
     const inSafari = this.isInSafari();
     const gender = this.scene.getUser()?.getProfile().gender ?? 'male';
-    const options = initialCursorIndex !== undefined ? { initialCursorIndex } : undefined;
-    const ret = await this.waitForSelect(MENU_ITEMS(inSafari, gender), options);
+    const items = MENU_ITEMS(inSafari, gender);
+    const foundIndex = initialCursorKey ? items.findIndex((item) => item.key === initialCursorKey) : -1;
+    const initialCursorIndex = foundIndex >= 0 ? foundIndex : 0;
+    const ret = await this.waitForSelect(items, { initialCursorIndex });
 
     this.hide();
 
+    const lastIndex = this.getLastSelectedIndex();
     return {
       key: ret?.key ?? 'cancel',
-      cursorIndex: this.getLastSelectedIndex(),
+      cursorKey: items[lastIndex]?.key ?? items[0].key,
     };
   }
 
