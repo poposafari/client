@@ -11,7 +11,6 @@ const BASE_MENU_ITEMS = (gender: 'male' | 'female') => [
     icon: gender === 'female' ? TEXTURE.ICON_BAG_F : TEXTURE.ICON_BAG_M,
   },
   { key: 'option', label: i18next.t('etc:option'), icon: TEXTURE.ICON_OPTION },
-  { key: 'title', label: i18next.t('etc:backToTitle'), icon: TEXTURE.ICON_EXIT_0 },
 ];
 
 const PLAZA_ITEM = () => ({
@@ -26,6 +25,12 @@ const POKE_RADER_ITEM = () => ({
   icon: TEXTURE.ICON_POKE_RADER,
 });
 
+const TITLE_ITEM = () => ({
+  key: 'title',
+  label: i18next.t('etc:backToTitle'),
+  icon: TEXTURE.ICON_EXIT_0,
+});
+
 const CANCEL_ITEM = () => ({
   key: 'cancel',
   label: i18next.t('etc:cancel'),
@@ -38,6 +43,7 @@ const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
     items.push(POKE_RADER_ITEM());
     items.push(PLAZA_ITEM());
   }
+  items.push(TITLE_ITEM());
   items.push(CANCEL_ITEM());
   return items;
 };
@@ -65,7 +71,9 @@ export class OverworldMenuUi extends MenuUi {
     const inSafari = this.isInSafari();
     const gender = this.scene.getUser()?.getProfile().gender ?? 'male';
     const items = MENU_ITEMS(inSafari, gender);
-    const foundIndex = initialCursorKey ? items.findIndex((item) => item.key === initialCursorKey) : -1;
+    const foundIndex = initialCursorKey
+      ? items.findIndex((item) => item.key === initialCursorKey)
+      : -1;
     const initialCursorIndex = foundIndex >= 0 ? foundIndex : 0;
     const ret = await this.waitForSelect(items, { initialCursorIndex });
 

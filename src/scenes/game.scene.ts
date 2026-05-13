@@ -590,6 +590,7 @@ export class GameScene extends BaseScene {
   ): Promise<boolean> {
     if (this.mapTransitionInProgress) return false;
     this.mapTransitionInProgress = true;
+    this.inputManager.setBlocked(true);
 
     const pipeline = this.getFadeToBlackPipeline();
     if (pipeline) {
@@ -629,6 +630,7 @@ export class GameScene extends BaseScene {
         });
       }
       this.mapTransitionInProgress = false;
+      this.inputManager.setBlocked(false);
       return false;
     }
 
@@ -641,6 +643,7 @@ export class GameScene extends BaseScene {
     const user = this.getUser();
     if (!user) {
       this.mapTransitionInProgress = false;
+      this.inputManager.setBlocked(false);
       return;
     }
     user.getProfile().lastLocation = {
@@ -649,6 +652,7 @@ export class GameScene extends BaseScene {
       y: initPosConfig.y,
     };
     this.mapTransitionInProgress = false;
+    this.inputManager.setBlocked(false);
     this.switchPhase(new OverworldEntryPhase(this, initPosConfig));
   }
 }

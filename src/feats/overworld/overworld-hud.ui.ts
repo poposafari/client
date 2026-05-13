@@ -413,7 +413,9 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       'center',
       TEXTSTYLE.YELLOW,
       TEXTSHADOW.GRAY,
-    ).setOrigin(0.5, 0.5);
+    )
+      .setOrigin(0.5, 0.5)
+      .setVisible(false);
     this.weatherContainer.add([this.weatherIcon, this.weatherText]);
   }
 

@@ -8,6 +8,7 @@ export class AudioManager {
 
   private currentBgm: Phaser.Sound.WebAudioSound | null = null;
   private pausedBgm: Phaser.Sound.WebAudioSound | null = null;
+  private pendingFadeOut: Phaser.Sound.WebAudioSound | null = null;
 
   constructor(private scene: Phaser.Scene) {}
 
@@ -108,11 +109,16 @@ export class AudioManager {
       loop: true,
     }) as Phaser.Sound.WebAudioSound;
 
+    this.currentBgm.setVolume(0);
     this.currentBgm.play();
+
+    if (targetVolume <= 0) {
+      return;
+    }
 
     this.scene.tweens.add({
       targets: this.currentBgm,
-      volume: targetVolume,
+      volume: { from: 0, to: targetVolume },
       duration,
       ease: 'Linear',
     });
@@ -160,17 +166,21 @@ export class AudioManager {
     const bgm = this.currentBgm;
     this.currentBgm = null;
     this.scene.tweens.killTweensOf(bgm);
-    if (fadeDurationMs <= 0) {
+    if (fadeDurationMs <= 0 || this.masterVolume * this.bgmVolume <= 0) {
       bgm.stop();
       bgm.destroy();
       return;
     }
+    this.pendingFadeOut = bgm;
     this.scene.tweens.add({
       targets: bgm,
       volume: 0,
       duration: fadeDurationMs,
       ease: 'Linear',
       onComplete: () => {
+        if (this.pendingFadeOut === bgm) {
+          this.pendingFadeOut = null;
+        }
         bgm.stop();
         bgm.destroy();
       },
@@ -195,6 +205,13 @@ export class AudioManager {
     if (this.currentBgm) {
       this.scene.tweens.killTweensOf(this.currentBgm);
       this.currentBgm.setVolume(this.masterVolume * this.bgmVolume);
+    }
+    if (this.pendingFadeOut && this.masterVolume * this.bgmVolume <= 0) {
+      const bgm = this.pendingFadeOut;
+      this.pendingFadeOut = null;
+      this.scene.tweens.killTweensOf(bgm);
+      bgm.stop();
+      bgm.destroy();
     }
   }
 }

@@ -22,7 +22,7 @@ export class QuestionMessageUi extends MessageUi {
   }
 
   public async showMessage(content: string | string[], config: MessageConfig = {}): Promise<void> {
-    return super.showMessage(content, config);
+    return super.showMessage(content, { ...config, showHint: false });
   }
 
   protected close(): void {

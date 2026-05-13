@@ -7,11 +7,15 @@ export interface IInputHandler {
 export class InputManager {
   private stack: IInputHandler[] = [];
   private inputQueue: string[] = [];
+  private blocked = false;
 
   private readonly maxProcessPerFrame = 2;
 
   constructor(scene: Phaser.Scene, onActivity?: () => void) {
     scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
+      if (this.blocked) {
+        return;
+      }
       if (event.repeat) {
         return;
       }
@@ -21,6 +25,10 @@ export class InputManager {
   }
 
   update(): void {
+    if (this.blocked) {
+      return;
+    }
+
     const count = Math.min(this.maxProcessPerFrame, this.inputQueue.length);
 
     for (let i = 0; i < count; i++) {
@@ -28,6 +36,13 @@ export class InputManager {
       if (keyCode) {
         this.dispatch(keyCode);
       }
+    }
+  }
+
+  setBlocked(blocked: boolean): void {
+    this.blocked = blocked;
+    if (blocked) {
+      this.inputQueue.length = 0;
     }
   }
 

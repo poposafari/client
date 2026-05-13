@@ -29,6 +29,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
   protected hintText!: GText;
   protected fullText: string = '';
   protected isTyping: boolean = false;
+  protected currentShowHint: boolean = true;
 
   private typingTimer: Phaser.Time.TimerEvent | null = null;
   protected resolveFunction: (() => void) | null = null;
@@ -36,7 +37,6 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
   protected inputLocked: boolean = false;
   /** 시퀀스 중간 메시지일 때 close() 시 윈도우를 유지한다. */
   protected keepWindowOpen: boolean = false;
-  private currentShowHint: boolean = true;
 
   private hintTimer: Phaser.Time.TimerEvent | null = null;
   private hintBlinkTween: Phaser.Tweens.Tween | null = null;
