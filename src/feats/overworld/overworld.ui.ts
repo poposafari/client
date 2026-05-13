@@ -506,7 +506,7 @@ export class OverworldUi extends BaseUi {
         await pet.playTremble(500);
       }
 
-      await pet.playEmote((sprite) => this.worldContainer?.add(sprite));
+      await pet.playEmote((sprite) => this.nameContainer?.add(sprite));
 
       const variants = i18next.t(`petEmotion:${emotion}`, {
         returnObjects: true,
@@ -529,7 +529,7 @@ export class OverworldUi extends BaseUi {
     this.wildEncounterPending = true;
     wild.freezeRandomWalk(true);
     wild.faceDirection(this.oppositeDirection(this.player.getLastDirection()));
-    await wild.playEmote('emo_0', (sprite) => this.worldContainer?.add(sprite));
+    await wild.playEmote('emo_0', (sprite) => this.nameContainer?.add(sprite));
     this.onWildEncounterRequested?.(wild);
   }
 

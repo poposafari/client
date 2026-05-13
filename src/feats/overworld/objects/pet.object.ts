@@ -1,6 +1,6 @@
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
-import { ANIMATION, DEPTH, SFX, TEXTURE } from '@poposafari/types';
+import { ANIMATION, SFX, TEXTURE } from '@poposafari/types';
 import { getPokemonTexture } from '@poposafari/utils';
 import {
   calcOverworldTilePos,
@@ -223,8 +223,7 @@ export class PetObject extends MovableObject {
       const sprite = this.scene.add
         .sprite(emoteX, emoteY, TEXTURE.PET_EMO)
         .setOrigin(0.5, 1)
-        .setScale(3)
-        .setDepth(DEPTH.FOREGROUND + 3);
+        .setScale(3);
       this.emoteSprite = sprite;
       attach?.(sprite);
 
