@@ -26,7 +26,7 @@ import {
   petEmotionFramePair,
 } from '../overworld/objects/pet-emotion';
 
-import { STARTER_POKEDEX_IDS } from '@poposafari/core/master.data.ts';
+import { P001_POKEMON_NPC, STARTER_POKEDEX_IDS } from '@poposafari/core/master.data.ts';
 import { s000Config, s001Config, s002Config, s003Config } from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
@@ -159,6 +159,12 @@ export class LoadingPhase implements IGamePhase {
     );
 
     for (const id of STARTER_POKEDEX_IDS) {
+      if (!this.scene.cache.audio.has(id)) {
+        this.scene.loadAudio(id, 'audio/pokemon', id, 'ogg');
+      }
+    }
+
+    for (const id of P001_POKEMON_NPC) {
       if (!this.scene.cache.audio.has(id)) {
         this.scene.loadAudio(id, 'audio/pokemon', id, 'ogg');
       }
