@@ -16,6 +16,7 @@ export const mart = {
   notPurchasable: 'そのアイテムは かえません。',
   itemNotFound: 'そのアイテムは とりあつかっていません。',
   notEnoughItems: 'そんなに もっていません。',
+  bicycleAlreadyOwned: 'もう じてんしゃを もっていますね！\nかうひつようは ありません！',
   total: '{{total}}',
   inBag: 'もっているかず：{{count}}',
   moneyLabel: 'しょじきん',

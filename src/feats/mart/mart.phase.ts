@@ -120,7 +120,14 @@ export class MartPhase implements IGamePhase {
       if (!itemData) continue;
 
       const owned = user.getItemBag()?.get(itemId)?.quantity ?? 0;
-      const maxQty = Math.min(MAX_ITEM_QUANTITY - owned, MAX_BUY_QUANTITY);
+
+      if (itemId === 'bicycle' && owned > 0) {
+        await talk.showMessage(i18next.t('mart:bicycleAlreadyOwned'));
+        continue;
+      }
+
+      const maxQty =
+        itemId === 'bicycle' ? 1 : Math.min(MAX_ITEM_QUANTITY - owned, MAX_BUY_QUANTITY);
 
       if (maxQty < 1) {
         await talk.showMessage(i18next.t('mart:itemMaxExceeded'));
@@ -354,6 +361,7 @@ export class MartPhase implements IGamePhase {
       ITEM_NOT_PURCHASABLE: 'notPurchasable',
       ITEM_NOT_FOUND: 'itemNotFound',
       ITEM_INSUFFICIENT_QUANTITY: 'notEnoughItems',
+      ITEM_ALREADY_OWNED: 'bicycleAlreadyOwned',
     };
     return map[code] ?? '';
   }

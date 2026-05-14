@@ -16,6 +16,7 @@ export const mart = {
   notPurchasable: '지금은 살 수 없는 물건입니다.',
   itemNotFound: '그 물건은 취급하지 않습니다.',
   notEnoughItems: '그만큼은 가지고 있지 않으시네요.',
+  bicycleAlreadyOwned: '이미 자전거가 있으시네요!\n그럼 구매할 필요 없습니다!',
   total: '{{total}}',
   inBag: '소지수: {{count}}',
   moneyLabel: '소지금',

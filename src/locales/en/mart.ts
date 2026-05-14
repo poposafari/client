@@ -16,6 +16,7 @@ export const mart = {
   notPurchasable: 'That item cannot be purchased.',
   itemNotFound: "We don't carry that item.",
   notEnoughItems: "You don't have that many.",
+  bicycleAlreadyOwned: 'You already have a bicycle!\nNo need to buy another one!',
   total: '{{total}}',
   inBag: 'In Bag: {{count}}',
   moneyLabel: 'Money',
