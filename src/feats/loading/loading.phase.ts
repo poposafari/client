@@ -151,12 +151,8 @@ export class LoadingPhase implements IGamePhase {
       `${path}/pokemon.overworld_swimming.json`,
       path,
     );
-    this.scene.load.atlas('pokemon_call', `${path}/pokemon_call.png`, `${path}/pokemon_call.json`);
-    this.scene.load.atlas(
-      'pokemon_recall',
-      `${path}/pokemon_recall.png`,
-      `${path}/pokemon_recall.json`,
-    );
+    this.scene.loadAtlas('pokemon_call', path, 'pokemon_call', 'pokemon_call');
+    this.scene.loadAtlas('pokemon_recall', path, 'pokemon_recall', 'pokemon_recall');
 
     for (const id of STARTER_POKEDEX_IDS) {
       if (!this.scene.cache.audio.has(id)) {

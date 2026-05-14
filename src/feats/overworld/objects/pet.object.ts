@@ -237,7 +237,7 @@ export class PetObject extends MovableObject {
         if (this.scene.cache.audio.has(cryKey)) {
           audio.playEffect(cryKey, tone);
         } else {
-          this.scene.load.audio(cryKey, `audio/pokemon/${cryKey}.ogg`);
+          this.scene.loadAudio(cryKey, 'audio/pokemon', cryKey, 'ogg');
           this.scene.load.once(`filecomplete-audio-${cryKey}`, () => {
             if (this.scene.cache.audio.has(cryKey)) audio.playEffect(cryKey, tone);
           });

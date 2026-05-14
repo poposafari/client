@@ -1329,7 +1329,7 @@ export class PokemonPcUi extends BaseUi {
             this.scene.load.off(event, handler);
             resolve();
           });
-          this.scene.load.audio(key, `audio/pokemon/${key}.ogg`);
+          this.scene.loadAudio(key, 'audio/pokemon', key, 'ogg');
         }),
     );
     this.scene.load.start();
