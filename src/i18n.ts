@@ -4,9 +4,10 @@ import { enConfig } from './locales/en/config';
 import { jpConfig } from './locales/jp/config';
 import { koConfig } from './locales/ko/config';
 import { TEXTFONT } from './types';
+import { assetUrl } from './utils/asset-url';
 import { particleFormatters } from './utils/korean-particle';
 
-const fonts = [new FontFace(TEXTFONT.BW, 'url(./font/pokemon-bw.ttf')];
+const fonts = [new FontFace(TEXTFONT.BW, `url(${assetUrl('font/pokemon-bw.ttf')})`)];
 
 function initLanguageFromBrowser(): void {
   const existingLang = localStorage.getItem('i18nextLng');
