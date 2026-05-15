@@ -4,6 +4,7 @@ import { ApiError, ErrorCode, UserPokemon } from '@poposafari/types';
 import {
   CostumeEntry,
   CreateUserReq,
+  GameConnectRes,
   GetMeRes,
   GetStartingPokemonsRes,
   GetUserRes,
@@ -11,9 +12,12 @@ import {
   LoginLocalReq,
   BoxMetaItem,
   NicknameChange,
+  OnlineCountRes,
   PcSlotState,
   PokedexEntry,
   PokemonBoxItem,
+  QueueCancelRes,
+  QueueStatusRes,
   RegisterLocalReq,
   SafariBaitReq,
   SafariBaitRockRes,
@@ -273,12 +277,36 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async getConnToken(): Promise<string> {
-    const res = await this.client.post<ApiResponse<{ token: string }>>('/game/connect');
+  async gameConnect(): Promise<GameConnectRes> {
+    const res = await this.client.post<ApiResponse<GameConnectRes>>('/game/connect');
     if (res.data.success) {
-      return res.data.data.token;
+      return res.data.data;
     }
-    throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to get connection token', 500);
+    throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to connect game', 500);
+  }
+
+  async queueStatus(): Promise<QueueStatusRes> {
+    const res = await this.client.get<ApiResponse<QueueStatusRes>>('/queue/status');
+    if (res.data.success) {
+      return res.data.data;
+    }
+    throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to fetch queue status', 500);
+  }
+
+  async queueCancel(): Promise<QueueCancelRes> {
+    const res = await this.client.post<ApiResponse<QueueCancelRes>>('/queue/cancel');
+    if (res.data.success) {
+      return res.data.data;
+    }
+    return { ok: false };
+  }
+
+  async getOnlineCount(): Promise<OnlineCountRes> {
+    const res = await this.client.get<ApiResponse<OnlineCountRes>>('/game/online');
+    if (res.data.success) {
+      return res.data.data;
+    }
+    return { count: 0 };
   }
 
   async logout(): Promise<void> {

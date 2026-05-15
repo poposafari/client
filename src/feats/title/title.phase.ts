@@ -7,11 +7,15 @@ import { MysteryGiftPhase } from '../mysterygift/mysterygift.phase';
 import { CreateAvatarPhase } from '../tutorial';
 import { DeleteAccountPhase } from '../delete-account/delete-account.phase';
 import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
+import { QueuePhase } from '../queue';
+
+const ONLINE_REFRESH_MS = 30_000;
 
 export class TitlePhase implements IGamePhase {
   private ui!: TitleUi;
 
   private savedCursorIndex: number | undefined = undefined;
+  private onlineRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private scene: GameScene,
@@ -23,6 +27,7 @@ export class TitlePhase implements IGamePhase {
     this.ui = new TitleUi(this.scene, continueEnabled);
 
     this.ui.show();
+    this.startOnlineRefresh();
     await this.runMenuOnce();
   }
 
@@ -37,7 +42,12 @@ export class TitlePhase implements IGamePhase {
           if (me) this.scene.createUserManager(me);
         }
         if (this.scene.getUser()) {
-          this.scene.switchPhase(new OverworldEntryPhase(this.scene));
+          const res = await this.scene.getApi().gameConnect();
+          if (res.ready) {
+            this.scene.switchPhase(new OverworldEntryPhase(this.scene, undefined, res.token));
+          } else {
+            this.scene.switchPhase(new QueuePhase(this.scene, res.position));
+          }
           return;
         }
         await this.runMenuOnce();
@@ -76,16 +86,46 @@ export class TitlePhase implements IGamePhase {
   }
 
   exit(): void {
+    this.stopOnlineRefresh();
     this.ui.hide();
     this.ui.destroy();
   }
 
+  onPause(): void {
+    this.stopOnlineRefresh();
+  }
+
   onResume(): void {
     this.ui.updateBg();
+    this.startOnlineRefresh();
     this.runMenuOnce();
   }
 
   onRefreshLanguage(): void {
     this.ui.onRefreshLanguage();
+  }
+
+  private startOnlineRefresh(): void {
+    this.stopOnlineRefresh();
+    void this.refreshOnlineCount();
+    this.onlineRefreshTimer = setInterval(() => {
+      void this.refreshOnlineCount();
+    }, ONLINE_REFRESH_MS);
+  }
+
+  private stopOnlineRefresh(): void {
+    if (this.onlineRefreshTimer !== null) {
+      clearInterval(this.onlineRefreshTimer);
+      this.onlineRefreshTimer = null;
+    }
+  }
+
+  private async refreshOnlineCount(): Promise<void> {
+    try {
+      const { count } = await this.scene.getApi().getOnlineCount();
+      this.ui.setPlayersOnline(count);
+    } catch {
+      // fail-silent: 부수 정보라 에러 노출 안 함
+    }
   }
 }

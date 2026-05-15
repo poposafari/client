@@ -24,6 +24,7 @@ export class OverworldEntryPhase implements IGamePhase {
   constructor(
     private scene: GameScene,
     private initPosConfig?: InitPosConfig,
+    private connToken?: string,
   ) {}
 
   async enter(): Promise<void> {
@@ -32,18 +33,16 @@ export class OverworldEntryPhase implements IGamePhase {
 
     let socket = this.scene.getSocket();
     if (!socket?.connected) {
-      try {
-        const token = await this.scene.getApi().getConnToken();
-        socket = io(SOCKET_SERVER_URL, {
-          auth: { token },
-          transports: ['websocket', 'polling'],
-        });
-        this.scene.setSocket(socket);
-        this.setupConnectErrorHandler(socket);
-      } catch {
+      if (!this.connToken) {
         this.goToLogin();
         return;
       }
+      socket = io(SOCKET_SERVER_URL, {
+        auth: { token: this.connToken },
+        transports: ['websocket', 'polling'],
+      });
+      this.scene.setSocket(socket);
+      this.setupConnectErrorHandler(socket);
     }
 
     if (this.initPosConfig) {

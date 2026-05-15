@@ -108,4 +108,9 @@ export const etc: TranslationEtc = {
     '서비스 이용에 불편을 드려 죄송합니다.\n점검이 완료되는 대로 다시 안내드리겠습니다.',
   maintenance_refresh_hint: '점검이 끝난 뒤 새로고침(F5) 해주세요',
   playersOnline: '{{value}} 플레이어 온라인',
+  queueWaitingTitle: '대기열에 입장했습니다',
+  queueWaitingMessage: '잠시 기다려주세요',
+  queuePosition: '순번: {{position}}번째',
+  queueImminent: '곧 입장합니다...',
+  queueCancelHint: '[ESC를 누르면, 취소됩니다]',
 };

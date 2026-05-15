@@ -106,4 +106,9 @@ export const etc: TranslationEtc = {
   maintenance_desc: "We're sorry for the inconvenience.\nWe'll be back as soon as the maintenance is complete.",
   maintenance_refresh_hint: 'Please refresh (F5) once maintenance is over',
   playersOnline: '{{value}} Players Online',
+  queueWaitingTitle: 'You are in the queue',
+  queueWaitingMessage: 'Please wait a moment',
+  queuePosition: 'Position: {{position}}',
+  queueImminent: 'Entering soon...',
+  queueCancelHint: '[Press ESC to cancel]',
 };

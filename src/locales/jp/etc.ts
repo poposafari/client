@@ -111,4 +111,9 @@ export const etc: TranslationEtc = {
   maintenance_desc: 'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
   maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
   playersOnline: '{{value}}にん オンライン',
+  queueWaitingTitle: 'まちゆけつに ならびました',
+  queueWaitingMessage: 'しばらく おまちください',
+  queuePosition: 'じゅんばん: {{position}}ばんめ',
+  queueImminent: 'まもなく にゅうじょうします...',
+  queueCancelHint: '[ESCで キャンセル]',
 };

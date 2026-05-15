@@ -71,6 +71,23 @@ export interface GetMeRes {
   }[];
 }
 
+// ── 게임 진입 / 큐 / 동접자 API ──
+export type GameConnectRes =
+  | { ready: true; token: string }
+  | { ready: false; position: number };
+
+export type QueueStatusRes =
+  | { ready: true; token: string }
+  | { ready: false; position: number | null };
+
+export interface QueueCancelRes {
+  ok: boolean;
+}
+
+export interface OnlineCountRes {
+  count: number;
+}
+
 // ── Lazy Load API 응답 타입 ──
 export interface PokemonBoxItem {
   id: number;
