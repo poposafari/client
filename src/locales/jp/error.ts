@@ -63,6 +63,7 @@ export const error: TranslationError = {
   INVALID_INPUT_PASSWORD: 'パスワードは 8〜20もじで えいじと すうじを\nりょうほう ふくむ ひつようが あります。',
   NOT_MATCH_PASSWORD_AND_REPASSWORD: 'パスワードが いっちしません。',
   EMPTY_NICKNAME: 'ニックネームを にゅうりょくしてください。',
+  WHITESPACE_NICKNAME: 'ニックネームに くうはくを\nふくめることは できません。',
   INVALID_COSTUME: 'むこうな コスチュームです。',
   INVALID_NICKNAME: 'ニックネームは 2もじいじょう 12もじいかで\nにゅうりょくしてください。',
   KICKED: 'ほかの たんまつで ログインされました。\nもういちど ログインしてください。',

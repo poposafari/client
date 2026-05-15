@@ -33,7 +33,7 @@ const TITLE_ITEM = () => ({
 
 const CANCEL_ITEM = () => ({
   key: 'cancel',
-  label: i18next.t('etc:cancel'),
+  label: i18next.t('etc:menuCancel'),
   icon: TEXTURE.ICON_CANCEL,
 });
 

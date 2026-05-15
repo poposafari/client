@@ -113,4 +113,5 @@ export const etc: TranslationEtc = {
   queuePosition: '순번: {{position}}번째',
   queueImminent: '곧 입장합니다...',
   queueCancelHint: '[ESC를 누르면, 취소됩니다]',
+  menuCancel: '닫는다',
 };

@@ -65,6 +65,7 @@ export const error: TranslationError = {
   INVALID_INPUT_PASSWORD: '비밀번호는 8~20자이며 영문과 숫자를\n모두 포함해야 합니다.',
   NOT_MATCH_PASSWORD_AND_REPASSWORD: '비밀번호가 일치하지 않습니다.',
   EMPTY_NICKNAME: '닉네임을 입력해주세요.',
+  WHITESPACE_NICKNAME: '닉네임에 공백을 포함할 수 없습니다.',
   INVALID_COSTUME: '올바르지 않은 코스튬입니다.',
   INVALID_NICKNAME: '닉네임은 2자 이상 12자 이하로\n입력하셔야 합니다.',
   KICKED: '다른 기기에서 접속했습니다.\n다시 로그인해 주세요.',

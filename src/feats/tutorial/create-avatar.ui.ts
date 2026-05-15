@@ -325,6 +325,11 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
     const hairColorId = this.boxHairColor.getSelectedId();
     const outfitId = this.boxOutfit.getSelectedId();
 
+    if (/\s/.test(nickname)) {
+      this.errorEffect(i18next.t('error:WHITESPACE_NICKNAME'));
+      return;
+    }
+
     if (!nickname || nickname.trim() === '') {
       this.errorEffect(i18next.t('error:EMPTY_NICKNAME'));
       return;

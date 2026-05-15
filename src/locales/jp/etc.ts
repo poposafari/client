@@ -108,7 +108,8 @@ export const etc: TranslationEtc = {
   pokeRader_title: 'ポケレーダー',
   pokeRader_caughtSpecies: 'つかまえた ポケモン',
   maintenance_title: '🛠️ メンテナンスちゅう',
-  maintenance_desc: 'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
+  maintenance_desc:
+    'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
   maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
   playersOnline: '{{value}}にん オンライン',
   queueWaitingTitle: 'まちゆけつに ならびました',
@@ -116,4 +117,5 @@ export const etc: TranslationEtc = {
   queuePosition: 'じゅんばん: {{position}}ばんめ',
   queueImminent: 'まもなく にゅうじょうします...',
   queueCancelHint: '[ESCで キャンセル]',
+  menuCancel: 'とじる',
 };

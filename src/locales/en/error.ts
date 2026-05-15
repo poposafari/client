@@ -63,6 +63,7 @@ export const error: TranslationError = {
   INVALID_INPUT_PASSWORD: 'Password must be 8-20 characters\nand include both letters and numbers.',
   NOT_MATCH_PASSWORD_AND_REPASSWORD: 'Passwords do not match.',
   EMPTY_NICKNAME: 'Please enter your nickname.',
+  WHITESPACE_NICKNAME: 'Nickname cannot contain whitespace.',
   INVALID_COSTUME: 'Invalid costume.',
   INVALID_NICKNAME: 'Nickname must be 2 to 12 characters.',
   KICKED: 'You were logged in from another device.\nPlease log in again.',
