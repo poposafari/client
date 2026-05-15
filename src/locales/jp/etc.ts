@@ -110,4 +110,5 @@ export const etc: TranslationEtc = {
   maintenance_title: '🛠️ メンテナンスちゅう',
   maintenance_desc: 'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
   maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
+  playersOnline: '{{value}}にん オンライン',
 };

@@ -107,4 +107,5 @@ export const etc: TranslationEtc = {
   maintenance_desc:
     '서비스 이용에 불편을 드려 죄송합니다.\n점검이 완료되는 대로 다시 안내드리겠습니다.',
   maintenance_refresh_hint: '점검이 끝난 뒤 새로고침(F5) 해주세요',
+  playersOnline: '{{value}} 플레이어 온라인',
 };

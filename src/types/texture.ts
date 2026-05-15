@@ -1,6 +1,8 @@
 export const enum TEXTURE {
   LOGO_0 = 'logo_0',
   LOGO_1 = 'logo_1',
+  LOGO_DISCORD = 'logo_discord',
+  LOGO_GITHUB = 'logo_github',
 
   BLANK = 'blank',
   TYPES = 'types',

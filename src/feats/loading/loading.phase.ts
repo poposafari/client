@@ -606,6 +606,9 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.PARTICLE_HM_0, 'ui/hm', 'particle_hm_0');
     this.scene.loadImage(TEXTURE.PARTICLE_HM_1, 'ui/hm', 'particle_hm_1');
 
+    this.scene.loadImage(TEXTURE.LOGO_DISCORD, 'ui', 'logo_discord');
+    this.scene.loadImage(TEXTURE.LOGO_GITHUB, 'ui', 'logo_github');
+
     // for (let i = 0; i <= PC_BG_CNT; i++) {
     //   this.scene.loadImage(`pc_bg_${i}`, 'ui/pc', `box_${i}`);
     // }
