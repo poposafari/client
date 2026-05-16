@@ -30,6 +30,8 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     VALUE_PART_GAP: 16,
     REG_ICON_GAP: 60,
     REG_ICON_SCALE: 2,
+    OWNED_ICON_SCALE: 2.4,
+    OWNED_ICON_GAP: 30,
   } as const;
 
   protected config: IMenuListConfig;
@@ -51,7 +53,9 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
   protected window!: GWindow;
   protected itemSlots: GContainer[] = [];
-  protected cursor!: GImage;
+  protected cursor?: GImage;
+  protected cursorWindow?: GWindow;
+  private readonly CURSOR_WINDOW_SCALE = 4;
   protected scrollBarContainer!: GContainer;
   protected scrollThumb!: GWindow;
   protected scrollThumbBg!: GWindow;
@@ -95,17 +99,15 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       this.config.itemHeight = this.metrics.itemHeight;
     }
 
+    const step = this.getItemStep();
     const screenHeight = this.scene.scale.height;
-    const maxPossibleCount = Math.floor(
-      (screenHeight - this.metrics.itemHeight) / this.config.itemHeight,
-    );
+    const maxPossibleCount = Math.floor((screenHeight - this.metrics.itemHeight) / step);
     if (this.config.visibleCount > maxPossibleCount) {
       this.config.visibleCount = maxPossibleCount;
     }
 
     if (!this.config.height) {
-      this.config.height =
-        this.config.itemHeight * this.config.visibleCount + this.metrics.itemHeight * 0.8;
+      this.config.height = step * this.config.visibleCount + this.metrics.itemHeight * 0.8;
     }
 
     if (!this.config.width) {
@@ -177,9 +179,28 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
     this.createItemSlots();
 
-    const cursorScale = this.FONT_SIZE / 20;
-    this.cursor = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, 0, 0).setScale(cursorScale);
-    this.add(this.cursor);
+    if (this.config.cursorWindowTexture) {
+      this.cursorWindow = addWindow(
+        this.scene,
+        this.config.cursorWindowTexture,
+        0,
+        0,
+        width!,
+        this.config.itemHeight,
+        this.CURSOR_WINDOW_SCALE,
+        16,
+        16,
+        16,
+        16,
+      );
+      this.add(this.cursorWindow);
+    } else {
+      const cursorScale = this.FONT_SIZE / 20;
+      this.cursor = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, 0, 0).setScale(
+        cursorScale,
+      );
+      this.add(this.cursor);
+    }
 
     this.createScrollBar();
 
@@ -187,12 +208,13 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   private createItemSlots() {
-    const { visibleCount, itemHeight } = this.config;
-    const totalListHeight = visibleCount * itemHeight;
-    const startY = -(totalListHeight / 2) + itemHeight / 2;
+    const { visibleCount } = this.config;
+    const step = this.getItemStep();
+    const totalListHeight = visibleCount * step;
+    const startY = -(totalListHeight / 2) + step / 2;
 
     for (let i = 0; i < visibleCount; i++) {
-      const slotContainer = addContainer(this.scene, 0, 0, startY + i * itemHeight);
+      const slotContainer = addContainer(this.scene, 0, 0, startY + i * step);
 
       const label = addText(
         this.scene,
@@ -213,6 +235,13 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       );
       regIcon.setVisible(false);
       slotContainer.add([label, countContainer, regIcon]);
+      if (this.config.enableOwnedIcon) {
+        const ownedIcon = addImage(this.scene, TEXTURE.OWNED, undefined, 0, 0).setScale(
+          this.LAYOUT.OWNED_ICON_SCALE,
+        );
+        ownedIcon.setVisible(false);
+        slotContainer.add(ownedIcon);
+      }
       this.itemSlots.push(slotContainer);
       this.add(slotContainer);
     }
@@ -354,6 +383,10 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     return this.config.borderPadding ?? this.LAYOUT.BORDER_PADDING;
   }
 
+  private getItemStep(): number {
+    return this.config.itemHeight + (this.config.itemGap ?? 0);
+  }
+
   private resizeLayout() {
     const width = this.config.width!;
     const height = this.config.height!;
@@ -363,12 +396,32 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     }
 
     const halfWidth = width / 2;
-    const labelX = -halfWidth + this.metrics.leftPadding;
+    const baseLabelX = -halfWidth + this.metrics.leftPadding;
+    const ownedSampleIcon =
+      this.config.enableOwnedIcon && this.itemSlots[0]
+        ? (this.itemSlots[0].list[3] as Phaser.GameObjects.Image | undefined)
+        : undefined;
+    const ownedReserve = ownedSampleIcon
+      ? ownedSampleIcon.displayWidth + this.LAYOUT.OWNED_ICON_GAP
+      : 0;
+    const ownedIconX = ownedSampleIcon ? baseLabelX + ownedSampleIcon.displayWidth / 2 : 0;
+    const labelX = baseLabelX + ownedReserve;
     const countX = halfWidth - this.metrics.rightPadding;
-    const cursorX = labelX - this.metrics.cursorGap;
+    const cursorX = baseLabelX - this.metrics.cursorGap;
     const scrollBarX = halfWidth - this.metrics.rightPadding / 2;
 
     if (this.cursor) this.cursor.setX(cursorX);
+    if (this.cursorWindow && this.cursorWindow.setSize) {
+      const cursorAnchorX = this.config.enableOwnedIcon ? baseLabelX + 8 : labelX;
+      const cursorLeft = cursorAnchorX - this.metrics.cursorGap / 2;
+      const cursorRight = halfWidth - this.SCROLL_BAR_WIDTH;
+      const cursorVisualWidth = cursorRight - cursorLeft;
+      this.cursorWindow.setSize(
+        cursorVisualWidth / this.CURSOR_WINDOW_SCALE,
+        this.config.itemHeight / this.CURSOR_WINDOW_SCALE,
+      );
+      this.cursorWindow.setX((cursorLeft + cursorRight) / 2 + 3);
+    }
     if (this.scrollBarContainer) {
       this.scrollBarContainer.setX(scrollBarX + this.LAYOUT.SCROLL_OFFSET_X);
     }
@@ -389,9 +442,11 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       const label = slot.list[0] as any;
       const countContainer = slot.list[1] as any;
       const regIcon = slot.list[2] as any;
+      const ownedIcon = slot.list[3] as Phaser.GameObjects.Image | undefined;
       if (label) label.setX(labelX);
       if (countContainer) countContainer.setX(countX);
       if (regIcon) regIcon.setX(regIconX);
+      if (ownedIcon && this.config.enableOwnedIcon) ownedIcon.setX(ownedIconX);
     }
   }
 
@@ -511,7 +566,8 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   protected refreshList() {
-    const { visibleCount, itemHeight } = this.config;
+    const { visibleCount } = this.config;
+    const step = this.getItemStep();
 
     for (let i = 0; i < visibleCount; i++) {
       const dataIndex = this.scrollIndex + i;
@@ -537,14 +593,24 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
         const regIcon = slot.list[2] as Phaser.GameObjects.Image | undefined;
         if (regIcon && regIcon.setVisible) regIcon.setVisible(!!item.registerIcon);
+
+        if (this.config.enableOwnedIcon) {
+          const ownedIcon = slot.list[3] as Phaser.GameObjects.Image | undefined;
+          if (ownedIcon) {
+            ownedIcon.setVisible(true);
+            if (item.ownedIcon) ownedIcon.clearTint();
+            else ownedIcon.setTintFill(0xffffff);
+          }
+        }
       } else {
         slot.setVisible(false);
       }
     }
 
     const relativeCursorIndex = this.cursorIndex - this.scrollIndex;
-    const cursorY = this.itemSlots[0].y + relativeCursorIndex * itemHeight;
-    this.cursor.setY(cursorY);
+    const cursorY = this.itemSlots[0].y + relativeCursorIndex * step;
+    if (this.cursor) this.cursor.setY(cursorY);
+    if (this.cursorWindow) this.cursorWindow.setY(cursorY);
 
     this.updateScrollBar();
   }
@@ -637,11 +703,11 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   public setCursorTexture(textureKey: string): void {
-    this.cursor.setTexture(textureKey);
+    if (this.cursor) this.cursor.setTexture(textureKey);
   }
 
   public setCursorScale(scale: number): void {
-    this.cursor.setScale(scale);
+    if (this.cursor) this.cursor.setScale(scale);
   }
 
   public setHighlightColor(color: string | null): void {

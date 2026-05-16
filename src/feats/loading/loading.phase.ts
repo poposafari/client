@@ -600,6 +600,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_MART_SELL, 'ui/bgs', 'bg_sell');
     this.scene.loadImage(TEXTURE.BG_POKE_RADER, 'ui/bgs', 'bg_poke-rader');
 
+    this.scene.loadImage(TEXTURE.BG_POKEDEX, 'ui/pokedex', 'bg_pokedex');
+    this.scene.loadImage(TEXTURE.POKEDEX_TITLE, 'ui/pokedex', 'pokedex-title');
+    this.scene.loadImage(TEXTURE.OWNED, 'ui/pokedex', 'owned');
+
     this.scene.loadImage(TEXTURE.LIGHT, 'ui', 'light');
 
     this.scene.loadImage(TEXTURE.BG_HM, 'ui/hm', 'bg_hm');
@@ -636,6 +640,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_GUIDE, 'ui/windows', 'window_guide');
     this.scene.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', 'window_white');
     this.scene.loadImage(TEXTURE.WINDOW_CURSOR, 'ui/windows', 'window_cursor');
+    this.scene.loadImage(TEXTURE.WINDOW_CURSOR_R, 'ui/windows', 'window_cursor_r');
     this.scene.loadImage(TEXTURE.WINDOW_HUD, 'ui/windows', 'window_hud');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', 'window_notice_0');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');

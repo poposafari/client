@@ -7,6 +7,7 @@ import { TitlePhase } from '../title';
 import { PokemonPcPhase } from '../pc/pokemon-pc.phase';
 import { BagPhase } from '../bag/bag.phase';
 import { PokeRaderPhase } from '../safari/poke-rader.phase';
+import { PokedexPhase } from '../pokedex/pokedex.phase';
 import { MenuUi } from '../menu/menu-ui';
 import { InitPosConfig } from './maps/door';
 import { MAP } from '@poposafari/types';
@@ -36,7 +37,7 @@ export class OverworldMenuPhase implements IGamePhase {
   }
 
   async enter(): Promise<void> {
-    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 820 : 620);
+    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 915 : 715);
     this.yesOrNoMenu = new BackTitleMenuUi(this.scene);
     this.confirmMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
       y: +800,
@@ -48,6 +49,11 @@ export class OverworldMenuPhase implements IGamePhase {
   private async runMenuOnce(): Promise<void> {
     const result = await this.ui.waitForInput(OverworldMenuPhase.savedCursorKey);
     OverworldMenuPhase.savedCursorKey = result.cursorKey;
+
+    if (result.key === 'pokedex') {
+      this.scene.pushPhase(new PokedexPhase(this.scene));
+      return;
+    }
 
     if (result.key === 'pc') {
       this.scene.pushPhase(new PokemonPcPhase(this.scene));

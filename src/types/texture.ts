@@ -24,6 +24,10 @@ export const enum TEXTURE {
   BG_MART_SELL = 'bg_mart_sell',
   BG_POKE_RADER = 'bg_poke-rader',
 
+  BG_POKEDEX = 'bg_pokedex',
+  POKEDEX_TITLE = 'pokedex-title',
+  OWNED = 'owned',
+
   WINDOW_0 = 'window_0',
   WINDOW_1 = 'window_1',
   WINDOW_2 = 'window_2',
@@ -31,6 +35,7 @@ export const enum TEXTURE {
   WINDOW_GUIDE = 'window_guide',
   WINDOW_WHITE = 'window_white',
   WINDOW_CURSOR = 'window_cursor',
+  WINDOW_CURSOR_R = 'window_cursor_r',
   WINDOW_HUD = 'window_hud',
   WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_NOTICE_1 = 'window_notice_1',

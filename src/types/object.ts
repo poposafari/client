@@ -46,6 +46,7 @@ export interface IMenuItem {
   color?: string;
   disabled?: boolean;
   registerIcon?: boolean;
+  ownedIcon?: boolean;
 }
 
 export interface IMenuListConfig {
@@ -55,9 +56,15 @@ export interface IMenuListConfig {
   height?: number;
   visibleCount: number;
   itemHeight: number;
+  /** 슬롯 사이의 추가 y 간격(px). 미지정 시 0(=기존 동작 그대로). */
+  itemGap?: number;
   showCancel?: boolean;
   borderPadding?: number;
   cursorSfx?: SFX;
+  /** 지정 시 좌측 화살표 이미지 대신 해당 WINDOW 텍스처로 슬롯 전체를 감싸는 커서를 사용한다. */
+  cursorWindowTexture?: TEXTURE;
+  /** 활성화 시 라벨 좌측에 TEXTURE.OWNED 아이콘 슬롯을 예약하여 컬럼을 정렬한다(item.ownedIcon=true일 때 표시). */
+  enableOwnedIcon?: boolean;
 }
 
 export interface IMenuConfig {
