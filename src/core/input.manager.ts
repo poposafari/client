@@ -77,9 +77,20 @@ export class InputManager {
   }
 
   private dispatch(key: string): void {
-    if (this.stack.length > 0) {
-      // this.debug('dispatch');
-      this.stack[this.stack.length - 1].onInput(key);
+    while (this.stack.length > 0) {
+      const handler = this.stack[this.stack.length - 1];
+      const phaserGO = handler as unknown as { scene?: unknown; active?: boolean };
+      if (phaserGO.scene === undefined || phaserGO.active === false) {
+        this.stack.pop();
+        this.logInputStack('auto-pop-destroyed');
+        continue;
+      }
+      try {
+        handler.onInput(key);
+      } catch (err) {
+        console.error('[InputManager] onInput threw:', err);
+      }
+      return;
     }
   }
 }

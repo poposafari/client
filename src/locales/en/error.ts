@@ -54,6 +54,8 @@ export const error: TranslationError = {
   OAUTH_TOKEN_FAILED: 'OAuth token request failed.',
   OAUTH_USERINFO_FAILED: 'OAuth user info request failed.',
   OAUTH_CANCELED: 'OAuth login was canceled.',
+  FOSSIL_RECIPE_NOT_FOUND: 'This fossil cannot be restored.',
+  FOSSIL_INGREDIENT_INSUFFICIENT: 'Not enough fossils for restoration.',
 
   // ===== Client validation =====
   EMPTY_USERNAME: 'Please enter your username.',

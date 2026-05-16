@@ -63,3 +63,21 @@ export class MartNpcObject extends NpcObject {
     return this.martItems;
   }
 }
+
+export class FossilNpcObject extends NpcObject {
+  scene: GameScene;
+
+  constructor(scene: GameScene, config: NpcConfig) {
+    super(scene, config);
+    this.scene = scene;
+  }
+
+  override getPhaseRequest(): string | null {
+    return 'fossil';
+  }
+
+  override reaction(direction: DIRECTION): ReactionStep[] {
+    this.lookAt(direction);
+    return [];
+  }
+}

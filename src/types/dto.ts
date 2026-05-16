@@ -227,3 +227,32 @@ export type SafariCatchRes =
     }
   | { result: 'fail' }
   | { result: 'flee' };
+
+// ── 화석 복원 (POST /api/fossil/restore) ──
+export interface RestoreFossilReq {
+  id: number;
+}
+
+export interface RestoreFossilPokemon {
+  id: number;
+  pokedexId: string;
+  level: number;
+  friendship: number;
+  gender: number;
+  isShiny: boolean;
+  nickname: string | null;
+  natureId: string;
+  abilityId: string;
+  heldItemId: string | null;
+  skills: unknown;
+  boxNumber: number | null;
+  gridNumber: number | null;
+  partySlot: number | null;
+  ballId: number;
+  caughtLocation: string;
+  caughtAt: string;
+}
+
+export interface RestoreFossilRes {
+  pokemon: RestoreFossilPokemon;
+}

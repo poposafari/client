@@ -6,6 +6,7 @@ export const object: TranslationObject = {
   shopkeeper_0: 'てんいん 1',
   shopkeeper_1: 'てんいん 2',
   professor: 'パンプキンはかせ',
+  fossil_restorer: 'カセキふっかつし',
   coming_soon: 'じゅんびちゅうです',
   sign_boutique: 'ブティック\n',
   sign_mart: 'フレンドリーショップ。\nいろいろな どうぐを かえます。',

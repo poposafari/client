@@ -19,6 +19,8 @@ import {
   QueueCancelRes,
   QueueStatusRes,
   RegisterLocalReq,
+  RestoreFossilReq,
+  RestoreFossilRes,
   SafariBaitReq,
   SafariBaitRockRes,
   SafariCatchReq,
@@ -401,6 +403,12 @@ export class ApiManager {
       '/game/safari/rock',
       payload,
     );
+    return res.data.success ? res.data.data : null;
+  }
+
+  async restoreFossil(id: number): Promise<RestoreFossilRes | null> {
+    const payload: RestoreFossilReq = { id };
+    const res = await this.client.post<ApiResponse<RestoreFossilRes>>('/fossil/restore', payload);
     return res.data.success ? res.data.data : null;
   }
 

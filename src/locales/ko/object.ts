@@ -8,6 +8,7 @@ export const object: TranslationObject = {
   shopkeeper_0: '점원 1',
   shopkeeper_1: '점원 2',
   professor: '호박사',
+  fossil_restorer: '화석 복원사',
   coming_soon: '준비 중입니다',
   sign_boutique: '옷가게\n',
   sign_mart: '프렌들리숍.\n다양한 도구들을 구매하실 수 있습니다.',

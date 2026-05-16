@@ -11,7 +11,7 @@ import {
   SafariNpcObject,
   TriggerObject,
 } from './objects';
-import { MartNpcObject } from './objects/special-npc.object';
+import { FossilNpcObject, MartNpcObject } from './objects/special-npc.object';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 
 export type MapNpc = NpcObject | MovingNpcObject;
@@ -114,6 +114,8 @@ export class MapView {
           this.npcs.push(new SafariNpcObject(this.scene, n));
         } else if (n.special === 'mart') {
           this.npcs.push(new MartNpcObject(this.scene, n));
+        } else if (n.special === 'fossil') {
+          this.npcs.push(new FossilNpcObject(this.scene, n));
         } else if (n.type === 'pokemon') {
           this.npcs.push(new PokemonNpcObject(this.scene, n, this));
         } else if (n.type === 'human') {

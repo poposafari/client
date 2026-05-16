@@ -726,6 +726,15 @@ export const p008Config: MapConfig = {
         },
       ],
     },
+    {
+      key: 'npc33',
+      name: 'fossil_restorer',
+      special: 'fossil',
+      x: 7,
+      y: 13,
+      direction: DIRECTION.DOWN,
+      reaction: [],
+    },
   ],
 };
 

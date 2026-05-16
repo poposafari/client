@@ -56,6 +56,8 @@ export const error: TranslationError = {
   OAUTH_TOKEN_FAILED: '외부 로그인 토큰을 가져오지 못했습니다.',
   OAUTH_USERINFO_FAILED: '외부 로그인 정보를 가져오지 못했습니다.',
   OAUTH_CANCELED: '외부 로그인이 취소되었습니다.',
+  FOSSIL_RECIPE_NOT_FOUND: '복원할 수 없는 화석입니다.',
+  FOSSIL_INGREDIENT_INSUFFICIENT: '복원에 필요한 화석이 부족합니다.',
 
   // ===== Client validation =====
   EMPTY_USERNAME: '아이디를 입력해주세요.',

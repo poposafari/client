@@ -12,6 +12,7 @@ import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
 import { MartPhase } from '../mart';
+import { FossilPhase } from '../fossil';
 import { MartNpcObject } from './objects/special-npc.object';
 import { BattlePhase } from '../battle';
 import { RewardPhase } from '../battle/reward/reward.phase';
@@ -120,6 +121,8 @@ export class OverworldPhase implements IGamePhase {
         this.scene.pushPhase(
           new MartPhase(this.scene, _object.getMartItems(), _object.getNpcKey()),
         );
+      } else if (phaseKey === 'fossil') {
+        this.scene.pushPhase(new FossilPhase(this.scene));
       }
     };
     this.overworldUi.onWildEncounterRequested = (wild) => {

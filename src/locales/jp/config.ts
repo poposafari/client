@@ -4,6 +4,7 @@ import { battle } from './battle';
 import { costume } from './costume';
 import { error } from './error';
 import { etc } from './etc';
+import { fossil } from './fossil';
 import { item } from './item';
 import { map } from './map';
 import { mart } from './mart';
@@ -25,6 +26,7 @@ export const jpConfig = {
   costume: costume,
   error: error,
   etc: etc,
+  fossil: fossil,
   item: item,
   map: map,
   mart: mart,

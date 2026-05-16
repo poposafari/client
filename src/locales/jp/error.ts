@@ -54,6 +54,8 @@ export const error: TranslationError = {
   OAUTH_TOKEN_FAILED: 'OAuthトークンの しゅとくに しっぱいしました。',
   OAUTH_USERINFO_FAILED: 'OAuthユーザーじょうほうの しゅとくに しっぱいしました。',
   OAUTH_CANCELED: 'OAuthログインが キャンセルされました。',
+  FOSSIL_RECIPE_NOT_FOUND: 'ふっかつ できない カセキです。',
+  FOSSIL_INGREDIENT_INSUFFICIENT: 'ふっかつに ひつような カセキが たりません。',
 
   // ===== Client validation =====
   EMPTY_USERNAME: 'ユーザーめいを にゅうりょくしてください。',

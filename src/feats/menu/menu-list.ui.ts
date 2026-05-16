@@ -581,7 +581,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
 
         const isSelected = dataIndex === this.cursorIndex;
         const labelColor = item.disabled
-          ? TEXTCOLOR.LIGHT_GRAY
+          ? (item.color ?? TEXTCOLOR.LIGHT_GRAY)
           : isSelected && this.highlightColor
             ? this.highlightColor
             : item.color || this.defaultColor;
