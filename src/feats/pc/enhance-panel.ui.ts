@@ -36,7 +36,7 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   private candyId = '';
   private candyMax = 0;
   private currentLevel = 0;
-  private maxLevel = 999;
+  private maxLevel = 100;
   private amount = 1;
 
   private resolver: ((result: EnhancePanelResult) => void) | null = null;

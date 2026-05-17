@@ -1134,7 +1134,7 @@ export class PokemonPcUi extends BaseUi {
     );
   }
 
-  private static readonly POKEMON_MAX_LEVEL = 999;
+  private static readonly POKEMON_MAX_LEVEL = 100;
 
   private async enhancePokemon(pokemon: PokemonBoxItem): Promise<void> {
     const masterPokemon = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);

@@ -64,8 +64,16 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private partyBonus = 0;
 
   // 서버 LEVEL_CURVE (server/lib/constants/level-curve.ts)와 동일하게 유지.
-  private static readonly PARTY_LEVEL_COEF = 0.0003;
-  private static readonly PARTY_LEVEL_CAP = 0.3;
+  private static readonly PARTY_LEVEL_COEF = 0.002;
+  private static readonly PARTY_LEVEL_CAP = 0.2;
+  private static readonly PARTY_SHINY_BONUS = 0.05;
+  private static readonly PARTY_TIER_BONUS: Record<PokemonRank, number> = {
+    common: 0,
+    rare: 0.01,
+    epic: 0.02,
+    legendary: 0.03,
+  };
+  private static readonly PARTY_SLOT_COUNT = 6;
   private static readonly CAPTURE_RATE_CAP = 0.999;
   private static readonly FLEE_RATE_CAP = 0.9;
 
@@ -383,15 +391,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     const party = user.getParty();
     if (!party || party.length === 0) return 0;
 
-    const tierBonus: Record<string, number> = {
-      common: 0,
-      rare: 0,
-      epic: 0.03,
-      legendary: 0.05,
-      mythical: 0.05,
-    };
-
-    let maxBonus = 0;
+    let sum = 0;
     for (const p of party) {
       const masterPokemon = scene.getMasterData().getPokemonData(String(p.pokedexId));
       const rank: PokemonRank = masterPokemon?.rank ?? 'common';
@@ -399,11 +399,11 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
         BattleInfoUi.PARTY_LEVEL_CAP,
         p.level * BattleInfoUi.PARTY_LEVEL_COEF,
       );
-      const shinyBonus = p.isShiny ? 0.03 : 0;
-      const tBonus = tierBonus[rank] ?? 0;
-      maxBonus = Math.max(maxBonus, lvlBonus + shinyBonus + tBonus);
+      const shinyBonus = p.isShiny ? BattleInfoUi.PARTY_SHINY_BONUS : 0;
+      const tBonus = BattleInfoUi.PARTY_TIER_BONUS[rank] ?? 0;
+      sum += lvlBonus + shinyBonus + tBonus;
     }
-    return maxBonus;
+    return sum / BattleInfoUi.PARTY_SLOT_COUNT;
   }
 
   private computeRates(modifiers: BattleModifiers): { capture: number; flee: number } {

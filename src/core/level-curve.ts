@@ -1,8 +1,8 @@
 export const LEVEL_CURVE = {
-  USER_LEVEL_MAX: 50,
+  USER_LEVEL_MAX: 100,
 
   expToNext(level: number): number {
-    return Math.floor(50 * level * level);
+    return level * level;
   },
 
   isMaxLevel(level: number): boolean {
