@@ -19,6 +19,10 @@ const SAFARI_ZONES: SafariZone[] = [
   { key: 's001', labelKey: 'map:s001', mapId: MAP.SAFARI_001, spawnX: 10, spawnY: 10 },
   { key: 's002', labelKey: 'map:s002', mapId: MAP.SAFARI_002, spawnX: 10, spawnY: 10 },
   { key: 's003', labelKey: 'map:s003', mapId: MAP.SAFARI_003, spawnX: 10, spawnY: 10 },
+  { key: 's004', labelKey: 'map:s004', mapId: MAP.SAFARI_004, spawnX: 10, spawnY: 10 },
+  { key: 's005', labelKey: 'map:s005', mapId: MAP.SAFARI_005, spawnX: 10, spawnY: 10 },
+  { key: 's006', labelKey: 'map:s006', mapId: MAP.SAFARI_006, spawnX: 10, spawnY: 10 },
+  { key: 's007', labelKey: 'map:s007', mapId: MAP.SAFARI_007, spawnX: 10, spawnY: 10 },
 ];
 
 const YES_NO_ITEMS = () => [

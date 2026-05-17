@@ -27,7 +27,16 @@ import {
 } from '../overworld/objects/pet-emotion';
 
 import { P001_POKEMON_NPC, STARTER_POKEDEX_IDS } from '@poposafari/core/master.data.ts';
-import { s000Config, s001Config, s002Config, s003Config } from '../overworld/maps/safari';
+import {
+  s000Config,
+  s001Config,
+  s002Config,
+  s003Config,
+  s004Config,
+  s005Config,
+  s006Config,
+  s007Config,
+} from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
   RAIN_ANIM_KEY,
@@ -846,6 +855,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadMap(MAP.SAFARI_001, 'ui/maps', MAP.SAFARI_001);
     this.scene.loadMap(MAP.SAFARI_002, 'ui/maps', MAP.SAFARI_002);
     this.scene.loadMap(MAP.SAFARI_003, 'ui/maps', MAP.SAFARI_003);
+    this.scene.loadMap(MAP.SAFARI_004, 'ui/maps', MAP.SAFARI_004);
+    this.scene.loadMap(MAP.SAFARI_005, 'ui/maps', MAP.SAFARI_005);
+    this.scene.loadMap(MAP.SAFARI_006, 'ui/maps', MAP.SAFARI_006);
+    this.scene.loadMap(MAP.SAFARI_007, 'ui/maps', MAP.SAFARI_007);
 
     // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
     // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
@@ -885,6 +898,10 @@ export class LoadingPhase implements IGamePhase {
     mapRegistry.register(s001Config);
     mapRegistry.register(s002Config);
     mapRegistry.register(s003Config);
+    mapRegistry.register(s004Config);
+    mapRegistry.register(s005Config);
+    mapRegistry.register(s006Config);
+    mapRegistry.register(s007Config);
   }
 
   private loadAudio() {

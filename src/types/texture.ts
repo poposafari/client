@@ -200,4 +200,8 @@ export const enum MAP {
   SAFARI_001 = 's001',
   SAFARI_002 = 's002',
   SAFARI_003 = 's003',
+  SAFARI_004 = 's004',
+  SAFARI_005 = 's005',
+  SAFARI_006 = 's006',
+  SAFARI_007 = 's007',
 }
