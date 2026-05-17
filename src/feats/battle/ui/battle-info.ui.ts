@@ -38,6 +38,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private partyList!: PartyListContainer;
 
   private wildNameText!: GText;
+  private wildLevelSymbol!: GImage;
   private wildLevelText!: GText;
   private wildGenderText!: GText;
   private wildCatchCntIcon!: GImage;
@@ -124,15 +125,16 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     updatePokemonGenderIcon(ctx.wild.gender, this.wildGenderText);
     this.wildHudContainer.add(this.wildGenderText);
 
+    this.wildLevelSymbol = addImage(scene, TEXTURE.ICON_LV, undefined, 180, -72).setScale(3.2);
+    this.wildHudContainer.add(this.wildLevelSymbol);
+
     this.wildLevelText = addText(
       scene,
-      ctx.wild.gender
-        ? this.wildGenderText.x + this.wildGenderText.displayWidth + 5
-        : this.wildNameText.x + this.wildNameText.displayWidth + 5,
-      -72,
-      `(+${ctx.wild.level})`,
-      75,
-      '100',
+      this.wildLevelSymbol.x + 40,
+      -77,
+      `${ctx.wild.level}`,
+      72,
+      '500',
       'left',
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,

@@ -15,6 +15,8 @@ export interface PokemonSlotOptions {
   levelOffsetY?: number;
   levelSize?: number;
   levelWeight?: number | string;
+  levelIconScale?: number;
+  levelIconGap?: number;
   heldItemScale?: number;
   heldItemOffset?: { x: number; y: number };
 }
@@ -24,12 +26,15 @@ const DEFAULT_HELD_ITEM_SCALE = 1;
 const DEFAULT_LEVEL_SIZE = 40;
 const DEFAULT_LEVEL_OFFSET_Y = 32;
 const DEFAULT_LEVEL_WEIGHT: string = '150';
+const DEFAULT_LEVEL_ICON_GAP = 4;
 
 /** 포켓몬 아이콘 + 선택적 레벨 텍스트 + 소지 아이템 뱃지를 하나로 묶는 슬롯. */
 export class PokemonSlotContainer extends Phaser.GameObjects.Container {
   scene: GameScene;
   private icon!: GImage;
   private level?: GText;
+  private levelIcon?: GImage;
+  private levelIconGap = DEFAULT_LEVEL_ICON_GAP;
   private heldItem!: GImage;
   private iconScale = DEFAULT_ICON_SCALE;
   private heldItemScale = DEFAULT_HELD_ITEM_SCALE;
@@ -48,12 +53,15 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
       levelOffsetY = DEFAULT_LEVEL_OFFSET_Y,
       levelSize = DEFAULT_LEVEL_SIZE,
       levelWeight = DEFAULT_LEVEL_WEIGHT,
+      levelIconScale = levelSize / 25,
+      levelIconGap = DEFAULT_LEVEL_ICON_GAP,
       heldItemScale = DEFAULT_HELD_ITEM_SCALE,
       heldItemOffset,
     } = options;
 
     this.iconScale = iconScale;
     this.heldItemScale = heldItemScale;
+    this.levelIconGap = levelIconGap;
 
     const heldX = heldItemOffset?.x ?? 32 * iconScale - 16 * heldItemScale;
     const heldY = heldItemOffset?.y ?? 32 * iconScale - 16 * heldItemScale;
@@ -69,17 +77,24 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
     this.add(this.heldItem);
 
     if (showLevel) {
+      this.levelIcon = addImage(this.scene, TEXTURE.ICON_LV, undefined, 0, levelOffsetY)
+        .setScale(levelIconScale)
+        .setVisible(false);
+      this.add(this.levelIcon);
+
       this.level = addText(
         this.scene,
         0,
-        levelOffsetY,
+        levelOffsetY - 5,
         '',
         levelSize,
         levelWeight,
-        'center',
-        TEXTSTYLE.YELLOW,
+        'left',
+        TEXTSTYLE.WHITE,
         TEXTSHADOW.GRAY,
-      ).setVisible(false);
+      )
+        .setOrigin(0, 0.5)
+        .setVisible(false);
       this.add(this.level);
     }
   }
@@ -88,6 +103,7 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
     if (!pokemon) {
       this.icon.setVisible(false);
       this.level?.setVisible(false);
+      this.levelIcon?.setVisible(false);
       this.heldItem.setVisible(false);
       return;
     }
@@ -98,7 +114,15 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
       .setScale(this.iconScale)
       .setVisible(true);
 
-    this.level?.setText(`(+${pokemon.level})`).setVisible(true);
+    if (this.level && this.levelIcon) {
+      this.level.setText(`${pokemon.level}`);
+      const iconW = this.levelIcon.displayWidth;
+      const textW = this.level.displayWidth;
+      const totalW = iconW + this.levelIconGap + textW;
+      const leftEdge = -totalW / 2;
+      this.levelIcon.setX(leftEdge + iconW / 2).setVisible(true);
+      this.level.setX(leftEdge + iconW + this.levelIconGap).setVisible(true);
+    }
 
     const itemId = pokemon.heldItemId;
     if (itemId && this.scene.textures.exists(itemId)) {

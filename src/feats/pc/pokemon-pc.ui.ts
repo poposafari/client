@@ -78,7 +78,6 @@ export class PokemonPcUi extends BaseUi {
   private infoPokemonName!: GText;
   private infoCapturePokeball!: GImage;
   private infoShinyIcon!: GImage;
-  private infoLevel!: GText;
   private infoCaptureLocation!: GText;
   private infoCaptureDate!: GText;
   private infoGender!: GText;
@@ -92,6 +91,8 @@ export class PokemonPcUi extends BaseUi {
   private infoAbilitySymbol!: GText;
   private heldItemSymbol!: GText;
   private infoTier!: GText;
+  private infoLevelSymbol!: GImage;
+  private infoLevel!: GText;
   private infoCandySymbol!: GImage;
   private infoCandy!: GText;
   private infoFriendshipSymbol!: GImage;
@@ -256,7 +257,6 @@ export class PokemonPcUi extends BaseUi {
       this.infoPokedex,
       this.infoFront,
       this.infoPokemonName,
-      this.infoLevel,
       this.infoCapturePokeball,
       this.infoCaptureDate,
       this.infoCaptureLocation,
@@ -269,6 +269,8 @@ export class PokemonPcUi extends BaseUi {
       this.infoAbilitySymbol,
       this.infoPokedexSymbol,
       this.heldItemSymbol,
+      this.infoLevelSymbol,
+      this.infoLevel,
       this.infoCandySymbol,
       this.infoCandy,
       this.infoFriendshipSymbol,
@@ -1601,40 +1603,43 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     ).setOrigin(1, 0);
 
-    this.infoLevel = addText(
-      this.scene,
-      -860,
-      -398,
-      ``,
-      70,
-      100,
-      'left',
-      TEXTSTYLE.BLACK,
-      TEXTSHADOW.GRAY,
+    this.infoLevelSymbol = addImage(this.scene, TEXTURE.ICON_LV, undefined, -920, -280).setScale(
+      2.6,
     );
-
-    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -920, -280).setScale(2.8);
-    this.infoCandy = addText(
+    this.infoLevel = addText(
       this.scene,
       -885,
       -285,
-      `x100`,
-      70,
+      ``,
+      60,
       100,
       'left',
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
 
-    this.infoFriendshipSymbol = addImage(this.scene, 'soothe-bell', undefined, -920, -215).setScale(
+    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -920, -215).setScale(2.8);
+    this.infoCandy = addText(
+      this.scene,
+      -885,
+      -220,
+      `x100`,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.infoFriendshipSymbol = addImage(this.scene, 'soothe-bell', undefined, -920, -150).setScale(
       2.8,
     );
     this.infoFriendship = addText(
       this.scene,
       -885,
-      -210,
+      -145,
       ` 100`,
-      70,
+      60,
       100,
       'left',
       TEXTSTYLE.BLACK,
@@ -1797,6 +1802,7 @@ export class PokemonPcUi extends BaseUi {
     for (const skill of this.infoSkills) skill.clear();
     this.heldItemSymbol.setVisible(false);
     this.heldItem.setVisible(false);
+    this.infoLevelSymbol.setVisible(false);
     this.infoCandySymbol.setVisible(false);
     this.infoCandy.setVisible(false);
     this.infoFriendshipSymbol.setVisible(false);
@@ -1806,6 +1812,7 @@ export class PokemonPcUi extends BaseUi {
   private restoreInfoSymbols(): void {
     this.infoFront.setVisible(true);
     this.infoCapturePokeball.setVisible(true);
+    this.infoLevelSymbol.setVisible(true);
     this.heldItemSymbol.setVisible(true);
     this.heldItem.setVisible(true);
     this.infoFriendshipSymbol.setVisible(true);
@@ -1832,7 +1839,7 @@ export class PokemonPcUi extends BaseUi {
 
     const name = pokemon.nickname ?? getPokemonI18Name(pokedexKey);
     this.infoPokemonName.setText(name);
-    this.infoLevel.setText(`(+${pokemon.level})`);
+    this.infoLevel.setText(`${pokemon.level}`);
     this.infoFriendship.setText(`${pokemon.friendship ?? 0}`);
 
     const spriteTexture = getPokemonTexture(
@@ -1878,7 +1885,7 @@ export class PokemonPcUi extends BaseUi {
       this.infoTier.setText('');
     }
 
-    this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);
+    // this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);
 
     const skills = (pokemon.skills as PokemonHiddenMove[] | null | undefined) ?? [];
     for (let i = 0; i < this.infoSkills.length; i++) {
@@ -1964,9 +1971,10 @@ export class PokemonPcUi extends BaseUi {
       slot.create({
         iconScale: 2.4,
         showLevel: true,
-        levelOffsetY: 35,
-        levelSize: 40,
+        levelOffsetY: 60,
+        levelSize: 50,
         levelWeight: 100,
+        levelIconScale: 2,
         heldItemScale: 2.4,
         heldItemOffset: { x: 30, y: 35 },
       });
