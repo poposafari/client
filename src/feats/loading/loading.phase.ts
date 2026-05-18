@@ -36,6 +36,10 @@ import {
   s005Config,
   s006Config,
   s007Config,
+  s008Config,
+  s009Config,
+  s010Config,
+  s011Config,
 } from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
@@ -859,6 +863,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadMap(MAP.SAFARI_005, 'ui/maps', MAP.SAFARI_005);
     this.scene.loadMap(MAP.SAFARI_006, 'ui/maps', MAP.SAFARI_006);
     this.scene.loadMap(MAP.SAFARI_007, 'ui/maps', MAP.SAFARI_007);
+    this.scene.loadMap(MAP.SAFARI_008, 'ui/maps', MAP.SAFARI_008);
+    this.scene.loadMap(MAP.SAFARI_009, 'ui/maps', MAP.SAFARI_009);
+    this.scene.loadMap(MAP.SAFARI_010, 'ui/maps', MAP.SAFARI_010);
+    this.scene.loadMap(MAP.SAFARI_011, 'ui/maps', MAP.SAFARI_011);
 
     // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
     // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
@@ -902,6 +910,10 @@ export class LoadingPhase implements IGamePhase {
     mapRegistry.register(s005Config);
     mapRegistry.register(s006Config);
     mapRegistry.register(s007Config);
+    mapRegistry.register(s008Config);
+    mapRegistry.register(s009Config);
+    mapRegistry.register(s010Config);
+    mapRegistry.register(s011Config);
   }
 
   private loadAudio() {
