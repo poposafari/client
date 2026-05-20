@@ -171,6 +171,14 @@ export type PokemonHiddenMove =
   | 'move_stomp'
   | 'move_taunt'
   | 'move_twin-beam';
+export type GrowthGroup =
+  | 'fast'
+  | 'medium_fast'
+  | 'medium_slow'
+  | 'slow'
+  | 'erratic'
+  | 'fluctuating';
+
 export type PokemonData = {
   formName: string;
   nextEvol: {
@@ -193,6 +201,8 @@ export type PokemonData = {
   generation: string;
   height_m: string;
   weight_kg: string;
+  growthGroup: GrowthGroup;
+  baseExp: number;
 };
 
 export type CostumeGenderData = {

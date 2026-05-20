@@ -178,11 +178,23 @@ export class ApiManager {
 
   async enhancePokemon(
     id: number,
-    candy: number,
-  ): Promise<{ id: number; level: number; candyId: string; candyRemaining: number } | null> {
+    candies: { itemId: string; count: number }[],
+  ): Promise<{
+    id: number;
+    level: number;
+    exp: number;
+    expToNext: { current: number; next: number; remaining: number };
+    leveledUp: boolean;
+  } | null> {
     const res = await this.client.post<
-      ApiResponse<{ id: number; level: number; candyId: string; candyRemaining: number }>
-    >('/pokemon/enhance', { id, candy });
+      ApiResponse<{
+        id: number;
+        level: number;
+        exp: number;
+        expToNext: { current: number; next: number; remaining: number };
+        leveledUp: boolean;
+      }>
+    >('/pokemon/enhance', { id, candies });
     return res.data.success ? res.data.data : null;
   }
 

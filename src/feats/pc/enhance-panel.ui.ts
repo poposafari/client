@@ -1,6 +1,15 @@
-import { BaseUi, IInputHandler } from '@poposafari/core';
+import {
+  BaseUi,
+  EXP_CANDY_VALUE,
+  IInputHandler,
+  POKEMON_LEVEL_MAX,
+  pokemonExpProgress,
+  pokemonLevelFromExp,
+  pokemonTotalExpForLevel,
+} from '@poposafari/core';
+import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, GrowthGroup, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText, addWindow } from '@poposafari/utils';
 import i18next from 'i18next';
 
@@ -8,7 +17,8 @@ export interface EnhancePanelOpenParams {
   candyId: string;
   candyMax: number;
   currentLevel: number;
-  maxLevel: number;
+  currentExp: number;
+  group: GrowthGroup;
 }
 
 export interface EnhancePanelResult {
@@ -25,18 +35,22 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   private window!: GWindow;
   private promptText!: GText;
   private candyIcon!: GImage;
+  private candyName!: GText;
   private candyQtyText!: GText;
   private leftArrow!: GImage;
   private rightArrow!: GImage;
   private amountText!: GText;
   private levelPreview!: GText;
-  private candySymbol!: GText;
-  private amountSymbol!: GText;
+  private expBar!: ExpBarContainer;
+  private expPreviewText!: GText;
 
   private candyId = '';
   private candyMax = 0;
-  private currentLevel = 0;
-  private maxLevel = 100;
+  private candyExpValue = 0;
+  private currentLevel = 1;
+  private currentExp = 0;
+  private group: GrowthGroup = 'medium_fast';
+  private capExp = 0;
   private amount = 1;
 
   private resolver: ((result: EnhancePanelResult) => void) | null = null;
@@ -49,8 +63,8 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   }
 
   createLayout(): void {
-    const width = 750;
-    const height = 550;
+    const width = 850;
+    const height = 600;
 
     this.window = addWindow(
       this.scene,
@@ -69,7 +83,7 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     this.promptText = addText(
       this.scene,
       0,
-      -70,
+      -130,
       i18next.t('pc:enhancePrompt'),
       60,
       '100',
@@ -78,25 +92,25 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
       TEXTSHADOW.GRAY,
     );
 
-    // 좌측: 캔디 아이콘 + 수량
-    this.candySymbol = addText(
+    // 좌측: 캔디 아이콘 + 이름 + 수량
+    this.candyIcon = addImage(this.scene, TEXTURE.BLANK, undefined, -290, +0).setScale(4);
+    this.candyName = addText(
       this.scene,
-      -230,
-      60,
+      -220,
+      -30,
       '',
-      60,
+      55,
       '100',
-      'center',
+      'left',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
-    );
-    this.candyIcon = addImage(this.scene, TEXTURE.BLANK, undefined, -250, +90).setScale(4);
+    ).setOrigin(0, 0.5);
     this.candyQtyText = addText(
       this.scene,
-      -200,
-      +90,
+      -220,
+      +30,
       'x0',
-      70,
+      60,
       '100',
       'left',
       TEXTSTYLE.WHITE,
@@ -104,13 +118,13 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     ).setOrigin(0, 0.5);
 
     // 우측: ◀ {amount} ▶
-    this.leftArrow = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, +40, +90)
+    this.leftArrow = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, +120, +0)
       .setScale(3)
       .setFlipX(true);
     this.amountText = addText(
       this.scene,
-      +140,
-      +90,
+      +230,
+      +0,
       '1',
       80,
       '100',
@@ -118,15 +132,32 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
-    this.rightArrow = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, +240, +90).setScale(3);
+    this.rightArrow = addImage(this.scene, TEXTURE.CURSOR_WHITE, undefined, +340, +0).setScale(3);
 
-    // 우측 하단: {curr} → {new}
+    this.expBar = new ExpBarContainer(this.scene, 0, +180, {
+      width: 400,
+      height: 32,
+      scale: 2,
+    });
+
+    this.expPreviewText = addText(
+      this.scene,
+      0,
+      +230,
+      '',
+      40,
+      '100',
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+
     this.levelPreview = addText(
       this.scene,
       0,
-      +250,
+      +290,
       '',
-      80,
+      70,
       '100',
       'center',
       TEXTSTYLE.YELLOW,
@@ -137,10 +168,13 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
       this.window,
       this.promptText,
       this.candyIcon,
+      this.candyName,
       this.candyQtyText,
       this.leftArrow,
       this.amountText,
       this.rightArrow,
+      this.expBar,
+      this.expPreviewText,
       this.levelPreview,
     ]);
 
@@ -151,14 +185,19 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     this.candyId = params.candyId;
     this.candyMax = Math.max(0, params.candyMax);
     this.currentLevel = params.currentLevel;
-    this.maxLevel = params.maxLevel;
-    this.amount = Math.min(1, this.getMaxAllowed());
-    if (this.amount < 1) this.amount = 1;
+    this.currentExp = params.currentExp;
+    this.group = params.group;
+    this.capExp = pokemonTotalExpForLevel(POKEMON_LEVEL_MAX, this.group);
+    this.candyExpValue = EXP_CANDY_VALUE[this.candyId] ?? 0;
+
+    const max = this.getMaxAllowed();
+    this.amount = max > 0 ? 1 : 0;
 
     this.candyIcon.setTexture(this.candyId);
+    this.candyName.setText(i18next.t(`item:${this.candyId}.name`));
     this.candyQtyText.setText(`x${this.candyMax}`);
-    this.refreshAmount();
 
+    this.refreshAmount();
     this.show();
     this.setVisible(true);
 
@@ -210,7 +249,12 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   }
 
   private getMaxAllowed(): number {
-    return Math.min(this.candyMax, Math.max(0, this.maxLevel - this.currentLevel));
+    if (this.candyMax <= 0) return 0;
+    if (this.candyExpValue <= 0) return 0;
+    if (this.currentExp >= this.capExp) return 0;
+    const remainingExp = this.capExp - this.currentExp;
+    const candiesToCap = Math.ceil(remainingExp / this.candyExpValue);
+    return Math.min(this.candyMax, candiesToCap);
   }
 
   private setAmount(next: number): void {
@@ -225,8 +269,19 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
 
   private refreshAmount(): void {
     this.amountText.setText(String(this.amount));
-    const next = this.currentLevel + this.amount;
-    this.levelPreview.setText(`(+${this.currentLevel}) → (+${next})`);
+
+    const expGain = this.candyExpValue * this.amount;
+    const newExp = Math.min(this.currentExp + expGain, this.capExp);
+    const newLevel = pokemonLevelFromExp(newExp, this.group);
+
+    this.expBar.setProgress(newLevel, newExp, this.group);
+
+    const afterProg = pokemonExpProgress(newLevel, newExp, this.group);
+    this.expPreviewText.setText(
+      `EXP ${this.currentExp} (+${expGain}) → ${newExp} / ${afterProg.next}`,
+    );
+
+    this.levelPreview.setText(`Lv.${this.currentLevel} → Lv.${newLevel}`);
   }
 
   private playCursor(): void {

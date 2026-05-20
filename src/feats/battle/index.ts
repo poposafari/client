@@ -7,5 +7,5 @@ export type {
   BattleState,
   CatchResult,
   CaughtPokemon,
-  CatchReward,
+  RewardItem,
 } from './battle.types';

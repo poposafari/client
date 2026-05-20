@@ -141,6 +141,7 @@ export class FossilPhase implements IGamePhase {
       id: p.id,
       pokedexId: p.pokedexId,
       level: p.level,
+      exp: 0,
       friendship: p.friendship ?? 0,
       gender: p.gender,
       isShiny: p.isShiny,

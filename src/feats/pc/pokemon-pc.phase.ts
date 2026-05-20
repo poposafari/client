@@ -19,8 +19,9 @@ export class PokemonPcPhase implements IGamePhase {
 
     const cachedBox = user.getPokemonBox();
     const cachedMeta = user.getBoxMeta();
+    const bagLoaded = user.isItemBagLoaded();
 
-    if (cachedBox && cachedMeta) {
+    if (cachedBox && cachedMeta && bagLoaded) {
       this.initPcUi(cachedBox, user, cachedMeta);
       return;
     }
@@ -28,10 +29,12 @@ export class PokemonPcPhase implements IGamePhase {
     Promise.all([
       cachedBox ? Promise.resolve(cachedBox) : api.getPokemonBox(),
       cachedMeta ? Promise.resolve(cachedMeta) : api.getBoxMeta(),
-    ]).then(([boxRes, metaRes]) => {
+      bagLoaded ? Promise.resolve(null) : api.getItemBag(),
+    ]).then(([boxRes, metaRes, bagRes]) => {
       if (!boxRes) return;
       if (!cachedBox) user.setPokemonBox(boxRes);
       if (!cachedMeta && metaRes !== null) user.setBoxMeta(metaRes);
+      if (!bagLoaded && bagRes) user.hydrateItemBag(bagRes);
       this.initPcUi(boxRes, user, metaRes ?? []);
     });
   }
@@ -69,6 +72,7 @@ export class PokemonPcPhase implements IGamePhase {
             id: p.id,
             pokedexId: p.pokedexId,
             level: p.level,
+            exp: p.exp ?? 0,
             gender: p.gender,
             isShiny: p.isShiny,
             nickname: p.nickname,

@@ -1,9 +1,9 @@
 import i18next from 'i18next';
-import { BaseUi, InputManager, LEVEL_CURVE } from '@poposafari/core';
+import { BaseUi, InputManager } from '@poposafari/core';
 import type { GameScene } from '@poposafari/scenes/game.scene';
 import {
-  ANIMATION,
   DEPTH,
+  type GrowthGroup,
   KEY,
   PokemonData,
   type PokemonRank,
@@ -16,7 +16,6 @@ import {
 } from '@poposafari/types';
 import {
   addImage,
-  addSprite,
   addText,
   addWindow,
   getPokedexId,
@@ -25,22 +24,15 @@ import {
   updatePokemonGenderIcon,
 } from '@poposafari/utils';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
-import {
-  equippedCostumesToParts,
-  getDefaultOverworldKeys,
-  getHairTextureKey,
-  getOutfitTextureKey,
-  getSkinTextureKey,
-} from '@poposafari/feats/overworld/overworld-costume-keys';
-import type { CatchReward, CaughtPokemon, ExpReward } from '../battle.types';
-import { SHARE_ENV } from 'worker_threads';
+import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
+import type { CaughtPokemon, PartyExpReward, RewardItem } from '../battle.types';
+import type { PartySnapshotEntry } from './reward.phase';
 
 export interface RewardDisplayData {
   pokemon: CaughtPokemon;
-  rewards: CatchReward[];
-  expReward: ExpReward;
-  beforeLevel: number;
-  beforeExp: number;
+  rewards: RewardItem[];
+  partySnapshot: PartySnapshotEntry[];
+  partyExp: PartyExpReward[];
   userSnapshot: {
     gender: 'male' | 'female';
     equippedCostumes: { costumeId: string }[];
@@ -87,35 +79,29 @@ const CONST = {
   rwNameOffY: +35,
   rwSlotWidth: 200,
 
-  // ── 경험치 컨테이너 (reward 바로 아래) ──────────────────────────
-  exp: {
-    x: +530,
-    y: -180,
-    width: 450,
-    height: 460,
+  // ── 파티 EXP 패널 (오른쪽 세로 리스트) ──────────────────────────
+  partyPanel: {
+    x: +560,
+    y: -10,
+    width: 520,
+    height: 800,
   },
-  // 경험치 내부 (컨테이너 로컬 좌표)
-  userSpriteX: +10,
-  userSpriteY: 0,
-  userSpriteScale: 5.4,
-  levelTextX: +10,
-  levelTextY: -20,
-  expGainedLabelX: -180,
-  expGainedValueX: +140,
-  expGainedY: +60,
-  expBarX: 0,
-  expBarY: +120,
-  expBarWidth: 350,
-  expBarHeight: 40,
-  expNumberY: +170,
+  partyTitleY: -350,
+  partyRowStartY: -240,
+  partyRowGap: 110,
+  partyIconX: -160,
+  partyIconScale: 2,
+  partyLevelX: -85,
+  partyLevelY: -25,
+  partyBarX: -80,
+  partyBarY: +15,
+  partyBarWidth: 250,
+  partyBarHeight: 22,
+  partyGainedX: +140,
+  partyGainedY: -30,
 
   // ── 힌트 (루트 기준) ─────────────────────────────────────────────
   hintY: +450,
-
-  // ── 경험치 바 색상 ───────────────────────────────────────────────
-  expBarFill: 0x66cc40,
-  expBarBg: 0x222222,
-  expBarStroke: 0xffffff,
 } as const;
 
 const RANK_COLOR: Record<PokemonRank, string> = {
@@ -132,19 +118,28 @@ const RANK_LOCALE: Record<PokemonRank, string> = {
   legendary: 'etc:tierLegendary',
 };
 
+interface PartyExpRow {
+  id: number;
+  group: GrowthGroup;
+  beforeLevel: number;
+  beforeExp: number;
+  afterLevel: number;
+  afterExp: number;
+  gained: number;
+  levelText: Phaser.GameObjects.Text;
+  gainedText: Phaser.GameObjects.Text;
+  expBar: ExpBarContainer;
+}
+
 export class RewardUi extends BaseUi {
   private resolver: (() => void) | null = null;
 
-  // ── exp bar runtime refs ────────────────────────────────────────
-  private expInner: Phaser.GameObjects.Rectangle | null = null;
-  private expNumberText: Phaser.GameObjects.Text | null = null;
-  private levelText: Phaser.GameObjects.Text | null = null;
-  private expContainer: Phaser.GameObjects.Container | null = null;
+  // ── party exp panel runtime refs ────────────────────────────────
+  private partyRows: PartyExpRow[] = [];
+  private partyContainer: Phaser.GameObjects.Container | null = null;
 
   private animating = false;
   private skipRequested = false;
-  private finalLevel = 1;
-  private finalExp = 0;
 
   constructor(
     scene: GameScene,
@@ -184,7 +179,7 @@ export class RewardUi extends BaseUi {
 
   private buildLayout(data: RewardDisplayData): void {
     const scene = this.scene as GameScene;
-    const { pokemon, rewards, expReward, beforeLevel, beforeExp, userSnapshot } = data;
+    const { pokemon, rewards } = data;
     const pokemonData = scene.getMasterData().getPokemonData(pokemon.pokedexId);
     const rank: PokemonRank = pokemonData?.rank ?? 'common';
 
@@ -263,18 +258,18 @@ export class RewardUi extends BaseUi {
     );
     this.buildRewardGrid(rewards, rewardContainer);
 
-    // ── 경험치 컨테이너: 유저 스프라이트 + 레벨/경험치 ─────────────
-    const expContainer = scene.add.container(CONST.exp.x, CONST.exp.y);
-    this.add(expContainer);
-    this.expContainer = expContainer;
-    expContainer.add(
+    // ── 파티 EXP 패널 (세로 리스트) ─────────────────────────────────
+    const partyContainer = scene.add.container(CONST.partyPanel.x, CONST.partyPanel.y);
+    this.add(partyContainer);
+    this.partyContainer = partyContainer;
+    partyContainer.add(
       addWindow(
         scene,
         TEXTURE.WINDOW_3,
         0,
         0,
-        CONST.exp.width,
-        CONST.exp.height,
+        CONST.partyPanel.width,
+        CONST.partyPanel.height,
         2.4,
         16,
         16,
@@ -282,7 +277,7 @@ export class RewardUi extends BaseUi {
         16,
       ),
     );
-    this.buildUserSection(beforeLevel, beforeExp, expReward, userSnapshot, expContainer);
+    this.buildPartySection(data, partyContainer);
 
     // ── Z/Enter 힌트 (루트) ────────────────────────────────────────
     const hintText = addText(
@@ -362,19 +357,29 @@ export class RewardUi extends BaseUi {
     target.add(genderText);
 
     const genderCursorX = genderText.displayWidth + genderText.x;
+    const lvIcon = addImage(
+      scene,
+      TEXTURE.ICON_LV,
+      undefined,
+      CONST.infoStartX - 10,
+      CONST.infoNameY + 50,
+    )
+      .setOrigin(0, 0.5)
+      .setScale(2.4);
+    target.add(lvIcon);
     const lvText = addText(
       scene,
-      CONST.infoStartX,
+      CONST.infoStartX + lvIcon.displayWidth + 5,
       CONST.infoNameY + 50,
-      `(+${pokemon.level})`,
+      `${pokemon.level}`,
       40,
       '100',
       'left',
-      TEXTSTYLE.YELLOW,
+      TEXTSTYLE.WHITE,
       TEXTSHADOW.NONE,
     ).setOrigin(0, 0.5);
     target.add(lvText);
-    cursorX += lvText.width + 14;
+    cursorX += lvIcon.displayWidth + 8 + lvText.width + 14;
 
     if (pokemon.isShiny) {
       const shinyInline = addImage(
@@ -474,7 +479,7 @@ export class RewardUi extends BaseUi {
     target.add(val);
   }
 
-  private buildRewardGrid(rewards: CatchReward[], target: Phaser.GameObjects.Container): void {
+  private buildRewardGrid(rewards: RewardItem[], target: Phaser.GameObjects.Container): void {
     const scene = this.scene as GameScene;
     const count = Math.min(rewards.length, 4);
     if (count === 0) return;
@@ -486,8 +491,8 @@ export class RewardUi extends BaseUi {
       const rw = rewards[i];
       const slotX = startX + i * CONST.rwSlotWidth;
 
-      // candyId 가 그대로 텍스처 키. 없으면 기본 아이콘으로 대체.
-      const iconKey = scene.textures.exists(rw.candyId) ? rw.candyId : TEXTURE.ICON_CANDY;
+      // itemId 가 그대로 텍스처 키. 없으면 기본 아이콘으로 대체.
+      const iconKey = scene.textures.exists(rw.itemId) ? rw.itemId : TEXTURE.ICON_CANDY;
       target.add(
         addImage(scene, iconKey, undefined, slotX, CONST.rwY + CONST.rwIconOffY).setScale(4),
       );
@@ -496,7 +501,7 @@ export class RewardUi extends BaseUi {
           scene,
           slotX + 8,
           CONST.rwY + CONST.rwQtyOffY,
-          `x${rw.candyQuantity}`,
+          `x${rw.quantity}`,
           50,
           '100',
           'left',
@@ -504,14 +509,14 @@ export class RewardUi extends BaseUi {
           TEXTSHADOW.GRAY,
         ),
       );
-      const candyName = i18next.t(`item:${rw.candyId}.name`, { defaultValue: rw.candyId });
+      const itemName = i18next.t(`item:${rw.itemId}.name`, { defaultValue: rw.itemId });
       target.add(
         addText(
           scene,
           slotX,
           CONST.rwY + CONST.rwNameOffY,
-          candyName,
-          50,
+          itemName,
+          30,
           '100',
           'center',
           TEXTSTYLE.WHITE,
@@ -521,281 +526,168 @@ export class RewardUi extends BaseUi {
     }
   }
 
-  private buildUserSection(
-    beforeLevel: number,
-    beforeExp: number,
-    expReward: ExpReward,
-    userSnapshot: RewardDisplayData['userSnapshot'],
+  private buildPartySection(data: RewardDisplayData, target: Phaser.GameObjects.Container): void {
+    const scene = this.scene as GameScene;
+    this.partyRows = [];
+
+    // 패널 타이틀
+    target.add(
+      addText(
+        scene,
+        0,
+        CONST.partyTitleY,
+        i18next.t('battle:rewardPartyExp', { defaultValue: 'PARTY EXP' }),
+        56,
+        '120',
+        'center',
+        TEXTSTYLE.YELLOW,
+        TEXTSHADOW.DARK_YELLOW,
+      ),
+    );
+
+    const expById = new Map((data.partyExp ?? []).map((e) => [e.id, e]));
+    if (expById.size === 0) return;
+
+    data.partySnapshot.forEach((snap, index) => {
+      const entry = expById.get(snap.id);
+      if (!entry) return;
+      const rowY = CONST.partyRowStartY + index * CONST.partyRowGap;
+      const row = this.buildPartyRow(snap, entry, rowY, target);
+      if (row) this.partyRows.push(row);
+    });
+  }
+
+  private buildPartyRow(
+    snap: PartySnapshotEntry,
+    entry: PartyExpReward,
+    rowY: number,
     target: Phaser.GameObjects.Container,
-  ): void {
+  ): PartyExpRow | null {
     const scene = this.scene as GameScene;
 
-    // ── 유저 overworld 스프라이트 (skin/hair/outfit 3레이어) ─────────
-    const { gender, equippedCostumes: equipped } = userSnapshot;
-    const parts = equipped.length ? equippedCostumesToParts(equipped) : null;
-    const defaults = getDefaultOverworldKeys(scene, gender);
+    // 포켓몬 아이콘 (icon atlas는 ${pokedex}_0 형태의 첫 프레임을 사용)
+    const tex = getPokemonTexture('icon', snap.pokedexId, { isShiny: snap.isShiny }, scene);
+    const icon = addImage(scene, tex.key, tex.frame + '_0', CONST.partyIconX, rowY).setScale(
+      CONST.partyIconScale,
+    );
+    target.add(icon);
 
-    const skinKeyReq = parts?.skin ? getSkinTextureKey(parts.skin) : defaults.skin;
-    const hairKeyReq = parts?.hair ? getHairTextureKey(gender, parts.hair) : defaults.hair;
-    const outfitKeyReq = parts?.outfit
-      ? getOutfitTextureKey(gender, parts.outfit)
-      : defaults.outfit;
-
-    const skinKey = scene.textures.exists(skinKeyReq) ? skinKeyReq : defaults.skin;
-    const hairKey = scene.textures.exists(hairKeyReq) ? hairKeyReq : defaults.hair;
-    const outfitKey = scene.textures.exists(outfitKeyReq) ? outfitKeyReq : defaults.outfit;
-
-    const downFrame = `${ANIMATION.PLAYER_OVERWORLD_SKIN}-0`;
-    for (const key of [skinKey, outfitKey, hairKey]) {
-      if (!scene.textures.exists(key)) continue;
-      const sprite = addSprite(scene, key, undefined, CONST.userSpriteX, CONST.userSpriteY);
-      sprite.setScale(CONST.userSpriteScale);
-      sprite.setOrigin(0.5, 1);
-      if (scene.textures.get(key).has(downFrame)) {
-        sprite.setFrame(downFrame);
-      }
-      target.add(sprite);
-    }
-
-    // ── 레벨 텍스트 ─────────────────────────────────────────────────
-    this.levelText = addText(
+    // 레벨 라벨 (시작값 = 캡쳐 직전 레벨)
+    const levelText = addText(
       scene,
-      CONST.levelTextX,
-      CONST.levelTextY,
-      `Lv.${beforeLevel}`,
-      60,
+      CONST.partyLevelX,
+      rowY + CONST.partyLevelY,
+      `Lv.${snap.level}`,
+      44,
       '100',
-      'center',
+      'left',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
-    target.add(this.levelText);
+    target.add(levelText);
 
-    // ── 획득 경험치 라벨 + 값 ───────────────────────────────────────
-    const expGainedLabel = addText(
+    // +N EXP 텍스트
+    const gainedText = addText(
       scene,
-      CONST.expGainedLabelX,
-      CONST.expGainedY,
-      i18next.t('battle:rewardExpGained'),
-      50,
+      CONST.partyGainedX,
+      rowY + CONST.partyGainedY,
+      entry.gained > 0 ? `+${entry.gained}` : '',
+      36,
       '100',
-      'left',
+      'right',
       TEXTSTYLE.YELLOW,
       TEXTSHADOW.GRAY,
     );
-    target.add(expGainedLabel);
-    const expGainedValue = addText(
+    target.add(gainedText);
+
+    const pokemonData = scene.getMasterData().getPokemonData(snap.pokedexId);
+    const group: GrowthGroup = pokemonData?.growthGroup ?? 'medium_fast';
+
+    const expBar = new ExpBarContainer(
       scene,
-      CONST.expGainedValueX,
-      CONST.expGainedY - 20,
-      `+${expReward.gained}`,
-      50,
-      '100',
-      'right',
-      TEXTSTYLE.WHITE,
-      TEXTSHADOW.GRAY,
+      CONST.partyBarX + CONST.partyBarWidth / 2,
+      rowY + CONST.partyBarY,
+      { width: CONST.partyBarWidth, height: CONST.partyBarHeight },
     );
-    target.add(expGainedValue);
+    expBar.setProgress(snap.level, snap.exp, group);
+    target.add(expBar);
 
-    // ── 경험치 바 (outer + inner) ───────────────────────────────────
-    const outer = scene.add.rectangle(
-      CONST.expBarX,
-      CONST.expBarY,
-      CONST.expBarWidth,
-      CONST.expBarHeight,
-      CONST.expBarBg,
-      0.35,
-    );
-    outer.setStrokeStyle(3, CONST.expBarStroke);
-    outer.setOrigin(0.5, 0.5);
-    outer.setScrollFactor(0);
-    target.add(outer);
-
-    const innerMaxW = CONST.expBarWidth - 6;
-    const innerX = CONST.expBarX - innerMaxW / 2;
-    const initRatio = LEVEL_CURVE.isMaxLevel(beforeLevel)
-      ? 1
-      : Math.min(1, beforeExp / LEVEL_CURVE.expToNext(beforeLevel));
-    this.expInner = scene.add.rectangle(
-      innerX,
-      CONST.expBarY,
-      innerMaxW * initRatio,
-      CONST.expBarHeight - 8,
-      CONST.expBarFill,
-      1,
-    );
-    this.expInner.setOrigin(0, 0.5);
-    this.expInner.setScrollFactor(0);
-    target.add(this.expInner);
-
-    // ── 경험치 수치 텍스트 ─────────────────────────────────────────
-    const initNeed = LEVEL_CURVE.isMaxLevel(beforeLevel) ? 0 : LEVEL_CURVE.expToNext(beforeLevel);
-    const initLabel = LEVEL_CURVE.isMaxLevel(beforeLevel) ? 'MAX' : `${beforeExp} / ${initNeed}`;
-    this.expNumberText = addText(
-      scene,
-      CONST.expBarX,
-      CONST.expNumberY,
-      initLabel,
-      40,
-      '100',
-      'center',
-      TEXTSTYLE.WHITE,
-      TEXTSHADOW.GRAY,
-    );
-    target.add(this.expNumberText);
-
-    this.finalLevel = expReward.level;
-    this.finalExp = expReward.exp;
+    return {
+      id: entry.id,
+      group,
+      beforeLevel: snap.level,
+      beforeExp: snap.exp,
+      afterLevel: entry.level,
+      afterExp: entry.exp,
+      gained: entry.gained,
+      levelText,
+      gainedText,
+      expBar,
+    };
   }
 
-  // ── 경험치 바 채우기 애니메이션 ──────────────────────────────────
   private async animateExpGain(data: RewardDisplayData): Promise<void> {
-    const { beforeLevel, beforeExp, expReward } = data;
-    if (!this.expInner || !this.expNumberText || !this.levelText) {
-      this.animating = false;
-      return;
-    }
-    const innerMaxW = CONST.expBarWidth - 6;
-    if (expReward.gained <= 0) {
-      this.snapToFinal(innerMaxW);
+    if (this.partyRows.length === 0) {
       this.animating = false;
       return;
     }
 
-    let curLevel = beforeLevel;
-    let curExp = beforeExp;
-    let remaining = expReward.gained;
+    const hasAnyGain = this.partyRows.some((r) => r.gained > 0);
+    if (!hasAnyGain) {
+      for (const row of this.partyRows) this.snapRowToFinal(row);
+      this.animating = false;
+      return;
+    }
 
     const audio = (this.scene as GameScene).getAudio();
-    const willFill = !LEVEL_CURVE.isMaxLevel(curLevel);
-    const expGainLoop = willFill ? audio.playEffectLoop(SFX.EXP_GAIN) : null;
+    const expGainLoop = audio.playEffectLoop(SFX.EXP_GAIN);
 
     try {
-      while (remaining > 0 && !LEVEL_CURVE.isMaxLevel(curLevel)) {
-        if (this.skipRequested) break;
-
-        const need = LEVEL_CURVE.expToNext(curLevel);
-        const canTake = need - curExp;
-        const take = Math.min(remaining, canTake);
-        const nextExp = curExp + take;
-
-        await this.tweenInnerTo(nextExp / need, innerMaxW, 700 * (take / Math.max(1, need)));
-
-        curExp = nextExp;
-        remaining -= take;
-        this.updateExpText(curLevel, curExp);
-
-        if (curExp >= need && curLevel < LEVEL_CURVE.USER_LEVEL_MAX) {
-          if (this.skipRequested) break;
-          await this.playLevelUpEffect(curLevel + 1);
-          curLevel += 1;
-          curExp = 0;
-          this.expInner.width = 0;
-          this.levelText?.setText(`Lv.${curLevel}`);
-          this.updateExpText(curLevel, 0);
-        }
-      }
+      await Promise.all(this.partyRows.map((row) => this.animateRow(row)));
     } finally {
       audio.stopEffectLoop(expGainLoop);
     }
 
-    this.snapToFinal(innerMaxW);
+    for (const row of this.partyRows) this.snapRowToFinal(row);
     this.animating = false;
     this.skipRequested = false;
   }
 
-  private snapToFinal(innerMaxW: number): void {
-    if (!this.expInner || !this.levelText) return;
-    const lvl = this.finalLevel;
-    const exp = this.finalExp;
-    this.levelText.setText(`Lv.${lvl}`);
-    if (LEVEL_CURVE.isMaxLevel(lvl)) {
-      this.expInner.width = innerMaxW;
-      this.expNumberText?.setText('MAX');
+  private async animateRow(row: PartyExpRow): Promise<void> {
+    if (row.gained <= 0) {
+      this.snapRowToFinal(row);
       return;
     }
-    const need = LEVEL_CURVE.expToNext(lvl);
-    const ratio = need > 0 ? Math.min(1, exp / need) : 0;
-    this.expInner.width = innerMaxW * ratio;
-    this.expNumberText?.setText(`${exp} / ${need}`);
-  }
 
-  private updateExpText(level: number, exp: number): void {
-    if (!this.expNumberText) return;
-    if (LEVEL_CURVE.isMaxLevel(level)) {
-      this.expNumberText.setText('MAX');
-      return;
-    }
-    const need = LEVEL_CURVE.expToNext(level);
-    this.expNumberText.setText(`${exp} / ${need}`);
-  }
-
-  private tweenInnerTo(ratio: number, innerMaxW: number, duration: number): Promise<void> {
-    return new Promise<void>((resolve) => {
-      if (!this.expInner) return resolve();
-      this.scene.tweens.add({
-        targets: this.expInner,
-        width: innerMaxW * Math.max(0, Math.min(1, ratio)),
-        duration: Math.max(120, duration),
-        ease: 'Cubic.easeOut',
-        onComplete: () => resolve(),
-      });
+    await row.expBar.animate({
+      beforeLevel: row.beforeLevel,
+      beforeExp: row.beforeExp,
+      afterLevel: row.afterLevel,
+      afterExp: row.afterExp,
+      group: row.group,
+      shouldSkip: () => this.skipRequested,
+      onLevelUp: async (newLevel) => {
+        await this.flashLevelUp(row, newLevel);
+      },
     });
   }
 
-  private async playLevelUpEffect(newLevel: number): Promise<void> {
+  private snapRowToFinal(row: PartyExpRow): void {
+    row.levelText.setText(`Lv.${row.afterLevel}`);
+    row.expBar.setProgress(row.afterLevel, row.afterExp, row.group);
+  }
+
+  private async flashLevelUp(row: PartyExpRow, newLevel: number): Promise<void> {
     const scene = this.scene as GameScene;
     scene.getAudio().playEffect(SFX.EXP_FULL);
-    const flash = addText(
-      scene,
-      CONST.expBarX,
-      CONST.levelTextY - 30,
-      'LEVEL UP!',
-      54,
-      '120',
-      'center',
-      TEXTSTYLE.YELLOW,
-      TEXTSHADOW.DARK_YELLOW,
-    );
-    flash.setAlpha(0);
-    flash.setScale(0.6);
-    if (this.expContainer) {
-      this.expContainer.add(flash);
-    } else {
-      this.add(flash);
-    }
-
+    row.levelText.setText(`Lv.${newLevel}`);
     await new Promise<void>((resolve) => {
       this.scene.tweens.add({
-        targets: flash,
-        alpha: { from: 0, to: 1 },
-        scale: { from: 0.6, to: 1.15 },
-        duration: 220,
+        targets: row.levelText,
+        scale: { from: 1.35, to: 1.0 },
+        duration: 240,
         ease: 'Back.easeOut',
         onComplete: () => resolve(),
-      });
-    });
-    if (this.levelText) {
-      this.levelText.setText(`Lv.${newLevel}`);
-      this.scene.tweens.add({
-        targets: this.levelText,
-        scale: { from: 1.3, to: 1.0 },
-        duration: 280,
-        ease: 'Back.easeOut',
-      });
-    }
-    await new Promise<void>((resolve) => {
-      this.scene.tweens.add({
-        targets: flash,
-        alpha: 0,
-        y: flash.y - 14,
-        delay: 360,
-        duration: 280,
-        ease: 'Sine.easeIn',
-        onComplete: () => {
-          flash.destroy();
-          resolve();
-        },
       });
     });
   }

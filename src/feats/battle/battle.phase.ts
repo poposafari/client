@@ -3,7 +3,7 @@ import { GameEvent, type GameScene } from '@poposafari/scenes/game.scene';
 import { BattleUi } from './battle.ui';
 import type { BattleContext, BattleModifiers, BattleState, CatchResult } from './battle.types';
 import { toCatchResult } from './battle.types';
-import { RewardPhase } from './reward/reward.phase';
+import { RewardPhase, type PartySnapshotEntry } from './reward/reward.phase';
 import { BattleTutorialPhase } from './tutorial/battle-tutorial.phase';
 import { BGM, MAP, OptionKey, SFX } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
@@ -15,6 +15,8 @@ export class BattlePhase implements IGamePhase {
   private modifiers: BattleModifiers = { bait: false, rock: false };
   /** 튜토리얼 phase를 첫 idle 진입 시 1회만 push하기 위한 플래그. */
   private tutorialShown = false;
+
+  private partySnapshot: PartySnapshotEntry[] = [];
 
   constructor(
     private readonly scene: GameScene,
@@ -108,6 +110,17 @@ export class BattlePhase implements IGamePhase {
         }
         await this.ui.showUsedBallMessage();
 
+        // 캡쳐 직전 파티 스냅샷 (Reward UI 의 파티 EXP 연출용)
+        this.partySnapshot = (this.scene.getUser()?.getParty() ?? []).map((p) => ({
+          id: p.id,
+          pokedexId: p.pokedexId,
+          level: p.level,
+          exp: p.exp ?? 0,
+          isShiny: p.isShiny,
+          gender: p.gender,
+          nickname: p.nickname,
+        }));
+
         // API 호출을 애니메이션 전에 수행하여 결과에 따라 shake 횟수를 결정한다.
         let outcome: CatchResult;
         try {
@@ -148,20 +161,27 @@ export class BattlePhase implements IGamePhase {
 
           audio.playBackground(BGM.BATTLE_VICTORY);
 
-          const { pokemon, reward, expReward } = next.outcome;
+          const { pokemon, rewards, partyExp } = next.outcome;
 
           const user = this.scene.getUser();
           const beforeProfile = user?.getProfile();
-          const beforeLevel = beforeProfile?.level ?? 1;
-          const beforeExp = beforeProfile?.exp ?? 0;
           const userSnapshot = {
             gender: beforeProfile?.gender ?? 'male',
             equippedCostumes: [...(user?.getEquippedCostumes() ?? [])],
           };
+
+          if (user) {
+            for (const r of rewards) {
+              if (r.quantity <= 0) continue;
+              const existing = user.getItemBag()?.get(r.itemId);
+              user.updateItemQuantity(r.itemId, (existing?.quantity ?? 0) + r.quantity);
+            }
+          }
           user?.addPokemonToBox({
             id: pokemon.id,
             pokedexId: pokemon.pokedexId,
             level: pokemon.level,
+            exp: 0,
             gender: pokemon.gender,
             isShiny: pokemon.isShiny,
             nickname: pokemon.nickname,
@@ -178,22 +198,13 @@ export class BattlePhase implements IGamePhase {
           });
           user?.incrementPokedexCount(pokemon.pokedexId);
 
-          if (user && reward?.candyId && reward.candyQuantity > 0) {
-            const existing = user.getItemBag()?.get(reward.candyId);
-            user.updateItemQuantity(
-              reward.candyId,
-              (existing?.quantity ?? 0) + reward.candyQuantity,
-            );
-          }
-
           await new Promise<void>((resolve) => {
             this.scene.pushPhase(
               new RewardPhase(this.scene, {
                 pokemon,
-                rewards: [reward],
-                expReward,
-                beforeLevel,
-                beforeExp,
+                rewards,
+                partySnapshot: this.partySnapshot,
+                partyExp,
                 userSnapshot,
                 onComplete: resolve,
               }),
@@ -203,7 +214,21 @@ export class BattlePhase implements IGamePhase {
           // Reward UI 종료 → 승리 BGM 을 서서히 페이드 아웃하며 배틀 종료로 진행.
           audio.stopBackground(1500);
 
-          user?.setLevelAndExp(expReward.level, expReward.exp);
+          if (user && partyExp.length > 0) {
+            const party = user.getParty();
+            if (party && party.length > 0) {
+              const expById = new Map(partyExp.map((p) => [p.id, p]));
+              user.setParty(
+                party.map((p) => {
+                  const r = expById.get(p.id);
+                  if (!r) return p;
+                  return { ...p, level: r.level, exp: r.exp };
+                }),
+              );
+              this.scene.events.emit(GameEvent.PARTY_CHANGED);
+            }
+          }
+
           this.scene.events.emit(GameEvent.PROFILE_CHANGED);
 
           return this.transition({ kind: 'exiting', reason: 'catch' });

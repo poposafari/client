@@ -27,8 +27,6 @@ export interface GetUserRes {
 export interface GetMeRes {
   profile: {
     nickname: string;
-    level: number;
-    exp: number;
     gender: number;
     money: number;
     playtime: number;
@@ -42,6 +40,7 @@ export interface GetMeRes {
     id: number;
     pokedexId: string;
     level: number;
+    exp: number;
     friendship: number;
     gender: number;
     isShiny: boolean;
@@ -93,6 +92,7 @@ export interface PokemonBoxItem {
   id: number;
   pokedexId: string;
   level: number;
+  exp: number;
   friendship: number;
   gender: number;
   isShiny: boolean;
@@ -211,19 +211,25 @@ export interface SafariCatchCaughtPokemon {
   caughtLocation: string;
 }
 
-export interface SafariExpReward {
+export interface SafariPartyExp {
+  id: number;
   gained: number;
   level: number;
   exp: number;
   leveledUp: boolean;
 }
 
+export interface SafariRewardItem {
+  itemId: string;
+  quantity: number;
+}
+
 export type SafariCatchRes =
   | {
       result: 'caught';
       pokemon: SafariCatchCaughtPokemon;
-      reward: { candyId: string; candyQuantity: number };
-      expReward: SafariExpReward;
+      rewards: SafariRewardItem[];
+      partyExp?: SafariPartyExp[];
     }
   | { result: 'fail' }
   | { result: 'flee' };

@@ -651,6 +651,26 @@ export const item: TranslationItem = {
     name: '페어리사탕',
     description: '페어리타입의 에너지가 담긴 사탕.',
   },
+  'experience-candy-xs': {
+    name: '경험치사탕XS',
+    description: '먹이면 포켓몬이 경험치를 조금 얻는다.',
+  },
+  'experience-candy-s': {
+    name: '경험치사탕S',
+    description: '먹이면 포켓몬이 경험치를 얻는다.',
+  },
+  'experience-candy-m': {
+    name: '경험치사탕M',
+    description: '먹이면 포켓몬이 경험치를 많이 얻는다.',
+  },
+  'experience-candy-l': {
+    name: '경험치사탕L',
+    description: '먹이면 포켓몬이 경험치를 매우 많이 얻는다.',
+  },
+  'experience-candy-xl': {
+    name: '경험치사탕XL',
+    description: '먹이면 포켓몬이 경험치를 엄청나게 많이 얻는다.',
+  },
   move_cut: {
     name: '기술머신 풀베기',
     description: '포켓몬에게 풀베기를 가르친다.',

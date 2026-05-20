@@ -24,6 +24,8 @@ export const enum TEXTCOLOR {
 
 export const enum TEXTFONT {
   BW = 'bw_font',
+  DP = 'dp_font',
+  MN = 'mn_font',
 }
 
 export const enum TEXTSTYLE {

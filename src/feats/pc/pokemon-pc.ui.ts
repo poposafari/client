@@ -1,4 +1,4 @@
-import { BaseUi } from '@poposafari/core';
+import { BaseUi, EXP_CANDY_IDS, pokemonExpProgress } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
@@ -9,9 +9,11 @@ import {
   SFX,
   SYMBOL_MALE,
   TEXTCOLOR,
+  TEXTFONT,
   TEXTSHADOW,
   TEXTSTYLE,
   TEXTURE,
+  type GrowthGroup,
   type PokemonBoxItem,
   type PokemonRank,
 } from '@poposafari/types';
@@ -44,6 +46,7 @@ import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.contai
 import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
 import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
+import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
@@ -65,7 +68,6 @@ const RANK_LOCALE: Record<PokemonRank, string> = {
 export class PokemonPcUi extends BaseUi {
   scene: GameScene;
   private bg!: GImage;
-  private guideFrame!: GWindow;
   private inputGuide!: KeyGuideBarContainer;
   private pcBg!: GSprite;
   private pcBgFrame!: GWindow;
@@ -80,6 +82,8 @@ export class PokemonPcUi extends BaseUi {
   private infoShinyIcon!: GImage;
   private infoCaptureLocation!: GText;
   private infoCaptureDate!: GText;
+  private infoCaptureDateSymbol!: GText;
+  private infoCaptureLocationSymbol!: GText;
   private infoGender!: GText;
   private infoAbility!: GText;
   private infoNature!: GText;
@@ -119,10 +123,28 @@ export class PokemonPcUi extends BaseUi {
   private wallpaperMenu: MenuListUi;
   private nameInput: NameInputUi;
   private enhancePanel!: EnhancePanelUi;
+  private enhanceCandyMenu!: MenuListUi;
   private evolveSelect!: EvolveSelectUi;
   private evolveUi!: EvolveUi;
   private menuOpen = false;
   private inputLocked = false;
+
+  // 하단 정보 페이지: 0=ability/nature/heldItem, 1=capture date/location, 2=exp
+  private infoPage: 0 | 1 | 2 = 0;
+
+  // EXP 바: infoLevel 위에 항상 표시 (페이지와 무관)
+  private infoExpBar!: ExpBarContainer;
+
+  // page 2 (exp) 전용 하단 표시 요소
+  private infoExpTotalSymbol!: GText;
+  private infoExpTotalValue!: GText;
+  private infoExpCurrentSymbol!: GText;
+  private infoExpCurrentValue!: GText;
+  private infoExpRemainingSymbol!: GText;
+  private infoExpRemainingValue!: GText;
+
+  // bottomInfo 우측 하단에 표시되는 N: 다음 키 가이드
+  private bottomInfoGuide!: KeyGuideBarContainer;
 
   private partyBaseY = 0;
 
@@ -156,6 +178,12 @@ export class PokemonPcUi extends BaseUi {
 
   // grabOverlay: grab cursor/icon을 담는 오버레이 컨테이너. pcSet 위치를 미러링.
   private grabOverlay!: GContainer;
+
+  // bottomInfoSet: ability/nature/heldItem, capture date/location, exp page를 묶은 컨테이너.
+  // 통째로 좌표 이동 가능.
+  private bottomInfoSet!: GContainer;
+  private static readonly BOTTOM_INFO_OFFSET_X = 0;
+  private static readonly BOTTOM_INFO_OFFSET_Y = -20;
 
   onClose?: () => void;
 
@@ -196,6 +224,7 @@ export class PokemonPcUi extends BaseUi {
     this.gridSelect.onCursorMoved = (selectedKey) => this.updateInfo(selectedKey);
     this.gridSelect.onConfirm = () => this.openGridMenu();
     this.gridSelect.onCancel = () => this.onClose?.();
+    this.gridSelect.onPageToggle = () => this.cycleInfoPage();
 
     this.gridMenu = new MenuListUi(scene, scene.getInputManager(), {
       x: +1540,
@@ -216,6 +245,13 @@ export class PokemonPcUi extends BaseUi {
     });
     this.nameInput = new NameInputUi(scene);
     this.enhancePanel = new EnhancePanelUi(scene);
+    this.enhanceCandyMenu = new MenuListUi(scene, scene.getInputManager(), {
+      x: +1580,
+      y: +748,
+      visibleCount: 5,
+      itemHeight: 0,
+      showCancel: false,
+    });
     this.evolveSelect = new EvolveSelectUi(scene);
     this.evolveUi = new EvolveUi(scene);
 
@@ -232,7 +268,6 @@ export class PokemonPcUi extends BaseUi {
     this.pcSet.add([
       this.pcBgFrame,
       this.pcBg,
-      this.guideFrame,
       this.gridSelect,
       this.topName,
       this.topCursor,
@@ -249,6 +284,34 @@ export class PokemonPcUi extends BaseUi {
     this.grabOverlay = this.scene.add.container(this.pcSet.x, this.pcSet.y);
     this.grabOverlay.add([this.grabIcon, this.grabCursor]);
 
+    this.bottomInfoSet = this.scene.add.container(
+      PokemonPcUi.BOTTOM_INFO_OFFSET_X,
+      PokemonPcUi.BOTTOM_INFO_OFFSET_Y,
+    );
+    this.bottomInfoSet.add([
+      // page 0: ability / nature / heldItem
+      this.infoAbilitySymbol,
+      this.infoAbility,
+      this.infoNatureSymbol,
+      this.infoNature,
+      this.heldItemSymbol,
+      this.heldItem,
+      // page 1: capture date / location
+      this.infoCaptureDateSymbol,
+      this.infoCaptureDate,
+      this.infoCaptureLocationSymbol,
+      this.infoCaptureLocation,
+      // page 2: total / current / remaining exp
+      this.infoExpTotalSymbol,
+      this.infoExpTotalValue,
+      this.infoExpCurrentSymbol,
+      this.infoExpCurrentValue,
+      this.infoExpRemainingSymbol,
+      this.infoExpRemainingValue,
+      // 우측 하단 N: 다음 가이드
+      this.bottomInfoGuide,
+    ]);
+
     this.add([
       this.bg,
       this.pcSet,
@@ -258,17 +321,10 @@ export class PokemonPcUi extends BaseUi {
       this.infoFront,
       this.infoPokemonName,
       this.infoCapturePokeball,
-      this.infoCaptureDate,
-      this.infoCaptureLocation,
       this.infoShinyIcon,
       this.infoGender,
       this.infoTier,
-      this.infoAbility,
-      this.infoNature,
-      this.infoNatureSymbol,
-      this.infoAbilitySymbol,
       this.infoPokedexSymbol,
-      this.heldItemSymbol,
       this.infoLevelSymbol,
       this.infoLevel,
       this.infoCandySymbol,
@@ -281,7 +337,8 @@ export class PokemonPcUi extends BaseUi {
       this.infoSkills[1],
       this.infoSkills[2],
       this.infoSkills[3],
-      this.heldItem,
+      this.infoExpBar,
+      this.bottomInfoSet,
       this.grabOverlay,
       this.inputGuide,
     ]);
@@ -455,6 +512,9 @@ export class PokemonPcUi extends BaseUi {
         this.openPartyMenu();
         break;
       }
+      case KEY.N:
+        this.cycleInfoPage();
+        break;
       case KEY.X:
       case KEY.ESC:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
@@ -603,9 +663,10 @@ export class PokemonPcUi extends BaseUi {
 
     const hasHeldItem = pokemon.heldItemId !== null;
     const pokemonData = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
-    const candyKey = pokemonData ? `${pokemonData.type1}-candy` : '';
     const bag = this.scene.getUser()?.getItemBag();
-    const hasCandy = (bag?.get(candyKey)?.quantity ?? 0) > 0;
+    const hasExpCandy = EXP_CANDY_IDS.some((id) => (bag?.get(id)?.quantity ?? 0) > 0);
+    const isMaxLevel = pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL;
+    const hasCandy = hasExpCandy && !isMaxLevel;
     const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
 
     items.push(
@@ -1141,28 +1202,31 @@ export class PokemonPcUi extends BaseUi {
   private async enhancePokemon(pokemon: PokemonBoxItem): Promise<void> {
     const masterPokemon = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
     if (!masterPokemon) return;
-
-    const candyId = `${masterPokemon.type1}-candy`;
-    const user = this.scene.getUser();
-    const bag = user?.getItemBag();
-    const candyMax = bag?.get(candyId)?.quantity ?? 0;
-    if (candyMax <= 0) return;
     if (pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL) return;
 
+    const user = this.scene.getUser();
+    const group = masterPokemon.growthGroup;
     const questionUi = this.scene.getMessage('question');
 
-    let chosenAmount = 0;
-    while (true) {
-      const currentCandy = user?.getItemBag()?.get(candyId)?.quantity ?? 0;
-      const result = await this.enhancePanel.open({
-        candyId,
-        candyMax: currentCandy,
-        currentLevel: pokemon.level,
-        maxLevel: PokemonPcUi.POKEMON_MAX_LEVEL,
-      });
+    let chosenCandy: { itemId: string; count: number } | null = null;
+    candyLoop: while (true) {
+      const candyChoice = await this.openEnhanceCandyMenu();
+      if (!candyChoice) return;
 
-      if (!result.confirmed) {
-        return;
+      const candyMax = user?.getItemBag()?.get(candyChoice)?.quantity ?? 0;
+      if (candyMax <= 0) {
+        continue;
+      }
+
+      const amountResult = await this.enhancePanel.open({
+        candyId: candyChoice,
+        candyMax,
+        currentLevel: pokemon.level,
+        currentExp: pokemon.exp ?? 0,
+        group,
+      });
+      if (!amountResult.confirmed) {
+        continue;
       }
 
       // 확인 다이얼로그
@@ -1176,48 +1240,84 @@ export class PokemonPcUi extends BaseUi {
       questionUi.hide();
 
       if (choice?.key === 'yes') {
-        chosenAmount = result.amount;
-        break;
+        chosenCandy = { itemId: candyChoice, count: amountResult.amount };
+        break candyLoop;
       }
-      // 아니오면 다시 수량 입력 루프
+      // 아니오 → 사탕 선택으로 복귀
     }
 
-    // 애니메이션 종료 전까지 grid select 포함 어떤 입력도 받지 못하도록 잠금
+    // 애니메이션 종료 전까지 어떤 입력도 받지 못하도록 잠금
     this.inputLocked = true;
     this.inputManager.push(this);
 
     const api = this.scene.getApi();
-    const resp = await api.enhancePokemon(pokemon.id, chosenAmount);
+    const resp = await api.enhancePokemon(pokemon.id, [chosenCandy]);
     if (!resp) {
       this.inputManager.pop(this);
       this.inputLocked = false;
       return;
     }
 
+    const prevQty = user?.getItemBag()?.get(chosenCandy.itemId)?.quantity ?? 0;
+    user?.updateItemQuantity(chosenCandy.itemId, Math.max(0, prevQty - chosenCandy.count));
+
     // 로컬 상태 동기화
     const oldLevel = pokemon.level;
+    const oldExp = pokemon.exp ?? 0;
     this.pcState.setLevel(resp.id, resp.level);
-    user?.updateItemQuantity(candyId, resp.candyRemaining);
+    this.pcState.setExp(resp.id, resp.exp);
 
     const cachedBox = user?.getPokemonBox();
     if (cachedBox) {
       const idx = cachedBox.findIndex((p) => p.id === resp.id);
-      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], level: resp.level };
+      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], level: resp.level, exp: resp.exp };
     }
     const party = user?.getParty();
     if (party) {
       const idx = party.findIndex((p) => p.id === resp.id);
-      if (idx >= 0) party[idx] = { ...party[idx], level: resp.level };
+      if (idx >= 0) party[idx] = { ...party[idx], level: resp.level, exp: resp.exp };
     }
 
-    // 레벨업 이펙트 + 카운터 틱업 애니메이션
-    await this.playEnhanceAnimation(oldLevel, resp.level);
+    await this.playEnhanceAnimation(oldLevel, oldExp, resp.level, resp.exp, group);
 
     this.refreshCurrentBox();
     this.updateInfo(String(resp.id));
 
+    const displayName = pokemon.nickname ?? getPokemonI18Name(pokemon.pokedexId);
+    const expGained = Math.max(0, resp.exp - oldExp);
+    const talkUi = this.scene.getMessage('talk');
+    await talkUi.showMessage(
+      i18next.t('pc:enhanceGainedExp', { name: displayName, exp: expGained }),
+    );
+    if (resp.leveledUp) {
+      this.scene.getAudio().playEffect(SFX.LEVEL_UP);
+      await talkUi.showMessage(
+        i18next.t('pc:enhanceLeveledUp', { name: displayName, level: resp.level }),
+      );
+    }
+
     this.inputManager.pop(this);
     this.inputLocked = false;
+  }
+
+  private async openEnhanceCandyMenu(): Promise<string | null> {
+    const bag = this.scene.getUser()?.getItemBag();
+    const items: IMenuItem[] = EXP_CANDY_IDS.map((id) => {
+      const qty = bag?.get(id)?.quantity ?? 0;
+      const disabled = qty <= 0;
+      return {
+        key: id,
+        label: i18next.t(`item:${id}.name`),
+        count: `x${qty}`,
+        disabled,
+        color: disabled ? TEXTCOLOR.GRAY : undefined,
+      };
+    });
+
+    const selected = await this.enhanceCandyMenu.waitForSelect(items);
+    this.enhanceCandyMenu.hide();
+    if (!selected) return null;
+    return selected.key;
   }
 
   private async evolvePokemon(pokemon: PokemonBoxItem): Promise<void> {
@@ -1338,65 +1438,47 @@ export class PokemonPcUi extends BaseUi {
     await Promise.all(waits);
   }
 
-  private playEnhanceAnimation(fromLevel: number, toLevel: number): Promise<void> {
-    return new Promise((resolve) => {
-      const delta = toLevel - fromLevel;
-      if (delta <= 0) {
-        resolve();
-        return;
-      }
+  private async playEnhanceAnimation(
+    fromLevel: number,
+    fromExp: number,
+    toLevel: number,
+    toExp: number,
+    group: GrowthGroup,
+  ): Promise<void> {
+    const expDelta = toExp - fromExp;
+    const levelDelta = toLevel - fromLevel;
+    if (expDelta <= 0 && levelDelta <= 0) return;
 
-      // 레벨 숫자 tick-up
-      const totalDuration = Math.min(1200, 120 + delta * 20);
-      const ticks = Math.min(delta, 30);
-      const stepDuration = totalDuration / ticks;
-      let current = fromLevel;
-      let count = 0;
-
-      let tickDone = false;
-      let tweenDone = false;
-      let settled = false;
-      const tryResolve = () => {
-        if (settled) return;
-        if (!tickDone || !tweenDone) return;
-        settled = true;
-        this.infoLevel.clearTint();
-        resolve();
-      };
-
-      const timer = this.scene.time.addEvent({
-        delay: stepDuration,
-        repeat: ticks - 1,
-        callback: () => {
-          count++;
-          current = Math.round(fromLevel + (delta * count) / ticks);
-          this.infoLevel.setText(`(+${current})`);
-          this.scene.getAudio().playEffect(SFX.CURSOR_0);
-          if (count >= ticks) {
-            this.infoLevel.setText(`(+${toLevel})`);
-            tickDone = true;
-            timer.remove();
-            tryResolve();
-          }
-        },
-      });
-
-      // 텍스트 틴트 플래시
+    const leveledUp = levelDelta > 0;
+    if (leveledUp) {
       this.infoLevel.setTint(0xfff28a);
+    }
 
-      // 스프라이트 바운스 이펙트
-      this.scene.tweens.add({
-        targets: this.infoFront,
-        scale: this.infoFront.scale * 1.15,
-        duration: totalDuration / 2,
-        yoyo: true,
-        ease: EASE.LINEAR,
-        onComplete: () => {
-          tweenDone = true;
-          tryResolve();
+    this.infoExpBar.setProgress(fromLevel, fromExp, group);
+
+    const audio = this.scene.getAudio();
+    const expGainLoop = audio.playEffectLoop(SFX.EXP_GAIN);
+    try {
+      await this.infoExpBar.animate({
+        beforeLevel: fromLevel,
+        beforeExp: fromExp,
+        afterLevel: toLevel,
+        afterExp: toExp,
+        group,
+        totalDuration: 1500,
+        onLevelUp: (newLevel) => {
+          this.infoLevel.setText(`${newLevel}`);
+          audio.playEffect(SFX.EXP_FULL);
         },
       });
-    });
+    } finally {
+      audio.stopEffectLoop(expGainLoop);
+    }
+
+    // 최종 표시 정리
+    this.infoLevel.setText(`${toLevel}`);
+    this.infoLevel.clearTint();
+    this.updateInfoExpBar(toLevel, toExp, group);
   }
 
   private switchBox(delta: number): void {
@@ -1480,19 +1562,6 @@ export class PokemonPcUi extends BaseUi {
     );
 
     this.info = addImage(this.scene, TEXTURE.PC_INFO, undefined, -445, 0).setScale(3.17);
-    this.guideFrame = addWindow(
-      this.scene,
-      TEXTURE.WINDOW_PC,
-      -650,
-      -484,
-      720,
-      113,
-      1.6,
-      16,
-      16,
-      16,
-      16,
-    );
 
     // 바를 화면 우측에 배치. align: 'right' → setPosition(x,y) 의 (x,y) 가 바의 우측 끝.
     // maxWidth 는 BaseUi 좌측 끝(- cameraHalfWidth) + 좌측 패딩 30 ~ 우측 끝 사이의 가용 폭.
@@ -1527,26 +1596,26 @@ export class PokemonPcUi extends BaseUi {
   private createInfoLayout() {
     this.infoPokedexSymbol = addText(
       this.scene,
-      -940,
-      -500,
+      -950,
+      -490,
       ``,
-      90,
+      70,
       100,
       'left',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
-    );
+    ).setFontFamily(TEXTFONT.DP);
     this.infoPokedex = addText(
       this.scene,
-      -830,
-      -500,
+      -860,
+      -495,
       `0000`,
-      90,
+      85,
       100,
       'left',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
-    );
+    ).setFontFamily(TEXTFONT.DP);
     this.infoFront = addImage(
       this.scene,
       getPokemonTexture('sprite', '0006', { isShiny: true, isFemale: false }).key,
@@ -1555,14 +1624,14 @@ export class PokemonPcUi extends BaseUi {
       -20,
     ).setScale(2.6);
 
-    this.infoShinyIcon = addImage(this.scene, TEXTURE.ICON_SHINY, undefined, -395, -225).setScale(
+    this.infoShinyIcon = addImage(this.scene, TEXTURE.ICON_SHINY, undefined, -395, -265).setScale(
       3.4,
     );
 
     this.infoPokemonName = addText(
       this.scene,
-      -870,
-      -398,
+      -875,
+      -413,
       ``,
       75,
       100,
@@ -1576,15 +1645,15 @@ export class PokemonPcUi extends BaseUi {
       `pc_safari-ball`,
       undefined,
       -915,
-      -400,
-    ).setScale(2.15);
+      -415,
+    ).setScale(2);
 
     this.infoGender = addText(
       this.scene,
       -390,
-      -400,
+      -412,
       SYMBOL_MALE,
-      120,
+      90,
       100,
       'center',
       TEXTSTYLE.BLACK,
@@ -1593,52 +1662,75 @@ export class PokemonPcUi extends BaseUi {
 
     this.infoTier = addText(
       this.scene,
-      -375,
-      -315,
+      -365,
+      -350,
       '',
-      70,
+      50,
       '100',
       'left',
       TEXTSTYLE.BLACK,
-      TEXTSHADOW.GRAY,
+      TEXTSHADOW.SIG_0,
     ).setOrigin(1, 0);
 
-    this.infoLevelSymbol = addImage(this.scene, TEXTURE.ICON_LV, undefined, -920, -280).setScale(
-      2.6,
+    this.infoLevelSymbol = addImage(this.scene, TEXTURE.ICON_LV, undefined, -930, -305).setScale(
+      2.4,
     );
     this.infoLevel = addText(
       this.scene,
-      -885,
-      -285,
+      -890,
+      -305,
       ``,
-      60,
+      55,
       100,
       'left',
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
 
-    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -920, -215).setScale(2.8);
+    this.infoCandySymbol = addImage(this.scene, 'fire-candy', undefined, -930, -260).setScale(2.6);
     this.infoCandy = addText(
       this.scene,
-      -885,
-      -220,
+      -890,
+      -260,
       `x100`,
-      60,
+      55,
       100,
       'left',
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
 
-    this.infoFriendshipSymbol = addImage(this.scene, 'soothe-bell', undefined, -920, -150).setScale(
-      2.8,
+    this.infoFriendshipSymbol = addImage(this.scene, 'soothe-bell', undefined, -930, -208).setScale(
+      2.6,
     );
     this.infoFriendship = addText(
       this.scene,
-      -885,
-      -145,
+      -890,
+      -206,
       ` 100`,
+      55,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.infoCaptureDateSymbol = addText(
+      this.scene,
+      -940,
+      +385,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoCaptureDate = addText(
+      this.scene,
+      -750,
+      +385,
+      ``,
       60,
       100,
       'left',
@@ -1646,27 +1738,26 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     );
 
-    this.infoCaptureDate = addText(
+    this.infoCaptureLocationSymbol = addText(
       this.scene,
       -940,
-      +307,
+      +445,
       ``,
-      50,
+      60,
       100,
       'left',
-      TEXTSTYLE.WHITE,
+      TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
-
     this.infoCaptureLocation = addText(
       this.scene,
-      -630,
-      +307,
+      -750,
+      +445,
       ``,
-      50,
+      60,
       100,
       'left',
-      TEXTSTYLE.WHITE,
+      TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
 
@@ -1738,6 +1829,78 @@ export class PokemonPcUi extends BaseUi {
       TEXTSHADOW.GRAY,
     );
 
+    this.infoExpBar = new ExpBarContainer(this.scene, -800, -343, {
+      width: 320,
+      height: 22,
+    });
+
+    this.infoExpTotalSymbol = addText(
+      this.scene,
+      -940,
+      +385,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoExpTotalValue = addText(
+      this.scene,
+      -750,
+      +385,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoExpCurrentSymbol = addText(
+      this.scene,
+      -940,
+      +445,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoExpCurrentValue = addText(
+      this.scene,
+      -750,
+      +445,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoExpRemainingSymbol = addText(
+      this.scene,
+      -940,
+      +505,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.infoExpRemainingValue = addText(
+      this.scene,
+      -750,
+      +505,
+      ``,
+      60,
+      100,
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+
     // this.infoType1 = addImage(this.scene, TEXTURE.TYPES, undefined, -890, +240).setScale(2);
     // this.infoType2 = addImage(this.scene, TEXTURE.TYPES, undefined, -755, +240).setScale(2);
 
@@ -1749,6 +1912,21 @@ export class PokemonPcUi extends BaseUi {
     this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +155));
     this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +110));
 
+    this.bottomInfoGuide = new KeyGuideBarContainer(this.scene);
+    this.bottomInfoGuide.create({
+      entries: [{ keys: ['N'], description: i18next.t('etc:next') }],
+      keycapTextSize: 32,
+      keycapPaddingX: 40,
+      keycapPaddingY: 30,
+      keycapScale: 2,
+      keycapTextYOffset: -4,
+      descriptionTextSize: 32,
+      gapKeyToDescription: 2,
+      gapInsideEntry: 4,
+      align: 'right',
+    });
+    this.bottomInfoGuide.setPosition(-330, +535);
+
     this.setSymbol();
   }
 
@@ -1757,16 +1935,24 @@ export class PokemonPcUi extends BaseUi {
     this.infoNatureSymbol.setText(i18next.t(`etc:natureSymbol`));
     this.infoAbilitySymbol.setText(i18next.t(`etc:abilitySymbol`));
     this.heldItemSymbol.setText(i18next.t(`etc:heldItemSymbol`));
+    this.infoExpTotalSymbol.setText(i18next.t(`etc:expSymbol`));
+    this.infoExpCurrentSymbol.setText(i18next.t(`etc:currentExpSymbol`));
+    this.infoExpRemainingSymbol.setText(i18next.t(`etc:remainingExpSymbol`));
+    this.infoCaptureDateSymbol.setText(i18next.t(`etc:captureDateSymbol`));
+    this.infoCaptureLocationSymbol.setText(i18next.t(`etc:captureLocationSymbol`));
 
-    const maxWidth = Math.max(
-      this.infoNatureSymbol.displayWidth,
-      this.infoAbilitySymbol.displayWidth,
-      this.heldItemSymbol.displayWidth,
-    );
-    const valueX = this.infoNatureSymbol.x + maxWidth + 30;
-    this.infoAbility.setX(valueX);
-    this.infoNature.setX(valueX);
-    this.heldItem.setX(valueX);
+    const GAP = 30;
+    const placeValue = (symbol: GText, value: GText) => {
+      value.setX(symbol.x + symbol.displayWidth + GAP);
+    };
+    placeValue(this.infoAbilitySymbol, this.infoAbility);
+    placeValue(this.infoNatureSymbol, this.infoNature);
+    placeValue(this.heldItemSymbol, this.heldItem);
+    placeValue(this.infoExpTotalSymbol, this.infoExpTotalValue);
+    placeValue(this.infoExpCurrentSymbol, this.infoExpCurrentValue);
+    placeValue(this.infoExpRemainingSymbol, this.infoExpRemainingValue);
+    placeValue(this.infoCaptureDateSymbol, this.infoCaptureDate);
+    placeValue(this.infoCaptureLocationSymbol, this.infoCaptureLocation);
   }
 
   setBoxPokemons(pokemons: PokemonBoxItem[]): void {
@@ -1779,6 +1965,14 @@ export class PokemonPcUi extends BaseUi {
 
   private pokedexIdToKey(pokedexId: string): string {
     return getPokedexId(pokedexId);
+  }
+
+  private updateInfoExpBar(level: number, exp: number, group: GrowthGroup): void {
+    this.infoExpBar.setProgress(level, exp, group);
+    const prog = pokemonExpProgress(level, exp, group);
+    this.infoExpTotalValue.setText(`${prog.next}`);
+    this.infoExpCurrentValue.setText(`${exp}`);
+    this.infoExpRemainingValue.setText(`${prog.remaining}`);
   }
 
   private clearInfo(): void {
@@ -1807,17 +2001,66 @@ export class PokemonPcUi extends BaseUi {
     this.infoCandy.setVisible(false);
     this.infoFriendshipSymbol.setVisible(false);
     this.infoFriendship.setVisible(false);
+    this.infoCaptureDate.setVisible(false);
+    this.infoCaptureLocation.setVisible(false);
+    this.infoCaptureDateSymbol.setVisible(false);
+    this.infoCaptureLocationSymbol.setVisible(false);
+    this.infoExpBar.setVisible(false);
+    this.infoExpTotalSymbol.setVisible(false);
+    this.infoExpTotalValue.setVisible(false);
+    this.infoExpCurrentSymbol.setVisible(false);
+    this.infoExpCurrentValue.setVisible(false);
+    this.infoExpRemainingSymbol.setVisible(false);
+    this.infoExpRemainingValue.setVisible(false);
   }
 
   private restoreInfoSymbols(): void {
     this.infoFront.setVisible(true);
     this.infoCapturePokeball.setVisible(true);
     this.infoLevelSymbol.setVisible(true);
-    this.heldItemSymbol.setVisible(true);
-    this.heldItem.setVisible(true);
     this.infoFriendshipSymbol.setVisible(true);
     this.infoFriendship.setVisible(true);
+    this.infoExpBar.setVisible(true);
     this.setSymbol();
+    this.applyInfoPageVisibility();
+  }
+
+  private applyInfoPageVisibility(): void {
+    const page = this.infoPage;
+    // page 0: ability / nature / held item
+    const show0 = page === 0;
+    this.infoAbilitySymbol.setVisible(show0);
+    this.infoAbility.setVisible(show0);
+    this.infoNatureSymbol.setVisible(show0);
+    this.infoNature.setVisible(show0);
+    this.heldItemSymbol.setVisible(show0);
+    this.heldItem.setVisible(show0);
+
+    const show1 = page === 1;
+    this.infoCaptureDateSymbol.setVisible(show1);
+    this.infoCaptureDate.setVisible(show1);
+    this.infoCaptureLocationSymbol.setVisible(show1);
+    this.infoCaptureLocation.setVisible(show1);
+
+    const show2 = page === 2;
+    this.infoExpTotalSymbol.setVisible(show2);
+    this.infoExpTotalValue.setVisible(show2);
+    this.infoExpCurrentSymbol.setVisible(show2);
+    this.infoExpCurrentValue.setVisible(show2);
+    this.infoExpRemainingSymbol.setVisible(show2);
+    this.infoExpRemainingValue.setVisible(show2);
+  }
+
+  private cycleInfoPage(): void {
+    this.infoPage = ((this.infoPage + 1) % 3) as 0 | 1 | 2;
+    if (this.focusArea === 'grid') {
+      this.updateInfo(this.gridSelect.getSelectedKey());
+    } else if (this.focusArea === 'party') {
+      this.updatePartySlotInfo();
+    } else {
+      this.applyInfoPageVisibility();
+    }
+    this.scene.getAudio().playEffect(SFX.CURSOR_0);
   }
 
   updateInfo(selectedKey: string): void {
@@ -1857,13 +2100,17 @@ export class PokemonPcUi extends BaseUi {
         ? `${caught.getFullYear()}-${String(caught.getMonth() + 1).padStart(2, '0')}-${String(caught.getDate()).padStart(2, '0')}`
         : '',
     );
-    this.infoCaptureLocation.setX(this.infoCaptureDate.x + this.infoCaptureDate.displayWidth + 20);
     this.infoCaptureLocation.setText(i18next.t(`map:${pokemon.caughtLocation}`));
     this.infoAbility.setText(i18next.t(`ability:${pokemon.abilityId}`));
     this.infoNature.setText(i18next.t(`nature:${pokemon.natureId}`));
     this.heldItem.setText(pokemon.heldItemId ? i18next.t(`item:${pokemon.heldItemId}.name`) : '-');
 
     const pokemonData = this.scene.getMasterData().getPokemonData(pokedexKey);
+    this.updateInfoExpBar(
+      pokemon.level,
+      pokemon.exp ?? 0,
+      pokemonData?.growthGroup ?? 'medium_fast',
+    );
     if (pokemonData) {
       // this.infoType1.setFrame(getPokemonTypeFrame(pokemonData.type1)).setVisible(true);
       this.infoType1.setType(pokemonData.type1);

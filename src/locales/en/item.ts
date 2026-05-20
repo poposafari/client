@@ -648,6 +648,26 @@ export const item: TranslationItem = {
     name: 'Fairy Candy',
     description: 'A candy filled with Fairy-type energy.',
   },
+  'experience-candy-xs': {
+    name: 'Exp. Candy XS',
+    description: 'When consumed, it gives a Pokémon a small amount of Exp. Points.',
+  },
+  'experience-candy-s': {
+    name: 'Exp. Candy S',
+    description: 'When consumed, it gives a Pokémon Exp. Points.',
+  },
+  'experience-candy-m': {
+    name: 'Exp. Candy M',
+    description: 'When consumed, it gives a Pokémon a moderate amount of Exp. Points.',
+  },
+  'experience-candy-l': {
+    name: 'Exp. Candy L',
+    description: 'When consumed, it gives a Pokémon a large amount of Exp. Points.',
+  },
+  'experience-candy-xl': {
+    name: 'Exp. Candy XL',
+    description: 'When consumed, it gives a Pokémon a huge amount of Exp. Points.',
+  },
   move_cut: {
     name: 'TM Cut',
     description: 'Teaches Cut to a Pokémon.',

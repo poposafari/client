@@ -40,6 +40,10 @@ import {
   s009Config,
   s010Config,
   s011Config,
+  s012Config,
+  s013Config,
+  s014Config,
+  s015Config,
 } from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
@@ -658,6 +662,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', 'window_notice_0');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');
     this.scene.loadImage(TEXTURE.WINDOW_PC, 'ui/windows', 'window_pc');
+    this.scene.loadImage(TEXTURE.WINDOW_EXP, 'ui/windows', 'window_exp');
 
     this.scene.loadImage(TEXTURE.KEYCAP, 'ui', 'keycap');
 
@@ -867,6 +872,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadMap(MAP.SAFARI_009, 'ui/maps', MAP.SAFARI_009);
     this.scene.loadMap(MAP.SAFARI_010, 'ui/maps', MAP.SAFARI_010);
     this.scene.loadMap(MAP.SAFARI_011, 'ui/maps', MAP.SAFARI_011);
+    this.scene.loadMap(MAP.SAFARI_012, 'ui/maps', MAP.SAFARI_012);
+    this.scene.loadMap(MAP.SAFARI_013, 'ui/maps', MAP.SAFARI_013);
+    this.scene.loadMap(MAP.SAFARI_014, 'ui/maps', MAP.SAFARI_014);
+    this.scene.loadMap(MAP.SAFARI_015, 'ui/maps', MAP.SAFARI_015);
 
     // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
     // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
@@ -914,6 +923,10 @@ export class LoadingPhase implements IGamePhase {
     mapRegistry.register(s009Config);
     mapRegistry.register(s010Config);
     mapRegistry.register(s011Config);
+    mapRegistry.register(s012Config);
+    mapRegistry.register(s013Config);
+    mapRegistry.register(s014Config);
+    mapRegistry.register(s015Config);
   }
 
   private loadAudio() {
@@ -948,6 +961,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.EXP_GAIN, 'audio/se', 'exp_gain', 'ogg');
     this.scene.loadAudio(SFX.EXP_FULL, 'audio/se', 'exp_full', 'ogg');
     this.scene.loadAudio(SFX.JUMP, 'audio/se', 'jump', 'ogg');
+    this.scene.loadAudio(SFX.LEVEL_UP, 'audio/se', 'level_up', 'ogg');
 
     this.scene.loadAudio(BGM.BATTLE_0, 'audio/bgm', 'battle_0', 'ogg');
     this.scene.loadAudio(BGM.BATTLE_1, 'audio/bgm', 'battle_1', 'ogg');

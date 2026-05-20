@@ -1,7 +1,7 @@
 import { InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { PokemonBoxItem } from '@poposafari/types';
-import { SFX, TEXTURE } from '@poposafari/types';
+import { KEY, SFX, TEXTURE } from '@poposafari/types';
 import { addImage, addSprite, getPokedexId, getPokemonTexture } from '@poposafari/utils';
 import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-select.ui';
 
@@ -64,6 +64,7 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
 
   onExitTop?: () => void;
   onExitRight?: () => void;
+  onPageToggle?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager) {
     const config: IGridSelectConfig = {
@@ -145,6 +146,14 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
       it.image.setAlpha(1);
       it.overlayImage?.setAlpha(1);
     }
+  }
+
+  onInput(key: string): void {
+    if (key === KEY.N) {
+      this.onPageToggle?.();
+      return;
+    }
+    super.onInput(key);
   }
 
   protected handleDirectionInput(key: string): boolean {

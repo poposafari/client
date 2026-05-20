@@ -4,9 +4,10 @@ export type BattleModifiers = { bait: boolean; rock: boolean };
 export type BattleAction = { type: 'ball' } | { type: 'feed' } | { type: 'mud' } | { type: 'run' };
 
 /** POST /api/game/safari/catch 응답 매핑.*/
-export type CatchReward = { candyId: string; candyQuantity: number };
+export type RewardItem = { itemId: string; quantity: number };
 
-export interface ExpReward {
+export interface PartyExpReward {
+  id: number;
   gained: number;
   level: number;
   exp: number;
@@ -31,7 +32,12 @@ export interface CaughtPokemon {
 }
 
 export type CatchResult =
-  | { kind: 'caught'; pokemon: CaughtPokemon; reward: CatchReward; expReward: ExpReward }
+  | {
+      kind: 'caught';
+      pokemon: CaughtPokemon;
+      rewards: RewardItem[];
+      partyExp: PartyExpReward[];
+    }
   | { kind: 'fail' }
   | { kind: 'flee' };
 
@@ -68,8 +74,8 @@ export type SafariCatchRes =
   | {
       result: 'caught';
       pokemon: CaughtPokemon;
-      reward: CatchReward;
-      expReward: ExpReward;
+      rewards: RewardItem[];
+      partyExp?: PartyExpReward[];
     }
   | { result: 'fail' }
   | { result: 'flee' };
@@ -80,8 +86,8 @@ export function toCatchResult(res: SafariCatchRes): CatchResult {
       return {
         kind: 'caught',
         pokemon: res.pokemon,
-        reward: res.reward,
-        expReward: res.expReward,
+        rewards: res.rewards ?? [],
+        partyExp: res.partyExp ?? [],
       };
     case 'fail':
       return { kind: 'fail' };

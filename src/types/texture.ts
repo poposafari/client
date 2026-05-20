@@ -40,6 +40,7 @@ export const enum TEXTURE {
   WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_NOTICE_1 = 'window_notice_1',
   WINDOW_PC = 'window_pc',
+  WINDOW_EXP = 'window_exp',
   KEYCAP = 'keycap',
 
   CURSOR_WHITE = 'cursor_w',
@@ -208,4 +209,8 @@ export const enum MAP {
   SAFARI_009 = 's009',
   SAFARI_010 = 's010',
   SAFARI_011 = 's011',
+  SAFARI_012 = 's012',
+  SAFARI_013 = 's013',
+  SAFARI_014 = 's014',
+  SAFARI_015 = 's015',
 }

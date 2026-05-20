@@ -740,6 +740,26 @@ export const item: TranslationItem = {
     name: 'フェアリーキャンディ',
     description: 'フェアリータイプのエネルギーが つまったキャンディ。',
   },
+  'experience-candy-xs': {
+    name: 'けいけんアメXS',
+    description: '食べさせると ポケモンの 経験値が 少し もらえる。',
+  },
+  'experience-candy-s': {
+    name: 'けいけんアメS',
+    description: '食べさせると ポケモンの 経験値が もらえる。',
+  },
+  'experience-candy-m': {
+    name: 'けいけんアメM',
+    description: '食べさせると ポケモンの 経験値が たくさん もらえる。',
+  },
+  'experience-candy-l': {
+    name: 'けいけんアメL',
+    description: '食べさせると ポケモンの 経験値が とても たくさん もらえる。',
+  },
+  'experience-candy-xl': {
+    name: 'けいけんアメXL',
+    description: '食べさせると ポケモンの 経験値が ものすごく たくさん もらえる。',
+  },
   move_cut: {
     name: 'わざマシン いあいぎり',
     description: 'ポケモンに いあいぎりを おぼえさせる。',

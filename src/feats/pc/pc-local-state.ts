@@ -265,6 +265,13 @@ export class PcLocalState {
     }
   }
 
+  setExp(id: number, exp: number): void {
+    const pokemon = this.allPokemons.get(id);
+    if (pokemon) {
+      pokemon.exp = exp;
+    }
+  }
+
   setPokedexId(id: number, pokedexId: string): void {
     const pokemon = this.allPokemons.get(id);
     if (pokemon) {

@@ -5,4 +5,4 @@ export * from './api.manager';
 export * from './api-loading-indicator.ui';
 export * from './audio.manager';
 export * from './option.manager';
-export * from './level-curve';
+export * from './pokemon-exp-curve';

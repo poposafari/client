@@ -29,6 +29,7 @@ export const enum SFX {
   EXP_FULL = 'exp_full',
   MART = 'mart',
   JUMP = 'jump',
+  LEVEL_UP = 'level_up',
 }
 
 export const enum BGM {
