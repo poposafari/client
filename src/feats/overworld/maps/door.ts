@@ -86,6 +86,26 @@ export enum DOOR {
   S010_RIGHT_0 = 's010_right_0',
 
   S011_DOWN_0 = 's011_down_0',
+
+  S012_DOWN_0 = 's012_down_0',
+
+  S013_LEFT_0 = 's013_left_0',
+  S013_LEFT_1 = 's013_left_1',
+  S013_RIGHT_0 = 's013_right_0',
+  S013_RIGHT_1 = 's013_right_1',
+
+  S014_LEFT_0 = 's014_left_0',
+  S014_LEFT_1 = 's014_left_1',
+  S014_UP_0 = 's014_up_0',
+  S014_RIGHT_0 = 's014_right_0',
+
+  S015_DOWN_0 = 's015_down_0',
+  S015_LEFT_0 = 's015_left_0',
+  S015_LEFT_1 = 's015_left_1',
+  S015_LEFT_2 = 's015_left_2',
+  S015_UP_0 = 's015_up_0',
+  S015_UP_1 = 's015_up_1',
+  S015_UP_2 = 's015_up_2',
 }
 
 export enum INIT_POS {
@@ -174,6 +194,26 @@ export enum INIT_POS {
   S010_RIGHT_0 = 's010_right_0',
 
   S011_DOWN_0 = 's011_down_0',
+
+  S012_DOWN_0 = 's012_down_0',
+
+  S013_LEFT_0 = 's013_left_0',
+  S013_LEFT_1 = 's013_left_1',
+  S013_RIGHT_0 = 's013_right_0',
+  S013_RIGHT_1 = 's013_right_1',
+
+  S014_LEFT_0 = 's014_left_0',
+  S014_LEFT_1 = 's014_left_1',
+  S014_UP_0 = 's014_up_0',
+  S014_RIGHT_0 = 's014_right_0',
+
+  S015_DOWN_0 = 's015_down_0',
+  S015_LEFT_0 = 's015_left_0',
+  S015_LEFT_1 = 's015_left_1',
+  S015_LEFT_2 = 's015_left_2',
+  S015_UP_0 = 's015_up_0',
+  S015_UP_1 = 's015_up_1',
+  S015_UP_2 = 's015_up_2',
 }
 
 export interface DoorConfig {
@@ -663,6 +703,118 @@ export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {
     y: 38,
     offsetY: 0,
   },
+  [DOOR.S012_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 25,
+    y: 50,
+    offsetY: 0,
+  },
+  [DOOR.S013_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 18,
+    offsetY: 0,
+  },
+  [DOOR.S013_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 19,
+    offsetY: 0,
+  },
+  [DOOR.S013_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 66,
+    y: 20,
+    offsetY: 0,
+  },
+  [DOOR.S013_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 66,
+    y: 21,
+    offsetY: 0,
+  },
+  [DOOR.S014_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 13,
+    y: 42,
+    offsetY: 0,
+  },
+  [DOOR.S014_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 13,
+    y: 43,
+    offsetY: 0,
+  },
+  [DOOR.S014_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 42,
+    y: 14,
+    offsetY: 0,
+  },
+  [DOOR.S014_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 45,
+    y: 59,
+    offsetY: 0,
+  },
+  [DOOR.S015_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 26,
+    y: 33,
+    offsetY: 0,
+  },
+  [DOOR.S015_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 18,
+    y: 0,
+    offsetY: 0,
+  },
+  [DOOR.S015_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 19,
+    y: 0,
+    offsetY: 0,
+  },
+  [DOOR.S015_UP_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 20,
+    y: 0,
+    offsetY: 0,
+  },
+  [DOOR.S015_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 2,
+    y: 17,
+    offsetY: 0,
+  },
+  [DOOR.S015_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 2,
+    y: 18,
+    offsetY: 0,
+  },
+  [DOOR.S015_LEFT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 2,
+    y: 19,
+    offsetY: 0,
+  },
 };
 
 export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
@@ -998,5 +1150,85 @@ export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
     location: MAP.SAFARI_011,
     x: 23,
     y: 37,
+  },
+  [INIT_POS.S012_DOWN_0]: {
+    location: MAP.SAFARI_012,
+    x: 25,
+    y: 49,
+  },
+  [INIT_POS.S013_LEFT_0]: {
+    location: MAP.SAFARI_013,
+    x: 16,
+    y: 18,
+  },
+  [INIT_POS.S013_LEFT_1]: {
+    location: MAP.SAFARI_013,
+    x: 16,
+    y: 19,
+  },
+  [INIT_POS.S013_RIGHT_0]: {
+    location: MAP.SAFARI_013,
+    x: 65,
+    y: 20,
+  },
+  [INIT_POS.S013_RIGHT_1]: {
+    location: MAP.SAFARI_013,
+    x: 65,
+    y: 21,
+  },
+  [INIT_POS.S014_LEFT_0]: {
+    location: MAP.SAFARI_014,
+    x: 14,
+    y: 42,
+  },
+  [INIT_POS.S014_LEFT_1]: {
+    location: MAP.SAFARI_014,
+    x: 14,
+    y: 43,
+  },
+  [INIT_POS.S014_UP_0]: {
+    location: MAP.SAFARI_014,
+    x: 42,
+    y: 15,
+  },
+  [INIT_POS.S014_RIGHT_0]: {
+    location: MAP.SAFARI_014,
+    x: 44,
+    y: 59,
+  },
+  [INIT_POS.S015_DOWN_0]: {
+    location: MAP.SAFARI_015,
+    x: 26,
+    y: 32,
+  },
+  [INIT_POS.S015_LEFT_0]: {
+    location: MAP.SAFARI_015,
+    x: 3,
+    y: 17,
+  },
+  [INIT_POS.S015_LEFT_1]: {
+    location: MAP.SAFARI_015,
+    x: 3,
+    y: 18,
+  },
+  [INIT_POS.S015_LEFT_2]: {
+    location: MAP.SAFARI_015,
+    x: 3,
+    y: 19,
+  },
+  [INIT_POS.S015_UP_0]: {
+    location: MAP.SAFARI_015,
+    x: 18,
+    y: 1,
+  },
+  [INIT_POS.S015_UP_1]: {
+    location: MAP.SAFARI_015,
+    x: 19,
+    y: 1,
+  },
+  [INIT_POS.S015_UP_2]: {
+    location: MAP.SAFARI_015,
+    x: 20,
+    y: 1,
   },
 };
