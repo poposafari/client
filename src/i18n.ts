@@ -7,7 +7,11 @@ import { TEXTFONT } from './types';
 import { assetUrl } from './utils/asset-url';
 import { particleFormatters } from './utils/korean-particle';
 
-const fonts = [new FontFace(TEXTFONT.BW, `url(${assetUrl('font/pokemon-bw.ttf')})`)];
+const fonts = [
+  new FontFace(TEXTFONT.BW, `url(${assetUrl('font/pokemon-bw.ttf')})`),
+  new FontFace(TEXTFONT.DP, `url(${assetUrl('font/pkmndp.ttf')})`),
+  new FontFace(TEXTFONT.MN, `url(${assetUrl('font/pkmnemn.ttf')})`),
+];
 
 function initLanguageFromBrowser(): void {
   const existingLang = localStorage.getItem('i18nextLng');

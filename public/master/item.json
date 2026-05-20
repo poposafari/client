@@ -1548,5 +1548,55 @@
     "sellPrice": 0,
     "sellable": false,
     "tier": "common"
+  },
+  "experience-candy-xs": {
+    "id": "experience-candy-xs",
+    "buyPrice": 999999999,
+    "category": "candy",
+    "comment": "경험사탕 XS",
+    "purchasable": false,
+    "sellPrice": 0,
+    "sellable": false,
+    "tier": "common"
+  },
+  "experience-candy-s": {
+    "id": "experience-candy-s",
+    "buyPrice": 999999999,
+    "category": "candy",
+    "comment": "경험사탕 S",
+    "purchasable": false,
+    "sellPrice": 0,
+    "sellable": false,
+    "tier": "rare"
+  },
+  "experience-candy-m": {
+    "id": "experience-candy-m",
+    "buyPrice": 999999999,
+    "category": "candy",
+    "comment": "경험사탕 M",
+    "purchasable": false,
+    "sellPrice": 0,
+    "sellable": false,
+    "tier": "epic"
+  },
+  "experience-candy-l": {
+    "id": "experience-candy-l",
+    "buyPrice": 999999999,
+    "category": "candy",
+    "comment": "경험사탕 L",
+    "purchasable": false,
+    "sellPrice": 0,
+    "sellable": false,
+    "tier": "legendary"
+  },
+  "experience-candy-xl": {
+    "id": "experience-candy-xl",
+    "buyPrice": 999999999,
+    "category": "candy",
+    "comment": "경험사탕 XL",
+    "purchasable": false,
+    "sellPrice": 0,
+    "sellable": false,
+    "tier": "legendary"
   }
 }
