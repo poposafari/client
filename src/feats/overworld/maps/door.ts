@@ -101,11 +101,123 @@ export enum DOOR {
 
   S015_DOWN_0 = 's015_down_0',
   S015_LEFT_0 = 's015_left_0',
-  S015_LEFT_1 = 's015_left_1',
-  S015_LEFT_2 = 's015_left_2',
-  S015_UP_0 = 's015_up_0',
-  S015_UP_1 = 's015_up_1',
-  S015_UP_2 = 's015_up_2',
+
+  S016_UP_0 = 's016_up_0',
+  S016_UP_1 = 's016_up_1',
+  S016_UP_2 = 's016_up_2',
+  S016_LEFT_0 = 's016_left_0',
+  S016_RIGHT_0 = 's016_right_0',
+
+  S017_UP_0 = 's017_up_0',
+  S017_UP_1 = 's017_up_1',
+  S017_RIGHT_0 = 's017_right_0',
+
+  S018_DOWN_0 = 's018_down_0',
+  S018_UP_0 = 's018_up_0',
+  S018_LEFT_0 = 's018_left_0',
+
+  S019_UP_0 = 's019_up_0',
+  S019_DOWN_0 = 's019_down_0',
+  S019_RIGHT_0 = 's019_right_0',
+  S019_RIGHT_1 = 's019_right_1',
+
+  S020_DOWN_0 = 's020_down_0',
+  S020_RIGHT_0 = 's20_right_0',
+
+  S021_LEFT_0 = 's021_left_0',
+  S021_UP_0 = 's021_up_0',
+  S021_UP_1 = 's021_up_1',
+  S021_DOWN_0 = 's021_down_0',
+  S021_DOWN_1 = 's021_down_1',
+
+  S022_UP_0 = 's022_up_0',
+  S022_UP_1 = 's022_up_1',
+
+  S023_UP_0 = 's023_up_0',
+  S023_UP_1 = 's023_up_1',
+  S023_RIGHT_0 = 's023_right_0',
+
+  S024_LEFT_0 = 's024_left_0',
+  S024_UP_0 = 's024_up_0',
+  S024_RIGHT_0 = 's024_right_0',
+  S024_RIGHT_1 = 's024_right_1',
+
+  S025_DOWN_0 = 's025_down_0',
+  S025_LEFT_0 = 's025_left_0',
+  S025_UP_0 = 's025_up_0',
+  S025_UP_1 = 's025_up_1',
+  S025_UP_2 = 's025_up_2',
+
+  S026_RIGHT_0 = 's026_right_0',
+
+  S027_DOWN_0 = 's027_down_0',
+
+  S028_UP_0 = 's028_up_0',
+
+  S029_LEFT_0 = 's029_left_0',
+  S029_UP_0 = 's029_up_0',
+  S029_UP_1 = 's029_up_1',
+  S029_DOWN_0 = 's029_down_0',
+  S029_DOWN_1 = 's029_down_1',
+
+  S030_UP_0 = 's030_up_0',
+
+  S031_UP_0 = 's031_up_0',
+
+  S032_LEFT_0 = 's032_left_0',
+  S032_RIGHT_0 = 's032_right_0',
+  S032_DOWN_0 = 's032_down_0',
+  S032_DOWN_1 = 's032_down_1',
+
+  S033_UP_0 = 's033_up_0',
+  S033_DOWN_0 = 's033_down_0',
+  S033_DOWN_1 = 's033_down_1',
+
+  S034_LEFT_0 = 's034_left_0',
+  S034_UP_0 = 's034_up_0',
+  S034_RIGHT_0 = 's034_right_0',
+
+  S035_LEFT_0 = 's035_left_0',
+  S035_UP_0 = 's035_up_0',
+  S035_UP_1 = 's035_up_1',
+  S035_DOWN_0 = 's035_down_0',
+  S035_DOWN_1 = 's035_down_1',
+  S035_RIGHT_0 = 's035_right_0',
+
+  S036_UP_0 = 's036_up_0',
+
+  S037_UP_0 = 's037_up_0',
+
+  S038_UP_0 = 's038_up_0',
+
+  S039_LEFT_0 = 's039_left_0',
+  S039_RIGHT_0 = 's039_right_0',
+  S039_RIGHT_1 = 's039_right_1',
+  S039_RIGHT_2 = 's039_right_2',
+
+  S040_LEFT_0 = 's040_left_0',
+  S040_LEFT_1 = 's040_left_1',
+  S040_LEFT_2 = 's040_left_2',
+  S040_UP_0 = 's040_up_0',
+  S040_RIGHT_0 = 's040_right_0',
+
+  S041_DOWN_0 = 's041_down_0',
+
+  S042_LEFT_0 = 's042_left_0',
+  S042_RIGHT_0 = 's042_right_0',
+  S042_RIGHT_1 = 's042_right_1',
+
+  S043_UP_0 = 's043_up_0',
+  S043_LEFT_0 = 's043_left_0',
+  S043_LEFT_1 = 's043_left_1',
+  S043_RIGHT_0 = 's043_right_0',
+
+  S044_UP_0 = 's044_up_0',
+
+  S045_LEFT_0 = 's045_left_0',
+
+  S046_UP_0 = 's046_up_0',
+  S046_UP_1 = 's046_up_1',
 }
 
 export enum INIT_POS {
@@ -209,11 +321,114 @@ export enum INIT_POS {
 
   S015_DOWN_0 = 's015_down_0',
   S015_LEFT_0 = 's015_left_0',
-  S015_LEFT_1 = 's015_left_1',
-  S015_LEFT_2 = 's015_left_2',
-  S015_UP_0 = 's015_up_0',
-  S015_UP_1 = 's015_up_1',
-  S015_UP_2 = 's015_up_2',
+
+  S016_UP_0 = 's016_up_0',
+  S016_UP_1 = 's016_up_1',
+  S016_UP_2 = 's016_up_2',
+  S016_LEFT_0 = 's016_left_0',
+  S016_RIGHT_0 = 's016_right_0',
+
+  S017_UP_0 = 's017_up_0',
+  S017_UP_1 = 's017_up_1',
+  S017_RIGHT_0 = 's017_right_0',
+
+  S018_DOWN_0 = 's018_down_0',
+  S018_UP_0 = 's018_up_0',
+  S018_LEFT_0 = 's018_left_0',
+
+  S019_UP_0 = 's019_up_0',
+  S019_DOWN_0 = 's019_down_0',
+  S019_RIGHT_0 = 's019_right_0',
+  S019_RIGHT_1 = 's019_right_1',
+
+  S020_DOWN_0 = 's020_down_0',
+  S020_RIGHT_0 = 's20_right_0',
+
+  S021_LEFT_0 = 's021_left_0',
+  S021_UP_0 = 's021_up_0',
+  S021_UP_1 = 's021_up_1',
+  S021_DOWN_0 = 's021_down_0',
+  S021_DOWN_1 = 's021_down_1',
+
+  S022_UP_0 = 's022_up_0',
+  S022_UP_1 = 's022_up_1',
+
+  S023_UP_0 = 's023_up_0',
+  S023_UP_1 = 's023_up_1',
+  S023_RIGHT_0 = 's023_right_0',
+
+  S024_LEFT_0 = 's024_left_0',
+  S024_UP_0 = 's024_up_0',
+  S024_RIGHT_0 = 's024_right_0',
+
+  S025_DOWN_0 = 's025_down_0',
+  S025_LEFT_0 = 's025_left_0',
+  S025_UP_0 = 's025_up_0',
+  S025_UP_1 = 's025_up_1',
+
+  S026_RIGHT_0 = 's026_right_0',
+
+  S027_DOWN_0 = 's027_down_0',
+
+  S028_UP_0 = 's028_up_0',
+
+  S029_LEFT_0 = 's029_left_0',
+  S029_UP_0 = 's029_up_0',
+  S029_DOWN_0 = 's029_down_0',
+
+  S030_UP_0 = 's030_up_0',
+
+  S031_UP_0 = 's031_up_0',
+
+  S032_LEFT_0 = 's032_left_0',
+  S032_RIGHT_0 = 's032_right_0',
+  S032_DOWN_0 = 's032_down_0',
+
+  S033_UP_0 = 's033_up_0',
+  S033_DOWN_0 = 's033_down_0',
+  S033_DOWN_1 = 's033_down_1',
+
+  S034_LEFT_0 = 's034_left_0',
+  S034_UP_0 = 's034_up_0',
+  S034_RIGHT_0 = 's034_right_0',
+
+  S035_LEFT_0 = 's035_left_0',
+  S035_UP_0 = 's035_up_0',
+  S035_DOWN_0 = 's035_down_0',
+  S035_RIGHT_0 = 's035_right_0',
+
+  S036_UP_0 = 's036_up_0',
+
+  S037_UP_0 = 's037_up_0',
+
+  S038_UP_0 = 's038_up_0',
+
+  S039_LEFT_0 = 's039_left_0',
+  S039_RIGHT_0 = 's039_right_0',
+  S039_RIGHT_1 = 's039_right_1',
+  S039_RIGHT_2 = 's039_right_2',
+
+  S040_LEFT_0 = 's040_left_0',
+  S040_LEFT_1 = 's040_left_1',
+  S040_LEFT_2 = 's040_left_2',
+  S040_UP_0 = 's040_up_0',
+  S040_RIGHT_0 = 's040_right_0',
+
+  S041_DOWN_0 = 's041_down_0',
+
+  S042_LEFT_0 = 's042_left_0',
+  S042_RIGHT_0 = 's042_right_0',
+
+  S043_UP_0 = 's043_up_0',
+  S043_LEFT_0 = 's043_left_0',
+  S043_RIGHT_0 = 's043_right_0',
+
+  S044_UP_0 = 's044_up_0',
+
+  S045_LEFT_0 = 's045_left_0',
+
+  S046_UP_0 = 's046_up_0',
+  S046_UP_1 = 's046_up_1',
 }
 
 export interface DoorConfig {
@@ -408,14 +623,14 @@ export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {
     door: TEXTURE.BLANK,
     name: '',
     x: 22,
-    y: 35,
+    y: 36,
     offsetY: 0,
   },
   [DOOR.S001_DOWN_1]: {
     door: TEXTURE.BLANK,
     name: '',
     x: 23,
-    y: 35,
+    y: 36,
     offsetY: 0,
   },
   [DOOR.S001_RIGHT_0]: {
@@ -773,46 +988,638 @@ export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {
     y: 33,
     offsetY: 0,
   },
-  [DOOR.S015_UP_0]: {
-    door: TEXTURE.BLANK,
-    name: '',
-    x: 18,
-    y: 0,
-    offsetY: 0,
-  },
-  [DOOR.S015_UP_1]: {
-    door: TEXTURE.BLANK,
-    name: '',
-    x: 19,
-    y: 0,
-    offsetY: 0,
-  },
-  [DOOR.S015_UP_2]: {
-    door: TEXTURE.BLANK,
-    name: '',
-    x: 20,
-    y: 0,
-    offsetY: 0,
-  },
   [DOOR.S015_LEFT_0]: {
     door: TEXTURE.BLANK,
     name: '',
-    x: 2,
-    y: 17,
-    offsetY: 0,
-  },
-  [DOOR.S015_LEFT_1]: {
-    door: TEXTURE.BLANK,
-    name: '',
-    x: 2,
+    x: 1,
     y: 18,
     offsetY: 0,
   },
-  [DOOR.S015_LEFT_2]: {
+
+  [DOOR.S016_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 9,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S016_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 18,
+    y: 2,
+    offsetY: 0,
+  },
+  [DOOR.S016_UP_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 27,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S016_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 6,
+    y: 31,
+    offsetY: 0,
+  },
+  [DOOR.S016_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 44,
+    y: 25,
+    offsetY: 0,
+  },
+  [DOOR.S017_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 25,
+    y: 18,
+    offsetY: 0,
+  },
+  [DOOR.S017_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 42,
+    y: 18,
+    offsetY: 0,
+  },
+  [DOOR.S017_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 18,
+    y: 34,
+    offsetY: 0,
+  },
+  [DOOR.S018_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 52,
+    y: 37,
+    offsetY: 0,
+  },
+  [DOOR.S018_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 14,
+    y: 3,
+    offsetY: 0,
+  },
+  [DOOR.S018_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 46,
+    y: 5,
+    offsetY: 0,
+  },
+
+  [DOOR.S019_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 38,
+    y: 9,
+    offsetY: 0,
+  },
+  [DOOR.S019_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 28,
+    y: 14,
+    offsetY: 0,
+  },
+  [DOOR.S019_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 66,
+    y: 20,
+    offsetY: 0,
+  },
+  [DOOR.S019_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 70,
+    y: 37,
+    offsetY: 0,
+  },
+
+  [DOOR.S020_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 8,
+    y: 35,
+    offsetY: 0,
+  },
+  [DOOR.S020_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 41,
+    y: 7,
+    offsetY: 0,
+  },
+
+  [DOOR.S021_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 19,
+    y: 21,
+    offsetY: 0,
+  },
+  [DOOR.S021_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 35,
+    y: 12,
+    offsetY: 0,
+  },
+  [DOOR.S021_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 36,
+    y: 12,
+    offsetY: 0,
+  },
+  [DOOR.S021_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 56,
+    y: 41,
+    offsetY: 0,
+  },
+  [DOOR.S021_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 57,
+    y: 41,
+    offsetY: 0,
+  },
+
+  [DOOR.S022_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 23,
+    y: 42,
+    offsetY: 0,
+  },
+  [DOOR.S022_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 24,
+    y: 42,
+    offsetY: 0,
+  },
+
+  [DOOR.S023_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 21,
+    y: 9,
+    offsetY: 0,
+  },
+  [DOOR.S023_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 22,
+    y: 9,
+    offsetY: 0,
+  },
+  [DOOR.S023_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 57,
+    y: 13,
+    offsetY: 0,
+  },
+
+  [DOOR.S024_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 1,
+    y: 24,
+    offsetY: 0,
+  },
+  [DOOR.S024_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 34,
+    y: 2,
+    offsetY: 0,
+  },
+  [DOOR.S024_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 45,
+    y: 15,
+    offsetY: 0,
+  },
+  [DOOR.S024_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 45,
+    y: 16,
+    offsetY: 0,
+  },
+
+  [DOOR.S025_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 40,
+    y: 38,
+    offsetY: 0,
+  },
+  [DOOR.S025_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 11,
+    y: 19,
+    offsetY: 0,
+  },
+  [DOOR.S025_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 18,
+    y: 5,
+    offsetY: 0,
+  },
+  [DOOR.S025_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 18,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S025_UP_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 31,
+    y: 15,
+    offsetY: 0,
+  },
+  [DOOR.S026_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 37,
+    y: 16,
+    offsetY: 0,
+  },
+  [DOOR.S027_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 9,
+    y: 8,
+    offsetY: 0,
+  },
+  [DOOR.S028_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 8,
+    y: 3,
+    offsetY: 0,
+  },
+  [DOOR.S029_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 7,
+    y: 30,
+    offsetY: 0,
+  },
+  [DOOR.S029_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 23,
+    y: 9,
+    offsetY: 0,
+  },
+  [DOOR.S029_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 23,
+    y: 10,
+    offsetY: 0,
+  },
+  [DOOR.S029_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 32,
+    y: 35,
+    offsetY: 0,
+  },
+  [DOOR.S029_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 32,
+    y: 36,
+    offsetY: 0,
+  },
+
+  [DOOR.S030_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 4,
+    y: 3,
+    offsetY: 0,
+  },
+
+  [DOOR.S031_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 29,
+    y: 4,
+    offsetY: 0,
+  },
+
+  [DOOR.S032_LEFT_0]: {
     door: TEXTURE.BLANK,
     name: '',
     x: 2,
-    y: 19,
+    y: 8,
+    offsetY: 0,
+  },
+  [DOOR.S032_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 22,
+    y: 11,
+    offsetY: 0,
+  },
+  [DOOR.S032_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 16,
+    offsetY: 0,
+  },
+  [DOOR.S032_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 15,
+    y: 17,
+    offsetY: 0,
+  },
+
+  [DOOR.S033_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 4,
+    y: 3,
+    offsetY: 0,
+  },
+  [DOOR.S033_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 27,
+    y: 21,
+    offsetY: 0,
+  },
+  [DOOR.S033_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 44,
+    y: 28,
+    offsetY: 0,
+  },
+
+  [DOOR.S034_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 8,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S034_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 32,
+    y: 5,
+    offsetY: 0,
+  },
+  [DOOR.S034_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 53,
+    y: 5,
+    offsetY: 0,
+  },
+
+  [DOOR.S035_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 4,
+    y: 13,
+    offsetY: 0,
+  },
+  [DOOR.S035_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 22,
+    y: 7,
+    offsetY: 0,
+  },
+  [DOOR.S035_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 22,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S035_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 27,
+    y: 41,
+    offsetY: 0,
+  },
+  [DOOR.S035_DOWN_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 27,
+    y: 42,
+    offsetY: 0,
+  },
+  [DOOR.S035_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 44,
+    y: 16,
+    offsetY: 0,
+  },
+
+  [DOOR.S036_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 8,
+    y: 3,
+    offsetY: 0,
+  },
+
+  [DOOR.S037_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 28,
+    y: 6,
+    offsetY: 0,
+  },
+
+  [DOOR.S038_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 24,
+    y: 3,
+    offsetY: 0,
+  },
+
+  [DOOR.S039_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 14,
+    y: 20,
+    offsetY: 0,
+  },
+  [DOOR.S039_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 58,
+    y: 21,
+    offsetY: 0,
+  },
+  [DOOR.S039_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 58,
+    y: 22,
+    offsetY: 0,
+  },
+  [DOOR.S039_RIGHT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 58,
+    y: 23,
+    offsetY: 0,
+  },
+
+  [DOOR.S040_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 13,
+    y: 12,
+    offsetY: 0,
+  },
+  [DOOR.S040_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 13,
+    y: 13,
+    offsetY: 0,
+  },
+  [DOOR.S040_LEFT_2]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 13,
+    y: 14,
+    offsetY: 0,
+  },
+  [DOOR.S040_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 47,
+    y: 15,
+    offsetY: 0,
+  },
+  [DOOR.S040_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 56,
+    y: 31,
+    offsetY: 0,
+  },
+
+  [DOOR.S041_DOWN_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 16,
+    y: 38,
+    offsetY: 0,
+  },
+
+  [DOOR.S042_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 6,
+    y: 31,
+    offsetY: 0,
+  },
+  [DOOR.S042_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 52,
+    y: 22,
+    offsetY: 0,
+  },
+  [DOOR.S042_RIGHT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 52,
+    y: 23,
+    offsetY: 0,
+  },
+
+  [DOOR.S043_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 34,
+    y: 6,
+    offsetY: 0,
+  },
+  [DOOR.S043_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 10,
+    y: 28,
+    offsetY: 0,
+  },
+  [DOOR.S043_LEFT_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 10,
+    y: 29,
+    offsetY: 0,
+  },
+  [DOOR.S043_RIGHT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 57,
+    y: 23,
+    offsetY: 0,
+  },
+
+  [DOOR.S044_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 20,
+    y: 4,
+    offsetY: 0,
+  },
+
+  [DOOR.S045_LEFT_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 7,
+    y: 18,
+    offsetY: 0,
+  },
+
+  [DOOR.S046_UP_0]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 47,
+    y: 9,
+    offsetY: 0,
+  },
+  [DOOR.S046_UP_1]: {
+    door: TEXTURE.BLANK,
+    name: '',
+    x: 48,
+    y: 9,
     offsetY: 0,
   },
 };
@@ -942,12 +1749,12 @@ export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
   [INIT_POS.S001_DOWN_0]: {
     location: MAP.SAFARI_001,
     x: 22,
-    y: 34,
+    y: 35,
   },
   [INIT_POS.S001_DOWN_1]: {
     location: MAP.SAFARI_001,
     x: 23,
-    y: 34,
+    y: 35,
   },
   [INIT_POS.S001_RIGHT_0]: {
     location: MAP.SAFARI_001,
@@ -1203,32 +2010,415 @@ export const OVERWORLD_INIT_POS: Record<INIT_POS, InitPosConfig> = {
   },
   [INIT_POS.S015_LEFT_0]: {
     location: MAP.SAFARI_015,
-    x: 3,
-    y: 17,
-  },
-  [INIT_POS.S015_LEFT_1]: {
-    location: MAP.SAFARI_015,
-    x: 3,
+    x: 2,
     y: 18,
   },
-  [INIT_POS.S015_LEFT_2]: {
-    location: MAP.SAFARI_015,
-    x: 3,
+  [INIT_POS.S016_UP_0]: {
+    location: MAP.SAFARI_016,
+    x: 9,
+    y: 7,
+  },
+  [INIT_POS.S016_UP_1]: {
+    location: MAP.SAFARI_016,
+    x: 18,
+    y: 3,
+  },
+  [INIT_POS.S016_UP_2]: {
+    location: MAP.SAFARI_016,
+    x: 27,
+    y: 7,
+  },
+  [INIT_POS.S016_LEFT_0]: {
+    location: MAP.SAFARI_016,
+    x: 7,
+    y: 31,
+  },
+  [INIT_POS.S016_RIGHT_0]: {
+    location: MAP.SAFARI_016,
+    x: 43,
+    y: 25,
+  },
+  [INIT_POS.S017_UP_0]: {
+    location: MAP.SAFARI_017,
+    x: 25,
+    y: 17,
+  },
+  [INIT_POS.S017_UP_1]: {
+    location: MAP.SAFARI_017,
+    x: 42,
+    y: 17,
+  },
+  [INIT_POS.S017_RIGHT_0]: {
+    location: MAP.SAFARI_017,
+    x: 17,
+    y: 34,
+  },
+  [INIT_POS.S018_DOWN_0]: {
+    location: MAP.SAFARI_018,
+    x: 52,
+    y: 36,
+  },
+  [INIT_POS.S018_UP_0]: {
+    location: MAP.SAFARI_018,
+    x: 14,
+    y: 4,
+  },
+  [INIT_POS.S018_LEFT_0]: {
+    location: MAP.SAFARI_018,
+    x: 45,
+    y: 5,
+  },
+
+  [INIT_POS.S019_UP_0]: {
+    location: MAP.SAFARI_019,
+    x: 38,
+    y: 10,
+  },
+  [INIT_POS.S019_DOWN_0]: {
+    location: MAP.SAFARI_019,
+    x: 28,
+    y: 13,
+  },
+  [INIT_POS.S019_RIGHT_0]: {
+    location: MAP.SAFARI_019,
+    x: 67,
+    y: 20,
+  },
+  [INIT_POS.S019_RIGHT_1]: {
+    location: MAP.SAFARI_019,
+    x: 71,
+    y: 37,
+  },
+
+  [INIT_POS.S020_DOWN_0]: {
+    location: MAP.SAFARI_020,
+    x: 8,
+    y: 34,
+  },
+  [INIT_POS.S020_RIGHT_0]: {
+    location: MAP.SAFARI_020,
+    x: 40,
+    y: 7,
+  },
+
+  [INIT_POS.S021_LEFT_0]: {
+    location: MAP.SAFARI_021,
+    x: 20,
+    y: 21,
+  },
+  [INIT_POS.S021_UP_0]: {
+    location: MAP.SAFARI_021,
+    x: 35,
+    y: 13,
+  },
+  [INIT_POS.S021_UP_1]: {
+    location: MAP.SAFARI_021,
+    x: 36,
+    y: 13,
+  },
+  [INIT_POS.S021_DOWN_0]: {
+    location: MAP.SAFARI_021,
+    x: 56,
+    y: 40,
+  },
+  [INIT_POS.S021_DOWN_1]: {
+    location: MAP.SAFARI_021,
+    x: 57,
+    y: 40,
+  },
+
+  [INIT_POS.S022_UP_0]: {
+    location: MAP.SAFARI_022,
+    x: 23,
+    y: 41,
+  },
+  [INIT_POS.S022_UP_1]: {
+    location: MAP.SAFARI_022,
+    x: 24,
+    y: 41,
+  },
+
+  [INIT_POS.S023_UP_0]: {
+    location: MAP.SAFARI_023,
+    x: 21,
+    y: 10,
+  },
+  [INIT_POS.S023_UP_1]: {
+    location: MAP.SAFARI_023,
+    x: 22,
+    y: 10,
+  },
+  [INIT_POS.S023_RIGHT_0]: {
+    location: MAP.SAFARI_023,
+    x: 56,
+    y: 13,
+  },
+
+  [INIT_POS.S024_LEFT_0]: {
+    location: MAP.SAFARI_024,
+    x: 2,
+    y: 24,
+  },
+  [INIT_POS.S024_UP_0]: {
+    location: MAP.SAFARI_024,
+    x: 34,
+    y: 3,
+  },
+  [INIT_POS.S024_RIGHT_0]: {
+    location: MAP.SAFARI_024,
+    x: 45,
+    y: 17,
+  },
+  [INIT_POS.S025_DOWN_0]: {
+    location: MAP.SAFARI_025,
+    x: 40,
+    y: 37,
+  },
+  [INIT_POS.S025_LEFT_0]: {
+    location: MAP.SAFARI_025,
+    x: 12,
     y: 19,
   },
-  [INIT_POS.S015_UP_0]: {
-    location: MAP.SAFARI_015,
+  [INIT_POS.S025_UP_0]: {
+    location: MAP.SAFARI_025,
     x: 18,
-    y: 1,
+    y: 7,
   },
-  [INIT_POS.S015_UP_1]: {
-    location: MAP.SAFARI_015,
-    x: 19,
-    y: 1,
+  [INIT_POS.S025_UP_1]: {
+    location: MAP.SAFARI_025,
+    x: 31,
+    y: 16,
   },
-  [INIT_POS.S015_UP_2]: {
-    location: MAP.SAFARI_015,
+  [INIT_POS.S026_RIGHT_0]: {
+    location: MAP.SAFARI_026,
+    x: 36,
+    y: 16,
+  },
+  [INIT_POS.S027_DOWN_0]: {
+    location: MAP.SAFARI_027,
+    x: 9,
+    y: 7,
+  },
+  [INIT_POS.S028_UP_0]: {
+    location: MAP.SAFARI_028,
+    x: 8,
+    y: 4,
+  },
+
+  [INIT_POS.S029_LEFT_0]: {
+    location: MAP.SAFARI_029,
+    x: 7,
+    y: 31,
+  },
+  [INIT_POS.S029_UP_0]: {
+    location: MAP.SAFARI_029,
+    x: 23,
+    y: 11,
+  },
+  [INIT_POS.S029_DOWN_0]: {
+    location: MAP.SAFARI_029,
+    x: 31,
+    y: 35,
+  },
+
+  [INIT_POS.S030_UP_0]: {
+    location: MAP.SAFARI_030,
+    x: 4,
+    y: 4,
+  },
+
+  [INIT_POS.S031_UP_0]: {
+    location: MAP.SAFARI_031,
+    x: 29,
+    y: 5,
+  },
+
+  [INIT_POS.S032_LEFT_0]: {
+    location: MAP.SAFARI_032,
+    x: 3,
+    y: 8,
+  },
+  [INIT_POS.S032_RIGHT_0]: {
+    location: MAP.SAFARI_032,
+    x: 21,
+    y: 11,
+  },
+  [INIT_POS.S032_DOWN_0]: {
+    location: MAP.SAFARI_032,
+    x: 14,
+    y: 17,
+  },
+
+  [INIT_POS.S033_UP_0]: {
+    location: MAP.SAFARI_033,
+    x: 4,
+    y: 4,
+  },
+  [INIT_POS.S033_DOWN_0]: {
+    location: MAP.SAFARI_033,
+    x: 27,
+    y: 20,
+  },
+  [INIT_POS.S033_DOWN_1]: {
+    location: MAP.SAFARI_033,
+    x: 44,
+    y: 27,
+  },
+
+  [INIT_POS.S034_LEFT_0]: {
+    location: MAP.SAFARI_034,
+    x: 8,
+    y: 7,
+  },
+  [INIT_POS.S034_UP_0]: {
+    location: MAP.SAFARI_034,
+    x: 32,
+    y: 6,
+  },
+  [INIT_POS.S034_RIGHT_0]: {
+    location: MAP.SAFARI_034,
+    x: 53,
+    y: 6,
+  },
+
+  [INIT_POS.S035_LEFT_0]: {
+    location: MAP.SAFARI_035,
+    x: 4,
+    y: 14,
+  },
+  [INIT_POS.S035_UP_0]: {
+    location: MAP.SAFARI_035,
+    x: 22,
+    y: 8,
+  },
+  [INIT_POS.S035_DOWN_0]: {
+    location: MAP.SAFARI_035,
+    x: 26,
+    y: 42,
+  },
+  [INIT_POS.S035_RIGHT_0]: {
+    location: MAP.SAFARI_035,
+    x: 44,
+    y: 17,
+  },
+
+  [INIT_POS.S036_UP_0]: {
+    location: MAP.SAFARI_036,
+    x: 8,
+    y: 4,
+  },
+
+  [INIT_POS.S037_UP_0]: {
+    location: MAP.SAFARI_037,
+    x: 28,
+    y: 7,
+  },
+
+  [INIT_POS.S038_UP_0]: {
+    location: MAP.SAFARI_038,
+    x: 24,
+    y: 4,
+  },
+
+  [INIT_POS.S039_LEFT_0]: {
+    location: MAP.SAFARI_039,
+    x: 15,
+    y: 20,
+  },
+  [INIT_POS.S039_RIGHT_0]: {
+    location: MAP.SAFARI_039,
+    x: 57,
+    y: 21,
+  },
+  [INIT_POS.S039_RIGHT_1]: {
+    location: MAP.SAFARI_039,
+    x: 57,
+    y: 22,
+  },
+  [INIT_POS.S039_RIGHT_2]: {
+    location: MAP.SAFARI_039,
+    x: 57,
+    y: 23,
+  },
+  [INIT_POS.S040_LEFT_0]: {
+    location: MAP.SAFARI_040,
+    x: 14,
+    y: 12,
+  },
+  [INIT_POS.S040_LEFT_1]: {
+    location: MAP.SAFARI_040,
+    x: 14,
+    y: 13,
+  },
+  [INIT_POS.S040_LEFT_2]: {
+    location: MAP.SAFARI_040,
+    x: 14,
+    y: 14,
+  },
+  [INIT_POS.S040_UP_0]: {
+    location: MAP.SAFARI_040,
+    x: 47,
+    y: 16,
+  },
+  [INIT_POS.S040_RIGHT_0]: {
+    location: MAP.SAFARI_040,
+    x: 55,
+    y: 31,
+  },
+
+  [INIT_POS.S041_DOWN_0]: {
+    location: MAP.SAFARI_041,
+    x: 16,
+    y: 37,
+  },
+
+  [INIT_POS.S042_LEFT_0]: {
+    location: MAP.SAFARI_042,
+    x: 7,
+    y: 31,
+  },
+  [INIT_POS.S042_RIGHT_0]: {
+    location: MAP.SAFARI_042,
+    x: 51,
+    y: 22,
+  },
+
+  [INIT_POS.S043_UP_0]: {
+    location: MAP.SAFARI_043,
+    x: 34,
+    y: 7,
+  },
+  [INIT_POS.S043_LEFT_0]: {
+    location: MAP.SAFARI_043,
+    x: 11,
+    y: 28,
+  },
+  [INIT_POS.S043_RIGHT_0]: {
+    location: MAP.SAFARI_043,
+    x: 56,
+    y: 23,
+  },
+
+  [INIT_POS.S044_UP_0]: {
+    location: MAP.SAFARI_044,
     x: 20,
-    y: 1,
+    y: 5,
+  },
+
+  [INIT_POS.S045_LEFT_0]: {
+    location: MAP.SAFARI_045,
+    x: 7,
+    y: 19,
+  },
+
+  [INIT_POS.S046_UP_0]: {
+    location: MAP.SAFARI_046,
+    x: 47,
+    y: 10,
+  },
+  [INIT_POS.S046_UP_1]: {
+    location: MAP.SAFARI_046,
+    x: 48,
+    y: 10,
   },
 };

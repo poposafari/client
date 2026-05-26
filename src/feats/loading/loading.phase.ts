@@ -44,6 +44,37 @@ import {
   s013Config,
   s014Config,
   s015Config,
+  s016Config,
+  s017Config,
+  s018Config,
+  s019Config,
+  s020Config,
+  s021Config,
+  s022Config,
+  s023Config,
+  s024Config,
+  s025Config,
+  s026Config,
+  s027Config,
+  s028Config,
+  s029Config,
+  s030Config,
+  s031Config,
+  s032Config,
+  s033Config,
+  s034Config,
+  s035Config,
+  s036Config,
+  s037Config,
+  s038Config,
+  s039Config,
+  s040Config,
+  s041Config,
+  s042Config,
+  s043Config,
+  s044Config,
+  s045Config,
+  s046Config,
 } from '../overworld/maps/safari';
 import {
   FOG_TEXTURE_KEYS,
@@ -876,6 +907,37 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadMap(MAP.SAFARI_013, 'ui/maps', MAP.SAFARI_013);
     this.scene.loadMap(MAP.SAFARI_014, 'ui/maps', MAP.SAFARI_014);
     this.scene.loadMap(MAP.SAFARI_015, 'ui/maps', MAP.SAFARI_015);
+    this.scene.loadMap(MAP.SAFARI_016, 'ui/maps', MAP.SAFARI_016);
+    this.scene.loadMap(MAP.SAFARI_017, 'ui/maps', MAP.SAFARI_017);
+    this.scene.loadMap(MAP.SAFARI_018, 'ui/maps', MAP.SAFARI_018);
+    this.scene.loadMap(MAP.SAFARI_019, 'ui/maps', MAP.SAFARI_019);
+    this.scene.loadMap(MAP.SAFARI_020, 'ui/maps', MAP.SAFARI_020);
+    this.scene.loadMap(MAP.SAFARI_021, 'ui/maps', MAP.SAFARI_021);
+    this.scene.loadMap(MAP.SAFARI_022, 'ui/maps', MAP.SAFARI_022);
+    this.scene.loadMap(MAP.SAFARI_023, 'ui/maps', MAP.SAFARI_023);
+    this.scene.loadMap(MAP.SAFARI_024, 'ui/maps', MAP.SAFARI_024);
+    this.scene.loadMap(MAP.SAFARI_025, 'ui/maps', MAP.SAFARI_025);
+    this.scene.loadMap(MAP.SAFARI_026, 'ui/maps', MAP.SAFARI_026);
+    this.scene.loadMap(MAP.SAFARI_027, 'ui/maps', MAP.SAFARI_027);
+    this.scene.loadMap(MAP.SAFARI_028, 'ui/maps', MAP.SAFARI_028);
+    this.scene.loadMap(MAP.SAFARI_029, 'ui/maps', MAP.SAFARI_029);
+    this.scene.loadMap(MAP.SAFARI_030, 'ui/maps', MAP.SAFARI_030);
+    this.scene.loadMap(MAP.SAFARI_031, 'ui/maps', MAP.SAFARI_031);
+    this.scene.loadMap(MAP.SAFARI_032, 'ui/maps', MAP.SAFARI_032);
+    this.scene.loadMap(MAP.SAFARI_033, 'ui/maps', MAP.SAFARI_033);
+    this.scene.loadMap(MAP.SAFARI_034, 'ui/maps', MAP.SAFARI_034);
+    this.scene.loadMap(MAP.SAFARI_035, 'ui/maps', MAP.SAFARI_035);
+    this.scene.loadMap(MAP.SAFARI_036, 'ui/maps', MAP.SAFARI_036);
+    this.scene.loadMap(MAP.SAFARI_037, 'ui/maps', MAP.SAFARI_037);
+    this.scene.loadMap(MAP.SAFARI_038, 'ui/maps', MAP.SAFARI_038);
+    this.scene.loadMap(MAP.SAFARI_039, 'ui/maps', MAP.SAFARI_039);
+    this.scene.loadMap(MAP.SAFARI_040, 'ui/maps', MAP.SAFARI_040);
+    this.scene.loadMap(MAP.SAFARI_041, 'ui/maps', MAP.SAFARI_041);
+    this.scene.loadMap(MAP.SAFARI_042, 'ui/maps', MAP.SAFARI_042);
+    this.scene.loadMap(MAP.SAFARI_043, 'ui/maps', MAP.SAFARI_043);
+    this.scene.loadMap(MAP.SAFARI_044, 'ui/maps', MAP.SAFARI_044);
+    this.scene.loadMap(MAP.SAFARI_045, 'ui/maps', MAP.SAFARI_045);
+    this.scene.loadMap(MAP.SAFARI_046, 'ui/maps', MAP.SAFARI_046);
 
     // this.scene.loadMap(MAP.PLAZA_002, 'ui/maps', MAP.PLAZA_002);
     // this.scene.loadMap(MAP.PLAZA_003, 'ui/maps', MAP.PLAZA_003);
@@ -927,6 +989,37 @@ export class LoadingPhase implements IGamePhase {
     mapRegistry.register(s013Config);
     mapRegistry.register(s014Config);
     mapRegistry.register(s015Config);
+    mapRegistry.register(s016Config);
+    mapRegistry.register(s017Config);
+    mapRegistry.register(s018Config);
+    mapRegistry.register(s019Config);
+    mapRegistry.register(s020Config);
+    mapRegistry.register(s021Config);
+    mapRegistry.register(s022Config);
+    mapRegistry.register(s023Config);
+    mapRegistry.register(s024Config);
+    mapRegistry.register(s025Config);
+    mapRegistry.register(s026Config);
+    mapRegistry.register(s027Config);
+    mapRegistry.register(s028Config);
+    mapRegistry.register(s029Config);
+    mapRegistry.register(s030Config);
+    mapRegistry.register(s031Config);
+    mapRegistry.register(s032Config);
+    mapRegistry.register(s033Config);
+    mapRegistry.register(s034Config);
+    mapRegistry.register(s035Config);
+    mapRegistry.register(s036Config);
+    mapRegistry.register(s037Config);
+    mapRegistry.register(s038Config);
+    mapRegistry.register(s039Config);
+    mapRegistry.register(s040Config);
+    mapRegistry.register(s041Config);
+    mapRegistry.register(s042Config);
+    mapRegistry.register(s043Config);
+    mapRegistry.register(s044Config);
+    mapRegistry.register(s045Config);
+    mapRegistry.register(s046Config);
   }
 
   private loadAudio() {

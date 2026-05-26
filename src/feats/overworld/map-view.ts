@@ -13,6 +13,7 @@ import {
 } from './objects';
 import { FossilNpcObject, MartNpcObject } from './objects/special-npc.object';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import { AnimatedTiles } from './animated-tiles';
 
 export type MapNpc = NpcObject | MovingNpcObject;
 
@@ -30,6 +31,7 @@ export class MapView {
 
   private triggers: TriggerObject[] = [];
   private npcs: MapNpc[] = [];
+  private animatedTiles = new AnimatedTiles();
   private readonly scale = MAP_LAYER_SCALE_ZOOMED;
 
   constructor(scene: GameScene) {
@@ -126,12 +128,20 @@ export class MapView {
       }
     }
 
+    this.animatedTiles.init(this.map);
+
     this.layerContainer.setVisible(true);
     this.foregroundContainer.setVisible(true);
     this.foreground1Container.setVisible(true);
   }
 
+  update(delta: number): void {
+    this.animatedTiles.update(delta);
+  }
+
   destroy(): void {
+    this.animatedTiles.destroy();
+
     if (this.map) {
       this.map.destroy();
       this.map = null!;

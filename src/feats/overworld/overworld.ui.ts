@@ -1994,6 +1994,7 @@ export class OverworldUi extends BaseUi {
   }
 
   update(_time: number, delta: number): void {
+    this.mapView?.update(delta);
     this.weatherOverlay?.tick(delta);
     if (!this.player || !this.cursorKeys) return;
 
