@@ -740,6 +740,14 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_SANDSTORM, 'ui/weather', 'icon_sandstorm');
 
     this.scene.loadImage(TEXTURE.OVERWORLD_SHADOW, 'ui', 'overworld_shadow');
+    this.scene.loadImage(TEXTURE.OVERWORLD_FOOTPRINT_0, 'ui', 'overworld_footprint_0');
+    this.scene.loadImage(TEXTURE.OVERWORLD_FOOTPRINT_1, 'ui', 'overworld_footprint_1');
+    this.scene.loadAtlas(
+      TEXTURE.OVERWORLD_FOOTPRINT_2,
+      'ui',
+      'overworld_footprint_2',
+      'overworld_footprint_2',
+    );
     this.scene.loadImage(TEXTURE.CURSOR_FINGER, 'ui', 'cursor_finger');
     this.scene.loadImage(TEXTURE.CURSOR_BLACK, 'ui', 'cursor_b');
     this.scene.loadImage(TEXTURE.CURSOR_MOUSE, 'ui', 'cursor_mouse');
@@ -1085,6 +1093,17 @@ export class LoadingPhase implements IGamePhase {
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1_B, ANIMATION.OVERWORLD_GRASS_1_B);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2, ANIMATION.OVERWORLD_GRASS_2);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2_B, ANIMATION.OVERWORLD_GRASS_2_B);
+
+    this.scene.anims.create({
+      key: TEXTURE.OVERWORLD_FOOTPRINT_2,
+      frames: this.scene.anims.generateFrameNames(TEXTURE.OVERWORLD_FOOTPRINT_2, {
+        prefix: 'overworld_footprint_2-',
+        start: 0,
+        end: 2,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
   }
 
   private createBaseSurfAnimations(): void {

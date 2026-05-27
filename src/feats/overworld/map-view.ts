@@ -248,6 +248,21 @@ export class MapView {
     return null;
   }
 
+  hasWaterEdgeTileAt(tileX: number, tileY: number): boolean {
+    if (!this.map) return false;
+    const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');
+    if (!tile || tile.index === -1) return false;
+    return tile.properties?.type === 'water_edge';
+  }
+
+  hasFootprintTileAt(tileX: number, tileY: number): boolean {
+    if (!this.map) return false;
+    const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');
+    if (!tile || tile.index === -1) return false;
+    const type = tile.properties?.type;
+    return type === 'snow_1' || type === 'sand_1';
+  }
+
   getLightTilePositions(): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
     if (!this.map) return positions;

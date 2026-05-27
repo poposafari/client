@@ -261,6 +261,7 @@ export class OverworldPhase implements IGamePhase {
   }
 
   tickBackground(_time: number, delta: number): void {
+    this.overworldUi?.getMapView()?.update(delta);
     this.overworldUi?.tickWildPokemons(delta);
     this.overworldUi?.tickBackgroundObjects(delta);
   }

@@ -36,6 +36,7 @@ import {
 import {
   BaseObject,
   DoorObject,
+  FootprintObject,
   GrassObject,
   GroundItemObject,
   InteractiveObject,
@@ -45,6 +46,7 @@ import {
   OtherPlayerObject,
   PetObject,
   PlayerObject,
+  WaterEdgeObject,
   WildPokemonObject,
 } from './objects';
 import { OverworldHudUI } from './overworld-hud.ui';
@@ -193,6 +195,9 @@ export class OverworldUi extends BaseUi {
   private grassByEntity: Map<BaseObject, GrassObject> = new Map();
   /** 엔티티의 마지막 관측 tile — 변경된 경우에만 grass 갱신. */
   private grassLastTile: Map<BaseObject, { x: number; y: number }> = new Map();
+
+  private footprints: FootprintObject[] = [];
+  private waterEdgeByEntity: Map<BaseObject, WaterEdgeObject> = new Map();
 
   private pet: PetObject | null = null;
   private petOwnerPokemonId: number | null = null;
@@ -978,6 +983,7 @@ export class OverworldUi extends BaseUi {
       ease: 'Sine.easeIn',
       onComplete: () => {
         this.releaseGrassForEntity(obj);
+        this.releaseWaterEdgeForEntity(obj);
         this.removeSafariObject(obj as unknown as InteractiveObject);
         this.markTileFree(pos);
       },
@@ -1249,6 +1255,7 @@ export class OverworldUi extends BaseUi {
     };
     if (this.pet) {
       this.releaseGrassForEntity(this.pet);
+      this.releaseWaterEdgeForEntity(this.pet);
       this.pet.destroy();
       this.pet = null;
       this.refreshWildBlockingRefs();
@@ -1392,6 +1399,7 @@ export class OverworldUi extends BaseUi {
       (obj) => this.worldContainer?.add(obj),
       () => {
         this.releaseGrassForEntity(pet);
+        this.releaseWaterEdgeForEntity(pet);
         if (this.pet === pet) {
           this.pet = null;
           this.refreshWildBlockingRefs();
@@ -1474,6 +1482,23 @@ export class OverworldUi extends BaseUi {
       const tileX = lastLocation?.x ?? DEFAULT_TILE_X;
       const tileY = lastLocation?.y ?? DEFAULT_TILE_Y;
       const initDirection = user ? toDIRECTION(user.getOverworldDirection()) : DIRECTION.DOWN;
+
+      const isOnWater = this.mapView.getTileSpawnAt(tileX, tileY) === 'water';
+      if (user) {
+        const preState = user.getOverworldMovementState();
+        if (this.mapConfig?.allowRide === false && preState === OverworldMovementState.RIDE) {
+          user.setOverworldMovementState(OverworldMovementState.WALK);
+        }
+        if (
+          !isOnWater &&
+          (preState === OverworldMovementState.SURF ||
+            preState === OverworldMovementState.JUMP)
+        ) {
+          user.setOverworldMovementState(OverworldMovementState.WALK);
+          user.setActiveSurfPokemonId(null);
+        }
+      }
+
       const blockingRefs = this.mapView.getNpcs();
       this.player = new PlayerObject(this.scene, this.mapView, tileX, tileY, {
         initDirection,
@@ -1487,15 +1512,6 @@ export class OverworldUi extends BaseUi {
       if (outfit) this.worldContainer.add(outfit);
       const hair = this.player.getHairSprite();
       if (hair) this.worldContainer.add(hair);
-
-      if (
-        this.mapConfig?.allowRide === false &&
-        user?.getOverworldMovementState() === OverworldMovementState.RIDE
-      ) {
-        user.setOverworldMovementState(OverworldMovementState.WALK);
-        const walkSpeed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
-        this.player.setBaseSpeed(walkSpeed);
-      }
 
       if (this.mapView.getTileSpawnAt(tileX, tileY) === 'water') {
         user?.setOverworldMovementState(OverworldMovementState.SURF);
@@ -1639,6 +1655,8 @@ export class OverworldUi extends BaseUi {
     this.unsubscribeParty?.();
     this.unsubscribeParty = null;
 
+    this.removeBaseSurf();
+
     this.pet?.destroy();
     this.pet = null;
     this.petOwnerPokemonId = null;
@@ -1648,6 +1666,8 @@ export class OverworldUi extends BaseUi {
     this.prevMovementState = null;
 
     this.releaseAllGrass();
+    this.releaseAllFootprints();
+    this.releaseAllWaterEdges();
 
     if (this.worldContainer) {
       this.worldContainer.removeAll(false);
@@ -1775,8 +1795,12 @@ export class OverworldUi extends BaseUi {
       this.nameContainer.remove(other.getName());
     }
     this.releaseGrassForEntity(other);
+    this.releaseWaterEdgeForEntity(other);
     const otherPet = other.getPet();
-    if (otherPet) this.releaseGrassForEntity(otherPet);
+    if (otherPet) {
+      this.releaseGrassForEntity(otherPet);
+      this.releaseWaterEdgeForEntity(otherPet);
+    }
     this.otherPlayers.delete(userId);
     other.destroy();
     this.sortWorldContainerByDepth();
@@ -1793,9 +1817,31 @@ export class OverworldUi extends BaseUi {
     const tileY = payload?.tileY ?? this.player.getTileY();
     this.updateGrassForEntity(this.player, tileX, tileY, payload?.direction);
 
+    if (payload?.direction) {
+      this.trySpawnFootprint(tileX, tileY, payload.direction);
+    }
+
     const user = this.scene.getUser();
     if (user?.getOverworldMovementState() !== OverworldMovementState.JUMP) return;
     this.emitMoveToServer(this.player.getLastDirection());
+  }
+
+  private trySpawnFootprint(tileX: number, tileY: number, direction: DIRECTION): void {
+    if (!this.mapView || !this.worldContainer) return;
+    if (!this.mapView.hasFootprintTileAt(tileX, tileY)) return;
+    const user = this.scene.getUser();
+    const state = user?.getOverworldMovementState();
+    if (
+      state !== OverworldMovementState.WALK &&
+      state !== OverworldMovementState.RUNNING &&
+      state !== OverworldMovementState.RIDE
+    ) {
+      return;
+    }
+    const isRide = state === OverworldMovementState.RIDE;
+    const fp = new FootprintObject(this.scene, tileX, tileY, isRide, direction);
+    this.worldContainer.add(fp.getSprite());
+    this.footprints.push(fp);
   }
 
   private syncGrassForEntity(entity: BaseObject | null | undefined): void {
@@ -1870,6 +1916,48 @@ export class OverworldUi extends BaseUi {
     for (const grass of this.grassByEntity.values()) grass.destroy();
     this.grassByEntity.clear();
     this.grassLastTile.clear();
+  }
+
+  private releaseAllFootprints(): void {
+    for (const fp of this.footprints) fp.destroy();
+    this.footprints = [];
+  }
+
+  private syncWaterEdgeForEntity(entity: BaseObject | null | undefined): void {
+    if (!entity) return;
+    if (!entity.getSprite().active) {
+      this.releaseWaterEdgeForEntity(entity);
+      return;
+    }
+    const isWaterEdge = this.mapView?.hasWaterEdgeTileAt(entity.getTileX(), entity.getTileY()) ?? false;
+    if (!isWaterEdge) {
+      if (this.waterEdgeByEntity.has(entity)) this.releaseWaterEdgeForEntity(entity);
+      return;
+    }
+    const sprite = entity.getSprite();
+    const depth = sprite.depth + 0.3;
+    let waterEdge = this.waterEdgeByEntity.get(entity);
+    if (!waterEdge) {
+      waterEdge = new WaterEdgeObject(this.scene, sprite.x, sprite.y, depth);
+      this.worldContainer?.add(waterEdge.getSprite());
+      this.waterEdgeByEntity.set(entity, waterEdge);
+    } else {
+      waterEdge.syncWith(sprite.x, sprite.y, depth);
+    }
+  }
+
+  private releaseWaterEdgeForEntity(entity: BaseObject): void {
+    const existing = this.waterEdgeByEntity.get(entity);
+    if (existing) {
+      if (this.worldContainer) this.worldContainer.remove(existing.getSprite());
+      existing.destroy();
+      this.waterEdgeByEntity.delete(entity);
+    }
+  }
+
+  private releaseAllWaterEdges(): void {
+    for (const we of this.waterEdgeByEntity.values()) we.destroy();
+    this.waterEdgeByEntity.clear();
   }
 
   private handleEntityTilePending = (payload: {
@@ -1958,6 +2046,7 @@ export class OverworldUi extends BaseUi {
         }
         obj.update(delta);
         this.syncGrassForEntity(obj);
+        this.syncWaterEdgeForEntity(obj);
       }
     }
   }
@@ -1966,10 +2055,13 @@ export class OverworldUi extends BaseUi {
     this.weatherOverlay?.tick(delta);
     this.pet?.update(delta);
     this.syncGrassForEntity(this.pet);
+    this.syncWaterEdgeForEntity(this.pet);
     for (const other of this.otherPlayers.values()) {
       other.update(delta);
       this.syncGrassForEntity(other);
+      this.syncWaterEdgeForEntity(other);
       this.syncGrassForEntity(other.getPet());
+      this.syncWaterEdgeForEntity(other.getPet());
     }
     this.tickMovingNpcs(delta);
   }
@@ -1990,6 +2082,7 @@ export class OverworldUi extends BaseUi {
       npc.setBlockingRefs(refs);
       npc.update(delta);
       this.syncGrassForEntity(npc);
+      this.syncWaterEdgeForEntity(npc);
     }
   }
 
@@ -2024,12 +2117,16 @@ export class OverworldUi extends BaseUi {
 
     this.player.update(delta);
     this.syncGrassForEntity(this.player);
+    this.syncWaterEdgeForEntity(this.player);
     this.pet?.update(delta);
     this.syncGrassForEntity(this.pet);
+    this.syncWaterEdgeForEntity(this.pet);
     for (const other of this.otherPlayers.values()) {
       other.update(delta);
       this.syncGrassForEntity(other);
+      this.syncWaterEdgeForEntity(other);
       this.syncGrassForEntity(other.getPet());
+      this.syncWaterEdgeForEntity(other.getPet());
     }
     this.tickMovingNpcs(delta);
 

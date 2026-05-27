@@ -1,5 +1,6 @@
 export * from './base.object';
 export * from './door.object';
+export * from './footprint.object';
 export * from './grass.object';
 export * from './ground-item.object';
 export * from './human-npc.object';
@@ -15,4 +16,5 @@ export * from './player.object';
 export * from './pokemon-npc.object';
 export * from './special-npc.object';
 export * from './trigger.object';
+export * from './water-edge.object';
 export * from './wild-pokemon.object';

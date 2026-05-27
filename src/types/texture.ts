@@ -129,6 +129,9 @@ export const enum TEXTURE {
   BALL_BURST_RAY = 'ball_burst_ray',
 
   BASE_SURF = 'base_surf',
+  OVERWORLD_FOOTPRINT_0 = 'overworld_footprint_0',
+  OVERWORLD_FOOTPRINT_1 = 'overworld_footprint_1',
+  OVERWORLD_FOOTPRINT_2 = 'overworld_footprint_2',
 }
 
 export const enum ANIMATION {
