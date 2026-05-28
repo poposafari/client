@@ -67,6 +67,8 @@ export const etc: TranslationEtc = {
   backToTitle: '타이틀로 돌아가기',
   backToPlaza: '포포타운으로 돌아가기',
   pokeRader: '포케레이더',
+  map: '지도',
+  safariMap: '포포사파리 지도',
   pc: '포켓몬 박스',
   bag: '가방',
   pokedex: '포켓몬 도감',

@@ -26,6 +26,12 @@ const POKE_RADER_ITEM = () => ({
   icon: TEXTURE.ICON_POKE_RADER,
 });
 
+const MAP_ITEM = () => ({
+  key: 'map',
+  label: i18next.t('etc:map'),
+  icon: TEXTURE.ICON_MAP,
+});
+
 const TITLE_ITEM = () => ({
   key: 'title',
   label: i18next.t('etc:backToTitle'),
@@ -42,6 +48,7 @@ const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
   const items = BASE_MENU_ITEMS(gender);
   if (inSafari) {
     items.push(POKE_RADER_ITEM());
+    items.push(MAP_ITEM());
     items.push(PLAZA_ITEM());
   }
   items.push(TITLE_ITEM());

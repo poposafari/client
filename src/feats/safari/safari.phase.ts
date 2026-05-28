@@ -93,6 +93,7 @@ export class SafariPhase implements IGamePhase {
           if (!result) return null;
 
           this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
+          this.scene.getUser()?.addVisitedMap(result.mapId);
 
           const entry = result.mapInfo.entry;
           const initPos: InitPosConfig = {

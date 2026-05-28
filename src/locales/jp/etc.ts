@@ -66,6 +66,8 @@ export const etc: TranslationEtc = {
   backToTitle: 'タイトルに もどる',
   backToPlaza: 'ポポタウンに もどる',
   pokeRader: 'ポケレーダー',
+  map: 'タウンマップ',
+  safariMap: 'ポポサファリ マップ',
   pc: 'ポケモンボックス',
   bag: 'バッグ',
   pokedex: 'ポケモンずかん',

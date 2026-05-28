@@ -1,0 +1,135 @@
+{
+  "frames": {
+    "map_player-0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    },
+    "map_player-1": {
+      "frame": {
+        "x": 18,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 18,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    },
+    "map_player-2": {
+      "frame": {
+        "x": 36,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 36,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    },
+    "map_player-3": {
+      "frame": {
+        "x": 54,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    },
+    "map_player-4": {
+      "frame": {
+        "x": 72,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 72,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    },
+    "map_player-5": {
+      "frame": {
+        "x": 90,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 90,
+        "y": 0,
+        "w": 18,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 40
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "name",
+    "format": "RGBA8888",
+    "size": {
+      "w": 108,
+      "h": 40
+    },
+    "scale": "1"
+  }
+}

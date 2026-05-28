@@ -8,6 +8,7 @@ import { PokemonPcPhase } from '../pc/pokemon-pc.phase';
 import { BagPhase } from '../bag/bag.phase';
 import { PokeRaderPhase } from '../safari/poke-rader.phase';
 import { PokedexPhase } from '../pokedex/pokedex.phase';
+import { SafariMapPhase } from '../safari-map/safari-map.phase';
 import { MenuUi } from '../menu/menu-ui';
 import { InitPosConfig } from './maps/door';
 import { MAP } from '@poposafari/types';
@@ -37,7 +38,7 @@ export class OverworldMenuPhase implements IGamePhase {
   }
 
   async enter(): Promise<void> {
-    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 915 : 715);
+    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 1015 : 715);
     this.yesOrNoMenu = new BackTitleMenuUi(this.scene);
     this.confirmMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
       y: +800,
@@ -67,6 +68,11 @@ export class OverworldMenuPhase implements IGamePhase {
 
     if (result.key === 'pokeRader') {
       this.scene.pushPhase(new PokeRaderPhase(this.scene));
+      return;
+    }
+
+    if (result.key === 'map') {
+      this.scene.pushPhase(new SafariMapPhase(this.scene));
       return;
     }
 

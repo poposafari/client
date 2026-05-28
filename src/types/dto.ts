@@ -68,6 +68,7 @@ export interface GetMeRes {
     pokedexId: string;
     caughtCount: number;
   }[];
+  visitedMaps: string[];
 }
 
 // ── 게임 진입 / 큐 / 동접자 API ──

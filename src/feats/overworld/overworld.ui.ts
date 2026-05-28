@@ -2282,6 +2282,9 @@ export class OverworldUi extends BaseUi {
                     return null;
                   }
                 }
+                if (targetMapId.startsWith('s')) {
+                  this.scene.getUser()?.addVisitedMap(targetMapId);
+                }
                 return result;
               });
               if (!ok) {

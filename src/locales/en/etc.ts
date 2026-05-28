@@ -65,6 +65,8 @@ export const etc: TranslationEtc = {
   backToTitle: 'BACK TO TITLE',
   backToPlaza: 'BACK TO POPO TOWN',
   pokeRader: 'POKé RADAR',
+  map: 'MAP',
+  safariMap: 'POPO SAFARI MAP',
   pc: 'POKéMON BOX',
   bag: 'BAG',
   pokedex: 'POKéDEX',

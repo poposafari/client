@@ -32,6 +32,7 @@ export class UserManager {
   private equippedCostumes!: GetMeRes['equippedCostumes'];
   private party!: GetMeRes['party'];
   private itemSlots!: string[];
+  private visitedMaps!: Set<string>;
 
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
@@ -62,6 +63,7 @@ export class UserManager {
     this.equippedCostumes = undefined as unknown as GetMeRes['equippedCostumes'];
     this.party = undefined as unknown as GetMeRes['party'];
     this.itemSlots = undefined as unknown as string[];
+    this.visitedMaps = undefined as unknown as Set<string>;
 
     this.pokemonBox = null;
     this.boxMeta = null;
@@ -103,6 +105,7 @@ export class UserManager {
       ...(user.essentialItems as unknown as ItemBagItem[]),
     ]);
     this.pokedex = user.pokedex;
+    this.visitedMaps = new Set(user.visitedMaps ?? []);
   }
 
   getProfile(): MappedProfile {
@@ -140,6 +143,20 @@ export class UserManager {
 
   getItemSlots(): string[] {
     return this.itemSlots;
+  }
+
+  getVisitedMaps(): string[] {
+    return Array.from(this.visitedMaps);
+  }
+
+  hasVisitedMap(mapId: string): boolean {
+    return this.visitedMaps.has(mapId);
+  }
+
+  addVisitedMap(mapId: string): boolean {
+    if (this.visitedMaps.has(mapId)) return false;
+    this.visitedMaps.add(mapId);
+    return true;
   }
 
   // ── Lazy Load getter/setter ──

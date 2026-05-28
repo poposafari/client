@@ -1,5 +1,6 @@
 export const enum SFX {
   CURSOR_0 = 'cursor_0',
+  CURSOR_1 = 'cursor_1',
   OPEN_0 = 'open_0',
   BUZZER = 'buzzer',
   DOOR_0 = 'door_0',

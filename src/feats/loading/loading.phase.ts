@@ -647,6 +647,16 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.BG_MART, 'ui/bgs', 'bg_mart');
     this.scene.loadImage(TEXTURE.BG_MART_SELL, 'ui/bgs', 'bg_sell');
     this.scene.loadImage(TEXTURE.BG_POKE_RADER, 'ui/bgs', 'bg_poke-rader');
+    this.scene.loadImage(TEXTURE.BG_MAP, 'ui/map', 'bg_map');
+    this.scene.loadImage(TEXTURE.MAP_ISLAND, 'ui/map', 'island');
+    this.scene.loadImage(TEXTURE.MAP_TITLE, 'ui/map', 'map_title');
+    this.scene.loadImage(TEXTURE.MAP_CURSOR, 'ui/map', 'map_cursor');
+    this.scene.loadImage(TEXTURE.MAP_POINT_0, 'ui/map', 'map_point_0');
+    this.scene.loadImage(TEXTURE.MAP_POINT_0_SEL, 'ui/map', 'map_point_0_sel');
+    this.scene.loadImage(TEXTURE.MAP_POINT_1, 'ui/map', 'map_point_1');
+    this.scene.loadImage(TEXTURE.MAP_POINT_1_SEL, 'ui/map', 'map_point_1_sel');
+    this.scene.loadAtlas(TEXTURE.MAP_CURSOR_SEL, 'ui/map', 'map_cursor_sel', 'map_cursor_sel');
+    this.scene.loadAtlas(TEXTURE.MAP_PLAYER, 'ui/map', 'map_player', 'map_player');
 
     this.scene.loadImage(TEXTURE.BG_POKEDEX, 'ui/pokedex', 'bg_pokedex');
     this.scene.loadImage(TEXTURE.POKEDEX_TITLE, 'ui/pokedex', 'pokedex-title');
@@ -694,6 +704,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');
     this.scene.loadImage(TEXTURE.WINDOW_PC, 'ui/windows', 'window_pc');
     this.scene.loadImage(TEXTURE.WINDOW_EXP, 'ui/windows', 'window_exp');
+    this.scene.loadImage(TEXTURE.WINDOW_MAP, 'ui/windows', 'window_map');
 
     this.scene.loadImage(TEXTURE.KEYCAP, 'ui', 'keycap');
 
@@ -729,6 +740,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_DISCORD, 'ui/icons', 'icon_discord');
     this.scene.loadImage(TEXTURE.ICON_GOOGLE, 'ui/icons', 'icon_google');
     this.scene.loadImage(TEXTURE.ICON_POKE_RADER, 'ui/icons', 'icon_poke-rader');
+    this.scene.loadImage(TEXTURE.ICON_MAP, 'ui/icons', 'icon_map');
 
     this.scene.loadImage(TEXTURE.ICON_SUNNY, 'ui/weather', 'icon_sunny');
     this.scene.loadImage(TEXTURE.ICON_RAINY, 'ui/weather', 'icon_rainy');
@@ -1033,6 +1045,7 @@ export class LoadingPhase implements IGamePhase {
   private loadAudio() {
     this.scene.loadAudio(SFX.OPEN_0, 'audio/se', 'open_0', 'ogg');
     this.scene.loadAudio(SFX.CURSOR_0, 'audio/se', 'cursor_0', 'ogg');
+    this.scene.loadAudio(SFX.CURSOR_1, 'audio/se', 'cursor_1', 'ogg');
     this.scene.loadAudio(SFX.BUZZER, 'audio/se', 'buzzer', 'ogg');
     this.scene.loadAudio(SFX.DOOR_0, 'audio/se', 'door_0', 'ogg');
     this.scene.loadAudio(SFX.DOOR_1, 'audio/se', 'door_1', 'ogg');
@@ -1093,6 +1106,38 @@ export class LoadingPhase implements IGamePhase {
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_1_B, ANIMATION.OVERWORLD_GRASS_1_B);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2, ANIMATION.OVERWORLD_GRASS_2);
     createSpriteAnimation(this.scene, TEXTURE.OVERWORLD_GRASS_2_B, ANIMATION.OVERWORLD_GRASS_2_B);
+
+    createAnimationFromFrameNames(
+      this.scene,
+      TEXTURE.MAP_CURSOR_SEL,
+      ANIMATION.MAP_CURSOR_SEL,
+      [
+        'map_cursor_sel-0',
+        'map_cursor_sel-1',
+        'map_cursor_sel-2',
+        'map_cursor_sel-3',
+        'map_cursor_sel-4',
+        'map_cursor_sel-5',
+      ],
+      8,
+      -1,
+    );
+
+    createAnimationFromFrameNames(
+      this.scene,
+      TEXTURE.MAP_PLAYER,
+      ANIMATION.MAP_PLAYER,
+      [
+        'map_player-0',
+        'map_player-1',
+        'map_player-2',
+        'map_player-3',
+        'map_player-4',
+        'map_player-5',
+      ],
+      8,
+      -1,
+    );
 
     this.scene.anims.create({
       key: TEXTURE.OVERWORLD_FOOTPRINT_2,
