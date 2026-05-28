@@ -10,6 +10,7 @@ export const pc: Record<string, string> = {
   sendToProfessor: 'はかせに おくる',
   confirmSendToProfessor: '{{name}}を はかせに おくりますか？',
   obtainedCandy: '{{item}} x{{quantity}}を てに いれた！',
+  obtainedExpCandy: 'さらに {{item}} x{{quantity}}も もらった！',
   confirmTakeHeldItem: '{{item}}を うけとりますか？',
   obtainedHeldItem: '{{item}}を うけとった！',
   surfInUse: 'なみのりを つかっています。',

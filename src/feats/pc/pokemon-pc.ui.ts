@@ -1183,18 +1183,24 @@ export class PokemonPcUi extends BaseUi {
       }
 
       const bag = user.getItemBag();
-      const existing = bag?.get(result.candyId);
-      user.updateItemQuantity(result.candyId, (existing?.quantity ?? 0) + result.quantity);
+      for (const reward of result.rewards) {
+        const existing = bag?.get(reward.itemId);
+        user.updateItemQuantity(reward.itemId, (existing?.quantity ?? 0) + reward.quantity);
+      }
     }
 
     this.refreshCurrentBox();
     this.clearInfo();
 
     const talkUi = this.scene.getMessage('talk');
-    const itemName = i18next.t(`item:${result.candyId}.name`);
-    await talkUi.showMessage(
-      i18next.t('pc:obtainedCandy', { item: itemName, quantity: result.quantity }),
-    );
+    const messages = result.rewards.map((reward) => {
+      const itemName = i18next.t(`item:${reward.itemId}.name`);
+      const key = reward.itemId.startsWith('experience-candy-')
+        ? 'pc:obtainedExpCandy'
+        : 'pc:obtainedCandy';
+      return i18next.t(key, { item: itemName, quantity: reward.quantity });
+    });
+    await talkUi.showMessage(messages);
   }
 
   private static readonly POKEMON_MAX_LEVEL = 100;

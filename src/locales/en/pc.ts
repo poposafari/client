@@ -10,6 +10,7 @@ export const pc: Record<string, string> = {
   sendToProfessor: 'Send to Professor',
   confirmSendToProfessor: 'Send {{name}} to the Professor?',
   obtainedCandy: 'Obtained {{item}} x{{quantity}}!',
+  obtainedExpCandy: 'And received {{item}} x{{quantity}} as a bonus!',
   confirmTakeHeldItem: 'Take the {{item}}?',
   obtainedHeldItem: 'Took the {{item}}!',
   surfInUse: 'Currently using Surf.',
