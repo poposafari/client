@@ -45,6 +45,8 @@ export class GrassObject extends BaseObject {
     this.backAnimKey = backAnim;
     if (options?.deferBackAnim) {
       this.backAnimStarted = false;
+      this.sprite.setVisible(false);
+      this.spriteBack.setVisible(false);
     } else if (scene.anims.exists(backAnim)) {
       this.spriteBack.play(backAnim);
     }
@@ -64,6 +66,8 @@ export class GrassObject extends BaseObject {
     const key = this.backAnimKey;
     if (!back || !back.active || !key) return;
     if (!back.scene.anims.exists(key)) return;
+    this.sprite.setVisible(true);
+    back.setVisible(true);
     back.play(key);
     this.backAnimStarted = true;
   }
@@ -71,7 +75,8 @@ export class GrassObject extends BaseObject {
   destroyAfterAnim(): void {
     const s = this.sprite;
     if (!s.active) return;
-    s.setDepth(this.tileY - 0.2);
+    s.setDepth(this.tileY - 3);
+    this.spriteBack?.setDepth(this.tileY - 3);
     if (s.anims && s.anims.isPlaying) {
       s.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         if (this.sprite.active) this.destroy();

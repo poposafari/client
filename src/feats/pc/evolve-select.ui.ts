@@ -78,7 +78,7 @@ export function parseCostParts(cost: string, type1: string): ParsedCostPart[] {
       };
       return {
         labelText: i18next.t(periodI18Key[period]),
-        iconKey: `icon_${period}`,
+        iconKey: `icon_${period}_1`,
         count: null,
         itemId: null,
         kind: 'time',

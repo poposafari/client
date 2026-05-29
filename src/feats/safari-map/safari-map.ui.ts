@@ -5,9 +5,9 @@ import { addBackground, addImage, addSprite, addText } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 
-const TITLE_X = -600;
+const TITLE_X = -560;
 const TITLE_Y = -470;
-const TITLE_ICON_SCALE = 2.2;
+const TITLE_ICON_SCALE = 2.6;
 const TITLE_FONT_SIZE = 60;
 const TITLE_ANIM_MS = 150;
 
@@ -37,7 +37,7 @@ const MAP_PLAYER_DURATION_MS = 750;
 const MAP_PLAYER_OFFSET_X = 0;
 const MAP_PLAYER_OFFSET_Y = -30;
 
-const HEADER_Y = -500;
+const HEADER_Y = -480;
 const HEADER_FONT_SIZE = 60;
 const HEADER_ICON_SCALE = 2;
 const HEADER_ICON_GAP = 40;
@@ -286,7 +286,7 @@ export class SafariMapUi extends BaseUi {
 
     this.titleText = addText(
       this.scene,
-      TITLE_X - 280,
+      TITLE_X - 320,
       TITLE_Y,
       '',
       TITLE_FONT_SIZE,

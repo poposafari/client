@@ -365,6 +365,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
       color: TEXTCOLOR.BLACK,
       registerIcon: cat === 'key' && this.registerLookup(e.itemId),
     }));
+    items.sort((a, b) => a.label.localeCompare(b.label, i18next.language));
     this.menuList.setItems(items);
     this.updateDetail(items[0]?.key ?? '');
   }

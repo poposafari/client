@@ -5,8 +5,8 @@ export class SafariZoneListUi extends MenuListUi {
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), {
       x: +1665,
-      y: +390,
-      visibleCount: 6,
+      y: +450,
+      visibleCount: 7,
       itemHeight: 0,
       showCancel: true,
     });

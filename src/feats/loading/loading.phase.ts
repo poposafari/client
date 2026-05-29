@@ -731,6 +731,10 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.ICON_DAY, 'ui/icons', 'icon_day');
     this.scene.loadImage(TEXTURE.ICON_DUSK, 'ui/icons', 'icon_dusk');
     this.scene.loadImage(TEXTURE.ICON_NIGHT, 'ui/icons', 'icon_night');
+    this.scene.loadImage(TEXTURE.ICON_DAWN_1, 'ui/icons', 'icon_dawn_1');
+    this.scene.loadImage(TEXTURE.ICON_DAY_1, 'ui/icons', 'icon_day_1');
+    this.scene.loadImage(TEXTURE.ICON_DUSK_1, 'ui/icons', 'icon_dusk_1');
+    this.scene.loadImage(TEXTURE.ICON_NIGHT_1, 'ui/icons', 'icon_night_1');
     this.scene.loadImage(TEXTURE.ICON_SHINY, 'ui/icons', 'icon_shiny');
     this.scene.loadImage(TEXTURE.ICON_OWNED, 'ui/icons', 'icon_owned');
     this.scene.loadImage(TEXTURE.ICON_LV, 'ui/icons', 'icon_lv');
