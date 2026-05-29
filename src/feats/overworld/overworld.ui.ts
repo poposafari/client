@@ -52,6 +52,7 @@ import {
 import { OverworldHudUI } from './overworld-hud.ui';
 import i18next from '@poposafari/i18n';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import CaveFilter from '@poposafari/utils/cave-filter';
 import { landToBiome, WeatherOverlay } from '@poposafari/utils/weather-overlay';
 import { getPokemonI18Name, showApiErrorAsTalk } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
@@ -1459,6 +1460,10 @@ export class OverworldUi extends BaseUi {
       this.worldContainer.setDepth(DEPTH.GROUND);
       if (this.mapConfig?.dayNightFilter !== false) {
         this.worldContainer.setPostPipeline(DayNightFilter.KEY);
+      }
+      if (this.mapConfig?.specialFilter?.kind === 'cave') {
+        CaveFilter.setVariant(this.mapConfig.specialFilter.variant);
+        this.worldContainer.setPostPipeline(CaveFilter.KEY);
       }
 
       this.nameContainer = this.scene.add.container(0, 0);

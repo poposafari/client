@@ -13,6 +13,7 @@ import {
 } from './objects';
 import { FossilNpcObject, MartNpcObject } from './objects/special-npc.object';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import CaveFilter from '@poposafari/utils/cave-filter';
 import { AnimatedTiles } from './animated-tiles';
 
 export type MapNpc = NpcObject | MovingNpcObject;
@@ -77,6 +78,13 @@ export class MapView {
       this.layerContainer.setPostPipeline(DayNightFilter.KEY);
       this.foregroundContainer.setPostPipeline(DayNightFilter.KEY);
       this.foreground1Container.setPostPipeline(DayNightFilter.KEY);
+    }
+
+    if (config.specialFilter?.kind === 'cave') {
+      CaveFilter.setVariant(config.specialFilter.variant);
+      this.layerContainer.setPostPipeline(CaveFilter.KEY);
+      this.foregroundContainer.setPostPipeline(CaveFilter.KEY);
+      this.foreground1Container.setPostPipeline(CaveFilter.KEY);
     }
 
     this.foregroundContainer.setDepth(DEPTH.FOREGROUND);

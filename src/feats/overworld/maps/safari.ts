@@ -425,6 +425,7 @@ export const s007Config: MapConfig = {
 
 export const s008Config: MapConfig = {
   key: 's008',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -477,6 +478,7 @@ export const s008Config: MapConfig = {
 
 export const s009Config: MapConfig = {
   key: 's009',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -529,6 +531,7 @@ export const s009Config: MapConfig = {
 
 export const s010Config: MapConfig = {
   key: 's010',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -577,6 +580,7 @@ export const s010Config: MapConfig = {
 
 export const s011Config: MapConfig = {
   key: 's011',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -779,6 +783,7 @@ export const s014Config: MapConfig = {
 
 export const s015Config: MapConfig = {
   key: 's015',
+  specialFilter: { kind: 'cave', variant: 'blue' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -836,6 +841,7 @@ export const s015Config: MapConfig = {
 
 export const s016Config: MapConfig = {
   key: 's016',
+  specialFilter: { kind: 'cave', variant: 'blue' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -942,6 +948,7 @@ export const s017Config: MapConfig = {
 
 export const s018Config: MapConfig = {
   key: 's018',
+  specialFilter: { kind: 'cave', variant: 'blue' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1046,6 +1053,7 @@ export const s019Config: MapConfig = {
 
 export const s020Config: MapConfig = {
   key: 's020',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1254,6 +1262,7 @@ export const s023Config: MapConfig = {
 
 export const s024Config: MapConfig = {
   key: 's024',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1307,6 +1316,7 @@ export const s024Config: MapConfig = {
 
 export const s025Config: MapConfig = {
   key: 's025',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1361,6 +1371,7 @@ export const s025Config: MapConfig = {
 
 export const s026Config: MapConfig = {
   key: 's026',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1409,6 +1420,7 @@ export const s026Config: MapConfig = {
 
 export const s027Config: MapConfig = {
   key: 's027',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1457,6 +1469,7 @@ export const s027Config: MapConfig = {
 
 export const s028Config: MapConfig = {
   key: 's028',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1505,6 +1518,7 @@ export const s028Config: MapConfig = {
 
 export const s029Config: MapConfig = {
   key: 's029',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1559,6 +1573,7 @@ export const s029Config: MapConfig = {
 
 export const s030Config: MapConfig = {
   key: 's030',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1607,6 +1622,7 @@ export const s030Config: MapConfig = {
 
 export const s031Config: MapConfig = {
   key: 's031',
+  specialFilter: { kind: 'cave', variant: 'ice' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'ice', water: 'water' },
@@ -1655,6 +1671,7 @@ export const s031Config: MapConfig = {
 
 export const s032Config: MapConfig = {
   key: 's032',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1708,6 +1725,7 @@ export const s032Config: MapConfig = {
 
 export const s033Config: MapConfig = {
   key: 's033',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1760,6 +1778,7 @@ export const s033Config: MapConfig = {
 
 export const s034Config: MapConfig = {
   key: 's034',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1812,6 +1831,7 @@ export const s034Config: MapConfig = {
 
 export const s035Config: MapConfig = {
   key: 's035',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1867,6 +1887,7 @@ export const s035Config: MapConfig = {
 
 export const s036Config: MapConfig = {
   key: 's036',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1915,6 +1936,7 @@ export const s036Config: MapConfig = {
 
 export const s037Config: MapConfig = {
   key: 's037',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -1963,6 +1985,7 @@ export const s037Config: MapConfig = {
 
 export const s038Config: MapConfig = {
   key: 's038',
+  specialFilter: { kind: 'cave', variant: 'dark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -2118,6 +2141,7 @@ export const s040Config: MapConfig = {
 
 export const s041Config: MapConfig = {
   key: 's041',
+  specialFilter: { kind: 'cave', variant: 'desertDark' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'sand', water: 'water' },
@@ -2166,6 +2190,7 @@ export const s041Config: MapConfig = {
 
 export const s042Config: MapConfig = {
   key: 's042',
+  specialFilter: { kind: 'cave', variant: 'blue' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -2218,6 +2243,7 @@ export const s042Config: MapConfig = {
 
 export const s043Config: MapConfig = {
   key: 's043',
+  specialFilter: { kind: 'cave', variant: 'red' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -2271,6 +2297,7 @@ export const s043Config: MapConfig = {
 
 export const s044Config: MapConfig = {
   key: 's044',
+  specialFilter: { kind: 'cave', variant: 'red' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },
@@ -2319,6 +2346,7 @@ export const s044Config: MapConfig = {
 
 export const s045Config: MapConfig = {
   key: 's045',
+  specialFilter: { kind: 'cave', variant: 'red' },
   bgm: BGM.P001,
   isIndoor: false,
   area: { land: 'rocky', water: 'water' },

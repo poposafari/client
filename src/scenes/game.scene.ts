@@ -31,6 +31,7 @@ import { debugLog } from '@poposafari/utils/debug';
 import { VITE_API_BASE_URL } from '@poposafari/env';
 import { FadeToBlackPipeline } from '@poposafari/utils/fade-to-black.pipeline';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
+import CaveFilter from '@poposafari/utils/cave-filter';
 import HazeDistortionFilter from '@poposafari/utils/haze-distortion-filter';
 import WipeRightToLeftShader from '@poposafari/utils/wipe-rl-shader';
 
@@ -320,6 +321,7 @@ export class GameScene extends BaseScene {
       renderer.pipelines.addPostPipeline(FadeToBlackPipeline.KEY, FadeToBlackPipeline);
       this.cameras.main.setPostPipeline(FadeToBlackPipeline.KEY);
       renderer.pipelines.addPostPipeline(DayNightFilter.KEY, DayNightFilter);
+      renderer.pipelines.addPostPipeline(CaveFilter.KEY, CaveFilter);
       renderer.pipelines.addPostPipeline(HazeDistortionFilter.KEY, HazeDistortionFilter);
       renderer.pipelines.addPostPipeline(WipeRightToLeftShader.KEY, WipeRightToLeftShader);
     }

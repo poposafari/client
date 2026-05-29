@@ -1,6 +1,9 @@
 import { DIRECTION } from '@poposafari/feats/overworld';
 import { DOOR, INIT_POS } from '@poposafari/feats/overworld/maps/door';
 import { BGM, TEXTURE } from '@poposafari/types';
+import { CaveVariant } from '@poposafari/utils/cave-filter';
+
+export type SpecialFilter = { kind: 'cave'; variant: CaveVariant };
 
 export interface LayerConfig {
   idx: number;
@@ -108,6 +111,8 @@ export interface MapConfig {
   type: 'plaza' | 'gate' | 'safari';
   dayNightFilter?: boolean;
   weatherFilter?: boolean;
+  /** 맵 전용 색조 필터. 설정 시 dayNightFilter와 무관하게 적용된다. */
+  specialFilter?: SpecialFilter | null;
   allowRide?: boolean;
   battleArea?: string;
   showLocationBanner?: boolean;
