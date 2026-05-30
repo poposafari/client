@@ -5,13 +5,13 @@ export const object: TranslationObject = {
   shopkeeper: 'てんいん',
   shopkeeper_0: 'てんいん 1',
   shopkeeper_1: 'てんいん 2',
-  professor: 'パンプキンはかせ',
+  professor: 'ホはかせ',
   fossil_restorer: 'カセキふっかつし',
   coming_soon: 'じゅんびちゅうです',
   sign_boutique: 'ブティック\n',
   sign_mart: 'フレンドリーショップ。\nいろいろな どうぐを かえます。',
   sign_bike_shop: 'じてんしゃショップ。\nじてんしゃを かえます。',
-  sign_lab: 'パンプキンはかせ けんきゅうじょ',
+  sign_lab: 'ホはかせ けんきゅうじょ',
   npc_script_0:
     'サファリゾーンに はいりたいなら\nタクシードライバー(サファリゾーン)に はなしかけてみて',
   npc_script_1:
@@ -36,13 +36,13 @@ export const object: TranslationObject = {
   npc_script_12:
     'サファリゾーンで じかんを すごしすぎて\nつかれたよ...',
   npc_script_13:
-    'パンプキンはかせの じょしゅとして はたらくと\nしごとが ふえて とっても しあわせ!',
-  npc_script_14: 'え? わたしは パンプキンはかせじゃ ありませんよ',
+    'ホはかせの じょしゅとして はたらくと\nしごとが ふえて とっても しあわせ!',
+  npc_script_14: 'え? わたしは ホはかせじゃ ありませんよ',
   npc_script_15:
-    'そのうち パンプキンはかせリサーチ という ものを\nどうにゅうしてみる つもりなんだけど...',
+    'そのうち ホはかせリサーチ という ものを\nどうにゅうしてみる つもりなんだけど...',
   npc_script_16: 'むりょうだから うれしい-!',
   npc_script_17:
     'トレーナーの レベルによって\nやせいの ポケモンの つよさが かわって でてくるよ!',
   npc_script_18: 'そのときが きたら きみに てつだって もらえたら うれしいよ!',
-  npc_script_19: 'パンプキンはかせは おくに いらっしゃいます',
+  npc_script_19: 'ホはかせは おくに いらっしゃいます',
 };

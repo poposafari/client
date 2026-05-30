@@ -8,7 +8,7 @@ export const map: TranslationMap = {
   p005: '-',
   p006: '-',
   p007: '-',
-  p008: 'Professor Pumpkin Lab',
+  p008: 'Professor Ho Lab',
   p009: '-',
   s000: 'Tutorial Zone',
   s001: 'Small Forest',
