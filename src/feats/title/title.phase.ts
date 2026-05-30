@@ -7,9 +7,9 @@ import { MysteryGiftPhase } from '../mysterygift/mysterygift.phase';
 import { CreateAvatarPhase } from '../tutorial';
 import { DeleteAccountPhase } from '../delete-account/delete-account.phase';
 import { OverworldEntryPhase } from '../overworld/overworld-entry.phase';
-import { QueuePhase } from '../queue';
 
 const ONLINE_REFRESH_MS = 30_000;
+const SERVER_BUSY_COOLDOWN_SEC = 5;
 
 export class TitlePhase implements IGamePhase {
   private ui!: TitleUi;
@@ -45,9 +45,11 @@ export class TitlePhase implements IGamePhase {
           const res = await this.scene.getApi().gameConnect();
           if (res.ready) {
             this.scene.switchPhase(new OverworldEntryPhase(this.scene, undefined, res.token));
-          } else {
-            this.scene.switchPhase(new QueuePhase(this.scene, res.position));
+            return;
           }
+          // 슬롯 가득 — 쿨다운 동안 메시지 닫기 잠금 후 메뉴 복귀
+          await this.ui.waitForServerBusy(SERVER_BUSY_COOLDOWN_SEC);
+          await this.runMenuOnce();
           return;
         }
         await this.runMenuOnce();

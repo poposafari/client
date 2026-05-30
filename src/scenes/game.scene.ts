@@ -19,6 +19,7 @@ import {
   TalkMessageUi,
 } from '@poposafari/feats';
 import { QuestionMessageUi } from '@poposafari/feats/message/question-message.ui';
+import { CooldownMessageUi } from '@poposafari/feats/message/cooldown-message.ui';
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
 import { CountdownPhase } from '@poposafari/feats/countdown';
@@ -99,6 +100,7 @@ export class GameScene extends BaseScene {
   private pocketTalkUi!: PocketTalkMessageUi;
   private noticeUi!: NoticeMessageUi;
   private questionUi!: QuestionMessageUi;
+  private cooldownUi!: CooldownMessageUi;
   private apiLoadingIndicator!: ApiLoadingIndicatorUi;
 
   private fadeInOnNextOverworldEnter = false;
@@ -304,6 +306,7 @@ export class GameScene extends BaseScene {
     this.pocketTalkUi = new PocketTalkMessageUi(this);
     this.noticeUi = new NoticeMessageUi(this);
     this.questionUi = new QuestionMessageUi(this);
+    this.cooldownUi = new CooldownMessageUi(this);
 
     this.events.on(GameEvent.LANGUAGE_CHANGED, () => {
       this.phaseStack.forEach((phase) => {
@@ -491,10 +494,14 @@ export class GameScene extends BaseScene {
   getMessage(type: 'pocketTalk'): PocketTalkMessageUi;
   getMessage(type: 'notice'): NoticeMessageUi;
   getMessage(type: 'question'): QuestionMessageUi;
-  getMessage(type: 'talk' | 'pocketTalk' | 'notice' | 'question'): MessageUi {
+  getMessage(type: 'cooldown'): CooldownMessageUi;
+  getMessage(
+    type: 'talk' | 'pocketTalk' | 'notice' | 'question' | 'cooldown',
+  ): MessageUi | CooldownMessageUi {
     if (type === 'talk') return this.talkUi;
     else if (type === 'pocketTalk') return this.pocketTalkUi;
     else if (type === 'notice') return this.noticeUi;
+    else if (type === 'cooldown') return this.cooldownUi;
     else return this.questionUi;
   }
 

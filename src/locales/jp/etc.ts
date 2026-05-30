@@ -135,10 +135,9 @@ export const etc: TranslationEtc = {
     'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
   maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
   playersOnline: '{{value}}にん オンライン',
-  queueWaitingTitle: 'まちゆけつに ならびました',
-  queueWaitingMessage: 'しばらく おまちください',
-  queuePosition: 'じゅんばん: {{position}}ばんめ',
-  queueImminent: 'まもなく にゅうじょうします...',
-  queueCancelHint: '[ESCで キャンセル]',
+  notice: 'おしらせ',
+  cooldownSeconds: '{{seconds}}びょう',
+  serverBusy:
+    'ただいま サーバーが まんいん です。\nしばらくしてから ふたたび おためしください。',
   menuCancel: 'とじる',
 };

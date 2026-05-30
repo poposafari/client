@@ -71,18 +71,8 @@ export interface GetMeRes {
   visitedMaps: string[];
 }
 
-// ── 게임 진입 / 큐 / 동접자 API ──
-export type GameConnectRes =
-  | { ready: true; token: string }
-  | { ready: false; position: number };
-
-export type QueueStatusRes =
-  | { ready: true; token: string }
-  | { ready: false; position: number | null };
-
-export interface QueueCancelRes {
-  ok: boolean;
-}
+// ── 게임 진입 / 동접자 API ──
+export type GameConnectRes = { ready: true; token: string } | { ready: false };
 
 export interface OnlineCountRes {
   count: number;

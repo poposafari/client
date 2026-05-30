@@ -3,3 +3,4 @@ export * from './talk-message.ui';
 export * from './pocket-talk-message.ui';
 export * from './notice-message.ui';
 export * from './question-message.ui';
+export * from './cooldown-message.ui';

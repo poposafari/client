@@ -47,6 +47,7 @@ import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.cont
 import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
+import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
@@ -145,6 +146,9 @@ export class PokemonPcUi extends BaseUi {
 
   // bottomInfo 우측 하단에 표시되는 N: 다음 키 가이드
   private bottomInfoGuide!: KeyGuideBarContainer;
+
+  private tooltipManager!: HudTooltipManager;
+  private currentInfoPokemon: PokemonBoxItem | null = null;
 
   private partyBaseY = 0;
 
@@ -342,6 +346,27 @@ export class PokemonPcUi extends BaseUi {
       this.grabOverlay,
       this.inputGuide,
     ]);
+
+    this.tooltipManager = new HudTooltipManager(this.scene, this);
+    this.tooltipManager.register(this.infoLevelSymbol, 'etc:tooltip_level');
+    this.tooltipManager.register(this.infoFriendshipSymbol, 'etc:tooltip_friendship');
+    this.tooltipManager.register(this.infoCandySymbol, 'etc:tooltip_candy');
+    this.tooltipManager.register(this.infoAbility, () => {
+      const p = this.currentInfoPokemon;
+      if (!p || !p.abilityId) return '';
+      return `${i18next.t(`ability:${p.abilityId}`)}\n`;
+    });
+    this.tooltipManager.register(this.heldItem, () => {
+      const p = this.currentInfoPokemon;
+      if (!p || !p.heldItemId) return '';
+      const name = i18next.t(`item:${p.heldItemId}.name`);
+      const desc = i18next.t(`item:${p.heldItemId}.description`);
+      return `${name}\n${desc}`;
+    });
+
+    this.once('destroy', () => {
+      this.tooltipManager?.destroy();
+    });
   }
 
   private isEligibleForTeachMove(pokemon: PokemonBoxItem): boolean {
@@ -1982,6 +2007,7 @@ export class PokemonPcUi extends BaseUi {
   }
 
   private clearInfo(): void {
+    this.currentInfoPokemon = null;
     this.infoPokedex.setText('');
     this.infoPokedexSymbol.setText('');
     this.infoPokemonName.setText('');
@@ -2080,7 +2106,12 @@ export class PokemonPcUi extends BaseUi {
     const pokemon =
       this.boxPokemons.find((p) => String(p.id) === selectedKey) ??
       this.pcState.getPokemonById(Number(selectedKey));
-    if (!pokemon) return;
+    if (!pokemon) {
+      this.currentInfoPokemon = null;
+      return;
+    }
+
+    this.currentInfoPokemon = pokemon;
 
     const pokedexKey = pokemon.pokedexId;
 

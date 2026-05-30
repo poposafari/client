@@ -175,6 +175,10 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     await this.talk.showMessage(error, { name: '' });
   }
 
+  async waitForServerBusy(cooldownSec: number): Promise<void> {
+    await this.scene.getMessage('cooldown').showCooldown(i18next.t('etc:serverBusy'), cooldownSec);
+  }
+
   createLayout(): void {
     this.bg = addBackground(this.scene, TEXTURE.BG_1);
 

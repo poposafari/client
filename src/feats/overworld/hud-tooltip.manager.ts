@@ -8,7 +8,8 @@ const TOOLTIP = {
   nineSlice: { left: 16, right: 16, top: 16, bottom: 16 },
   paddingX: 20,
   paddingY: 20,
-  fontSize: 40,
+  fontSize: 60,
+  lineGap: 8,
   cursorOffsetX: 10,
   cursorOffsetY: 8,
   edgeMargin: 12,
@@ -29,7 +30,8 @@ export class HudTooltipManager {
 
   private container!: GContainer;
   private window!: GWindow;
-  private text!: GText;
+  private nameText!: GText;
+  private descText!: GText;
 
   private currentTarget: Hoverable | null = null;
   private destroyed = false;
@@ -60,7 +62,20 @@ export class HudTooltipManager {
     );
     this.window.setOrigin(0, 0);
 
-    this.text = addText(
+    this.nameText = addText(
+      this.scene,
+      TOOLTIP.paddingX,
+      TOOLTIP.paddingY,
+      '',
+      TOOLTIP.fontSize,
+      '100',
+      'left',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    );
+    this.nameText.setOrigin(0, 0);
+
+    this.descText = addText(
       this.scene,
       TOOLTIP.paddingX,
       TOOLTIP.paddingY,
@@ -71,9 +86,9 @@ export class HudTooltipManager {
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
-    this.text.setOrigin(0, 0);
+    this.descText.setOrigin(0, 0);
 
-    this.container.add([this.window, this.text]);
+    this.container.add([this.window, this.nameText, this.descText]);
     this.container.setVisible(false);
     this.parent.add(this.container);
   }
@@ -138,9 +153,27 @@ export class HudTooltipManager {
 
   private show(content: TooltipContent, pointer: Phaser.Input.Pointer): void {
     const label = typeof content === 'function' ? content() : i18next.t(content);
-    this.text.setText(label);
-    const w = this.text.width + TOOLTIP.paddingX * 2;
-    const h = this.text.height + TOOLTIP.paddingY * 2;
+    if (!label) {
+      this.hide();
+      return;
+    }
+
+    const newlineIdx = label.indexOf('\n');
+    const name = newlineIdx === -1 ? label : label.slice(0, newlineIdx);
+    const desc = newlineIdx === -1 ? '' : label.slice(newlineIdx + 1);
+
+    this.nameText.setText(name);
+    this.descText.setText(desc);
+    this.descText.setVisible(!!desc);
+
+    const nameH = this.nameText.height;
+    this.descText.setY(TOOLTIP.paddingY + nameH + (desc ? TOOLTIP.lineGap : 0));
+
+    const contentW = Math.max(this.nameText.width, desc ? this.descText.width : 0);
+    const descBlockH = desc ? TOOLTIP.lineGap + this.descText.height : 0;
+    const w = contentW + TOOLTIP.paddingX * 2;
+    const h = nameH + descBlockH + TOOLTIP.paddingY * 2;
+
     this.window.setSize(w / TOOLTIP.windowScale, h / TOOLTIP.windowScale);
     this.window.setTexture(this.scene.getOption().getWindow());
     this.updatePosition(pointer);

@@ -16,8 +16,6 @@ import {
   PcSlotState,
   PokedexEntry,
   PokemonBoxItem,
-  QueueCancelRes,
-  QueueStatusRes,
   RegisterLocalReq,
   RestoreFossilReq,
   RestoreFossilRes,
@@ -298,22 +296,6 @@ export class ApiManager {
       return res.data.data;
     }
     throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to connect game', 500);
-  }
-
-  async queueStatus(): Promise<QueueStatusRes> {
-    const res = await this.client.get<ApiResponse<QueueStatusRes>>('/queue/status');
-    if (res.data.success) {
-      return res.data.data;
-    }
-    throw new ApiError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to fetch queue status', 500);
-  }
-
-  async queueCancel(): Promise<QueueCancelRes> {
-    const res = await this.client.post<ApiResponse<QueueCancelRes>>('/queue/cancel');
-    if (res.data.success) {
-      return res.data.data;
-    }
-    return { ok: false };
   }
 
   async getOnlineCount(): Promise<OnlineCountRes> {
