@@ -1093,6 +1093,27 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(BGM.P001, 'audio/bgm', 'p001', 'ogg');
     this.scene.loadAudio(BGM.P009, 'audio/bgm', 'p009', 'wav');
     this.scene.loadAudio(BGM.POKEMART, 'audio/bgm', 'pokemart', 'ogg');
+    this.scene.loadAudio(BGM.S000, 'audio/bgm', 's000', 'ogg');
+    this.scene.loadAudio(BGM.S001, 'audio/bgm', 's001', 'ogg');
+    this.scene.loadAudio(BGM.S002, 'audio/bgm', 's002', 'ogg');
+    this.scene.loadAudio(BGM.S003, 'audio/bgm', 's003', 'ogg');
+    this.scene.loadAudio(BGM.S004, 'audio/bgm', 's004', 'ogg');
+    this.scene.loadAudio(BGM.S005, 'audio/bgm', 's005', 'ogg');
+    this.scene.loadAudio(BGM.S006, 'audio/bgm', 's006', 'ogg');
+    this.scene.loadAudio(BGM.S007, 'audio/bgm', 's007', 'ogg');
+    this.scene.loadAudio(BGM.S008_S011, 'audio/bgm', 's008_s011', 'ogg');
+    this.scene.loadAudio(BGM.S012, 'audio/bgm', 's012', 'ogg');
+    this.scene.loadAudio(BGM.S013_S014, 'audio/bgm', 's013_s014', 'ogg');
+    this.scene.loadAudio(BGM.S015_S020, 'audio/bgm', 's015_s020', 'ogg');
+    this.scene.loadAudio(BGM.S021, 'audio/bgm', 's021', 'ogg');
+    this.scene.loadAudio(BGM.S022, 'audio/bgm', 's022', 'ogg');
+    this.scene.loadAudio(BGM.S023, 'audio/bgm', 's023', 'ogg');
+    this.scene.loadAudio(BGM.S024_S031, 'audio/bgm', 's024_s031', 'ogg');
+    this.scene.loadAudio(BGM.S032_S038, 'audio/bgm', 's032_s038', 'ogg');
+    this.scene.loadAudio(BGM.S039_S040, 'audio/bgm', 's039_s040', 'ogg');
+    this.scene.loadAudio(BGM.S041, 'audio/bgm', 's041', 'ogg');
+    this.scene.loadAudio(BGM.S042_S045, 'audio/bgm', 's042_s045', 'ogg');
+    this.scene.loadAudio(BGM.S046, 'audio/bgm', 's046', 'ogg');
   }
 
   private createSprite() {
