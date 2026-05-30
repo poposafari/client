@@ -63,5 +63,7 @@ export const pc: Record<string, string> = {
   evolveStart: 'おや？ {{name}}の\nようすが？！',
   evolveEnd: 'おめでとう！ {{from}}は\n{{to}}に しんかした！',
   friendship: 'なつき',
+  level: 'レベル',
+  exp: 'EXP',
   noEvolution: 'しんかできない ポケモンです。',
 };

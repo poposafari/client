@@ -63,5 +63,7 @@ export const pc: Record<string, string> = {
   evolveStart: 'What?\n{{name}} is evolving!',
   evolveEnd: '{{from}} evolved\ninto {{to}}!',
   friendship: 'Friendship',
+  level: 'Level',
+  exp: 'EXP',
   noEvolution: 'This Pokémon cannot evolve.',
 };

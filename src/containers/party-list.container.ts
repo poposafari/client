@@ -83,4 +83,8 @@ export class PartyListContainer extends Phaser.GameObjects.Container {
       this.slots[i]?.setPokemon(sorted[i] ?? null);
     }
   }
+
+  getSlots(): PokemonSlotContainer[] {
+    return this.slots;
+  }
 }

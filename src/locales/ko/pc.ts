@@ -63,5 +63,7 @@ export const pc: Record<string, string> = {
   evolveStart: '어라? {{name}}의\n모습이?!',
   evolveEnd: '축하합니다! {{from, 은/는}}\n{{to, (으)로}} 진화했습니다!',
   friendship: '친밀도',
+  level: '레벨',
+  exp: 'EXP',
   noEvolution: '진화할 수 없는 포켓몬입니다.',
 };

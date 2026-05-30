@@ -137,4 +137,9 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
     this.icon.setAlpha(alpha);
     this.heldItem.setAlpha(alpha);
   }
+
+  /** hover hit-test용 아이콘 이미지. 비어있는 슬롯에서는 visible=false. */
+  getIcon(): GImage {
+    return this.icon;
+  }
 }

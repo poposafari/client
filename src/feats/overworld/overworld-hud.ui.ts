@@ -23,6 +23,7 @@ import {
   getOutfitTextureKey,
   getSkinTextureKey,
 } from './overworld-costume-keys';
+import { PartyHoverTooltip } from './party-hover-tooltip';
 
 const MAX_QUICK_SLOT_SIZE = 6;
 
@@ -138,6 +139,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private locationBannerTween: Phaser.Tweens.Tween | null = null;
 
   private tooltipManager!: HudTooltipManager;
+  private partyHoverTooltip!: PartyHoverTooltip;
 
   constructor(scene: GameScene) {
     const { width, height } = scene.cameras.main;
@@ -174,6 +176,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
     this.tooltipManager = new HudTooltipManager(this.scene, this);
     this.registerTooltips();
+    this.partyHoverTooltip = new PartyHoverTooltip(this.scene, this, this.partyList);
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.scene.events.on(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
@@ -199,6 +202,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.timeTickEvent = null;
       this.clearLocationBanner();
       this.tooltipManager?.destroy();
+      this.partyHoverTooltip?.destroy();
     });
 
     this.updateTime(DayNightFilter.getCurrentTimeLabel());
