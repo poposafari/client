@@ -68,6 +68,7 @@ export interface GetMeRes {
     pokedexId: string;
     caughtCount: number;
   }[];
+  pokemonBoxCount: number;
   visitedMaps: string[];
 }
 
@@ -196,8 +197,9 @@ export interface SafariCatchCaughtPokemon {
   abilityId: string;
   heldItemId: string | null;
   skills: string[];
-  boxNumber: number;
-  gridNumber: number;
+  boxNumber: number | null;
+  gridNumber: number | null;
+  partySlot: number | null;
   ballId: number;
   caughtLocation: string;
 }

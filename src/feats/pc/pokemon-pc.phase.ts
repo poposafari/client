@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { UserManager } from '@poposafari/core/user.manager';
 import { PokemonPcUi } from './pokemon-pc.ui';
-import { GameEvent, GameScene } from '@poposafari/scenes';
+import { GameScene } from '@poposafari/scenes';
 import { PcLocalState } from './pc-local-state';
 import type { BoxMetaItem, PokemonBoxItem } from '@poposafari/types/dto';
 
@@ -89,10 +89,10 @@ export class PokemonPcPhase implements IGamePhase {
         }),
       );
 
-      user?.setPokemonBox(this.pcState.getAllBoxPokemons());
+      const updatedBox = this.pcState.getAllBoxPokemons();
+      user?.setPokemonBox(updatedBox);
+      user?.setPokemonBoxCount(updatedBox.length);
       user?.setBoxMeta(this.pcState.getBoxMetaSnapshot());
-
-      this.scene.events.emit(GameEvent.PARTY_CHANGED);
     }
 
     this.scene.popPhase();

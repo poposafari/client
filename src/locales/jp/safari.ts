@@ -8,4 +8,5 @@ export const safari = {
     line2: '{{category}}ポケットに いれた！',
   },
   wildEncounter: 'おっと！ やせいの {{name}}が\nおどろいた かおで こちらを みている！',
+  boxFull: 'ポケモンボックスが いっぱいだ！\nボックスを せいりしてください。',
 };

@@ -17,6 +17,9 @@ export interface ItemBagEntry {
   register: boolean;
 }
 
+export const MAX_POKEMON_BOX_CAPACITY = 900;
+export const MAX_PARTY_SIZE = 6;
+
 export interface MappedProfile {
   nickname: string;
   gender: 'male' | 'female';
@@ -33,6 +36,7 @@ export class UserManager {
   private party!: GetMeRes['party'];
   private itemSlots!: string[];
   private visitedMaps!: Set<string>;
+  private pokemonBoxCount!: number;
 
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
@@ -64,6 +68,7 @@ export class UserManager {
     this.party = undefined as unknown as GetMeRes['party'];
     this.itemSlots = undefined as unknown as string[];
     this.visitedMaps = undefined as unknown as Set<string>;
+    this.pokemonBoxCount = undefined as unknown as number;
 
     this.pokemonBox = null;
     this.boxMeta = null;
@@ -106,6 +111,7 @@ export class UserManager {
     ]);
     this.pokedex = user.pokedex;
     this.visitedMaps = new Set(user.visitedMaps ?? []);
+    this.pokemonBoxCount = user.pokemonBoxCount ?? 0;
   }
 
   getProfile(): MappedProfile {
@@ -173,6 +179,26 @@ export class UserManager {
   addPokemonToBox(pokemon: PokemonBoxItem): void {
     if (!this.pokemonBox) return;
     this.pokemonBox.push(pokemon);
+  }
+
+  getPokemonBoxCount(): number {
+    return this.pokemonBoxCount ?? 0;
+  }
+
+  setPokemonBoxCount(count: number): void {
+    this.pokemonBoxCount = Math.max(0, count);
+  }
+
+  adjustPokemonBoxCount(delta: number): void {
+    this.pokemonBoxCount = Math.max(0, (this.pokemonBoxCount ?? 0) + delta);
+  }
+
+  /** 박스 900칸과 파티 6칸이 모두 가득 차야 true. 둘 중 한 곳이라도 빈 슬롯이 있으면 포획 가능. */
+  isPokemonBoxFull(): boolean {
+    return (
+      (this.pokemonBoxCount ?? 0) >= MAX_POKEMON_BOX_CAPACITY &&
+      (this.party?.length ?? 0) >= MAX_PARTY_SIZE
+    );
   }
 
   getBoxMeta(): BoxMetaItem[] | null {

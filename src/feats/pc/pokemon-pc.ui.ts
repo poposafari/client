@@ -1206,6 +1206,7 @@ export class PokemonPcUi extends BaseUi {
       if (cachedBox) {
         user.setPokemonBox(cachedBox.filter((p) => p.id !== pokemon.id));
       }
+      user.adjustPokemonBoxCount(-1);
 
       const bag = user.getItemBag();
       for (const reward of result.rewards) {

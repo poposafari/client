@@ -8,4 +8,5 @@ export const safari = {
     line2: '{{category}} 포켓에 넣었다!',
   },
   wildEncounter: '앗! 야생 {{name, 이/가}}\n놀란 표정으로 이쪽을 바라본다!',
+  boxFull: '포켓몬 박스가 가득 찼다!\n박스를 정리해 주세요.',
 };

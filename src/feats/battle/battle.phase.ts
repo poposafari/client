@@ -5,7 +5,7 @@ import type { BattleContext, BattleModifiers, BattleState, CatchResult } from '.
 import { toCatchResult } from './battle.types';
 import { RewardPhase, type PartySnapshotEntry } from './reward/reward.phase';
 import { BattleTutorialPhase } from './tutorial/battle-tutorial.phase';
-import { BGM, MAP, OptionKey, SFX } from '@poposafari/types';
+import { ApiError, BGM, ErrorCode, MAP, OptionKey, SFX } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
 import { screenFadeOut } from '@poposafari/utils/screen-fade';
 
@@ -139,6 +139,17 @@ export class BattlePhase implements IGamePhase {
           }
           outcome = res ? toCatchResult(res) : { kind: 'fail' };
         } catch (e) {
+          if (e instanceof ApiError && e.code === ErrorCode.POKEMON_BOX_FULL) {
+            const u = this.scene.getUser();
+            if (u) {
+              const entry = u.getItemBag()?.get('safari-ball');
+              const restored = (entry?.quantity ?? 0) + 1;
+              u.updateItemQuantity('safari-ball', restored);
+              this.ui.updateSafariBallCount(restored);
+              u.setPokemonBoxCount(900);
+            }
+            await this.scene.getMessage('talk').showMessage(i18next.t('safari:boxFull'));
+          }
           outcome = { kind: 'fail' };
         }
 
@@ -177,25 +188,51 @@ export class BattlePhase implements IGamePhase {
               user.updateItemQuantity(r.itemId, (existing?.quantity ?? 0) + r.quantity);
             }
           }
-          user?.addPokemonToBox({
-            id: pokemon.id,
-            pokedexId: pokemon.pokedexId,
-            level: pokemon.level,
-            exp: 0,
-            gender: pokemon.gender,
-            isShiny: pokemon.isShiny,
-            nickname: pokemon.nickname,
-            abilityId: pokemon.abilityId,
-            natureId: pokemon.natureId,
-            skills: pokemon.skills,
-            heldItemId: pokemon.heldItemId ? pokemon.heldItemId : null,
-            boxNumber: pokemon.boxNumber,
-            gridNumber: pokemon.gridNumber,
-            ballId: pokemon.ballId,
-            caughtLocation: pokemon.caughtLocation,
-            caughtAt: new Date().toISOString(),
-            friendship: 0,
-          });
+          if (pokemon.partySlot !== null) {
+            const currentParty = user?.getParty() ?? [];
+            user?.setParty([
+              ...currentParty,
+              {
+                id: pokemon.id,
+                pokedexId: pokemon.pokedexId,
+                level: pokemon.level,
+                exp: 0,
+                friendship: 0,
+                gender: pokemon.gender,
+                isShiny: pokemon.isShiny,
+                nickname: pokemon.nickname,
+                abilityId: pokemon.abilityId,
+                natureId: pokemon.natureId,
+                skills: pokemon.skills,
+                heldItemId: pokemon.heldItemId ?? null,
+                partySlot: pokemon.partySlot,
+                ballId: pokemon.ballId,
+                caughtLocation: pokemon.caughtLocation,
+                caughtAt: new Date().toISOString(),
+              },
+            ]);
+          } else {
+            user?.addPokemonToBox({
+              id: pokemon.id,
+              pokedexId: pokemon.pokedexId,
+              level: pokemon.level,
+              exp: 0,
+              gender: pokemon.gender,
+              isShiny: pokemon.isShiny,
+              nickname: pokemon.nickname,
+              abilityId: pokemon.abilityId,
+              natureId: pokemon.natureId,
+              skills: pokemon.skills,
+              heldItemId: pokemon.heldItemId ? pokemon.heldItemId : null,
+              boxNumber: pokemon.boxNumber,
+              gridNumber: pokemon.gridNumber,
+              ballId: pokemon.ballId,
+              caughtLocation: pokemon.caughtLocation,
+              caughtAt: new Date().toISOString(),
+              friendship: 0,
+            });
+            user?.adjustPokemonBoxCount(1);
+          }
           user?.incrementPokedexCount(pokemon.pokedexId);
 
           await new Promise<void>((resolve) => {
@@ -225,7 +262,6 @@ export class BattlePhase implements IGamePhase {
                   return { ...p, level: r.level, exp: r.exp };
                 }),
               );
-              this.scene.events.emit(GameEvent.PARTY_CHANGED);
             }
           }
 

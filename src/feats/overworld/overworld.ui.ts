@@ -532,6 +532,13 @@ export class OverworldUi extends BaseUi {
     if (!this.player) return;
     if (!wild.tryLockInteraction()) return;
 
+    const user = this.scene.getUser();
+    if (user?.isPokemonBoxFull()) {
+      wild.unlockInteraction();
+      await this.scene.getMessage('talk').showMessage(i18next.t('safari:boxFull'));
+      return;
+    }
+
     this.wildEncounterPending = true;
     wild.freezeRandomWalk(true);
     wild.faceDirection(this.oppositeDirection(this.player.getLastDirection()));

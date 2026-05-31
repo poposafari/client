@@ -135,6 +135,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   private timeTickEvent: Phaser.Time.TimerEvent | null = null;
 
+  private unsubscribeParty: (() => void) | null = null;
+
   private locationBanner: GContainer | null = null;
   private locationBannerTween: Phaser.Tweens.Tween | null = null;
 
@@ -180,8 +182,11 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
     this.scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.scene.events.on(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
-    this.scene.events.on(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
     this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
+
+    // 파티 슬롯은 UserManager.setParty()를 단일 진실 공급원으로 삼아 갱신한다.
+    // (포획/화석/PC/가방 등 모든 파티 변경이 setParty()를 거치므로 갱신 누락이 없다.)
+    this.unsubscribeParty = this.scene.getUser()?.onPartyChanged(this.onPartyChanged) ?? null;
 
     this.timeTickEvent = this.scene.time.addEvent({
       delay: 1000,
@@ -196,8 +201,9 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.once('destroy', () => {
       this.scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
       this.scene.events.off(GameEvent.WEATHER_CHANGED, this.onWeatherChanged, this);
-      this.scene.events.off(GameEvent.PARTY_CHANGED, this.onPartyChanged, this);
       this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged, this);
+      this.unsubscribeParty?.();
+      this.unsubscribeParty = null;
       this.timeTickEvent?.remove(false);
       this.timeTickEvent = null;
       this.clearLocationBanner();

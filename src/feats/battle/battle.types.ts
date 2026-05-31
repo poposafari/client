@@ -25,8 +25,9 @@ export interface CaughtPokemon {
   abilityId: string;
   heldItemId: string | null;
   skills: string[];
-  boxNumber: number;
-  gridNumber: number;
+  boxNumber: number | null;
+  gridNumber: number | null;
+  partySlot: number | null;
   ballId: number;
   caughtLocation: string;
 }

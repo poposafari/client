@@ -137,25 +137,51 @@ export class FossilPhase implements IGamePhase {
     if (!user) return false;
 
     const p = result.pokemon;
-    user.addPokemonToBox({
-      id: p.id,
-      pokedexId: p.pokedexId,
-      level: p.level,
-      exp: 0,
-      friendship: p.friendship ?? 0,
-      gender: p.gender,
-      isShiny: p.isShiny,
-      nickname: p.nickname,
-      abilityId: p.abilityId,
-      natureId: p.natureId,
-      skills: p.skills,
-      heldItemId: p.heldItemId ?? null,
-      boxNumber: p.boxNumber,
-      gridNumber: p.gridNumber,
-      ballId: p.ballId,
-      caughtLocation: p.caughtLocation,
-      caughtAt: p.caughtAt ?? new Date().toISOString(),
-    });
+    if (p.partySlot !== null) {
+      const currentParty = user.getParty();
+      user.setParty([
+        ...currentParty,
+        {
+          id: p.id,
+          pokedexId: p.pokedexId,
+          level: p.level,
+          exp: 0,
+          friendship: p.friendship ?? 0,
+          gender: p.gender,
+          isShiny: p.isShiny,
+          nickname: p.nickname,
+          abilityId: p.abilityId,
+          natureId: p.natureId,
+          skills: p.skills,
+          heldItemId: p.heldItemId ?? null,
+          partySlot: p.partySlot,
+          ballId: p.ballId,
+          caughtLocation: p.caughtLocation,
+          caughtAt: p.caughtAt ?? new Date().toISOString(),
+        },
+      ]);
+    } else {
+      user.addPokemonToBox({
+        id: p.id,
+        pokedexId: p.pokedexId,
+        level: p.level,
+        exp: 0,
+        friendship: p.friendship ?? 0,
+        gender: p.gender,
+        isShiny: p.isShiny,
+        nickname: p.nickname,
+        abilityId: p.abilityId,
+        natureId: p.natureId,
+        skills: p.skills,
+        heldItemId: p.heldItemId ?? null,
+        boxNumber: p.boxNumber,
+        gridNumber: p.gridNumber,
+        ballId: p.ballId,
+        caughtLocation: p.caughtLocation,
+        caughtAt: p.caughtAt ?? new Date().toISOString(),
+      });
+      user.adjustPokemonBoxCount(1);
+    }
     user.incrementPokedexCount(p.pokedexId);
     for (const ingredientId of recipe.ingredients) {
       user.decreaseItemQuantity(ingredientId, 1);
