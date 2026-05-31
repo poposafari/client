@@ -19,7 +19,7 @@ const buildVersion = (() => {
     return process.env.GITHUB_REF_NAME;
   }
   try {
-    return execSync('git describe --tags --always', { stdio: ['ignore', 'pipe', 'ignore'] })
+    return execSync('git describe --tags --abbrev=0', { stdio: ['ignore', 'pipe', 'ignore'] })
       .toString()
       .trim();
   } catch {
