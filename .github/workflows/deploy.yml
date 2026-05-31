@@ -11,14 +11,21 @@ on:
       - 'vite.config.ts'
       - 'tsconfig.json'
       - '.github/workflows/deploy.yml'
+    tags:
+      - 'v*'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - id: meta
-        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
 
       - uses: pnpm/action-setup@v3
         with: { version: 9 }
@@ -35,7 +42,7 @@ jobs:
       - name: Notify Discord (start)
         run: |
           curl -X POST -H "Content-Type: application/json" \
-            -d "{\"content\":\"🎨 클라이언트 배포 시작 SHA \`${{ steps.meta.outputs.sha }}\`\"}" \
+            -d "{\"content\":\"🎨 클라이언트 배포 시작 \`${{ steps.meta.outputs.version }}\` (SHA \`${{ steps.meta.outputs.sha }}\`)\"}" \
             ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
 
       - name: Setup SSH key
@@ -76,7 +83,7 @@ jobs:
         if: success()
         run: |
           curl -X POST -H "Content-Type: application/json" \
-            -d "{\"content\":\"✅ 클라이언트 배포 완료 SHA \`${{ steps.meta.outputs.sha }}\`\"}" \
+            -d "{\"content\":\"✅ 클라이언트 배포 완료 \`${{ steps.meta.outputs.version }}\` (SHA \`${{ steps.meta.outputs.sha }}\`)\"}" \
             ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
 
       - name: Notify Discord (failure)

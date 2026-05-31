@@ -206,7 +206,7 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.scene,
       this.title.displayWidth / 2,
       this.title.displayHeight / 2,
-      'v0.0.1',
+      __BUILD_VERSION__,
       60,
       '100',
       'right',

@@ -45,7 +45,7 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 const start = async () => {
-  console.info(`[poposafari] build ${__BUILD_SHA__} @ ${__BUILD_AT__}`);
+  console.info(`[poposafari] ${__BUILD_VERSION__} (build ${__BUILD_SHA__}) @ ${__BUILD_AT__}`);
   await initI18n();
 
   const game = new Phaser.Game(config);

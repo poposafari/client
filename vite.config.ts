@@ -13,12 +13,27 @@ const buildSha = (() => {
     return 'unknown';
   }
 })();
+
+const buildVersion = (() => {
+  if (process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME) {
+    return process.env.GITHUB_REF_NAME;
+  }
+  try {
+    return execSync('git describe --tags --always', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    return 'dev';
+  }
+})();
+
 const buildAt = new Date().toISOString();
 
 export default defineConfig({
   define: {
     __BUILD_SHA__: JSON.stringify(buildSha),
     __BUILD_AT__: JSON.stringify(buildAt),
+    __BUILD_VERSION__: JSON.stringify(buildVersion),
   },
   plugins: [
     // 브라우저 화면에 오버레이로 타입 에러를 띄워줌 (개발 편의성 UP)
