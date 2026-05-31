@@ -58,6 +58,7 @@ export const error: TranslationError = {
   OAUTH_CANCELED: '외부 로그인이 취소되었습니다.',
   FOSSIL_RECIPE_NOT_FOUND: '복원할 수 없는 화석입니다.',
   FOSSIL_INGREDIENT_INSUFFICIENT: '복원에 필요한 화석이 부족합니다.',
+  POKEMON_BOX_FULL: '포켓몬 박스가 가득 찼다!\n박스를 정리해 주세요.',
 
   // ===== Client validation =====
   EMPTY_USERNAME: '아이디를 입력해주세요.',
@@ -70,6 +71,8 @@ export const error: TranslationError = {
   WHITESPACE_NICKNAME: '닉네임에 공백을 포함할 수 없습니다.',
   INVALID_COSTUME: '올바르지 않은 코스튬입니다.',
   INVALID_NICKNAME: '닉네임은 2자 이상 12자 이하로\n입력하셔야 합니다.',
+  INVALID_NICKNAME_CHARS: '닉네임은 문자와 숫자만\n사용할 수 있습니다.',
+  RESERVED_NICKNAME: '사용할 수 없는 닉네임입니다.',
   KICKED: '다른 기기에서 접속했습니다.\n다시 로그인해 주세요.',
   OAUTH_FAILED: '외부 로그인에 실패했습니다.\n다시 시도해주세요.',
 };

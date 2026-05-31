@@ -56,6 +56,7 @@ export const error: TranslationError = {
   OAUTH_CANCELED: 'OAuthログインが キャンセルされました。',
   FOSSIL_RECIPE_NOT_FOUND: 'ふっかつ できない カセキです。',
   FOSSIL_INGREDIENT_INSUFFICIENT: 'ふっかつに ひつような カセキが たりません。',
+  POKEMON_BOX_FULL: 'ポケモンボックスが いっぱいだ！\nボックスを せいりしてください。',
 
   // ===== Client validation =====
   EMPTY_USERNAME: 'ユーザーめいを にゅうりょくしてください。',
@@ -68,6 +69,8 @@ export const error: TranslationError = {
   WHITESPACE_NICKNAME: 'ニックネームに くうはくを\nふくめることは できません。',
   INVALID_COSTUME: 'むこうな コスチュームです。',
   INVALID_NICKNAME: 'ニックネームは 2もじいじょう 12もじいかで\nにゅうりょくしてください。',
+  INVALID_NICKNAME_CHARS: 'ニックネームは もじと すうじだけ\nつかうことが できます。',
+  RESERVED_NICKNAME: 'つかえない ニックネームです。',
   KICKED: 'ほかの たんまつで ログインされました。\nもういちど ログインしてください。',
   OAUTH_FAILED: 'がいぶログインに しっぱいしました。\nもういちど おためしください。',
 };

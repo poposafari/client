@@ -56,6 +56,7 @@ export const error: TranslationError = {
   OAUTH_CANCELED: 'OAuth login was canceled.',
   FOSSIL_RECIPE_NOT_FOUND: 'This fossil cannot be restored.',
   FOSSIL_INGREDIENT_INSUFFICIENT: 'Not enough fossils for restoration.',
+  POKEMON_BOX_FULL: 'Your Pokémon Box is full!\nPlease organize your boxes.',
 
   // ===== Client validation =====
   EMPTY_USERNAME: 'Please enter your username.',
@@ -68,6 +69,8 @@ export const error: TranslationError = {
   WHITESPACE_NICKNAME: 'Nickname cannot contain whitespace.',
   INVALID_COSTUME: 'Invalid costume.',
   INVALID_NICKNAME: 'Nickname must be 2 to 12 characters.',
+  INVALID_NICKNAME_CHARS: 'Nickname can only contain\nletters and numbers.',
+  RESERVED_NICKNAME: 'This nickname cannot be used.',
   KICKED: 'You were logged in from another device.\nPlease log in again.',
   OAUTH_FAILED: 'External login failed.\nPlease try again.',
 };

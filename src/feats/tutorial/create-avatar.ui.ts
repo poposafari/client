@@ -18,9 +18,9 @@ import {
   addTextInput,
   addWindow,
   getBackgroundKey,
-  isValidNickname,
   runShakeEffect,
   toGenderCode,
+  validateNickname,
 } from '@poposafari/utils';
 import { SelectBoxContainer } from '@poposafari/containers/box-select.container';
 import { ButtonContainer } from '@poposafari/containers/button.container';
@@ -325,18 +325,9 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
     const hairColorId = this.boxHairColor.getSelectedId();
     const outfitId = this.boxOutfit.getSelectedId();
 
-    if (/\s/.test(nickname)) {
-      this.errorEffect(i18next.t('error:WHITESPACE_NICKNAME'));
-      return;
-    }
-
-    if (!nickname || nickname.trim() === '') {
-      this.errorEffect(i18next.t('error:EMPTY_NICKNAME'));
-      return;
-    }
-
-    if (!isValidNickname(nickname)) {
-      this.errorEffect(i18next.t('error:INVALID_NICKNAME'));
+    const nicknameError = validateNickname(nickname);
+    if (nicknameError) {
+      this.errorEffect(i18next.t(`error:${nicknameError}`));
       return;
     }
 

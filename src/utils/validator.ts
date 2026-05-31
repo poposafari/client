@@ -11,10 +11,28 @@ export function isValidPassword(password: string): boolean {
   return true;
 }
 
-export function isValidNickname(nickname: string): boolean {
+export type NicknameError =
+  | 'EMPTY_NICKNAME'
+  | 'WHITESPACE_NICKNAME'
+  | 'INVALID_NICKNAME'
+  | 'INVALID_NICKNAME_CHARS'
+  | 'RESERVED_NICKNAME';
+
+/**
+ * 닉네임을 검증하고 실패 사유 코드를 반환한다. 유효하면 null.
+ * 반환되는 코드는 그대로 i18n error 네임스페이스의 키로 사용된다.
+ */
+export function validateNickname(nickname: string): NicknameError | null {
+  if (/\s/.test(nickname)) return 'WHITESPACE_NICKNAME';
   const trimmed = nickname.trim();
-  if (!/^[\p{L}\p{N}]{2,12}$/u.test(trimmed)) return false;
+  if (trimmed === '') return 'EMPTY_NICKNAME';
+  if (trimmed.length < 2 || trimmed.length > 12) return 'INVALID_NICKNAME';
+  if (!/^[\p{L}\p{N}]+$/u.test(trimmed)) return 'INVALID_NICKNAME_CHARS';
   const lower = trimmed.toLowerCase();
-  if (RESERVED_NICKNAME_WORDS.some((w) => lower.includes(w))) return false;
-  return true;
+  if (RESERVED_NICKNAME_WORDS.some((w) => lower.includes(w))) return 'RESERVED_NICKNAME';
+  return null;
+}
+
+export function isValidNickname(nickname: string): boolean {
+  return validateNickname(nickname) === null;
 }
