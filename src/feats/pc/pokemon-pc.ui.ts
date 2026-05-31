@@ -1195,7 +1195,13 @@ export class PokemonPcUi extends BaseUi {
     if (choice?.key !== 'yes') return;
 
     const api = this.scene.getApi();
-    const result = await api.sellPokemon(pokemon.id);
+    let result;
+    try {
+      result = await api.sellPokemon(pokemon.id);
+    } catch (err) {
+      await showApiErrorAsTalk(this.scene, err);
+      return;
+    }
     if (!result) return;
 
     this.pcState.removePokemon(pokemon.id);

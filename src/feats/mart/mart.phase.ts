@@ -9,7 +9,7 @@ import { MartBuyUi } from './mart-buy.ui';
 import { MartSellUi } from './mart-sell.ui';
 import { MartSellBagUi } from './mart-sell-bag.ui';
 
-const MAX_ITEM_QUANTITY = 9999;
+const MAX_ITEM_QUANTITY = 9_999_999;
 const MAX_BUY_QUANTITY = 99;
 const MAX_USER_MONEY = 999_999_999;
 
