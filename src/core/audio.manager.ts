@@ -1,5 +1,9 @@
 import { BGM, SFX } from '@poposafari/types';
 
+export interface SeamlessLoopHandle {
+  stop(): void;
+}
+
 export class AudioManager {
   // Volume (0.0 ~ 1.0)
   private masterVolume: number = 1.0;
@@ -81,6 +85,78 @@ export class AudioManager {
     if (!sound) return;
     if (sound.isPlaying) sound.stop();
     sound.destroy();
+  }
+
+  public playEffectSeamlessLoop(
+    key: SFX | string,
+    options?: { rate?: number; detune?: number; overlapMs?: number },
+  ): SeamlessLoopHandle {
+    const volume = this.masterVolume * this.effectVolume;
+    const rate = options?.rate ?? 1;
+    const overlapMs = options?.overlapMs ?? 300;
+
+    let stopped = false;
+    let timer: Phaser.Time.TimerEvent | null = null;
+    let current: Phaser.Sound.WebAudioSound | null = null;
+    const active = new Set<Phaser.Sound.WebAudioSound>();
+
+    const playNext = (): void => {
+      if (stopped) return;
+
+      const previous = current;
+      const sound = this.scene.sound.add(key as unknown as string, {
+        volume,
+        loop: false,
+        rate,
+        detune: options?.detune,
+      }) as Phaser.Sound.WebAudioSound;
+
+      active.add(sound);
+      const cleanup = (): void => {
+        active.delete(sound);
+        this.scene.tweens.killTweensOf(sound);
+        sound.destroy();
+      };
+      sound.once('complete', cleanup);
+      sound.once('stop', cleanup);
+      sound.play();
+      current = sound;
+
+      if (previous && previous.isPlaying) {
+        this.scene.tweens.add({
+          targets: previous,
+          volume: 0,
+          duration: overlapMs,
+          ease: 'Linear',
+          onComplete: () => {
+            if (previous.isPlaying) previous.stop();
+          },
+        });
+      }
+
+      const durationMs = Math.ceil(((sound.duration || 1) * 1000) / rate);
+      const nextDelay = Math.max(10, durationMs - overlapMs);
+      timer = this.scene.time.delayedCall(nextDelay, playNext);
+    };
+
+    playNext();
+
+    return {
+      stop: (): void => {
+        stopped = true;
+        if (timer) {
+          timer.remove(false);
+          timer = null;
+        }
+        for (const s of active) {
+          this.scene.tweens.killTweensOf(s);
+          if (s.isPlaying) s.stop();
+          s.destroy();
+        }
+        active.clear();
+        current = null;
+      },
+    };
   }
 
   public stopEffect(key: SFX | string): void {

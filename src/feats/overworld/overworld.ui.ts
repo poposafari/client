@@ -101,8 +101,10 @@ function toMoveType(state: OverworldMovementState): MovePayload['moveType'] {
 
 const DEFAULT_TILE_X = 4;
 const DEFAULT_TILE_Y = 4;
-/** IDLE일 때 이 시간 이상 누르면 이동, 미만이면 제자리에서 방향만 전환 */
 const HOLD_THRESHOLD_MS = 120;
+
+const GRASS_STEP_HEARING_RANGE = 4;
+const STEP_SOUND_MIN_INTERVAL = 250;
 
 /** base_surf 스프라이트 Y 오프셋 (음수=화면 위로, 양수=화면 아래로) */
 const BASE_SURF_Y_OFFSET = +20;
@@ -196,6 +198,10 @@ export class OverworldUi extends BaseUi {
   private grassByEntity: Map<BaseObject, GrassObject> = new Map();
   /** 엔티티의 마지막 관측 tile — 변경된 경우에만 grass 갱신. */
   private grassLastTile: Map<BaseObject, { x: number; y: number }> = new Map();
+  /** 잔디 밟는 소리가 재생 중인지. 한 번에 하나만 — 이전 소리가 끝나야 다음 소리 허용. */
+  private grassStepPlaying = false;
+  /** 마지막으로 타일 발소리(road 등)를 낸 시각(scene clock ms). 최소 간격 스로틀용. */
+  private lastStepSoundTime = 0;
 
   private footprints: FootprintObject[] = [];
   private waterEdgeByEntity: Map<BaseObject, WaterEdgeObject> = new Map();
@@ -1503,8 +1509,7 @@ export class OverworldUi extends BaseUi {
         }
         if (
           !isOnWater &&
-          (preState === OverworldMovementState.SURF ||
-            preState === OverworldMovementState.JUMP)
+          (preState === OverworldMovementState.SURF || preState === OverworldMovementState.JUMP)
         ) {
           user.setOverworldMovementState(OverworldMovementState.WALK);
           user.setActiveSurfPokemonId(null);
@@ -1604,7 +1609,7 @@ export class OverworldUi extends BaseUi {
 
       if (this.mapConfig?.weatherFilter !== false) {
         const biome = landToBiome(this.mapConfig?.area?.land);
-        this.weatherOverlay = new WeatherOverlay(this.scene, biome);
+        this.weatherOverlay = new WeatherOverlay(this.scene, biome, [], this.scene.getAudio());
         // 맵 전역 spawn(눈 등)을 위해 현재 맵의 월드 영역을 알려줌. 레이어 컨테이너의 스케일을 곱해야 실제 월드 dim.
         const tilemap = this.mapView?.getTilemap();
         if (tilemap) {
@@ -1828,6 +1833,7 @@ export class OverworldUi extends BaseUi {
     const tileX = payload?.tileX ?? this.player.getTileX();
     const tileY = payload?.tileY ?? this.player.getTileY();
     this.updateGrassForEntity(this.player, tileX, tileY, payload?.direction);
+    this.playTileStepSound(tileX, tileY);
 
     if (payload?.direction) {
       this.trySpawnFootprint(tileX, tileY, payload.direction);
@@ -1908,6 +1914,55 @@ export class OverworldUi extends BaseUi {
     const back = grass.getBackSprite();
     if (back) this.worldContainer?.add(back);
     this.grassByEntity.set(entity, grass);
+
+    this.playGrassStep(entity, tileX, tileY);
+  }
+
+  private playGrassStep(entity: BaseObject, tileX: number, tileY: number): void {
+    if (this.grassStepPlaying) return;
+
+    const isPlayer = entity === this.player;
+    const isWild = entity instanceof WildPokemonObject;
+    if (!isPlayer && !isWild) return;
+
+    if (isWild && this.player) {
+      const dx = Math.abs(tileX - this.player.getTileX());
+      const dy = Math.abs(tileY - this.player.getTileY());
+      if (Math.max(dx, dy) > GRASS_STEP_HEARING_RANGE) return;
+    }
+
+    this.grassStepPlaying = true;
+    void this.scene
+      .getAudio()
+      .playEffectAwaitable(SFX.STEP_GRASS)
+      .finally(() => {
+        this.grassStepPlaying = false;
+      });
+  }
+
+  private playTileStepSound(tileX: number, tileY: number): void {
+    const state = this.scene.getUser()?.getOverworldMovementState();
+    if (state !== OverworldMovementState.WALK && state !== OverworldMovementState.RUNNING) return;
+
+    const tileSound = this.mapView?.getTileSoundAt(tileX, tileY) ?? null;
+    const tileType = this.mapView?.getEventTileType(tileX, tileY) ?? null;
+    const sfx =
+      tileSound === 'road'
+        ? SFX.STEP_ROAD
+        : tileType === 'sand_1'
+          ? SFX.STEP_DIRT
+          : tileType === 'snow_1'
+            ? SFX.STEP_SNOW
+            : tileType === 'water_edge'
+              ? SFX.STEP_WATER
+              : null;
+    if (!sfx) return;
+
+    const now = this.scene.time.now;
+    if (now - this.lastStepSoundTime < STEP_SOUND_MIN_INTERVAL) return;
+    this.lastStepSoundTime = now;
+
+    this.scene.getAudio().playEffect(sfx);
   }
 
   private isEntityInMotion(entity: BaseObject): boolean {
@@ -1941,7 +1996,8 @@ export class OverworldUi extends BaseUi {
       this.releaseWaterEdgeForEntity(entity);
       return;
     }
-    const isWaterEdge = this.mapView?.hasWaterEdgeTileAt(entity.getTileX(), entity.getTileY()) ?? false;
+    const isWaterEdge =
+      this.mapView?.hasWaterEdgeTileAt(entity.getTileX(), entity.getTileY()) ?? false;
     if (!isWaterEdge) {
       if (this.waterEdgeByEntity.has(entity)) this.releaseWaterEdgeForEntity(entity);
       return;
@@ -2277,14 +2333,9 @@ export class OverworldUi extends BaseUi {
               }
               const targetMapId = result.location as string;
               const ok = await this.scene.startMapTransitionWithFade(async () => {
-                if (
-                  targetMapId.startsWith('s') &&
-                  !this.scene.getSafariInfo().has(targetMapId)
-                ) {
+                if (targetMapId.startsWith('s') && !this.scene.getSafariInfo().has(targetMapId)) {
                   try {
-                    const safariResult = await this.scene
-                      .getApi()
-                      .enterSafari(targetMapId, false);
+                    const safariResult = await this.scene.getApi().enterSafari(targetMapId, false);
                     if (safariResult) {
                       this.scene.mergeSafariInfo({
                         [safariResult.mapId]: safariResult.mapInfo,

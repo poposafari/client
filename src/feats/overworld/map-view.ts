@@ -258,6 +258,22 @@ export class MapView {
     return null;
   }
 
+  getTileSoundAt(tileX: number, tileY: number): string | null {
+    if (!this.map) return null;
+    const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');
+    if (!tile || tile.index === -1) return null;
+    const sound = tile.properties?.tile_sound;
+    return typeof sound === 'string' ? sound : null;
+  }
+
+  getEventTileType(tileX: number, tileY: number): string | null {
+    if (!this.map) return null;
+    const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');
+    if (!tile || tile.index === -1) return null;
+    const type = tile.properties?.type;
+    return typeof type === 'string' ? type : null;
+  }
+
   hasWaterEdgeTileAt(tileX: number, tileY: number): boolean {
     if (!this.map) return false;
     const tile = this.map.getTileAt(Math.floor(tileX), Math.floor(tileY), false, 'event');

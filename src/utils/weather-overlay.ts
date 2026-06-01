@@ -1,4 +1,5 @@
-import { DEPTH } from '@poposafari/types';
+import { DEPTH, SFX } from '@poposafari/types';
+import { AudioManager, SeamlessLoopHandle } from '@poposafari/core/audio.manager';
 import HazeDistortionFilter from '@poposafari/utils/haze-distortion-filter';
 
 export type WeatherBiome = 'normal' | 'snow' | 'desert';
@@ -105,6 +106,11 @@ export class WeatherOverlay {
   private currentWeather = 'sunny';
   private resizeBound = false;
 
+  private audio: AudioManager | null = null;
+  private rainLoop: SeamlessLoopHandle | null = null;
+  private stormLoop: SeamlessLoopHandle | null = null;
+  private windLoop: SeamlessLoopHandle | null = null;
+
   private fogIsHaze = false;
   private hazePhase = 0;
   private hazeActive = false;
@@ -117,9 +123,11 @@ export class WeatherOverlay {
     scene: Phaser.Scene,
     biome: WeatherBiome = 'normal',
     hazeTargets: Phaser.GameObjects.Container[] = [],
+    audio: AudioManager | null = null,
   ) {
     this.scene = scene;
     this.biome = biome;
+    this.audio = audio;
     this.hazeTargets = hazeTargets.filter((c): c is Phaser.GameObjects.Container => !!c);
     this.ensureTextures();
     this.buildPersistentLayers();
@@ -269,6 +277,7 @@ export class WeatherOverlay {
     if (this.currentWeather === weather) return;
     this.currentWeather = weather;
     this.resetAllLayers();
+    this.updateWeatherAudio();
 
     if (weather === 'sunny') {
       // desert는 sunny일 때 뿌연 오버레이 없이 화면 일렁임만 — foggy보다 살짝 강하게.
@@ -303,6 +312,46 @@ export class WeatherOverlay {
     }
   }
 
+  private updateWeatherAudio(): void {
+    const rainOn =
+      this.biome === 'normal' &&
+      (this.currentWeather === 'rainy' || this.currentWeather === 'stormy');
+    const stormOn = this.biome === 'normal' && this.currentWeather === 'stormy';
+    const windOn =
+      this.biome === 'desert' &&
+      (this.currentWeather === 'rainy' || this.currentWeather === 'stormy');
+
+    if (rainOn && !this.rainLoop) {
+      this.rainLoop = this.audio?.playEffectSeamlessLoop(SFX.RAIN, { overlapMs: 500 }) ?? null;
+    } else if (!rainOn && this.rainLoop) {
+      this.rainLoop.stop();
+      this.rainLoop = null;
+    }
+
+    if (stormOn && !this.stormLoop) {
+      this.stormLoop = this.audio?.playEffectSeamlessLoop(SFX.STORM, { overlapMs: 500 }) ?? null;
+    } else if (!stormOn && this.stormLoop) {
+      this.stormLoop.stop();
+      this.stormLoop = null;
+    }
+
+    if (windOn && !this.windLoop) {
+      this.windLoop = this.audio?.playEffectSeamlessLoop(SFX.WIND, { overlapMs: 500 }) ?? null;
+    } else if (!windOn && this.windLoop) {
+      this.windLoop.stop();
+      this.windLoop = null;
+    }
+  }
+
+  private stopWeatherAudio(): void {
+    this.rainLoop?.stop();
+    this.rainLoop = null;
+    this.stormLoop?.stop();
+    this.stormLoop = null;
+    this.windLoop?.stop();
+    this.windLoop = null;
+  }
+
   tick(delta: number): void {
     if (this.fogIsHaze || this.hazeActive) {
       this.hazePhase += delta;
@@ -333,6 +382,7 @@ export class WeatherOverlay {
   }
 
   destroy(): void {
+    this.stopWeatherAudio();
     this.stopSpawnTimers();
     for (const child of this.particles.getChildren()) {
       this.scene.tweens.killTweensOf(child);
@@ -683,6 +733,7 @@ export class WeatherOverlay {
           return;
         }
         this.flashRect.setVisible(true);
+        this.audio?.playEffect(SFX.THUNDER);
         this.scene.tweens.add({
           targets: this.flashRect,
           fillAlpha: 0.5,

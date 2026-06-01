@@ -31,6 +31,15 @@ export const enum SFX {
   MART = 'mart',
   JUMP = 'jump',
   LEVEL_UP = 'level_up',
+  RAIN = 'rain',
+  STORM = 'storm',
+  WIND = 'wind',
+  THUNDER = 'thunder',
+  STEP_GRASS = 'step_grass',
+  STEP_ROAD = 'step_road',
+  STEP_DIRT = 'step_dirt',
+  STEP_SNOW = 'step_snow',
+  STEP_WATER = 'step_water',
 }
 
 export const enum BGM {
