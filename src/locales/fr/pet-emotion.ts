@@ -1,0 +1,70 @@
+export const petEmotion: Record<string, string[]> = {
+  '1': [
+    '{{name}} observe tranquillement les alentours.',
+    '{{name}} garde la bouche close, parfaitement immobile.',
+    '{{name}} semble calme et posé.',
+    '{{name}} reste assis en silence, sans un bruit.',
+  ],
+  '2': [
+    '{{name}} affiche une expression effrayée !',
+    "{{name}} a reculé d'un pas, surpris.",
+    'Les yeux de {{name}} se sont écarquillés de stupeur !',
+    "Le poil de {{name}} s'est hérissé d'un coup.",
+  ],
+  '3': [
+    '{{name}} penche la tête sur le côté.',
+    "{{name}} renifle l'air comme s'il se posait une question.",
+    'Les yeux de {{name}} pétillent de curiosité au moindre son.',
+    "Le regard de {{name}} s'agite en tous sens.",
+  ],
+  '4': [
+    '{{name}} fredonne un air joyeux.',
+    '{{name}} esquisse une petite danse sur un rythme imaginaire.',
+    'De petites notes de musique semblent flotter autour de {{name}}.',
+    '{{name}} chante gaiement, la queue se balançant en rythme.',
+  ],
+  '5': [
+    "{{name}} contemple les alentours avec des yeux remplis d'amour.",
+    "De petits cœurs s'élèvent autour de {{name}}.",
+    '{{name}} frotte sa joue avec contentement.',
+    "Le visage de {{name}} déborde d'affection.",
+    "{{name}} s'appuie confortablement d'un côté.",
+  ],
+  '6': [
+    "{{name}} n'a pas l'air en grande forme...",
+    "{{name}} semble regretter ce qu'il vient de manger.",
+    'Le visage de {{name}} paraît un peu pâle.',
+    '{{name}} émet un drôle de gargouillis venant de son ventre.',
+  ],
+  '7': [
+    '{{name}} sourit, de bonne humeur.',
+    '{{name}} gambade à petits pas légers.',
+    "L'expression de {{name}} est plus radieuse que d'habitude aujourd'hui.",
+    '{{name}} laisse échapper un bâillement satisfait.',
+  ],
+  '8': [
+    "{{name}} est si heureux qu'il sautille sur place !",
+    '{{name}} remue la queue comme un fou pour fêter ça !',
+    'Les yeux de {{name}} brillent comme des étoiles !',
+    '{{name}} ne peut cacher la joie qui jaillit de lui !',
+  ],
+  '9': [
+    "{{name}} baisse la tête, l'air abattu...",
+    'Une pointe de tristesse persiste dans les yeux de {{name}}.',
+    '{{name}} a poussé un soupir discret.',
+    "Les épaules de {{name}} s'affaissent lourdement aujourd'hui.",
+  ],
+  '10': [
+    '{{name}} a détourné la tête, légèrement boudeur.',
+    "{{name}} a l'air contrarié par quelque chose.",
+    'Le front de {{name}} est faiblement plissé.',
+    '{{name}} a marmonné quelque chose à voix basse.',
+  ],
+  '11': [
+    '{{name}} semble absolument furieux !',
+    'Des ondes de colère émanent de {{name}} !',
+    '{{name}} montre les dents en grognant sourdement.',
+    '{{name}} tape du pied, soufflant bruyamment !',
+    "{{name}} a l'air prêt à exploser de rage à tout instant...",
+  ],
+};

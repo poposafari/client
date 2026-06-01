@@ -1,0 +1,62 @@
+import type { TranslationObject } from '../ko/object';
+
+export const object: TranslationObject = {
+  cabbie_safari: 'Chauffeur (Zone Safari)',
+  shopkeeper: 'Vendeur',
+  shopkeeper_0: 'Vendeur 1',
+  shopkeeper_1: 'Vendeur 2',
+  professor: 'Professeur Ho',
+  fossil_restorer: 'Restaurateur de fossiles',
+  musician: 'Musicien',
+  musician_question: 'La-la-la~\nVoulez-vous changer la musique de fond de Bourg Popo ?',
+  musician_confirm: 'La régler sur « {{name}} » ?',
+  musician_done: 'Excellent choix ! La-la-la~',
+  musician_track_0: 'Porte de la Zone Safari',
+  musician_track_1: 'Bonaugure',
+  musician_track_2: 'Unionpolis',
+  musician_track_3: 'Vestigion',
+  musician_track_4: 'Voilaroc',
+  musician_track_5: 'Rivage du Lac Courage',
+  musician_track_6: 'Joliberges',
+  musician_track_7: 'Ville Griotte',
+  musician_track_8: 'Mauville',
+  musician_track_9: 'Écorcia',
+  musician_track_10: 'Doublonville',
+  musician_track_11: 'Irisia',
+  musician_track_12: 'Carmin-sur-Mer',
+  musician_track_13: 'Azuria',
+  musician_track_14: 'Bourg Palette',
+  musician_track_15: 'Vénélase',
+  coming_soon: 'Bientôt disponible',
+  sign_boutique: 'Boutique\n',
+  sign_mart: 'Boutique Sympa.\nVous pouvez y acheter divers objets.',
+  sign_bike_shop: 'Magasin de Vélos.\nVous pouvez y acheter des vélos.',
+  sign_lab: 'Labo du Professeur Ho',
+  npc_script_0:
+    'Si vous voulez entrer dans la Zone Safari,\nessayez de parler au chauffeur (Zone Safari).',
+  npc_script_1:
+    'Le saviez-vous ? Dans la Zone Safari, les Pokémon\nqui apparaissent changent selon la météo.',
+  npc_script_2: "Si vous apprenez la CS Surf à un Pokémon,\nvous pourrez traverser l'eau !",
+  npc_script_3: "Je n'arrive pas à décider quoi acheter...",
+  npc_script_4:
+    'Continuez à renforcer vos Pokémon !\nEn les mettant dans votre équipe, vous capturerez plus facilement les Pokémon sauvages.',
+  npc_script_5:
+    'Dans quelle Zone Safari apparaît le Pokémon fabuleux Mew ?\nJe cherchais dans des livres pour le découvrir !',
+  npc_script_6: 'Je crois que je vais passer toute la journée\nà simplement contempler le lac.',
+  npc_script_7: 'Le Pokémon en tête de votre équipe\npeut se promener avec vous !',
+  npc_script_8: 'Laisse-moi donner un bon conseil à un jeune comme toi.....',
+  npc_script_9:
+    "Je ne sais pas quand ce sera ajouté, mais...\non dirait qu'un PokéStop est en construction !..",
+  npc_script_10:
+    "Je viens de l'apprendre dans un livre —\nil semble que chaque Pokémon ait un rang !",
+  npc_script_11:
+    'On dit que le taux de capture des Pokémon sauvages\naugmente selon le rang des Pokémon de votre équipe.',
+  npc_script_12: "J'ai passé bien trop de temps dans la Zone Safari...\nJe suis épuisé.",
+  npc_script_13: "Travailler comme assistant du Professeur Ho\nme tient si occupé — j'adore ça !",
+  npc_script_14: 'Hein ? Je ne suis pas le Professeur Ho.',
+  npc_script_15: 'Je pense bientôt introduire quelque chose\nappelé Recherche du Professeur Ho...',
+  npc_script_16: "Et c'est gratuit, c'est génial-!",
+  npc_script_17: 'De nouvelles cartes de la Zone Safari sont découvertes en permanence !',
+  npc_script_18: "Quand ce moment viendra, j'adorerais que tu m'aides !",
+  npc_script_19: "Le Professeur Ho est à l'intérieur.",
+};

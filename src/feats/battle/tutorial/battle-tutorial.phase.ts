@@ -17,7 +17,6 @@ const TUTORIAL_LINES = [
   'etc:s000_tutorial_mud_0',
   'etc:s000_tutorial_mud_1',
   'etc:s000_tutorial_run_0',
-  'etc:s000_tutorial_run_1',
 ];
 
 export class BattleTutorialPhase implements IGamePhase {

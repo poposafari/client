@@ -108,8 +108,6 @@ export const etc: TranslationEtc = {
   s000_tutorial_mud_0: '「どろ」は ポケモンに どろを なげて\nほかく かくりつを あげますが、',
   s000_tutorial_mud_1: 'ポケモンが おこって\nにげる かくりつも いっしょに あがります。',
   s000_tutorial_run_0: '「にげる」は バトルを あきらめて\nあんぜんに ぬけだす こうどうです。',
-  s000_tutorial_run_1:
-    'ただし こんかいの チュートリアルでは\nかならず いっぴき つかまえなければ なりません！',
   deleteAccount_0: 'すべての データを\nさくじょしますか？',
   deleteAccount_1: 'ふっきゅうは できません。\nそれでも よろしいですか？',
   deleteAccount_2: 'ほんとうに？\nそれでも さくじょしますか？',
@@ -137,7 +135,6 @@ export const etc: TranslationEtc = {
   playersOnline: '{{value}}にん オンライン',
   notice: 'おしらせ',
   cooldownSeconds: '{{seconds}}びょう',
-  serverBusy:
-    'ただいま サーバーが まんいん です。\nしばらくしてから ふたたび おためしください。',
+  serverBusy: 'ただいま サーバーが まんいん です。\nしばらくしてから ふたたび おためしください。',
   menuCancel: 'とじる',
 };

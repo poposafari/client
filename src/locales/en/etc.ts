@@ -104,7 +104,6 @@ export const etc: TranslationEtc = {
   s000_tutorial_mud_0: '"Mud" raises the catch rate,\nbut',
   s000_tutorial_mud_1: 'it also makes the Pokémon angry,\nincreasing the chance to flee.',
   s000_tutorial_run_0: '"Run" means giving up the battle\nand escaping safely.',
-  s000_tutorial_run_1: 'However, in this tutorial\nyou must catch at least one!',
   deleteAccount_0: 'Delete all\nyour data?',
   deleteAccount_1: 'This cannot be undone.\nAre you sure?',
   deleteAccount_2: 'Really?\nDelete anyway?',

@@ -2,7 +2,7 @@ import { Language, OPTION_KEY, OptionKey, TEXTURE } from '@poposafari/types';
 import { AudioManager } from './audio.manager';
 import { debugLog } from '@poposafari/utils';
 
-export const LanguageItmes = ['en', 'ko', 'jp'];
+export const LanguageItmes = ['en', 'ko', 'jp', 'fr'];
 
 export class OptionManager {
   private option: Record<OptionKey, any> = {

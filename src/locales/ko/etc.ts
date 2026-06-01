@@ -105,7 +105,6 @@ export const etc: TranslationEtc = {
   s000_tutorial_mud_0: '"진흙"은 포켓몬에게 진흙을 던져서\n포획 확률을 높여주지만,',
   s000_tutorial_mud_1: '포켓몬이 화가 나서\n도망갈 확률도 함께 올라갑니다.',
   s000_tutorial_run_0: '"도망가기"는 전투를 포기하고\n안전하게 빠져나오는 행동입니다.',
-  s000_tutorial_run_1: '단, 이번 튜토리얼에서는\n반드시 한 마리는 잡아야 합니다!',
   deleteAccount_0: '모든 데이터를\n삭제하시겠습니까?',
   deleteAccount_1: '복구할 수 없습니다\n그래도 괜찮겠습니까?',
   deleteAccount_2: '정말로?\n그래도 삭제하시겠습니까?',

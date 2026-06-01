@@ -29,6 +29,7 @@ export enum Language {
   KOREAN = 'ko',
   ENGLISH = 'en',
   JAPANESE = 'jp',
+  FRENCH = 'fr',
 }
 
 /** 오버월드 플레이어 움직임 상태 (UserManager에서 관리) */

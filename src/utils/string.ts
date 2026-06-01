@@ -25,6 +25,9 @@ export const getGlobalLanguageName = (language: string) => {
     case 'jp':
       ret = '日本語';
       break;
+    case 'fr':
+      ret = 'Français';
+      break;
   }
 
   return ret;
