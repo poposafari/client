@@ -1429,7 +1429,7 @@ export const STARTER_POKEDEX_IDS: readonly string[] = [
   '0912',
 ];
 
-export const P001_POKEMON_NPC: readonly string[] = ['0823', '0835', '0446'];
+export const P001_POKEMON_NPC: readonly string[] = ['0823', '0835', '0446', '0402'];
 
 type WildSlot = {
   sunny?: { id: string; weight: number }[];

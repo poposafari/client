@@ -17,10 +17,14 @@ import { MartNpcObject } from './objects/special-npc.object';
 import { BattlePhase } from '../battle';
 import { RewardPhase } from '../battle/reward/reward.phase';
 import { HiddenMovePhase } from '../hidden-move/hidden-move.phase';
+import { MenuUi } from '@poposafari/feats/menu/menu-ui';
+import { MusicianListUi } from '@poposafari/feats/menu/musician-list.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from '@poposafari/i18n';
 import { screenFadeIn } from '@poposafari/utils/screen-fade';
 import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { BGM } from '@poposafari/types';
+import { POPOTOWN_OST_TRACKS, resolveMapBgm, setPopotownOst } from '@poposafari/core/popotown-ost';
 
 export class OverworldPhase implements IGamePhase {
   private overworldUi: OverworldUi | null = null;
@@ -32,6 +36,70 @@ export class OverworldPhase implements IGamePhase {
   };
 
   constructor(private scene: GameScene) {}
+
+  private async handleMusicianTalk(): Promise<void> {
+    const question = this.scene.getMessage('question');
+    const talk = this.scene.getMessage('talk');
+    const yesNoMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
+      y: +800,
+      itemHeight: 70,
+    });
+    const listUi = new MusicianListUi(this.scene);
+
+    const mapConfig = this.scene.getMapRegistry().get(this.currentLocation);
+    const originalBgm = resolveMapBgm(this.currentLocation, mapConfig?.bgm);
+
+    const yesNoItems = () => [
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
+    ];
+
+    try {
+      await question.showMessage(i18next.t('object:musician_question'), {
+        name: i18next.t('object:musician'),
+        resolveWhen: 'displayed',
+      });
+      const choice = await yesNoMenu.waitForSelect(yesNoItems());
+      yesNoMenu.hide();
+      question.hide();
+      if (choice?.key !== 'yes') return;
+
+      const items = POPOTOWN_OST_TRACKS.map((bgm, i) => ({
+        key: bgm as string,
+        label: i18next.t(`object:musician_track_${i}`),
+      }));
+      listUi.setItems(items);
+
+      while (true) {
+        const selected = await listUi.waitForSelect();
+        if (!selected || selected.key === 'cancel') {
+          listUi.hide();
+          if (originalBgm) this.scene.getAudio().playBackground(originalBgm);
+          return;
+        }
+
+        listUi.hide();
+        await question.showMessage(i18next.t('object:musician_confirm', { name: selected.label }), {
+          resolveWhen: 'displayed',
+        });
+        const confirm = await yesNoMenu.waitForSelect(yesNoItems());
+        yesNoMenu.hide();
+        question.hide();
+
+        if (confirm?.key === 'yes') {
+          setPopotownOst(selected.key as BGM);
+          this.scene.getAudio().playBackground(selected.key as BGM);
+          await talk.showMessage(i18next.t('object:musician_done'), {
+            name: i18next.t('object:musician'),
+          });
+          return;
+        }
+      }
+    } finally {
+      yesNoMenu.destroy();
+      listUi.destroy();
+    }
+  }
 
   private applyNewbieMode(): void {
     const profile = this.scene.getUser()?.getProfile();
@@ -91,8 +159,9 @@ export class OverworldPhase implements IGamePhase {
       this.unsubscribePartyCry = user.onPartyChanged(() => this.prefetchPartyCries());
     }
 
-    if (mapConfig.bgm) {
-      this.scene.getAudio().playBackground(mapConfig.bgm);
+    const effectiveBgm = resolveMapBgm(location, mapConfig.bgm);
+    if (effectiveBgm) {
+      this.scene.getAudio().playBackground(effectiveBgm);
     } else {
       this.scene.getAudio().stopBackground();
     }
@@ -123,6 +192,8 @@ export class OverworldPhase implements IGamePhase {
         );
       } else if (phaseKey === 'fossil') {
         this.scene.pushPhase(new FossilPhase(this.scene));
+      } else if (phaseKey === 'musician') {
+        void this.handleMusicianTalk();
       }
     };
     this.overworldUi.onWildEncounterRequested = (wild) => {
@@ -269,8 +340,9 @@ export class OverworldPhase implements IGamePhase {
   onResume(): void {
     this.overworldUi?.syncMenuToggleIcon(false);
     const mapConfig = this.scene.getMapRegistry().get(this.currentLocation);
-    if (mapConfig?.bgm) {
-      this.scene.getAudio().playBackground(mapConfig.bgm);
+    const effectiveBgm = resolveMapBgm(this.currentLocation, mapConfig?.bgm);
+    if (effectiveBgm) {
+      this.scene.getAudio().playBackground(effectiveBgm);
     }
   }
 

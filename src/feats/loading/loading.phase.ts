@@ -88,6 +88,8 @@ import {
 
 const MAX_NPC = 34;
 const MAX_DOOR = 19;
+const MAX_NPC_1 = 0;
+const SPECIAL_NPC_1_INDICES = new Set<number>([0]);
 
 /** id like "skin_0" | "outfit_0" | "hair_0" -> numeric suffix "0" */
 function idToSuffix(id: string): string {
@@ -829,6 +831,11 @@ export class LoadingPhase implements IGamePhase {
       this.scene.loadAtlas(`npc${i}`, 'ui/npcs', `npc${i}`, ANIMATION.NPC, 'ui/npcs');
     }
 
+    for (let i = 0; i <= MAX_NPC_1; i++) {
+      const key = `npc_1_${i}`;
+      this.scene.loadAtlas(key, 'ui/npcs/npc_1', key, 'npc_1', 'ui/npcs/npc_1');
+    }
+
     //door
     for (let i = 0; i <= MAX_DOOR; i++) {
       this.scene.loadAtlas(`door${i}`, 'ui/doors', `door_${i}`, ANIMATION.DOOR, 'ui/doors');
@@ -1090,7 +1097,22 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(BGM.BATTLE_2, 'audio/bgm', 'battle_2', 'ogg');
     this.scene.loadAudio(BGM.BATTLE_STRONG, 'audio/bgm', 'battle_strong', 'ogg');
     this.scene.loadAudio(BGM.BATTLE_VICTORY, 'audio/bgm', 'battle_victory', 'ogg');
-    this.scene.loadAudio(BGM.P001, 'audio/bgm', 'p001', 'ogg');
+    this.scene.loadAudio(BGM.P001_0, 'audio/bgm', 'p001_0', 'ogg');
+    this.scene.loadAudio(BGM.P001_1, 'audio/bgm', 'p001_1', 'ogg');
+    this.scene.loadAudio(BGM.P001_2, 'audio/bgm', 'p001_2', 'ogg');
+    this.scene.loadAudio(BGM.P001_3, 'audio/bgm', 'p001_3', 'ogg');
+    this.scene.loadAudio(BGM.P001_4, 'audio/bgm', 'p001_4', 'ogg');
+    this.scene.loadAudio(BGM.P001_5, 'audio/bgm', 'p001_5', 'ogg');
+    this.scene.loadAudio(BGM.P001_6, 'audio/bgm', 'p001_6', 'ogg');
+    this.scene.loadAudio(BGM.P001_7, 'audio/bgm', 'p001_7', 'ogg');
+    this.scene.loadAudio(BGM.P001_8, 'audio/bgm', 'p001_8', 'ogg');
+    this.scene.loadAudio(BGM.P001_9, 'audio/bgm', 'p001_9', 'ogg');
+    this.scene.loadAudio(BGM.P001_10, 'audio/bgm', 'p001_10', 'ogg');
+    this.scene.loadAudio(BGM.P001_11, 'audio/bgm', 'p001_11', 'ogg');
+    this.scene.loadAudio(BGM.P001_12, 'audio/bgm', 'p001_12', 'ogg');
+    this.scene.loadAudio(BGM.P001_13, 'audio/bgm', 'p001_13', 'ogg');
+    this.scene.loadAudio(BGM.P001_14, 'audio/bgm', 'p001_14', 'ogg');
+    this.scene.loadAudio(BGM.P001_15, 'audio/bgm', 'p001_15', 'ogg');
     this.scene.loadAudio(BGM.P009, 'audio/bgm', 'p009', 'wav');
     this.scene.loadAudio(BGM.POKEMART, 'audio/bgm', 'pokemart', 'ogg');
     this.scene.loadAudio(BGM.S000, 'audio/bgm', 's000', 'ogg');
@@ -1121,6 +1143,7 @@ export class LoadingPhase implements IGamePhase {
     this.createPlayerBackSprite();
     this.createNpcSprite();
     this.createNpcWalkAnimations();
+    this.createNpc1Sprite();
     this.createDoorSprite();
     this.createPokemonIconAnimations();
     this.createPokemonOverworldAnimations();
@@ -1750,6 +1773,53 @@ export class LoadingPhase implements IGamePhase {
   private createNpcSprite() {
     for (let i = 0; i <= MAX_NPC; i++) {
       createSpriteAnimation(this.scene, `npc${i}`, ANIMATION.NPC);
+    }
+  }
+
+  private createNpc1Sprite(): void {
+    const directionRanges = [
+      ['down', 0, 3],
+      ['left', 4, 7],
+      ['right', 8, 11],
+      ['up', 12, 15],
+    ] as const;
+
+    for (let i = 0; i <= MAX_NPC_1; i++) {
+      const textureKey = `npc_1_${i}`;
+      const texture = this.scene.textures.get(textureKey);
+      if (!texture?.getFrameNames) continue;
+      const frameNames = texture.getFrameNames();
+      const framePrefix = 'npc_1';
+
+      if (SPECIAL_NPC_1_INDICES.has(i)) {
+        // p001_0(특별한 npc) 방향 없이 단일 몸 흔들기 애니메이션
+        const frames: string[] = [];
+        for (let idx = 0; ; idx++) {
+          const frameName = `${framePrefix}-${idx}`;
+          if (!frameNames.includes(frameName)) break;
+          frames.push(frameName);
+        }
+        if (frames.length === 0) continue;
+
+        const animKey = textureKey;
+        if (this.scene.anims.exists(animKey)) continue;
+        createAnimationFromFrameNames(this.scene, textureKey, animKey, frames, 3, -1);
+        continue;
+      }
+
+      // 상하좌우 walk 애니메이션
+      for (const [dir, start, end] of directionRanges) {
+        const frames: string[] = [];
+        for (let idx = start; idx <= end; idx++) {
+          const frameName = `${framePrefix}-${idx}`;
+          if (!frameNames.includes(frameName)) break;
+          frames.push(frameName);
+        }
+        if (frames.length !== end - start + 1) continue;
+        const animKey = `${textureKey}_walk_${dir}`;
+        if (this.scene.anims.exists(animKey)) continue;
+        createAnimationFromFrameNames(this.scene, textureKey, animKey, frames, 8, -1);
+      }
     }
   }
 

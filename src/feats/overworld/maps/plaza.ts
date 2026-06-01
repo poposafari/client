@@ -5,7 +5,7 @@ import { DOOR, INIT_POS } from './door';
 
 export const p001Config: MapConfig = {
   key: 'p001',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   isIndoor: false,
   area: { land: 'p001', water: 'p001' },
   type: 'plaza',
@@ -74,6 +74,27 @@ export const p001Config: MapConfig = {
       y: 21,
       direction: DIRECTION.DOWN,
       reaction: [],
+    },
+    {
+      key: 'npc_1_0',
+      name: 'musician',
+      special: 'musician',
+      x: 57,
+      y: 28,
+      direction: DIRECTION.DOWN,
+      reaction: [],
+    },
+    {
+      key: '',
+      name: '',
+      x: 58,
+      y: 28,
+      direction: DIRECTION.DOWN,
+      type: 'pokemon',
+      pokedexId: '0402',
+      isShiny: false,
+      path: [],
+      reaction: [{ key: 'talk', content: { text: ['msg:npc1_0', 'msg:npc1_1'], name: 'NPC' } }],
     },
     {
       key: '',
@@ -236,7 +257,7 @@ export const p001Config: MapConfig = {
 
 export const p002Config: MapConfig = {
   key: 'p002',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   isIndoor: true,
   area: { land: 'p002', water: 'p002' },
   type: 'plaza',
@@ -452,7 +473,7 @@ export const p003Config: MapConfig = {
 
 export const p004Config: MapConfig = {
   key: 'p004',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   isIndoor: true,
   area: { land: 'p004', water: 'p004' },
   type: 'plaza',
@@ -492,7 +513,7 @@ export const p004Config: MapConfig = {
 
 export const p005Config: MapConfig = {
   key: 'p005',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   showLocationBanner: false,
   isIndoor: true,
   area: { land: 'p005', water: 'p005' },
@@ -547,7 +568,7 @@ export const p005Config: MapConfig = {
 
 export const p006Config: MapConfig = {
   key: 'p006',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   showLocationBanner: false,
   isIndoor: true,
   area: { land: 'p006', water: 'p006' },
@@ -609,7 +630,7 @@ export const p006Config: MapConfig = {
 
 export const p007Config: MapConfig = {
   key: 'p007',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   showLocationBanner: false,
   isIndoor: true,
   area: { land: 'p007', water: 'p007' },
@@ -655,7 +676,7 @@ export const p007Config: MapConfig = {
 
 export const p008Config: MapConfig = {
   key: 'p008',
-  bgm: BGM.P001,
+  bgm: BGM.P001_1,
   isIndoor: true,
   area: { land: 'p008', water: 'p008' },
   type: 'plaza',

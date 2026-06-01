@@ -81,3 +81,23 @@ export class FossilNpcObject extends NpcObject {
     return [];
   }
 }
+
+export class MusicianNpcObject extends NpcObject {
+  scene: GameScene;
+
+  constructor(scene: GameScene, config: NpcConfig) {
+    super(scene, config);
+    this.scene = scene;
+    this.startSpriteAnimation(config.key);
+  }
+
+  override getPhaseRequest(): string | null {
+    return 'musician';
+  }
+
+  override reaction(_direction: DIRECTION): ReactionStep[] {
+    return [];
+  }
+
+  override lookAt(_direction: DIRECTION): void {}
+}
