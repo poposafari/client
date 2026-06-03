@@ -21,6 +21,7 @@ import {
 } from '@poposafari/utils';
 import type { BattleAction, BattleContext, BattleModifiers } from '../battle.types';
 import { LOCATION_HUD, PLAYER_HUD, WILD_HUD } from '../battle.constants';
+import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
 import i18next from 'i18next';
 
 const TIME_I18N_KEY: Record<string, string> = {
@@ -63,6 +64,10 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private baseCapture = 0;
   private baseFlee = 0;
   private partyBonus = 0;
+
+  private tooltipManager?: HudTooltipManager;
+  /** catch rate 툴팁이 현재 표시값과 동일한 분해를 보여주도록, 마지막 표시 modifiers를 보관. */
+  private currentModifiers: BattleModifiers = { bait: false, rock: false };
 
   // 서버 LEVEL_CURVE (server/lib/constants/level-curve.ts)와 동일하게 유지.
   private static readonly PARTY_LEVEL_COEF = 0.002;
@@ -231,6 +236,12 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     this.add(this.rateContainer);
     this.updateRateDisplay({ bait: false, rock: false });
 
+    const tooltipLayer = addContainer(scene, DEPTH.HUD + 2, camW / 2, height / 2);
+    this.add(tooltipLayer);
+    this.tooltipManager = new HudTooltipManager(scene, tooltipLayer);
+    this.tooltipManager.register(this.catchRateText, () => this.buildCatchRateTooltip());
+    this.tooltipManager.register(this.fleeRateText, () => this.buildFleeRateTooltip());
+
     // ── 플레이어 HUD ───────────────────────────────
     this.playerHudContainer = addContainer(scene, 0, PLAYER_HUD.x, height / 2 + PLAYER_HUD.yOffset);
 
@@ -323,6 +334,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.once('destroy', () => {
       scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+      this.tooltipManager?.destroy();
+      this.tooltipManager = undefined;
     });
 
     this.setVisible(false);
@@ -408,17 +421,17 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     return sum / BattleInfoUi.PARTY_SLOT_COUNT;
   }
 
-  private computeRates(modifiers: BattleModifiers): { capture: number; flee: number } {
-    let captureMul = 1.0;
-    let fleeMul = 1.0;
+  private modifierMultipliers(modifiers: BattleModifiers): {
+    captureMul: number;
+    fleeMul: number;
+  } {
+    if (modifiers.bait) return { captureMul: 0.5, fleeMul: 0.5 };
+    if (modifiers.rock) return { captureMul: 1.5, fleeMul: 2.0 };
+    return { captureMul: 1.0, fleeMul: 1.0 };
+  }
 
-    if (modifiers.bait) {
-      captureMul = 0.5;
-      fleeMul = 0.5;
-    } else if (modifiers.rock) {
-      captureMul = 1.5;
-      fleeMul = 2.0;
-    }
+  private computeRates(modifiers: BattleModifiers): { capture: number; flee: number } {
+    const { captureMul, fleeMul } = this.modifierMultipliers(modifiers);
 
     const capture = Math.min(
       this.baseCapture * captureMul + this.partyBonus,
@@ -428,8 +441,56 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     return { capture, flee };
   }
 
+  private buildCatchRateTooltip(): string {
+    const { captureMul } = this.modifierMultipliers(this.currentModifiers);
+    const base = (this.baseCapture * 100).toFixed(1);
+
+    let result = i18next.t('battle:catchRateBase', { rate: base });
+
+    if (this.partyBonus > 0) {
+      const bonus = (this.partyBonus * 100).toFixed(1);
+      result += ` + ${i18next.t('battle:catchRatePartyBonus', { rate: bonus })}`;
+    }
+
+    const modifierKey = this.currentModifiers.bait
+      ? 'battle:catchRateFeed'
+      : this.currentModifiers.rock
+        ? 'battle:catchRateMud'
+        : null;
+    if (modifierKey) {
+      const delta = this.baseCapture * (captureMul - 1);
+      const rate = (Math.abs(delta) * 100).toFixed(1);
+      const sign = delta >= 0 ? '+' : '-';
+      result += ` ${sign} ${i18next.t(modifierKey, { rate })}`;
+    }
+
+    return result;
+  }
+
+  private buildFleeRateTooltip(): string {
+    const { fleeMul } = this.modifierMultipliers(this.currentModifiers);
+    const base = (this.baseFlee * 100).toFixed(1);
+
+    let result = i18next.t('battle:fleeRateBase', { rate: base });
+
+    const modifierKey = this.currentModifiers.bait
+      ? 'battle:catchRateFeed'
+      : this.currentModifiers.rock
+        ? 'battle:catchRateMud'
+        : null;
+    if (modifierKey) {
+      const delta = this.baseFlee * (fleeMul - 1);
+      const rate = (Math.abs(delta) * 100).toFixed(1);
+      const sign = delta >= 0 ? '+' : '-';
+      result += ` ${sign} ${i18next.t(modifierKey, { rate })}`;
+    }
+
+    return result;
+  }
+
   /** 현재 modifiers 기반으로 확률 표시를 갱신한다. */
   updateRateDisplay(modifiers: BattleModifiers): void {
+    this.currentModifiers = modifiers;
     const { capture, flee } = this.computeRates(modifiers);
     this.catchRateText?.setText(
       i18next.t('battle:catchRate', { rate: (capture * 100).toFixed(1) }),
