@@ -1100,6 +1100,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAudio(SFX.STEP_DIRT, 'audio/se', 'step_dirt', 'wav');
     this.scene.loadAudio(SFX.STEP_SNOW, 'audio/se', 'step_snow', 'ogg');
     this.scene.loadAudio(SFX.STEP_WATER, 'audio/se', 'step_water', 'ogg');
+    this.scene.loadAudio(SFX.SHINY, 'audio/se', 'shiny', 'wav');
 
     this.scene.loadAudio(BGM.BATTLE_0, 'audio/bgm', 'battle_0', 'ogg');
     this.scene.loadAudio(BGM.BATTLE_1, 'audio/bgm', 'battle_1', 'ogg');

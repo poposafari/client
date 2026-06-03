@@ -40,6 +40,7 @@ export const enum SFX {
   STEP_DIRT = 'step_dirt',
   STEP_SNOW = 'step_snow',
   STEP_WATER = 'step_water',
+  SHINY = 'shiny',
 }
 
 export const enum BGM {

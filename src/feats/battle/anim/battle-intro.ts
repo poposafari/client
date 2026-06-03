@@ -1,5 +1,5 @@
 import type { GameScene } from '@poposafari/scenes/game.scene';
-import { DEPTH, EASE } from '@poposafari/types';
+import { DEPTH, EASE, SFX } from '@poposafari/types';
 import type { BattleBaseUi } from '../ui/battle-base.ui';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import type { BattleInfoUi } from '../ui/battle-info.ui';
@@ -136,7 +136,7 @@ export async function displayBattleIntro(
   });
 
   const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-  scene.getAudio().playEffect(cryKey);
+  const cryDone = scene.getAudio().playEffectAwaitable(cryKey);
 
   // 3. wildHud 슬라이드인 (playerHud 는 아직 오프스크린)
   await tweenAsync(scene, {
@@ -146,9 +146,10 @@ export async function displayBattleIntro(
     ease: Phaser.Math.Easing.Quadratic.Out,
   });
 
-  // 4. 이로치 이펙트
   if (isShiny) {
+    await cryDone;
     const { playShinySparkle } = await import('./shiny');
+    scene.getAudio().playEffect(SFX.SHINY);
     await playShinySparkle(scene, wildSprite);
   }
 }

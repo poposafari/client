@@ -824,6 +824,8 @@ export class OverworldUi extends BaseUi {
       this.safariObjects.push(obj);
       this.worldContainer.add(obj.getShadow());
       this.worldContainer.add(obj.getSprite());
+      const shiny = obj.getShinySprite();
+      if (shiny) this.worldContainer.add(shiny);
       this.nameContainer.add(obj.getName());
       this.nameContainer.add(obj.getTimerText());
     }
@@ -890,6 +892,8 @@ export class OverworldUi extends BaseUi {
     this.safariObjects.push(obj);
     this.worldContainer.add(obj.getShadow());
     this.worldContainer.add(obj.getSprite());
+    const shinyOverlay = obj.getShinySprite();
+    if (shinyOverlay) this.worldContainer.add(shinyOverlay);
     this.nameContainer.add(obj.getName());
     this.nameContainer.add(obj.getTimerText());
 
@@ -902,18 +906,22 @@ export class OverworldUi extends BaseUi {
       this.scene.getAudio().isAudible() &&
       !this.scene.hasPhaseOfType(BattlePhase)
     ) {
-      const pokedexId = obj.getPokedexId();
-      const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-      if (pokemonCryNames.includes(cryKey)) {
-        const audio = this.scene.getAudio();
-        if (this.scene.cache.audio.has(cryKey)) {
-          audio.playEffect(cryKey);
-        } else {
-          this.scene.loadAudio(cryKey, 'audio/pokemon', cryKey, 'ogg');
-          this.scene.load.once(`filecomplete-audio-${cryKey}`, () => {
-            if (this.scene.cache.audio.has(cryKey)) audio.playEffect(cryKey);
-          });
-          this.scene.load.start();
+      const audio = this.scene.getAudio();
+      if (obj.getWild().isShiny) {
+        audio.playEffect(SFX.SHINY);
+      } else {
+        const pokedexId = obj.getPokedexId();
+        const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
+        if (pokemonCryNames.includes(cryKey)) {
+          if (this.scene.cache.audio.has(cryKey)) {
+            audio.playEffect(cryKey);
+          } else {
+            this.scene.loadAudio(cryKey, 'audio/pokemon', cryKey, 'ogg');
+            this.scene.load.once(`filecomplete-audio-${cryKey}`, () => {
+              if (this.scene.cache.audio.has(cryKey)) audio.playEffect(cryKey);
+            });
+            this.scene.load.start();
+          }
         }
       }
     }
@@ -928,8 +936,13 @@ export class OverworldUi extends BaseUi {
     shadow.setAlpha(0);
     nameTag.setAlpha(0);
     timerText.setAlpha(0);
+    const fadeTargets: Phaser.GameObjects.GameObject[] = [sprite, shadow, nameTag, timerText];
+    if (shinyOverlay) {
+      shinyOverlay.setAlpha(0);
+      fadeTargets.push(shinyOverlay);
+    }
     this.scene.tweens.add({
-      targets: [sprite, shadow, nameTag, timerText],
+      targets: fadeTargets,
       alpha: 1,
       duration: 450,
       ease: 'Sine.easeOut',
@@ -984,6 +997,8 @@ export class OverworldUi extends BaseUi {
     // 서서히 사라지는 효과: alpha/scale 함께, 500ms
     const fadeTargets: Phaser.GameObjects.GameObject[] = [sprite, shadow, nameTag];
     if (timerText) fadeTargets.push(timerText);
+    const shinyOverlay = obj instanceof WildPokemonObject ? obj.getShinySprite() : null;
+    if (shinyOverlay) fadeTargets.push(shinyOverlay);
     this.scene.tweens.add({
       targets: fadeTargets,
       alpha: 0,

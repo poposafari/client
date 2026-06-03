@@ -123,6 +123,10 @@ export class WildPokemonObject extends MovableObject {
     return this.timerText;
   }
 
+  getShinySprite(): Phaser.GameObjects.Sprite | null {
+    return this.shinySprite;
+  }
+
   isDespawning(): boolean {
     return this.despawning;
   }
