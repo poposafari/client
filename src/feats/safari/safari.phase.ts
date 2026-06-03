@@ -15,6 +15,8 @@ interface SafariZone {
   spawnY: number;
 }
 
+const SAFARI_ZONE_TICKET_ID = 'safari-zone-ticket';
+
 const SAFARI_ZONES: SafariZone[] = [
   { key: 's046', labelKey: 'map:s046', mapId: MAP.SAFARI_046, spawnX: 10, spawnY: 10 },
   { key: 's001', labelKey: 'map:s001', mapId: MAP.SAFARI_001, spawnX: 10, spawnY: 10 },
@@ -92,6 +94,13 @@ export class SafariPhase implements IGamePhase {
         this.menuUi!.hide();
         question.hide();
 
+        // 입장권 보유 확인(클라이언트 1차 게이트). 실제 차감/검증은 서버가 수행한다.
+        const user = this.scene.getUser();
+        if (!user || user.getItemQuantity(SAFARI_ZONE_TICKET_ID) <= 0) {
+          await this.scene.getMessage('talk').showMessage([i18next.t('safari:noTicket')]);
+          continue;
+        }
+
         let pendingError: unknown = null;
         const ok = await this.scene.startMapTransitionWithFade(async () => {
           let result;
@@ -105,6 +114,8 @@ export class SafariPhase implements IGamePhase {
 
           this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
           this.scene.getUser()?.addVisitedMap(result.mapId);
+          // 서버가 입장권 1개를 차감했으므로 로컬 캐시도 동기화한다.
+          this.scene.getUser()?.decreaseItemQuantity(SAFARI_ZONE_TICKET_ID, 1);
 
           const entry = result.mapInfo.entry;
           const initPos: InitPosConfig = {

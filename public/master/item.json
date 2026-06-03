@@ -9,6 +9,16 @@
     "sellable": true,
     "tier": "common"
   },
+  "safari-zone-ticket": {
+    "id": "safari-zone-ticket",
+    "buyPrice": 500,
+    "category": "etc",
+    "comment": "사파리존입장권",
+    "purchasable": true,
+    "sellPrice": 0,
+    "sellable": true,
+    "tier": "rare"
+  },
   "fire-stone": {
     "id": "fire-stone",
     "buyPrice": 20000,

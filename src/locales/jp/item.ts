@@ -18,6 +18,10 @@ export const item: TranslationItem = {
     description:
       'カントーちほうの　サファリゾーンや\nシンオウちほうの　だいしつげんで\nつかわれていた　とくべつな　ボール。',
   },
+  'safari-zone-ticket': {
+    name: 'サファリゾーンチケット',
+    description: 'サファリゾーンに　はいるときに\nひつような　チケット。にゅうじょうじに\n1まい　しょうひされる。',
+  },
   'great-ball': {
     name: 'スーパーボール',
     description:

@@ -189,7 +189,7 @@ export const p001Config: MapConfig = {
       reaction: [
         {
           key: 'talk',
-          content: { text: ['object:npc_script_0', 'object:npc_script_16'], name: 'NPC' },
+          content: { text: ['object:npc_script_0'], name: 'NPC' },
         },
       ],
     },
@@ -418,7 +418,7 @@ export const p003Config: MapConfig = {
       key: TEXTURE.BLANK,
       name: '',
       special: 'mart',
-      martItems: ['safari-ball', 'move_surf'],
+      martItems: ['safari-ball', 'safari-zone-ticket', 'move_surf'],
       x: 3,
       y: 5,
       direction: DIRECTION.DOWN,

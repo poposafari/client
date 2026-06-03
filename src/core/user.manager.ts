@@ -213,6 +213,14 @@ export class UserManager {
     return this.itemBag;
   }
 
+  getItemQuantity(itemId: string): number {
+    return this.itemBag?.get(itemId)?.quantity ?? 0;
+  }
+
+  hasItem(itemId: string): boolean {
+    return this.getItemQuantity(itemId) > 0;
+  }
+
   setItemBag(data: ItemBagItem[]): void {
     this.itemBag = new Map();
     for (const item of data) {

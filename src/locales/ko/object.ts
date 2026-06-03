@@ -51,7 +51,6 @@ export const object: TranslationObject = {
   npc_script_13: '호박사님 조수로 일하면\n일이 많아져서 너무 행복해!',
   npc_script_14: '네? 저는 호박사님이 아니에요',
   npc_script_15: '조만간 호박사 리서치라는 걸 도입해볼 건데...',
-  npc_script_16: '무료라서 너무 좋아-!',
   npc_script_17: '사파리존 맵은 꾸준히 발견되고 있단다!',
   npc_script_18: '그때가 되면 자네가 도와주었으면 좋겠구만!',
   npc_script_19: '호박사님은 안쪽에 계십니다',

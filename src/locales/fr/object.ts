@@ -55,7 +55,6 @@ export const object: TranslationObject = {
   npc_script_13: "Travailler comme assistant du Professeur Ho\nme tient si occupé — j'adore ça !",
   npc_script_14: 'Hein ? Je ne suis pas le Professeur Ho.',
   npc_script_15: 'Je pense bientôt introduire quelque chose\nappelé Recherche du Professeur Ho...',
-  npc_script_16: "Et c'est gratuit, c'est génial-!",
   npc_script_17: 'De nouvelles cartes de la Zone Safari sont découvertes en permanence !',
   npc_script_18: "Quand ce moment viendra, j'adorerais que tu m'aides !",
   npc_script_19: "Le Professeur Ho est à l'intérieur.",

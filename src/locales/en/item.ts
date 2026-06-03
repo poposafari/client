@@ -16,6 +16,10 @@ export const item: TranslationItem = {
     description:
       'A special Poké Ball that is used only in the Safari Zone.\nIt is decorated in a camouflage pattern.',
   },
+  'safari-zone-ticket': {
+    name: 'Safari Zone Ticket',
+    description: 'A ticket required to enter the Safari Zone.\nOne is consumed each time you enter.',
+  },
   'great-ball': {
     name: 'Great Ball',
     description: 'A good Ball that offers a higher Pokémon catch rate\nthan a standard Poké Ball.',

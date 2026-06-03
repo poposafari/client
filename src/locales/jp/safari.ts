@@ -1,6 +1,7 @@
 export const safari = {
-  greeting1: 'いらっしゃい！ むりょうで\nサファリゾーンへ おくります！',
+  greeting1: 'いらっしゃい！ チケット1まいで\nサファリゾーンへ おくります！',
   greeting2: 'どのエリアに いきますか？',
+  noTicket: 'サファリゾーンチケットが ありません。\nさきに チケットを よういして ください。',
   confirmMove: '{{map}}に いどうしますか？',
   pickedItem: '{{name}}は\n{{item}}を てにいれた！',
   pickedItemPocket: {

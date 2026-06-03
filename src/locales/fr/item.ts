@@ -18,6 +18,11 @@ export const item: TranslationItem = {
     description:
       'Une Poké Ball spéciale anciennement utilisée au Parc Safari de Kanto et au Grand Marais de Sinnoh.',
   },
+  'safari-zone-ticket': {
+    name: 'Ticket Zone Safari',
+    description:
+      'Un ticket requis pour entrer dans la Zone Safari.\nUn ticket est consommé à chaque entrée.',
+  },
   'great-ball': {
     name: 'Super Ball',
     description:

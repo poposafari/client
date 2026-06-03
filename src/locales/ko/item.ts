@@ -20,6 +20,10 @@ export const item: TranslationItem = {
     name: '사파리볼',
     description: '사파리존에서만 사용할 수 있는\n위장 무늬가 그려진 특별한 볼.',
   },
+  'safari-zone-ticket': {
+    name: '사파리존 입장권',
+    description: '사파리존에 입장할 때 필요한 티켓.\n입장 시 1장이 소모된다.',
+  },
   'great-ball': {
     name: '수퍼볼',
     description: '몬스터볼보다도 더욱 포켓몬을 잡기 쉬워진\n약간 성능이 좋은 볼.',
