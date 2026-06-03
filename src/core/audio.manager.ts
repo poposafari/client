@@ -237,6 +237,18 @@ export class AudioManager {
     }
   }
 
+  public pauseBackground(): void {
+    if (this.currentBgm && this.currentBgm.isPlaying) {
+      this.currentBgm.pause();
+    }
+  }
+
+  public resumeBackground(): void {
+    if (this.currentBgm && !this.currentBgm.isPlaying) {
+      this.currentBgm.resume();
+    }
+  }
+
   public stopBackground(fadeDurationMs: number = 0): void {
     if (!this.currentBgm) return;
     const bgm = this.currentBgm;

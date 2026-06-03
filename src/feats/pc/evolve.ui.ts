@@ -23,7 +23,7 @@ export class EvolveUi extends BaseUi implements IInputHandler {
   private fakeText!: GText;
 
   private particles: Phaser.GameObjects.Image[] = [];
-  private loopSound: Phaser.Sound.BaseSound | null = null;
+  private loopSound: Phaser.Sound.WebAudioSound | null = null;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.API + 1);
@@ -117,50 +117,57 @@ export class EvolveUi extends BaseUi implements IInputHandler {
     this.setVisible(true);
     this.inputManager.pop(this);
 
+    this.scene.getAudio().pauseBackground();
+
     const talk = this.scene.getMessage('talk');
     const originalTalkDepth = (talk as Phaser.GameObjects.Container).depth;
 
-    await this.fadeIn();
+    try {
+      await this.fadeIn();
 
-    const startName = i18next.t(`pokemon:${startPokedexId}.name`);
-    const nextName = i18next.t(`pokemon:${nextPokedexId}.name`);
+      const startName = i18next.t(`pokemon:${startPokedexId}.name`);
+      const nextName = i18next.t(`pokemon:${nextPokedexId}.name`);
 
-    const startMessage = i18next.t('pc:evolveStart', { name: startName });
-    await this.showTalk(talk, startMessage);
-    this.showFakeMessage(startMessage);
+      const startMessage = i18next.t('pc:evolveStart', { name: startName });
+      await this.showTalk(talk, startMessage);
+      this.showFakeMessage(startMessage);
 
-    await this.playSoundAsync(this.resolveCryKey(startPokedexId));
-    await this.playSoundAsync(SFX.EVOL_0);
-    this.playLoopSound(SFX.EVOL_1);
+      await this.playSoundAsync(this.resolveCryKey(startPokedexId));
+      await this.playSoundAsync(SFX.EVOL_0);
+      this.playLoopSound(SFX.EVOL_1);
 
-    await this.fadeToBlack();
-    // await this.prePulse(this.startSprite);
-    await this.runCrossTween();
-    await this.flashWhite();
+      await this.fadeToBlack();
+      // await this.prePulse(this.startSprite);
+      await this.runCrossTween();
+      await this.flashWhite();
 
-    // 파티클 이펙트 시작
-    this.stopLoopSound();
-    this.nextSprite.clearTint();
-    await this.playSoundAsync(SFX.HATCH);
+      // 파티클 이펙트 시작
+      this.stopLoopSound();
+      this.nextSprite.clearTint();
+      await this.playSoundAsync(SFX.HATCH);
 
-    this.startParticles();
+      this.startParticles();
 
-    await this.fadeFromBlack();
-    await this.wait(800);
-    await this.playSoundAsync(this.resolveCryKey(nextPokedexId));
+      await this.fadeFromBlack();
+      await this.wait(800);
+      await this.playSoundAsync(this.resolveCryKey(nextPokedexId));
 
-    this.hideFakeMessage();
+      this.hideFakeMessage();
 
-    const endMessage = i18next.t('pc:evolveEnd', { from: startName, to: nextName });
-    const congDone = this.playSoundAsync(SFX.CONGRATULATIONS);
-    await this.showTalk(talk, endMessage, congDone);
-    this.showFakeMessage(endMessage);
+      const endMessage = i18next.t('pc:evolveEnd', { from: startName, to: nextName });
+      const congDone = this.playSoundAsync(SFX.CONGRATULATIONS);
+      await this.showTalk(talk, endMessage, congDone);
+      this.showFakeMessage(endMessage);
 
-    (talk as Phaser.GameObjects.Container).setDepth(originalTalkDepth);
+      (talk as Phaser.GameObjects.Container).setDepth(originalTalkDepth);
 
-    await this.fadeOut();
-    this.hide();
-    this.setVisible(false);
+      await this.fadeOut();
+      this.hide();
+      this.setVisible(false);
+    } finally {
+      this.stopLoopSound();
+      this.scene.getAudio().resumeBackground();
+    }
   }
 
   private showFakeMessage(content: string): void {
@@ -195,29 +202,17 @@ export class EvolveUi extends BaseUi implements IInputHandler {
   }
 
   private playSoundAsync(key: string): Promise<void> {
-    return new Promise((resolve) => {
-      const sound = this.scene.sound.add(key);
-      sound.once(Phaser.Sound.Events.COMPLETE, () => {
-        sound.destroy();
-        resolve();
-      });
-      sound.play();
-    });
+    return this.scene.getAudio().playEffectAwaitable(key);
   }
 
   private playLoopSound(key: string): void {
     this.stopLoopSound();
-    const sound = this.scene.sound.add(key, { loop: true });
-    sound.play();
-    this.loopSound = sound;
+    this.loopSound = this.scene.getAudio().playEffectLoop(key);
   }
 
   private stopLoopSound(): void {
-    if (this.loopSound) {
-      this.loopSound.stop();
-      this.loopSound.destroy();
-      this.loopSound = null;
-    }
+    this.scene.getAudio().stopEffectLoop(this.loopSound);
+    this.loopSound = null;
   }
 
   private fadeIn(): Promise<void> {
