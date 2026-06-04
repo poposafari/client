@@ -13,6 +13,7 @@ export const error: TranslationError = {
   ACCOUNT_ALREADY_EXIST: '이미 등록된 계정입니다.',
   FAILED_ACCOUNT: '계정 인증에 실패했습니다.',
   ACCOUNT_ALREADY_DELETED: '이미 삭제된 계정입니다.',
+  ACCOUNT_IN_USE: '다른 기기에서 접속 중입니다.\n종료 후 다시 시도해 주세요.',
   EXCEED_REQUEST: '요청 횟수가 너무 많습니다.\n잠시 후 다시 시도해주세요.',
   USER_NOT_FOUND: '유저를 찾을 수 없습니다.',
   USER_ALREADY_EXISTS: '이미 가입된 유저입니다.',

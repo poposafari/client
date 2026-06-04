@@ -11,6 +11,7 @@ export const error: TranslationError = {
   ACCOUNT_ALREADY_EXIST: 'Ce compte est déjà enregistré.',
   FAILED_ACCOUNT: "Échec de l'authentification du compte.",
   ACCOUNT_ALREADY_DELETED: 'Ce compte a été supprimé.',
+  ACCOUNT_IN_USE: 'Ce compte est utilisé sur un autre appareil.\nVeuillez le fermer et réessayer.',
   EXCEED_REQUEST: 'Trop de requêtes.\nVeuillez réessayer plus tard.',
   USER_NOT_FOUND: 'Utilisateur introuvable.',
   USER_ALREADY_EXISTS: 'Cet utilisateur est déjà enregistré.',

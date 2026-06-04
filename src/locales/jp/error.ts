@@ -11,6 +11,7 @@ export const error: TranslationError = {
   ACCOUNT_ALREADY_EXIST: 'このアカウントは すでに とうろくされています。',
   FAILED_ACCOUNT: 'アカウントにんしょうに しっぱいしました。',
   ACCOUNT_ALREADY_DELETED: 'このアカウントは すでに さくじょされています。',
+  ACCOUNT_IN_USE: 'ほかの ききで せつぞくちゅうです。\nしゅうりょうしてから もういちど おためしください。',
   EXCEED_REQUEST: 'リクエストが おおすぎます。\nしばらくしてから おためしください。',
   USER_NOT_FOUND: 'ユーザーが みつかりません。',
   USER_ALREADY_EXISTS: 'このユーザーは すでに とうろくされています。',

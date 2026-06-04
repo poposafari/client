@@ -11,6 +11,7 @@ export const error: TranslationError = {
   ACCOUNT_ALREADY_EXIST: 'This account is already registered.',
   FAILED_ACCOUNT: 'Account authentication failed.',
   ACCOUNT_ALREADY_DELETED: 'This account has been deleted.',
+  ACCOUNT_IN_USE: 'This account is in use on another device.\nPlease close it and try again.',
   EXCEED_REQUEST: 'Too many requests.\nPlease try again later.',
   USER_NOT_FOUND: 'User not found.',
   USER_ALREADY_EXISTS: 'This user is already registered.',

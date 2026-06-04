@@ -5,6 +5,7 @@ import { DeleteAccountUi } from './delete-account.ui';
 import { DeleteAccountMenuUi } from './delete-account-menu.ui';
 import i18next from 'i18next';
 import { LoginPhase } from '../login';
+import { showApiErrorAsTalk } from '@poposafari/utils';
 
 export class DeleteAccountPhase implements IGamePhase {
   private ui!: DeleteAccountUi;
@@ -21,7 +22,13 @@ export class DeleteAccountPhase implements IGamePhase {
     const result = await this.ui.runDeleteAccountFlow();
 
     if (result === 'confirmed') {
-      await this.scene.getApi().deleteAccount();
+      try {
+        await this.scene.getApi().deleteAccount();
+      } catch (e) {
+        await showApiErrorAsTalk(this.scene, e);
+        this.scene.popPhase();
+        return;
+      }
       this.scene.clearUser();
       this.scene.switchPhase(new LoginPhase(this.scene));
       return;
