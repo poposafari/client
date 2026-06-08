@@ -1,0 +1,25 @@
+import type { TranslationAvatar } from '../ko/costume';
+
+export const costume: TranslationAvatar = {
+  skin: 'Tono de piel',
+  hair: 'Peinado',
+  hair_color: 'Color de pelo',
+  outfit: 'Atuendo',
+  skin_0: 'Piel 1',
+  skin_1: 'Piel 2',
+  skin_2: 'Piel 3',
+  skin_3: 'Piel 4',
+  m_hair_0: 'Pelo 1',
+  m_hair_1: 'Pelo 2',
+  m_hair_2: 'Pelo 3',
+  f_hair_0: 'Pelo 1',
+  f_hair_1: 'Pelo 2',
+  m_outfit_0: 'Conjunto 1',
+  f_outfit_0: 'Conjunto 2',
+  c0: 'Pelo rojo',
+  c1: 'Pelo verde',
+  c2: 'Pelo azul',
+  c3: 'Pelo amarillo',
+  c4: 'Pelo negro',
+  c5: 'Pelo rosa',
+};

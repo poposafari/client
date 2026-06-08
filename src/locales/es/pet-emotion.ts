@@ -1,0 +1,70 @@
+export const petEmotion: Record<string, string[]> = {
+  '1': [
+    '{{name}} está mirando a su alrededor en silencio.',
+    '{{name}} mantiene la boca cerrada, completamente quieto.',
+    '{{name}} parece tranquilo y sereno.',
+    '{{name}} está sentado en silencio, sin hacer ningún ruido.',
+  ],
+  '2': [
+    '¡{{name}} tiene una expresión de sobresalto!',
+    '{{name}} dio un paso atrás del susto.',
+    '¡Los ojos de {{name}} se abrieron de par en par del impacto!',
+    'El pelaje de {{name}} se erizó por un sobresalto repentino.',
+  ],
+  '3': [
+    '{{name}} está ladeando la cabeza.',
+    '{{name}} olfatea el aire como si se preguntara algo.',
+    'Los ojos de {{name}} brillan de curiosidad ante cada pequeño sonido.',
+    'La mirada de {{name}} va de un lado a otro afanosamente.',
+  ],
+  '4': [
+    '{{name}} está tarareando una melodía alegre.',
+    '{{name}} hace un pequeño baile siguiendo un ritmo imaginario.',
+    'Parece que de {{name}} salen flotando pequeñas notas musicales.',
+    '{{name}} canta feliz, moviendo la cola al compás.',
+  ],
+  '5': [
+    '{{name}} mira a su alrededor con ojos llenos de cariño.',
+    'Pequeños corazones flotan alrededor de {{name}}.',
+    '{{name}} se frota la mejilla con satisfacción.',
+    'El rostro de {{name}} está lleno de afecto.',
+    '{{name}} apoya su cuerpo cómodamente hacia un lado.',
+  ],
+  '6': [
+    '{{name}} no tiene muy buen aspecto...',
+    '{{name}} parece arrepentirse de lo que acaba de comer.',
+    'El rostro de {{name}} se ve un poco pálido.',
+    '{{name}} hace un extraño ruido de gruñido en el estómago.',
+  ],
+  '7': [
+    '{{name}} sonríe, de buen humor.',
+    '{{name}} da saltitos ligeros de un lado a otro.',
+    'La expresión de {{name}} hoy está más radiante que de costumbre.',
+    '{{name}} suelta un bostezo de satisfacción.',
+  ],
+  '8': [
+    '¡{{name}} está tan feliz que da saltos en el sitio!',
+    '¡{{name}} mueve la cola como loco celebrando!',
+    '¡Los ojos de {{name}} brillan como estrellas!',
+    '¡{{name}} no puede ocultar la alegría que le rebosa!',
+  ],
+  '9': [
+    '{{name}} baja la cabeza, con aire abatido...',
+    'Un atisbo de tristeza permanece en los ojos de {{name}}.',
+    '{{name}} soltó un suspiro discreto.',
+    'Hoy los hombros de {{name}} se hunden pesadamente.',
+  ],
+  '10': [
+    '{{name}} apartó la cabeza, un poco enfurruñado.',
+    '{{name}} parece que algo le ha sentado mal.',
+    'El ceño de {{name}} está levemente fruncido.',
+    '{{name}} masculló algo en voz baja.',
+  ],
+  '11': [
+    '¡{{name}} parece estar absolutamente furioso!',
+    '¡De {{name}} irradian oleadas de ira!',
+    '{{name}} enseña los dientes con un gruñido grave.',
+    '¡{{name}} patea el suelo, resoplando con fuerza!',
+    '{{name}} parece a punto de estallar de rabia en cualquier momento...',
+  ],
+};

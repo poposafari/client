@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { enConfig } from './locales/en/config';
+import { esConfig } from './locales/es/config';
 import { frConfig } from './locales/fr/config';
 import { jpConfig } from './locales/jp/config';
 import { koConfig } from './locales/ko/config';
@@ -42,7 +43,7 @@ export async function initI18n(): Promise<void> {
     nonExplicitSupportedLngs: true,
     fallbackLng: 'en',
     load: 'languageOnly',
-    supportedLngs: ['en', 'ko', 'jp', 'fr'],
+    supportedLngs: ['en', 'ko', 'jp', 'fr', 'es'],
     interpolation: {
       format: (value, format) => {
         if (typeof value === 'string' && format && particleFormatters[format]) {
@@ -63,6 +64,9 @@ export async function initI18n(): Promise<void> {
       },
       fr: {
         ...frConfig,
+      },
+      es: {
+        ...esConfig,
       },
     },
   });
