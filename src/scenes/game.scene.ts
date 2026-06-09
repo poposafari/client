@@ -23,7 +23,6 @@ import { CooldownMessageUi } from '@poposafari/feats/message/cooldown-message.ui
 import type { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
 import type { RoomUserState } from '@poposafari/feats/overworld/overworld-socket.types';
 import { CountdownPhase } from '@poposafari/feats/countdown';
-import { MaintenancePhase } from '@poposafari/feats/maintenance';
 import { MapBuilder, OverworldEntryPhase, OverworldPhase } from '@poposafari/feats/overworld';
 import { DIRECTION } from '@poposafari/feats/overworld/overworld.constants';
 import { BaseScene } from '@poposafari/scenes';
@@ -134,9 +133,8 @@ export class GameScene extends BaseScene {
     this.socket = null;
 
     if (payload?.reason === 'MAINTENANCE') {
-      const top = this.getCurrentPhase();
-      if (top instanceof MaintenancePhase) return;
-      this.switchPhase(new MaintenancePhase(this));
+      this.clearUser();
+      this.switchPhase(new LoginPhase(this));
       return;
     }
 
@@ -161,13 +159,14 @@ export class GameScene extends BaseScene {
 
   private handleMaintenance = (): void => {
     const top = this.getCurrentPhase();
-    if (top instanceof MaintenancePhase) return;
+    if (top instanceof LoginPhase) return;
 
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
     }
-    this.switchPhase(new MaintenancePhase(this));
+    this.clearUser();
+    this.switchPhase(new LoginPhase(this));
   };
 
   private onSocketDisconnect = (reason: string): void => {

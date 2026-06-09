@@ -128,10 +128,7 @@ export const etc: TranslationEtc = {
   weather_sandstorm: 'すなあらし',
   pokeRader_title: 'ポケレーダー',
   pokeRader_caughtSpecies: 'つかまえた ポケモン',
-  maintenance_title: '🛠️ メンテナンスちゅう',
-  maintenance_desc:
-    'ごふべんを おかけして もうしわけございません。\nメンテナンスが おわるまで しばらく おまちください。',
-  maintenance_refresh_hint: 'メンテナンスが おわったら リロード(F5)してください',
+  maintenance_talk: 'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
   playersOnline: '{{value}}にん オンライン',
   notice: 'おしらせ',
   cooldownSeconds: '{{seconds}}びょう',

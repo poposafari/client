@@ -130,10 +130,7 @@ export const etc: TranslationEtc = {
   weather_sandstorm: 'Tempête de sable',
   pokeRader_title: 'Poké Radar',
   pokeRader_caughtSpecies: 'Pokémon capturés',
-  maintenance_title: '🛠️ En maintenance',
-  maintenance_desc:
-    'Nous sommes désolés pour la gêne occasionnée.\nNous reviendrons dès la fin de la maintenance.',
-  maintenance_refresh_hint: 'Veuillez actualiser (F5) une fois la maintenance terminée',
+  maintenance_talk: 'Le serveur est en maintenance.\nVeuillez réessayer dans un instant.',
   playersOnline: '{{value}} joueurs en ligne',
   notice: 'Avis',
   cooldownSeconds: '{{seconds}} s',

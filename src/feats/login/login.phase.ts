@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import { IGamePhase } from '@poposafari/core';
+import { ApiError } from '@poposafari/types';
 import { GameScene } from '@poposafari/scenes';
 import { LoginUi } from './login.ui';
 import { RegisterPhase } from '../register';
@@ -45,7 +46,11 @@ export class LoginPhase implements IGamePhase {
           return;
         }
       } catch (error: any) {
-        this.ui.errorEffect(error.message);
+        if (error instanceof ApiError && error.status === 503) {
+          await this.scene.getMessage('talk').showMessage(i18next.t('etc:maintenance_talk'));
+        } else {
+          this.ui.errorEffect(error.message);
+        }
       }
     }
   }

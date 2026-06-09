@@ -128,10 +128,7 @@ export const etc: TranslationEtc = {
   weather_sandstorm: '모래폭풍',
   pokeRader_title: '포케레이더',
   pokeRader_caughtSpecies: '포획 성공한 포켓몬',
-  maintenance_title: '🛠️ 점검 중입니다',
-  maintenance_desc:
-    '서비스 이용에 불편을 드려 죄송합니다.\n점검이 완료되는 대로 다시 안내드리겠습니다.',
-  maintenance_refresh_hint: '점검이 끝난 뒤 새로고침(F5) 해주세요',
+  maintenance_talk: '현재 서버 점검 중입니다.\n잠시 후 다시 시도해 주세요.',
   playersOnline: '{{value}} 플레이어 온라인',
   notice: '알림',
   cooldownSeconds: '{{seconds}}초',
