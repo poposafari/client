@@ -73,5 +73,6 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: 'ニックネームは もじと すうじだけ\nつかうことが できます。',
   RESERVED_NICKNAME: 'つかえない ニックネームです。',
   KICKED: 'ほかの たんまつで ログインされました。\nもういちど ログインしてください。',
+  MAINTENANCE: 'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
   OAUTH_FAILED: 'がいぶログインに しっぱいしました。\nもういちど おためしください。',
 };

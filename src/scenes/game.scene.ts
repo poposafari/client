@@ -134,7 +134,7 @@ export class GameScene extends BaseScene {
 
     if (payload?.reason === 'MAINTENANCE') {
       this.clearUser();
-      this.switchPhase(new LoginPhase(this));
+      this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:MAINTENANCE' }));
       return;
     }
 
@@ -166,7 +166,7 @@ export class GameScene extends BaseScene {
       this.socket = null;
     }
     this.clearUser();
-    this.switchPhase(new LoginPhase(this));
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:MAINTENANCE' }));
   };
 
   private onSocketDisconnect = (reason: string): void => {

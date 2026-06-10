@@ -73,5 +73,6 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: 'Nickname can only contain\nletters and numbers.',
   RESERVED_NICKNAME: 'This nickname cannot be used.',
   KICKED: 'You were logged in from another device.\nPlease log in again.',
+  MAINTENANCE: 'The server is under maintenance.\nPlease try again in a moment.',
   OAUTH_FAILED: 'External login failed.\nPlease try again.',
 };

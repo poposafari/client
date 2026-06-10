@@ -74,5 +74,6 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: 'Le pseudo ne peut contenir que\ndes lettres et des chiffres.',
   RESERVED_NICKNAME: 'Ce pseudo ne peut pas être utilisé.',
   KICKED: 'Vous vous êtes connecté depuis un autre appareil.\nVeuillez vous reconnecter.',
+  MAINTENANCE: 'Le serveur est en maintenance.\nVeuillez réessayer dans un instant.',
   OAUTH_FAILED: 'La connexion externe a échoué.\nVeuillez réessayer.',
 };

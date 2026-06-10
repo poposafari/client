@@ -93,6 +93,11 @@ export class OverworldEntryPhase implements IGamePhase {
       y: this.initPosConfig!.y,
     });
 
+    const maintenanceProbe = window.setTimeout(() => {
+      void this.scene.getApi().checkSession();
+    }, 5000);
+    this.offFns.push(() => window.clearTimeout(maintenanceProbe));
+
     const onInitRoomState = (payload: { users: RoomUserState[] }) => {
       if (payload?.users?.length) {
         this.scene.setPendingRoomState(payload.users);

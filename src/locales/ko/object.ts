@@ -25,7 +25,7 @@ export const object: TranslationObject = {
   musician_track_9: '고동마을',
   musician_track_10: '금빛시티',
   musician_track_11: '진달래마을',
-  musician_track_12: '갈샐시티',
+  musician_track_12: '갈색시티',
   musician_track_13: '블루시티',
   musician_track_14: '태초마을',
   musician_track_15: '물풍경시티',

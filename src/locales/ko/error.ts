@@ -75,5 +75,6 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: '닉네임은 문자와 숫자만\n사용할 수 있습니다.',
   RESERVED_NICKNAME: '사용할 수 없는 닉네임입니다.',
   KICKED: '다른 기기에서 접속했습니다.\n다시 로그인해 주세요.',
+  MAINTENANCE: '현재 서버 점검 중입니다.\n잠시 후 다시 시도해 주세요.',
   OAUTH_FAILED: '외부 로그인에 실패했습니다.\n다시 시도해주세요.',
 };

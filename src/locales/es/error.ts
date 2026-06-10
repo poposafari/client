@@ -73,5 +73,6 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: 'El apodo solo puede contener\nletras y números.',
   RESERVED_NICKNAME: 'Este apodo no se puede usar.',
   KICKED: 'Has iniciado sesión desde otro dispositivo.\nInicia sesión de nuevo.',
+  MAINTENANCE: 'El servidor está en mantenimiento.\nVuelve a intentarlo en un momento.',
   OAUTH_FAILED: 'Falló el inicio de sesión externo.\nInténtalo de nuevo.',
 };

@@ -47,7 +47,7 @@ export class LoginPhase implements IGamePhase {
         }
       } catch (error: any) {
         if (error instanceof ApiError && error.status === 503) {
-          await this.scene.getMessage('talk').showMessage(i18next.t('etc:maintenance_talk'));
+          this.ui.errorEffect(i18next.t('error:MAINTENANCE'));
         } else {
           this.ui.errorEffect(error.message);
         }
