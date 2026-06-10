@@ -14,6 +14,8 @@ export class AudioManager {
   private pausedBgm: Phaser.Sound.WebAudioSound | null = null;
   private pendingFadeOut: Phaser.Sound.WebAudioSound | null = null;
 
+  private effectVolumeUpdaters = new Set<() => void>();
+
   constructor(private scene: Phaser.Scene) {}
 
   init(masterVolume: number, bgmVolume: number, effectVolume: number) {
@@ -91,7 +93,7 @@ export class AudioManager {
     key: SFX | string,
     options?: { rate?: number; detune?: number; overlapMs?: number },
   ): SeamlessLoopHandle {
-    const volume = this.masterVolume * this.effectVolume;
+    const getVolume = (): number => this.masterVolume * this.effectVolume;
     const rate = options?.rate ?? 1;
     const overlapMs = options?.overlapMs ?? 300;
 
@@ -100,12 +102,17 @@ export class AudioManager {
     let current: Phaser.Sound.WebAudioSound | null = null;
     const active = new Set<Phaser.Sound.WebAudioSound>();
 
+    const updateVolume = (): void => {
+      if (current && current.isPlaying) current.setVolume(getVolume());
+    };
+    this.effectVolumeUpdaters.add(updateVolume);
+
     const playNext = (): void => {
       if (stopped) return;
 
       const previous = current;
       const sound = this.scene.sound.add(key as unknown as string, {
-        volume,
+        volume: getVolume(),
         loop: false,
         rate,
         detune: options?.detune,
@@ -144,6 +151,7 @@ export class AudioManager {
     return {
       stop: (): void => {
         stopped = true;
+        this.effectVolumeUpdaters.delete(updateVolume);
         if (timer) {
           timer.remove(false);
           timer = null;
@@ -278,6 +286,7 @@ export class AudioManager {
   public setMasterVolume(value: number): void {
     this.masterVolume = Phaser.Math.Clamp(value * 0.1, 0, 1);
     this.updateCurrentBgmVolume();
+    this.updateActiveEffectVolumes();
   }
 
   public setBgmVolume(value: number): void {
@@ -287,6 +296,11 @@ export class AudioManager {
 
   public setEffectVolume(value: number): void {
     this.effectVolume = Phaser.Math.Clamp(value * 0.1, 0, 1);
+    this.updateActiveEffectVolumes();
+  }
+
+  private updateActiveEffectVolumes(): void {
+    for (const update of this.effectVolumeUpdaters) update();
   }
 
   private updateCurrentBgmVolume(): void {
