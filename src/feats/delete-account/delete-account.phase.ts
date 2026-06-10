@@ -29,7 +29,7 @@ export class DeleteAccountPhase implements IGamePhase {
         this.scene.popPhase();
         return;
       }
-      this.scene.clearUser();
+      this.scene.resetSessionState();
       this.scene.switchPhase(new LoginPhase(this.scene));
       return;
     } else {

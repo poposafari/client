@@ -73,13 +73,8 @@ export class TitlePhase implements IGamePhase {
         return;
       }
       // logout
-      const socket = this.scene.getSocket();
-      if (socket) {
-        socket.disconnect();
-        this.scene.setSocket(null);
-      }
       await this.scene.getApi().logout();
-      this.scene.clearUser();
+      this.scene.resetSessionState();
       this.scene.switchPhase(new LoginPhase(this.scene));
     } catch (error: any) {
       await this.ui.waitForError(error);

@@ -59,13 +59,7 @@ export class CountdownPhase implements IGamePhase, IInputHandler {
 
   private expire(): void {
     this.finished = true;
-    const socket = this.scene.getSocket();
-    if (socket) {
-      socket.disconnect();
-      this.scene.setSocket(null);
-    }
-
-    this.scene.clearUser();
+    this.scene.resetSessionState();
     this.scene.switchPhase(new TitlePhase(this.scene, { forceContinueEnabled: true }));
   }
 }

@@ -130,31 +130,29 @@ export class GameScene extends BaseScene {
     message?: string;
   }): Promise<void> => {
     if (!this.socket) return;
-    this.socket.off('kicked', this.onSocketKicked);
-    this.socket = null;
+    const maintenance = payload?.reason === 'MAINTENANCE';
+    this.resetSessionState();
 
-    if (payload?.reason === 'MAINTENANCE') {
-      this.clearUser();
-      this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:MAINTENANCE' }));
-      return;
+    if (!maintenance) {
+      try {
+        await this.getApi().invalidateSession();
+      } catch {}
     }
 
-    try {
-      await this.getApi().invalidateSession();
-    } catch {}
-    this.clearUser();
-    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:KICKED' }));
+    this.switchPhase(
+      new LoginPhase(this, {
+        initialErrorKey: maintenance ? 'error:MAINTENANCE' : 'error:KICKED',
+      }),
+    );
   };
 
   private handleSessionInvalid = (): void => {
+    if (!this.user) return;
+
     const top = this.getCurrentPhase();
     if (top instanceof LoginPhase) return;
 
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
-    }
-    this.clearUser();
+    this.resetSessionState();
     this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:SESSION_EXPIRED' }));
   };
 
@@ -163,11 +161,7 @@ export class GameScene extends BaseScene {
 
     if (top instanceof LoginPhase || top instanceof RegisterPhase) return;
 
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
-    }
-    this.clearUser();
+    this.resetSessionState();
     this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:MAINTENANCE' }));
   };
 
@@ -365,6 +359,27 @@ export class GameScene extends BaseScene {
 
   clearUser() {
     this.user = null;
+  }
+
+  resetSessionState(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+    this.setSocket(null);
+    this.clearUser();
+    this.clearSafariInfo();
+    this.clearPendingRoomState();
+    this.setCurrentSocketUserId(null);
+    this.setGameTimeState(null);
+    this.setWeatherState(null);
+
+    this.audio.stopBackground();
+
+    this.talkUi.hide();
+    this.pocketTalkUi.hide();
+    this.noticeUi.hide();
+    this.questionUi.hide();
+    this.cooldownUi.hide();
   }
 
   getOption(): OptionManager {

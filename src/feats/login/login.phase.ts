@@ -19,6 +19,8 @@ export class LoginPhase implements IGamePhase {
   ) {}
 
   async enter(): Promise<void> {
+    this.scene.getFadeToBlackPipeline()?.setProgress(0);
+
     const existingSocket = this.scene.getSocket();
     if (existingSocket) {
       existingSocket.disconnect();

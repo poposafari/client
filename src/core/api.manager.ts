@@ -106,7 +106,10 @@ export class ApiManager {
           this.onMaintenance();
         }
         const code = error.response?.data?.code;
-        if (code === ErrorCode.SESSION_EXPIRED && this.onSessionInvalid) {
+        if (
+          (code === ErrorCode.SESSION_EXPIRED || code === ErrorCode.SESSION_MISSING) &&
+          this.onSessionInvalid
+        ) {
           this.onSessionInvalid();
         }
         return this.handleGlobalError(error);

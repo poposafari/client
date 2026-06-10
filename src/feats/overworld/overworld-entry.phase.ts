@@ -69,12 +69,7 @@ export class OverworldEntryPhase implements IGamePhase {
       this.ui.destroy();
       this.ui = null;
     }
-    this.scene.clearUser();
-    const s = this.scene.getSocket();
-    if (s) {
-      s.disconnect();
-      this.scene.setSocket(null);
-    }
+    this.scene.resetSessionState();
     this.scene.switchPhase(
       new LoginPhase(this.scene, { initialErrorKey: 'error:SESSION_EXPIRED' }),
     );
