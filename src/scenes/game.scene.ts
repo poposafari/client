@@ -13,6 +13,7 @@ import { UserManager } from '@poposafari/core/user.manager';
 import {
   LoadingPhase,
   LoginPhase,
+  RegisterPhase,
   MessageUi,
   NoticeMessageUi,
   PocketTalkMessageUi,
@@ -159,7 +160,8 @@ export class GameScene extends BaseScene {
 
   private handleMaintenance = (): void => {
     const top = this.getCurrentPhase();
-    if (top instanceof LoginPhase) return;
+
+    if (top instanceof LoginPhase || top instanceof RegisterPhase) return;
 
     if (this.socket) {
       this.socket.disconnect();

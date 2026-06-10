@@ -1,4 +1,6 @@
+import i18next from 'i18next';
 import { IGamePhase } from '@poposafari/core';
+import { ApiError } from '@poposafari/types';
 import { GameScene } from '@poposafari/scenes';
 import { RegisterUi } from './register.ui';
 import { LoginPhase } from '../login';
@@ -27,8 +29,11 @@ export class RegisterPhase implements IGamePhase {
           return;
         }
       } catch (error: any) {
-        console.log(error.message);
-        this.ui.errorEffect(error.message);
+        if (error instanceof ApiError && error.status === 503) {
+          this.ui.errorEffect(i18next.t('error:MAINTENANCE'));
+        } else {
+          this.ui.errorEffect(error.message);
+        }
       }
     }
   }
