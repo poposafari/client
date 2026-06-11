@@ -37,8 +37,18 @@ export class OverworldMenuPhase implements IGamePhase {
     return map.startsWith('s');
   }
 
+  private isNewbie(): boolean {
+    const profile = this.scene.getUser()?.getProfile();
+    return profile?.lastLocation.map === 's000' && profile?.hasStarter === true;
+  }
+
+  private getMenuAnchorY(): number {
+    if (this.isNewbie()) return 410;
+    return this.isInSafari() ? 1015 : 715;
+  }
+
   async enter(): Promise<void> {
-    this.ui = new OverworldMenuUi(this.scene, this.isInSafari() ? 1015 : 715);
+    this.ui = new OverworldMenuUi(this.scene, this.getMenuAnchorY());
     this.yesOrNoMenu = new BackTitleMenuUi(this.scene);
     this.confirmMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
       y: +800,

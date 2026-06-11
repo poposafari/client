@@ -56,6 +56,12 @@ const MENU_ITEMS = (inSafari: boolean, gender: 'male' | 'female') => {
   return items;
 };
 
+const NEWBIE_MENU_ITEMS = () => [
+  { key: 'option', label: i18next.t('etc:option'), icon: TEXTURE.ICON_OPTION },
+  TITLE_ITEM(),
+  CANCEL_ITEM(),
+];
+
 const YES_NO_ITEMS = () => [
   { key: 'yes', label: i18next.t('etc:yes') },
   { key: 'no', label: i18next.t('etc:no') },
@@ -75,10 +81,15 @@ export class OverworldMenuUi extends MenuUi {
     return map.startsWith('s');
   }
 
+  private isNewbie(): boolean {
+    const profile = this.scene.getUser()?.getProfile();
+    return profile?.lastLocation.map === 's000' && profile?.hasStarter === true;
+  }
+
   async waitForInput(initialCursorKey?: string): Promise<{ key: string; cursorKey: string }> {
     const inSafari = this.isInSafari();
     const gender = this.scene.getUser()?.getProfile().gender ?? 'male';
-    const items = MENU_ITEMS(inSafari, gender);
+    const items = this.isNewbie() ? NEWBIE_MENU_ITEMS() : MENU_ITEMS(inSafari, gender);
     const foundIndex = initialCursorKey
       ? items.findIndex((item) => item.key === initialCursorKey)
       : -1;

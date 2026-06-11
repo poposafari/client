@@ -339,7 +339,6 @@ export class OverworldUi extends BaseUi {
         this.syncRunningToggleIcon();
         break;
       case KEY.S:
-        if (this.newbieRestricted) break;
         this.syncMenuToggleIcon(true);
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMenuRequested?.();

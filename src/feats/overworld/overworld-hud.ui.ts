@@ -600,20 +600,14 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   }
 
   setNewbieMode(enabled: boolean): void {
-    const runningIdx = TOGGLE_ICONS.findIndex((c) => c.texture === TEXTURE.ICON_RUNNING);
+    const registerIdx = TOGGLE_ICONS.findIndex((c) => c.texture === TEXTURE.ICON_REGISTER);
     this.toggleIconGroups.forEach((group, i) => {
-      const visible = !enabled || i === runningIdx;
+      const visible = !enabled || i !== registerIdx;
       for (const obj of group) {
         obj.setVisible(visible);
       }
     });
-    const otherVisible = !enabled;
-    this.partyList?.setVisible(otherVisible);
-    this.timeContainer?.setVisible(otherVisible);
-    this.weatherContainer?.setVisible(otherVisible);
-    this.xyText?.setVisible(otherVisible);
-    this.infoList?.setVisible(otherVisible);
-    this.profileContainer?.setVisible(otherVisible);
+    this.partyList?.setVisible(!enabled);
   }
 
   updateToggleIcon(texture: TEXTURE, onoff: boolean) {
