@@ -1,7 +1,7 @@
 export const pc: Record<string, string> = {
   box: 'ボックス',
-  party: 'てもち',
-  addToParty: 'てもちに くわえる',
+  party: 'パーティ',
+  addToParty: 'パーティに くわえる',
   grab: 'つかむ',
   heldItem: 'もちもの',
   evolve: 'しんかする',
@@ -14,7 +14,7 @@ export const pc: Record<string, string> = {
   confirmTakeHeldItem: '{{item}}を うけとりますか？',
   obtainedHeldItem: '{{item}}を うけとった！',
   surfInUse: 'なみのりを つかっています。',
-  removeFromParty: 'てもちから はずす',
+  removeFromParty: 'パーティから はずす',
   cancel: 'やめる',
   changeWallpaper: 'かべがみを かえる',
   wallpaper: 'かべがみ',

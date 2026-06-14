@@ -14,7 +14,7 @@ export const bag = {
     cancel: 'やめる',
   },
   empty: 'なにもない。',
-  noParty: 'てもちポケモンが いない。',
+  noParty: 'パーティポケモンが いない。',
   useStub: 'いまは つかえない。',
   confirmReplaceHeld: 'すでに どうぐを もっています。とりかえますか？',
   gaveItem: '{{name}}に {{item}}を もたせた。',

@@ -3,8 +3,8 @@ export type TranslationFossil = {
 };
 
 export const fossil: TranslationFossil = {
-  greeting: 'ふっかつ　させたい\nカセキは　あるかな？',
-  confirmOne: '{{name}}を　ふっかつさせるかい？',
-  confirmTwo: '{{name1}}と　{{name2}}を　ふっかつさせるかい？',
+  greeting: 'ポケモンに もどしたい\nカセキは　あるかな？',
+  confirmOne: '{{name}}を　ポケモンにもどすかい？',
+  confirmTwo: '{{name1}}と　{{name2}}を　ポケモンにもどすかい？',
   received: '{{nickname}}は\n{{name}}を　うけとった！',
 };

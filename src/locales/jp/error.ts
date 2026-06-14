@@ -11,7 +11,8 @@ export const error: TranslationError = {
   ACCOUNT_ALREADY_EXIST: 'このアカウントは すでに とうろくされています。',
   FAILED_ACCOUNT: 'アカウントにんしょうに しっぱいしました。',
   ACCOUNT_ALREADY_DELETED: 'このアカウントは すでに さくじょされています。',
-  ACCOUNT_IN_USE: 'ほかの ききで せつぞくちゅうです。\nしゅうりょうしてから もういちど おためしください。',
+  ACCOUNT_IN_USE:
+    'ほかの ききで せつぞくちゅうです。\nしゅうりょうしてから もういちど おためしください。',
   EXCEED_REQUEST: 'リクエストが おおすぎます。\nしばらくしてから おためしください。',
   USER_NOT_FOUND: 'ユーザーが みつかりません。',
   USER_ALREADY_EXISTS: 'このユーザーは すでに とうろくされています。',
@@ -63,8 +64,9 @@ export const error: TranslationError = {
   EMPTY_USERNAME: 'ユーザーめいを にゅうりょくしてください。',
   EMPTY_PASSWORD: 'パスワードを にゅうりょくしてください。',
   INVALID_USERNAME_OR_PASSWORD: 'ユーザーめい または パスワードが\nいっちしません。',
-  INVALID_INPUT_USERNAME: 'ユーザーめいは 6〜20もじの\nえいこもじと すうじで にゅうりょくしてください。',
-  INVALID_INPUT_PASSWORD: 'パスワードは 8〜20もじで えいじと すうじを\nりょうほう ふくむ ひつようが あります。',
+  INVALID_INPUT_USERNAME: 'ユーザーめいは 6〜20もじの\nえいすうじで にゅうりょくしてください。',
+  INVALID_INPUT_PASSWORD:
+    'パスワードは 8〜20もじで えいすうじを\nりょうほう ふくむ ひつようが あります。',
   NOT_MATCH_PASSWORD_AND_REPASSWORD: 'パスワードが いっちしません。',
   EMPTY_NICKNAME: 'ニックネームを にゅうりょくしてください。',
   WHITESPACE_NICKNAME: 'ニックネームに くうはくを\nふくめることは できません。',
@@ -73,6 +75,7 @@ export const error: TranslationError = {
   INVALID_NICKNAME_CHARS: 'ニックネームは もじと すうじだけ\nつかうことが できます。',
   RESERVED_NICKNAME: 'つかえない ニックネームです。',
   KICKED: 'ほかの たんまつで ログインされました。\nもういちど ログインしてください。',
-  MAINTENANCE: 'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
+  MAINTENANCE:
+    'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
   OAUTH_FAILED: 'がいぶログインに しっぱいしました。\nもういちど おためしください。',
 };

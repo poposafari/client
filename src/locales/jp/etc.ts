@@ -10,8 +10,8 @@ export const etc: TranslationEtc = {
   arrowKey: 'やじるしキー',
   saveAndQuit: 'セーブしてから やめる',
   login: 'ログイン',
-  backToLogin: 'ログインに もどる',
-  register: 'かいいんとうろく',
+  backToLogin: 'もどる',
+  register: 'とうろく',
   username: 'ユーザーめい',
   password: 'パスワード',
   repassword: 'パスワード さいにゅうりょく',
@@ -19,7 +19,7 @@ export const etc: TranslationEtc = {
   enterYourPassword: 'パスワードを にゅうりょくしてください。',
   welcome_0: 'ポポサファリへ ようこそ！',
   welcome_1:
-    'このゲームは ポケットモンスターシリーズに とうじょうする\nサファリゾーンを ちゅうしんに かいはつされた ポケモンファンゲームです。',
+    'このゲームは ポケットモンスターシリーズに とうじょうする\nサファリゾーンを モチーフにつくられた ポケモンファンゲームです。',
   welcome_2:
     'このゲームは しゅうえきを えておらず Pokémonおよび つかわれた\nリソースの しょゆうけんを しゅちょうしません。',
   welcome_3:
@@ -33,9 +33,9 @@ export const etc: TranslationEtc = {
   mysteryGift: 'ふしぎな おくりもの',
   option: 'せってい',
   logout: 'ログアウト',
-  s000_caught_0: 'おめでとう！\nついに あなたの はじめての ポケモンが できました。',
+  s000_caught_0: 'はじめてのGOTCHAだね、おめでとう！',
   s000_caught_1: 'ここから ほんかくてきに\nポポサファリを たのしめます。',
-  s000_caught_2: 'ポポタウンへ おくります。',
+  s000_caught_2: 'これより ポポタウンへ いどうします！',
   hisui: 'ヒスイ',
   galar: 'ガラル',
   paldea: 'パルデア',
@@ -68,7 +68,7 @@ export const etc: TranslationEtc = {
   pokeRader: 'ポケレーダー',
   map: 'タウンマップ',
   safariMap: 'ポポサファリ マップ',
-  pc: 'ポケモンボックス',
+  pc: 'ボックス',
   bag: 'バッグ',
   pokedex: 'ポケモンずかん',
   pokedexFilter_all: 'すべて',
@@ -93,7 +93,8 @@ export const etc: TranslationEtc = {
   tierEpic: 'エピック',
   tierLegendary: 'でんせつ',
   s000_welcome_0: 'ポポサファリへ ようこそ！',
-  s000_welcome_1: 'ここは あなたの はじめての ポケモンを\nえらぶための とくべつな サファリです。',
+  s000_welcome_1:
+    'ここは あなたの はじめての ポケモンを\nえらぶための とくべつな サファリゾーンです。',
   s000_welcome_2: 'つかまえたい ポケモンに ちかづいて\nZまたは ENTERキーを おしてみてください！',
   s000_battle_intro_0: 'やせいの ポケモンと であった！',
   s000_battle_intro_1:
@@ -101,7 +102,7 @@ export const etc: TranslationEtc = {
   s000_tutorial_ball_0:
     'まず 「つかまえる」は サファリボールを なげて\nポケモンを ほかくする こうどうです。',
   s000_tutorial_ball_1:
-    'サファリでは ふつうの バトルではなく\nサファリボールだけで ポケモンを つかまえます。',
+    'サファリゾーンでは ふつうの バトルではなく\nサファリボールだけで ポケモンを つかまえます。',
   s000_tutorial_feed_0: '「エサ」は ポケモンに エサを なげて\nにげる かくりつを さげるかわりに、',
   s000_tutorial_feed_1:
     'ほかく かくりつも いっしょに さがります。\nしんちょうに つかってください。',
@@ -109,7 +110,7 @@ export const etc: TranslationEtc = {
   s000_tutorial_mud_1: 'ポケモンが おこって\nにげる かくりつも いっしょに あがります。',
   s000_tutorial_run_0: '「にげる」は バトルを あきらめて\nあんぜんに ぬけだす こうどうです。',
   deleteAccount_0: 'すべての データを\nさくじょしますか？',
-  deleteAccount_1: 'ふっきゅうは できません。\nそれでも よろしいですか？',
+  deleteAccount_1: 'もとにもどすことは できません。\nそれでも よろしいですか？',
   deleteAccount_2: 'ほんとうに？\nそれでも さくじょしますか？',
   tooltip_register: 'とうろくアイテム(A)',
   tooltip_running: 'はしる(R)',
@@ -128,8 +129,9 @@ export const etc: TranslationEtc = {
   weather_sandstorm: 'すなあらし',
   pokeRader_title: 'ポケレーダー',
   pokeRader_caughtSpecies: 'つかまえた ポケモン',
-  maintenance_talk: 'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
-  playersOnline: '{{value}}にん オンライン',
+  maintenance_talk:
+    'ただいま サーバーメンテナンスちゅうです。\nしばらくして からもういちど おためしください。',
+  playersOnline: '{{value}} にん オンライン',
   notice: 'おしらせ',
   cooldownSeconds: '{{seconds}}びょう',
   serverBusy: 'ただいま サーバーが まんいん です。\nしばらくしてから ふたたび おためしください。',
