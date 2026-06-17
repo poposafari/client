@@ -1,0 +1,38 @@
+{
+  "comment": "포포시티",
+  "type": "plaza",
+  "cost": 0,
+  "item": {
+    "min": 1,
+    "max": 2,
+    "spawn": []
+  },
+  "wild": {
+    "min": 3,
+    "max": 5,
+    "dawn": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "day": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "dusk": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "night": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    }
+  }
+}

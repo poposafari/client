@@ -1,0 +1,38 @@
+{
+  "comment": "스타터 선택 사파리",
+  "type": "safari",
+  "cost": 0,
+  "item": {
+    "min": 0,
+    "max": 0,
+    "spawn": []
+  },
+  "wild": {
+    "min": 27,
+    "max": 27,
+    "dawn": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "day": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "dusk": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    },
+    "night": {
+      "sunny": [],
+      "rainy": [],
+      "stormy": [],
+      "foggy": []
+    }
+  }
+}

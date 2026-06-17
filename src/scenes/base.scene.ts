@@ -47,11 +47,10 @@ export class BaseScene extends Phaser.Scene {
     this.load.audio(key, assetUrl(`${folder}/${filename}`));
   }
 
-  // master/ JSON lives in public/ unhashed so balance can hot-patch without a rebuild.
   loadJson(key: string, folder: string, filename: string) {
     if (filename) {
       filename = `${filename}.json`;
     }
-    this.load.json(key, `${folder}/${filename}`);
+    this.load.json(key, `${folder}/${filename}?v=${__BUILD_SHA__}`);
   }
 }

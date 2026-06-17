@@ -26,7 +26,11 @@ import {
   petEmotionFramePair,
 } from '../overworld/objects/pet-emotion';
 
-import { P001_POKEMON_NPC, STARTER_POKEDEX_IDS } from '@poposafari/core/master.data.ts';
+import {
+  MAP_MASTER_IDS,
+  P001_POKEMON_NPC,
+  STARTER_POKEDEX_IDS,
+} from '@poposafari/core/master.data.ts';
 import {
   s000Config,
   s001Config,
@@ -140,7 +144,12 @@ export class LoadingPhase implements IGamePhase {
     const pokemon = this.scene.cache.json.get('pokemon');
     const costume = this.scene.cache.json.get('costume');
     const mapArea = this.scene.cache.json.get('map-area');
-    const map = this.scene.cache.json.get('map');
+
+    const map: Record<string, unknown> = {};
+    for (const id of MAP_MASTER_IDS) {
+      const entry = this.scene.cache.json.get(`map.${id}`);
+      if (entry) map[id] = entry;
+    }
 
     this.scene.getMasterData().loadJsonDataFromCache(costume, item, pokemon, mapArea, map);
   }
@@ -188,7 +197,9 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadJson('pokemon', 'master', 'pokemon');
     this.scene.loadJson('costume', 'master', 'costume');
     this.scene.loadJson('map-area', 'master', 'map-area');
-    this.scene.loadJson('map', 'master', 'map');
+    for (const id of MAP_MASTER_IDS) {
+      this.scene.loadJson(`map.${id}`, 'master/map', id);
+    }
   }
 
   private loadPokemonAssets(): void {

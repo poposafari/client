@@ -1,0 +1,1182 @@
+{
+  "comment": "수정 동굴 호수",
+  "type": "safari",
+  "cost": 0,
+  "item": {
+    "min": 3,
+    "max": 6,
+    "spawn": []
+  },
+  "wild": {
+    "min": 8,
+    "max": 10,
+    "dawn": {
+      "sunny": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "rainy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "stormy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "foggy": [
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0969",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0970",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ]
+    },
+    "day": {
+      "sunny": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "rainy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "stormy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 41,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "foggy": [
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0969",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0970",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ]
+    },
+    "dusk": {
+      "sunny": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 31,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "rainy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "stormy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0349",
+          "weight": 35,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0350",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "foggy": [
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0969",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0970",
+          "weight": 50,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ]
+    },
+    "night": {
+      "sunny": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050_alola",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051_alola",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 22,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "rainy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050_alola",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051_alola",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "stormy": [
+        {
+          "id": "0118",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050_alola",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051_alola",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0090",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0091",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0119",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 25,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ],
+      "foggy": [
+        {
+          "id": "0140",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211_hisui",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0211",
+          "weight": 250,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050_alola",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0050",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051_alola",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0051",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0063",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0141",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0142",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0969",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0970",
+          "weight": 27,
+          "levelMin": 10,
+          "levelMax": 30
+        },
+        {
+          "id": "0132",
+          "weight": 1,
+          "levelMin": 10,
+          "levelMax": 30
+        }
+      ]
+    }
+  }
+}
