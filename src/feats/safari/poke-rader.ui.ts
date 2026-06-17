@@ -1,7 +1,18 @@
 import { BaseUi } from '@poposafari/core';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX, TEXTCOLOR, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  DEPTH,
+  EASE,
+  KEY,
+  SFX,
+  SYMBOL_ARROW_LEFT,
+  SYMBOL_ARROW_RIGHT,
+  TEXTCOLOR,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import {
   addBackground,
   addImage,
@@ -30,16 +41,19 @@ const WEATHER_I18N_KEY: Record<Weather, string> = {
   foggy: 'etc:weather_foggy',
 };
 
+type FocusRow = 'grid' | 'time' | 'weather';
+const FOCUS_ROWS: FocusRow[] = ['grid', 'time', 'weather'];
+
 const GRID_COLS = 10;
 const GRID_ROWS = 3;
 const CELL_W = 160;
 const CELL_H = 150;
 const GRID_ORIGIN_X = -((GRID_COLS - 1) * CELL_W) / 2;
-const GRID_ORIGIN_Y = -200;
-const ICON_SCALE = 2.4;
+const GRID_ORIGIN_Y = -210;
+const ICON_SCALE = 2.2;
 const WEIGHT_TEXT_OFFSET_Y = 60;
 
-const UNCAUGHT_TINT = 0x808080;
+const UNCAUGHT_TINT = 0x000000;
 
 const WEIGHT_PCT_HIGH = 20;
 const WEIGHT_PCT_LOW = 5;
@@ -47,8 +61,9 @@ const WEIGHT_PCT_LOW = 5;
 const PANEL_TITLE_Y = -470;
 const PANEL_TITLE_ICON_PADDING = 40;
 const PANEL_TITLE_ICON_SCALE = 2;
-const MAP_TITLE_Y = -360;
-const CAUGHT_COUNT_Y = -290;
+const MAP_TITLE_Y = -370;
+const CAUGHT_COUNT_X = -860;
+const CAUGHT_COUNT_Y = MAP_TITLE_Y;
 const TIME_ROW_Y = 250;
 const WEATHER_ROW_Y = 400;
 const ROW_LABEL_X = -800;
@@ -58,7 +73,20 @@ const OPT_GAP = 260;
 const ROW_CURSOR_X = -8;
 const ROW_CURSOR_WIDTH = 1790;
 const ROW_CURSOR_HEIGHT = 145;
-const ROW_CURSOR_SCALE = 3.2;
+const ROW_CURSOR_SCALE = 4;
+
+const GRID_CURSOR_X = -8;
+const GRID_CURSOR_Y = -130;
+const GRID_CURSOR_WIDTH = 1790;
+const GRID_CURSOR_HEIGHT = 610;
+
+const PAGE_SIZE = GRID_COLS * GRID_ROWS;
+const PAGE_TEXT_X = 0;
+const PAGE_TEXT_Y = -290;
+
+const CURSOR_PULSE_SCALE = 1.02;
+const CURSOR_PULSE_DELAY = 100;
+const CURSOR_PULSE_DURATION = 350;
 
 function normalizePokedexId(id: string): string {
   return id.split('_')[0].padStart(4, '0');
@@ -77,16 +105,19 @@ export class PokeRaderUi extends BaseUi {
   private panelTitleIconRight!: GImage;
   private mapNameText!: GText;
   private caughtCountText!: GText;
+  private pageText!: GText;
   private timeRowLabel!: GText;
   private weatherRowLabel!: GText;
   private timeOptionTexts: GText[] = [];
   private weatherOptionTexts: GText[] = [];
   private rowCursor!: GWindow;
+  private cursorTween: Phaser.Tweens.Tween | null = null;
   private inputGuide!: KeyGuideBarContainer;
   private iconSprites: Phaser.GameObjects.Sprite[] = [];
   private weightTexts: GText[] = [];
 
-  private focusRow: 'time' | 'weather' = 'time';
+  private focusRow: FocusRow = 'grid';
+  private page: number = 0;
   private time: TimePhase = 'day';
   private weather: Weather = 'sunny';
   private mapKey: string = '';
@@ -100,6 +131,7 @@ export class PokeRaderUi extends BaseUi {
     this.createLayout();
     this.rebuildIcons();
     this.updateFilterHighlights();
+    this.playCursorPulse();
   }
 
   private initState(): void {
@@ -172,16 +204,29 @@ export class PokeRaderUi extends BaseUi {
 
     this.caughtCountText = addText(
       scene,
-      0,
+      CAUGHT_COUNT_X,
       CAUGHT_COUNT_Y,
       '',
       60,
+      '500',
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.add(this.caughtCountText);
+
+    this.pageText = addText(
+      scene,
+      PAGE_TEXT_X,
+      PAGE_TEXT_Y,
+      '',
+      80,
       '500',
       'center',
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
-    this.add(this.caughtCountText);
+    this.add(this.pageText);
 
     this.timeRowLabel = addText(
       scene,
@@ -290,12 +335,16 @@ export class PokeRaderUi extends BaseUi {
     this.iconSprites = [];
     this.weightTexts = [];
 
-    const list = this.getCurrentList();
-    const total = list.reduce((sum, item) => sum + (item.weight > 0 ? item.weight : 0), 0);
-    const max = Math.min(list.length, GRID_COLS * GRID_ROWS);
+    const fullList = this.getCurrentList();
+    const total = fullList.reduce((sum, item) => sum + (item.weight > 0 ? item.weight : 0), 0);
 
-    let caughtCount = 0;
-    for (let i = 0; i < max; i++) {
+    const totalPages = Math.max(1, Math.ceil(fullList.length / PAGE_SIZE));
+    this.page = Math.min(Math.max(this.page, 0), totalPages - 1);
+
+    const start = this.page * PAGE_SIZE;
+    const list = fullList.slice(start, start + PAGE_SIZE);
+
+    for (let i = 0; i < list.length; i++) {
       const { id, weight } = list[i];
       const col = i % GRID_COLS;
       const row = Math.floor(i / GRID_COLS);
@@ -305,11 +354,8 @@ export class PokeRaderUi extends BaseUi {
       const tex = getPokemonTexture('icon', id);
       const sprite = addSprite(scene, tex.key, tex.frame + '_0', x, y);
       sprite.setScale(ICON_SCALE);
-      const isCaught = this.caughtSet.has(normalizePokedexId(id));
-      if (!isCaught) {
-        sprite.setTint(UNCAUGHT_TINT);
-      } else {
-        caughtCount++;
+      if (!this.caughtSet.has(normalizePokedexId(id))) {
+        sprite.setTintFill(UNCAUGHT_TINT);
       }
       this.iconSprites.push(sprite);
 
@@ -331,8 +377,16 @@ export class PokeRaderUi extends BaseUi {
 
     this.add([...this.iconSprites, ...this.weightTexts]);
 
+    let caughtCount = 0;
+    for (const item of fullList) {
+      if (this.caughtSet.has(normalizePokedexId(item.id))) caughtCount++;
+    }
+
     const label = i18next.t('etc:pokeRader_caughtSpecies');
-    this.caughtCountText.setText(`${label}: ${caughtCount} / ${max}`);
+    this.caughtCountText.setText(`${label}: ${caughtCount} / ${fullList.length}`);
+    this.pageText.setText(
+      `${SYMBOL_ARROW_LEFT} ${this.page + 1} / ${totalPages} ${SYMBOL_ARROW_RIGHT}`,
+    );
   }
 
   private updateFilterHighlights(): void {
@@ -346,7 +400,38 @@ export class PokeRaderUi extends BaseUi {
       this.weatherOptionTexts[i].setColor(WEATHERS[i] === this.weather ? selectedColor : idleColor);
     }
 
-    this.rowCursor.setY(this.focusRow === 'time' ? TIME_ROW_Y : WEATHER_ROW_Y);
+    this.updateCursor();
+  }
+
+  private updateCursor(): void {
+    const scale = ROW_CURSOR_SCALE;
+    if (this.focusRow === 'grid') {
+      this.rowCursor.setSize(GRID_CURSOR_WIDTH / scale, GRID_CURSOR_HEIGHT / scale);
+      this.rowCursor.setPosition(GRID_CURSOR_X, GRID_CURSOR_Y);
+    } else {
+      this.rowCursor.setSize(ROW_CURSOR_WIDTH / scale, ROW_CURSOR_HEIGHT / scale);
+      this.rowCursor.setPosition(
+        ROW_CURSOR_X,
+        this.focusRow === 'time' ? TIME_ROW_Y : WEATHER_ROW_Y,
+      );
+    }
+  }
+
+  private playCursorPulse(): void {
+    const scene = this.scene as GameScene;
+    const base = ROW_CURSOR_SCALE;
+    this.cursorTween?.stop();
+    this.rowCursor.setScale(base);
+    this.cursorTween = scene.tweens.add({
+      targets: this.rowCursor,
+      scaleX: base * CURSOR_PULSE_SCALE,
+      scaleY: base * CURSOR_PULSE_SCALE,
+      delay: CURSOR_PULSE_DELAY,
+      duration: CURSOR_PULSE_DURATION,
+      ease: EASE.LINEAR,
+      yoyo: true,
+      repeat: -1,
+    });
   }
 
   private cycleFocusValue(delta: number): void {
@@ -357,8 +442,18 @@ export class PokeRaderUi extends BaseUi {
       const idx = WEATHERS.indexOf(this.weather);
       this.weather = WEATHERS[(idx + delta + WEATHERS.length) % WEATHERS.length];
     }
+    this.page = 0;
     this.rebuildIcons();
     this.updateFilterHighlights();
+    this.playCursorPulse();
+  }
+
+  private changePage(delta: number): void {
+    const totalPages = Math.max(1, Math.ceil(this.getCurrentList().length / PAGE_SIZE));
+    if (totalPages <= 1) return;
+    this.page = (this.page + delta + totalPages) % totalPages;
+    this.rebuildIcons();
+    this.playCursorPulse();
   }
 
   onInput(key: string): void {
@@ -369,18 +464,24 @@ export class PokeRaderUi extends BaseUi {
         this.finishExit();
         return;
       case KEY.UP:
-      case KEY.DOWN:
+      case KEY.DOWN: {
         (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
-        this.focusRow = this.focusRow === 'time' ? 'weather' : 'time';
+        const idx = FOCUS_ROWS.indexOf(this.focusRow);
+        const delta = key === KEY.UP ? -1 : +1;
+        this.focusRow = FOCUS_ROWS[(idx + delta + FOCUS_ROWS.length) % FOCUS_ROWS.length];
         this.updateFilterHighlights();
+        this.playCursorPulse();
         return;
+      }
       case KEY.LEFT:
         (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
-        this.cycleFocusValue(-1);
+        if (this.focusRow === 'grid') this.changePage(-1);
+        else this.cycleFocusValue(-1);
         return;
       case KEY.RIGHT:
         (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
-        this.cycleFocusValue(+1);
+        if (this.focusRow === 'grid') this.changePage(+1);
+        else this.cycleFocusValue(+1);
         return;
     }
   }
@@ -399,6 +500,8 @@ export class PokeRaderUi extends BaseUi {
 
   private finishExit(): void {
     if (!this.resolveExit) return;
+    this.cursorTween?.stop();
+    this.cursorTween = null;
     const resolve = this.resolveExit;
     this.resolveExit = null;
     resolve();
