@@ -45,6 +45,42 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "sweet-apple",
+        "weight": 1
+      },
+      {
+        "id": "flower-sweet",
+        "weight": 1
+      },
+      {
+        "id": "clover-sweet",
+        "weight": 1
+      },
+      {
+        "id": "strawberry-sweet",
+        "weight": 1
+      },
+      {
+        "id": "ribbon-sweet",
+        "weight": 1
+      },
+      {
+        "id": "oval-stone",
+        "weight": 1
+      },
+      {
+        "id": "up-grade",
+        "weight": 1
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 10
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 20
       }
     ]
   },

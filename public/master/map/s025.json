@@ -29,6 +29,14 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "ice-stone",
+        "weight": 1
+      },
+      {
+        "id": "fossilized-bird",
+        "weight": 1
       }
     ]
   },

@@ -33,6 +33,34 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "nugget",
+        "weight": 20
+      },
+      {
+        "id": "big-nugget",
+        "weight": 10
+      },
+      {
+        "id": "skull-fossil",
+        "weight": 1
+      },
+      {
+        "id": "armor-fossil",
+        "weight": 1
+      },
+      {
+        "id": "moon-stone",
+        "weight": 1
+      },
+      {
+        "id": "kings-rock",
+        "weight": 1
+      },
+      {
+        "id": "linking-cord",
+        "weight": 1
       }
     ]
   },

@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -25,6 +25,14 @@
       {
         "id": "ghost-candy",
         "weight": 100
+      },
+      {
+        "id": "malicious-armor",
+        "weight": 1
+      },
+      {
+        "id": "auspicious-armor",
+        "weight": 1
       }
     ]
   },

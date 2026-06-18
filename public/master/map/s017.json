@@ -41,6 +41,22 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "plume-fossil",
+        "weight": 1
+      },
+      {
+        "id": "jaw-fossil",
+        "weight": 1
+      },
+      {
+        "id": "rare-bone",
+        "weight": 20
+      },
+      {
+        "id": "metal-alloy",
+        "weight": 1
       }
     ]
   },

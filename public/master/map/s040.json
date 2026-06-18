@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -41,6 +41,14 @@
       {
         "id": "dark-candy",
         "weight": 100
+      },
+      {
+        "id": "rare-bone",
+        "weight": 20
+      },
+      {
+        "id": "stardust",
+        "weight": 10
       }
     ]
   },

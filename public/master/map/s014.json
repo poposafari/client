@@ -45,6 +45,22 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 20
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 10
+      },
+      {
+        "id": "comet-shard",
+        "weight": 10
+      },
+      {
+        "id": "masterpiece-teacup",
+        "weight": 1
       }
     ]
   },

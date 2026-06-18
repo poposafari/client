@@ -33,6 +33,18 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "skull-fossil",
+        "weight": 1
+      },
+      {
+        "id": "claw-fossil",
+        "weight": 1
+      },
+      {
+        "id": "big-nugget",
+        "weight": 10
       }
     ]
   },

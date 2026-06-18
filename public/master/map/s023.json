@@ -25,6 +25,22 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "star-piece",
+        "weight": 10
+      },
+      {
+        "id": "comet-shard",
+        "weight": 10
+      },
+      {
+        "id": "oval-stone",
+        "weight": 1
+      },
+      {
+        "id": "protector",
+        "weight": 1
       }
     ]
   },

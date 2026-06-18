@@ -49,6 +49,26 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "helix-fossil",
+        "weight": 1
+      },
+      {
+        "id": "sail-fossil",
+        "weight": 1
+      },
+      {
+        "id": "shiny-stone",
+        "weight": 1
+      },
+      {
+        "id": "nugget",
+        "weight": 20
+      },
+      {
+        "id": "rare-bone",
+        "weight": 10
       }
     ]
   },

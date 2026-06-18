@@ -3,8 +3,8 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
-    "max": 6,
+    "min": 2,
+    "max": 3,
     "spawn": [
       {
         "id": "safari-ball",
@@ -37,6 +37,22 @@
       {
         "id": "dark-candy",
         "weight": 100
+      },
+      {
+        "id": "fossilized-bird",
+        "weight": 1
+      },
+      {
+        "id": "fossilized-dino",
+        "weight": 1
+      },
+      {
+        "id": "leaf-stone",
+        "weight": 1
+      },
+      {
+        "id": "dusk-stone",
+        "weight": 1
       }
     ]
   },

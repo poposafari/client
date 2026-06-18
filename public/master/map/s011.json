@@ -5,32 +5,7 @@
   "item": {
     "min": 3,
     "max": 6,
-    "spawn": [
-      {
-        "id": "safari-ball",
-        "weight": 40
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "water-candy",
-        "weight": 100
-      },
-      {
-        "id": "electric-candy",
-        "weight": 100
-      },
-      {
-        "id": "ground-candy",
-        "weight": 100
-      },
-      {
-        "id": "rock-candy",
-        "weight": 100
-      }
-    ]
+    "spawn": []
   },
   "wild": {
     "min": 6,

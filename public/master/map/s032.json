@@ -3,8 +3,8 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
-    "max": 6,
+    "min": 2,
+    "max": 2,
     "spawn": [
       {
         "id": "safari-ball",
@@ -29,12 +29,16 @@
       {
         "id": "ghost-candy",
         "weight": 100
+      },
+      {
+        "id": "nugget",
+        "weight": 20
       }
     ]
   },
   "wild": {
-    "min": 4,
-    "max": 6,
+    "min": 3,
+    "max": 3,
     "dawn": {
       "sunny": [
         {

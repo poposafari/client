@@ -25,6 +25,22 @@
       {
         "id": "ghost-candy",
         "weight": 100
+      },
+      {
+        "id": "malicious-armor",
+        "weight": 1
+      },
+      {
+        "id": "auspicious-armor",
+        "weight": 1
+      },
+      {
+        "id": "star-piece",
+        "weight": 10
+      },
+      {
+        "id": "comet-shard",
+        "weight": 10
       }
     ]
   },

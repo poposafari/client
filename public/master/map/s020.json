@@ -29,6 +29,18 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "comet-shard",
+        "weight": 10
+      },
+      {
+        "id": "fossilized-drake",
+        "weight": 1
+      },
+      {
+        "id": "fossilized-dino",
+        "weight": 1
       }
     ]
   },

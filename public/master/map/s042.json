@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -41,11 +41,35 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "fossilized-dino",
+        "weight": 1
+      },
+      {
+        "id": "fossilized-drake",
+        "weight": 1
+      },
+      {
+        "id": "stardust",
+        "weight": 20
+      },
+      {
+        "id": "star-piece",
+        "weight": 20
+      },
+      {
+        "id": "malicious-armor",
+        "weight": 1
+      },
+      {
+        "id": "auspicious-armor",
+        "weight": 1
       }
     ]
   },
   "wild": {
-    "min": 10,
+    "min": 8,
     "max": 12,
     "dawn": {
       "sunny": [

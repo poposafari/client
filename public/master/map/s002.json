@@ -41,12 +41,44 @@
       {
         "id": "bug-candy",
         "weight": 100
+      },
+      {
+        "id": "fire-stone",
+        "weight": 1
+      },
+      {
+        "id": "water-stone",
+        "weight": 1
+      },
+      {
+        "id": "thunder-stone",
+        "weight": 1
+      },
+      {
+        "id": "leaf-stone",
+        "weight": 1
+      },
+      {
+        "id": "sweet-apple",
+        "weight": 1
+      },
+      {
+        "id": "tart-apple",
+        "weight": 1
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 30
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 10
       }
     ]
   },
   "wild": {
-    "min": 10,
-    "max": 20,
+    "min": 20,
+    "max": 25,
     "dawn": {
       "sunny": [
         {

@@ -29,6 +29,18 @@
       {
         "id": "rock-candy",
         "weight": 100
+      },
+      {
+        "id": "ice-stone",
+        "weight": 1
+      },
+      {
+        "id": "razor-claw",
+        "weight": 1
+      },
+      {
+        "id": "peat-block",
+        "weight": 1
       }
     ]
   },

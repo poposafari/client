@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -25,6 +25,22 @@
       {
         "id": "ghost-candy",
         "weight": 100
+      },
+      {
+        "id": "stardust",
+        "weight": 20
+      },
+      {
+        "id": "relic-copper",
+        "weight": 20
+      },
+      {
+        "id": "relic-silver",
+        "weight": 10
+      },
+      {
+        "id": "relic-gold",
+        "weight": 3
       }
     ]
   },

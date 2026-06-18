@@ -41,6 +41,38 @@
       {
         "id": "fairy-candy",
         "weight": 20
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 20
+      },
+      {
+        "id": "balm-mushroom",
+        "weight": 20
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 5
+      },
+      {
+        "id": "reaper-cloth",
+        "weight": 1
+      },
+      {
+        "id": "dusk-stone",
+        "weight": 1
+      },
+      {
+        "id": "dubious-disc",
+        "weight": 1
+      },
+      {
+        "id": "electirizer",
+        "weight": 1
+      },
+      {
+        "id": "cracked-pot",
+        "weight": 1
       }
     ]
   },

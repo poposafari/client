@@ -33,6 +33,14 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "comet-shard",
+        "weight": 10
+      },
+      {
+        "id": "star-piece",
+        "weight": 10
       }
     ]
   },

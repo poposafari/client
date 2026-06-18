@@ -45,6 +45,30 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "dome-fossil",
+        "weight": 1
+      },
+      {
+        "id": "root-fossil",
+        "weight": 1
+      },
+      {
+        "id": "claw-fossil",
+        "weight": 1
+      },
+      {
+        "id": "nugget",
+        "weight": 20
+      },
+      {
+        "id": "rare-bone",
+        "weight": 10
+      },
+      {
+        "id": "big-nugget",
+        "weight": 3
       }
     ]
   },

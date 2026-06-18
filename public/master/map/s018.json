@@ -41,6 +41,14 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "fossilized-bird",
+        "weight": 1
+      },
+      {
+        "id": "sail-fossil",
+        "weight": 1
       }
     ]
   },

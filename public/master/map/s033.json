@@ -37,12 +37,36 @@
       {
         "id": "dark-candy",
         "weight": 100
+      },
+      {
+        "id": "nugget",
+        "weight": 20
+      },
+      {
+        "id": "big-nugget",
+        "weight": 10
+      },
+      {
+        "id": "star-piece",
+        "weight": 20
+      },
+      {
+        "id": "comet-shard",
+        "weight": 20
+      },
+      {
+        "id": "root-fossil",
+        "weight": 1
+      },
+      {
+        "id": "dome-fossil",
+        "weight": 1
       }
     ]
   },
   "wild": {
-    "min": 10,
-    "max": 12,
+    "min": 8,
+    "max": 10,
     "dawn": {
       "sunny": [
         {

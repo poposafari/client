@@ -49,12 +49,32 @@
       {
         "id": "bug-candy",
         "weight": 100
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 30
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 10
+      },
+      {
+        "id": "dawn-stone",
+        "weight": 1
+      },
+      {
+        "id": "shiny-stone",
+        "weight": 1
+      },
+      {
+        "id": "sun-stone",
+        "weight": 1
       }
     ]
   },
   "wild": {
-    "min": 10,
-    "max": 20,
+    "min": 5,
+    "max": 10,
     "dawn": {
       "sunny": [
         {

@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 3,
     "spawn": [
       {
         "id": "safari-ball",
@@ -37,6 +37,34 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "moon-stone",
+        "weight": 1
+      },
+      {
+        "id": "sun-stone",
+        "weight": 1
+      },
+      {
+        "id": "shiny-stone",
+        "weight": 1
+      },
+      {
+        "id": "dawn-stone",
+        "weight": 1
+      },
+      {
+        "id": "kings-rock",
+        "weight": 1
+      },
+      {
+        "id": "up-grade",
+        "weight": 1
+      },
+      {
+        "id": "razor-claw",
+        "weight": 1
       }
     ]
   },

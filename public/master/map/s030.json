@@ -21,12 +21,20 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "sail-fossil",
+        "weight": 1
+      },
+      {
+        "id": "fossilized-drake",
+        "weight": 1
       }
     ]
   },
   "wild": {
-    "min": 8,
-    "max": 10,
+    "min": 6,
+    "max": 6,
     "dawn": {
       "sunny": [
         {

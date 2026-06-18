@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -29,11 +29,47 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "water-stone",
+        "weight": 1
+      },
+      {
+        "id": "dragon-scale",
+        "weight": 1
+      },
+      {
+        "id": "kings-rock",
+        "weight": 1
+      },
+      {
+        "id": "deep-sea-scale",
+        "weight": 1
+      },
+      {
+        "id": "deep-sea-tooth",
+        "weight": 1
+      },
+      {
+        "id": "prism-scale",
+        "weight": 1
+      },
+      {
+        "id": "pearl",
+        "weight": 20
+      },
+      {
+        "id": "big-pearl",
+        "weight": 10
+      },
+      {
+        "id": "pearl-string",
+        "weight": 20
       }
     ]
   },
   "wild": {
-    "min": 15,
+    "min": 20,
     "max": 24,
     "dawn": {
       "sunny": [

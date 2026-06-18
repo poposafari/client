@@ -65,12 +65,40 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "sun-stone",
+        "weight": 1
+      },
+      {
+        "id": "moon-stone",
+        "weight": 1
+      },
+      {
+        "id": "leaf-stone",
+        "weight": 1
+      },
+      {
+        "id": "thunder-stone",
+        "weight": 1
+      },
+      {
+        "id": "balm-mushroom",
+        "weight": 30
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 30
+      },
+      {
+        "id": "big-mushroom",
+        "weight": 10
       }
     ]
   },
   "wild": {
-    "min": 10,
-    "max": 20,
+    "min": 8,
+    "max": 12,
     "dawn": {
       "sunny": [
         {

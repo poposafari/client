@@ -29,6 +29,10 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "ice-stone",
+        "weight": 1
       }
     ]
   },

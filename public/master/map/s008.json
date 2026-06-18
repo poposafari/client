@@ -41,6 +41,26 @@
       {
         "id": "steel-candy",
         "weight": 100
+      },
+      {
+        "id": "oval-stone",
+        "weight": 1
+      },
+      {
+        "id": "dusk-stone",
+        "weight": 1
+      },
+      {
+        "id": "dubious-disc",
+        "weight": 1
+      },
+      {
+        "id": "helix-fossil",
+        "weight": 1
+      },
+      {
+        "id": "nugget",
+        "weight": 10
       }
     ]
   },

@@ -4,7 +4,7 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
@@ -41,6 +41,26 @@
       {
         "id": "fairy-candy",
         "weight": 100
+      },
+      {
+        "id": "armor-fossil",
+        "weight": 1
+      },
+      {
+        "id": "cover-fossil",
+        "weight": 1
+      },
+      {
+        "id": "plume-fossil",
+        "weight": 1
+      },
+      {
+        "id": "root-fossil",
+        "weight": 1
+      },
+      {
+        "id": "nugget",
+        "weight": 20
       }
     ]
   },
