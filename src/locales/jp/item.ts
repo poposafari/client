@@ -864,4 +864,8 @@ export const item: TranslationItem = {
     name: 'わざマシン ドラゴンエール',
     description: 'ポケモンに ドラゴンエールを おぼえさせる。',
   },
+  'metal-alloy': {
+    name: '複合金属',
+    description: 'ジュラルドンに 使うと\n進化する 特別な 複合金属。',
+  },
 };

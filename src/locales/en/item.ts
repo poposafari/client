@@ -772,4 +772,8 @@ export const item: TranslationItem = {
     name: 'TM Dragon Cheer',
     description: 'Teaches Dragon Cheer to a Pokémon.',
   },
+  'metal-alloy': {
+    name: 'Metal Alloy',
+    description: 'A special metal alloy.\nExpose Duraludon to it to make it evolve.',
+  },
 };

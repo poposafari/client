@@ -835,4 +835,8 @@ export const item: TranslationItem = {
     name: 'CT Cri Draconique',
     description: 'Apprend la capacité Cri Draconique à un Pokémon.',
   },
+  'metal-alloy': {
+    name: 'Alliage Métal',
+    description: "Un alliage métallique spécial.\nExposer Duralugon à cet alliage le fait évoluer.",
+  },
 };

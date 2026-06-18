@@ -49,8 +49,8 @@ const GRID_ROWS = 3;
 const CELL_W = 160;
 const CELL_H = 150;
 const GRID_ORIGIN_X = -((GRID_COLS - 1) * CELL_W) / 2;
-const GRID_ORIGIN_Y = -210;
-const ICON_SCALE = 2.2;
+const GRID_ORIGIN_Y = -290;
+const ICON_SCALE = 2.1;
 const WEIGHT_TEXT_OFFSET_Y = 60;
 
 const UNCAUGHT_TINT = 0x000000;
@@ -68,7 +68,7 @@ const TIME_ROW_Y = 250;
 const WEATHER_ROW_Y = 400;
 const ROW_LABEL_X = -800;
 const OPT_START_X = -400;
-const OPT_GAP = 260;
+const OPT_GAP = 380;
 
 const ROW_CURSOR_X = -8;
 const ROW_CURSOR_WIDTH = 1790;
@@ -82,7 +82,7 @@ const GRID_CURSOR_HEIGHT = 610;
 
 const PAGE_SIZE = GRID_COLS * GRID_ROWS;
 const PAGE_TEXT_X = 0;
-const PAGE_TEXT_Y = -290;
+const PAGE_TEXT_Y = +130;
 
 const CURSOR_PULSE_SCALE = 1.02;
 const CURSOR_PULSE_DELAY = 100;
@@ -96,6 +96,23 @@ function getWeightColor(pct: number): TEXTCOLOR {
   if (pct >= WEIGHT_PCT_HIGH) return TEXTCOLOR.SIG_0;
   if (pct >= WEIGHT_PCT_LOW) return TEXTCOLOR.RARE;
   return TEXTCOLOR.RED;
+}
+
+function parseSafariMapNumber(mapKey: string): number | null {
+  const m = mapKey.match(/^s(\d+)$/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function getWeatherI18nKey(weather: Weather, mapKey: string): string {
+  const mapNum = parseSafariMapNumber(mapKey);
+  if (mapNum !== null && mapNum >= 19 && mapNum <= 31) {
+    if (weather === 'rainy') return 'etc:weather_snowy';
+    if (weather === 'stormy') return 'etc:weather_blizzard';
+  } else if (mapNum !== null && mapNum >= 39 && mapNum <= 45) {
+    if (weather === 'rainy') return 'etc:weather_sandwind';
+    if (weather === 'stormy') return 'etc:weather_sandstorm';
+  }
+  return WEATHER_I18N_KEY[weather];
 }
 
 export class PokeRaderUi extends BaseUi {
@@ -220,7 +237,7 @@ export class PokeRaderUi extends BaseUi {
       PAGE_TEXT_X,
       PAGE_TEXT_Y,
       '',
-      80,
+      60,
       '500',
       'center',
       TEXTSTYLE.BLACK,
@@ -272,7 +289,7 @@ export class PokeRaderUi extends BaseUi {
         scene,
         OPT_START_X + i * OPT_GAP,
         WEATHER_ROW_Y,
-        i18next.t(WEATHER_I18N_KEY[WEATHERS[i]]),
+        i18next.t(getWeatherI18nKey(WEATHERS[i], this.mapKey)),
         70,
         '500',
         'center',

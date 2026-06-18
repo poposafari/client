@@ -775,4 +775,8 @@ export const item: TranslationItem = {
     name: '기술머신 드래곤옐',
     description: '포켓몬에게 드래곤옐을 가르친다.',
   },
+  'metal-alloy': {
+    name: '복합금속',
+    description: '두랄루돈에게 사용하면\n진화하는 특별한 복합금속.',
+  },
 };

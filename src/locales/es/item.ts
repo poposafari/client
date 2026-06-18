@@ -772,4 +772,8 @@ export const item: TranslationItem = {
     name: 'MT Bramido Dragón',
     description: 'Enseña Bramido Dragón a un Pokémon.',
   },
+  'metal-alloy': {
+    name: 'Aleación Metal',
+    description: 'Una aleación de metal especial.\nExpón a Duraludon a ella para que evolucione.',
+  },
 };
