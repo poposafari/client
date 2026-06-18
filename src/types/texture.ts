@@ -10,11 +10,6 @@ export const enum TEXTURE {
 
   BG_0 = 'bg_0',
   BG_1 = 'bg_1',
-  BG_2 = 'bg_2',
-  BG_3 = 'bg_3',
-  BG_4 = 'bg_4',
-  BG_5 = 'bg_5',
-  BG_6 = 'bg_6',
   BG_BLACK = 'bg_black',
   BG_PC = 'bg_pc',
   BG_EVOLVE = 'bg_evolve',

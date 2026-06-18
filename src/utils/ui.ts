@@ -530,7 +530,7 @@ function getSpriteAnimationFrameYoyo(animation: ANIMATION | string) {
   return ret;
 }
 
-const BACKGROUND_KEY = [TEXTURE.BG_2, TEXTURE.BG_4, TEXTURE.BG_5] as const;
+const BACKGROUND_KEY = [TEXTURE.BG_1, TEXTURE.BG_1, TEXTURE.BG_1] as const;
 
 // dawn : 6:00 ~ 6:59
 // day : 7:00 ~ 17:59

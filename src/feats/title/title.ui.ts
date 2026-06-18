@@ -211,7 +211,7 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
       '100',
       'right',
       TEXTSTYLE.YELLOW,
-      TEXTSHADOW.NONE,
+      TEXTSHADOW.GRAY,
     ).setOrigin(1, 0);
 
     this.topContainer.setY(-400);
