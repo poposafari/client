@@ -2692,7 +2692,7 @@
     "ability": ["synchronize", "inner-focus", "magic-guard"],
     "comment": "윤겔라",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0065"]
     },
     "form": [],
@@ -2792,7 +2792,7 @@
     "ability": ["guts", "no-guard", "steadfast"],
     "comment": "근육몬",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0068"]
     },
     "form": [],
@@ -3067,7 +3067,7 @@
     "ability": ["rock-head", "sturdy", "sand-veil"],
     "comment": "데구리",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0076"]
     },
     "form": [],
@@ -3092,7 +3092,7 @@
     "ability": ["magnet-pull", "sturdy", "galvanize"],
     "comment": "데구리",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0076_alola"]
     },
     "form": [],
@@ -3774,7 +3774,7 @@
     "ability": ["levitate"],
     "comment": "고우스트",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0094"]
     },
     "form": [],
@@ -10653,7 +10653,7 @@
     "ability": ["compound-eyes", "run-away"],
     "comment": "토중몬",
     "nextEvol": {
-      "cost": ["candy_30", "poke-ball"],
+      "cost": ["candy_30", "safari-ball"],
       "next": ["0291", "0292"]
     },
     "form": [],
@@ -15416,7 +15416,7 @@
     },
     "skills": ["move_surf", "move_cut", "move_rock-smash", "move_strength"],
     "spawn": ["land"],
-    "rank": "Epic",
+    "rank": "epic",
     "type1": "dragon",
     "type2": "ground",
     "weight_kg": "95.0",
@@ -17883,7 +17883,7 @@
     "ability": ["sturdy", "weak-armor", "sand-force"],
     "comment": "암트르",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0526"]
     },
     "form": [],
@@ -18133,7 +18133,7 @@
     "ability": ["guts", "sheer-force", "iron-fist"],
     "comment": "토쇠골",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0534"]
     },
     "form": [],
@@ -19983,7 +19983,7 @@
     "ability": ["swarm", "shed-skin", "no-guard"],
     "comment": "딱정곤",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0589"]
     },
     "form": [],
@@ -20733,7 +20733,7 @@
     "ability": ["hydration", "shell-armor", "overcoat"],
     "comment": "쪼마리",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0617"]
     },
     "form": [],
@@ -24243,7 +24243,7 @@
     "ability": ["natural-cure", "frisk", "harvest"],
     "comment": "나목령",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0709"]
     },
     "form": [],
@@ -24293,7 +24293,7 @@
     "ability": ["pickup", "frisk", "insomnia"],
     "comment": "호바귀",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0711"]
     },
     "form": [],
@@ -24318,7 +24318,7 @@
     "ability": ["pickup", "frisk", "insomnia"],
     "comment": "호바귀",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0711"]
     },
     "form": [],
@@ -24343,7 +24343,7 @@
     "ability": ["pickup", "frisk", "insomnia"],
     "comment": "호바귀",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0711"]
     },
     "form": [],
@@ -24368,7 +24368,7 @@
     "ability": ["pickup", "frisk", "insomnia"],
     "comment": "호바귀",
     "nextEvol": {
-      "cost": ["trade"],
+      "cost": ["linking-cord"],
       "next": ["0711"]
     },
     "form": [],

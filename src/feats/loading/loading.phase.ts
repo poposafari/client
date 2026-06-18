@@ -253,13 +253,21 @@ export class LoadingPhase implements IGamePhase {
             moveKey = 'rock';
             break;
           case 'dragon-pulse':
+          case 'dragon-cheer':
             moveKey = 'dragon';
             break;
           case 'taunt':
             moveKey = 'dark';
             break;
           case 'twin-beam':
+          case 'psyshield-bash':
             moveKey = 'psychic';
+            break;
+          case 'rage-fist':
+            moveKey = 'ghost';
+            break;
+          case 'barb-barrage':
+            moveKey = 'poison';
             break;
         }
         this.scene.loadImage(`move_${moveName}`, 'ui/items', `move_${moveKey}`);

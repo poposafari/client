@@ -3,6 +3,10 @@ type TranslationItem = {
 };
 
 export const item: TranslationItem = {
+  leek: {
+    name: 'ながねぎ',
+    description: 'とても ながくて かたい ながねぎ。\nとくていの ポケモンの だいこうぶつ。',
+  },
   'master-ball': {
     name: 'マスターボール',
     description:
@@ -326,44 +330,44 @@ export const item: TranslationItem = {
       'ガラナツのえだを　あみこんだ　かんむり。\nガラルちほうの　ヤドンに\nかぶせてあげると　よろこぶ。',
   },
   'linking-cord': {
-    name: 'Linking Cord',
-    description: '',
+    name: 'つながりのヒモ',
+    description: 'ふしぎな　エネルギーを　かんじる　ヒモ。\nとくていの　ポケモンに　あいされている。',
   },
   'black-augurite': {
-    name: 'Black Augurite',
-    description: '',
+    name: 'くろのきせき',
+    description: 'ふうがわりな　くろい　いし。\nとくていの　ポケモンに　あいされている。',
   },
   'peat-block': {
-    name: 'Peat Block',
-    description: '',
+    name: 'ピートブロック',
+    description: 'ふしぎな　エネルギーを　かんじる　ピート。\nとくていの　ポケモンに　あいされている。',
   },
   'scroll-of-darkness': {
     name: 'あくのかけじく',
-    description: '',
+    description: 'あくの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
   },
   'scroll-of-waters': {
     name: 'みずのかけじく',
-    description: '',
+    description: 'みずの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
   },
   'malicious-armor': {
     name: 'ノロイノヨロイ',
-    description: '',
+    description: 'ふしぎな　エネルギーを　かんじる\nのろわれた　ヨロイ。とくていの\nポケモンに　あいされている。',
   },
   'auspicious-armor': {
     name: 'イワイノヨロイ',
-    description: '',
+    description: 'ふしぎな　エネルギーを　かんじる\nめでたい　ヨロイ。とくていの\nポケモンに　あいされている。',
   },
   'syrupy-apple': {
     name: 'みついりりんご',
-    description: '',
+    description: 'あまくて　みつ　たっぷりの　りんご。\nとくていの　ポケモンに　あいされている。',
   },
   'unremarkable-teacup': {
     name: 'ボンサクのちゃわん',
-    description: '',
+    description: 'ふしぎな　エネルギーを　かんじる\nふるい　ちゃわん。とくていの\nポケモンに　あいされている。',
   },
   'masterpiece-teacup': {
     name: 'ケッサクのちゃわん',
-    description: '',
+    description: 'ふしぎな　エネルギーを　かんじる\nこっとうの　ちゃわん。とくていの\nポケモンに　あいされている。',
   },
   repel: {
     name: 'むしよけスプレー',
@@ -567,7 +571,7 @@ export const item: TranslationItem = {
   },
   'fairy-feather': {
     name: 'ようせいのハネ',
-    description: '',
+    description: 'ポケモンに　もたせる　どうぐ。\nとくていの　ポケモンに　あいされている。',
   },
   bicycle: {
     name: 'じてんしゃ',
@@ -635,27 +639,27 @@ export const item: TranslationItem = {
   },
   'adamant-crystal': {
     name: 'だいこんごうだま',
-    description: '',
+    description: 'ディアルガが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'lustrous-globe': {
     name: 'だいしらたま',
-    description: '',
+    description: 'パルキアが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'griseous-core': {
     name: 'だいはっきんだま',
-    description: '',
+    description: 'ギラティナが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'cornerstone-mask': {
     name: 'いしずえのめん',
-    description: '',
+    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'wellspring-mask': {
     name: 'いどのめん',
-    description: '',
+    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'hearthflame-mask': {
     name: 'かまどのめん',
-    description: '',
+    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'red-orb': {
     name: 'べにいろのたま',
@@ -839,5 +843,25 @@ export const item: TranslationItem = {
   'move_twin-beam': {
     name: 'わざマシン ツインビーム',
     description: 'ポケモンに ツインビームを おぼえさせる。',
+  },
+  'move_rage-fist': {
+    name: 'わざマシン ふんどのこぶし',
+    description: 'ポケモンに ふんどのこぶしを おぼえさせる。',
+  },
+  'move_barb-barrage': {
+    name: 'わざマシン どくばりセンボン',
+    description: 'ポケモンに どくばりセンボンを おぼえさせる。',
+  },
+  'move_psyshield-bash': {
+    name: 'わざマシン バリアーラッシュ',
+    description: 'ポケモンに バリアーラッシュを おぼえさせる。',
+  },
+  'move_double-edge': {
+    name: 'わざマシン すてみタックル',
+    description: 'ポケモンに すてみタックルを おぼえさせる。',
+  },
+  'move_dragon-cheer': {
+    name: 'わざマシン ドラゴンエール',
+    description: 'ポケモンに ドラゴンエールを おぼえさせる。',
   },
 };

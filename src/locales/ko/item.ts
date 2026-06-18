@@ -8,6 +8,10 @@ type TranslationItemData = {
 };
 
 export const item: TranslationItem = {
+  leek: {
+    name: '대파',
+    description: '매우 길고 단단한 대파.\n특정 포켓몬이 매우 좋아한다.',
+  },
   'master-ball': {
     name: '마스터볼',
     description: '야생 포켓몬을 반드시\n잡을 수 있는 최고 성능의 볼.',
@@ -271,17 +275,17 @@ export const item: TranslationItem = {
   'linking-cord': {
     name: '연결의 끈',
     description:
-      '모종의 유대감이 느껴지는 신비한 에너지가 담긴 끈. 어떤 포켓몬들이 좋아하는 물건이다.',
+      '모종의 유대감이 느껴지는 신비한 에너지가 담긴 끈.\n어떤 포켓몬들이 좋아하는 물건이다.',
   },
   'black-augurite': {
     name: '검은 휘석',
     description:
-      '조각내면 예리하게 날이 서는 유리 같은 성질을 띠는 검은 돌. 어떤 포켓몬이 좋아하는 물건이다.',
+      '조각내면 예리하게 날이 서는 유리 같은 성질을 띠는 검은 돌.\n어떤 포켓몬이 좋아하는 물건이다.',
   },
   'peat-block': {
     name: '피트 블록',
     description:
-      '진흙 같은 석탄 덩어리. 말리면 연료로도 쓸 수 있다. 어떤 포켓몬이 좋아하는 물건이다.',
+      '진흙 같은 석탄 덩어리. 말리면 연료로도 쓸 수 있다.\n어떤 포켓몬이 좋아하는 물건이다.',
   },
   'scroll-of-darkness': {
     name: '악의 족자',
@@ -293,23 +297,23 @@ export const item: TranslationItem = {
   },
   'malicious-armor': {
     name: '저주받은 갑옷',
-    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷. 저주의 감정이 담겨 있다.',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷.\n저주의 감정이 담겨 있다.',
   },
   'auspicious-armor': {
     name: '축복받은 갑옷',
-    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷. 축복의 감정이 담겨 있다.',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 갑옷.\n축복의 감정이 담겨 있다.',
   },
   'syrupy-apple': {
     name: '꿀맛사과',
-    description: '어느 특정 포켓몬을 진화시키는 이상한 사과. 엄청나게 꿀맛이다.',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 사과.\n엄청나게 꿀맛이다.',
   },
   'unremarkable-teacup': {
     name: '범작찻잔',
-    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔. 깨졌지만 차는 맛있어진다.',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔.\n깨졌지만 차는 맛있어진다.',
   },
   'masterpiece-teacup': {
     name: '걸작찻잔',
-    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔. 이가 빠졌지만 차는 맛있어진다.',
+    description: '어느 특정 포켓몬을 진화시키는 이상한 찻잔.\n이가 빠졌지만 차는 맛있어진다.',
   },
   repel: {
     name: '벌레회피스프레이',
@@ -486,7 +490,7 @@ export const item: TranslationItem = {
   },
   'fairy-feather': {
     name: '요정의 깃털',
-    description: '',
+    description: '포켓몬에게 지니게 하는 도구.\n어떤 포켓몬이 좋아하는 물건이다.',
   },
   bicycle: {
     name: '자전거',
@@ -750,5 +754,25 @@ export const item: TranslationItem = {
   'move_twin-beam': {
     name: '기술머신 트윈빔',
     description: '포켓몬에게 트윈빔을 가르친다.',
+  },
+  'move_rage-fist': {
+    name: '기술머신 분노의주먹',
+    description: '포켓몬에게 분노의주먹을 가르친다.',
+  },
+  'move_barb-barrage': {
+    name: '기술머신 독침천발',
+    description: '포켓몬에게 독침천발을 가르친다.',
+  },
+  'move_psyshield-bash': {
+    name: '기술머신 배리어러시',
+    description: '포켓몬에게 배리어러시를 가르친다.',
+  },
+  'move_double-edge': {
+    name: '기술머신 이판사판태클',
+    description: '포켓몬에게 이판사판태클을 가르친다.',
+  },
+  'move_dragon-cheer': {
+    name: '기술머신 드래곤옐',
+    description: '포켓몬에게 드래곤옐을 가르친다.',
   },
 };

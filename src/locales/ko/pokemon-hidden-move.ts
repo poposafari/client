@@ -23,4 +23,9 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   move_stomp: '밟기',
   move_taunt: '도발',
   'move_twin-beam': '트윈빔',
+  'move_rage-fist': '분노의주먹',
+  'move_barb-barrage': '독침천발',
+  'move_psyshield-bash': '배리어러시',
+  'move_double-edge': '이판사판태클',
+  'move_dragon-cheer': '드래곤옐',
 };

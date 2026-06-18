@@ -172,7 +172,12 @@ export type PokemonHiddenMove =
   | 'move_rollout'
   | 'move_stomp'
   | 'move_taunt'
-  | 'move_twin-beam';
+  | 'move_twin-beam'
+  | 'move_rage-fist'
+  | 'move_barb-barrage'
+  | 'move_psyshield-bash'
+  | 'move_double-edge'
+  | 'move_dragon-cheer';
 export type GrowthGroup =
   | 'fast'
   | 'medium_fast'

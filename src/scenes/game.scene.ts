@@ -277,6 +277,7 @@ export class GameScene extends BaseScene {
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', 'window_0');
     this.loadImage(TEXTURE.CURSOR_WHITE, 'ui', 'cursor_w');
     this.loadImage('poke-ball', 'ui/items', 'poke-ball');
+    this.loadImage('safari-ball', 'ui/items', 'safari-ball');
   }
 
   create() {

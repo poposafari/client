@@ -23,4 +23,9 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   move_stomp: 'Écrasement',
   move_taunt: 'Provoc',
   'move_twin-beam': 'Double Laser',
+  'move_rage-fist': 'Poing de Colère',
+  'move_barb-barrage': 'Multitoxik',
+  'move_psyshield-bash': 'Sprint Bouclier',
+  'move_double-edge': 'Damoclès',
+  'move_dragon-cheer': 'Cri Draconique',
 };

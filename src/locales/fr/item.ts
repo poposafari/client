@@ -3,6 +3,10 @@ type TranslationItem = {
 };
 
 export const item: TranslationItem = {
+  leek: {
+    name: 'Poireau',
+    description: 'Un poireau très long et rigide.\nUn certain Pokémon en raffole.',
+  },
   'master-ball': {
     name: 'Master Ball',
     description:
@@ -300,43 +304,43 @@ export const item: TranslationItem = {
   },
   'linking-cord': {
     name: 'Fil de Liaison',
-    description: '',
+    description: 'Un fil qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   'black-augurite': {
     name: 'Obsidienne',
-    description: '',
+    description: 'Une étrange pierre noire. Certaines espèces de Pokémon en raffolent.',
   },
   'peat-block': {
     name: 'Bloc de Tourbe',
-    description: '',
+    description: 'Un bloc de tourbe qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   'scroll-of-darkness': {
     name: 'Rouleau des Ténèbres',
-    description: '',
+    description: 'Un étrange rouleau renfermant les secrets des capacités Ténèbres. Certaines espèces de Pokémon en raffolent.',
   },
   'scroll-of-waters': {
     name: "Rouleau de l'Eau",
-    description: '',
+    description: 'Un étrange rouleau renfermant les secrets des capacités Eau. Certaines espèces de Pokémon en raffolent.',
   },
   'malicious-armor': {
     name: 'Armure de la Rancune',
-    description: '',
+    description: 'Une armure maudite qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   'auspicious-armor': {
     name: 'Armure de la Fortune',
-    description: '',
+    description: 'Une armure de bon augure qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   'syrupy-apple': {
     name: 'Pomme Nectar',
-    description: '',
+    description: 'Une pomme douce et sirupeuse. Certaines espèces de Pokémon en raffolent.',
   },
   'unremarkable-teacup': {
     name: 'Bol Médiocre',
-    description: '',
+    description: 'Un vieux bol qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   'masterpiece-teacup': {
     name: 'Bol Exceptionnel',
-    description: '',
+    description: 'Un bol ancien qui dégage une mystérieuse énergie. Certaines espèces de Pokémon en raffolent.',
   },
   repel: {
     name: 'Repousse',
@@ -533,7 +537,7 @@ export const item: TranslationItem = {
   },
   'fairy-feather': {
     name: 'Plume Enchantée',
-    description: '',
+    description: 'Objet à faire tenir à un Pokémon. Certaines espèces de Pokémon en raffolent.',
   },
   bicycle: {
     name: 'Bicyclette',
@@ -602,27 +606,27 @@ export const item: TranslationItem = {
   },
   'adamant-crystal': {
     name: 'Globe Adamant',
-    description: '',
+    description: 'Une gemme étincelante qui permet à Dialga de changer de forme et de révéler tout son potentiel.',
   },
   'lustrous-globe': {
     name: 'Globe Perlé',
-    description: '',
+    description: 'Une gemme étincelante qui permet à Palkia de changer de forme et de révéler tout son potentiel.',
   },
   'griseous-core': {
     name: 'Globe Platiné',
-    description: '',
+    description: 'Une gemme étincelante qui permet à Giratina de changer de forme et de révéler tout son potentiel.',
   },
   'cornerstone-mask': {
     name: 'Masque de la Pierre',
-    description: '',
+    description: "L'un des masques portés par Ogerpon. Bien qu'il semble lourd, il renferme les sentiments d'une certaine personne.",
   },
   'wellspring-mask': {
     name: 'Masque du Puits',
-    description: '',
+    description: "L'un des masques portés par Ogerpon. Bien qu'il semble lourd, il renferme les sentiments d'une certaine personne.",
   },
   'hearthflame-mask': {
     name: 'Masque du Fourneau',
-    description: '',
+    description: "L'un des masques portés par Ogerpon. Bien qu'il semble lourd, il renferme les sentiments d'une certaine personne.",
   },
   'red-orb': {
     name: 'Gemme Rouge',
@@ -810,5 +814,25 @@ export const item: TranslationItem = {
   'move_twin-beam': {
     name: 'CT Double Laser',
     description: 'Apprend la capacité Double Laser à un Pokémon.',
+  },
+  'move_rage-fist': {
+    name: 'CT Poing de Colère',
+    description: 'Apprend la capacité Poing de Colère à un Pokémon.',
+  },
+  'move_barb-barrage': {
+    name: 'CT Multitoxik',
+    description: 'Apprend la capacité Multitoxik à un Pokémon.',
+  },
+  'move_psyshield-bash': {
+    name: 'CT Sprint Bouclier',
+    description: 'Apprend la capacité Sprint Bouclier à un Pokémon.',
+  },
+  'move_double-edge': {
+    name: 'CT Damoclès',
+    description: 'Apprend la capacité Damoclès à un Pokémon.',
+  },
+  'move_dragon-cheer': {
+    name: 'CT Cri Draconique',
+    description: 'Apprend la capacité Cri Draconique à un Pokémon.',
   },
 };

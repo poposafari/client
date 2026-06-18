@@ -26,7 +26,7 @@ export class ApiLoadingIndicatorUi extends BaseUi {
   }
 
   createLayout(): void {
-    this.ball = this.scene.add.image(0, 0, 'poke-ball');
+    this.ball = this.scene.add.image(0, 0, 'safari-ball');
     this.ball.setScale(SPRITE_SCALE);
     this.text = addText(
       this.scene,

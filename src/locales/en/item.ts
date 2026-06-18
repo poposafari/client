@@ -3,6 +3,10 @@ type TranslationItem = {
 };
 
 export const item: TranslationItem = {
+  leek: {
+    name: 'Leek',
+    description: 'A very long and stiff leek.\nA certain Pokémon loves it.',
+  },
   'master-ball': {
     name: 'Master Ball',
     description: 'The best Ball with the ultimate performance.\nIt will catch any wild Pokémon.',
@@ -275,43 +279,43 @@ export const item: TranslationItem = {
   },
   'linking-cord': {
     name: 'Linking Cord',
-    description: '',
+    description: 'A cable that gives off a mysterious energy.\nIt is loved by certain species of Pokémon.',
   },
   'black-augurite': {
     name: 'Black Augurite',
-    description: '',
+    description: 'A peculiar black stone.\nIt is loved by certain species of Pokémon.',
   },
   'peat-block': {
     name: 'Peat Block',
-    description: '',
+    description: 'A block of peat that gives off a mysterious\nenergy. It is loved by certain species of Pokémon.',
   },
   'scroll-of-darkness': {
     name: 'Scroll of Darkness',
-    description: '',
+    description: 'A peculiar scroll that contains the secrets of\ndark moves. It is loved by certain species of Pokémon.',
   },
   'scroll-of-waters': {
     name: 'Scroll of Waters',
-    description: '',
+    description: 'A peculiar scroll that contains the secrets of\nwater moves. It is loved by certain species of Pokémon.',
   },
   'malicious-armor': {
     name: 'Malicious Armor',
-    description: '',
+    description: 'Cursed armor that gives off a mysterious energy.\nIt is loved by certain species of Pokémon.',
   },
   'auspicious-armor': {
     name: 'Auspicious Armor',
-    description: '',
+    description: 'Auspicious armor that gives off a mysterious\nenergy. It is loved by certain species of Pokémon.',
   },
   'syrupy-apple': {
     name: 'Syrupy Apple',
-    description: '',
+    description: 'A sweet and syrupy apple.\nIt is loved by certain species of Pokémon.',
   },
   'unremarkable-teacup': {
     name: 'Unremarkable Teacup',
-    description: '',
+    description: 'An old teacup that gives off a mysterious energy.\nIt is loved by certain species of Pokémon.',
   },
   'masterpiece-teacup': {
     name: 'Masterpiece Teacup',
-    description: '',
+    description: 'An antique teacup that gives off a mysterious\nenergy. It is loved by certain species of Pokémon.',
   },
   repel: {
     name: 'Repel',
@@ -484,7 +488,7 @@ export const item: TranslationItem = {
   },
   'fairy-feather': {
     name: 'Fairy Feather',
-    description: '',
+    description: 'An item to be held by a Pokémon.\nIt is loved by certain species of Pokémon.',
   },
   bicycle: {
     name: 'Bicycle',
@@ -545,27 +549,27 @@ export const item: TranslationItem = {
   },
   'adamant-crystal': {
     name: 'Adamant Crystal',
-    description: '',
+    description: 'A brilliant gem that lets Dialga change form\nand fully realize its true power.',
   },
   'lustrous-globe': {
     name: 'Lustrous Globe',
-    description: '',
+    description: 'A brilliant gem that lets Palkia change form\nand fully realize its true power.',
   },
   'griseous-core': {
     name: 'Griseous Core',
-    description: '',
+    description: 'A brilliant gem that lets Giratina change form\nand fully realize its true power.',
   },
   'cornerstone-mask': {
     name: 'Cornerstone Mask',
-    description: '',
+    description: 'One of the masks Ogerpon wears. Though it seems\nheavy, it holds the heart of a certain someone.',
   },
   'wellspring-mask': {
     name: 'Wellspring Mask',
-    description: '',
+    description: 'One of the masks Ogerpon wears. Though it seems\nheavy, it holds the heart of a certain someone.',
   },
   'hearthflame-mask': {
     name: 'Hearthflame Mask',
-    description: '',
+    description: 'One of the masks Ogerpon wears. Though it seems\nheavy, it holds the heart of a certain someone.',
   },
   'red-orb': {
     name: 'Red Orb',
@@ -747,5 +751,25 @@ export const item: TranslationItem = {
   'move_twin-beam': {
     name: 'TM Twin Beam',
     description: 'Teaches Twin Beam to a Pokémon.',
+  },
+  'move_rage-fist': {
+    name: 'TM Rage Fist',
+    description: 'Teaches Rage Fist to a Pokémon.',
+  },
+  'move_barb-barrage': {
+    name: 'TM Barb Barrage',
+    description: 'Teaches Barb Barrage to a Pokémon.',
+  },
+  'move_psyshield-bash': {
+    name: 'TM Psyshield Bash',
+    description: 'Teaches Psyshield Bash to a Pokémon.',
+  },
+  'move_double-edge': {
+    name: 'TM Double-Edge',
+    description: 'Teaches Double-Edge to a Pokémon.',
+  },
+  'move_dragon-cheer': {
+    name: 'TM Dragon Cheer',
+    description: 'Teaches Dragon Cheer to a Pokémon.',
   },
 };

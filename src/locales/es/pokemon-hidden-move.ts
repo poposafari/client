@@ -23,4 +23,9 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   move_stomp: 'Pisotón',
   move_taunt: 'Mofa',
   'move_twin-beam': 'Doble Rayo',
+  'move_rage-fist': 'Puño Furia',
+  'move_barb-barrage': 'Mil Púas Tóxicas',
+  'move_psyshield-bash': 'Asalto Barrera',
+  'move_double-edge': 'Doble Filo',
+  'move_dragon-cheer': 'Bramido Dragón',
 };

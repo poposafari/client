@@ -23,4 +23,9 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   move_stomp: 'ふみつけ',
   move_taunt: 'ちょうはつ',
   'move_twin-beam': 'ツインビーム',
+  'move_rage-fist': 'ふんどのこぶし',
+  'move_barb-barrage': 'どくばりセンボン',
+  'move_psyshield-bash': 'バリアーラッシュ',
+  'move_double-edge': 'すてみタックル',
+  'move_dragon-cheer': 'ドラゴンエール',
 };

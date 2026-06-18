@@ -23,6 +23,11 @@ const HIDDEN_MOVE_TYPE: Record<PokemonHiddenMove, PokemonType> = {
   move_stomp: 'normal',
   move_taunt: 'dark',
   'move_twin-beam': 'normal',
+  'move_rage-fist': 'ghost',
+  'move_barb-barrage': 'poison',
+  'move_psyshield-bash': 'psychic',
+  'move_double-edge': 'normal',
+  'move_dragon-cheer': 'dragon',
 };
 
 export class PokemonSkillContainer extends Phaser.GameObjects.Container {

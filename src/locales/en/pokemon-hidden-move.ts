@@ -23,4 +23,9 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   move_stomp: 'Stomp',
   move_taunt: 'Taunt',
   'move_twin-beam': 'Twin Beam',
+  'move_rage-fist': 'Rage Fist',
+  'move_barb-barrage': 'Barb Barrage',
+  'move_psyshield-bash': 'Psyshield Bash',
+  'move_double-edge': 'Double-Edge',
+  'move_dragon-cheer': 'Dragon Cheer',
 };

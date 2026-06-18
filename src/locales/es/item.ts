@@ -3,6 +3,10 @@ type TranslationItem = {
 };
 
 export const item: TranslationItem = {
+  leek: {
+    name: 'Puerro',
+    description: 'Un puerro muy largo y rígido.\nA cierto Pokémon le encanta.',
+  },
   'master-ball': {
     name: 'Master Ball',
     description: 'La mejor Ball, con un rendimiento supremo.\nAtrapa a cualquier Pokémon salvaje.',
@@ -275,43 +279,43 @@ export const item: TranslationItem = {
   },
   'linking-cord': {
     name: 'Cordón de Unión',
-    description: '',
+    description: 'Cordón que desprende una energía misteriosa.\nHay especies de Pokémon a las que les encanta.',
   },
   'black-augurite': {
     name: 'Mineral Negro',
-    description: '',
+    description: 'Una peculiar piedra negra.\nHay especies de Pokémon a las que les encanta.',
   },
   'peat-block': {
     name: 'Bloque de Turba',
-    description: '',
+    description: 'Bloque de turba que desprende una energía\nmisteriosa. Hay especies de Pokémon a las que les encanta.',
   },
   'scroll-of-darkness': {
     name: 'Manuscrito Sombrío',
-    description: '',
+    description: 'Manuscrito que recoge los secretos de los\nmovimientos siniestros. Hay especies de Pokémon a las que les encanta.',
   },
   'scroll-of-waters': {
     name: 'Manuscrito Acuoso',
-    description: '',
+    description: 'Manuscrito que recoge los secretos de los\nmovimientos de agua. Hay especies de Pokémon a las que les encanta.',
   },
   'malicious-armor': {
     name: 'Armadura Maldita',
-    description: '',
+    description: 'Armadura maldita que desprende una energía\nmisteriosa. Hay especies de Pokémon a las que les encanta.',
   },
   'auspicious-armor': {
     name: 'Armadura Bendita',
-    description: '',
+    description: 'Armadura bendita que desprende una energía\nmisteriosa. Hay especies de Pokémon a las que les encanta.',
   },
   'syrupy-apple': {
     name: 'Manzana Melosa',
-    description: '',
+    description: 'Una manzana dulce y melosa.\nHay especies de Pokémon a las que les encanta.',
   },
   'unremarkable-teacup': {
     name: 'Tazón Mediocre',
-    description: '',
+    description: 'Tazón viejo que desprende una energía misteriosa.\nHay especies de Pokémon a las que les encanta.',
   },
   'masterpiece-teacup': {
     name: 'Tazón Sublime',
-    description: '',
+    description: 'Tazón antiguo que desprende una energía\nmisteriosa. Hay especies de Pokémon a las que les encanta.',
   },
   repel: {
     name: 'Repelente',
@@ -484,7 +488,7 @@ export const item: TranslationItem = {
   },
   'fairy-feather': {
     name: 'Pluma de Hada',
-    description: '',
+    description: 'Objeto para que lo lleve un Pokémon.\nHay especies de Pokémon a las que les encanta.',
   },
   bicycle: {
     name: 'Bicicleta',
@@ -545,27 +549,27 @@ export const item: TranslationItem = {
   },
   'adamant-crystal': {
     name: 'Diamansfera',
-    description: '',
+    description: 'Gema brillante que permite a Dialga cambiar de\nforma y desplegar todo su poder.',
   },
   'lustrous-globe': {
     name: 'Lustresfera',
-    description: '',
+    description: 'Gema brillante que permite a Palkia cambiar de\nforma y desplegar todo su poder.',
   },
   'griseous-core': {
     name: 'Griseosfera',
-    description: '',
+    description: 'Gema brillante que permite a Giratina cambiar de\nforma y desplegar todo su poder.',
   },
   'cornerstone-mask': {
     name: 'Máscara Cimiento',
-    description: '',
+    description: 'Una de las máscaras de Ogerpon. Aunque parece\npesada, encierra el corazón de cierta persona.',
   },
   'wellspring-mask': {
     name: 'Máscara Fuente',
-    description: '',
+    description: 'Una de las máscaras de Ogerpon. Aunque parece\npesada, encierra el corazón de cierta persona.',
   },
   'hearthflame-mask': {
     name: 'Máscara Horno',
-    description: '',
+    description: 'Una de las máscaras de Ogerpon. Aunque parece\npesada, encierra el corazón de cierta persona.',
   },
   'red-orb': {
     name: 'Esfera Roja',
@@ -747,5 +751,25 @@ export const item: TranslationItem = {
   'move_twin-beam': {
     name: 'MT Geminrayo',
     description: 'Enseña Geminrayo a un Pokémon.',
+  },
+  'move_rage-fist': {
+    name: 'MT Puño Furia',
+    description: 'Enseña Puño Furia a un Pokémon.',
+  },
+  'move_barb-barrage': {
+    name: 'MT Mil Púas Tóxicas',
+    description: 'Enseña Mil Púas Tóxicas a un Pokémon.',
+  },
+  'move_psyshield-bash': {
+    name: 'MT Asalto Barrera',
+    description: 'Enseña Asalto Barrera a un Pokémon.',
+  },
+  'move_double-edge': {
+    name: 'MT Doble Filo',
+    description: 'Enseña Doble Filo a un Pokémon.',
+  },
+  'move_dragon-cheer': {
+    name: 'MT Bramido Dragón',
+    description: 'Enseña Bramido Dragón a un Pokémon.',
   },
 };
