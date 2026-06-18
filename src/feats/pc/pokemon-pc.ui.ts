@@ -34,6 +34,7 @@ import {
 import i18next from 'i18next';
 import { PokemonPcGridSelectUi } from './pokemon-pc-grid-select.ui';
 import { PcLocalState } from './pc-local-state';
+import { PC_MAX_BOX } from './pc.const';
 import { MenuListUi } from '../menu/menu-list.ui';
 import { MenuUi } from '../menu/menu-ui';
 import { NameInputUi } from './name-input.ui';
@@ -262,7 +263,7 @@ export class PokemonPcUi extends BaseUi {
     // 이전 커서 상태 복원
     const user = this.scene.getUser();
     this.currentBoxIndex = user?.getPcBoxIndex() ?? 0;
-    this.totalBoxCount = 30;
+    this.totalBoxCount = PC_MAX_BOX;
     this.refreshCurrentBox();
     const savedGridIndex = user?.getPcGridIndex() ?? 0;
     this.gridSelect.setCursorToIndex(savedGridIndex);

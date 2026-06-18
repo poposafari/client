@@ -1,4 +1,5 @@
 import type { BoxMetaItem, GetMeRes, PcSlotState, PokemonBoxItem } from '@poposafari/types/dto';
+import { PC_MAX_BOX, PC_GRID_PER_BOX } from './pc.const';
 
 export interface BoxMeta {
   wallpaper: number;
@@ -9,7 +10,7 @@ export class PcLocalState {
   private original = new Map<number, PcSlotState>();
   private current = new Map<number, PcSlotState>();
   private allPokemons = new Map<number, PokemonBoxItem>();
-  private boxMeta = new Map<number, BoxMeta>(); // boxNumber(1~30) → meta
+  private boxMeta = new Map<number, BoxMeta>(); // boxNumber(1~PC_MAX_BOX) → meta
   private originalBoxMeta = new Map<number, BoxMeta>();
   private originalNicknames = new Map<number, string | null>(); // id → 진입 시 닉네임
 
@@ -26,7 +27,7 @@ export class PcLocalState {
     // 박스 메타 초기화
     this.boxMeta.clear();
     this.originalBoxMeta.clear();
-    for (let i = 1; i <= 30; i++) {
+    for (let i = 1; i <= PC_MAX_BOX; i++) {
       this.boxMeta.set(i, { wallpaper: 0, name: '' });
       this.originalBoxMeta.set(i, { wallpaper: 0, name: '' });
     }
@@ -181,7 +182,7 @@ export class PcLocalState {
         used.add(state.gridNumber);
       }
     }
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < PC_GRID_PER_BOX; i++) {
       if (!used.has(i)) return i;
     }
     return null;

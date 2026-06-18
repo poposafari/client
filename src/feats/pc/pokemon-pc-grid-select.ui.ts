@@ -4,9 +4,10 @@ import type { PokemonBoxItem } from '@poposafari/types';
 import { KEY, SFX, TEXTURE } from '@poposafari/types';
 import { addImage, addSprite, getPokedexId, getPokemonTexture } from '@poposafari/utils';
 import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-select.ui';
+import { PC_GRID_PER_BOX } from './pc.const';
 
 const POKEMON_ICON_ANIM_PREFIX = 'pokemon.icon.';
-const GRID_SLOT_COUNT = 30;
+const GRID_SLOT_COUNT = PC_GRID_PER_BOX;
 const EMPTY_SLOT_KEY_PREFIX = '__empty_';
 const HELD_ITEM_SCALE = 2.4;
 const HELD_ITEM_OFFSET_X = 30;
