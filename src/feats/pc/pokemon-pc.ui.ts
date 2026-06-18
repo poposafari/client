@@ -41,7 +41,7 @@ import { EnhancePanelUi } from './enhance-panel.ui';
 import { EvolveSelectUi, parseCostParts } from './evolve-select.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { EvolveUi } from './evolve.ui';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
 import { PokemonSkillContainer } from '@poposafari/containers/pokemon-skill.container';
 import { PokemonSlotContainer } from '@poposafari/containers/pokemon-slot.container';
@@ -1452,8 +1452,8 @@ export class PokemonPcUi extends BaseUi {
   private async ensureCriesLoaded(...pokedexIds: string[]): Promise<void> {
     const keysToLoad = new Set<string>();
     for (const id of pokedexIds) {
-      const key = pokemonCryNames.includes(id) ? id : id.split('_')[0];
-      if (!pokemonCryNames.includes(key)) continue;
+      const key = resolveCryKey(id);
+      if (!key) continue;
       if (this.scene.cache.audio.has(key)) continue;
       keysToLoad.add(key);
     }

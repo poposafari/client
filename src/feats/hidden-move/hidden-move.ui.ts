@@ -1,5 +1,5 @@
 import { BaseUi } from '@poposafari/core';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, EASE, TEXTURE } from '@poposafari/types';
 import { addContainer, getPokemonTexture } from '@poposafari/utils';
@@ -133,8 +133,8 @@ export class HiddenMoveUi extends BaseUi {
   }
 
   private playCry(pokedexId: string): void {
-    const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-    if (!pokemonCryNames.includes(cryKey)) return;
+    const cryKey = resolveCryKey(pokedexId);
+    if (!cryKey) return;
     this.scene.getAudio().playEffect(cryKey);
   }
 

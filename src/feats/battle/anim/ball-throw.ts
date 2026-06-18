@@ -3,7 +3,7 @@ import { DEPTH, EASE, SFX, TEXTURE } from '@poposafari/types';
 import { addImage } from '@poposafari/utils';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import { BALL_ANIM, THROW_ITEM, WILD_SHADOW, WILD_SPRITE } from '../battle.constants';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 
 const BALL_THROW_ANIM_KEY = 'battle_ball_throw';
 
@@ -644,8 +644,8 @@ export async function playBallFail(
   wild.setTintFill(0xffffff);
   wildShadow.setTintFill(0x000000);
 
-  const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-  scene.getAudio().playEffect(cryKey);
+  const cryKey = resolveCryKey(pokedexId);
+  if (cryKey) scene.getAudio().playEffect(cryKey);
 
   await Promise.all([
     tweenAsync(scene, {

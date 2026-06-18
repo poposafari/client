@@ -22,7 +22,7 @@ import { MusicianListUi } from '@poposafari/feats/menu/musician-list.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from '@poposafari/i18n';
 import { screenFadeIn } from '@poposafari/utils/screen-fade';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { BGM } from '@poposafari/types';
 import { POPOTOWN_OST_TRACKS, resolveMapBgm, setPopotownOst } from '@poposafari/core/popotown-ost';
 
@@ -113,8 +113,8 @@ export class OverworldPhase implements IGamePhase {
 
     let queued = 0;
     for (const id of ids) {
-      const key = pokemonCryNames.includes(id) ? id : id.split('_')[0];
-      if (!pokemonCryNames.includes(key)) continue;
+      const key = resolveCryKey(id);
+      if (!key) continue;
       if (this.scene.cache.audio.has(key)) continue;
       this.scene.loadAudio(key, 'audio/pokemon', key, 'ogg');
       queued++;
@@ -128,8 +128,8 @@ export class OverworldPhase implements IGamePhase {
 
     let queued = 0;
     for (const p of party) {
-      const key = pokemonCryNames.includes(p.pokedexId) ? p.pokedexId : p.pokedexId.split('_')[0];
-      if (!pokemonCryNames.includes(key)) continue;
+      const key = resolveCryKey(p.pokedexId);
+      if (!key) continue;
       if (this.scene.cache.audio.has(key)) continue;
       this.scene.loadAudio(key, 'audio/pokemon', key, 'ogg');
       queued++;

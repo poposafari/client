@@ -136,7 +136,7 @@ export function getPokemonTexture(
 }
 
 export function getPokemonI18Name(pokedexId: string) {
-  let pokedex = pokedexId;
+  const pokedex = pokedexId.slice(0, 4);
   let prefix = '';
 
   if (
@@ -145,10 +145,7 @@ export function getPokemonI18Name(pokedexId: string) {
     pokedexId.includes('alola') ||
     pokedexId.includes('paldea')
   ) {
-    const split = pokedexId.split('_');
-
-    pokedex = split[0];
-    prefix = split[1];
+    prefix = pokedexId.split('_')[1];
   }
 
   return prefix.length

@@ -1,4 +1,4 @@
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { ANIMATION, SFX, TEXTURE } from '@poposafari/types';
 import { getPokemonTexture } from '@poposafari/utils';
@@ -228,10 +228,8 @@ export class PetObject extends MovableObject {
       attach?.(sprite);
 
       this.scene.getAudio().playEffect(SFX.EMO);
-      const cryKey = pokemonCryNames.includes(this.pokedexId)
-        ? this.pokedexId
-        : this.pokedexId.split('_')[0];
-      if (pokemonCryNames.includes(cryKey)) {
+      const cryKey = resolveCryKey(this.pokedexId);
+      if (cryKey) {
         const tone = PET_CRY_TONE_BY_EMOTION[this.currentEmotion];
         const audio = this.scene.getAudio();
         if (this.scene.cache.audio.has(cryKey)) {

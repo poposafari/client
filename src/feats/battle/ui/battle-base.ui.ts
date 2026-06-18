@@ -2,7 +2,7 @@ import type { GameScene } from '@poposafari/scenes/game.scene';
 import { DEPTH, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
 import { addBackground, addText, addWindow } from '@poposafari/utils';
 import type { BattleContext } from '../battle.types';
-import { BASE_WINDOW } from '../battle.constants';
+import { BASE_WINDOW, resolveBattleTime } from '../battle.constants';
 
 export class BattleBaseUi extends Phaser.GameObjects.Container {
   private background!: GImage;
@@ -21,7 +21,8 @@ export class BattleBaseUi extends Phaser.GameObjects.Container {
     const scene = this.scene as GameScene;
     const { width, height } = scene.cameras.main;
 
-    const bgKey = `bg_${ctx.area}_${ctx.time}`;
+    const time = resolveBattleTime(ctx.locationLabel, ctx.time);
+    const bgKey = `bg_${ctx.area}_${time}`;
     this.background = addBackground(this.scene, bgKey);
 
     this.add(this.background);

@@ -30,27 +30,36 @@ export class AudioManager {
   }
 
   public playEffect(key: SFX | string, options?: { rate?: number; detune?: number }): void {
+    const soundKey = key as unknown as string;
+    if (!this.scene.cache.audio.has(soundKey)) {
+      console.warn(`[AudioManager] effect not in cache, skipped: '${soundKey}'`);
+      return;
+    }
     const volume = this.masterVolume * this.effectVolume;
 
-    this.scene.sound.play(key as unknown as string, {
-      volume,
-      loop: false,
-      rate: options?.rate,
-      detune: options?.detune,
-    });
+    try {
+      this.scene.sound.play(soundKey, {
+        volume,
+        loop: false,
+        rate: options?.rate,
+        detune: options?.detune,
+      });
+    } catch (e) {
+      console.warn(`[AudioManager] failed to play effect '${soundKey}':`, e);
+    }
   }
 
   public playEffectAwaitable(
     key: SFX | string,
     options?: { rate?: number; detune?: number },
   ): Promise<void> {
+    const soundKey = key as unknown as string;
+    // 캐시에 없는 키(미로드/누락된 cry 등)는 즉시 resolve — await 체인이 끊겨 연출이 멈추지 않도록.
+    if (!this.scene.cache.audio.has(soundKey)) {
+      console.warn(`[AudioManager] effect not in cache, skipped: '${soundKey}'`);
+      return Promise.resolve();
+    }
     const volume = this.masterVolume * this.effectVolume;
-    const sound = this.scene.sound.add(key as unknown as string, {
-      volume,
-      loop: false,
-      rate: options?.rate,
-      detune: options?.detune,
-    }) as Phaser.Sound.WebAudioSound;
 
     return new Promise<void>((resolve) => {
       let done = false;
@@ -60,9 +69,30 @@ export class AudioManager {
         sound.destroy();
         resolve();
       };
+
+      let sound: Phaser.Sound.WebAudioSound;
+      try {
+        sound = this.scene.sound.add(soundKey, {
+          volume,
+          loop: false,
+          rate: options?.rate,
+          detune: options?.detune,
+        }) as Phaser.Sound.WebAudioSound;
+      } catch (e) {
+        console.warn(`[AudioManager] failed to add effect '${soundKey}':`, e);
+        resolve();
+        return;
+      }
+
       sound.once('complete', finish);
       sound.once('stop', finish);
-      sound.play();
+      try {
+        sound.play();
+      } catch (e) {
+        console.warn(`[AudioManager] failed to play effect '${soundKey}':`, e);
+        finish();
+        return;
+      }
       const fallbackMs = Math.max(300, Math.ceil((sound.duration || 1) * 1000) + 100);
       this.scene.time.delayedCall(fallbackMs, finish);
     });

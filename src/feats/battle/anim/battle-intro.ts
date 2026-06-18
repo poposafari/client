@@ -4,7 +4,7 @@ import type { BattleBaseUi } from '../ui/battle-base.ui';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import type { BattleInfoUi } from '../ui/battle-info.ui';
 import { INTRO_SLIDE, PLAYER_HUD, WILD_HUD, WILD_SHADOW } from '../battle.constants';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 
 /** Phaser tween 을 Promise 로 감싼 헬퍼. */
 function tweenAsync(
@@ -135,8 +135,10 @@ export async function displayBattleIntro(
     ease: EASE.LINEAR,
   });
 
-  const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-  const cryDone = scene.getAudio().playEffectAwaitable(cryKey);
+  const cryKey = resolveCryKey(pokedexId);
+  const cryDone = cryKey
+    ? scene.getAudio().playEffectAwaitable(cryKey)
+    : Promise.resolve();
 
   // 3. wildHud 슬라이드인 (playerHud 는 아직 오프스크린)
   await tweenAsync(scene, {

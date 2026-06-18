@@ -1,3 +1,37 @@
+export const NIGHT_FIXED_MAPS = new Set<string>([
+  's008',
+  's009',
+  's010',
+  's011',
+  's015',
+  's016',
+  's018',
+  's020',
+  's024',
+  's025',
+  's026',
+  's027',
+  's028',
+  's029',
+  's030',
+  's031',
+  's032',
+  's033',
+  's034',
+  's035',
+  's036',
+  's037',
+  's038',
+  's042',
+  's043',
+  's044',
+  's045',
+]);
+
+export function resolveBattleTime(mapId: string, time: string): string {
+  return NIGHT_FIXED_MAPS.has(mapId) ? 'night' : time;
+}
+
 // ───────── 스프라이트 컨테이너 ─────────
 export const PLAYER_CONTAINER = { x: 900, yOffset: 0 }; // y = h/2
 export const WILD_CONTAINER = { x: 1000, yOffset: 0 };

@@ -17,7 +17,7 @@ import {
   playMudThrow,
 } from './anim/ball-throw';
 import { EncounterTransition } from '@poposafari/utils/encounter-transition';
-import { PLAYER_HUD } from './battle.constants';
+import { PLAYER_HUD, resolveBattleTime } from './battle.constants';
 import { BGM, OptionKey, SFX } from '@poposafari/types';
 import { getPokemonI18Name } from '@poposafari/utils';
 
@@ -41,7 +41,7 @@ export class BattleUi {
 
   private onGameTimeChanged(_timeOfDay: string): void {
     if (!this.built) return;
-    const newTime = DayNightFilter.getBattleTime();
+    const newTime = resolveBattleTime(this.ctx.locationLabel, DayNightFilter.getBattleTime());
     const area = this.ctx.area;
     const duration = 2000;
     this.base.crossfadeBackground(area, newTime, duration);

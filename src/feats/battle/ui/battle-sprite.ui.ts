@@ -17,6 +17,7 @@ import {
   WILD_CONTAINER,
   WILD_SHADOW,
   WILD_SPRITE,
+  resolveBattleTime,
 } from '../battle.constants';
 
 export class BattleSpriteUi extends Phaser.GameObjects.Container {
@@ -52,7 +53,9 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       height / 2 + WILD_CONTAINER.yOffset,
     );
 
-    const wildBaseKey = `eb_${ctx.area}_${ctx.time}`;
+    const time = resolveBattleTime(ctx.locationLabel, ctx.time);
+
+    const wildBaseKey = `eb_${ctx.area}_${time}`;
     this.wildBase = addImage(scene, wildBaseKey, undefined, WILD_BASE.x, WILD_BASE.y).setScale(
       WILD_BASE.scale,
     );
@@ -95,7 +98,7 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       height / 2 + PLAYER_CONTAINER.yOffset,
     );
 
-    const platformKey = `pb_${ctx.area}_${ctx.time}`;
+    const platformKey = `pb_${ctx.area}_${time}`;
     this.playerBase = addImage(
       scene,
       platformKey,
@@ -199,7 +202,10 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
     if (!scene.textures.exists(newKey)) return;
     if (oldImg.texture.key === newKey) return;
 
-    const newImg = addImage(scene, newKey, undefined, oldImg.x, oldImg.y).setScale(oldImg.scaleX);
+    const newImg = addImage(scene, newKey, undefined, oldImg.x, oldImg.y).setScale(
+      oldImg.scaleX,
+      oldImg.scaleY,
+    );
     newImg.setAlpha(0);
     const idx = container.getIndex(oldImg);
     container.addAt(newImg, idx + 1);
@@ -209,6 +215,11 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       alpha: 1,
       duration,
       ease: 'Linear',
+      onUpdate: () => {
+        newImg.x = oldImg.x;
+        newImg.y = oldImg.y;
+        newImg.setScale(oldImg.scaleX, oldImg.scaleY);
+      },
       onComplete: () => {
         oldImg.destroy();
         setter(newImg);

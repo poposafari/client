@@ -634,8 +634,8 @@ export const pokemonCryNames = [
   '0582',
   '0583',
   '0584',
-  '0585-spring',
-  '0586-spring',
+  '0585',
+  '0586',
   '0587',
   '0588',
   '0589',
@@ -723,10 +723,10 @@ export const pokemonCryNames = [
   '0666',
   '0667',
   '0668',
-  '0669-red',
+  '0669',
   '0670-5',
-  '0670-red',
-  '0671-red',
+  '0670',
+  '0671',
   '0672',
   '0673',
   '0674',
@@ -1115,6 +1115,19 @@ export const pokemonCryNames = [
   '1024',
   '1025',
 ];
+
+/**
+ * pokedexId(폼 포함)에 대응하는 cry 키를 해석한다.
+ *  1) 폼 전용 cry가 있으면 그대로 사용 (예: '0006-mega-x', '0080_galar')
+ *  2) 없으면 기본 번호로 폴백 (예: '0585-spring' → '0585')
+ *  3) 그래도 없으면 null → 호출부에서 재생 skip
+ */
+export function resolveCryKey(pokedexId: string): string | null {
+  if (pokemonCryNames.includes(pokedexId)) return pokedexId;
+  const base = pokedexId.match(/^\d+/)?.[0];
+  if (base && pokemonCryNames.includes(base)) return base;
+  return null;
+}
 
 export const excludePokemonKeys = [
   '0003-gmax',

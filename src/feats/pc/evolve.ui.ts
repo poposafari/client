@@ -1,5 +1,5 @@
 import { BaseUi, IInputHandler } from '@poposafari/core';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, EASE, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText, addWindow, getPokemonTexture } from '@poposafari/utils';
@@ -132,7 +132,7 @@ export class EvolveUi extends BaseUi implements IInputHandler {
       await this.showTalk(talk, startMessage);
       this.showFakeMessage(startMessage);
 
-      await this.playSoundAsync(this.resolveCryKey(startPokedexId));
+      await this.playCryAsync(startPokedexId);
       await this.playSoundAsync(SFX.EVOL_0);
       this.playLoopSound(SFX.EVOL_1);
 
@@ -150,7 +150,7 @@ export class EvolveUi extends BaseUi implements IInputHandler {
 
       await this.fadeFromBlack();
       await this.wait(800);
-      await this.playSoundAsync(this.resolveCryKey(nextPokedexId));
+      await this.playCryAsync(nextPokedexId);
 
       this.hideFakeMessage();
 
@@ -191,8 +191,9 @@ export class EvolveUi extends BaseUi implements IInputHandler {
     await talk.showMessage(content, { unlockInputAfter });
   }
 
-  private resolveCryKey(pokedexId: string): string {
-    return pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
+  private playCryAsync(pokedexId: string): Promise<void> {
+    const key = resolveCryKey(pokedexId);
+    return key ? this.playSoundAsync(key) : Promise.resolve();
   }
 
   private wait(ms: number): Promise<void> {

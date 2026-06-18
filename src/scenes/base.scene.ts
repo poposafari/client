@@ -1,4 +1,4 @@
-import { assetUrl } from '@poposafari/utils/asset-url';
+import { assetUrl, assetUrlSafe } from '@poposafari/utils/asset-url';
 
 export class BaseScene extends Phaser.Scene {
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
@@ -44,7 +44,13 @@ export class BaseScene extends Phaser.Scene {
     if (filename) {
       filename = `${filename}.${extension}`;
     }
-    this.load.audio(key, assetUrl(`${folder}/${filename}`));
+
+    const url = assetUrlSafe(`${folder}/${filename}`);
+    if (!url) {
+      console.warn(`[loadAudio] asset not found, skipped: ${folder}/${filename}`);
+      return;
+    }
+    this.load.audio(key, url);
   }
 
   loadJson(key: string, folder: string, filename: string) {

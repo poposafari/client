@@ -56,7 +56,7 @@ import CaveFilter from '@poposafari/utils/cave-filter';
 import { landToBiome, WeatherOverlay } from '@poposafari/utils/weather-overlay';
 import { getPokemonI18Name, showApiErrorAsTalk } from '@poposafari/utils';
 import { KeyItemRegistry } from '../key-items';
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { BattlePhase } from '@poposafari/feats/battle';
 
 const TRIGGER_HANDLERS: Record<
@@ -910,8 +910,8 @@ export class OverworldUi extends BaseUi {
         audio.playEffect(SFX.SHINY);
       } else {
         const pokedexId = obj.getPokedexId();
-        const cryKey = pokemonCryNames.includes(pokedexId) ? pokedexId : pokedexId.split('_')[0];
-        if (pokemonCryNames.includes(cryKey)) {
+        const cryKey = resolveCryKey(pokedexId);
+        if (cryKey) {
           if (this.scene.cache.audio.has(cryKey)) {
             audio.playEffect(cryKey);
           } else {

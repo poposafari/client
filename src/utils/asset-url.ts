@@ -12,3 +12,7 @@ export function assetUrl(relPath: string): string {
   }
   return url;
 }
+
+export function assetUrlSafe(relPath: string): string | null {
+  return manifest[`/src/assets/${relPath}`] ?? null;
+}

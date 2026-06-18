@@ -1,4 +1,4 @@
-import { pokemonCryNames } from '@poposafari/core/master.data.ts';
+import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import type { NpcConfig, ReactionStep } from '@poposafari/core/map.registry';
 import { GameScene } from '@poposafari/scenes';
 import { getPokemonTexture } from '@poposafari/utils';
@@ -64,10 +64,8 @@ export class PokemonNpcObject extends MovingNpcObject {
 
   private playCry(): void {
     if (this.cryActive) return;
-    const cryKey = pokemonCryNames.includes(this.pokedexId)
-      ? this.pokedexId
-      : this.pokedexId.split('_')[0];
-    if (!pokemonCryNames.includes(cryKey)) return;
+    const cryKey = resolveCryKey(this.pokedexId);
+    if (!cryKey) return;
     this.cryActive = true;
     void this.scene
       .getAudio()
