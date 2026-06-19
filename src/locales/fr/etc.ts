@@ -113,6 +113,7 @@ export const etc: TranslationEtc = {
   tooltip_register: 'Objets enregistrés (A)',
   tooltip_running: 'Chaussures de course (R)',
   tooltip_menu: 'Menu (S)',
+  tooltip_map: 'Carte (M)',
   tooltip_time: 'Heure',
   tooltip_weather: 'Météo',
   tooltip_location: 'Lieu actuel',

@@ -115,6 +115,7 @@ export const etc: TranslationEtc = {
   tooltip_register: 'とうろくアイテム(A)',
   tooltip_running: 'はしる(R)',
   tooltip_menu: 'メニュー(S)',
+  tooltip_map: 'タウンマップ(M)',
   tooltip_time: 'じかん',
   tooltip_weather: 'てんき',
   tooltip_location: 'いまの ばしょ',

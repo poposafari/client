@@ -213,6 +213,7 @@ export class OverworldUi extends BaseUi {
     null;
   onWildEncounterRequested: ((wild: WildPokemonObject) => void) | null = null;
   onRegisteredItemsRequested: (() => void) | null = null;
+  onMapRequested: (() => void) | null = null;
   onHiddenMoveSurfRequested:
     | ((caster: {
         pokedexId: string;
@@ -313,6 +314,11 @@ export class OverworldUi extends BaseUi {
 
   createLayout(): void {}
 
+  private isInSafari(): boolean {
+    const map = this.scene.getUser()?.getProfile().lastLocation.map ?? '';
+    return map.startsWith('s');
+  }
+
   onInput(key: string): void {
     if (this.doorTransitionPending) return;
     if (this.wildEncounterPending) return;
@@ -341,6 +347,13 @@ export class OverworldUi extends BaseUi {
         if (this.newbieRestricted) break;
         this.syncRegistedItemIcon(true);
         this.onRegisteredItemsRequested?.();
+        break;
+      case KEY.M:
+        if (this.newbieRestricted) break;
+        if (!this.isInSafari()) break;
+        this.syncMapToggleIcon(true);
+        this.scene.getAudio().playEffect(SFX.OPEN_0);
+        this.onMapRequested?.();
         break;
       case KEY.J:
         this.handleKeyJ();
@@ -1150,6 +1163,10 @@ export class OverworldUi extends BaseUi {
 
   public syncRegistedItemIcon(open: boolean): void {
     this.hud?.updateToggleIcon(TEXTURE.ICON_REGISTER, open);
+  }
+
+  public syncMapToggleIcon(open: boolean): void {
+    this.hud?.updateMapToggleIcon(open);
   }
 
   private syncRunningToggleIcon(): void {

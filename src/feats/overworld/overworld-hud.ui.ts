@@ -111,6 +111,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private toggleIconTexts: GText[] = [];
   private toggleIconGroups: Array<Array<GImage | GText>> = [];
 
+  private mapIcon!: GImage;
+  private mapToggleGroup: Array<GImage | GText> = [];
+  private newbieMode = false;
+
   private partyList!: PartyListContainer;
 
   private infoList!: ImageTextListContainer;
@@ -295,6 +299,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       if (key) this.tooltipManager.register(icon, key);
     });
 
+    if (this.mapIcon) this.tooltipManager.register(this.mapIcon, 'etc:tooltip_map');
+
     if (this.timeIcon) this.tooltipManager.register(this.timeIcon, () => this.getTimeTooltipText());
     if (this.weatherIcon)
       this.tooltipManager.register(this.weatherIcon, () => this.getWeatherTooltipText());
@@ -355,8 +361,42 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.toggleIconContainer.add([icon, guideIcon, guideText]);
     }
 
+    const mapX = -n * step;
+    this.mapIcon = addImage(this.scene, TEXTURE.ICON_MAP, undefined, mapX, iconY).setScale(
+      iconScale,
+    );
+    const mapGuideIcon = addImage(
+      this.scene,
+      TEXTURE.KEYCAP,
+      undefined,
+      mapX + guideOffsetX,
+      guideKeycapY,
+    ).setScale(guideScale);
+    const mapGuideText = addText(
+      this.scene,
+      mapX + guideOffsetX,
+      guideTextY,
+      'M',
+      guideFontSize,
+      'bold',
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+    this.mapIcon.setTint(0x7f7f7f);
+    this.mapToggleGroup = [this.mapIcon, mapGuideIcon, mapGuideText];
+    this.toggleIconContainer.add([this.mapIcon, mapGuideIcon, mapGuideText]);
+
     const { width } = this.scene.cameras.main;
     this.toggleIconContainer.setPosition(width / 2 - rightPadding, y);
+
+    this.refreshMapToggleVisibility();
+  }
+
+  private refreshMapToggleVisibility(): void {
+    const map = this.scene.getUser()?.getProfile().lastLocation.map ?? '';
+    const visible = map.startsWith('s') && !this.newbieMode;
+    for (const obj of this.mapToggleGroup) obj?.setVisible(visible);
   }
 
   private createParty() {
@@ -600,6 +640,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   }
 
   setNewbieMode(enabled: boolean): void {
+    this.newbieMode = enabled;
     const registerIdx = TOGGLE_ICONS.findIndex((c) => c.texture === TEXTURE.ICON_REGISTER);
     this.toggleIconGroups.forEach((group, i) => {
       const visible = !enabled || i !== registerIdx;
@@ -608,6 +649,16 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       }
     });
     this.partyList?.setVisible(!enabled);
+    this.refreshMapToggleVisibility();
+  }
+
+  updateMapToggleIcon(onoff: boolean): void {
+    if (!this.mapIcon) return;
+    if (onoff) {
+      this.mapIcon.clearTint();
+    } else {
+      this.mapIcon.setTint(0x7f7f7f);
+    }
   }
 
   updateToggleIcon(texture: TEXTURE, onoff: boolean) {
@@ -629,6 +680,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
     const moneyRow = this.infoList.getRow('money');
     if (moneyRow) moneyRow.text.setText(`${MONEY_SYMBOL} ${money}`);
+
+    this.refreshMapToggleVisibility();
   }
 
   updateTime(timeOfDay?: string): void {

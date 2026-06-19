@@ -11,6 +11,7 @@ import { OverworldMenuPhase } from './overworld-menu.phase';
 import { RegisteredItemsPhase } from './registered-items.phase';
 import { OverworldUi } from './overworld.ui';
 import { SafariPhase } from '../safari/safari.phase';
+import { SafariMapPhase } from '../safari-map/safari-map.phase';
 import { MartPhase } from '../mart';
 import { FossilPhase } from '../fossil';
 import { MartNpcObject } from './objects/special-npc.object';
@@ -171,6 +172,9 @@ export class OverworldPhase implements IGamePhase {
     this.overworldUi.onRegisteredItemsRequested = () => {
       if (!this.overworldUi) return;
       this.scene.pushPhase(new RegisteredItemsPhase(this.scene, this.overworldUi));
+    };
+    this.overworldUi.onMapRequested = () => {
+      this.scene.pushPhase(new SafariMapPhase(this.scene));
     };
     this.overworldUi.onHiddenMoveSurfRequested = (caster) => {
       this.scene.pushPhase(
@@ -351,6 +355,7 @@ export class OverworldPhase implements IGamePhase {
 
   onResume(): void {
     this.overworldUi?.syncMenuToggleIcon(false);
+    this.overworldUi?.syncMapToggleIcon(false);
     const mapConfig = this.scene.getMapRegistry().get(this.currentLocation);
     const effectiveBgm = resolveMapBgm(this.currentLocation, mapConfig?.bgm);
     if (effectiveBgm) {

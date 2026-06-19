@@ -111,6 +111,7 @@ export const etc: TranslationEtc = {
   tooltip_register: '등록한 아이템(A)',
   tooltip_running: '러닝슈즈(R)',
   tooltip_menu: '메뉴(S)',
+  tooltip_map: '지도(M)',
   tooltip_time: '시간',
   tooltip_weather: '날씨',
   tooltip_location: '현재 위치',
