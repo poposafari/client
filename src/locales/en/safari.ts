@@ -2,6 +2,7 @@ export const safari = {
   greeting1: 'Welcome! With one ticket, we can\ntake you to your private Safari Zone!',
   greeting2: 'Which area would you like to visit?',
   noTicket: "You don't have a Safari Zone Ticket.\nPlease get one first.",
+  ballGranted: 'Welcome to the Safari Zone!\nHere are {{count}} Safari Balls for you!',
   confirmMove: 'Travel to {{map}}?',
   pickedItem: '{{name}} obtained\n{{item}}.',
   pickedItemPocket: {

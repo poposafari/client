@@ -283,17 +283,21 @@ export class OverworldPhase implements IGamePhase {
       );
     }
 
+    let fadeInDone: Promise<void> | null = null;
     {
       const shouldFadeIn = this.scene.consumeFadeInOnOverworldEnter();
       const pipeline = this.scene.getFadeToBlackPipeline();
       if (pipeline) {
         if (shouldFadeIn) {
           pipeline.setProgress(1);
-          this.scene.tweens.add({
-            targets: pipeline,
-            progress: 0,
-            duration: 300,
-            ease: 'Linear',
+          fadeInDone = new Promise<void>((resolve) => {
+            this.scene.tweens.add({
+              targets: pipeline,
+              progress: 0,
+              duration: 300,
+              ease: 'Linear',
+              onComplete: () => resolve(),
+            });
           });
         } else if (pipeline.progress > 0.01) {
           this.scene.tweens.add({
@@ -311,6 +315,14 @@ export class OverworldPhase implements IGamePhase {
 
     if (this.scene.consumePendingScreenFadeIn()) {
       await screenFadeIn(this.scene);
+    }
+
+    const safariGrant = this.scene.consumePendingSafariEntryBallGrant();
+    if (safariGrant > 0) {
+      await fadeInDone;
+      await this.scene
+        .getMessage('talk')
+        .showMessage([i18next.t('safari:ballGranted', { count: safariGrant })], { name: '' });
     }
 
     const profile = this.scene.getUser()?.getProfile();

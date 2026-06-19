@@ -2,6 +2,7 @@ export const safari = {
   greeting1: 'ようこそ！にゅうじょうけん1まいで\nプライベートサファリゾーンににゅうじょうできますよ！',
   greeting2: 'どのエリアに いきますか？',
   noTicket: 'サファリゾーンチケットが ありません。\nさきに チケットを よういして ください。',
+  ballGranted: 'サファリゾーンへ ようこそ！\nサファリボールを {{count}}こ さしあげます！',
   confirmMove: '{{map}}に いどうしますか？',
   pickedItem: '{{name}}は\n{{item}}を てにいれた！',
   pickedItemPocket: {

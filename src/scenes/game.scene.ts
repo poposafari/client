@@ -104,6 +104,7 @@ export class GameScene extends BaseScene {
 
   private fadeInOnNextOverworldEnter = false;
   private pendingScreenFadeIn = false;
+  private pendingSafariEntryBallGrant = 0;
   private mapTransitionInProgress = false;
 
   private socket: Socket | null = null;
@@ -606,6 +607,16 @@ export class GameScene extends BaseScene {
   consumePendingScreenFadeIn(): boolean {
     const v = this.pendingScreenFadeIn;
     this.pendingScreenFadeIn = false;
+    return v;
+  }
+
+  setPendingSafariEntryBallGrant(quantity: number): void {
+    this.pendingSafariEntryBallGrant = quantity;
+  }
+
+  consumePendingSafariEntryBallGrant(): number {
+    const v = this.pendingSafariEntryBallGrant;
+    this.pendingSafariEntryBallGrant = 0;
     return v;
   }
 

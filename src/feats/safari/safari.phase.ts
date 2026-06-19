@@ -16,6 +16,8 @@ interface SafariZone {
 }
 
 const SAFARI_ZONE_TICKET_ID = 'safari-zone-ticket';
+const SAFARI_BALL_ID = 'safari-ball';
+const SAFARI_ENTRY_BALL_QUANTITY = 30;
 
 const SAFARI_ZONES: SafariZone[] = [
   { key: 's046', labelKey: 'map:s046', mapId: MAP.SAFARI_046, spawnX: 10, spawnY: 10 },
@@ -114,8 +116,11 @@ export class SafariPhase implements IGamePhase {
 
           this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
           this.scene.getUser()?.addVisitedMap(result.mapId);
-          // 서버가 입장권 1개를 차감했으므로 로컬 캐시도 동기화한다.
-          this.scene.getUser()?.decreaseItemQuantity(SAFARI_ZONE_TICKET_ID, 1);
+          const u = this.scene.getUser();
+          u?.decreaseItemQuantity(SAFARI_ZONE_TICKET_ID, 1);
+          const ballQty = u?.getItemBag()?.get(SAFARI_BALL_ID)?.quantity ?? 0;
+          u?.updateItemQuantity(SAFARI_BALL_ID, ballQty + SAFARI_ENTRY_BALL_QUANTITY);
+          this.scene.setPendingSafariEntryBallGrant(SAFARI_ENTRY_BALL_QUANTITY);
 
           const entry = result.mapInfo.entry;
           const initPos: InitPosConfig = {
