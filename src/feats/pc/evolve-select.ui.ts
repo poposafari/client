@@ -113,7 +113,8 @@ const LAYOUT = {
 } as const;
 
 const ICON_SCALE = 3;
-const ICON_SIZE = 16 * ICON_SCALE; // 48px
+const ICON_SIZE = 16 * ICON_SCALE;
+const UI_SCALE = 0.8;
 
 export interface EvolveSelectConfig {
   x: number;
@@ -125,8 +126,8 @@ export interface EvolveSelectConfig {
 }
 
 const DEFAULT_CONFIG: EvolveSelectConfig = {
-  x: +1620,
-  y: +740,
+  x: +1550,
+  y: +810,
   visibleCount: 6,
   itemHeight: 0,
 };
@@ -390,6 +391,7 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
     this.scrollIndex = 0;
     this.refreshList();
     this.show();
+    this.setScale(this.scaleX * UI_SCALE, this.scaleY * UI_SCALE);
     this.setVisible(true);
 
     return new Promise<number | null>((resolve) => {
@@ -661,6 +663,12 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
       .sprite(x + ICON_SIZE / 2, 0, tex.key, tex.frame + '_0')
       .setScale(1.6)
       .setOrigin(0.5, 0.5);
+
+    if (this.scene.getUser()?.isPokedexRegistered(item.option.nextPokedexId)) {
+      pokemonIcon.clearTint();
+    } else {
+      pokemonIcon.setTintFill(0x000000);
+    }
     slot.add(pokemonIcon);
     x += ICON_SIZE + LAYOUT.GAP;
 
@@ -721,11 +729,12 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
   private clampToScreen(): void {
     const screenWidth = this.scene.scale.width;
     const screenHeight = this.scene.scale.height;
-    const width = this.config.width!;
-    const height = this.config.height!;
+    const width = this.config.width! * UI_SCALE;
+    const height = this.config.height! * UI_SCALE;
 
-    const scrollExtra = this.metrics.rightPadding / 2 + LAYOUT.SCROLL_OFFSET_X + SCROLL_BAR_WIDTH;
-    const marginX = -35;
+    const scrollExtra =
+      (this.metrics.rightPadding / 2 + LAYOUT.SCROLL_OFFSET_X + SCROLL_BAR_WIDTH) * UI_SCALE;
+    const marginX = -25;
     const marginY = 5;
 
     const minX = width / 2 + marginX;

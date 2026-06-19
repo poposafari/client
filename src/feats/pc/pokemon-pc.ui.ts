@@ -1425,6 +1425,8 @@ export class PokemonPcUi extends BaseUi {
 
     const user = this.scene.getUser();
 
+    user?.incrementPokedexCount(resp.pokedexId);
+
     // 진화 비용(아이템) 로컬 차감
     const costParts = parseCostParts(selectedOption.cost, selectedOption.type1);
     for (const p of costParts) {
@@ -1946,10 +1948,10 @@ export class PokemonPcUi extends BaseUi {
     this.infoType1 = new PokemonTypeContainer(this.scene, -890, +245);
     this.infoType2 = new PokemonTypeContainer(this.scene, -755, +245);
 
-    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +245));
-    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +200));
-    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +155));
-    this.infoSkills.push(new PokemonSkillContainer(this.scene, -470, +110));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -460, +250));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -460, +205));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -460, +160));
+    this.infoSkills.push(new PokemonSkillContainer(this.scene, -460, +115));
 
     this.bottomInfoGuide = new KeyGuideBarContainer(this.scene);
     this.bottomInfoGuide.create({

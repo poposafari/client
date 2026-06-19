@@ -1,7 +1,7 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { IMenuItem } from '@poposafari/types';
-import { screenFadeIn } from '@poposafari/utils';
+import { getPokemonI18Name, screenFadeIn } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { PokedexUi } from './pokedex.ui';
 import { PokedexListUi } from './pokedex-list.ui';
@@ -105,9 +105,7 @@ export class PokedexPhase implements IGamePhase {
     const caughtBaseSet = new Set(
       pokedex.filter((p) => p.caughtCount > 0).map((p) => baseId(p.pokedexId)),
     );
-    const caughtKeySet = new Set(
-      pokedex.filter((p) => p.caughtCount > 0).map((p) => p.pokedexId),
-    );
+    const caughtKeySet = new Set(pokedex.filter((p) => p.caughtCount > 0).map((p) => p.pokedexId));
 
     const regionalByBase = new Map<string, string[]>();
     for (const key of masterData.getPokemonDataKeys()) {
@@ -128,9 +126,7 @@ export class PokedexPhase implements IGamePhase {
       if (!masterData.getPokemonData(id)) continue;
 
       const isBaseSeen = caughtBaseSet.has(id);
-      const baseName = isBaseSeen
-        ? i18next.t(`pokemon:${id}.name`, { defaultValue: id })
-        : NAME_MASK;
+      const baseName = isBaseSeen ? getPokemonI18Name(id) : NAME_MASK;
       items.push({
         key: id,
         label: `${id}  ${baseName}`,
@@ -141,9 +137,7 @@ export class PokedexPhase implements IGamePhase {
       if (!variants) continue;
       for (const vKey of variants) {
         const isVariantSeen = caughtKeySet.has(vKey);
-        const variantName = isVariantSeen
-          ? i18next.t(`pokemon:${vKey}.name`, { defaultValue: vKey })
-          : NAME_MASK;
+        const variantName = isVariantSeen ? getPokemonI18Name(vKey) : NAME_MASK;
         items.push({
           key: vKey,
           label: `${id}  ${variantName}`,

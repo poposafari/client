@@ -293,6 +293,13 @@ export class UserManager {
     return this.pokedex;
   }
 
+  isPokedexRegistered(pokedexId: string): boolean {
+    if (!this.pokedex) return false;
+    const normalize = (id: string) => id.split('_')[0].padStart(4, '0');
+    const target = normalize(pokedexId);
+    return this.pokedex.some((p) => p.caughtCount > 0 && normalize(p.pokedexId) === target);
+  }
+
   setPokedex(data: PokedexEntry[]): void {
     this.pokedex = data;
   }

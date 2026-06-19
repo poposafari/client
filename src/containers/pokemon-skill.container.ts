@@ -30,6 +30,10 @@ const HIDDEN_MOVE_TYPE: Record<PokemonHiddenMove, PokemonType> = {
   'move_dragon-cheer': 'dragon',
 };
 
+const BADGE_WIDTH = 190;
+const BADGE_HEIGHT = 40;
+const LABEL_INNER_PADDING = 40;
+
 export class PokemonSkillContainer extends Phaser.GameObjects.Container {
   private bg: GImage;
   private label: GText;
@@ -38,19 +42,9 @@ export class PokemonSkillContainer extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.bg = addImage(scene, TEXTURE.TYPES_EMPTY, undefined, 0, 0);
-    this.label = addText(
-      scene,
-      0,
-      0,
-      '파도타기',
-      35,
-      100,
-      'center',
-      TEXTSTYLE.WHITE,
-      TEXTSHADOW.GRAY,
-    );
+    this.label = addText(scene, 0, 0, '', 35, 100, 'center', TEXTSTYLE.WHITE, TEXTSHADOW.GRAY);
 
-    this.bg.setDisplaySize(this.label.displayWidth + 100, this.label.displayHeight + 10);
+    this.bg.setDisplaySize(BADGE_WIDTH, BADGE_HEIGHT);
 
     this.add([this.bg, this.label]);
 
@@ -60,8 +54,16 @@ export class PokemonSkillContainer extends Phaser.GameObjects.Container {
   setType(move: PokemonHiddenMove): void {
     super.setVisible(true);
     this.label.setText(i18next.t(`pokemonHiddenMove:${move}`)).setVisible(true);
+    this.fitLabel();
     this.bg.setFrame(getPokemonTypeFrame(HIDDEN_MOVE_TYPE[move])).setVisible(true);
-    this.bg.setDisplaySize(this.label.displayWidth + 100, this.label.displayHeight + 10);
+  }
+
+  private fitLabel(): void {
+    this.label.setScale(1);
+    const maxInner = BADGE_WIDTH - LABEL_INNER_PADDING;
+    if (this.label.width > maxInner) {
+      this.label.setScale(maxInner / this.label.width);
+    }
   }
 
   override setVisible(value: boolean): this {
