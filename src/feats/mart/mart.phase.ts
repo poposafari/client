@@ -134,6 +134,8 @@ export class MartPhase implements IGamePhase {
         continue;
       }
 
+      await question.showMessage(i18next.t('mart:howManyBuy'), { resolveWhen: 'displayed' });
+
       const qty = await this.quantityUi!.open({
         mode: 'buy',
         itemId,
@@ -141,6 +143,8 @@ export class MartPhase implements IGamePhase {
         min: 1,
         max: maxQty,
       });
+
+      question.hide();
 
       if (!qty) {
         continue;
@@ -261,6 +265,8 @@ export class MartPhase implements IGamePhase {
         continue;
       }
 
+      await question.showMessage(i18next.t('mart:howManySell'), { resolveWhen: 'displayed' });
+
       const qty = await this.quantityUi!.open({
         mode: 'sell',
         itemId,
@@ -268,6 +274,8 @@ export class MartPhase implements IGamePhase {
         min: 1,
         max: maxQty,
       });
+
+      question.hide();
 
       if (!qty) {
         continue;
@@ -329,10 +337,7 @@ export class MartPhase implements IGamePhase {
           quantity: e.quantity,
           register: e.register,
         }));
-        this.bagUi.setBagData(
-          updatedEntries,
-          (id) => masterData.getItemData(id)?.category ?? null,
-        );
+        this.bagUi.setBagData(updatedEntries, (id) => masterData.getItemData(id)?.category ?? null);
       }
 
       await talk.showMessage(i18next.t('mart:thanksSell'));

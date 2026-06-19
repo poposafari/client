@@ -1,6 +1,6 @@
 import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, MONEY_SYMBOL, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, KEY, MONEY_SYMBOL, SFX, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
 import { addText, addWindow } from '@poposafari/utils';
 import i18next from 'i18next';
 
@@ -18,9 +18,13 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
   private window!: GWindow;
   private quantityText!: GText;
   private totalText!: GText;
+  private hintText!: GText;
 
   private quantity = 1;
   private props!: MartQuantityUiProps;
+
+  private offsetX = +1590;
+  private offsetY = +730;
 
   private resolveQuantity: ((qty: number | null) => void) | null = null;
 
@@ -36,7 +40,7 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
       this.scene.getOption().getWindow(),
       0,
       0,
-      600,
+      650,
       150,
       4,
       16,
@@ -48,12 +52,12 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
 
     this.quantityText = addText(
       this.scene,
-      -230,
+      -200,
       0,
       '',
-      80,
+      70,
       '100',
-      'left',
+      'center',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
@@ -64,7 +68,7 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
       -80,
       0,
       '',
-      65,
+      70,
       '100',
       'left',
       TEXTSTYLE.WHITE,
@@ -72,7 +76,26 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
     );
     this.add(this.totalText);
 
-    this.setPosition(+1610, +670);
+    this.hintText = addText(
+      this.scene,
+      +300,
+      +270,
+      i18next.t('mart:quantityGuide'),
+      70,
+      '100',
+      'left',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    ).setOrigin(1, 0);
+    this.add(this.hintText);
+
+    this.setPosition(this.offsetX, this.offsetY);
+  }
+
+  setOffset(offsetX: number, offsetY: number): void {
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+    this.setPosition(this.offsetX, this.offsetY);
   }
 
   onInput(key: string): void {
@@ -107,10 +130,15 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
 
   private adjustQuantity(delta: number): void {
     const { min, max } = this.props;
-    const range = max - min + 1;
-    const offset = this.quantity - min + delta;
-    const wrapped = ((offset % range) + range) % range;
-    this.quantity = min + wrapped;
+    this.scene.getAudio().playEffect(SFX.CURSOR_0);
+
+    let next = this.quantity + delta;
+    if (next > max) {
+      next = this.quantity === max ? min : max;
+    } else if (next < min) {
+      next = this.quantity === min ? max : min;
+    }
+    this.quantity = next;
     this.refreshDisplay();
   }
 

@@ -11,6 +11,7 @@ import {
 } from '@poposafari/types';
 import { addBackground, addSprite, addText } from '@poposafari/utils';
 import { ItemDetailContainer } from '@poposafari/containers/item-detail.container';
+import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import i18next from '@poposafari/i18n';
 import { MenuListUi } from '../menu/menu-list.ui';
 
@@ -26,6 +27,7 @@ export class MartBuyUi extends BaseUi implements IInputHandler, IRefreshableLang
   private moneyValueText!: GText;
   private menuList!: MenuListUi;
   private npcSprite!: GSprite;
+  private inputGuide!: KeyGuideBarContainer;
 
   private quantityLookup: (itemId: string) => number = () => 0;
   private moneyLookup: () => number = () => 0;
@@ -129,6 +131,30 @@ export class MartBuyUi extends BaseUi implements IInputHandler, IRefreshableLang
     this.menuList.onCursorMove = (_i, item) => this.updateDetail(item.key);
     this.menuList.onSelect = (item) => this.finish(item.key);
     this.menuList.onCancel = () => this.finish(null);
+
+    this.inputGuide = new KeyGuideBarContainer(this.scene);
+    this.inputGuide.create({
+      entries: [
+        { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
+        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
+        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
+      ],
+      keycapTextSize: 30,
+      keycapPaddingX: 50,
+      keycapPaddingY: 40,
+      keycapScale: 2,
+      keycapTextYOffset: -5,
+      descriptionTextSize: 50,
+      descriptionTextStyle: TEXTSTYLE.WHITE,
+      descriptionTextShadow: TEXTSHADOW.GRAY,
+      gapKeyToDescription: 5,
+      gapBetweenEntries: 25,
+      gapInsideEntry: 4,
+      align: 'right',
+      maxWidth: this.scene.cameras.main.width - 60,
+    });
+    this.inputGuide.setPosition(+920, +500);
+    this.add(this.inputGuide);
   }
 
   private updateDetail(itemId: string): void {
@@ -218,6 +244,10 @@ export class MartBuyUi extends BaseUi implements IInputHandler, IRefreshableLang
     this.menuList.onRefreshLanguage();
     this.refreshBagText();
     this.refreshMoneyText();
+    this.inputGuide.getEntryKeycapText(0, 0)?.setText(i18next.t('etc:arrowKey'));
+    this.inputGuide.setEntryDescription(0, i18next.t('etc:move'));
+    this.inputGuide.setEntryDescription(1, i18next.t('etc:confirm'));
+    this.inputGuide.setEntryDescription(2, i18next.t('etc:cancel'));
   }
 
   destroy(fromScene?: boolean): void {
