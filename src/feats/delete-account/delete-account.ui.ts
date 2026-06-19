@@ -1,7 +1,7 @@
 import { BaseUi, IInputHandler } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, TEXTURE } from '@poposafari/types';
-import { addBackground, getBackgroundKey } from '@poposafari/utils';
+import { addBackground, getSessionBackgroundKey } from '@poposafari/utils';
 import { DeleteAccountMenuUi } from './delete-account-menu.ui';
 import i18next from 'i18next';
 
@@ -68,7 +68,7 @@ export class DeleteAccountUi extends BaseUi implements IInputHandler {
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getSessionBackgroundKey());
     super.show();
   }
 }

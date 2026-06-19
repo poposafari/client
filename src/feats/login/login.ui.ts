@@ -10,7 +10,7 @@ import {
   addText,
   addTextInput,
   addWindow,
-  getBackgroundKey,
+  getSessionBackgroundKey,
   runFloatEffect,
   runShakeEffect,
 } from '@poposafari/utils';
@@ -449,7 +449,7 @@ export class LoginUi extends BaseUi implements IInputHandler, IRefreshableLangua
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getSessionBackgroundKey());
     super.show();
   }
 }

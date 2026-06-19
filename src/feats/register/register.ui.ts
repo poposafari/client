@@ -8,7 +8,7 @@ import {
   addText,
   addTextInput,
   addWindow,
-  getBackgroundKey,
+  getSessionBackgroundKey,
   isValidPassword,
   isValidUsername,
   runFloatEffect,
@@ -390,7 +390,7 @@ export class RegisterUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getSessionBackgroundKey());
     super.show();
   }
 }

@@ -597,3 +597,12 @@ export function getRandomBackgroundKey(): TEXTURE {
   const idx = Math.floor(Math.random() * RANDOM_BACKGROUND_KEYS.length);
   return RANDOM_BACKGROUND_KEYS[idx];
 }
+
+let sessionBackgroundKey: TEXTURE | null = null;
+
+export function getSessionBackgroundKey(): TEXTURE {
+  if (sessionBackgroundKey === null) {
+    sessionBackgroundKey = getRandomBackgroundKey();
+  }
+  return sessionBackgroundKey;
+}
