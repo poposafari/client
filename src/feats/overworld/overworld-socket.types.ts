@@ -1,3 +1,6 @@
+import type { SafariWildInfo } from '@poposafari/scenes';
+import { MOVEMENT_SPEED, TILE_MOVE_BASE_MS } from './overworld.constants';
+
 export interface PetState {
   pokedexId: string;
   isShiny: boolean;
@@ -84,8 +87,6 @@ export interface UsersMovedPayload {
   updates: UserMovedPayload[];
 }
 
-import type { SafariWildInfo } from '@poposafari/scenes';
-
 export interface WildSpawnPayload {
   mapId: string;
   wild: SafariWildInfo;
@@ -99,11 +100,10 @@ export interface WildDespawnPayload {
   reason: WildDespawnReason;
 }
 
-export const MOVE_TYPE_DURATION_MS: Record<string, number> = {
-  walk: 288,
-  running: 144,
-  ride: 96,
-  surf: 144,
-  jump: 384, // 점프는 총 2타일 이동이므로 384ms
-};
-export const DEFAULT_MOVE_DURATION_MS = 288;
+export const MOVE_TYPE_DURATION_MS: Record<string, number> = Object.fromEntries(
+  Object.entries(MOVEMENT_SPEED).map(([moveType, speed]) => [
+    moveType,
+    Math.round((TILE_MOVE_BASE_MS / speed) * (moveType === 'jump' ? 2 : 1)),
+  ]),
+);
+export const DEFAULT_MOVE_DURATION_MS = MOVE_TYPE_DURATION_MS.walk;

@@ -1,7 +1,7 @@
 import type { CurrentUserCostume, UserGender } from '@poposafari/types';
 import { GameScene } from '@poposafari/scenes';
 import { ANIMATION, TEXTCOLOR, TEXTURE } from '@poposafari/types';
-import { calcOverworldTilePos, DIRECTION } from '../overworld.constants';
+import { calcOverworldTilePos, DIRECTION, MOVEMENT_SPEED } from '../overworld.constants';
 import {
   getRideAnimationKey,
   getRunningAnimationKey,
@@ -506,7 +506,7 @@ export class OtherPlayerObject extends BaseObject {
 
   private syncPetSpeed(moveType?: string): void {
     if (!this.pet) return;
-    const speed = moveType === 'running' ? 4 : 2;
+    const speed = moveType === 'running' ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk;
     if (speed !== this.lastPetSpeed) {
       this.lastPetSpeed = speed;
       this.pet.setBaseSpeed(speed);

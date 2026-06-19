@@ -1,7 +1,12 @@
 import { GameScene } from '@poposafari/scenes';
 import { OverworldMovementState, TEXTSTYLE } from '@poposafari/types';
 import type { UserGender } from '@poposafari/types';
-import { calcOverworldTilePos, directionToDelta, DIRECTION } from '../overworld.constants';
+import {
+  calcOverworldTilePos,
+  directionToDelta,
+  DIRECTION,
+  MOVEMENT_SPEED,
+} from '../overworld.constants';
 import {
   getRideAnimationKey,
   getRunningAnimationKey,
@@ -95,14 +100,7 @@ export class PlayerObject extends MovableObject {
 
     const movementState =
       scene.getUser()?.getOverworldMovementState() ?? OverworldMovementState.WALK;
-    this.baseSpeed =
-      movementState === OverworldMovementState.RIDE
-        ? 6
-        : movementState === OverworldMovementState.RUNNING
-          ? 4
-          : movementState === OverworldMovementState.SURF
-            ? 4
-            : 2;
+    this.baseSpeed = MOVEMENT_SPEED[movementState] ?? MOVEMENT_SPEED.walk;
   }
 
   protected override onTileMoved(tileX: number, tileY: number, direction: DIRECTION): void {

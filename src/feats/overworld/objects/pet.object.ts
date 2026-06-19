@@ -6,6 +6,7 @@ import {
   calcOverworldTilePos,
   directionToDelta,
   DIRECTION,
+  MOVEMENT_SPEED,
   TILE_PIXEL,
 } from '../overworld.constants';
 import { IOverworldBlockingRef, IOverworldMapAdapter, MovableObject } from './movable.object';
@@ -25,8 +26,8 @@ const PET_RUN_OFFSET_PX = 40;
 const PET_WALK_OFFSET_PX = 30;
 const PET_IDLE_OFFSET_PX = 10;
 
-const PET_RUNNING_SPEED = 4;
-const PET_WALKING_SPEED = 2;
+const PET_RUNNING_SPEED = MOVEMENT_SPEED.running;
+const PET_WALKING_SPEED = MOVEMENT_SPEED.walk;
 
 /** IDLE에서 sprite overflow(px)에 곱할 계수. 1:1이면 큰 포켓몬에서 폭주하므로 작게. */
 const PET_IDLE_OVERFLOW_GAIN = 0.15;
@@ -146,7 +147,7 @@ export class PetObject extends MovableObject {
     this.shadow.setVisible(true);
     this.refreshPosition();
 
-    this.setBaseSpeed(2);
+    this.setBaseSpeed(MOVEMENT_SPEED.walk);
     this.startSpriteAnimation(this.animKey(initDirection));
     this.snapTrailOffsetToTarget();
 

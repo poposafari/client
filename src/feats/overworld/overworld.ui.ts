@@ -20,6 +20,7 @@ import {
   DIRECTION,
   directionToDelta,
   MAP_LAYER_SCALE_ZOOMED,
+  MOVEMENT_SPEED,
   OVERWORLD_ZOOM,
 } from './overworld.constants';
 import { MapView } from './map-view';
@@ -112,15 +113,8 @@ const BASE_SURF_Y_OFFSET = +20;
 const SURF_BOB_AMPLITUDE = 2;
 const SURF_BOB_PERIOD_MS = 1100;
 
-/** 움직임 상태별 타일당 이동 속도 (MovableObject baseSpeed) */
-const SPEED_BY_MOVEMENT_STATE: Partial<Record<OverworldMovementState, number>> = {
-  [OverworldMovementState.WALK]: 2,
-  [OverworldMovementState.RUNNING]: 4,
-  [OverworldMovementState.RIDE]: 6,
-  [OverworldMovementState.JUMP]: 3,
-  [OverworldMovementState.SURF]: 4,
-  // FISHING는 추후 정의
-};
+/** 움직임 상태별 타일당 이동 속도 (MovableObject baseSpeed). 단일 소스는 MOVEMENT_SPEED. */
+const SPEED_BY_MOVEMENT_STATE = MOVEMENT_SPEED;
 
 type KeyState = { up: boolean; down: boolean; left: boolean; right: boolean };
 
@@ -1181,7 +1175,9 @@ export class OverworldUi extends BaseUi {
     const speed =
       SPEED_BY_MOVEMENT_STATE[next] ?? SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
     this.player.setBaseSpeed(speed);
-    this.pet?.setBaseSpeed(next === OverworldMovementState.RUNNING ? 4 : 2);
+    this.pet?.setBaseSpeed(
+      next === OverworldMovementState.RUNNING ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk,
+    );
   }
 
   /**
@@ -1355,7 +1351,9 @@ export class OverworldUi extends BaseUi {
     }
     if (isField && this.pet) {
       // WALK ↔ RUNNING: 속도 동기화만.
-      this.pet.setBaseSpeed(currentState === OverworldMovementState.RUNNING ? 4 : 2);
+      this.pet.setBaseSpeed(
+        currentState === OverworldMovementState.RUNNING ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk,
+      );
     }
   }
 
@@ -1407,7 +1405,11 @@ export class OverworldUi extends BaseUi {
     );
     this.pet = pet;
     const user = this.scene.getUser();
-    pet.setBaseSpeed(user?.getOverworldMovementState() === OverworldMovementState.RUNNING ? 4 : 2);
+    pet.setBaseSpeed(
+      user?.getOverworldMovementState() === OverworldMovementState.RUNNING
+        ? MOVEMENT_SPEED.running
+        : MOVEMENT_SPEED.walk,
+    );
     this.petSummoning = false;
     this.refreshWildBlockingRefs();
   }

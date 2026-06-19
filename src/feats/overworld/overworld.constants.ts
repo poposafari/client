@@ -7,6 +7,17 @@ export const TILE_BASE = 16;
 export const MAP_LAYER_SCALE = 3;
 export const TILE_PIXEL = TILE_BASE * MAP_LAYER_SCALE;
 
+export const TILE_MOVE_BASE_MS = TILE_PIXEL * 12;
+
+//속도를 올릴 꺼면 이 값만 수정 하면 된다!!!
+export const MOVEMENT_SPEED: Record<string, number> = {
+  walk: 2,
+  running: 4.5,
+  ride: 8,
+  surf: 4.5,
+  jump: 3,
+};
+
 /** 오버월드 시각 줌 (Container scale, setZoom 대신 사용). */
 export const OVERWORLD_ZOOM = 1.6;
 /** 맵 레이어 시각 스케일: TilemapLayer는 Container scale을 따르지 않으므로 맵만 이 스케일로 그린다. */
