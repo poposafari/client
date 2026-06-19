@@ -12,10 +12,8 @@ export class GroundItemObject extends InteractiveObject {
     this.uid = uid;
     this.itemId = itemId;
 
-    // 이름 라벨 숨김 (ground item은 라벨이 필요 없음)
     this.name.setVisible(false);
     this.sprite.setScale(1.4);
-    // 그림자: sprite 가로폭에 비례시키되 원본 종횡비는 보존(납작한 타원 유지).
     this.shadow.setVisible(true);
     const shadowWidth = this.sprite.displayWidth * 0.9;
     const ratio = this.shadow.height / this.shadow.width;

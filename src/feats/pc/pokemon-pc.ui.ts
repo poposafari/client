@@ -80,7 +80,6 @@ export class PokemonPcUi extends BaseUi {
   private infoPokedex!: GText;
   private infoFront!: GImage;
   private infoPokemonName!: GText;
-  private infoCapturePokeball!: GImage;
   private infoShinyIcon!: GImage;
   private infoCaptureLocation!: GText;
   private infoCaptureDate!: GText;
@@ -325,7 +324,6 @@ export class PokemonPcUi extends BaseUi {
       this.infoPokedex,
       this.infoFront,
       this.infoPokemonName,
-      this.infoCapturePokeball,
       this.infoShinyIcon,
       this.infoGender,
       this.infoTier,
@@ -1325,15 +1323,17 @@ export class PokemonPcUi extends BaseUi {
     const displayName = pokemon.nickname ?? getPokemonI18Name(pokemon.pokedexId);
     const expGained = Math.max(0, resp.exp - oldExp);
     const talkUi = this.scene.getMessage('talk');
-    await talkUi.showMessage(
-      i18next.t('pc:enhanceGainedExp', { name: displayName, exp: expGained }),
-    );
+    const messages = [i18next.t('pc:enhanceGainedExp', { name: displayName, exp: expGained })];
     if (resp.leveledUp) {
-      this.scene.getAudio().playEffect(SFX.LEVEL_UP);
-      await talkUi.showMessage(
-        i18next.t('pc:enhanceLeveledUp', { name: displayName, level: resp.level }),
-      );
+      messages.push(i18next.t('pc:enhanceLeveledUp', { name: displayName, level: resp.level }));
     }
+    await talkUi.showMessage(messages, {
+      onPageStart: (i) => {
+        if (resp.leveledUp && i === messages.length - 1) {
+          this.scene.getAudio().playEffect(SFX.LEVEL_UP);
+        }
+      },
+    });
 
     this.inputManager.pop(this);
     this.inputLocked = false;
@@ -1671,7 +1671,7 @@ export class PokemonPcUi extends BaseUi {
 
     this.infoPokemonName = addText(
       this.scene,
-      -875,
+      -950,
       -413,
       ``,
       75,
@@ -1680,14 +1680,6 @@ export class PokemonPcUi extends BaseUi {
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
-
-    this.infoCapturePokeball = addImage(
-      this.scene,
-      `pc_safari-ball`,
-      undefined,
-      -915,
-      -415,
-    ).setScale(2);
 
     this.infoGender = addText(
       this.scene,
@@ -2028,7 +2020,6 @@ export class PokemonPcUi extends BaseUi {
     this.infoShinyIcon.setVisible(false);
     this.infoCaptureDate.setText('');
     this.infoCaptureLocation.setText('');
-    this.infoCapturePokeball.setVisible(false);
     this.infoAbility.setText('');
     this.infoNature.setText('');
     this.infoAbilitySymbol.setText('');
@@ -2058,7 +2049,6 @@ export class PokemonPcUi extends BaseUi {
 
   private restoreInfoSymbols(): void {
     this.infoFront.setVisible(true);
-    this.infoCapturePokeball.setVisible(true);
     this.infoLevelSymbol.setVisible(true);
     this.infoFriendshipSymbol.setVisible(true);
     this.infoFriendship.setVisible(true);

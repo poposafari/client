@@ -1,5 +1,5 @@
 export const safari = {
-  greeting1: 'Welcome! With one ticket, we can\ntake you to the Safari Zone!',
+  greeting1: 'Welcome! With one ticket, we can\ntake you to your private Safari Zone!',
   greeting2: 'Which area would you like to visit?',
   noTicket: "You don't have a Safari Zone Ticket.\nPlease get one first.",
   confirmMove: 'Travel to {{map}}?',

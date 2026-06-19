@@ -1,13 +1,6 @@
 import i18next from '@poposafari/i18n';
 import { GameScene } from '@poposafari/scenes';
-import {
-  ItemCategory,
-  KEY,
-  SFX,
-  TEXTSHADOW,
-  TEXTSTYLE,
-  TEXTURE,
-} from '@poposafari/types';
+import { ItemCategory, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText } from '@poposafari/utils';
 import { TalkMessageUi } from './talk-message.ui';
 
@@ -28,6 +21,7 @@ export class PocketTalkMessageUi extends TalkMessageUi {
   private line1Full: string = '';
   private line2Full: string = '';
   private pocketTypingTimer: Phaser.Time.TimerEvent | null = null;
+  private isPocketPage: boolean = false;
 
   constructor(scene: GameScene) {
     super(scene);
@@ -72,7 +66,11 @@ export class PocketTalkMessageUi extends TalkMessageUi {
     if (this.inputLocked) return;
     if (key === KEY.Z || key === KEY.ENTER) {
       if (this.isTyping) {
-        this.stopPocketTyping();
+        if (this.isPocketPage) {
+          this.stopPocketTyping();
+        } else {
+          this.stopTyping();
+        }
       } else {
         this.close();
       }
@@ -80,11 +78,27 @@ export class PocketTalkMessageUi extends TalkMessageUi {
   }
 
   public async showPocketMessage(params: PocketTalkParams): Promise<void> {
-    this.scene.getAudio().playEffect(SFX.CURSOR_0);
     this.window.setTexture(this.scene.getOption().getWindow());
 
     this.show();
     this.setVisible(true);
+
+    this.isPocketPage = false;
+    this.keepWindowOpen = true;
+    await this.showOne(
+      i18next.t('safari:pickedItem', { name: params.name, item: params.item }),
+      {},
+    );
+
+    this.isPocketPage = true;
+    this.keepWindowOpen = false;
+    await this.showPocketLine(params);
+
+    this.isPocketPage = false;
+  }
+
+  private showPocketLine(params: PocketTalkParams): Promise<void> {
+    this.scene.getAudio().playEffect(SFX.CURSOR_0);
 
     this.inputLocked = true;
     this.scene.time.delayedCall(100, () => {
@@ -163,6 +177,11 @@ export class PocketTalkMessageUi extends TalkMessageUi {
   }
 
   protected override onTypingComplete(): void {
+    if (!this.isPocketPage) {
+      super.onTypingComplete();
+      return;
+    }
+
     const tempText = this.scene.add
       .text(0, 0, this.line2Full, this.line2Text.style)
       .setVisible(false);

@@ -13,11 +13,9 @@ export interface MessageConfig {
   window?: TEXTURE | string;
   resolveWhen?: 'close' | 'displayed';
   showHint?: boolean;
-  /**
-   * 이 Promise 가 resolve 되기 전까지 Z/ENTER 등 입력을 무시한다.
-   * (타이핑 스킵·close 둘 다 차단) 기본 100ms 잠금에 추가로 적용된다.
-   */
+
   unlockInputAfter?: Promise<void>;
+  onPageStart?: (index: number) => void;
 }
 
 export abstract class MessageUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
@@ -110,12 +108,13 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
     for (let i = 0; i < contents.length; i++) {
       const isLast = i === contents.length - 1;
       this.keepWindowOpen = !isLast;
+      config.onPageStart?.(i);
       await this.showOne(contents[i], config);
     }
     this.keepWindowOpen = false;
   }
 
-  private showOne(content: string, config: MessageConfig): Promise<void> {
+  protected showOne(content: string, config: MessageConfig): Promise<void> {
     this.scene.getAudio().playEffect(SFX.CURSOR_0);
 
     this.cancelHintTimer();

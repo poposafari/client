@@ -566,10 +566,6 @@ export class OverworldUi extends BaseUi {
 
       this.removeSafariObject(obj);
 
-      await this.scene
-        .getMessage('talk')
-        .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
-
       const category = this.scene.getMasterData().getItemData(result.itemId)?.category ?? null;
       if (category) {
         await this.scene.getMessage('pocketTalk').showPocketMessage({
@@ -577,6 +573,10 @@ export class OverworldUi extends BaseUi {
           item: itemName,
           category: category as ItemCategory,
         });
+      } else {
+        await this.scene
+          .getMessage('talk')
+          .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
       }
 
       // SafariInfo 동기화: picked = true
@@ -628,6 +628,7 @@ export class OverworldUi extends BaseUi {
     }
     const idx = this.safariObjects.indexOf(obj);
     if (idx >= 0) this.safariObjects.splice(idx, 1);
+    this.releaseWaterEdgeForEntity(obj);
     obj.destroy();
     this.refreshPlayerBlockingRefs();
     this.refreshPetBlockingRefs();
@@ -785,6 +786,7 @@ export class OverworldUi extends BaseUi {
       this.worldContainer.add(obj.getShadow());
       this.worldContainer.add(obj.getSprite());
       this.nameContainer.add(obj.getName());
+      this.syncWaterEdgeForEntity(obj);
     }
 
     // 2) Wilds — pokemonData.spawn 기반으로 land/water 결정
