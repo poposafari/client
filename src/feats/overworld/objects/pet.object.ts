@@ -316,14 +316,51 @@ export class PetObject extends MovableObject {
     return this.isShiny;
   }
 
+  private static readonly FOLLOW_SNAP_TILES = 5;
+  private static readonly FOLLOW_MAX_SPEED_MUL = 2;
+
   followStep(playerTileX: number, playerTileY: number, playerDir: DIRECTION): void {
     const dir = playerDir === DIRECTION.NONE ? DIRECTION.DOWN : playerDir;
     const { dx: pdx, dy: pdy } = directionToDelta(dir);
     const behindX = playerTileX - pdx;
     const behindY = playerTileY - pdy;
     const myPos = this.getTilePos();
-    if (myPos.x === behindX && myPos.y === behindY) return;
+    if (myPos.x === behindX && myPos.y === behindY) {
+      this.speedMultiplier = 1;
+      return;
+    }
 
+    const gap = Math.max(Math.abs(behindX - myPos.x), Math.abs(behindY - myPos.y));
+
+    if (gap >= 2 && (this.hasTerrainCollision() || gap >= PetObject.FOLLOW_SNAP_TILES)) {
+      this.snapBehind(behindX, behindY, dir);
+      return;
+    }
+
+    if (gap >= 2) {
+      this.speedMultiplier = Math.min(PetObject.FOLLOW_MAX_SPEED_MUL, gap);
+      this.clearMovementQueue();
+      let cx = myPos.x;
+      let cy = myPos.y;
+      while (cx !== behindX || cy !== behindY) {
+        if (cx < behindX) {
+          this.ready(DIRECTION.RIGHT, this.animKey(DIRECTION.RIGHT), 1);
+          cx++;
+        } else if (cx > behindX) {
+          this.ready(DIRECTION.LEFT, this.animKey(DIRECTION.LEFT), 1);
+          cx--;
+        } else if (cy < behindY) {
+          this.ready(DIRECTION.DOWN, this.animKey(DIRECTION.DOWN), 1);
+          cy++;
+        } else {
+          this.ready(DIRECTION.UP, this.animKey(DIRECTION.UP), 1);
+          cy--;
+        }
+      }
+      return;
+    }
+
+    this.speedMultiplier = 1;
     const dx = behindX - myPos.x;
     const dy = behindY - myPos.y;
     if (dx > 0) {
@@ -337,7 +374,17 @@ export class PetObject extends MovableObject {
     }
   }
 
+  private snapBehind(tileX: number, tileY: number, dir: DIRECTION): void {
+    this.speedMultiplier = 1;
+    this.resetMotion();
+    this.setTilePos(tileX, tileY);
+    this.refreshPosition();
+    this.faceDirection(dir);
+    this.snapTrailOffsetToTarget();
+  }
+
   update(delta: number): void {
+    if (!this.isInMotion()) this.speedMultiplier = 1;
     this.updateTremble();
     this.smoothTrailOffset(delta);
     super.update(delta);

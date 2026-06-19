@@ -64,6 +64,7 @@ export class OtherPlayerObject extends BaseObject {
   private moveNameTween: Phaser.Tweens.Tween | null = null;
   private outfitSprite: Phaser.GameObjects.Sprite | null = null;
   private hairSprite: Phaser.GameObjects.Sprite | null = null;
+  private avatarContainer: Phaser.GameObjects.Container | null = null;
   private skinKey = '';
   private outfitKey = '';
   private hairKey = '';
@@ -121,14 +122,20 @@ export class OtherPlayerObject extends BaseObject {
       this.outfitSprite = scene.add
         .sprite(px, py, outfitKeyResolved)
         .setOrigin(0.5, 1)
-        .setScale(scale)
-        .setDepth(this.tileY + 0.1);
-      this.hairSprite = scene.add
-        .sprite(px, py, hairKeyResolved)
-        .setOrigin(0.5, 1)
-        .setScale(scale)
-        .setDepth(this.tileY + 0.2);
+        .setScale(scale);
+      this.hairSprite = scene.add.sprite(px, py, hairKeyResolved).setOrigin(0.5, 1).setScale(scale);
     }
+
+    this.avatarContainer = scene.add.container(0, 0);
+    this.avatarContainer.add(this.getShadow());
+    this.avatarContainer.add(this.getSprite());
+    if (this.outfitSprite) this.avatarContainer.add(this.outfitSprite);
+    if (this.hairSprite) this.avatarContainer.add(this.hairSprite);
+    this.avatarContainer.setDepth(this.tileY);
+  }
+
+  getAvatarContainer(): Phaser.GameObjects.Container {
+    return this.avatarContainer!;
   }
 
   getOutfitSprite(): Phaser.GameObjects.Sprite | null {
@@ -205,15 +212,13 @@ export class OtherPlayerObject extends BaseObject {
       const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
       this.outfitSprite?.setPosition(px, py);
       this.hairSprite?.setPosition(px, py);
-      this.outfitSprite?.setDepth(this.tileY + 0.1);
-      this.hairSprite?.setDepth(this.tileY + 0.2);
+      this.avatarContainer?.setDepth(this.tileY);
     }
   }
 
   override setSpriteDepth(value: number): void {
     super.setSpriteDepth(value);
-    this.outfitSprite?.setDepth(value + 0.1);
-    this.hairSprite?.setDepth(value + 0.2);
+    this.avatarContainer?.setDepth(value);
   }
 
   moveToTile(
@@ -524,5 +529,7 @@ export class OtherPlayerObject extends BaseObject {
     this.outfitSprite = null;
     this.hairSprite = null;
     super.destroy();
+    this.avatarContainer?.destroy();
+    this.avatarContainer = null;
   }
 }

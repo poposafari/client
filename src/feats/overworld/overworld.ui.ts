@@ -1352,7 +1352,9 @@ export class OverworldUi extends BaseUi {
     if (isField && this.pet) {
       // WALK ↔ RUNNING: 속도 동기화만.
       this.pet.setBaseSpeed(
-        currentState === OverworldMovementState.RUNNING ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk,
+        currentState === OverworldMovementState.RUNNING
+          ? MOVEMENT_SPEED.running
+          : MOVEMENT_SPEED.walk,
       );
     }
   }
@@ -1540,13 +1542,8 @@ export class OverworldUi extends BaseUi {
         blockingRefs: blockingRefs.length > 0 ? blockingRefs : undefined,
       });
 
-      this.worldContainer.add(this.player.getShadow());
-      this.worldContainer.add(this.player.getSprite());
+      this.worldContainer.add(this.player.getAvatarContainer());
       this.nameContainer!.add(this.player.getName());
-      const outfit = this.player.getOutfitSprite();
-      if (outfit) this.worldContainer.add(outfit);
-      const hair = this.player.getHairSprite();
-      if (hair) this.worldContainer.add(hair);
 
       if (this.mapView.getTileSpawnAt(tileX, tileY) === 'water') {
         user?.setOverworldMovementState(OverworldMovementState.SURF);
@@ -1600,12 +1597,7 @@ export class OverworldUi extends BaseUi {
             name: u.nickname || '',
           });
           other.getName().setText(u.nickname || '');
-          this.worldContainer!.add(other.getShadow());
-          this.worldContainer!.add(other.getSprite());
-          const oSprite = other.getOutfitSprite();
-          if (oSprite) this.worldContainer!.add(oSprite);
-          const hSprite = other.getHairSprite();
-          if (hSprite) this.worldContainer!.add(hSprite);
+          this.worldContainer!.add(other.getAvatarContainer());
           this.nameContainer!.add(other.getName());
           other.setContainerAdd((obj) => this.worldContainer?.add(obj));
           this.otherPlayers.set(u.userId, other);
@@ -1787,12 +1779,7 @@ export class OverworldUi extends BaseUi {
       name: u.nickname || '',
     });
     other.getName().setText(u.nickname || '');
-    this.worldContainer.add(other.getShadow());
-    this.worldContainer.add(other.getSprite());
-    const oSprite = other.getOutfitSprite();
-    if (oSprite) this.worldContainer.add(oSprite);
-    const hSprite = other.getHairSprite();
-    if (hSprite) this.worldContainer.add(hSprite);
+    this.worldContainer.add(other.getAvatarContainer());
     this.nameContainer.add(other.getName());
     other.setContainerAdd((obj) => this.worldContainer?.add(obj));
     this.otherPlayers.set(u.userId, other);
@@ -1819,12 +1806,7 @@ export class OverworldUi extends BaseUi {
     const other = this.otherPlayers.get(userId);
     if (!other) return;
     if (this.worldContainer) {
-      this.worldContainer.remove(other.getShadow());
-      this.worldContainer.remove(other.getSprite());
-      const oSprite = other.getOutfitSprite();
-      if (oSprite) this.worldContainer.remove(oSprite);
-      const hSprite = other.getHairSprite();
-      if (hSprite) this.worldContainer.remove(hSprite);
+      this.worldContainer.remove(other.getAvatarContainer());
     }
     if (this.nameContainer) {
       this.nameContainer.remove(other.getName());

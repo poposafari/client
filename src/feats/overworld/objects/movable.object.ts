@@ -39,6 +39,8 @@ export class MovableObject extends BaseObject {
   protected stopFrameNumbers: number[] = [];
   protected baseSpeed = 100;
 
+  protected speedMultiplier = 1;
+
   constructor(
     scene: GameScene,
     mapAdapter: IOverworldMapAdapter | null,
@@ -86,6 +88,7 @@ export class MovableObject extends BaseObject {
 
   update(delta: number): void {
     if (this.movementCheck && this.movementDirectionQueue.length === 0) {
+      this.tileSizePixelsWalked = 0;
       const frame = this.getStopFrameNumberFromDirection(this.lastDirection);
       if (frame !== undefined) this.stopSpriteAnimation(frame);
       return;
@@ -97,6 +100,7 @@ export class MovableObject extends BaseObject {
       if (this.currentMoveTiles === 2) {
         const [sx, sy] = calcOverworldTilePos(this.tileX, this.tileY);
         this.jumpStartPixel = { x: sx, y: sy };
+        this.tileSizePixelsWalked = 0;
         this.processJump(temp.direction);
       } else {
         this.process(temp.direction, temp.animationKey);
@@ -113,7 +117,7 @@ export class MovableObject extends BaseObject {
     }
 
     if (this.isMoving()) {
-      const pixelsToMove = (this.baseSpeed * delta) / 12;
+      const pixelsToMove = (this.baseSpeed * this.speedMultiplier * delta) / 12;
       this.moveObject(pixelsToMove);
     }
   }
@@ -166,6 +170,20 @@ export class MovableObject extends BaseObject {
 
   setBaseSpeed(speed: number): void {
     this.baseSpeed = speed;
+  }
+
+  protected hasTerrainCollision(): boolean {
+    return this.mapAdapter !== null || this.blockingRefs.length > 0;
+  }
+
+  resetMotion(): void {
+    this.movementDirectionQueue.length = 0;
+    this.movementCheck = true;
+    this.tileSizePixelsWalked = 0;
+    this.currentMoveTiles = 1;
+    this.jumpStartPixel = null;
+    this.movementBlocking = false;
+    this.processStop();
   }
 
   setDirectionOnly(direction: DIRECTION): void {
@@ -230,7 +248,8 @@ export class MovableObject extends BaseObject {
     if (this.tileSizePixelsWalked >= threshold) {
       const [px, py] = calcOverworldTilePos(this.tileX, this.tileY);
       this.setPosition(px, py);
-      this.tileSizePixelsWalked = 0;
+
+      this.tileSizePixelsWalked = Math.min(this.tileSizePixelsWalked - threshold, TILE_PIXEL);
       this.currentMoveTiles = 1;
       this.jumpStartPixel = null;
       this.movementCheck = true;

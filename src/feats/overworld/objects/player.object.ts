@@ -32,6 +32,7 @@ export class PlayerObject extends MovableObject {
 
   private hairSprite: Phaser.GameObjects.Sprite | null = null;
   private outfitSprite: Phaser.GameObjects.Sprite | null = null;
+  private avatarContainer: Phaser.GameObjects.Container | null = null;
   private skinKey = '';
   private hairKey = '';
   private outfitKey = '';
@@ -84,14 +85,19 @@ export class PlayerObject extends MovableObject {
       this.outfitSprite = scene.add
         .sprite(px, py, outfitKeyResolved)
         .setOrigin(0.5, 1)
-        .setScale(PLAYER_SCALE)
-        .setDepth(this.tileY + 0.1);
+        .setScale(PLAYER_SCALE);
       this.hairSprite = scene.add
         .sprite(px, py, hairKeyResolved)
         .setOrigin(0.5, 1)
-        .setScale(PLAYER_SCALE)
-        .setDepth(this.tileY + 0.2);
+        .setScale(PLAYER_SCALE);
     }
+
+    this.avatarContainer = scene.add.container(0, 0);
+    this.avatarContainer.add(this.getShadow());
+    this.avatarContainer.add(this.getSprite());
+    if (this.outfitSprite) this.avatarContainer.add(this.outfitSprite);
+    if (this.hairSprite) this.avatarContainer.add(this.hairSprite);
+    this.avatarContainer.setDepth(this.tileY);
 
     this.smoothFrameNumbers = [12, 0, 4, 8];
     this.stopFrameNumbers = [12, 0, 4, 8];
@@ -156,8 +162,7 @@ export class PlayerObject extends MovableObject {
     this.getSprite().setPosition(px, adjustedY);
     this.hairSprite?.setPosition(px, adjustedY);
     this.outfitSprite?.setPosition(px, adjustedY);
-    this.outfitSprite?.setDepth(this.tileY + 0.1);
-    this.hairSprite?.setDepth(this.tileY + 0.2);
+    this.avatarContainer?.setDepth(this.tileY);
   }
 
   override startSpriteAnimation(key: string): void {
@@ -185,8 +190,11 @@ export class PlayerObject extends MovableObject {
 
   override setSpriteDepth(value: number): void {
     super.setSpriteDepth(value);
-    this.outfitSprite?.setDepth(value + 0.1);
-    this.hairSprite?.setDepth(value + 0.2);
+    this.avatarContainer?.setDepth(value);
+  }
+
+  getAvatarContainer(): Phaser.GameObjects.Container {
+    return this.avatarContainer!;
   }
 
   override destroy(): void {
@@ -195,6 +203,8 @@ export class PlayerObject extends MovableObject {
     this.hairSprite = null;
     this.outfitSprite = null;
     super.destroy();
+    this.avatarContainer?.destroy();
+    this.avatarContainer = null;
   }
 
   move(direction: DIRECTION): void {
