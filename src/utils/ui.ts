@@ -532,6 +532,21 @@ function getSpriteAnimationFrameYoyo(animation: ANIMATION | string) {
 
 const BACKGROUND_KEY = [TEXTURE.BG_1, TEXTURE.BG_1, TEXTURE.BG_1] as const;
 
+const RANDOM_BACKGROUND_KEYS = [
+  TEXTURE.BG_1,
+  TEXTURE.BG_2,
+  TEXTURE.BG_3,
+  TEXTURE.BG_4,
+  TEXTURE.BG_5,
+  TEXTURE.BG_6,
+  TEXTURE.BG_7,
+  TEXTURE.BG_8,
+  TEXTURE.BG_9,
+  TEXTURE.BG_10,
+  TEXTURE.BG_11,
+  TEXTURE.BG_12,
+] as const;
+
 // dawn : 6:00 ~ 6:59
 // day : 7:00 ~ 17:59
 // dusk : 18:00 ~ 18:59
@@ -576,4 +591,9 @@ export function getBackgroundKey(): TEXTURE {
     return BACKGROUND_KEY[1];
   }
   return BACKGROUND_KEY[0];
+}
+
+export function getRandomBackgroundKey(): TEXTURE {
+  const idx = Math.floor(Math.random() * RANDOM_BACKGROUND_KEYS.length);
+  return RANDOM_BACKGROUND_KEYS[idx];
 }

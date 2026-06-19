@@ -15,7 +15,7 @@ import {
   addContainer,
   addImage,
   addText,
-  getBackgroundKey,
+  getRandomBackgroundKey,
   getTextShadow,
   getTextStyle,
 } from '@poposafari/utils';
@@ -495,11 +495,11 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getRandomBackgroundKey());
     super.show();
   }
 
   updateBg(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getRandomBackgroundKey());
   }
 }

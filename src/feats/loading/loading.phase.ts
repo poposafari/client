@@ -655,6 +655,18 @@ export class LoadingPhase implements IGamePhase {
 
   private loadImageAndSprite() {
     this.scene.loadImage(TEXTURE.BG_1, 'ui/bgs', 'bg_1');
+    this.scene.loadImage(TEXTURE.BG_2, 'ui/bgs', 'bg_2');
+    this.scene.loadImage(TEXTURE.BG_3, 'ui/bgs', 'bg_3');
+    this.scene.loadImage(TEXTURE.BG_4, 'ui/bgs', 'bg_4');
+    this.scene.loadImage(TEXTURE.BG_5, 'ui/bgs', 'bg_5');
+    this.scene.loadImage(TEXTURE.BG_6, 'ui/bgs', 'bg_6');
+    this.scene.loadImage(TEXTURE.BG_7, 'ui/bgs', 'bg_7');
+    this.scene.loadImage(TEXTURE.BG_8, 'ui/bgs', 'bg_8');
+    this.scene.loadImage(TEXTURE.BG_9, 'ui/bgs', 'bg_9');
+    this.scene.loadImage(TEXTURE.BG_10, 'ui/bgs', 'bg_10');
+    this.scene.loadImage(TEXTURE.BG_11, 'ui/bgs', 'bg_11');
+    this.scene.loadImage(TEXTURE.BG_12, 'ui/bgs', 'bg_12');
+
     this.scene.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
     this.scene.loadImage(TEXTURE.BG_PC, 'ui/bgs', 'bg_pc');
     this.scene.loadImage(TEXTURE.BG_EVOLVE, 'ui/bgs', 'bg_evolve');
