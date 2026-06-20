@@ -16,19 +16,19 @@
       },
       {
         "id": "ice-candy",
-        "weight": 30
+        "weight": 5
       },
       {
         "id": "dark-candy",
-        "weight": 30
+        "weight": 5
       },
       {
         "id": "steel-candy",
-        "weight": 20
+        "weight": 5
       },
       {
         "id": "fairy-candy",
-        "weight": 20
+        "weight": 5
       },
       {
         "id": "comet-shard",
@@ -48,356 +48,356 @@
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 24,
+          "levelMax": 29
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 68,
+          "levelMax": 68
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 49,
+          "levelMax": 50
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 42
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 13,
+          "levelMax": 24
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 50
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 70,
+          "levelMax": 70
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 22,
+          "levelMax": 22
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 43
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 65,
+          "levelMax": 65
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 42,
+          "levelMax": 48
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 29,
+          "levelMax": 29
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 50
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 59,
+          "levelMax": 61
         }
       ],
       "rainy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 13,
+          "levelMax": 25
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 51,
+          "levelMax": 55
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 46,
+          "levelMax": 47
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 40
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 28,
           "levelMax": 30
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 64,
+          "levelMax": 68
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 40
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 51,
+          "levelMax": 57
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 11,
+          "levelMax": 29
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 64
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 42,
+          "levelMax": 46
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 29,
+          "levelMax": 29
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 24,
+          "levelMax": 26
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 49
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 65
         }
       ],
       "stormy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 52,
+          "levelMax": 65
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 47,
+          "levelMax": 48
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 49,
+          "levelMax": 49
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 25,
+          "levelMax": 27
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 62,
+          "levelMax": 66
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 49
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 56,
+          "levelMax": 69
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 29,
           "levelMax": 30
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 49
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 65,
+          "levelMax": 65
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 44
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 5,
+          "levelMax": 27
         }
       ],
       "foggy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 22,
+          "levelMax": 26
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 69,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 46,
+          "levelMax": 50
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 47,
+          "levelMax": 47
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 20,
+          "levelMax": 23
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 54,
+          "levelMax": 59
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 36,
+          "levelMax": 37
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 57
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 13,
+          "levelMax": 27
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 48
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 54,
+          "levelMax": 60
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 35,
+          "levelMax": 39
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 8,
+          "levelMax": 24
         }
       ]
     },
@@ -406,356 +406,356 @@
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 22,
+          "levelMax": 26
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 67,
+          "levelMax": 69
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 47
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 46,
+          "levelMax": 49
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 9,
+          "levelMax": 26
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 69,
+          "levelMax": 70
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 45
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 62,
+          "levelMax": 67
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 9,
+          "levelMax": 15
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 43
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 68,
+          "levelMax": 69
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 44
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 28,
+          "levelMax": 28
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 19,
+          "levelMax": 24
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 47,
+          "levelMax": 50
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 58,
+          "levelMax": 63
         }
       ],
       "rainy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 8,
+          "levelMax": 9
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 67,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 42
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 44,
+          "levelMax": 48
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 19,
+          "levelMax": 23
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 61,
+          "levelMax": 63
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 40
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 57
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 22,
+          "levelMax": 26
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 48
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 61,
+          "levelMax": 63
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 45
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 23
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 44,
+          "levelMax": 45
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 60,
+          "levelMax": 62
         }
       ],
       "stormy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 26,
+          "levelMax": 29
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 52,
+          "levelMax": 64
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 38
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 43,
+          "levelMax": 46
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 27,
+          "levelMax": 29
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 66,
+          "levelMax": 70
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 49
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 61,
+          "levelMax": 70
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 28
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 43,
+          "levelMax": 49
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 61
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 39,
+          "levelMax": 44
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 14,
+          "levelMax": 21
         }
       ],
       "foggy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 27,
+          "levelMax": 28
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 59,
+          "levelMax": 61
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 44
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 46
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 16,
+          "levelMax": 22
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 60,
+          "levelMax": 62
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 44,
+          "levelMax": 45
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 69,
+          "levelMax": 70
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 23,
+          "levelMax": 27
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 48
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 52,
+          "levelMax": 54
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 27,
+          "levelMax": 27
         }
       ]
     },
@@ -764,275 +764,275 @@
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 19,
+          "levelMax": 24
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 59,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 41
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 47,
+          "levelMax": 48
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 27,
+          "levelMax": 28
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 64
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 43,
+          "levelMax": 43
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 66
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 19
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 47,
+          "levelMax": 49
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 67,
+          "levelMax": 68
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 45
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 13
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 23,
+          "levelMax": 27
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 47
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 62,
+          "levelMax": 64
         }
       ],
       "rainy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 5,
+          "levelMax": 29
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 57
         },
         {
           "id": "0221",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 39,
+          "levelMax": 43
         },
         {
           "id": "0225",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 49,
+          "levelMax": 50
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 25,
+          "levelMax": 28
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 62,
+          "levelMax": 68
         },
         {
           "id": "0614",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 69,
+          "levelMax": 70
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 13,
+          "levelMax": 22
         },
         {
           "id": "0699",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 35,
+          "levelMax": 45
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 68
         },
         {
           "id": "0873",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 35,
+          "levelMax": 46
         },
         {
           "id": "0875",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 6,
+          "levelMax": 21
         },
         {
           "id": "0996",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 11,
+          "levelMax": 15
         },
         {
           "id": "0997",
           "weight": 30,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 42,
+          "levelMax": 45
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 61,
+          "levelMax": 68
         }
       ],
       "stormy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 23,
+          "levelMax": 23
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 51,
+          "levelMax": 65
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 45
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 49,
+          "levelMax": 50
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 24,
           "levelMax": 30
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 67
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 39
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 53,
+          "levelMax": 67
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 13,
+          "levelMax": 18
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 46,
+          "levelMax": 50
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 52,
+          "levelMax": 59
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 48
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
+          "levelMin": 15,
           "levelMax": 30
         }
       ],
@@ -1040,80 +1040,80 @@
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 20,
+          "levelMax": 26
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 67,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 36,
+          "levelMax": 49
         },
         {
           "id": "0225",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 36,
+          "levelMax": 39
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 16,
+          "levelMax": 16
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 66,
+          "levelMax": 67
         },
         {
           "id": "0614",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 50
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 65,
+          "levelMax": 69
         },
         {
           "id": "0698",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 21,
+          "levelMax": 26
         },
         {
           "id": "0699",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 39,
+          "levelMax": 41
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 59
         },
         {
           "id": "0873",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 46,
+          "levelMax": 48
         },
         {
           "id": "0875",
           "weight": 41,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 9,
+          "levelMax": 21
         }
       ]
     },
@@ -1122,312 +1122,312 @@
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 7,
+          "levelMax": 20
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 54,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 36,
+          "levelMax": 43
         },
         {
           "id": "0225",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 42
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 5,
+          "levelMax": 19
         },
         {
           "id": "0361",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 20,
+          "levelMax": 27
         },
         {
           "id": "0362",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 66,
+          "levelMax": 70
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 55,
+          "levelMax": 65
         },
         {
           "id": "0614",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 42,
+          "levelMax": 45
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 68
         },
         {
           "id": "0698",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 19,
+          "levelMax": 29
         },
         {
           "id": "0699",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 42
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 59,
+          "levelMax": 62
         },
         {
           "id": "0873",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 40
         },
         {
           "id": "0875",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 18
         },
         {
           "id": "0996",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 22,
+          "levelMax": 25
         },
         {
           "id": "0997",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 48
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 55,
+          "levelMax": 60
         }
       ],
       "rainy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 20,
+          "levelMax": 24
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 57,
+          "levelMax": 70
         },
         {
           "id": "0221",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0225",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 35,
+          "levelMax": 38
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 20,
+          "levelMax": 29
         },
         {
           "id": "0361",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0362",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 70,
+          "levelMax": 70
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 65
         },
         {
           "id": "0614",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 43,
+          "levelMax": 47
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 69,
+          "levelMax": 69
         },
         {
           "id": "0698",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 28,
+          "levelMax": 29
         },
         {
           "id": "0699",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 45,
+          "levelMax": 49
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 55,
+          "levelMax": 62
         },
         {
           "id": "0873",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 48
         },
         {
           "id": "0875",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 8,
+          "levelMax": 17
         },
         {
           "id": "0996",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 27,
+          "levelMax": 28
         },
         {
           "id": "0997",
           "weight": 27,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 42
         },
         {
           "id": "0998",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 66,
+          "levelMax": 66
         }
       ],
       "stormy": [
         {
           "id": "0063",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 8,
+          "levelMax": 21
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 60,
+          "levelMax": 69
         },
         {
           "id": "0221",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 40
         },
         {
           "id": "0225",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 41
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0361",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 5,
+          "levelMax": 15
         },
         {
           "id": "0362",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 63,
+          "levelMax": 68
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 59,
+          "levelMax": 68
         },
         {
           "id": "0614",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 49,
+          "levelMax": 50
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 61,
+          "levelMax": 66
         },
         {
           "id": "0698",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 11,
+          "levelMax": 25
         },
         {
           "id": "0699",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 41,
+          "levelMax": 47
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 64,
+          "levelMax": 67
         },
         {
           "id": "0873",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 48,
+          "levelMax": 48
         },
         {
           "id": "0875",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 12,
+          "levelMax": 16
         }
       ],
       "foggy": [
@@ -1435,91 +1435,91 @@
           "id": "0063",
           "weight": 250,
           "levelMin": 10,
-          "levelMax": 30
+          "levelMax": 20
         },
         {
           "id": "0132",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 69
         },
         {
           "id": "0221",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 36,
+          "levelMax": 43
         },
         {
           "id": "0225",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 37,
+          "levelMax": 41
         },
         {
           "id": "0238",
           "weight": 250,
-          "levelMin": 10,
+          "levelMin": 30,
           "levelMax": 30
         },
         {
           "id": "0361",
           "weight": 250,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 6,
+          "levelMax": 22
         },
         {
           "id": "0362",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 59
         },
         {
           "id": "0584",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 66,
+          "levelMax": 66
         },
         {
           "id": "0614",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 50,
+          "levelMax": 50
         },
         {
           "id": "0615",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 56,
+          "levelMax": 60
         },
         {
           "id": "0698",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 21,
+          "levelMax": 21
         },
         {
           "id": "0699",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 38,
+          "levelMax": 40
         },
         {
           "id": "0866",
           "weight": 1,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 62,
+          "levelMax": 62
         },
         {
           "id": "0873",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 40,
+          "levelMax": 45
         },
         {
           "id": "0875",
           "weight": 35,
-          "levelMin": 10,
-          "levelMax": 30
+          "levelMin": 25,
+          "levelMax": 26
         }
       ]
     }
