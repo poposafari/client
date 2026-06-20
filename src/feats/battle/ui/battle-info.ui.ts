@@ -426,7 +426,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     fleeMul: number;
   } {
     if (modifiers.bait) return { captureMul: 0.5, fleeMul: 0.5 };
-    if (modifiers.rock) return { captureMul: 1.5, fleeMul: 2.0 };
+    if (modifiers.rock) return { captureMul: 1.5, fleeMul: 1.25 };
     return { captureMul: 1.0, fleeMul: 1.0 };
   }
 
