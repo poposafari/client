@@ -13,6 +13,7 @@ export class OptionManager {
     [OptionKey.WINDOW]: 0,
     [OptionKey.WILD_SPAWN_CRY]: 0,
     [OptionKey.BATTLE_TUTORIAL]: 0,
+    [OptionKey.PC_TUTORIAL]: 0,
     [OptionKey.BATTLE_BGM]: 0,
     [OptionKey.LANGUAGE]: 0,
   };
@@ -73,6 +74,8 @@ export class OptionManager {
       case OptionKey.WILD_SPAWN_CRY:
         return value >= 0 && value <= 1;
       case OptionKey.BATTLE_TUTORIAL:
+        return value >= 0 && value <= 1;
+      case OptionKey.PC_TUTORIAL:
         return value >= 0 && value <= 1;
       case OptionKey.BATTLE_BGM:
         return value >= 0 && value <= 2;

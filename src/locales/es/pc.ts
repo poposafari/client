@@ -66,4 +66,8 @@ export const pc: Record<string, string> = {
   level: 'Nivel',
   exp: 'EXP',
   noEvolution: 'Este Pokémon no puede evolucionar.',
+  tutorial_0: 'La Caja Pokémon es donde guardas los\nPokémon que capturas y organizas tu equipo.',
+  tutorial_1: 'Los Pokémon de tu equipo aumentan\nla tasa de captura de los Pokémon salvajes.',
+  tutorial_2: 'Cuanto mayor sea su nivel, más raro o más\nvariocolor sea, más sube la tasa de captura,',
+  tutorial_3: '¡así que cuida la composición de tu equipo!',
 };

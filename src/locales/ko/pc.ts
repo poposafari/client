@@ -66,4 +66,8 @@ export const pc: Record<string, string> = {
   level: '레벨',
   exp: 'EXP',
   noEvolution: '진화할 수 없는 포켓몬입니다.',
+  tutorial_0: '포켓몬 박스는 잡은 포켓몬을 보관하고\n파티를 편성할 수 있는 공간입니다.',
+  tutorial_1: '파티에 넣은 포켓몬은 야생 포켓몬의\n포획률을 올려줍니다.',
+  tutorial_2: '레벨이 높고, 희귀하고, 색이 다른 포켓몬일수록\n포획률을 더 많이 올릴 수 있으니',
+  tutorial_3: '파티 편성에 신경써주세요!',
 };

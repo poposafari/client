@@ -52,6 +52,7 @@ export const object: TranslationObject = {
   sign_s041: 'Droit devant : $t(map:s041)',
   sign_s042: 'Droit devant : $t(map:s042)',
   sign_s046: 'Droit devant : $t(map:s046)',
+  sign_study_room: "Ici se trouve la salle d'étude\nDév & Sécurité",
   npc_script_0:
     'Si vous voulez entrer dans la Zone Safari,\nessayez de parler au chauffeur (Zone Safari).',
   npc_script_1:

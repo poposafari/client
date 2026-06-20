@@ -10,6 +10,7 @@ export const option: TranslationOption = {
   frameValue: 'Tipo',
   wildSpawnCry: 'Voz de aparición de Pokémon salvaje',
   battleTutorial: 'Tutorial de combate',
+  pcTutorial: 'Tutorial de la Caja Pokémon',
   battleBgm: 'Música de combate',
   battleBgmValue: 'Música',
   on: 'Activado',

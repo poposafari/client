@@ -66,4 +66,8 @@ export const pc: Record<string, string> = {
   level: 'Niveau',
   exp: 'EXP',
   noEvolution: 'Ce Pokémon ne peut pas évoluer.',
+  tutorial_0: 'La Boîte Pokémon sert à ranger les Pokémon\ncapturés et à organiser ton équipe.',
+  tutorial_1: 'Les Pokémon de ton équipe augmentent\nle taux de capture des Pokémon sauvages.',
+  tutorial_2: 'Plus un Pokémon a un niveau élevé, est rare\nou chromatique, plus il fait grimper ce taux,',
+  tutorial_3: 'alors soigne la composition de ton équipe !',
 };

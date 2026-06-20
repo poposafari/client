@@ -12,6 +12,7 @@ export const option: TranslationOption = {
   frameValue: '타입',
   wildSpawnCry: '야생 포켓몬 스폰 소리',
   battleTutorial: '배틀 튜토리얼',
+  pcTutorial: '포켓몬 박스 튜토리얼',
   battleBgm: '배틀 배경음',
   battleBgmValue: '배경음',
   on: '켜기',

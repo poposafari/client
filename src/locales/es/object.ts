@@ -52,6 +52,7 @@ export const object: TranslationObject = {
   sign_s041: 'Más adelante: $t(map:s041)',
   sign_s042: 'Más adelante: $t(map:s042)',
   sign_s046: 'Más adelante: $t(map:s046)',
+  sign_study_room: 'Esta es la sala de estudio\nde Desarrollo y Seguridad',
   npc_script_0: 'Si quieres entrar en la Zona Safari,\nprueba a hablar con el taxista (Zona Safari).',
   npc_script_1:
     '¿Sabías que? En la Zona Safari, los Pokémon\nque aparecen cambian según el clima.',

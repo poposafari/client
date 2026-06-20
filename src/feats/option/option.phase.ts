@@ -66,6 +66,12 @@ function defaultOptionItems(): IOptionItem[] {
       values: [i18next.t('option:on'), i18next.t('option:off')],
       valueIndex: 0,
     },
+    {
+      key: OptionKey.PC_TUTORIAL,
+      label: i18next.t('option:pcTutorial'),
+      values: [i18next.t('option:on'), i18next.t('option:off')],
+      valueIndex: 0,
+    },
   ];
 }
 

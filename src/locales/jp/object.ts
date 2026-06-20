@@ -52,6 +52,7 @@ export const object: TranslationObject = {
   sign_s041: 'このさきは $t(map:s041)',
   sign_s042: 'このさきは $t(map:s042)',
   sign_s046: 'このさきは $t(map:s046)',
+  sign_study_room: 'ここは\nかいはつ＆セキュリティ べんきょうべや',
   npc_script_0:
     'サファリゾーンに はいりたいなら\nタクシードライバー(サファリゾーン)に はなしかけてみて',
   npc_script_1: 'しってる? サファリゾーンでは てんきによって でてくる\nポケモンが かわるんだよ',

@@ -66,4 +66,8 @@ export const pc: Record<string, string> = {
   level: 'Level',
   exp: 'EXP',
   noEvolution: 'This Pokémon cannot evolve.',
+  tutorial_0: 'The Pokémon Box is where you store the\nPokémon you catch and arrange your party.',
+  tutorial_1: 'Pokémon in your party raise the\ncatch rate of wild Pokémon.',
+  tutorial_2: 'The higher their level, the rarer, and the\nshinier they are, the more the catch rate rises,',
+  tutorial_3: 'so put some thought into your party!',
 };

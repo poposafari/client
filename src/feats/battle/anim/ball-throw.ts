@@ -7,6 +7,8 @@ import { resolveCryKey } from '@poposafari/core/master.data.ts';
 
 const BALL_THROW_ANIM_KEY = 'battle_ball_throw';
 
+const ENTER_ANIM_SPEED = 1.35;
+
 function tweenAsync(
   scene: Phaser.Scene,
   config: Phaser.Types.Tweens.TweenBuilderConfig,
@@ -70,8 +72,8 @@ async function playBallBurstParticles(scene: GameScene, sprite: BattleSpriteUi):
   const particleCount = 7;
   const outerRadius = 360;
   const innerRadius = 185;
-  const expandMs = 350;
-  const contractMs = 350;
+  const expandMs = 350 / ENTER_ANIM_SPEED;
+  const contractMs = 350 / ENTER_ANIM_SPEED;
   const rotationDeg = 140;
 
   type BurstParticle = {
@@ -122,8 +124,8 @@ async function playBallBurstParticles(scene: GameScene, sprite: BattleSpriteUi):
   wildContainer.moveBelow(dazzle, throwItem);
 
   const totalMs = expandMs + contractMs;
-  const fadeInMs = 300;
-  const holdMs = 300;
+  const fadeInMs = 300 / ENTER_ANIM_SPEED;
+  const holdMs = 300 / ENTER_ANIM_SPEED;
   const fadeOutStart = fadeInMs + holdMs;
   const fadeOutMs = Math.max(1, totalMs - fadeOutStart);
   const holdCurve = (elapsedMs: number): number => {
@@ -179,8 +181,8 @@ async function playBallBurstParticles(scene: GameScene, sprite: BattleSpriteUi):
   const ringStartScale = 0.1;
   const ringEndScale = 5.0;
   const ringPeakAlpha = 0.6;
-  const ringFadeInMs = 200;
-  const ringFadeOutMs = 300;
+  const ringFadeInMs = 200 / ENTER_ANIM_SPEED;
+  const ringFadeOutMs = 300 / ENTER_ANIM_SPEED;
   const ringTotalMs = ringFadeInMs + ringFadeOutMs;
   const ringFadeInRatio = ringFadeInMs / ringTotalMs;
   const ring = addImage(scene, TEXTURE.BALL_BURST_RING, undefined, burstX, burstY)
@@ -468,14 +470,14 @@ export async function playBallThrow(
       targets: wild,
       scale: 0.1,
       alpha: 0,
-      duration: BALL_ANIM.enterShrinkMs,
+      duration: BALL_ANIM.enterShrinkMs / ENTER_ANIM_SPEED,
     }),
     tweenAsync(scene, {
       targets: wildShadow,
       scaleX: 0.1,
       scaleY: 0.1,
       alpha: 0,
-      duration: BALL_ANIM.enterShrinkMs,
+      duration: BALL_ANIM.enterShrinkMs / ENTER_ANIM_SPEED,
     }),
     // throwItem 중앙에서 파티클 버스트 → 시계방향 회전 → 중앙으로 수렴
     playBallBurstParticles(scene, sprite),
@@ -487,7 +489,7 @@ export async function playBallThrow(
   wild.y = savedY;
   throwItem.setTexture(TEXTURE.SAFARI_BALL_THROW).setFrame(`${TEXTURE.SAFARI_BALL_THROW}-0`);
 
-  const ballGlowMs = 500;
+  const ballGlowMs = 500 / ENTER_ANIM_SPEED;
   const ballGlowPeakAlpha = 1.0;
   const ballGlow = addImage(
     scene,
