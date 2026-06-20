@@ -1,6 +1,7 @@
 import { MapConfig } from '@poposafari/core/map.registry';
-import { BGM, DEPTH, TILE } from '@poposafari/types';
+import { BGM, DEPTH, TEXTURE, TILE } from '@poposafari/types';
 import { DOOR, INIT_POS } from './door';
+import { DIRECTION } from '../overworld.constants';
 
 export const s000Config: MapConfig = {
   key: 's000',
@@ -99,7 +100,34 @@ export const s001Config: MapConfig = {
     { startId: DOOR.S001_DOWN_1, destId: INIT_POS.S046_UP_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 24,
+      y: 32,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s046'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 46,
+      y: 18,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s002'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s002Config: MapConfig = {
@@ -152,7 +180,34 @@ export const s002Config: MapConfig = {
     { startId: DOOR.S002_UP_1, destId: INIT_POS.S003_DOWN_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 32,
+      y: 47,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s001'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 37,
+      y: 12,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s003'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s003Config: MapConfig = {
@@ -208,7 +263,47 @@ export const s003Config: MapConfig = {
     { startId: DOOR.S003_RIGHT_2, destId: INIT_POS.S013_LEFT_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 31,
+      y: 42,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s002'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 17,
+      y: 20,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s004'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 47,
+      y: 35,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s013'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s004Config: MapConfig = {
@@ -263,7 +358,47 @@ export const s004Config: MapConfig = {
     { startId: DOOR.S004_LEFT_2, destId: INIT_POS.S006_RIGHT_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 53,
+      y: 27,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s003'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 28,
+      y: 45,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s005'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 20,
+      y: 20,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s006'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s005Config: MapConfig = {
@@ -366,7 +501,47 @@ export const s006Config: MapConfig = {
     { startId: DOOR.S006_UP_0, destId: INIT_POS.S008_DOWN_0 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 60,
+      y: 23,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s004'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 20,
+      y: 25,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s007'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 19,
+      y: 12,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s008'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s007Config: MapConfig = {
@@ -416,7 +591,21 @@ export const s007Config: MapConfig = {
     { startId: DOOR.S007_RIGHT_1, destId: INIT_POS.S006_LEFT_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 43,
+      y: 31,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s006'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s008Config: MapConfig = {
@@ -721,7 +910,34 @@ export const s013Config: MapConfig = {
     { startId: DOOR.S013_RIGHT_1, destId: INIT_POS.S014_LEFT_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 18,
+      y: 17,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s003'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 63,
+      y: 19,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s014'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s014Config: MapConfig = {
@@ -774,7 +990,34 @@ export const s014Config: MapConfig = {
     { startId: DOOR.S014_RIGHT_0, destId: INIT_POS.S032_LEFT_0 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 44,
+      y: 15,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s015'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 40,
+      y: 58,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s032'], name: '', window: TEXTURE.WINDOW_NOTICE_2 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s015Config: MapConfig = {
@@ -1150,7 +1393,47 @@ export const s021Config: MapConfig = {
     { startId: DOOR.S021_LEFT_0, destId: INIT_POS.S020_RIGHT_0 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 21,
+      y: 20,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s020'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 34,
+      y: 13,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s022'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 56,
+      y: 36,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s023'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s022Config: MapConfig = {
@@ -1253,7 +1536,34 @@ export const s023Config: MapConfig = {
     { startId: DOOR.S023_RIGHT_0, destId: INIT_POS.S024_LEFT_0 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 20,
+      y: 10,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s021'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 56,
+      y: 12,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s024'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s024Config: MapConfig = {
@@ -2078,7 +2388,21 @@ export const s039Config: MapConfig = {
     { startId: DOOR.S039_RIGHT_1, destId: INIT_POS.S040_LEFT_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 15,
+      y: 19,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s032'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+  ],
 };
 
 export const s040Config: MapConfig = {
@@ -2132,7 +2456,49 @@ export const s040Config: MapConfig = {
     { startId: DOOR.S040_RIGHT_0, destId: INIT_POS.S042_LEFT_0 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 45,
+      y: 16,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s041'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 55,
+      y: 30,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s042'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+    {
+      key: 'npc_1_1',
+      name: '',
+      x: 47,
+      y: 16,
+      direction: DIRECTION.DOWN,
+      type: 'human',
+      path: [],
+      reaction: [
+        {
+          key: 'talk',
+          content: { text: ['object:npc_script_20'], name: 'NPC' },
+        },
+      ],
+    },
+  ],
 };
 
 export const s041Config: MapConfig = {
@@ -2437,5 +2803,19 @@ export const s046Config: MapConfig = {
     { startId: DOOR.S046_UP_1, destId: INIT_POS.S001_DOWN_1 },
   ],
 
-  npcs: [],
+  npcs: [
+    {
+      key: TEXTURE.BLANK,
+      name: '',
+      x: 46,
+      y: 10,
+      direction: DIRECTION.DOWN,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_s001'], name: '', window: TEXTURE.WINDOW_NOTICE_1 },
+        },
+      ],
+    },
+  ],
 };

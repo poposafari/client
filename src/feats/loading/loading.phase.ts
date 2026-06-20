@@ -92,7 +92,7 @@ import {
 
 const MAX_NPC = 34;
 const MAX_DOOR = 19;
-const MAX_NPC_1 = 0;
+const MAX_NPC_1 = 1;
 const SPECIAL_NPC_1_INDICES = new Set<number>([0]);
 
 /** id like "skin_0" | "outfit_0" | "hair_0" -> numeric suffix "0" */
@@ -730,6 +730,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_HUD, 'ui/windows', 'window_hud');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', 'window_notice_0');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');
+    this.scene.loadImage(TEXTURE.WINDOW_NOTICE_2, 'ui/windows', 'window_notice_2');
     this.scene.loadImage(TEXTURE.WINDOW_PC, 'ui/windows', 'window_pc');
     this.scene.loadImage(TEXTURE.WINDOW_EXP, 'ui/windows', 'window_exp');
     this.scene.loadImage(TEXTURE.WINDOW_MAP, 'ui/windows', 'window_map');

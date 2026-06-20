@@ -138,6 +138,19 @@ export const p001Config: MapConfig = {
     {
       key: TEXTURE.BLANK,
       name: '',
+      x: 31,
+      y: 51,
+      direction: DIRECTION.RIGHT,
+      reaction: [
+        {
+          key: 'notice',
+          content: { text: ['object:sign_study_room'], name: '', window: TEXTURE.WINDOW_NOTICE_0 },
+        },
+      ],
+    },
+    {
+      key: TEXTURE.BLANK,
+      name: '',
       x: 38,
       y: 28,
       direction: DIRECTION.RIGHT,

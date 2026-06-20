@@ -32260,7 +32260,7 @@
         0,
         0,
         0,
-        0,
+        14194,
         0,
         0,
         0,
@@ -34768,7 +34768,6 @@
       ],
       "height": 55,
       "id": 9,
-      "locked": true,
       "name": "L8_object_urban",
       "opacity": 1,
       "type": "tilelayer",
@@ -39988,7 +39987,7 @@
         0,
         0,
         13731,
-        13736,
+        13731,
         13736,
         13736,
         13736,
@@ -43781,7 +43780,7 @@
         0,
         0,
         0,
-        0,
+        14148,
         0,
         0,
         0,
@@ -50285,11 +50284,22 @@
       "imagewidth": 736,
       "name": "outdoor_object_urban",
       "tilecount": 3220,
-      "tiles": [],
+      "tiles": [
+        {
+          "id": 442,
+          "properties": [
+            {
+              "name": "dummy",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
       "tilewidth": 16,
       "tileheight": 16,
       "type": "tileset",
-      "firstgid": 0
+      "firstgid": 13752
     },
     {
       "columns": 52,

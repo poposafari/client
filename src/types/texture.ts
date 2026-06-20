@@ -55,6 +55,7 @@ export const enum TEXTURE {
   WINDOW_HUD = 'window_hud',
   WINDOW_NOTICE_0 = 'window_notice_0',
   WINDOW_NOTICE_1 = 'window_notice_1',
+  WINDOW_NOTICE_2 = 'window_notice_2',
   WINDOW_PC = 'window_pc',
   WINDOW_EXP = 'window_exp',
   WINDOW_MAP = 'window_map',
