@@ -4,39 +4,39 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "poison-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "bug-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "rock-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "nugget",
@@ -56,11 +56,11 @@
       },
       {
         "id": "root-fossil",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "dome-fossil",
-        "weight": 1
+        "weight": 3
       }
     ]
   },

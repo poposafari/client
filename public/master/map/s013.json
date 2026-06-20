@@ -4,15 +4,15 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 200
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 80
+        "weight": 20
       },
       {
         "id": "fire-candy",
@@ -44,41 +44,41 @@
       },
       {
         "id": "tiny-mushroom",
-        "weight": 20
+        "weight": 30
       },
       {
         "id": "balm-mushroom",
-        "weight": 20
+        "weight": 30
       },
       {
         "id": "big-mushroom",
-        "weight": 5
+        "weight": 10
       },
       {
         "id": "reaper-cloth",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "dusk-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "dubious-disc",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "electirizer",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "cracked-pot",
-        "weight": 1
+        "weight": 3
       }
     ]
   },
   "wild": {
-    "min": 10,
-    "max": 12,
+    "min": 8,
+    "max": 10,
     "dawn": {
       "sunny": [
         {

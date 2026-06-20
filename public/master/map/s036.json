@@ -16,39 +16,39 @@
       },
       {
         "id": "poison-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "rock-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dragon-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "star-piece",
-        "weight": 20
+        "weight": 30
       },
       {
         "id": "comet-shard",
-        "weight": 20
+        "weight": 30
       }
     ]
   },

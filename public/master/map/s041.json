@@ -8,23 +8,23 @@
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "rock-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "stardust",

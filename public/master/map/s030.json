@@ -4,31 +4,39 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ice-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "sail-fossil",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "fossilized-drake",
-        "weight": 1
+        "weight": 3
+      },
+      {
+        "id": "star-piece",
+        "weight": 20
+      },
+      {
+        "id": "comet-shard",
+        "weight": 30
       }
     ]
   },

@@ -8,63 +8,63 @@
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "normal-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fire-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "water-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "flying-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "psychic-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "moon-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "sun-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "shiny-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "dawn-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "kings-rock",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "up-grade",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "razor-claw",
-        "weight": 1
+        "weight": 3
       }
     ]
   },

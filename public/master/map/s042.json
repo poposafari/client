@@ -8,47 +8,47 @@
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "normal-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fire-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "poison-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fossilized-dino",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "fossilized-drake",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "stardust",
@@ -81,7 +81,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -191,7 +191,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -253,7 +253,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -315,7 +315,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -379,7 +379,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -507,7 +507,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -587,7 +587,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -667,7 +667,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -749,7 +749,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -871,7 +871,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -933,7 +933,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -995,7 +995,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1071,7 +1071,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1211,7 +1211,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1291,7 +1291,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1371,7 +1371,7 @@
         },
         {
           "id": "0935",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },

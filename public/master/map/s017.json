@@ -4,59 +4,59 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "fighting-candy",
-        "weight": 100
-      },
-      {
-        "id": "ground-candy",
-        "weight": 100
-      },
-      {
-        "id": "flying-candy",
-        "weight": 100
-      },
-      {
-        "id": "rock-candy",
-        "weight": 100
-      },
-      {
-        "id": "dragon-candy",
-        "weight": 100
-      },
-      {
-        "id": "dark-candy",
-        "weight": 100
-      },
-      {
-        "id": "steel-candy",
-        "weight": 100
-      },
-      {
-        "id": "plume-fossil",
-        "weight": 1
-      },
-      {
-        "id": "jaw-fossil",
-        "weight": 1
-      },
-      {
-        "id": "rare-bone",
         "weight": 20
       },
       {
+        "id": "safari-zone-ticket",
+        "weight": 20
+      },
+      {
+        "id": "fighting-candy",
+        "weight": 20
+      },
+      {
+        "id": "ground-candy",
+        "weight": 20
+      },
+      {
+        "id": "flying-candy",
+        "weight": 20
+      },
+      {
+        "id": "rock-candy",
+        "weight": 20
+      },
+      {
+        "id": "dragon-candy",
+        "weight": 20
+      },
+      {
+        "id": "dark-candy",
+        "weight": 30
+      },
+      {
+        "id": "steel-candy",
+        "weight": 30
+      },
+      {
+        "id": "plume-fossil",
+        "weight": 3
+      },
+      {
+        "id": "jaw-fossil",
+        "weight": 3
+      },
+      {
+        "id": "rare-bone",
+        "weight": 30
+      },
+      {
         "id": "metal-alloy",
-        "weight": 1
+        "weight": 3
       }
     ]
   },
@@ -85,7 +85,7 @@
         },
         {
           "id": "0029",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -103,7 +103,7 @@
         },
         {
           "id": "0032",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -307,7 +307,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -747,7 +747,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1097,7 +1097,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1417,7 +1417,7 @@
         },
         {
           "id": "0029",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1435,7 +1435,7 @@
         },
         {
           "id": "0032",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1519,7 +1519,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1871,7 +1871,7 @@
         },
         {
           "id": "0029",
-          "weight": 3,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1889,7 +1889,7 @@
         },
         {
           "id": "0032",
-          "weight": 3,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2093,7 +2093,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2557,7 +2557,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2895,7 +2895,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3209,7 +3209,7 @@
         },
         {
           "id": "0029",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3227,7 +3227,7 @@
         },
         {
           "id": "0032",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3311,7 +3311,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3681,7 +3681,7 @@
         },
         {
           "id": "0029",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3699,7 +3699,7 @@
         },
         {
           "id": "0032",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -3891,7 +3891,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -4331,7 +4331,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -4675,7 +4675,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5001,7 +5001,7 @@
         },
         {
           "id": "0029",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5019,7 +5019,7 @@
         },
         {
           "id": "0032",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5103,7 +5103,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5455,7 +5455,7 @@
         },
         {
           "id": "0029",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5473,7 +5473,7 @@
         },
         {
           "id": "0032",
-          "weight": 4,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -5665,7 +5665,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -6117,7 +6117,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -6473,7 +6473,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -6817,7 +6817,7 @@
         },
         {
           "id": "0029",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -6835,7 +6835,7 @@
         },
         {
           "id": "0032",
-          "weight": 5,
+          "weight": 100,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -6919,7 +6919,7 @@
         },
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },

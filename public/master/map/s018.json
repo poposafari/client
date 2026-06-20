@@ -4,62 +4,66 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "fighting-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "rock-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dragon-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fossilized-bird",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "sail-fossil",
-        "weight": 1
+        "weight": 3
+      },
+      {
+        "id": "nugget",
+        "weight": 25
       }
     ]
   },
   "wild": {
     "min": 8,
-    "max": 11,
+    "max": 10,
     "dawn": {
       "sunny": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -271,7 +275,7 @@
       "rainy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -387,7 +391,7 @@
       "stormy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -503,7 +507,7 @@
       "foggy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 20,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -675,7 +679,7 @@
       "sunny": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -905,7 +909,7 @@
       "rainy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1015,7 +1019,7 @@
       "stormy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1125,7 +1129,7 @@
       "foggy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 20,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1315,7 +1319,7 @@
       "sunny": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1679,7 +1683,7 @@
       "stormy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -1813,7 +1817,7 @@
       "foggy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 20,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2003,7 +2007,7 @@
       "sunny": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 12,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2403,7 +2407,7 @@
       "stormy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 30,
           "levelMin": 10,
           "levelMax": 30
         },
@@ -2555,7 +2559,7 @@
       "foggy": [
         {
           "id": "0246",
-          "weight": 250,
+          "weight": 20,
           "levelMin": 10,
           "levelMax": 30
         },

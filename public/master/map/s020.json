@@ -4,49 +4,49 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ice-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "psychic-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "comet-shard",
-        "weight": 10
+        "weight": 30
       },
       {
         "id": "fossilized-drake",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "fossilized-dino",
-        "weight": 1
+        "weight": 3
       }
     ]
   },
   "wild": {
-    "min": 8,
-    "max": 11,
+    "min": 6,
+    "max": 9,
     "dawn": {
       "sunny": [
         {

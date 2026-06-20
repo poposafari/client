@@ -4,75 +4,63 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 5,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
-      },
-      {
-        "id": "grass-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fighting-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "poison-candy",
-        "weight": 100
-      },
-      {
-        "id": "bug-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "sweet-apple",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "flower-sweet",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "clover-sweet",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "strawberry-sweet",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "ribbon-sweet",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "oval-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "up-grade",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "big-mushroom",
@@ -80,7 +68,7 @@
       },
       {
         "id": "tiny-mushroom",
-        "weight": 20
+        "weight": 30
       }
     ]
   },

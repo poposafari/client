@@ -4,35 +4,39 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ice-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dragon-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ice-stone",
-        "weight": 1
+        "weight": 3
+      },
+      {
+        "id": "rare-bone",
+        "weight": 30
       }
     ]
   },

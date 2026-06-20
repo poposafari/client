@@ -4,83 +4,67 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 30
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 30
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fire-candy",
-        "weight": 100
-      },
-      {
-        "id": "water-candy",
-        "weight": 100
-      },
-      {
-        "id": "grass-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "electric-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "poison-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "flying-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "psychic-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "bug-candy",
-        "weight": 100
-      },
-      {
-        "id": "rock-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ghost-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "sun-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "moon-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "leaf-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "thunder-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "balm-mushroom",
@@ -98,7 +82,7 @@
   },
   "wild": {
     "min": 8,
-    "max": 12,
+    "max": 10,
     "dawn": {
       "sunny": [
         {

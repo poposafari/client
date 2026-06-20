@@ -3,50 +3,54 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
-    "max": 6,
+    "min": 2,
+    "max": 2,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ice-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "ground-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "flying-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "rock-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "ice-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "razor-claw",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "peat-block",
-        "weight": 1
+        "weight": 3
+      },
+      {
+        "id": "star-piece",
+        "weight": 30
       }
     ]
   },
   "wild": {
-    "min": 8,
-    "max": 10,
+    "min": 3,
+    "max": 5,
     "dawn": {
       "sunny": [
         {

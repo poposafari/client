@@ -4,31 +4,39 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "ice-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "dark-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "steel-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fairy-candy",
-        "weight": 100
+        "weight": 20
+      },
+      {
+        "id": "comet-shard",
+        "weight": 30
+      },
+      {
+        "id": "star-piece",
+        "weight": 30
       }
     ]
   },

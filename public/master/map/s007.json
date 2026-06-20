@@ -8,51 +8,51 @@
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
-      },
-      {
-        "id": "water-candy",
-        "weight": 100
-      },
-      {
-        "id": "grass-candy",
-        "weight": 100
-      },
-      {
-        "id": "electric-candy",
-        "weight": 100
-      },
-      {
-        "id": "poison-candy",
-        "weight": 100
-      },
-      {
-        "id": "ground-candy",
-        "weight": 100
-      },
-      {
-        "id": "bug-candy",
-        "weight": 100
-      },
-      {
-        "id": "tiny-mushroom",
         "weight": 20
       },
       {
+        "id": "safari-zone-ticket",
+        "weight": 20
+      },
+      {
+        "id": "normal-candy",
+        "weight": 20
+      },
+      {
+        "id": "water-candy",
+        "weight": 30
+      },
+      {
+        "id": "grass-candy",
+        "weight": 20
+      },
+      {
+        "id": "electric-candy",
+        "weight": 20
+      },
+      {
+        "id": "poison-candy",
+        "weight": 30
+      },
+      {
+        "id": "ground-candy",
+        "weight": 20
+      },
+      {
+        "id": "bug-candy",
+        "weight": 20
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 30
+      },
+      {
         "id": "big-mushroom",
-        "weight": 5
+        "weight": 10
       },
       {
         "id": "balm-mushroom",
-        "weight": 10
+        "weight": 30
       }
     ]
   },

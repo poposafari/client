@@ -4,12 +4,12 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": []
   },
   "wild": {
     "min": 8,
-    "max": 8,
+    "max": 10,
     "dawn": {
       "sunny": [
         {

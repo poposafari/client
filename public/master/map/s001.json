@@ -4,65 +4,65 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 3,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
-      },
-      {
-        "id": "grass-candy",
-        "weight": 100
-      },
-      {
-        "id": "poison-candy",
-        "weight": 100
-      },
-      {
-        "id": "flying-candy",
-        "weight": 100
-      },
-      {
-        "id": "psychic-candy",
-        "weight": 100
-      },
-      {
-        "id": "bug-candy",
-        "weight": 100
-      },
-      {
-        "id": "tiny-mushroom",
         "weight": 20
       },
       {
+        "id": "safari-zone-ticket",
+        "weight": 20
+      },
+      {
+        "id": "normal-candy",
+        "weight": 20
+      },
+      {
+        "id": "grass-candy",
+        "weight": 30
+      },
+      {
+        "id": "poison-candy",
+        "weight": 20
+      },
+      {
+        "id": "flying-candy",
+        "weight": 20
+      },
+      {
+        "id": "psychic-candy",
+        "weight": 20
+      },
+      {
+        "id": "bug-candy",
+        "weight": 30
+      },
+      {
+        "id": "tiny-mushroom",
+        "weight": 30
+      },
+      {
         "id": "big-mushroom",
-        "weight": 5
+        "weight": 10
       },
       {
         "id": "water-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "leaf-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "syrupy-apple",
-        "weight": 1
+        "weight": 3
       }
     ]
   },
   "wild": {
     "min": 5,
-    "max": 10,
+    "max": 7,
     "dawn": {
       "sunny": [
         {

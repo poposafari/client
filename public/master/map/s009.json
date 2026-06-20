@@ -4,77 +4,77 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 30
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 30
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
-      },
-      {
-        "id": "water-candy",
-        "weight": 100
-      },
-      {
-        "id": "electric-candy",
-        "weight": 100
-      },
-      {
-        "id": "fighting-candy",
-        "weight": 100
-      },
-      {
-        "id": "ground-candy",
-        "weight": 100
-      },
-      {
-        "id": "rock-candy",
-        "weight": 100
-      },
-      {
-        "id": "ghost-candy",
-        "weight": 100
-      },
-      {
-        "id": "dark-candy",
-        "weight": 100
-      },
-      {
-        "id": "steel-candy",
-        "weight": 100
-      },
-      {
-        "id": "helix-fossil",
-        "weight": 1
-      },
-      {
-        "id": "sail-fossil",
-        "weight": 1
-      },
-      {
-        "id": "shiny-stone",
-        "weight": 1
-      },
-      {
-        "id": "nugget",
         "weight": 20
       },
       {
-        "id": "rare-bone",
+        "id": "safari-zone-ticket",
+        "weight": 20
+      },
+      {
+        "id": "normal-candy",
+        "weight": 20
+      },
+      {
+        "id": "water-candy",
+        "weight": 20
+      },
+      {
+        "id": "electric-candy",
+        "weight": 20
+      },
+      {
+        "id": "fighting-candy",
+        "weight": 20
+      },
+      {
+        "id": "ground-candy",
+        "weight": 20
+      },
+      {
+        "id": "rock-candy",
+        "weight": 20
+      },
+      {
+        "id": "ghost-candy",
+        "weight": 20
+      },
+      {
+        "id": "dark-candy",
+        "weight": 20
+      },
+      {
+        "id": "steel-candy",
+        "weight": 20
+      },
+      {
+        "id": "helix-fossil",
+        "weight": 3
+      },
+      {
+        "id": "sail-fossil",
+        "weight": 3
+      },
+      {
+        "id": "shiny-stone",
+        "weight": 3
+      },
+      {
+        "id": "nugget",
         "weight": 10
+      },
+      {
+        "id": "rare-bone",
+        "weight": 30
       }
     ]
   },
   "wild": {
-    "min": 8,
-    "max": 10,
+    "min": 6,
+    "max": 8,
     "dawn": {
       "sunny": [
         {

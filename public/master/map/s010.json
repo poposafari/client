@@ -4,71 +4,63 @@
   "cost": 0,
   "item": {
     "min": 3,
-    "max": 6,
+    "max": 4,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
-      },
-      {
-        "id": "safari-zone-ticket",
-        "weight": 40
-      },
-      {
-        "id": "normal-candy",
-        "weight": 100
-      },
-      {
-        "id": "water-candy",
-        "weight": 100
-      },
-      {
-        "id": "electric-candy",
-        "weight": 100
-      },
-      {
-        "id": "fighting-candy",
-        "weight": 100
-      },
-      {
-        "id": "poison-candy",
-        "weight": 100
-      },
-      {
-        "id": "ground-candy",
-        "weight": 100
-      },
-      {
-        "id": "rock-candy",
-        "weight": 100
-      },
-      {
-        "id": "steel-candy",
-        "weight": 100
-      },
-      {
-        "id": "dome-fossil",
-        "weight": 1
-      },
-      {
-        "id": "root-fossil",
-        "weight": 1
-      },
-      {
-        "id": "claw-fossil",
-        "weight": 1
-      },
-      {
-        "id": "nugget",
         "weight": 20
       },
       {
-        "id": "rare-bone",
+        "id": "safari-zone-ticket",
+        "weight": 20
+      },
+      {
+        "id": "electric-candy",
+        "weight": 20
+      },
+      {
+        "id": "fighting-candy",
+        "weight": 20
+      },
+      {
+        "id": "poison-candy",
+        "weight": 20
+      },
+      {
+        "id": "ground-candy",
+        "weight": 20
+      },
+      {
+        "id": "rock-candy",
+        "weight": 20
+      },
+      {
+        "id": "steel-candy",
+        "weight": 20
+      },
+      {
+        "id": "dome-fossil",
+        "weight": 3
+      },
+      {
+        "id": "root-fossil",
+        "weight": 3
+      },
+      {
+        "id": "claw-fossil",
+        "weight": 3
+      },
+      {
+        "id": "nugget",
         "weight": 10
       },
       {
+        "id": "rare-bone",
+        "weight": 30
+      },
+      {
         "id": "big-nugget",
-        "weight": 3
+        "weight": 5
       }
     ]
   },

@@ -3,68 +3,68 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
-    "max": 6,
+    "min": 5,
+    "max": 7,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 40
+        "weight": 20
       },
       {
         "id": "normal-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "fire-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "grass-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "electric-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "flying-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "psychic-candy",
-        "weight": 100
+        "weight": 20
       },
       {
         "id": "bug-candy",
-        "weight": 100
+        "weight": 30
       },
       {
         "id": "fire-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "water-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "thunder-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "leaf-stone",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "sweet-apple",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "tart-apple",
-        "weight": 1
+        "weight": 3
       },
       {
         "id": "tiny-mushroom",
