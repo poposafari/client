@@ -17,7 +17,7 @@ import {
   addText,
   addTextInput,
   addWindow,
-  getBackgroundKey,
+  getSessionBackgroundKey,
   runShakeEffect,
   toGenderCode,
   validateNickname,
@@ -355,7 +355,7 @@ export class CreateAvatarUi extends BaseUi implements IInputHandler, IRefreshabl
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getSessionBackgroundKey());
     super.show();
   }
 }

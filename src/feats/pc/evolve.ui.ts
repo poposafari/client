@@ -2,7 +2,7 @@ import { BaseUi, IInputHandler } from '@poposafari/core';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, EASE, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
-import { addImage, addText, addWindow, getPokemonTexture } from '@poposafari/utils';
+import { addImage, addText, addWindow, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
 import i18next from 'i18next';
 import { TalkMessageUi } from '../message';
 
@@ -125,8 +125,8 @@ export class EvolveUi extends BaseUi implements IInputHandler {
     try {
       await this.fadeIn();
 
-      const startName = i18next.t(`pokemon:${startPokedexId}.name`);
-      const nextName = i18next.t(`pokemon:${nextPokedexId}.name`);
+      const startName = getPokemonI18Name(startPokedexId);
+      const nextName = getPokemonI18Name(nextPokedexId);
 
       const startMessage = i18next.t('pc:evolveStart', { name: startName });
       await this.showTalk(talk, startMessage);

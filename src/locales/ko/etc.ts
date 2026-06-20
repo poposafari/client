@@ -24,7 +24,10 @@ export const etc: TranslationEtc = {
     '이 게임은 포켓몬스터 게임 시리즈에서 등장하는\n사파리존 컨텐츠를 중점으로 개발한 포켓몬 팬 게임입니다.',
   welcome_2:
     '이 게임은 수익을 창출하지 않으며 Pokémon 및 사용된\n리소스에 대한 소유권을 주장하지 않습니다.',
-  welcome_3: '아직 개발 중이지만, 플레이 하실 수 있습니다.\n재미있게 플레이해주세요!',
+  welcome_3:
+    '아직 개발 중이지만, 지금 바로 플레이하실 수 있습니다.\n꾸준히 업데이트하며 더 나은 게임을 만들어가고 있습니다',
+  welcome_4: '공식 디스코드 채널을 운영 중입니다.\n버그 제보나 건의사항은 디스코드로 알려주세요!',
+  welcome_5: '디스코드 링크는 타이틀 화면 좌측 하단에 있습니다.',
   createAvatar_intro: '당신의 아바타를 생성해주세요',
   createAvatar: '아바타 생성',
   enterYourNickname: '닉네임 입력',
@@ -135,4 +138,5 @@ export const etc: TranslationEtc = {
   cooldownSeconds: '{{seconds}}초',
   serverBusy: '현재 서버 접속 인원이 가득 찼습니다.\n잠시 후에 다시 시도해 주세요.',
   menuCancel: '닫는다',
+  githubNotice: '오픈 소스를 준비 중입니다.',
 };

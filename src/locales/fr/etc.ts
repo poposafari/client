@@ -22,7 +22,11 @@ export const etc: TranslationEtc = {
     'Ceci est un fan-game Pokémon centré sur le contenu\nde la Zone Safari présent dans la série Pokémon.',
   welcome_2:
     'Ce jeu est à but non lucratif et ne revendique aucun droit\nsur Pokémon ni sur les ressources utilisées.',
-  welcome_3: 'Il est encore en développement, mais vous pouvez y jouer.\nAmusez-vous bien !',
+  welcome_3:
+    "Il est encore en développement, mais vous pouvez déjà y jouer.\nNous le mettons à jour régulièrement pour en faire un meilleur jeu.",
+  welcome_4:
+    'Nous avons un canal Discord officiel.\nSignalez les bugs ou vos suggestions sur Discord !',
+  welcome_5: "Le lien Discord se trouve en bas à gauche de l'écran-titre.",
   createAvatar_intro: 'Veuillez créer votre avatar',
   createAvatar: 'Créer un avatar',
   enterYourNickname: 'Saisir un pseudo',
@@ -137,4 +141,5 @@ export const etc: TranslationEtc = {
   cooldownSeconds: '{{seconds}} s',
   serverBusy: 'Le serveur est plein.\nVeuillez réessayer plus tard.',
   menuCancel: 'QUITTER',
+  githubNotice: 'Le code open source est en préparation.',
 };

@@ -118,7 +118,7 @@ export class PokemonPcUi extends BaseUi {
 
   private pcState: PcLocalState;
   private gridMenu: MenuListUi;
-  private partyMenu: MenuUi;
+  private partyMenu: MenuListUi;
   private topMenu: MenuUi;
   private confirmMenu: MenuUi;
   private wallpaperMenu: MenuListUi;
@@ -232,12 +232,18 @@ export class PokemonPcUi extends BaseUi {
 
     this.gridMenu = new MenuListUi(scene, scene.getInputManager(), {
       x: +1540,
-      y: +700,
+      y: +695,
       visibleCount: 6,
       itemHeight: 0,
       showCancel: false,
     });
-    this.partyMenu = new MenuUi(scene, scene.getInputManager(), { y: +1070 });
+    this.partyMenu = new MenuListUi(scene, scene.getInputManager(), {
+      x: +1755,
+      y: +695,
+      visibleCount: 6,
+      itemHeight: 0,
+      showCancel: false,
+    });
     this.topMenu = new MenuUi(scene, scene.getInputManager(), { y: +1070 });
     this.confirmMenu = new MenuUi(scene, scene.getInputManager(), { y: +805, itemHeight: 70 });
     this.wallpaperMenu = new MenuListUi(scene, scene.getInputManager(), {
@@ -283,7 +289,13 @@ export class PokemonPcUi extends BaseUi {
       PokemonPcUi.PARTY_BASE_X + PokemonPcUi.PARTY_SET_OFFSET_X,
       this.partyBaseY + PokemonPcUi.PARTY_SET_OFFSET_Y,
     );
-    this.partySet.add([this.partyWindow, this.partyTitle, ...this.partySlots, this.partyCursor]);
+
+    this.partySet.add([
+      this.partyWindow,
+      this.partyTitle,
+      ...[...this.partySlots].reverse(),
+      this.partyCursor,
+    ]);
 
     this.grabOverlay = this.scene.add.container(this.pcSet.x, this.pcSet.y);
     this.grabOverlay.add([this.grabIcon, this.grabCursor]);
@@ -827,9 +839,21 @@ export class PokemonPcUi extends BaseUi {
       return;
     }
 
+    const hasHeldItem = pokemon.heldItemId !== null;
+    const pokemonData = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    const bag = this.scene.getUser()?.getItemBag();
+    const hasExpCandy = EXP_CANDY_IDS.some((id) => (bag?.get(id)?.quantity ?? 0) > 0);
+    const isMaxLevel = pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL;
+    const hasCandy = hasExpCandy && !isMaxLevel;
+    const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
+
     const items: IMenuItem[] = [
       { key: 'pc:removeFromParty', label: i18next.t('pc:removeFromParty') },
       { key: 'pc:grab', label: i18next.t('pc:grab') },
+      { key: 'pc:heldItem', label: i18next.t('pc:heldItem'), disabled: !hasHeldItem },
+      { key: 'pc:evolve', label: i18next.t('pc:evolve'), disabled: !canEvolve },
+      { key: 'pc:strengthen', label: i18next.t('pc:strengthen'), disabled: !hasCandy },
+      { key: 'pc:rename', label: i18next.t('pc:rename') },
       { key: 'pc:cancel', label: i18next.t('pc:cancel') },
     ];
 
@@ -885,6 +909,24 @@ export class PokemonPcUi extends BaseUi {
           this.startGrab(pokemon);
           break;
         }
+        case 'pc:heldItem':
+          this.takeHeldItem(pokemon).then(() => {
+            this.inputManager.push(this);
+          });
+          break;
+        case 'pc:evolve':
+          this.evolvePokemon(pokemon).then(() => {
+            this.inputManager.push(this);
+          });
+          break;
+        case 'pc:strengthen':
+          this.enhancePokemon(pokemon).then(() => {
+            this.inputManager.push(this);
+          });
+          break;
+        case 'pc:rename':
+          this.renamePokemon(pokemon);
+          break;
         default:
           this.inputManager.push(this);
           break;
@@ -981,8 +1023,16 @@ export class PokemonPcUi extends BaseUi {
         this.refreshCurrentBox();
         this.updateInfo(String(pokemon.id));
       }
-      this.inputManager.push(this.gridSelect);
+      this.restoreFocusInput();
     });
+  }
+
+  private restoreFocusInput(): void {
+    if (this.focusArea === 'party') {
+      this.inputManager.push(this);
+    } else {
+      this.inputManager.push(this.gridSelect);
+    }
   }
 
   private startGrab(pokemon: PokemonBoxItem): void {
@@ -1442,7 +1492,10 @@ export class PokemonPcUi extends BaseUi {
     const party = user?.getParty();
     if (party) {
       const idx = party.findIndex((p) => p.id === resp.id);
-      if (idx >= 0) party[idx] = { ...party[idx], pokedexId: resp.pokedexId };
+      if (idx >= 0) {
+        party[idx] = { ...party[idx], pokedexId: resp.pokedexId };
+        user?.setParty(party);
+      }
     }
 
     this.refreshCurrentBox();

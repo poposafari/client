@@ -23,7 +23,10 @@ export const etc: TranslationEtc = {
   welcome_2:
     'このゲームは しゅうえきを えておらず Pokémonおよび つかわれた\nリソースの しょゆうけんを しゅちょうしません。',
   welcome_3:
-    'まだ かいはつちゅうですが プレイすることが できます。\nたのしんで プレイしてください！',
+    'まだ かいはつちゅうですが いますぐ プレイできます。\nこまめに アップデートして よりよい ゲームを めざしています。',
+  welcome_4:
+    'こうしきの Discordチャンネルを うんえいしています。\nバグほうこくや ごようぼうは Discordへ おしらせください！',
+  welcome_5: 'Discordの リンクは タイトルがめんの ひだりしたに あります。',
   createAvatar_intro: 'あなたの アバターを つくってください',
   createAvatar: 'アバターさくせい',
   enterYourNickname: 'ニックネームを にゅうりょく',
@@ -137,4 +140,5 @@ export const etc: TranslationEtc = {
   cooldownSeconds: '{{seconds}}びょう',
   serverBusy: 'ただいま サーバーが まんいん です。\nしばらくしてから ふたたび おためしください。',
   menuCancel: 'とじる',
+  githubNotice: 'オープンソースを じゅんびちゅう です。',
 };

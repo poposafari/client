@@ -25,6 +25,7 @@ import {
   KeyGuideBarContainer,
   type KeyGuideBarOptions,
 } from '@poposafari/containers/key-guide-bar.container';
+import { TypingTextContainer } from '@poposafari/containers/typing-text.container';
 
 export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLanguage {
   scene: GameScene;
@@ -67,6 +68,9 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
   private discordBg!: Phaser.GameObjects.Graphics;
   private discordLogo!: GImage;
   private discordOverlay!: Phaser.GameObjects.Graphics;
+
+  // 오픈 소스 비공개 상태 — Github 클릭 시 타이핑 효과로 안내 문구를 출력한다.
+  private githubNotice!: TypingTextContainer;
 
   constructor(scene: GameScene, existUser: boolean) {
     super(scene, scene.getInputManager(), DEPTH.DEFAULT);
@@ -308,7 +312,7 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     const GITHUB_COLOR = 0xffffff;
     const DISCORD_COLOR = 0x5865f2;
     const ANCHOR_LEFT_X = -940;
-    const GITHUB_URL = 'https://github.com/seophohoho/poposafari';
+    const GITHUB_URL = '';
     const DISCORD_URL = 'https://discord.gg/uqt7cqqT23';
     const TINT_GRAY = 0xcccccc;
 
@@ -362,7 +366,8 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.githubBg.on('pointerover', () => this.githubOverlay.setVisible(true));
     this.githubBg.on('pointerout', () => this.githubOverlay.setVisible(false));
     this.githubBg.on('pointerdown', () => {
-      window.open(GITHUB_URL, '_blank', 'noopener,noreferrer');
+      // window.open(GITHUB_URL, '_blank', 'noopener,noreferrer');
+      this.showGithubNotice();
     });
 
     this.discordBg.setInteractive({
@@ -381,7 +386,6 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
       window.open(DISCORD_URL, '_blank', 'noopener,noreferrer');
     });
 
-    // 호버 오버레이: bg/logo 위에 깔리고 multiply 블렌드로 setTint(0xcccccc)와 동일한 어둡힘 효과
     this.githubOverlay = this.scene.add.graphics();
     this.githubOverlay.fillStyle(TINT_GRAY, 1);
     this.githubOverlay.fillRoundedRect(
@@ -406,8 +410,21 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.discordOverlay.setBlendMode(Phaser.BlendModes.MULTIPLY);
     this.discordOverlay.setVisible(false);
 
+    this.githubNotice = new TypingTextContainer(
+      this.scene,
+      githubX - githubBgW / 2 + 20,
+      -bgHeight / 2 - 10,
+      {
+        fontSize: 40,
+        textStyle: TEXTSTYLE.WHITE,
+        textShadow: TEXTSHADOW.GRAY,
+        typeSpeed: 10,
+        hideDelay: 3000,
+      },
+    );
+    this.githubNotice.getText().setOrigin(0, 1);
+
     this.socialContainer.setPosition(ANCHOR_LEFT_X + githubBgW / 2, +500);
-    // 렌더 순서: bg → logo → overlay (overlay가 최상단, multiply로 아래 픽셀을 어둡힘)
     this.socialContainer.add([
       this.githubBg,
       this.discordBg,
@@ -415,7 +432,13 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
       this.discordLogo,
       this.githubOverlay,
       this.discordOverlay,
+      this.githubNotice,
     ]);
+  }
+
+  private showGithubNotice(): void {
+    this.audio.playEffect(SFX.CURSOR_0);
+    this.githubNotice.typeOut(i18next.t('etc:githubNotice'));
   }
 
   /**

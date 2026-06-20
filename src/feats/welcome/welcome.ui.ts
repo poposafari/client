@@ -1,6 +1,6 @@
 import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
 import { DEPTH, TEXTURE } from '@poposafari/types';
-import { addBackground, getBackgroundKey } from '@poposafari/utils';
+import { addBackground, getSessionBackgroundKey } from '@poposafari/utils';
 import { GameScene } from '@poposafari/scenes';
 import i18next from 'i18next';
 
@@ -38,13 +38,15 @@ export class WelcomeUi extends BaseUi implements IInputHandler {
         i18next.t('etc:welcome_1'),
         i18next.t('etc:welcome_2'),
         i18next.t('etc:welcome_3'),
+        i18next.t('etc:welcome_4'),
+        i18next.t('etc:welcome_5'),
       ],
       { name: '테스트맨' },
     );
   }
 
   show(): void {
-    this.bg.setTexture(getBackgroundKey());
+    this.bg.setTexture(getSessionBackgroundKey());
     super.show();
   }
 }

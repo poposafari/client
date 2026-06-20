@@ -44,11 +44,7 @@ export const s000Config: MapConfig = {
     },
   ],
 
-  doors: [
-    { startId: DOOR.S001_RIGHT_0, destId: INIT_POS.S002_DOWN_0 },
-    { startId: DOOR.S001_RIGHT_1, destId: INIT_POS.S002_DOWN_1 },
-    { startId: DOOR.S001_RIGHT_2, destId: INIT_POS.S002_DOWN_2 },
-  ],
+  doors: [],
 
   npcs: [],
 };
