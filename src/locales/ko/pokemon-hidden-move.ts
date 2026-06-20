@@ -20,7 +20,7 @@ export const pokemonHiddenMove: TranslationPokemonHiddenMove = {
   'move_hyper-drill': '하이퍼드릴',
   move_mimic: '흉내내기',
   move_rollout: '구르기',
-  move_stomp: '밟기',
+  move_stomp: '짓밟기',
   move_taunt: '도발',
   'move_twin-beam': '트윈빔',
   'move_rage-fist': '분노의주먹',

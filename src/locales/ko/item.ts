@@ -724,8 +724,8 @@ export const item: TranslationItem = {
     description: '포켓몬에게 원시의힘을 가르친다.',
   },
   'move_double-hit': {
-    name: '기술머신 2회타격',
-    description: '포켓몬에게 2회타격을 가르친다.',
+    name: '기술머신 더블어택',
+    description: '포켓몬에게 더블어택을 가르친다.',
   },
   'move_dragon-pulse': {
     name: '기술머신 용의파동',
@@ -744,8 +744,8 @@ export const item: TranslationItem = {
     description: '포켓몬에게 구르기를 가르친다.',
   },
   move_stomp: {
-    name: '기술머신 밟기',
-    description: '포켓몬에게 밟기를 가르친다.',
+    name: '기술머신 짓밟기',
+    description: '포켓몬에게 짓밟기를 가르친다.',
   },
   move_taunt: {
     name: '기술머신 도발',
