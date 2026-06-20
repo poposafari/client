@@ -1,6 +1,16 @@
 import { BaseUi, IInputHandler } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX, TEXTCOLOR, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  DEPTH,
+  KEY,
+  SFX,
+  SYMBOL_FEMALE,
+  SYMBOL_MALE,
+  TEXTCOLOR,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import {
   addContainer,
   addImage,
@@ -25,14 +35,16 @@ type ParsedCostPart = {
   iconKey: string;
   count: number | null;
   itemId: string | null;
-  kind: 'item' | 'friendship' | 'time';
+  kind: 'item' | 'friendship' | 'time' | 'gender';
   friendshipRequired?: number;
   timePeriod?: EvolveTimeOfDay;
+  genderRequired?: number;
 };
 
 export interface EvolveContext {
   pokemonFriendship: number;
   currentTimeOfDay: EvolveTimeOfDay;
+  pokemonGender: number;
 }
 
 type EvolveItem =
@@ -83,6 +95,19 @@ export function parseCostParts(cost: string, type1: string): ParsedCostPart[] {
         itemId: null,
         kind: 'time',
         timePeriod: period,
+      };
+    }
+
+    const genderMatch = part.match(/^(male|female)$/);
+    if (genderMatch) {
+      const required = genderMatch[1] === 'male' ? 1 : 2;
+      return {
+        labelText: required === 1 ? SYMBOL_MALE : SYMBOL_FEMALE,
+        iconKey: '',
+        count: null,
+        itemId: null,
+        kind: 'gender',
+        genderRequired: required,
       };
     }
 
@@ -312,6 +337,11 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
         dummy.setText(' + ');
         w += dummy.width + LAYOUT.GAP;
       }
+      if (parts[i].kind === 'gender') {
+        dummy.setText(parts[i].labelText);
+        w += dummy.width + LAYOUT.GAP;
+        continue;
+      }
       dummy.setText(parts[i].labelText);
       w += dummy.width + LAYOUT.GAP;
       w += parenW + LAYOUT.GAP;
@@ -365,6 +395,11 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
           }
         } else if (p.kind === 'time') {
           if (context.currentTimeOfDay !== p.timePeriod) {
+            affordable = false;
+            break;
+          }
+        } else if (p.kind === 'gender') {
+          if (context.pokemonGender !== p.genderRequired) {
             affordable = false;
             break;
           }
@@ -538,6 +573,24 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
         sep.setColor(color);
         slot.add(sep);
         x += sep.width + LAYOUT.GAP;
+      }
+
+      if (part.kind === 'gender') {
+        const sym = addText(
+          this.scene,
+          x,
+          0,
+          part.labelText,
+          FONT_SIZE,
+          '100',
+          'left',
+          TEXTSTYLE.WHITE,
+          TEXTSHADOW.GRAY,
+        ).setOrigin(0, 0.5);
+        sym.setColor(color);
+        slot.add(sym);
+        x += sym.width + LAYOUT.GAP;
+        continue;
       }
 
       const label = addText(

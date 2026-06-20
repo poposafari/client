@@ -1424,6 +1424,7 @@ export class PokemonPcUi extends BaseUi {
     const selectedIndex = await this.evolveSelect.open(options, {
       pokemonFriendship: pokemon.friendship ?? 0,
       currentTimeOfDay: DayNightFilter.getCurrentTimeLabel(),
+      pokemonGender: pokemon.gender ?? 0,
     });
     if (selectedIndex === null) return;
 
