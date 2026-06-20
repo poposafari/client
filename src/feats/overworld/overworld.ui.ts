@@ -565,6 +565,8 @@ export class OverworldUi extends BaseUi {
       const result = await this.scene.getApi().pickGroundItem(uid);
       if (!result) return;
 
+      this.scene.getUser()?.updateItemQuantity(result.itemId, result.newQuantity);
+
       const nickname = this.scene.getUser()?.getProfile().nickname ?? '';
       const itemName = i18next.t(`item:${result.itemId}.name`, {
         defaultValue: result.itemId,
@@ -586,7 +588,6 @@ export class OverworldUi extends BaseUi {
           .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
       }
 
-      // SafariInfo 동기화: picked = true
       const mapKey = this.mapConfig?.key;
       if (mapKey) {
         const info = this.scene.getSafariInfo().get(mapKey);
