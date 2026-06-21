@@ -185,8 +185,11 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     this.candyId = params.candyId;
     this.candyMax = Math.max(0, params.candyMax);
     this.currentLevel = params.currentLevel;
-    this.currentExp = params.currentExp;
     this.group = params.group;
+    this.currentExp = Math.max(
+      params.currentExp,
+      pokemonTotalExpForLevel(params.currentLevel, this.group),
+    );
     this.capExp = pokemonTotalExpForLevel(POKEMON_LEVEL_MAX, this.group);
     this.candyExpValue = EXP_CANDY_VALUE[this.candyId] ?? 0;
 
