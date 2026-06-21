@@ -5,7 +5,7 @@
     "category": "pokeball",
     "comment": "사파리볼",
     "purchasable": true,
-    "sellPrice": 100,
+    "sellPrice": 10,
     "sellable": true,
     "tier": "common"
   },
