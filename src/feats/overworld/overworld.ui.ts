@@ -838,6 +838,8 @@ export class OverworldUi extends BaseUi {
       if (shiny) this.worldContainer.add(shiny);
       this.nameContainer.add(obj.getName());
       this.nameContainer.add(obj.getTimerText());
+      const owned = obj.getOwnedIcon();
+      if (owned) this.nameContainer.add(owned);
 
       if (obj.getWild().isShiny) spawnedShiny = true;
     }
@@ -915,8 +917,10 @@ export class OverworldUi extends BaseUi {
     this.worldContainer.add(obj.getSprite());
     const shinyOverlay = obj.getShinySprite();
     if (shinyOverlay) this.worldContainer.add(shinyOverlay);
+    const ownedIcon = obj.getOwnedIcon();
     this.nameContainer.add(obj.getName());
     this.nameContainer.add(obj.getTimerText());
+    if (ownedIcon) this.nameContainer.add(ownedIcon);
 
     this.refreshWildBlockingRefs();
     this.refreshPlayerBlockingRefs();
@@ -961,6 +965,10 @@ export class OverworldUi extends BaseUi {
     if (shinyOverlay) {
       shinyOverlay.setAlpha(0);
       fadeTargets.push(shinyOverlay);
+    }
+    if (ownedIcon) {
+      ownedIcon.setAlpha(0);
+      fadeTargets.push(ownedIcon);
     }
     this.scene.tweens.add({
       targets: fadeTargets,
@@ -1020,6 +1028,8 @@ export class OverworldUi extends BaseUi {
     if (timerText) fadeTargets.push(timerText);
     const shinyOverlay = obj instanceof WildPokemonObject ? obj.getShinySprite() : null;
     if (shinyOverlay) fadeTargets.push(shinyOverlay);
+    const ownedIcon = obj instanceof WildPokemonObject ? obj.getOwnedIcon() : null;
+    if (ownedIcon) fadeTargets.push(ownedIcon);
     this.scene.tweens.add({
       targets: fadeTargets,
       alpha: 0,

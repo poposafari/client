@@ -1,7 +1,13 @@
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import type { SafariWildInfo } from '@poposafari/scenes';
 import { ANIMATION, DEPTH, SFX, TEXTCOLOR, TEXTURE } from '@poposafari/types';
-import { addObjText, addSprite, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
+import {
+  addImage,
+  addObjText,
+  addSprite,
+  getPokemonI18Name,
+  getPokemonTexture,
+} from '@poposafari/utils';
 import { calcOverworldTilePos, DIRECTION } from '../overworld.constants';
 import { IOverworldBlockingRef, IOverworldMapAdapter, MovableObject } from './movable.object';
 import i18next from 'i18next';
@@ -16,6 +22,8 @@ const STEP_MAX = 4;
 const DIRS: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT];
 const NAME_VISIBLE_RANGE = 3;
 const SHINY_SIZE_MARGIN = 0.6;
+const OWNED_ICON_SCALE = 1.3;
+const OWNED_ICON_GAP = 6;
 
 export class WildPokemonObject extends MovableObject {
   private readonly wild: SafariWildInfo;
@@ -39,6 +47,8 @@ export class WildPokemonObject extends MovableObject {
   private timerText: Phaser.GameObjects.Text;
   private lastTimerLabel = '';
   private shinySprite: Phaser.GameObjects.Sprite | null = null;
+  private ownedIcon: Phaser.GameObjects.Image | null = null;
+  private isPokedexRegistered = false;
   /** 페이드아웃이 실제로 시작되면 true. OverworldUi.handleWildDespawn이 1회만 실행되도록. */
   private despawning = false;
   /** 클라 자체 TTL 감지로 `wild_ttl_expired`를 이미 emit했는지 (중복 emit 방지). */
@@ -47,6 +57,12 @@ export class WildPokemonObject extends MovableObject {
     this.lastPlayerTileX = payload.tileX;
     this.lastPlayerTileY = payload.tileY;
     this.refreshNameVisibility();
+  };
+
+  private readonly onProfileChanged = (): void => {
+    if (this.isPokedexRegistered) return;
+    this.isPokedexRegistered =
+      this.scene.getUser()?.isPokedexRegistered(String(this.wild.pokedexId)) ?? false;
   };
 
   constructor(
@@ -91,7 +107,17 @@ export class WildPokemonObject extends MovableObject {
     this.timerText.setVisible(false);
 
     this.name.setVisible(false);
+
+    this.isPokedexRegistered =
+      scene.getUser()?.isPokedexRegistered(String(wild.pokedexId)) ?? false;
+    this.ownedIcon = addImage(scene, TEXTURE.ICON_OWNED, undefined, tileX, tileY)
+      .setOrigin(1, 0.5)
+      .setScale(OWNED_ICON_SCALE);
+    this.ownedIcon.setDepth(DEPTH.MESSAGE);
+    this.ownedIcon.setVisible(false);
+
     this.scene.events.on('player_tile_moved', this.onPlayerTileMoved);
+    this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
     this.shadow.setVisible(true).setScale(3);
     this.refreshPosition();
 
@@ -126,6 +152,10 @@ export class WildPokemonObject extends MovableObject {
 
   getShinySprite(): Phaser.GameObjects.Sprite | null {
     return this.shinySprite;
+  }
+
+  getOwnedIcon(): Phaser.GameObjects.Image | null {
+    return this.ownedIcon;
   }
 
   isDespawning(): boolean {
@@ -203,6 +233,7 @@ export class WildPokemonObject extends MovableObject {
     if (this.frozen) {
       super.update(delta);
       this.refreshTimer();
+      this.syncOwnedIcon();
       return;
     }
 
@@ -229,6 +260,7 @@ export class WildPokemonObject extends MovableObject {
     super.update(delta);
     this.refreshTimer();
     this.syncShinyOverlay();
+    this.syncOwnedIcon();
   }
 
   private syncShinyOverlay(): void {
@@ -236,6 +268,17 @@ export class WildPokemonObject extends MovableObject {
     this.shinySprite.setPosition(this.sprite.x, this.sprite.y);
     this.shinySprite.setDepth(this.sprite.depth + 0.05);
     this.shinySprite.setVisible(this.sprite.visible);
+  }
+
+  private syncOwnedIcon(): void {
+    if (!this.ownedIcon) return;
+    const visible = this.name.visible && this.isPokedexRegistered;
+    this.ownedIcon.setVisible(visible);
+    if (!visible) return;
+    this.ownedIcon.setPosition(
+      this.name.x - this.name.displayWidth / 2 - OWNED_ICON_GAP,
+      this.name.y,
+    );
   }
 
   /** 타이머 텍스트를 갱신. 이름표 바로 아래 위치를 따라다니게 한다.
@@ -304,11 +347,14 @@ export class WildPokemonObject extends MovableObject {
   override destroy(): void {
     this.state = 'STOPPED';
     this.scene.events.off('player_tile_moved', this.onPlayerTileMoved);
+    this.scene.events.off(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
     this.emoteSprite?.destroy();
     this.emoteSprite = null;
     this.timerText.destroy();
     this.shinySprite?.destroy();
     this.shinySprite = null;
+    this.ownedIcon?.destroy();
+    this.ownedIcon = null;
     super.destroy();
   }
 
@@ -320,6 +366,7 @@ export class WildPokemonObject extends MovableObject {
     const dx = Math.abs(this.tileX - this.lastPlayerTileX);
     const dy = Math.abs(this.tileY - this.lastPlayerTileY);
     this.name.setVisible(Math.max(dx, dy) <= NAME_VISIBLE_RANGE);
+    this.syncOwnedIcon();
   }
 
   private beginNewCycle(): void {

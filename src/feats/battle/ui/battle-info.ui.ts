@@ -146,9 +146,11 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     );
     this.wildHudContainer.add(this.wildLevelText);
 
+    const isPokedexRegistered =
+      scene.getUser()?.isPokedexRegistered(String(ctx.wild.pokedexId)) ?? false;
     this.wildCatchCntIcon = addImage(scene, TEXTURE.ICON_OWNED, undefined, -400, -10)
       .setScale(2.4)
-      .setVisible(ctx.wild.caughtCount > 0);
+      .setVisible(isPokedexRegistered);
     this.wildHudContainer.add(this.wildCatchCntIcon);
 
     if (ctx.wild.isShiny) {
