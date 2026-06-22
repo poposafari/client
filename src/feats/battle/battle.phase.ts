@@ -156,7 +156,6 @@ export class BattlePhase implements IGamePhase {
         const shakeCount = outcome.kind === 'caught' ? 3 : Math.floor(Math.random() * 4);
         await this.ui.playBallThrow(shakeCount);
 
-        this.modifiers = { bait: false, rock: false };
         return this.transition({ kind: 'result', outcome });
       }
 
