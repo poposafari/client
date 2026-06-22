@@ -72,6 +72,12 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private static readonly CAPTURE_RATE_CAP = 0.999;
   private static readonly FLEE_RATE_CAP = 0.9;
 
+  private static readonly WILD_NAME_FONT_SIZE = 80;
+  private static readonly WILD_NAME_MIN_FONT_SIZE = 44;
+  private static readonly WILD_NAME_GENDER_GAP = 5;
+  private static readonly WILD_NAME_SHINY_GAP = 30;
+  private static readonly WILD_NAME_LEVEL_MARGIN = 25;
+
   constructor(scene: GameScene) {
     super(scene, 0, 0);
     this.setScrollFactor(0);
@@ -107,7 +113,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     this.wildGenderText = addText(
       scene,
-      this.wildNameText.x + this.wildNameText.displayWidth + 5,
+      this.wildNameText.x + this.wildNameText.displayWidth + BattleInfoUi.WILD_NAME_GENDER_GAP,
       -75,
       SYMBOL_MALE,
       75,
@@ -147,11 +153,13 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
         scene,
         TEXTURE.ICON_SHINY,
         undefined,
-        this.wildGenderText.x + this.wildGenderText.displayWidth + 30,
+        this.wildGenderText.x + this.wildGenderText.displayWidth + BattleInfoUi.WILD_NAME_SHINY_GAP,
         -75,
       ).setScale(3);
       this.wildHudContainer.add(this.wildShiny);
     }
+
+    this.fitWildNameWithinLevel();
 
     this.add(this.wildHudContainer);
 
@@ -334,6 +342,34 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     });
 
     this.setVisible(false);
+  }
+
+  private fitWildNameWithinLevel(): void {
+    const genderGap = BattleInfoUi.WILD_NAME_GENDER_GAP;
+    const shinyGap = BattleInfoUi.WILD_NAME_SHINY_GAP;
+
+    const levelLeftEdge = this.wildLevelSymbol.x - this.wildLevelSymbol.displayWidth / 2;
+    const limit = levelLeftEdge - BattleInfoUi.WILD_NAME_LEVEL_MARGIN;
+
+    const genderWidth = this.wildGenderText.displayWidth;
+    const shinyReserved = this.wildShiny ? shinyGap + this.wildShiny.displayWidth : 0;
+    const reserved = genderGap + genderWidth + shinyReserved;
+
+    const availableForName = limit - this.wildNameText.x - reserved;
+
+    if (availableForName > 0 && this.wildNameText.displayWidth > availableForName) {
+      const ratio = availableForName / this.wildNameText.displayWidth;
+      const newSize = Math.max(
+        BattleInfoUi.WILD_NAME_MIN_FONT_SIZE,
+        Math.floor(BattleInfoUi.WILD_NAME_FONT_SIZE * ratio),
+      );
+      this.wildNameText.setFontSize(newSize);
+    }
+
+    this.wildGenderText.setX(this.wildNameText.x + this.wildNameText.displayWidth + genderGap);
+    if (this.wildShiny) {
+      this.wildShiny.setX(this.wildGenderText.x + this.wildGenderText.displayWidth + shinyGap);
+    }
   }
 
   private buildLocationString(): string {
