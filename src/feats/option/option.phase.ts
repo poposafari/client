@@ -3,8 +3,14 @@ import { GameEvent, GameScene } from '@poposafari/scenes';
 import { OptionUi } from './option.ui';
 import { OptionMenuUi, IOptionItem } from './option-menu.ui';
 import i18next from 'i18next';
-import { Language, LANGUAGE_KEY, OptionKey } from '@poposafari/types';
+import { LANGUAGE_KEY, OptionKey } from '@poposafari/types';
 import { getGlobalLanguageName } from '@poposafari/utils';
+
+function currentLanguageIndex(): number {
+  const lng = (i18next.language || 'en').slice(0, 2);
+  const idx = LanguageItmes.indexOf(lng);
+  return idx >= 0 ? idx : 0;
+}
 
 function defaultOptionItems(): IOptionItem[] {
   return [
@@ -96,8 +102,12 @@ export class OptionPhase implements IGamePhase {
     const items = defaultOptionItems();
     const optionManager = this.scene.getOption();
     for (const item of items) {
-      const stored = optionManager.getOption(item.key as OptionKey);
-      item.valueIndex = this.resolveValueIndex(stored, item.values.length);
+      if (item.key === LANGUAGE_KEY) {
+        item.valueIndex = currentLanguageIndex();
+      } else {
+        const stored = optionManager.getOption(item.key as OptionKey);
+        item.valueIndex = this.resolveValueIndex(stored, item.values.length);
+      }
     }
     return items;
   }

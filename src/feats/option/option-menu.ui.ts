@@ -118,12 +118,14 @@ export class OptionMenuUi extends MenuListUi {
       this.scene.getAudio().playEffect(SFX.CURSOR_0);
       opt.valueIndex = (opt.valueIndex - 1 + opt.values.length) % opt.values.length;
       this.syncItemsFromOptionData();
-      this.scene.getOption().updateOption(opt.key as OptionKey, opt.valueIndex);
 
-      if (opt.key === OptionKey.WINDOW) {
-        this.changeWindowsTexture();
-      } else if (opt.key === LANGUAGE_KEY) {
+      if (opt.key === LANGUAGE_KEY) {
         this.changeLanguage(opt.valueIndex);
+      } else {
+        this.scene.getOption().updateOption(opt.key as OptionKey, opt.valueIndex);
+        if (opt.key === OptionKey.WINDOW) {
+          this.changeWindowsTexture();
+        }
       }
 
       return;
@@ -132,12 +134,14 @@ export class OptionMenuUi extends MenuListUi {
       this.scene.getAudio().playEffect(SFX.CURSOR_0);
       opt.valueIndex = (opt.valueIndex + 1) % opt.values.length;
       this.syncItemsFromOptionData();
-      this.scene.getOption().updateOption(opt.key as OptionKey, opt.valueIndex);
 
-      if (opt.key === OptionKey.WINDOW) {
-        this.changeWindowsTexture();
-      } else if (opt.key === LANGUAGE_KEY) {
+      if (opt.key === LANGUAGE_KEY) {
         this.changeLanguage(opt.valueIndex);
+      } else {
+        this.scene.getOption().updateOption(opt.key as OptionKey, opt.valueIndex);
+        if (opt.key === OptionKey.WINDOW) {
+          this.changeWindowsTexture();
+        }
       }
 
       return;

@@ -1,4 +1,4 @@
-import { Language, OPTION_KEY, OptionKey, TEXTURE } from '@poposafari/types';
+import { Language, LANGUAGE_KEY, OPTION_KEY, OptionKey, TEXTURE } from '@poposafari/types';
 import { AudioManager } from './audio.manager';
 import { debugLog } from '@poposafari/utils';
 
@@ -15,7 +15,6 @@ export class OptionManager {
     [OptionKey.BATTLE_TUTORIAL]: 0,
     [OptionKey.PC_TUTORIAL]: 0,
     [OptionKey.BATTLE_BGM]: 0,
-    [OptionKey.LANGUAGE]: 0,
   };
 
   private readonly WINDOWS = [
@@ -41,16 +40,23 @@ export class OptionManager {
 
     if (!jsonString) {
       this.saveToCache();
-    } else {
-      if (!this.validateCache(JSON.parse(jsonString))) {
-        this.saveToCache();
-      } else {
-        this.option = JSON.parse(jsonString);
+      return;
+    }
 
-        this.audio.setMasterVolume(this.option[OptionKey.MASTER_VOLUME] / 10);
-        this.audio.setEffectVolume(this.option[OptionKey.SFX_VOLUME] / 10);
-        this.audio.setBgmVolume(this.option[OptionKey.BGM_VOLUME] / 10);
-      }
+    const parsed = JSON.parse(jsonString);
+
+    if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      delete (parsed as Record<string, unknown>)[LANGUAGE_KEY];
+    }
+
+    if (!this.validateCache(parsed)) {
+      this.saveToCache();
+    } else {
+      this.option = parsed;
+
+      this.audio.setMasterVolume(this.option[OptionKey.MASTER_VOLUME] / 10);
+      this.audio.setEffectVolume(this.option[OptionKey.SFX_VOLUME] / 10);
+      this.audio.setBgmVolume(this.option[OptionKey.BGM_VOLUME] / 10);
     }
   }
 
@@ -79,8 +85,6 @@ export class OptionManager {
         return value >= 0 && value <= 1;
       case OptionKey.BATTLE_BGM:
         return value >= 0 && value <= 2;
-      case OptionKey.LANGUAGE:
-        return value >= 0 && value < LanguageItmes.length;
       default:
         return false;
     }

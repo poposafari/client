@@ -22,8 +22,6 @@ export enum OptionKey {
   BATTLE_TUTORIAL = 'battle_tutorial',
   PC_TUTORIAL = 'pc_tutorial',
   BATTLE_BGM = 'battle_bgm',
-  /** 언어 옵션 (i18nextLng). OptionManager 저장/조회용. */
-  LANGUAGE = 'i18nextLng',
 }
 
 export enum Language {
