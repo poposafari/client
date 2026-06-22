@@ -156,7 +156,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
         scene,
         TEXTURE.ICON_SHINY,
         undefined,
-        this.wildLevelText.x + this.wildLevelText.displayWidth + 30,
+        this.wildGenderText.x + this.wildGenderText.displayWidth + 30,
         -75,
       ).setScale(3);
       this.wildHudContainer.add(this.wildShiny);

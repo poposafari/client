@@ -798,6 +798,7 @@ export class OverworldUi extends BaseUi {
     }
 
     // 2) Wilds — pokemonData.spawn 기반으로 land/water 결정
+    let spawnedShiny = false;
     for (const wild of availableWilds) {
       let px: number;
       let py: number;
@@ -837,6 +838,17 @@ export class OverworldUi extends BaseUi {
       if (shiny) this.worldContainer.add(shiny);
       this.nameContainer.add(obj.getName());
       this.nameContainer.add(obj.getTimerText());
+
+      if (obj.getWild().isShiny) spawnedShiny = true;
+    }
+
+    if (
+      spawnedShiny &&
+      this.scene.getOption().getOption(OptionKey.WILD_SPAWN_CRY) === 0 &&
+      this.scene.getAudio().isAudible() &&
+      !this.scene.hasPhaseOfType(BattlePhase)
+    ) {
+      this.scene.getAudio().playEffect(SFX.SHINY);
     }
 
     this.refreshWildBlockingRefs();

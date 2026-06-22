@@ -2,7 +2,13 @@ import { BaseUi, IInputHandler } from '@poposafari/core';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
 import { GameScene } from '@poposafari/scenes';
 import { DEPTH, EASE, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
-import { addImage, addText, addWindow, getPokemonI18Name, getPokemonTexture } from '@poposafari/utils';
+import {
+  addImage,
+  addText,
+  addWindow,
+  getPokemonI18Name,
+  getPokemonTexture,
+} from '@poposafari/utils';
 import i18next from 'i18next';
 import { TalkMessageUi } from '../message';
 
@@ -98,9 +104,13 @@ export class EvolveUi extends BaseUi implements IInputHandler {
     ]);
   }
 
-  async play(startPokedexId: string, nextPokedexId: string): Promise<void> {
-    const startTex = getPokemonTexture('sprite', startPokedexId);
-    const nextTex = getPokemonTexture('sprite', nextPokedexId);
+  async play(
+    startPokedexId: string,
+    nextPokedexId: string,
+    options: { isShiny?: boolean; isFemale?: boolean } = {},
+  ): Promise<void> {
+    const startTex = getPokemonTexture('sprite', startPokedexId, options, this.scene);
+    const nextTex = getPokemonTexture('sprite', nextPokedexId, options, this.scene);
 
     this.startSprite.setTexture(startTex.key, startTex.frame).clearTint();
     this.nextSprite.setTexture(nextTex.key, nextTex.frame).clearTint();

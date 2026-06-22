@@ -1429,7 +1429,8 @@ export class PokemonPcUi extends BaseUi {
     if (selectedIndex === null) return;
 
     const selectedOption = options[selectedIndex];
-    const nextName = i18next.t(`pokemon:${selectedOption.nextPokedexId}.name`);
+
+    const nextName = getPokemonI18Name(selectedOption.nextPokedexId);
 
     // 확인 메시지
     const questionUi = this.scene.getMessage('question');
@@ -1469,7 +1470,10 @@ export class PokemonPcUi extends BaseUi {
     await this.ensureCriesLoaded(pokemon.pokedexId, resp.pokedexId);
 
     // 진화 애니메이션 재생
-    await this.evolveUi.play(pokemon.pokedexId, resp.pokedexId);
+    await this.evolveUi.play(pokemon.pokedexId, resp.pokedexId, {
+      isShiny: pokemon.isShiny,
+      isFemale: pokemon.gender === 2,
+    });
 
     // 로컬 상태 동기화
     this.pcState.setPokedexId(resp.id, resp.pokedexId);
