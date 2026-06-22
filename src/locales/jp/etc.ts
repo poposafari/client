@@ -112,7 +112,7 @@ export const etc: TranslationEtc = {
   s000_tutorial_mud_0: '「どろ」は ポケモンに どろを なげて\nほかく かくりつを あげますが、',
   s000_tutorial_mud_1: 'ポケモンが おこって\nにげる かくりつも いっしょに あがります。',
   s000_tutorial_run_0: '「にげる」は バトルを あきらめて\nあんぜんに ぬけだす こうどうです。',
-  deleteAccount_0: 'すべての データを\nさくじょしますか？',
+  deleteAccount_0: '※アカウントを ふくむ すべての\nデータを さくじょしますか？',
   deleteAccount_1: 'もとにもどすことは できません。\nそれでも よろしいですか？',
   deleteAccount_2: 'ほんとうに？\nそれでも さくじょしますか？',
   tooltip_register: 'とうろくアイテム(A)',

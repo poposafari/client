@@ -58,7 +58,7 @@ export const object: TranslationObject = {
   sign_study_room: '이곳은\n개발&보안 공부방',
   npc_script_0: '사파리존에 입장하고 싶으면\n택시 운전사(사파리존)에게 말을 걸어봐',
   npc_script_1: '그거 아니? 사파리존에는 날씨에 따라서 출현하는\n포켓몬들이 달라져',
-  npc_script_2: '기술머신 파도타기를 포켓몬에게 가르치면\n물을 건널 수 있어!',
+  npc_script_2: '파도타기를 포켓몬에게 가르치면\n물을 건널 수 있어!',
   npc_script_3: '뭘 사야 할지 고민이 되네...',
   npc_script_4: '자네의 포켓몬을 계속 강화해봐!\n파티에 넣어두면 야생 포켓몬이 더 잘 잡힐거야',
   npc_script_5:
@@ -72,7 +72,7 @@ export const object: TranslationObject = {
   npc_script_12: '사파리존에서 시간을 너무 많이 보내서\n피곤하네...',
   npc_script_13: '호박사님 조수로 일하면\n일이 많아져서 너무 행복해!',
   npc_script_14: '네? 저는 호박사님이 아니에요',
-  npc_script_15: '조만간 호박사 리서치라는 걸 도입해볼 건데...',
+  npc_script_15: '조만간 호박사 리서치라는걸 도입해볼 생각인데...',
   npc_script_17: '사파리존 맵은 꾸준히 발견되고 있단다!',
   npc_script_18: '그때가 되면 자네가 도와주었으면 좋겠구만!',
   npc_script_19: '호박사님은 안쪽에 계십니다',
