@@ -86,6 +86,7 @@ export class WildPokemonObject extends MovableObject {
     this.chosenDirection = initialDir;
 
     this.timerText = addObjText(scene, tileX, tileY, '', 14, TEXTCOLOR.WHITE);
+    this.timerText.setStroke(TEXTCOLOR.REAL_BLACK, 4);
     this.timerText.setDepth(DEPTH.MESSAGE);
     this.timerText.setVisible(false);
 
