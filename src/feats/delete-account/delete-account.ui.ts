@@ -43,6 +43,7 @@ export class DeleteAccountUi extends BaseUi implements IInputHandler {
 
   async runDeleteAccountFlow(): Promise<DeleteAccountResult> {
     const questionUi = this.scene.getMessage('question');
+    const talk = this.scene.getMessage('talk');
 
     const ask = async (msgKey: string) => {
       await questionUi.showMessage(i18next.t(msgKey), {
@@ -56,9 +57,11 @@ export class DeleteAccountUi extends BaseUi implements IInputHandler {
       return choice?.key === 'yes';
     };
 
-    if (!(await ask('etc:deleteAccount_0'))) return 'cancelled';
+    await talk.showMessage(i18next.t('etc:deleteAccount_0'));
+
     if (!(await ask('etc:deleteAccount_1'))) return 'cancelled';
     if (!(await ask('etc:deleteAccount_2'))) return 'cancelled';
+    if (!(await ask('etc:deleteAccount_3'))) return 'cancelled';
 
     return 'confirmed';
   }
