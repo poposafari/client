@@ -1,6 +1,7 @@
 import type { GameScene } from '@poposafari/scenes';
-import { TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { TEXTFONT, TEXTSHADOW, TEXTSTROKE, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText, getPokemonTexture } from '@poposafari/utils';
+import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
 
 export interface PokemonSlotData {
   pokedexId: string;
@@ -19,6 +20,10 @@ export interface PokemonSlotOptions {
   levelIconGap?: number;
   heldItemScale?: number;
   heldItemOffset?: { x: number; y: number };
+  showPartyBonus?: boolean;
+  partyBonusOffsetX?: number;
+  partyBonusOffsetY?: number;
+  partyBonusSize?: number;
 }
 
 const DEFAULT_ICON_SCALE = 2;
@@ -35,6 +40,7 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
   private level?: GText;
   private levelIcon?: GImage;
   private levelIconGap = DEFAULT_LEVEL_ICON_GAP;
+  private partyBonusText?: GText;
   private heldItem!: GImage;
   private iconScale = DEFAULT_ICON_SCALE;
   private heldItemScale = DEFAULT_HELD_ITEM_SCALE;
@@ -57,6 +63,10 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
       levelIconGap = DEFAULT_LEVEL_ICON_GAP,
       heldItemScale = DEFAULT_HELD_ITEM_SCALE,
       heldItemOffset,
+      showPartyBonus = false,
+      partyBonusSize = Math.round(levelSize * 0.8),
+      partyBonusOffsetX = 0,
+      partyBonusOffsetY = levelOffsetY - levelSize,
     } = options;
 
     this.iconScale = iconScale;
@@ -97,6 +107,25 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
         .setVisible(false);
       this.add(this.level);
     }
+
+    if (showPartyBonus) {
+      this.partyBonusText = addText(
+        this.scene,
+        partyBonusOffsetX,
+        partyBonusOffsetY,
+        '',
+        partyBonusSize,
+        levelWeight,
+        'center',
+        TEXTSTYLE.SIG_0,
+        TEXTSHADOW.NONE,
+        TEXTSTROKE.GRAY,
+      )
+        .setOrigin(0.5, 0.5)
+        .setVisible(false)
+        .setFontFamily(TEXTFONT.MN);
+      this.add(this.partyBonusText);
+    }
   }
 
   setPokemon(pokemon: PokemonSlotData | null): void {
@@ -105,6 +134,7 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
       this.level?.setVisible(false);
       this.levelIcon?.setVisible(false);
       this.heldItem.setVisible(false);
+      this.partyBonusText?.setVisible(false);
       return;
     }
 
@@ -122,6 +152,13 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
       const leftEdge = -totalW / 2;
       this.levelIcon.setX(leftEdge + iconW / 2).setVisible(true);
       this.level.setX(leftEdge + iconW + this.levelIconGap).setVisible(true);
+    }
+
+    if (this.partyBonusText) {
+      const master = this.scene.getMasterData().getPokemonData(String(pokemon.pokedexId));
+      const rank = master?.rank ?? 'common';
+      const bonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, rank);
+      this.partyBonusText.setText(`+${(bonus * 100).toFixed(1)}%`).setVisible(true);
     }
 
     const itemId = pokemon.heldItemId;

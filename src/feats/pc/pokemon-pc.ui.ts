@@ -2319,6 +2319,10 @@ export class PokemonPcUi extends BaseUi {
         levelIconScale: 2,
         heldItemScale: 2.4,
         heldItemOffset: { x: 30, y: 35 },
+        showPartyBonus: true,
+        partyBonusOffsetX: 0,
+        partyBonusOffsetY: -22,
+        partyBonusSize: 35,
       });
       this.partySlots.push(slot);
     }

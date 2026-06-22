@@ -15,6 +15,10 @@ export interface PartyListOptions {
   levelSize?: number;
   heldItemScale?: number;
   heldItemOffset?: { x: number; y: number };
+  showPartyBonus?: boolean;
+  partyBonusOffsetX?: number;
+  partyBonusOffsetY?: number;
+  partyBonusSize?: number;
 }
 
 export class PartyListContainer extends Phaser.GameObjects.Container {
@@ -41,6 +45,10 @@ export class PartyListContainer extends Phaser.GameObjects.Container {
       nineSlice = { left: 8, right: 8, top: 8, bottom: 8 },
       heldItemScale = 2,
       heldItemOffset,
+      showPartyBonus = false,
+      partyBonusOffsetX,
+      partyBonusOffsetY,
+      partyBonusSize,
     } = options;
 
     this.strip = new WindowStripContainer(this.scene);
@@ -68,6 +76,10 @@ export class PartyListContainer extends Phaser.GameObjects.Container {
         levelSize,
         heldItemScale,
         heldItemOffset,
+        showPartyBonus,
+        partyBonusOffsetX,
+        partyBonusOffsetY,
+        partyBonusSize,
       });
       this.slots.push(slot);
       this.add(slot);

@@ -411,6 +411,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       frameVisible: false,
       levelSize: 40,
       heldItemOffset: { x: 20, y: 20 },
+      showPartyBonus: true,
+      partyBonusOffsetX: +0,
+      partyBonusOffsetY: -20,
+      partyBonusSize: 25,
     });
     this.partyList.setPosition(+905, 0);
     this.partyList.refresh();

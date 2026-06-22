@@ -6,3 +6,4 @@ export * from './api-loading-indicator.ui';
 export * from './audio.manager';
 export * from './option.manager';
 export * from './pokemon-exp-curve';
+export * from './party-bonus';

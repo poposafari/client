@@ -11,7 +11,6 @@ import {
   TEXTSTYLE,
   TEXTURE,
 } from '@poposafari/types';
-import type { PokemonRank } from '@poposafari/types';
 import {
   addContainer,
   addImage,
@@ -19,6 +18,7 @@ import {
   getPokemonI18Name,
   updatePokemonGenderIcon,
 } from '@poposafari/utils';
+import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
 import type { BattleAction, BattleContext, BattleModifiers } from '../battle.types';
 import { LOCATION_HUD, PLAYER_HUD, WILD_HUD } from '../battle.constants';
 import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
@@ -69,17 +69,6 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   /** catch rate 툴팁이 현재 표시값과 동일한 분해를 보여주도록, 마지막 표시 modifiers를 보관. */
   private currentModifiers: BattleModifiers = { bait: false, rock: false };
 
-  // 서버 LEVEL_CURVE (server/lib/constants/level-curve.ts)와 동일하게 유지.
-  private static readonly PARTY_LEVEL_COEF = 0.002;
-  private static readonly PARTY_LEVEL_CAP = 0.2;
-  private static readonly PARTY_SHINY_BONUS = 0.05;
-  private static readonly PARTY_TIER_BONUS: Record<PokemonRank, number> = {
-    common: 0,
-    rare: 0.01,
-    epic: 0.02,
-    legendary: 0.03,
-  };
-  private static readonly PARTY_SLOT_COUNT = 6;
   private static readonly CAPTURE_RATE_CAP = 0.999;
   private static readonly FLEE_RATE_CAP = 0.9;
 
@@ -284,6 +273,10 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       showLevel: true,
       nineSlice: { left: 8, right: 8, top: 8, bottom: 8 },
       frameVisible: false,
+      showPartyBonus: true,
+      partyBonusOffsetX: +0,
+      partyBonusOffsetY: -30,
+      partyBonusSize: 30,
     });
     this.partyList.setPosition(camW / 2 + 600 - PLAYER_HUD.x, 80);
     this.partyList.refresh();
@@ -410,17 +403,23 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let sum = 0;
     for (const p of party) {
-      const masterPokemon = scene.getMasterData().getPokemonData(String(p.pokedexId));
-      const rank: PokemonRank = masterPokemon?.rank ?? 'common';
-      const lvlBonus = Math.min(
-        BattleInfoUi.PARTY_LEVEL_CAP,
-        p.level * BattleInfoUi.PARTY_LEVEL_COEF,
-      );
-      const shinyBonus = p.isShiny ? BattleInfoUi.PARTY_SHINY_BONUS : 0;
-      const tBonus = BattleInfoUi.PARTY_TIER_BONUS[rank] ?? 0;
-      sum += lvlBonus + shinyBonus + tBonus;
+      const rank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      sum += partyMemberCaptureBonus(p.level, p.isShiny, rank);
     }
-    return sum / BattleInfoUi.PARTY_SLOT_COUNT;
+    return sum;
+  }
+
+  private partyBonusDisplaySum(): number {
+    const scene = this.scene as GameScene;
+    const party = scene.getUser()?.getParty();
+    if (!party || party.length === 0) return 0;
+
+    let sum = 0;
+    for (const p of party) {
+      const rank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      sum += Number((partyMemberCaptureBonus(p.level, p.isShiny, rank) * 100).toFixed(1));
+    }
+    return Number(sum.toFixed(1));
   }
 
   private modifierMultipliers(modifiers: BattleModifiers): {
@@ -449,9 +448,9 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let result = i18next.t('battle:catchRateBase', { rate: base });
 
-    if (this.partyBonus > 0) {
-      const bonus = (this.partyBonus * 100).toFixed(1);
-      result += ` + ${i18next.t('battle:catchRatePartyBonus', { rate: bonus })}`;
+    const displayBonus = this.partyBonusDisplaySum();
+    if (displayBonus > 0) {
+      result += ` + ${i18next.t('battle:catchRatePartyBonus', { rate: displayBonus.toFixed(1) })}`;
     }
 
     const modifierKey = this.currentModifiers.bait
