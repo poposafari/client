@@ -446,7 +446,8 @@ export class ApiManager {
     }
 
     if (status === 429) {
-      message = i18next.t('error:EXCEED_REQUEST');
+      const retryAfter = Number((error.response?.data as any)?.retryAfter) || 5;
+      message = i18next.t('error:EXCEED_REQUEST', { minutes: retryAfter });
     }
 
     return Promise.reject(new ApiError(code, message, status));

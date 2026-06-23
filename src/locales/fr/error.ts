@@ -12,7 +12,7 @@ export const error: TranslationError = {
   FAILED_ACCOUNT: "Échec de l'authentification du compte.",
   ACCOUNT_ALREADY_DELETED: "Une demande de suppression a été déposée pour ce compte.\nVeuillez contacter l'administrateur.",
   ACCOUNT_IN_USE: 'Ce compte est utilisé sur un autre appareil.\nVeuillez le fermer et réessayer.',
-  EXCEED_REQUEST: 'Trop de requêtes.\nVeuillez réessayer plus tard.',
+  EXCEED_REQUEST: 'Trop de requêtes.\nVeuillez réessayer dans {{minutes}} minute(s).',
   USER_NOT_FOUND: 'Utilisateur introuvable.',
   USER_ALREADY_EXISTS: 'Cet utilisateur est déjà enregistré.',
   NICKNAME_ALREADY_EXISTS: 'Ce pseudo est déjà utilisé.',

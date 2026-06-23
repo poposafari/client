@@ -12,7 +12,7 @@ export const error: TranslationError = {
   FAILED_ACCOUNT: 'Account authentication failed.',
   ACCOUNT_ALREADY_DELETED: 'This account has a deletion request.\nPlease contact the administrator.',
   ACCOUNT_IN_USE: 'This account is in use on another device.\nPlease close it and try again.',
-  EXCEED_REQUEST: 'Too many requests.\nPlease try again later.',
+  EXCEED_REQUEST: 'Too many requests.\nPlease try again in {{minutes}} minute(s).',
   USER_NOT_FOUND: 'User not found.',
   USER_ALREADY_EXISTS: 'This user is already registered.',
   NICKNAME_ALREADY_EXISTS: 'This nickname is already in use.',
