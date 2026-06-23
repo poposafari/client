@@ -10,7 +10,7 @@ export const error: TranslationError = {
   SESSION_EXPIRED: 'セッションの ゆうこうきげんが きれました。',
   ACCOUNT_ALREADY_EXIST: 'このアカウントは すでに とうろくされています。',
   FAILED_ACCOUNT: 'アカウントにんしょうに しっぱいしました。',
-  ACCOUNT_ALREADY_DELETED: 'このアカウントは すでに さくじょされています。',
+  ACCOUNT_ALREADY_DELETED: 'このアカウントは さくじょが しんせいされています。\nかんりしゃに おといあわせください。',
   ACCOUNT_IN_USE:
     'ほかの ききで せつぞくちゅうです。\nしゅうりょうしてから もういちど おためしください。',
   EXCEED_REQUEST: 'リクエストが おおすぎます。\nしばらくしてから おためしください。',

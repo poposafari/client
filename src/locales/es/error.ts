@@ -10,7 +10,7 @@ export const error: TranslationError = {
   SESSION_EXPIRED: 'Tu sesión ha caducado.',
   ACCOUNT_ALREADY_EXIST: 'Esta cuenta ya está registrada.',
   FAILED_ACCOUNT: 'Error al autenticar la cuenta.',
-  ACCOUNT_ALREADY_DELETED: 'Esta cuenta ha sido eliminada.',
+  ACCOUNT_ALREADY_DELETED: 'Esta cuenta tiene una solicitud de eliminación.\nPor favor, contacta con el administrador.',
   ACCOUNT_IN_USE: 'Esta cuenta está en uso en otro dispositivo.\nCiérrala e inténtalo de nuevo.',
   EXCEED_REQUEST: 'Demasiadas solicitudes.\nInténtalo de nuevo más tarde.',
   USER_NOT_FOUND: 'Usuario no encontrado.',

@@ -10,7 +10,7 @@ export const error: TranslationError = {
   SESSION_EXPIRED: 'Your session has expired.',
   ACCOUNT_ALREADY_EXIST: 'This account is already registered.',
   FAILED_ACCOUNT: 'Account authentication failed.',
-  ACCOUNT_ALREADY_DELETED: 'This account has been deleted.',
+  ACCOUNT_ALREADY_DELETED: 'This account has a deletion request.\nPlease contact the administrator.',
   ACCOUNT_IN_USE: 'This account is in use on another device.\nPlease close it and try again.',
   EXCEED_REQUEST: 'Too many requests.\nPlease try again later.',
   USER_NOT_FOUND: 'User not found.',

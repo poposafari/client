@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { LoginPhase } from '../login';
@@ -56,12 +57,14 @@ export class WelcomePhase implements IGamePhase {
     if (typeof window === 'undefined') return undefined;
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
-    if (!code || !code.startsWith('OAUTH_')) return undefined;
+    if (!code) return undefined;
     params.delete('code');
     const cleaned = params.toString();
     const newUrl = window.location.pathname + (cleaned ? `?${cleaned}` : '') + window.location.hash;
     window.history.replaceState(null, '', newUrl);
-    return 'error:OAUTH_FAILED';
+
+    const i18nKey = `error:${code}`;
+    return i18next.exists(i18nKey) ? i18nKey : 'error:OAUTH_FAILED';
   }
 
   exit(): void {
