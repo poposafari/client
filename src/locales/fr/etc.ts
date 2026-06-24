@@ -2,6 +2,7 @@ import type { TranslationEtc } from '../ko/etc';
 
 export const etc: TranslationEtc = {
   loading: 'Traitement en cours...',
+  reconnecting: 'Reconnexion...',
   yes: 'Oui',
   no: 'Non',
   cancel: 'Annuler',
@@ -23,7 +24,7 @@ export const etc: TranslationEtc = {
   welcome_2:
     'Ce jeu est à but non lucratif et ne revendique aucun droit\nsur Pokémon ni sur les ressources utilisées.',
   welcome_3:
-    "Il est encore en développement, mais vous pouvez déjà y jouer.\nNous le mettons à jour régulièrement pour en faire un meilleur jeu.",
+    'Il est encore en développement, mais vous pouvez déjà y jouer.\nNous le mettons à jour régulièrement pour en faire un meilleur jeu.',
   welcome_4:
     'Nous avons un canal Discord officiel.\nSignalez les bugs ou vos suggestions sur Discord !',
   welcome_5: "Le lien Discord se trouve en bas à gauche de l'écran-titre.",

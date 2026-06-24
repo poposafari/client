@@ -17,6 +17,8 @@ const SOCKET_SERVER_URL =
 
 const AUTH_ERROR_MESSAGES = ['Missing connection token', 'Invalid or expired connection token'];
 
+const RECONNECTION_ATTEMPTS = Infinity;
+
 export class OverworldEntryPhase implements IGamePhase {
   private ui: OverworldEntryUi | null = null;
   private offFns: Array<() => void> = [];
@@ -32,14 +34,30 @@ export class OverworldEntryPhase implements IGamePhase {
     this.ui.show();
 
     let socket = this.scene.getSocket();
-    if (!socket?.connected) {
+
+    if (!socket) {
       if (!this.connToken) {
         this.goToLogin();
         return;
       }
+
+      let firstAttempt = true;
       socket = io(SOCKET_SERVER_URL, {
-        auth: { token: this.connToken },
         transports: ['websocket', 'polling'],
+        reconnectionAttempts: RECONNECTION_ATTEMPTS,
+        auth: (cb: (data: { token: string }) => void) => {
+          if (firstAttempt && this.connToken) {
+            firstAttempt = false;
+            cb({ token: this.connToken });
+            return;
+          }
+          firstAttempt = false;
+          this.scene
+            .getApi()
+            .gameConnect()
+            .then((res) => cb({ token: res.ready ? res.token : '' }))
+            .catch(() => cb({ token: '' }));
+        },
       });
       this.scene.setSocket(socket);
       this.setupConnectErrorHandler(socket);
@@ -62,7 +80,7 @@ export class OverworldEntryPhase implements IGamePhase {
     this.offFns.push(() => socket.off('connect_error', handler));
   }
 
-  private goToLogin(): void {
+  private goToLogin(errorKey = 'error:SESSION_EXPIRED'): void {
     this.removeListeners();
     if (this.ui) {
       this.ui.hide();
@@ -70,9 +88,7 @@ export class OverworldEntryPhase implements IGamePhase {
       this.ui = null;
     }
     this.scene.resetSessionState();
-    this.scene.switchPhase(
-      new LoginPhase(this.scene, { initialErrorKey: 'error:SESSION_EXPIRED' }),
-    );
+    this.scene.switchPhase(new LoginPhase(this.scene, { initialErrorKey: errorKey }));
   }
 
   private enterChangeMap(socket: ReturnType<typeof io>): void {
@@ -210,12 +226,8 @@ export class OverworldEntryPhase implements IGamePhase {
       this.scene.switchPhase(new OverworldPhase(this.scene));
     };
     const onInitError = (payload: { message?: string }) => {
-      this.removeListeners();
       console.error('[OverworldEntry] init_error:', payload?.message);
-      this.ui?.hide();
-      this.ui?.destroy();
-      this.ui = null;
-      this.scene.switchPhase(new OverworldPhase(this.scene));
+      this.goToLogin('error:INTERNAL_SERVER_ERROR');
     };
     const onInitRoomState = (payload: { users: RoomUserState[] }) => {
       if (payload?.users?.length) {

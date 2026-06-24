@@ -6,6 +6,7 @@ import {
   IGamePhase,
   InputManager,
   OptionManager,
+  SocketReconnectingUi,
 } from '@poposafari/core';
 import { MapRegistry } from '@poposafari/core/map.registry';
 import { MasterData } from '@poposafari/core/master.data.ts';
@@ -101,6 +102,11 @@ export class GameScene extends BaseScene {
   private questionUi!: QuestionMessageUi;
   private cooldownUi!: CooldownMessageUi;
   private apiLoadingIndicator!: ApiLoadingIndicatorUi;
+  private reconnectingUi!: SocketReconnectingUi;
+  private reconnecting = false;
+  private reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private pendingOverworldRebuild = false;
+  private static readonly RECONNECT_TIMEOUT_MS = 60 * 1000;
 
   private fadeInOnNextOverworldEnter = false;
   private pendingScreenFadeIn = false;
@@ -174,6 +180,57 @@ export class GameScene extends BaseScene {
   };
   private onSocketConnectError = (err: Error): void => {
     console.warn('[Socket] connect_error', { message: err?.message, ts: new Date().toISOString() });
+  };
+
+  private onSocketReconnectAttempt = (): void => {
+    if (!this.currentSocketUserId) return;
+    if (this.reconnecting) return;
+    this.reconnecting = true;
+    this.reconnectingUi.show();
+    this.startReconnectTimeout();
+  };
+  private onSocketReconnect = (): void => {
+    if (!this.reconnecting) return;
+    this.reconnecting = false;
+    this.clearReconnectTimeout();
+    this.reconnectingUi.hide();
+
+    if (this.getCurrentPhase() instanceof OverworldPhase) {
+      this.switchPhase(new OverworldEntryPhase(this));
+    } else {
+      this.pendingOverworldRebuild = true;
+    }
+  };
+  private onSocketReconnectFailed = (): void => {
+    if (!this.reconnecting) return;
+    this.reconnecting = false;
+    this.clearReconnectTimeout();
+    this.reconnectingUi.hide();
+    this.resetSessionState();
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:SESSION_EXPIRED' }));
+  };
+
+  private startReconnectTimeout(): void {
+    this.clearReconnectTimeout();
+    this.reconnectTimeoutId = setTimeout(() => {
+      this.handleReconnectTimeout();
+    }, GameScene.RECONNECT_TIMEOUT_MS);
+  }
+
+  private clearReconnectTimeout(): void {
+    if (this.reconnectTimeoutId !== null) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
+  }
+
+  private handleReconnectTimeout = (): void => {
+    if (!this.reconnecting) return;
+    this.reconnecting = false;
+    this.reconnectTimeoutId = null;
+    this.reconnectingUi.hide();
+    this.resetSessionState();
+    this.switchPhase(new LoginPhase(this, { initialErrorKey: 'error:SESSION_EXPIRED' }));
   };
 
   private dayNightTween: Phaser.Tweens.Tween | null = null;
@@ -274,6 +331,7 @@ export class GameScene extends BaseScene {
 
   preload() {
     this.loadImage(TEXTURE.BG_0, 'ui/bgs', 'bg_0');
+    this.loadImage(TEXTURE.BG_BLACK, 'ui/bgs', 'bg_black');
     this.loadImage(TEXTURE.LOGO_0, 'ui', 'logo_0');
     this.loadImage(TEXTURE.WINDOW_0, 'ui/windows', 'window_0');
     this.loadImage(TEXTURE.CURSOR_WHITE, 'ui', 'cursor_w');
@@ -294,6 +352,7 @@ export class GameScene extends BaseScene {
     this.apiLoadingIndicator = new ApiLoadingIndicatorUi(this);
     this.api.setOnRequestStart(() => this.apiLoadingIndicator.start());
     this.api.setOnRequestEnd(() => this.apiLoadingIndicator.end());
+    this.reconnectingUi = new SocketReconnectingUi(this);
     this.mapRegistry = new MapRegistry();
     this.mapBuilder = new MapBuilder(this, this.mapRegistry);
     this.masterData = new MasterData();
@@ -364,6 +423,10 @@ export class GameScene extends BaseScene {
   }
 
   resetSessionState(): void {
+    this.reconnecting = false;
+    this.clearReconnectTimeout();
+    this.pendingOverworldRebuild = false;
+    this.reconnectingUi?.hide();
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -446,6 +509,9 @@ export class GameScene extends BaseScene {
       this.socket.off('connect_error', this.onSocketConnectError);
       this.socket.off('game_time_changed', this.onGameTimeChanged);
       this.socket.off('weather_changed', this.onWeatherChanged);
+      this.socket.io.off('reconnect_attempt', this.onSocketReconnectAttempt);
+      this.socket.io.off('reconnect', this.onSocketReconnect);
+      this.socket.io.off('reconnect_failed', this.onSocketReconnectFailed);
     }
     this.socket = socket;
     if (this.socket) {
@@ -455,6 +521,9 @@ export class GameScene extends BaseScene {
       this.socket.on('connect_error', this.onSocketConnectError);
       this.socket.on('game_time_changed', this.onGameTimeChanged);
       this.socket.on('weather_changed', this.onWeatherChanged);
+      this.socket.io.on('reconnect_attempt', this.onSocketReconnectAttempt);
+      this.socket.io.on('reconnect', this.onSocketReconnect);
+      this.socket.io.on('reconnect_failed', this.onSocketReconnectFailed);
       this.startIdleCheck();
     } else {
       this.stopIdleCheck();
@@ -527,6 +596,10 @@ export class GameScene extends BaseScene {
       const top = this.phaseStack.pop();
       if (top) top.exit();
     }
+
+    if (newPhase instanceof OverworldEntryPhase || newPhase instanceof OverworldPhase) {
+      this.pendingOverworldRebuild = false;
+    }
     this.phaseStack = [newPhase];
     this.logPhaseStack('switchPhase', newPhase);
     newPhase.enter();
@@ -555,6 +628,13 @@ export class GameScene extends BaseScene {
       top.exit();
     }
     const current = this.getCurrentPhase();
+
+    if (this.pendingOverworldRebuild && current instanceof OverworldPhase) {
+      this.logPhaseStack('popPhase (after)');
+      this.switchPhase(new OverworldEntryPhase(this));
+      return;
+    }
+
     if (current && current.onResume) {
       current.onResume();
     }

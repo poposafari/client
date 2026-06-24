@@ -2,6 +2,7 @@ import type { TranslationEtc } from '../ko/etc';
 
 export const etc: TranslationEtc = {
   loading: 'Procesando...',
+  reconnecting: 'Reconectando...',
   yes: 'Sí',
   no: 'No',
   cancel: 'Cancelar',
@@ -24,8 +25,7 @@ export const etc: TranslationEtc = {
     'Este juego es sin ánimo de lucro y no reclama la propiedad de\nPokémon ni de ninguno de los recursos utilizados.',
   welcome_3:
     'Todavía está en desarrollo, pero ya puedes jugarlo.\nLo actualizamos constantemente para hacer un juego cada vez mejor.',
-  welcome_4:
-    'Tenemos un canal oficial de Discord.\n¡Informa de errores o sugerencias por Discord!',
+  welcome_4: 'Tenemos un canal oficial de Discord.\n¡Informa de errores o sugerencias por Discord!',
   welcome_5:
     'Encontrarás el enlace de Discord en la parte inferior izquierda de la pantalla de título.',
   createAvatar_intro: 'Crea tu avatar',
@@ -101,7 +101,8 @@ export const etc: TranslationEtc = {
   s000_welcome_2: '¡Acércate al Pokémon que quieras capturar\ny pulsa Z o ENTER!',
   s000_battle_intro_0: '¡Te has encontrado con un Pokémon salvaje!',
   s000_battle_intro_1: 'Como esto es un tutorial,\nte explicaré brevemente cada acción.',
-  s000_tutorial_ball_0: 'Primero, «Bola» significa lanzar una Safari Ball\npara capturar al Pokémon.',
+  s000_tutorial_ball_0:
+    'Primero, «Bola» significa lanzar una Safari Ball\npara capturar al Pokémon.',
   s000_tutorial_ball_1:
     'En la Safari, solo usas Safari Balls\npara capturar Pokémon, no combates normales.',
   s000_tutorial_feed_0: '«Cebo» reduce la probabilidad de que huya,\npero también,',
