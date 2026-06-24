@@ -365,8 +365,8 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
       this.setItems(items);
       let initialCursorIndex = options?.initialCursorIndex;
       if (initialCursorIndex === undefined) {
-        const noIndex = items.findIndex((item) => item.key === 'no');
-        if (noIndex >= 0) initialCursorIndex = noIndex;
+        const yesIndex = items.findIndex((item) => item.key === 'yes');
+        if (yesIndex >= 0) initialCursorIndex = yesIndex;
       }
       if (initialCursorIndex !== undefined) {
         this.cursorIndex = Math.max(0, Math.min(items.length - 1, initialCursorIndex));

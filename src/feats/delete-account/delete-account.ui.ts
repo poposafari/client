@@ -50,7 +50,9 @@ export class DeleteAccountUi extends BaseUi implements IInputHandler {
         resolveWhen: 'displayed',
       });
 
-      const choice = await this.menuUi.waitForSelect(YES_NO_ITEMS());
+      const items = YES_NO_ITEMS();
+      const noIndex = items.findIndex((item) => item.key === 'no');
+      const choice = await this.menuUi.waitForSelect(items, { initialCursorIndex: noIndex });
       this.menuUi.hide();
       questionUi.hide();
 
