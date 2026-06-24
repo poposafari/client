@@ -765,23 +765,23 @@ export const item: TranslationItem = {
   },
   'experience-candy-xs': {
     name: 'けいけんアメXS',
-    description: '木 食べさせると ポケモンの 経験値が 少し もらえる。',
+    description: 'たべさせると ポケモンの けいけんちが すこし もらえる。',
   },
   'experience-candy-s': {
     name: 'けいけんアメS',
-    description: '食べさせると ポケモンの 経験値が もらえる。',
+    description: 'たべさせると ポケモンの けいけんちが もらえる。',
   },
   'experience-candy-m': {
     name: 'けいけんアメM',
-    description: '食べさせると ポケモンの 経験値が たくさん もらえる。',
+    description: 'たべさせると ポケモンの けいけんちが たくさん\nもらえる。',
   },
   'experience-candy-l': {
     name: 'けいけんアメL',
-    description: '食べさせると ポケモンの 経験値が とても たくさん もらえる。',
+    description: 'たべさせると ポケモンの けいけんちが とても\nたくさん もらえる。',
   },
   'experience-candy-xl': {
     name: 'けいけんアメXL',
-    description: '食べさせると ポケモンの 経験値が ものすごく たくさん もらえる。',
+    description: 'たべさせると ポケモンの けいけんちが ものすごく\nたくさん もらえる。',
   },
   move_cut: {
     name: 'わざマシン いあいぎり',
