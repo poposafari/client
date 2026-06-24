@@ -7,6 +7,7 @@ import {
   addBackground,
   addImage,
   addText,
+  getPokedexBaseId,
   getPokemonI18Name,
   getPokemonTexture,
 } from '@poposafari/utils';
@@ -14,10 +15,6 @@ import i18next from 'i18next';
 
 const MASK_NAME = '----------';
 const MASK_VALUE = '';
-
-function baseId(id: string): string {
-  return id.split(/[-_]/)[0].padStart(4, '0');
-}
 
 export class PokedexUi extends BaseUi {
   private bg!: GImage;
@@ -285,12 +282,12 @@ export class PokedexUi extends BaseUi {
     const user = scene.getUser();
     const pokedex: PokedexEntry[] = user?.getPokedex() ?? [];
 
-    const base = baseId(pokedexKey);
+    const base = getPokedexBaseId(pokedexKey);
     const hasVariant = pokedexKey !== base;
 
     const caughtKeySet = new Set(pokedex.filter((p) => p.caughtCount > 0).map((p) => p.pokedexId));
     const caughtBaseSet = new Set(
-      pokedex.filter((p) => p.caughtCount > 0).map((p) => baseId(p.pokedexId)),
+      pokedex.filter((p) => p.caughtCount > 0).map((p) => getPokedexBaseId(p.pokedexId)),
     );
     const isSeen = hasVariant ? caughtKeySet.has(pokedexKey) : caughtBaseSet.has(base);
 

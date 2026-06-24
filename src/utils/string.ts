@@ -166,5 +166,9 @@ export function updatePokemonGenderIcon(gender: number, text: GText) {
 }
 
 export function getPokedexId(pokdexId: string) {
-  return pokdexId.split('_')[0];
+  return pokdexId.split(/[-_]/)[0];
+}
+
+export function getPokedexBaseId(pokedexId: string): string {
+  return pokedexId.split(/[-_]/)[0].padStart(4, '0');
 }
