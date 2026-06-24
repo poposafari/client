@@ -12,7 +12,7 @@ import {
   BaseBagUi,
 } from '@poposafari/feats/bag/base-bag.ui';
 
-const SELL_CATEGORIES: ItemCategory[] = ['pokeball', 'candy', 'etc', 'tms_hms'];
+const SELL_CATEGORIES: ItemCategory[] = ['pokeball', 'candy', 'etc', 'sellable', 'tms_hms'];
 
 export class MartSellBagUi extends BaseBagUi {
   private masterData: MasterData;

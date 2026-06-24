@@ -831,18 +831,21 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage('pocket_m_pokeball', 'ui/bag', 'pocket_m_pokeball');
     this.scene.loadImage('pocket_m_candy', 'ui/bag', 'pocket_m_candy');
     this.scene.loadImage('pocket_m_etc', 'ui/bag', 'pocket_m_etc');
+    this.scene.loadImage('pocket_m_sellable', 'ui/bag', 'pocket_m_sellable');
     this.scene.loadImage('pocket_m_tms_hms', 'ui/bag', 'pocket_m_tms_hms');
     this.scene.loadImage('pocket_m_key', 'ui/bag', 'pocket_m_key');
 
     this.scene.loadImage('pocket_f_pokeball', 'ui/bag', 'pocket_f_pokeball');
     this.scene.loadImage('pocket_f_candy', 'ui/bag', 'pocket_f_candy');
     this.scene.loadImage('pocket_f_etc', 'ui/bag', 'pocket_f_etc');
+    this.scene.loadImage('pocket_f_sellable', 'ui/bag', 'pocket_f_sellable');
     this.scene.loadImage('pocket_f_tms_hms', 'ui/bag', 'pocket_f_tms_hms');
     this.scene.loadImage('pocket_f_key', 'ui/bag', 'pocket_f_key');
 
     this.scene.loadImage('icon_pocket_pokeball', 'ui/bag', 'icon_pocket_pokeball');
     this.scene.loadImage('icon_pocket_candy', 'ui/bag', 'icon_pocket_candy');
     this.scene.loadImage('icon_pocket_etc', 'ui/bag', 'icon_pocket_etc');
+    this.scene.loadImage('icon_pocket_sellable', 'ui/bag', 'icon_pocket_sellable');
     this.scene.loadImage('icon_pocket_tms_hms', 'ui/bag', 'icon_pocket_tms_hms');
     this.scene.loadImage('icon_pocket_key', 'ui/bag', 'icon_pocket_key');
     this.scene.loadImage(TEXTURE.REG, 'ui/bag', 'reg');

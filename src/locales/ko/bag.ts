@@ -3,6 +3,7 @@ export const bag = {
     pokeball: '몬스터볼',
     candy: '사탕',
     etc: '도구',
+    sellable: '판매 목적용',
     tms_hms: '기술머신',
     key: '귀중한 물건',
   },

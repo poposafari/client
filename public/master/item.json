@@ -572,29 +572,29 @@
   "nugget": {
     "id": "nugget",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "금구슬",
-    "purchasable": true,
-    "sellPrice": 5000,
+    "purchasable": false,
+    "sellPrice": 2000,
     "sellable": true,
     "tier": "rare"
   },
   "slowpoke-tail": {
     "id": "slowpoke-tail",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "맛있는꼬리",
-    "purchasable": true,
-    "sellPrice": 4900,
+    "purchasable": false,
+    "sellPrice": 2000,
     "sellable": true,
     "tier": "rare"
   },
   "stardust": {
     "id": "stardust",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "별의모래",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 1000,
     "sellable": true,
     "tier": "rare"
@@ -602,19 +602,19 @@
   "star-piece": {
     "id": "star-piece",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "별의조각",
-    "purchasable": true,
-    "sellPrice": 2000,
+    "purchasable": false,
+    "sellPrice": 1000,
     "sellable": true,
     "tier": "rare"
   },
   "tiny-mushroom": {
     "id": "tiny-mushroom",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "작은버섯",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
@@ -622,49 +622,49 @@
   "pearl": {
     "id": "pearl",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "진주",
-    "purchasable": true,
-    "sellPrice": 1000,
+    "purchasable": false,
+    "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
   },
   "big-mushroom": {
     "id": "big-mushroom",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "큰버섯",
-    "purchasable": true,
-    "sellPrice": 1500,
+    "purchasable": false,
+    "sellPrice": 1000,
     "sellable": true,
     "tier": "rare"
   },
   "big-pearl": {
     "id": "big-pearl",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "큰진주",
-    "purchasable": true,
-    "sellPrice": 2500,
+    "purchasable": false,
+    "sellPrice": 1000,
     "sellable": true,
     "tier": "rare"
   },
   "rare-bone": {
     "id": "rare-bone",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "귀중한뼈",
-    "purchasable": true,
-    "sellPrice": 5000,
+    "purchasable": false,
+    "sellPrice": 2000,
     "sellable": true,
     "tier": "rare"
   },
   "honey": {
     "id": "honey",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "달콤한꿀",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
@@ -672,19 +672,19 @@
   "pretty-wing": {
     "id": "pretty-wing",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고운깃털",
-    "purchasable": true,
-    "sellPrice": 200,
+    "purchasable": false,
+    "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
   },
   "balm-mushroom": {
     "id": "balm-mushroom",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "향기버섯",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
@@ -692,39 +692,39 @@
   "comet-shard": {
     "id": "comet-shard",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "혜성조각",
-    "purchasable": true,
-    "sellPrice": 1500,
+    "purchasable": false,
+    "sellPrice": 1200,
     "sellable": true,
     "tier": "rare"
   },
   "big-nugget": {
     "id": "big-nugget",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "큰금구슬",
-    "purchasable": true,
-    "sellPrice": 10000,
+    "purchasable": false,
+    "sellPrice": 4000,
     "sellable": true,
     "tier": "rare"
   },
   "pearl-string": {
     "id": "pearl-string",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "경단진주",
-    "purchasable": true,
-    "sellPrice": 3500,
+    "purchasable": false,
+    "sellPrice": 2000,
     "sellable": true,
     "tier": "rare"
   },
   "relic-band": {
     "id": "relic-band",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의팔찌",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 50000,
     "sellable": true,
     "tier": "epic"
@@ -732,9 +732,9 @@
   "relic-copper": {
     "id": "relic-copper",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의동화",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 2000,
     "sellable": true,
     "tier": "rare"
@@ -742,9 +742,9 @@
   "relic-silver": {
     "id": "relic-silver",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의은화",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 5000,
     "sellable": true,
     "tier": "rare"
@@ -752,9 +752,9 @@
   "relic-gold": {
     "id": "relic-gold",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의금화",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 10000,
     "sellable": true,
     "tier": "rare"
@@ -762,9 +762,9 @@
   "relic-crown": {
     "id": "relic-crown",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의왕관",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 200000,
     "sellable": true,
     "tier": "epic"
@@ -772,9 +772,9 @@
   "relic-statue": {
     "id": "relic-statue",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의석상",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 150000,
     "sellable": true,
     "tier": "epic"
@@ -782,9 +782,9 @@
   "relic-vase": {
     "id": "relic-vase",
     "buyPrice": 999999999,
-    "category": "etc",
+    "category": "sellable",
     "comment": "고대의항아리",
-    "purchasable": true,
+    "purchasable": false,
     "sellPrice": 70000,
     "sellable": true,
     "tier": "epic"

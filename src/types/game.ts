@@ -106,7 +106,7 @@ export interface UserProfile {
 }
 
 export type ItemTier = 'common' | 'rare' | 'epic' | 'legendary';
-export type ItemCategory = 'pokeball' | 'tms_hms' | 'etc' | 'key' | 'candy';
+export type ItemCategory = 'pokeball' | 'tms_hms' | 'etc' | 'key' | 'candy' | 'sellable';
 export type ItemData = {
   id: string;
   comment: string;

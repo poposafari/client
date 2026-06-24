@@ -107,6 +107,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
     pokeball: [],
     candy: [],
     etc: [],
+    sellable: [],
     tms_hms: [],
     key: [],
   };
@@ -285,6 +286,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
       pokeball: [],
       candy: [],
       etc: [],
+      sellable: [],
       tms_hms: [],
       key: [],
     };

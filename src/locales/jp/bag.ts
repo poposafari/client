@@ -3,6 +3,7 @@ export const bag = {
     pokeball: 'モンスターボール',
     candy: 'アメ',
     etc: 'どうぐ',
+    sellable: 'きちょうひん',
     tms_hms: 'わざマシン',
     key: 'たいせつなもの',
   },

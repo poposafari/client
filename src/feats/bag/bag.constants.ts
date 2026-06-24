@@ -1,6 +1,6 @@
 import { ItemCategory } from '@poposafari/types';
 
-export const BAG_CATEGORIES: ItemCategory[] = ['pokeball', 'candy', 'etc', 'tms_hms', 'key'];
+export const BAG_CATEGORIES: ItemCategory[] = ['pokeball', 'candy', 'etc', 'sellable', 'tms_hms', 'key'];
 
 export interface BagAction {
   key: 'give' | 'use' | 'register' | 'deregister' | 'cancel';
@@ -17,6 +17,10 @@ export const BAG_ACTIONS: Record<ItemCategory, BagAction[]> = {
     { key: 'cancel', i18n: 'bag:action.cancel' },
   ],
   etc: [
+    { key: 'give', i18n: 'bag:action.give' },
+    { key: 'cancel', i18n: 'bag:action.cancel' },
+  ],
+  sellable: [
     { key: 'give', i18n: 'bag:action.give' },
     { key: 'cancel', i18n: 'bag:action.cancel' },
   ],
