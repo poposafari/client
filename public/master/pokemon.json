@@ -7245,7 +7245,7 @@
     "baseExp": 184
   },
   "0198": {
-    "ability": ["insomnia", "super-luck", "ptierster"],
+    "ability": ["insomnia", "super-luck", "prankster"],
     "comment": "니로우",
     "nextEvol": {
       "cost": ["dusk-stone"],
@@ -10950,7 +10950,7 @@
     "baseExp": 140
   },
   "0302": {
-    "ability": ["keen-eye", "stall", "ptierster"],
+    "ability": ["keen-eye", "stall", "prankster"],
     "comment": "깜까미",
     "nextEvol": {
       "cost": [],
@@ -11350,7 +11350,7 @@
     "baseExp": 142
   },
   "0313": {
-    "ability": ["illuminate", "swarm", "ptierster"],
+    "ability": ["illuminate", "swarm", "prankster"],
     "comment": "볼비트",
     "nextEvol": {
       "cost": [],
@@ -11375,7 +11375,7 @@
     "baseExp": 151
   },
   "0314": {
-    "ability": ["oblivious", "tinted-lens", "ptierster"],
+    "ability": ["oblivious", "tinted-lens", "prankster"],
     "comment": "네오비트",
     "nextEvol": {
       "cost": [],
@@ -12557,7 +12557,7 @@
     "baseExp": 159
   },
   "0354-mega": {
-    "ability": ["ptierster"],
+    "ability": ["prankster"],
     "comment": "다크펫",
     "nextEvol": {
       "cost": [],
@@ -15474,7 +15474,7 @@
     "baseExp": 78
   },
   "0447": {
-    "ability": ["steadfast", "inner-focus", "ptierster"],
+    "ability": ["steadfast", "inner-focus", "prankster"],
     "comment": "리오르",
     "nextEvol": {
       "cost": ["friendship_220+time_day"],
@@ -17480,7 +17480,7 @@
     "baseExp": 225
   },
   "0509": {
-    "ability": ["limber", "unburden", "ptierster"],
+    "ability": ["limber", "unburden", "prankster"],
     "comment": "쌔비냥",
     "nextEvol": {
       "cost": ["candy_30"],
@@ -17505,7 +17505,7 @@
     "baseExp": 56
   },
   "0510": {
-    "ability": ["limber", "unburden", "ptierster"],
+    "ability": ["limber", "unburden", "prankster"],
     "comment": "레파르다스",
     "nextEvol": {
       "cost": [],
@@ -18480,7 +18480,7 @@
     "baseExp": 218
   },
   "0546": {
-    "ability": ["ptierster", "infiltrator", "chlorophyll"],
+    "ability": ["prankster", "infiltrator", "chlorophyll"],
     "comment": "소미안",
     "nextEvol": {
       "cost": ["sun-stone"],
@@ -18505,7 +18505,7 @@
     "baseExp": 56
   },
   "0547": {
-    "ability": ["ptierster", "infiltrator", "chlorophyll"],
+    "ability": ["prankster", "infiltrator", "chlorophyll"],
     "comment": "엘풍",
     "nextEvol": {
       "cost": [],
@@ -21430,7 +21430,7 @@
     "baseExp": 261
   },
   "0641": {
-    "ability": ["ptierster", "defiant"],
+    "ability": ["prankster", "defiant"],
     "comment": "토네로스",
     "nextEvol": {
       "cost": [],
@@ -21480,7 +21480,7 @@
     "baseExp": 261
   },
   "0642": {
-    "ability": ["ptierster", "defiant"],
+    "ability": ["prankster", "defiant"],
     "comment": "볼트로스",
     "nextEvol": {
       "cost": [],
@@ -23283,7 +23283,7 @@
     "baseExp": 71
   },
   "0678": {
-    "ability": ["keen-eye", "infiltrator", "ptierster"],
+    "ability": ["keen-eye", "infiltrator", "prankster"],
     "comment": "냐오닉스",
     "nextEvol": {
       "cost": [],
@@ -24215,7 +24215,7 @@
     "baseExp": 270
   },
   "0707": {
-    "ability": ["ptierster", "magician"],
+    "ability": ["prankster", "magician"],
     "comment": "클레피",
     "nextEvol": {
       "cost": [],
@@ -29290,7 +29290,7 @@
     "baseExp": 255
   },
   "0859": {
-    "ability": ["ptierster", "frisk", "pickpocket"],
+    "ability": ["prankster", "frisk", "pickpocket"],
     "comment": "메롱꿍",
     "nextEvol": {
       "cost": ["candy_45"],
@@ -29315,7 +29315,7 @@
     "baseExp": 53
   },
   "0860": {
-    "ability": ["ptierster", "frisk", "pickpocket"],
+    "ability": ["prankster", "frisk", "pickpocket"],
     "comment": "쏘겨모",
     "nextEvol": {
       "cost": ["candy_80"],
@@ -29340,7 +29340,7 @@
     "baseExp": 130
   },
   "0861": {
-    "ability": ["ptierster", "frisk", "pickpocket"],
+    "ability": ["prankster", "frisk", "pickpocket"],
     "comment": "오롱털",
     "nextEvol": {
       "cost": [],
@@ -29365,7 +29365,7 @@
     "baseExp": 255
   },
   "0861-gmax": {
-    "ability": ["ptierster", "frisk", "pickpocket"],
+    "ability": ["prankster", "frisk", "pickpocket"],
     "comment": "오롱털",
     "nextEvol": {
       "cost": [],
@@ -31973,7 +31973,7 @@
     "baseExp": 177
   },
   "0944": {
-    "ability": ["unburden", "pickpocket", "ptierster"],
+    "ability": ["unburden", "pickpocket", "prankster"],
     "comment": "땃쭈르",
     "nextEvol": {
       "cost": ["candy_36"],
@@ -31998,7 +31998,7 @@
     "baseExp": 58
   },
   "0945": {
-    "ability": ["unburden", "poison-touch", "ptierster"],
+    "ability": ["unburden", "poison-touch", "prankster"],
     "comment": "태깅구르",
     "nextEvol": {
       "cost": [],
