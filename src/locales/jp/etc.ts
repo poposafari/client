@@ -64,6 +64,7 @@ export const etc: TranslationEtc = {
   timeDay: 'ひる',
   timeDusk: 'ゆうがた',
   timeNight: 'よる',
+  timeUntilNext: 'つぎの じかんまで',
   noRegisteredItem: 'とうろくした アイテムが ありません。',
   cantRideHere: 'ここでは つかえない アイテムです。',
   surfPrompt: 'みずは ふかく あおい いろだ。\nなみのりを つかいますか？',

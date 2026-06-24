@@ -121,6 +121,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
 
   private timeContainer!: GContainer;
   private timeIcon!: GImage;
+  private timeLabelText!: GText;
   private timeText!: GText;
 
   private weatherContainer!: GContainer;
@@ -429,10 +430,21 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private createTime() {
     this.timeContainer = addContainer(this.scene, DEPTH.HUD, -810, -390);
     this.timeIcon = addImage(this.scene, TEXTURE.ICON_NIGHT, undefined, 0, 0).setScale(4.8);
+    this.timeLabelText = addText(
+      this.scene,
+      0,
+      +48,
+      i18next.t('etc:timeUntilNext'),
+      30,
+      '100',
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    ).setOrigin(0.5, 0.5);
     this.timeText = addText(
       this.scene,
       0,
-      +60,
+      +82,
       '00:00',
       50,
       '100',
@@ -440,7 +452,7 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       TEXTSTYLE.YELLOW,
       TEXTSHADOW.GRAY,
     ).setOrigin(0.5, 0.5);
-    this.timeContainer.add([this.timeIcon, this.timeText]);
+    this.timeContainer.add([this.timeIcon, this.timeLabelText, this.timeText]);
   }
 
   private createWeather() {
@@ -677,6 +689,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   }
 
   refreshInfo(mapKey: string, tileX: number, tileY: number, money: number): void {
+    this.timeLabelText?.setText(i18next.t('etc:timeUntilNext'));
+
     const loc = this.infoList.getRow('location');
     if (loc) loc.text.setText(mapKey ? i18next.t(`map:${mapKey}`) : '');
 

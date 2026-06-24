@@ -65,6 +65,7 @@ export const etc: TranslationEtc = {
   timeDay: '낮',
   timeDusk: '일몰',
   timeNight: '밤',
+  timeUntilNext: '다음 시간까지',
   noRegisteredItem: '등록한 아이템이 없습니다.',
   cantRideHere: '여기서는 사용할 수 없는 아이템입니다.',
   surfPrompt: '물은 깊고 푸른색이다.\n파도타기를 사용하시겠습니까?',

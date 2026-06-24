@@ -64,6 +64,7 @@ export const etc: TranslationEtc = {
   timeDay: 'Jour',
   timeDusk: 'Crépuscule',
   timeNight: 'Nuit',
+  timeUntilNext: 'Jusqu\'au prochain',
   noRegisteredItem: 'Aucun objet enregistré.',
   cantRideHere: 'Cet objet ne peut pas être utilisé ici.',
   surfPrompt: "L'eau est profonde et bleue.\nUtiliser Surf ?",
