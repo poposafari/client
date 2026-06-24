@@ -310,6 +310,21 @@ export class PcLocalState {
     this.allPokemons.delete(id);
   }
 
+  commit(): void {
+    this.original.clear();
+    for (const [id, state] of this.current) {
+      this.original.set(id, { ...state });
+    }
+    this.originalNicknames.clear();
+    for (const [id, pokemon] of this.allPokemons) {
+      this.originalNicknames.set(id, pokemon.nickname);
+    }
+    this.originalBoxMeta.clear();
+    for (const [boxNumber, meta] of this.boxMeta) {
+      this.originalBoxMeta.set(boxNumber, { ...meta });
+    }
+  }
+
   getChanges(): PcSlotState[] {
     const changes: PcSlotState[] = [];
     for (const [id, cur] of this.current) {

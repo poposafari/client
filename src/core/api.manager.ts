@@ -169,12 +169,12 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async sellPokemon(
-    id: number,
+  async sellPokemons(
+    ids: number[],
   ): Promise<{ rewards: { itemId: string; quantity: number }[] } | null> {
     const res = await this.client.post<
       ApiResponse<{ rewards: { itemId: string; quantity: number }[] }>
-    >('/pokemon/sell', { id });
+    >('/pokemon/sell', { ids });
     return res.data.success ? res.data.data : null;
   }
 

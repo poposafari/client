@@ -46,6 +46,7 @@ export class PokemonPcPhase implements IGamePhase {
     this.pcState.init(boxPokemons, user.getParty(), boxMeta);
     this.pokemonPcUi = new PokemonPcUi(this.scene, this.pcState);
     this.pokemonPcUi.onClose = () => this.closePc();
+    this.pokemonPcUi.onFlush = () => this.flushArrange();
     this.pokemonPcUi.show();
 
     void this.maybeShowTutorial();
@@ -84,51 +85,59 @@ export class PokemonPcPhase implements IGamePhase {
     this.closing = true;
     this.pokemonPcUi?.lockInput();
 
+    await this.flushArrange();
+
+    this.scene.popPhase();
+  }
+
+  private async flushArrange(): Promise<void> {
     const changes = this.pcState.getChanges();
     const boxMetaChanges = this.pcState.getBoxMetaChanges();
     const nicknameChanges = this.pcState.getNicknameChanges();
 
-    if (changes.length > 0 || boxMetaChanges.length > 0 || nicknameChanges.length > 0) {
-      const api = this.scene.getApi();
-      await api.patchPokemonArrange(
-        changes,
-        boxMetaChanges.length > 0 ? boxMetaChanges : undefined,
-        nicknameChanges.length > 0 ? nicknameChanges : undefined,
-      );
-
-      const user = this.scene.getUser();
-      const partyPokemons = this.pcState.getPartyPokemons();
-      user?.setParty(
-        partyPokemons.map((p) => {
-          const slotState = this.pcState.getSlotState(p.id)!;
-          return {
-            id: p.id,
-            pokedexId: p.pokedexId,
-            level: p.level,
-            exp: p.exp ?? 0,
-            gender: p.gender,
-            isShiny: p.isShiny,
-            nickname: p.nickname,
-            abilityId: p.abilityId,
-            natureId: p.natureId,
-            skills: p.skills,
-            heldItemId: p.heldItemId,
-            partySlot: slotState.partySlot,
-            ballId: p.ballId,
-            friendship: p.friendship,
-            caughtLocation: p.caughtLocation,
-            caughtAt: p.caughtAt,
-          };
-        }),
-      );
-
-      const updatedBox = this.pcState.getAllBoxPokemons();
-      user?.setPokemonBox(updatedBox);
-      user?.setPokemonBoxCount(updatedBox.length);
-      user?.setBoxMeta(this.pcState.getBoxMetaSnapshot());
+    if (changes.length === 0 && boxMetaChanges.length === 0 && nicknameChanges.length === 0) {
+      return;
     }
 
-    this.scene.popPhase();
+    const api = this.scene.getApi();
+    await api.patchPokemonArrange(
+      changes,
+      boxMetaChanges.length > 0 ? boxMetaChanges : undefined,
+      nicknameChanges.length > 0 ? nicknameChanges : undefined,
+    );
+
+    const user = this.scene.getUser();
+    const partyPokemons = this.pcState.getPartyPokemons();
+    user?.setParty(
+      partyPokemons.map((p) => {
+        const slotState = this.pcState.getSlotState(p.id)!;
+        return {
+          id: p.id,
+          pokedexId: p.pokedexId,
+          level: p.level,
+          exp: p.exp ?? 0,
+          gender: p.gender,
+          isShiny: p.isShiny,
+          nickname: p.nickname,
+          abilityId: p.abilityId,
+          natureId: p.natureId,
+          skills: p.skills,
+          heldItemId: p.heldItemId,
+          partySlot: slotState.partySlot,
+          ballId: p.ballId,
+          friendship: p.friendship,
+          caughtLocation: p.caughtLocation,
+          caughtAt: p.caughtAt,
+        };
+      }),
+    );
+
+    const updatedBox = this.pcState.getAllBoxPokemons();
+    user?.setPokemonBox(updatedBox);
+    user?.setPokemonBoxCount(updatedBox.length);
+    user?.setBoxMeta(this.pcState.getBoxMetaSnapshot());
+
+    this.pcState.commit();
   }
 
   exit(): void {

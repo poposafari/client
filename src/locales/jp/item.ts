@@ -24,7 +24,8 @@ export const item: TranslationItem = {
   },
   'safari-zone-ticket': {
     name: 'サファリゾーンチケット',
-    description: 'サファリゾーンに　はいるときに\nひつような　チケット。にゅうじょうじに\n1まい　しょうひされる。',
+    description:
+      'サファリゾーンに　はいるときに\nひつような　チケット。にゅうじょうじに\n1まい　しょうひされる。',
   },
   'great-ball': {
     name: 'スーパーボール',
@@ -331,7 +332,8 @@ export const item: TranslationItem = {
   },
   'linking-cord': {
     name: 'つながりのヒモ',
-    description: 'ふしぎな　エネルギーを　かんじる　ヒモ。\nとくていの　ポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる　ヒモ。\nとくていの　ポケモンに　あいされている。',
   },
   'black-augurite': {
     name: 'くろのきせき',
@@ -339,23 +341,28 @@ export const item: TranslationItem = {
   },
   'peat-block': {
     name: 'ピートブロック',
-    description: 'ふしぎな　エネルギーを　かんじる　ピート。\nとくていの　ポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる　ピート。\nとくていの　ポケモンに　あいされている。',
   },
   'scroll-of-darkness': {
     name: 'あくのかけじく',
-    description: 'あくの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
+    description:
+      'あくの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
   },
   'scroll-of-waters': {
     name: 'みずのかけじく',
-    description: 'みずの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
+    description:
+      'みずの　わざの　おくぎが　しるされた\nふうがわりな　かけじく。とくていの\nポケモンに　あいされている。',
   },
   'malicious-armor': {
     name: 'ノロイノヨロイ',
-    description: 'ふしぎな　エネルギーを　かんじる\nのろわれた　ヨロイ。とくていの\nポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる\nのろわれた　ヨロイ。とくていの\nポケモンに　あいされている。',
   },
   'auspicious-armor': {
     name: 'イワイノヨロイ',
-    description: 'ふしぎな　エネルギーを　かんじる\nめでたい　ヨロイ。とくていの\nポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる\nめでたい　ヨロイ。とくていの\nポケモンに　あいされている。',
   },
   'syrupy-apple': {
     name: 'みついりりんご',
@@ -363,11 +370,13 @@ export const item: TranslationItem = {
   },
   'unremarkable-teacup': {
     name: 'ボンサクのちゃわん',
-    description: 'ふしぎな　エネルギーを　かんじる\nふるい　ちゃわん。とくていの\nポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる\nふるい　ちゃわん。とくていの\nポケモンに　あいされている。',
   },
   'masterpiece-teacup': {
     name: 'ケッサクのちゃわん',
-    description: 'ふしぎな　エネルギーを　かんじる\nこっとうの　ちゃわん。とくていの\nポケモンに　あいされている。',
+    description:
+      'ふしぎな　エネルギーを　かんじる\nこっとうの　ちゃわん。とくていの\nポケモンに　あいされている。',
   },
   repel: {
     name: 'むしよけスプレー',
@@ -639,27 +648,33 @@ export const item: TranslationItem = {
   },
   'adamant-crystal': {
     name: 'だいこんごうだま',
-    description: 'ディアルガが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
+    description:
+      'ディアルガが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'lustrous-globe': {
     name: 'だいしらたま',
-    description: 'パルキアが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
+    description:
+      'パルキアが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'griseous-core': {
     name: 'だいはっきんだま',
-    description: 'ギラティナが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
+    description:
+      'ギラティナが　もつと　すがたが　かわり\nほんとうの　ちからを　はっきできる　かがやく　たま。',
   },
   'cornerstone-mask': {
     name: 'いしずえのめん',
-    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
+    description:
+      'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'wellspring-mask': {
     name: 'いどのめん',
-    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
+    description:
+      'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'hearthflame-mask': {
     name: 'かまどのめん',
-    description: 'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
+    description:
+      'オーガポンが　つけている　めんの　ひとつ。\nおもそうだが　だれかの　おもいが　こもっている。',
   },
   'red-orb': {
     name: 'べにいろのたま',
@@ -750,7 +765,7 @@ export const item: TranslationItem = {
   },
   'experience-candy-xs': {
     name: 'けいけんアメXS',
-    description: '食べさせると ポケモンの 経験値が 少し もらえる。',
+    description: '木 食べさせると ポケモンの 経験値が 少し もらえる。',
   },
   'experience-candy-s': {
     name: 'けいけんアメS',

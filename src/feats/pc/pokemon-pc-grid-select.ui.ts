@@ -65,6 +65,7 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
 
   onExitTop?: () => void;
   onExitRight?: () => void;
+  onExitBottom?: () => boolean;
   onPageToggle?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager) {
@@ -174,6 +175,14 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
       (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
       this.onExitRight?.();
       return true;
+    }
+
+    const lastRowStart = (this.config.rows - 1) * cols;
+    if (key === dir.down && this.cursorIndex >= lastRowStart) {
+      if (this.onExitBottom?.()) {
+        (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
+        return true;
+      }
     }
 
     return false;

@@ -34,7 +34,7 @@ import {
 import i18next from 'i18next';
 import { PokemonPcGridSelectUi } from './pokemon-pc-grid-select.ui';
 import { PcLocalState } from './pc-local-state';
-import { PC_MAX_BOX } from './pc.const';
+import { PC_MAX_BOX, PC_GRID_PER_BOX } from './pc.const';
 import { MenuListUi } from '../menu/menu-list.ui';
 import { MenuUi } from '../menu/menu-ui';
 import { NameInputUi } from './name-input.ui';
@@ -50,7 +50,7 @@ import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.conta
 import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
 
-type PcFocusArea = 'grid' | 'party' | 'top' | 'grab';
+type PcFocusArea = 'grid' | 'party' | 'top' | 'grab' | 'sellButtons';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
 
 const RANK_COLOR: Record<PokemonRank, string> = {
@@ -189,7 +189,25 @@ export class PokemonPcUi extends BaseUi {
   private static readonly BOTTOM_INFO_OFFSET_X = 0;
   private static readonly BOTTOM_INFO_OFFSET_Y = -20;
 
+  private sellMode = false;
+  private sellSelectedIds = new Set<number>();
+  private sellGuideWindow!: GWindow;
+  private sellGuideText!: GText;
+  private sellTitle!: GText;
+  private sellDecideWindow!: GWindow;
+  private sellDecideText!: GText;
+  private sellQuitWindow!: GWindow;
+  private sellQuitText!: GText;
+  private sellButtonCursor!: GSprite;
+  private sellButtonIndex: 0 | 1 = 0; // 0 = 결정한다, 1 = 그만둔다
+  private sellCheckIcons: GImage[] = [];
+  private sellTopSet!: GContainer;
+  private sellBottomSet!: GContainer;
+  private partyDimWindow!: GWindow;
+
   onClose?: () => void;
+
+  onFlush?: () => Promise<void>;
 
   /** selectForGive 모드에서 포켓몬이 선택되었을 때 호출 */
   onPokemonSelected?: (pokemon: PokemonBoxItem) => void;
@@ -218,6 +236,7 @@ export class PokemonPcUi extends BaseUi {
     this.gridSelect = new PokemonPcGridSelectUi(scene, scene.getInputManager());
     this.gridSelect.onExitTop = () => this.switchFocus('top');
     this.gridSelect.onExitRight = () => {
+      if (this.sellMode) return;
       const partyCount = this.pcState.getPartyCount();
       if (partyCount === 0) return;
       const gridCols = 6;
@@ -225,9 +244,20 @@ export class PokemonPcUi extends BaseUi {
       this.partyCursorIndex = Math.min(row, partyCount - 1);
       this.switchFocus('party');
     };
+    this.gridSelect.onExitBottom = () => {
+      if (!this.sellMode) return false;
+      this.switchFocus('sellButtons');
+      return true;
+    };
     this.gridSelect.onCursorMoved = (selectedKey) => this.updateInfo(selectedKey);
-    this.gridSelect.onConfirm = () => this.openGridMenu();
-    this.gridSelect.onCancel = () => this.onClose?.();
+    this.gridSelect.onConfirm = () => {
+      if (this.sellMode) this.toggleSellCheck();
+      else this.openGridMenu();
+    };
+    this.gridSelect.onCancel = () => {
+      if (this.sellMode) this.exitSellMode();
+      else this.onClose?.();
+    };
     this.gridSelect.onPageToggle = () => this.cycleInfoPage();
 
     this.gridMenu = new MenuListUi(scene, scene.getInputManager(), {
@@ -283,6 +313,7 @@ export class PokemonPcUi extends BaseUi {
       this.topCursor,
       this.topArrowLeft,
       this.topArrowRight,
+      ...this.sellCheckIcons,
     ]);
 
     this.partySet = this.scene.add.container(
@@ -295,6 +326,7 @@ export class PokemonPcUi extends BaseUi {
       this.partyTitle,
       ...[...this.partySlots].reverse(),
       this.partyCursor,
+      this.partyDimWindow,
     ]);
 
     this.grabOverlay = this.scene.add.container(this.pcSet.x, this.pcSet.y);
@@ -356,6 +388,8 @@ export class PokemonPcUi extends BaseUi {
       this.bottomInfoSet,
       this.grabOverlay,
       this.inputGuide,
+      this.sellTopSet,
+      this.sellBottomSet,
     ]);
 
     this.tooltipManager = new HudTooltipManager(this.scene, this);
@@ -420,6 +454,7 @@ export class PokemonPcUi extends BaseUi {
     this.topName.setText(displayName);
     this.pcBg.setFrame(`pc_bgs-${meta.wallpaper}`);
     this.refreshPartySlots();
+    if (this.sellMode) this.refreshSellChecks();
     if (this.focusArea === 'top' || this.focusArea === 'grab') {
       this.clearInfo();
     } else if (this.focusArea === 'party') {
@@ -458,11 +493,13 @@ export class PokemonPcUi extends BaseUi {
       this.gridSelect.setCursorVisible(true);
       this.topCursor.setVisible(false);
       this.partyCursor.setVisible(false);
+      this.sellButtonCursor.setVisible(false);
       this.updateInfo(this.gridSelect.getSelectedKey());
       this.inputManager.push(this.gridSelect);
     } else if (area === 'top') {
       this.topCursor.setVisible(true);
       this.partyCursor.setVisible(false);
+      this.sellButtonCursor.setVisible(false);
       this.clearInfo();
       this.inputManager.push(this);
     } else if (area === 'party') {
@@ -470,6 +507,12 @@ export class PokemonPcUi extends BaseUi {
       this.topCursor.setVisible(false);
       this.updatePartyCursorPosition();
       this.updatePartySlotInfo();
+      this.inputManager.push(this);
+    } else if (area === 'sellButtons') {
+      this.topCursor.setVisible(false);
+      this.partyCursor.setVisible(false);
+      this.sellButtonCursor.setVisible(true);
+      this.updateSellButtonCursor();
       this.inputManager.push(this);
     }
   }
@@ -507,6 +550,8 @@ export class PokemonPcUi extends BaseUi {
       this.handleTopInput(key);
     } else if (this.focusArea === 'grab') {
       this.handleGrabInput(key);
+    } else if (this.focusArea === 'sellButtons') {
+      this.handleSellButtonsInput(key);
     }
   }
 
@@ -574,6 +619,7 @@ export class PokemonPcUi extends BaseUi {
         break;
       case KEY.Z:
       case KEY.ENTER:
+        if (this.sellMode) break;
         if (this.mode !== 'manage') break;
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.openTopMenu();
@@ -581,6 +627,10 @@ export class PokemonPcUi extends BaseUi {
       case KEY.X:
       case KEY.ESC:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        if (this.sellMode) {
+          this.exitSellMode();
+          break;
+        }
         this.onClose?.();
         break;
     }
@@ -742,9 +792,7 @@ export class PokemonPcUi extends BaseUi {
           this.renamePokemon(pokemon);
           break;
         case 'pc:sendToProfessor':
-          this.sellPokemon(pokemon).then(() => {
-            this.inputManager.push(this.gridSelect);
-          });
+          this.enterSellMode(pokemon.id);
           break;
         case 'pc:strengthen':
           this.enhancePokemon(pokemon).then(() => {
@@ -1231,11 +1279,354 @@ export class PokemonPcUi extends BaseUi {
     });
   }
 
-  private async sellPokemon(pokemon: PokemonBoxItem): Promise<void> {
-    const questionUi = this.scene.getMessage('question');
-    const pokemonName = pokemon.nickname ?? getPokemonI18Name(pokemon.pokedexId);
+  private static readonly SELL_GUIDE_X = +260;
+  private static readonly SELL_GUIDE_Y = -490;
+  private static readonly SELL_BUTTON_Y = +480;
+  private static readonly SELL_DECIDE_X = +90;
+  private static readonly SELL_QUIT_X = +430;
+  private static readonly SELL_BUTTON_CURSOR_OFFSET_Y = -58;
+  private static readonly SELL_SLIDE_DISTANCE = 320;
+  private static readonly SELL_SLIDE_DURATION = 220;
+  private static readonly PARTY_DIM_ALPHA = 0.6;
 
-    await questionUi.showMessage(i18next.t('pc:confirmSendToProfessor', { name: pokemonName }), {
+  private createSellLayout(): void {
+    // const windowTexture = this.scene.getOption().getWindow();
+    const windowTexture = TEXTURE.WINDOW_PC;
+
+    this.sellTitle = addText(
+      this.scene,
+      0,
+      PokemonPcUi.SELL_GUIDE_Y - 20,
+      `${i18next.t('pc:sellSelectTitle')}`,
+      50,
+      100,
+      'center',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.sellGuideText = addText(
+      this.scene,
+      0,
+      PokemonPcUi.SELL_GUIDE_Y + 20,
+      `(${i18next.t('pc:sellSelectGuide')})`,
+      30,
+      100,
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+    this.sellGuideWindow = addWindow(
+      this.scene,
+      TEXTURE.WINDOW_SYS,
+      0,
+      PokemonPcUi.SELL_GUIDE_Y - 8,
+      this.bg.displayWidth + 40,
+      100,
+      1,
+      16,
+      16,
+      16,
+      16,
+    );
+    this.setSellGuideVisible(false);
+
+    this.sellDecideText = addText(
+      this.scene,
+      PokemonPcUi.SELL_DECIDE_X,
+      PokemonPcUi.SELL_BUTTON_Y,
+      i18next.t('pc:decide'),
+      60,
+      100,
+      'center',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.sellDecideWindow = addWindow(
+      this.scene,
+      windowTexture,
+      PokemonPcUi.SELL_DECIDE_X,
+      PokemonPcUi.SELL_BUTTON_Y,
+      this.sellDecideText.displayWidth + 90,
+      this.sellDecideText.displayHeight + 50,
+      1.4,
+      16,
+      16,
+      16,
+      16,
+    );
+
+    this.sellQuitText = addText(
+      this.scene,
+      PokemonPcUi.SELL_QUIT_X,
+      PokemonPcUi.SELL_BUTTON_Y,
+      i18next.t('pc:cancel'),
+      60,
+      100,
+      'center',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    );
+    this.sellQuitWindow = addWindow(
+      this.scene,
+      windowTexture,
+      PokemonPcUi.SELL_QUIT_X,
+      PokemonPcUi.SELL_BUTTON_Y,
+      this.sellQuitText.displayWidth + 90,
+      this.sellQuitText.displayHeight + 50,
+      1.4,
+      16,
+      16,
+      16,
+      16,
+    );
+
+    this.sellButtonCursor = addSprite(
+      this.scene,
+      TEXTURE.PC_FINGER_0,
+      'pc_finger_0-0',
+      PokemonPcUi.SELL_DECIDE_X,
+      PokemonPcUi.SELL_BUTTON_Y + PokemonPcUi.SELL_BUTTON_CURSOR_OFFSET_Y,
+    )
+      .setScale(3.4)
+      .setVisible(false);
+    this.playFingerAnim(this.sellButtonCursor);
+
+    this.setSellButtonsVisible(false);
+
+    for (let i = 0; i < PC_GRID_PER_BOX; i++) {
+      const { x, y } = this.getGridCellLocalPosition(i);
+      const icon = addImage(this.scene, TEXTURE.ICON_CHECK, undefined, x, y)
+        .setScale(4)
+        .setVisible(false);
+      this.sellCheckIcons.push(icon);
+    }
+
+    // 상단(안내창)·하단(버튼+커서) 요소를 각각 컨테이너로 묶어 통째로 슬라이드시킨다.
+    // 컨테이너 자체는 (0,0)에 두고, 자식들은 기존 절대 좌표를 그대로 유지한다.
+    this.sellTopSet = this.scene.add.container(0, 0);
+    this.sellTopSet.add([this.sellGuideWindow, this.sellTitle, this.sellGuideText]);
+
+    this.sellBottomSet = this.scene.add.container(0, 0);
+    this.sellBottomSet.add([
+      this.sellDecideWindow,
+      this.sellDecideText,
+      this.sellQuitWindow,
+      this.sellQuitText,
+      this.sellButtonCursor,
+    ]);
+  }
+
+  private enterSellMode(preselectId?: number): void {
+    this.sellMode = true;
+    this.sellSelectedIds.clear();
+    if (preselectId != null) this.sellSelectedIds.add(preselectId);
+    this.sellButtonIndex = 0;
+
+    this.inputGuide.setVisible(false);
+    this.setSellGuideVisible(true);
+    this.setSellButtonsVisible(true);
+    this.slideInSellWindows();
+    this.setPartyDimVisible(true);
+
+    this.focusArea = 'grid';
+    this.gridSelect.setCursorVisible(true);
+    this.topCursor.setVisible(false);
+    this.partyCursor.setVisible(false);
+    this.sellButtonCursor.setVisible(false);
+
+    this.refreshSellChecks();
+    this.updateInfo(this.gridSelect.getSelectedKey());
+    this.inputManager.push(this.gridSelect);
+  }
+
+  private exitSellMode(): void {
+    this.sellMode = false;
+    this.sellSelectedIds.clear();
+    this.slideOutSellWindows();
+    this.setPartyDimVisible(false);
+    for (const icon of this.sellCheckIcons) icon.setVisible(false);
+    this.inputGuide.setVisible(true);
+
+    if (this.focusArea !== 'grid') {
+      this.inputManager.pop(this);
+      this.inputManager.push(this.gridSelect);
+    }
+    this.focusArea = 'grid';
+    this.gridSelect.setCursorVisible(true);
+    this.topCursor.setVisible(false);
+    this.sellButtonCursor.setVisible(false);
+    this.updateInfo(this.gridSelect.getSelectedKey());
+  }
+
+  private toggleSellCheck(): void {
+    const idx = this.gridSelect.getSelectedIndex();
+    if (this.gridSelect.isEmptySlot(idx)) {
+      this.scene.getAudio().playEffect(SFX.BUZZER);
+      return;
+    }
+    const id = Number(this.gridSelect.getSelectedKey());
+    if (this.sellSelectedIds.has(id)) this.sellSelectedIds.delete(id);
+    else this.sellSelectedIds.add(id);
+    this.scene.getAudio().playEffect(SFX.CURSOR_0);
+    this.refreshSellChecks();
+  }
+
+  private refreshSellChecks(): void {
+    const boxNumber = this.currentBoxIndex + 1;
+    for (let i = 0; i < this.sellCheckIcons.length; i++) {
+      const pokemon = this.pcState.getPokemonAt(boxNumber, i);
+      const show = this.sellMode && !!pokemon && this.sellSelectedIds.has(pokemon.id);
+      this.sellCheckIcons[i].setVisible(show);
+    }
+  }
+
+  private handleSellButtonsInput(key: string): void {
+    switch (key) {
+      case KEY.LEFT:
+        if (this.sellButtonIndex !== 0) {
+          this.sellButtonIndex = 0;
+          this.updateSellButtonCursor();
+          this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        }
+        break;
+      case KEY.RIGHT:
+        if (this.sellButtonIndex !== 1) {
+          this.sellButtonIndex = 1;
+          this.updateSellButtonCursor();
+          this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        }
+        break;
+      case KEY.UP:
+        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.switchFocus('grid');
+        break;
+      case KEY.Z:
+      case KEY.ENTER:
+        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        if (this.sellButtonIndex === 0) this.confirmAndSell();
+        else this.exitSellMode();
+        break;
+      case KEY.X:
+      case KEY.ESC:
+        this.scene.getAudio().playEffect(SFX.CURSOR_0);
+        this.exitSellMode();
+        break;
+    }
+  }
+
+  private updateSellButtonCursor(): void {
+    const x = this.sellButtonIndex === 0 ? PokemonPcUi.SELL_DECIDE_X : PokemonPcUi.SELL_QUIT_X;
+    this.sellButtonCursor.setPosition(
+      x,
+      PokemonPcUi.SELL_BUTTON_Y + PokemonPcUi.SELL_BUTTON_CURSOR_OFFSET_Y,
+    );
+  }
+
+  private setSellButtonsVisible(visible: boolean): void {
+    this.sellDecideWindow.setVisible(visible);
+    this.sellDecideText.setVisible(visible);
+    this.sellQuitWindow.setVisible(visible);
+    this.sellQuitText.setVisible(visible);
+    if (!visible) this.sellButtonCursor.setVisible(false);
+  }
+
+  private setSellGuideVisible(visible: boolean): void {
+    this.sellGuideWindow.setVisible(visible);
+    this.sellGuideText.setVisible(visible);
+    this.sellTitle.setVisible(visible);
+  }
+
+  /** 파티 목록 비활성화 오버레이를 페이드 인/아웃 */
+  private setPartyDimVisible(visible: boolean): void {
+    this.scene.tweens.killTweensOf(this.partyDimWindow);
+    if (visible) {
+      this.partyDimWindow.setVisible(true);
+      this.scene.tweens.add({
+        targets: this.partyDimWindow,
+        alpha: PokemonPcUi.PARTY_DIM_ALPHA,
+        duration: PokemonPcUi.SELL_SLIDE_DURATION,
+        ease: EASE.LINEAR,
+      });
+    } else {
+      this.scene.tweens.add({
+        targets: this.partyDimWindow,
+        alpha: 0,
+        duration: PokemonPcUi.SELL_SLIDE_DURATION,
+        ease: EASE.LINEAR,
+        onComplete: () => this.partyDimWindow.setVisible(false),
+      });
+    }
+  }
+
+  private slideInSellWindows(): void {
+    this.scene.tweens.killTweensOf(this.sellTopSet);
+    this.scene.tweens.killTweensOf(this.sellBottomSet);
+
+    this.sellTopSet.setY(-PokemonPcUi.SELL_SLIDE_DISTANCE);
+    this.sellBottomSet.setY(+PokemonPcUi.SELL_SLIDE_DISTANCE);
+
+    this.scene.tweens.add({
+      targets: this.sellTopSet,
+      y: 0,
+      duration: PokemonPcUi.SELL_SLIDE_DURATION,
+      ease: EASE.BACK_EASEOUT,
+    });
+    this.scene.tweens.add({
+      targets: this.sellBottomSet,
+      y: 0,
+      duration: PokemonPcUi.SELL_SLIDE_DURATION,
+      ease: EASE.BACK_EASEOUT,
+    });
+  }
+
+  /** 상단 안내창은 아래→위로, 하단 버튼은 위→아래로 슬라이드하며 퇴장 */
+  private slideOutSellWindows(): void {
+    this.scene.tweens.killTweensOf(this.sellTopSet);
+    this.scene.tweens.killTweensOf(this.sellBottomSet);
+
+    let topDone = false;
+    let bottomDone = false;
+    const finish = () => {
+      if (!topDone || !bottomDone) return;
+      this.setSellGuideVisible(false);
+      this.setSellButtonsVisible(false);
+      this.sellTopSet.setY(0);
+      this.sellBottomSet.setY(0);
+    };
+
+    this.scene.tweens.add({
+      targets: this.sellTopSet,
+      y: -PokemonPcUi.SELL_SLIDE_DISTANCE,
+      duration: PokemonPcUi.SELL_SLIDE_DURATION,
+      ease: EASE.LINEAR,
+      onComplete: () => {
+        topDone = true;
+        finish();
+      },
+    });
+    this.scene.tweens.add({
+      targets: this.sellBottomSet,
+      y: +PokemonPcUi.SELL_SLIDE_DISTANCE,
+      duration: PokemonPcUi.SELL_SLIDE_DURATION,
+      ease: EASE.LINEAR,
+      onComplete: () => {
+        bottomDone = true;
+        finish();
+      },
+    });
+  }
+
+  private async confirmAndSell(): Promise<void> {
+    if (this.sellSelectedIds.size === 0) {
+      this.scene.getAudio().playEffect(SFX.BUZZER);
+      return;
+    }
+
+    this.inputManager.pop(this);
+
+    const questionUi = this.scene.getMessage('question');
+    await questionUi.showMessage(i18next.t('pc:confirmSendSelectedToProfessor'), {
       resolveWhen: 'displayed',
     });
 
@@ -1248,27 +1639,45 @@ export class PokemonPcUi extends BaseUi {
     this.confirmMenu.hide();
     questionUi.hide();
 
-    if (choice?.key !== 'yes') return;
-
-    const api = this.scene.getApi();
-    let result;
-    try {
-      result = await api.sellPokemon(pokemon.id);
-    } catch (err) {
-      await showApiErrorAsTalk(this.scene, err);
+    if (choice?.key !== 'yes') {
+      this.inputManager.push(this);
       return;
     }
-    if (!result) return;
 
-    this.pcState.removePokemon(pokemon.id);
+    const ids = [...this.sellSelectedIds];
+    const api = this.scene.getApi();
+
+    try {
+      await this.onFlush?.();
+    } catch (err) {
+      await showApiErrorAsTalk(this.scene, err);
+      this.inputManager.push(this);
+      return;
+    }
+
+    let result;
+    try {
+      result = await api.sellPokemons(ids);
+    } catch (err) {
+      await showApiErrorAsTalk(this.scene, err);
+      this.inputManager.push(this);
+      return;
+    }
+    if (!result) {
+      this.inputManager.push(this);
+      return;
+    }
+
+    for (const id of ids) this.pcState.removePokemon(id);
 
     const user = this.scene.getUser();
     if (user) {
+      const soldSet = new Set(ids);
       const cachedBox = user.getPokemonBox();
       if (cachedBox) {
-        user.setPokemonBox(cachedBox.filter((p) => p.id !== pokemon.id));
+        user.setPokemonBox(cachedBox.filter((p) => !soldSet.has(p.id)));
       }
-      user.adjustPokemonBoxCount(-1);
+      user.adjustPokemonBoxCount(-ids.length);
 
       const bag = user.getItemBag();
       for (const reward of result.rewards) {
@@ -1277,8 +1686,20 @@ export class PokemonPcUi extends BaseUi {
       }
     }
 
+    this.sellMode = false;
+    this.sellSelectedIds.clear();
+    this.slideOutSellWindows();
+    this.setPartyDimVisible(false);
+    for (const icon of this.sellCheckIcons) icon.setVisible(false);
+    this.inputGuide.setVisible(true);
+    this.focusArea = 'grid';
+    this.gridSelect.setCursorVisible(true);
+    this.topCursor.setVisible(false);
+    this.sellButtonCursor.setVisible(false);
+
     this.refreshCurrentBox();
     this.clearInfo();
+    this.inputManager.push(this.gridSelect);
 
     const talkUi = this.scene.getMessage('talk');
     const messages = result.rewards.map((reward) => {
@@ -1618,6 +2039,7 @@ export class PokemonPcUi extends BaseUi {
     this.createInfoLayout();
     this.createTopLayout();
     this.createGrabLayout();
+    this.createSellLayout();
   }
 
   getGridSelect(): PokemonPcGridSelectUi {
@@ -1666,6 +2088,21 @@ export class PokemonPcUi extends BaseUi {
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
+
+    this.partyDimWindow = addWindow(
+      this.scene,
+      TEXTURE.WINDOW_PC,
+      0,
+      0,
+      170,
+      840,
+      1.6,
+      16,
+      16,
+      16,
+      16,
+    );
+    this.partyDimWindow.setTintFill(0x000000).setAlpha(0).setVisible(false);
 
     this.info = addImage(this.scene, TEXTURE.PC_INFO, undefined, -445, 0).setScale(3.17);
 
