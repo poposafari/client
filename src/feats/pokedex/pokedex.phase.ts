@@ -40,6 +40,8 @@ function baseId(id: string): string {
   return id.split(/[-_]/)[0].padStart(4, '0');
 }
 
+const HYPHEN_FORM_BASES = new Set(['0201', '0422', '0423', '0585', '0586', '0669', '0670', '0671']);
+
 export class PokedexPhase implements IGamePhase {
   private ui: PokedexUi | null = null;
   private listUi: PokedexListUi | null = null;
@@ -107,33 +109,38 @@ export class PokedexPhase implements IGamePhase {
     );
     const caughtKeySet = new Set(pokedex.filter((p) => p.caughtCount > 0).map((p) => p.pokedexId));
 
-    const regionalByBase = new Map<string, string[]>();
+    const variantsByBase = new Map<string, string[]>();
     for (const key of masterData.getPokemonDataKeys()) {
-      const sep = key.indexOf('_');
-      if (sep <= 0) continue;
-      const base = key.slice(0, sep);
-      if (!/^\d{4}$/.test(base)) continue;
-      const arr = regionalByBase.get(base);
+      const m = key.match(/^(\d{4})([-_])/);
+      if (!m) continue;
+      const base = m[1];
+      const sep = m[2];
+
+      if (sep === '-' && !HYPHEN_FORM_BASES.has(base)) continue;
+      const arr = variantsByBase.get(base);
       if (arr) arr.push(key);
-      else regionalByBase.set(base, [key]);
+      else variantsByBase.set(base, [key]);
     }
-    for (const arr of regionalByBase.values()) arr.sort();
+    for (const arr of variantsByBase.values()) arr.sort();
 
     const range = GEN_RANGES[filterIdx];
     const items: IMenuItem[] = [];
     for (let i = range.from; i <= range.to; i++) {
       const id = String(i).padStart(4, '0');
-      if (!masterData.getPokemonData(id)) continue;
+      const variants = variantsByBase.get(id);
+      const hasBase = !!masterData.getPokemonData(id);
+      if (!hasBase && !variants) continue;
 
-      const isBaseSeen = caughtBaseSet.has(id);
-      const baseName = isBaseSeen ? getPokemonI18Name(id) : NAME_MASK;
-      items.push({
-        key: id,
-        label: `${id}  ${baseName}`,
-        ownedIcon: caughtKeySet.has(id),
-      });
+      if (hasBase) {
+        const isBaseSeen = caughtBaseSet.has(id);
+        const baseName = isBaseSeen ? getPokemonI18Name(id) : NAME_MASK;
+        items.push({
+          key: id,
+          label: `${id}  ${baseName}`,
+          ownedIcon: caughtKeySet.has(id),
+        });
+      }
 
-      const variants = regionalByBase.get(id);
       if (!variants) continue;
       for (const vKey of variants) {
         const isVariantSeen = caughtKeySet.has(vKey);
