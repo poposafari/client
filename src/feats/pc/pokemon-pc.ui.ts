@@ -847,8 +847,15 @@ export class PokemonPcUi extends BaseUi {
     const hasCandy = hasExpCandy && !isMaxLevel;
     const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
 
+    const currentBoxNumber = this.currentBoxIndex + 1;
+    const isCurrentBoxFull = this.pcState.getNextFreeGridSlot(currentBoxNumber) === null;
+
     const items: IMenuItem[] = [
-      { key: 'pc:removeFromParty', label: i18next.t('pc:removeFromParty') },
+      {
+        key: 'pc:removeFromParty',
+        label: i18next.t('pc:removeFromParty'),
+        disabled: isCurrentBoxFull,
+      },
       { key: 'pc:grab', label: i18next.t('pc:grab') },
       { key: 'pc:heldItem', label: i18next.t('pc:heldItem'), disabled: !hasHeldItem },
       { key: 'pc:evolve', label: i18next.t('pc:evolve'), disabled: !canEvolve },
