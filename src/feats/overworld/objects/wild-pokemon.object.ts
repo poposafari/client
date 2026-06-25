@@ -162,6 +162,10 @@ export class WildPokemonObject extends MovableObject {
     return this.despawning;
   }
 
+  isExpired(): boolean {
+    return this.expiresAt != null && this.expiresAt - Date.now() <= 0;
+  }
+
   /** 중복 호출 방지용. OverworldUi가 페이드 시작 직전에 세팅. 걷기도 멈춘다. */
   markDespawning(): void {
     this.despawning = true;

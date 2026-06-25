@@ -2169,12 +2169,17 @@ export class OverworldUi extends BaseUi {
   }
 
   tickWildPokemons(delta: number): void {
+    const mapKey = this.mapConfig?.key;
     for (const obj of this.safariObjects) {
       if (obj instanceof WildPokemonObject) {
         if (!obj.isInteractionLocked()) {
           obj.freezeRandomWalk(false);
         }
         obj.update(delta);
+
+        if (mapKey && obj.isExpired() && !obj.isDespawning()) {
+          this.handleWildDespawn({ mapId: mapKey, wildUid: obj.getWild().uid, reason: 'ttl' });
+        }
         this.syncGrassForEntity(obj);
         this.syncWaterEdgeForEntity(obj);
       }
@@ -2186,6 +2191,7 @@ export class OverworldUi extends BaseUi {
     this.pet?.update(delta);
     this.syncGrassForEntity(this.pet);
     this.syncWaterEdgeForEntity(this.pet);
+
     for (const other of this.otherPlayers.values()) {
       other.update(delta);
       this.syncGrassForEntity(other);
