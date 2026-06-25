@@ -17,7 +17,8 @@ interface SafariZone {
 
 const SAFARI_ZONE_TICKET_ID = 'safari-zone-ticket';
 const SAFARI_BALL_ID = 'safari-ball';
-const SAFARI_ENTRY_BALL_QUANTITY = 30;
+
+const SAFARI_ENTRY_BALL_QUANTITY = 0;
 
 const SAFARI_ZONES: SafariZone[] = [
   { key: 's046', labelKey: 'map:s046', mapId: MAP.SAFARI_046, spawnX: 10, spawnY: 10 },
