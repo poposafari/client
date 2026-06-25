@@ -212,8 +212,20 @@ export class PlayerObject extends MovableObject {
       this.animStep = 0;
     }
     const textureKey = this.getSprite().texture.key;
-    const movementState =
-      this.getScene().getUser()?.getOverworldMovementState() ?? OverworldMovementState.WALK;
+    const user = this.getScene().getUser();
+    let movementState = user?.getOverworldMovementState() ?? OverworldMovementState.WALK;
+
+    if (
+      movementState === OverworldMovementState.WALK ||
+      movementState === OverworldMovementState.RUNNING
+    ) {
+      movementState = user?.isRunningToggled()
+        ? OverworldMovementState.RUNNING
+        : OverworldMovementState.WALK;
+      user?.setOverworldMovementState(movementState);
+      this.baseSpeed = MOVEMENT_SPEED[movementState] ?? MOVEMENT_SPEED.walk;
+    }
+
     const animationKey =
       movementState === OverworldMovementState.RIDE
         ? getRideAnimationKey(textureKey, direction, this.animStep)

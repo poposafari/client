@@ -325,6 +325,13 @@ export class OverworldUi extends BaseUi {
     if (this.petTalkPending) return;
     if (this.surfPromptPending) return;
     if (this.talkActionPending) return;
+
+    if (key === KEY.R) {
+      this.handleKeyR();
+      this.syncRunningToggleIcon();
+      return;
+    }
+
     const user = this.scene.getUser();
     const state = user?.getOverworldMovementState();
     if (state === OverworldMovementState.JUMP) {
@@ -334,10 +341,6 @@ export class OverworldUi extends BaseUi {
       return;
     }
     switch (key) {
-      case KEY.R:
-        this.handleKeyR();
-        this.syncRunningToggleIcon();
-        break;
       case KEY.S:
         this.syncMenuToggleIcon(true);
         this.scene.getAudio().playEffect(SFX.OPEN_0);
@@ -1193,31 +1196,42 @@ export class OverworldUi extends BaseUi {
   }
 
   private syncRunningToggleIcon(): void {
-    const isRunning =
-      this.scene.getUser()?.getOverworldMovementState() === OverworldMovementState.RUNNING;
-    this.hud?.updateToggleIcon(TEXTURE.ICON_RUNNING, isRunning);
+    const toggled = this.scene.getUser()?.isRunningToggled() ?? false;
+    this.hud?.updateToggleIcon(TEXTURE.ICON_RUNNING, toggled);
+  }
+
+  private fieldStateFromToggle(): OverworldMovementState {
+    return this.scene.getUser()?.isRunningToggled()
+      ? OverworldMovementState.RUNNING
+      : OverworldMovementState.WALK;
+  }
+
+  /** 현재 필드(WALK/RUNNING) 상태를 토글 기준으로 정규화하고 플레이어/펫 속도를 맞춘다. */
+  private applyFieldMovementFromToggle(): void {
+    const user = this.scene.getUser();
+    if (!user || !this.player) return;
+    const next = this.fieldStateFromToggle();
+    user.setOverworldMovementState(next);
+    const speed = SPEED_BY_MOVEMENT_STATE[next] ?? MOVEMENT_SPEED.walk;
+    this.player.setBaseSpeed(speed);
+    this.pet?.setBaseSpeed(
+      next === OverworldMovementState.RUNNING ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk,
+    );
   }
 
   private handleKeyR(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
 
+    const toggled = user.toggleRunning();
+    this.hud?.updateToggleIcon(TEXTURE.ICON_RUNNING, toggled);
+
     const current = user.getOverworldMovementState();
-
-    if (current === OverworldMovementState.SURF) return;
-
-    const next =
-      current === OverworldMovementState.RUNNING
-        ? OverworldMovementState.WALK
-        : OverworldMovementState.RUNNING;
-    user.setOverworldMovementState(next);
-
-    const speed =
-      SPEED_BY_MOVEMENT_STATE[next] ?? SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
-    this.player.setBaseSpeed(speed);
-    this.pet?.setBaseSpeed(
-      next === OverworldMovementState.RUNNING ? MOVEMENT_SPEED.running : MOVEMENT_SPEED.walk,
-    );
+    const isField =
+      current === OverworldMovementState.WALK || current === OverworldMovementState.RUNNING;
+    if (isField && this.player.isMovementFinish()) {
+      this.applyFieldMovementFromToggle();
+    }
   }
 
   /**
@@ -1238,9 +1252,10 @@ export class OverworldUi extends BaseUi {
       return;
     }
 
+    // RIDE 해제 시에는 RUNNING 토글을 보고 WALK/RUNNING 중에서 복귀 상태를 정한다.
     const next =
       current === OverworldMovementState.RIDE
-        ? OverworldMovementState.WALK
+        ? this.fieldStateFromToggle()
         : OverworldMovementState.RIDE;
     user.setOverworldMovementState(next);
 
@@ -1273,8 +1288,10 @@ export class OverworldUi extends BaseUi {
   exitRideBicycle(): void {
     const user = this.scene.getUser();
     if (!user || !this.player) return;
-    user.setOverworldMovementState(OverworldMovementState.WALK);
-    const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
+    // RIDE 해제 시 RUNNING 토글을 보고 WALK/RUNNING으로 복귀.
+    const next = this.fieldStateFromToggle();
+    user.setOverworldMovementState(next);
+    const speed = SPEED_BY_MOVEMENT_STATE[next] ?? MOVEMENT_SPEED.walk;
     this.player.setBaseSpeed(speed);
 
     this.syncRunningToggleIcon();
@@ -1565,14 +1582,19 @@ export class OverworldUi extends BaseUi {
       if (user) {
         const preState = user.getOverworldMovementState();
         if (this.mapConfig?.allowRide === false && preState === OverworldMovementState.RIDE) {
-          user.setOverworldMovementState(OverworldMovementState.WALK);
+          user.setOverworldMovementState(this.fieldStateFromToggle());
         }
         if (
           !isOnWater &&
           (preState === OverworldMovementState.SURF || preState === OverworldMovementState.JUMP)
         ) {
-          user.setOverworldMovementState(OverworldMovementState.WALK);
+          user.setOverworldMovementState(this.fieldStateFromToggle());
           user.setActiveSurfPokemonId(null);
+        }
+
+        const cur = user.getOverworldMovementState();
+        if (cur === OverworldMovementState.WALK || cur === OverworldMovementState.RUNNING) {
+          user.setOverworldMovementState(this.fieldStateFromToggle());
         }
       }
 
@@ -2280,8 +2302,11 @@ export class OverworldUi extends BaseUi {
         this.pendingSurfPokemonId = null;
       } else {
         const wasJumpFromSurf = this.player.isJumpFromSurf();
-        user?.setOverworldMovementState(OverworldMovementState.WALK);
-        const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.WALK] ?? 2;
+        // JUMP가 목표 지점에 완전히 착지한 시점. SURF 탈출/일반 점프 모두
+        // RUNNING 토글을 보고 WALK/RUNNING으로 복귀한다.
+        const next = this.fieldStateFromToggle();
+        user?.setOverworldMovementState(next);
+        const speed = SPEED_BY_MOVEMENT_STATE[next] ?? MOVEMENT_SPEED.walk;
         this.player.setBaseSpeed(speed);
         if (wasJumpFromSurf) {
           this.player.clearJumpFromSurf();

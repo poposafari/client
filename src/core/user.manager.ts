@@ -53,6 +53,8 @@ export class UserManager {
 
   /** 플레이어 오버월드 움직임 상태 (walk / running / ride / fishing / surf) */
   private overworldMovementState: OverworldMovementState = OverworldMovementState.WALK;
+
+  private runningToggle = false;
   /** 마지막으로 바라본 방향 (맵 전환 후 플레이어 초기 방향으로 사용) */
   private overworldDirection: OverworldDirection = OverworldDirection.DOWN;
   /** 현재 파도타기를 시전 중인 파티 포켓몬의 DB id. SURF 상태일 때만 유효. */
@@ -82,6 +84,7 @@ export class UserManager {
     this.pcGridIndex = 0;
 
     this.overworldMovementState = OverworldMovementState.WALK;
+    this.runningToggle = false;
     this.overworldDirection = OverworldDirection.DOWN;
     this.activeSurfPokemonId = null;
 
@@ -356,6 +359,19 @@ export class UserManager {
 
   setOverworldMovementState(state: OverworldMovementState): void {
     this.overworldMovementState = state;
+  }
+
+  isRunningToggled(): boolean {
+    return this.runningToggle;
+  }
+
+  setRunningToggle(value: boolean): void {
+    this.runningToggle = value;
+  }
+
+  toggleRunning(): boolean {
+    this.runningToggle = !this.runningToggle;
+    return this.runningToggle;
   }
 
   getOverworldDirection(): OverworldDirection {
