@@ -32,8 +32,9 @@ export class BattleUi {
   private ctx!: BattleContext;
   private firstIdlePrompt = true;
   private currentModifiers: import('./battle.types').BattleModifiers = { bait: false, rock: false };
-  /** playPreIntro에서 생성되어 playIntro 진입 시 dismiss되는 트랜지션. */
   private pendingTransition: EncounterTransition | null = null;
+  private isPlayingIntro = false;
+  private timeChangedDuringIntro = false;
 
   constructor(private readonly scene: GameScene) {
     this.onGameTimeChanged = this.onGameTimeChanged.bind(this);
@@ -41,6 +42,14 @@ export class BattleUi {
 
   private onGameTimeChanged(_timeOfDay: string): void {
     if (!this.built) return;
+    if (this.isPlayingIntro) {
+      this.timeChangedDuringIntro = true;
+      return;
+    }
+    this.applyTimeBackground();
+  }
+
+  private applyTimeBackground(): void {
     const newTime = resolveBattleTime(this.ctx.locationLabel, DayNightFilter.getBattleTime());
     const area = this.ctx.area;
     const duration = 2000;
@@ -121,18 +130,26 @@ export class BattleUi {
   }
 
   async playIntro(): Promise<void> {
-    // displayBattleIntro가 자체 black overlay를 만들기 직전에 우리 overlay 제거.
-    // 같은 JS tick 안에서 동기로 처리되어 프레임 갭 없음.
     this.pendingTransition?.dismiss();
     this.pendingTransition = null;
-    await displayBattleIntro(
-      this.scene,
-      this.base,
-      this.sprite,
-      this.info,
-      this.ctx.wild.isShiny,
-      this.ctx.wild.pokedexId,
-    );
+    this.isPlayingIntro = true;
+    this.timeChangedDuringIntro = false;
+    try {
+      await displayBattleIntro(
+        this.scene,
+        this.base,
+        this.sprite,
+        this.info,
+        this.ctx.wild.isShiny,
+        this.ctx.wild.pokedexId,
+      );
+    } finally {
+      this.isPlayingIntro = false;
+    }
+    if (this.timeChangedDuringIntro) {
+      this.timeChangedDuringIntro = false;
+      this.applyTimeBackground();
+    }
   }
 
   async playAppear(ctx: BattleContext): Promise<void> {
