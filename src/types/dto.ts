@@ -217,15 +217,21 @@ export interface SafariRewardItem {
   quantity: number;
 }
 
+export interface SafariPartyFriendship {
+  id: number;
+  friendship: number;
+}
+
 export type SafariCatchRes =
   | {
       result: 'caught';
       pokemon: SafariCatchCaughtPokemon;
       rewards: SafariRewardItem[];
       partyExp?: SafariPartyExp[];
+      partyFriendship?: SafariPartyFriendship[];
     }
-  | { result: 'fail' }
-  | { result: 'flee' };
+  | { result: 'fail'; partyFriendship?: SafariPartyFriendship[] }
+  | { result: 'flee'; partyFriendship?: SafariPartyFriendship[] };
 
 // ── 화석 복원 (POST /api/fossil/restore) ──
 export interface RestoreFossilReq {

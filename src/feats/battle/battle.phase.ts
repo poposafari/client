@@ -129,12 +129,12 @@ export class BattlePhase implements IGamePhase {
           });
           const user = this.scene.getUser();
           const party = user?.getParty();
-          if (user && party && party.length > 0) {
+          if (user && party && party.length > 0 && res?.partyFriendship?.length) {
+            const friendshipById = new Map(res.partyFriendship.map((f) => [f.id, f.friendship]));
             user.setParty(
-              party.map((p) => ({
-                ...p,
-                friendship: Math.min((p.friendship ?? 0) + 2, 255),
-              })),
+              party.map((p) =>
+                friendshipById.has(p.id) ? { ...p, friendship: friendshipById.get(p.id)! } : p,
+              ),
             );
           }
           outcome = res ? toCatchResult(res) : { kind: 'fail' };
