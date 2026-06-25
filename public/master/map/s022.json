@@ -3,16 +3,16 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
+    "min": 2,
     "max": 3,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 30
+        "weight": 12
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 20
+        "weight": 4
       },
       {
         "id": "ice-candy",

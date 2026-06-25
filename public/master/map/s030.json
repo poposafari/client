@@ -3,12 +3,12 @@
   "type": "safari",
   "cost": 0,
   "item": {
-    "min": 3,
-    "max": 4,
+    "min": 2,
+    "max": 3,
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 20
+        "weight": 12
       },
       {
         "id": "ice-candy",
@@ -36,7 +36,7 @@
       },
       {
         "id": "comet-shard",
-        "weight": 30
+        "weight": 7
       }
     ]
   },

@@ -8,11 +8,11 @@
     "spawn": [
       {
         "id": "safari-ball",
-        "weight": 20
+        "weight": 12
       },
       {
         "id": "safari-zone-ticket",
-        "weight": 20
+        "weight": 4
       },
       {
         "id": "poison-candy",
@@ -56,7 +56,7 @@
       },
       {
         "id": "comet-shard",
-        "weight": 30
+        "weight": 7
       },
       {
         "id": "star-piece",

@@ -25,7 +25,7 @@
     "category": "etc",
     "comment": "불꽃의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -35,7 +35,7 @@
     "category": "etc",
     "comment": "물의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -45,7 +45,7 @@
     "category": "etc",
     "comment": "천둥의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -55,7 +55,7 @@
     "category": "etc",
     "comment": "리프의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -65,7 +65,7 @@
     "category": "etc",
     "comment": "달의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -75,7 +75,7 @@
     "category": "etc",
     "comment": "태양의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -85,7 +85,7 @@
     "category": "etc",
     "comment": "빛의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -95,7 +95,7 @@
     "category": "etc",
     "comment": "어둠의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -105,7 +105,7 @@
     "category": "etc",
     "comment": "각성의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -115,7 +115,7 @@
     "category": "etc",
     "comment": "동글동글돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -125,7 +125,7 @@
     "category": "etc",
     "comment": "얼음의돌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -135,7 +135,7 @@
     "category": "etc",
     "comment": "금속코트",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -145,7 +145,7 @@
     "category": "etc",
     "comment": "업그레이드",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -155,7 +155,7 @@
     "category": "etc",
     "comment": "왕의징표석",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -165,7 +165,7 @@
     "category": "etc",
     "comment": "용의비늘",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -175,7 +175,7 @@
     "category": "etc",
     "comment": "심해의비늘",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -185,7 +185,7 @@
     "category": "etc",
     "comment": "심해의이빨",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -195,7 +195,7 @@
     "category": "etc",
     "comment": "괴상한패치",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -205,7 +205,7 @@
     "category": "etc",
     "comment": "마그마부스터",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -215,7 +215,7 @@
     "category": "etc",
     "comment": "에레키부스터",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -225,7 +225,7 @@
     "category": "etc",
     "comment": "영계의천",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -235,7 +235,7 @@
     "category": "etc",
     "comment": "프로텍터",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -245,7 +245,7 @@
     "category": "etc",
     "comment": "예리한손톱",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -255,7 +255,7 @@
     "category": "etc",
     "comment": "예리한이빨",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -265,7 +265,7 @@
     "category": "etc",
     "comment": "고운비늘",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -275,7 +275,7 @@
     "category": "etc",
     "comment": "휘핑팝",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -285,7 +285,7 @@
     "category": "etc",
     "comment": "향기주머니",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -295,7 +295,7 @@
     "category": "etc",
     "comment": "깨진포트",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -305,7 +305,7 @@
     "category": "etc",
     "comment": "이빠진포트",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -315,7 +315,7 @@
     "category": "etc",
     "comment": "달콤한사과",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -325,7 +325,7 @@
     "category": "etc",
     "comment": "새콤한사과",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -335,7 +335,7 @@
     "category": "etc",
     "comment": "꽃사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -345,7 +345,7 @@
     "category": "etc",
     "comment": "네잎사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -355,7 +355,7 @@
     "category": "etc",
     "comment": "딸기사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -365,7 +365,7 @@
     "category": "etc",
     "comment": "리본사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -375,7 +375,7 @@
     "category": "etc",
     "comment": "베리사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -385,7 +385,7 @@
     "category": "etc",
     "comment": "스타사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -395,7 +395,7 @@
     "category": "etc",
     "comment": "하트사탕공예",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -405,7 +405,7 @@
     "category": "etc",
     "comment": "가라두구팔찌",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -415,7 +415,7 @@
     "category": "etc",
     "comment": "가라두구머리장식",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -425,7 +425,7 @@
     "category": "etc",
     "comment": "연결의끈",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -435,7 +435,7 @@
     "category": "etc",
     "comment": "검은휘석",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -445,7 +445,7 @@
     "category": "etc",
     "comment": "피트블록",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -495,7 +495,7 @@
     "category": "etc",
     "comment": "꿀맛사과",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -505,7 +505,7 @@
     "category": "etc",
     "comment": "범작찻잔",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -515,7 +515,7 @@
     "category": "etc",
     "comment": "걸작찻잔",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -525,7 +525,7 @@
     "category": "etc",
     "comment": "대파",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -535,7 +535,7 @@
     "category": "etc",
     "comment": "복합금속",
     "purchasable": true,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "epic"
   },
@@ -575,7 +575,7 @@
     "category": "sellable",
     "comment": "금구슬",
     "purchasable": false,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "rare"
   },
@@ -585,7 +585,7 @@
     "category": "sellable",
     "comment": "맛있는꼬리",
     "purchasable": false,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "rare"
   },
@@ -595,7 +595,7 @@
     "category": "sellable",
     "comment": "별의모래",
     "purchasable": false,
-    "sellPrice": 1000,
+    "sellPrice": 500,
     "sellable": true,
     "tier": "rare"
   },
@@ -605,7 +605,7 @@
     "category": "sellable",
     "comment": "별의조각",
     "purchasable": false,
-    "sellPrice": 1000,
+    "sellPrice": 1200,
     "sellable": true,
     "tier": "rare"
   },
@@ -615,7 +615,7 @@
     "category": "sellable",
     "comment": "작은버섯",
     "purchasable": false,
-    "sellPrice": 500,
+    "sellPrice": 400,
     "sellable": true,
     "tier": "rare"
   },
@@ -625,7 +625,7 @@
     "category": "sellable",
     "comment": "진주",
     "purchasable": false,
-    "sellPrice": 500,
+    "sellPrice": 400,
     "sellable": true,
     "tier": "rare"
   },
@@ -655,7 +655,7 @@
     "category": "sellable",
     "comment": "귀중한뼈",
     "purchasable": false,
-    "sellPrice": 2000,
+    "sellPrice": 2500,
     "sellable": true,
     "tier": "rare"
   },
@@ -665,7 +665,7 @@
     "category": "sellable",
     "comment": "달콤한꿀",
     "purchasable": false,
-    "sellPrice": 500,
+    "sellPrice": 300,
     "sellable": true,
     "tier": "rare"
   },
@@ -675,7 +675,7 @@
     "category": "sellable",
     "comment": "고운깃털",
     "purchasable": false,
-    "sellPrice": 500,
+    "sellPrice": 300,
     "sellable": true,
     "tier": "rare"
   },
@@ -695,7 +695,7 @@
     "category": "sellable",
     "comment": "혜성조각",
     "purchasable": false,
-    "sellPrice": 1200,
+    "sellPrice": 5000,
     "sellable": true,
     "tier": "rare"
   },
@@ -715,7 +715,7 @@
     "category": "sellable",
     "comment": "경단진주",
     "purchasable": false,
-    "sellPrice": 2000,
+    "sellPrice": 2500,
     "sellable": true,
     "tier": "rare"
   },
@@ -725,7 +725,7 @@
     "category": "sellable",
     "comment": "고대의팔찌",
     "purchasable": false,
-    "sellPrice": 50000,
+    "sellPrice": 25000,
     "sellable": true,
     "tier": "epic"
   },
@@ -735,7 +735,7 @@
     "category": "sellable",
     "comment": "고대의동화",
     "purchasable": false,
-    "sellPrice": 2000,
+    "sellPrice": 1500,
     "sellable": true,
     "tier": "rare"
   },
@@ -745,7 +745,7 @@
     "category": "sellable",
     "comment": "고대의은화",
     "purchasable": false,
-    "sellPrice": 5000,
+    "sellPrice": 4000,
     "sellable": true,
     "tier": "rare"
   },
@@ -765,7 +765,7 @@
     "category": "sellable",
     "comment": "고대의왕관",
     "purchasable": false,
-    "sellPrice": 200000,
+    "sellPrice": 150000,
     "sellable": true,
     "tier": "epic"
   },
@@ -775,7 +775,7 @@
     "category": "sellable",
     "comment": "고대의석상",
     "purchasable": false,
-    "sellPrice": 150000,
+    "sellPrice": 80000,
     "sellable": true,
     "tier": "epic"
   },
@@ -785,7 +785,7 @@
     "category": "sellable",
     "comment": "고대의항아리",
     "purchasable": false,
-    "sellPrice": 70000,
+    "sellPrice": 40000,
     "sellable": true,
     "tier": "epic"
   },
