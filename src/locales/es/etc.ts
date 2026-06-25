@@ -100,6 +100,11 @@ export const etc: TranslationEtc = {
   s000_welcome_0: '¡Bienvenido a PopoSafari!',
   s000_welcome_1: 'Esta es una safari especial preparada\npara que elijas tu primer Pokémon.',
   s000_welcome_2: '¡Acércate al Pokémon que quieras capturar\ny pulsa Z o ENTER!',
+  s000_guide_running: 'Pulsa R para activar o desactivar\ntus Zapatillas de Carrera.',
+  s000_guide_menu_0: 'Pulsa S para abrir el menú.',
+  s000_guide_menu_1:
+    'En el menú puedes acceder a muchas funciones\ncomo la Caja Pokémon, la Mochila y el PokéRadar.',
+  s000_guide_register: 'Pulsa A para usar rápidamente\ntu objeto registrado.',
   s000_battle_intro_0: '¡Te has encontrado con un Pokémon salvaje!',
   s000_battle_intro_1: 'Como esto es un tutorial,\nte explicaré brevemente cada acción.',
   s000_tutorial_ball_0:

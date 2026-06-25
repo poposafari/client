@@ -724,6 +724,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_2, 'ui/windows', 'window_2');
     this.scene.loadImage(TEXTURE.WINDOW_3, 'ui/windows', 'window_3');
     this.scene.loadImage(TEXTURE.WINDOW_GUIDE, 'ui/windows', 'window_guide');
+    this.scene.loadAtlas(TEXTURE.SEL, 'ui', 'sel', 'sel');
     this.scene.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', 'window_white');
     this.scene.loadImage(TEXTURE.WINDOW_CURSOR, 'ui/windows', 'window_cursor');
     this.scene.loadImage(TEXTURE.WINDOW_CURSOR_R, 'ui/windows', 'window_cursor_r');
@@ -1229,6 +1230,15 @@ export class LoadingPhase implements IGamePhase {
         'map_player-5',
       ],
       8,
+      -1,
+    );
+
+    createAnimationFromFrameNames(
+      this.scene,
+      TEXTURE.SEL,
+      ANIMATION.SEL,
+      ['sel-0', 'sel-1', 'sel-2', 'sel-3'],
+      6,
       -1,
     );
 

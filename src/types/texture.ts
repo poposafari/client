@@ -130,6 +130,7 @@ export const enum TEXTURE {
   SAFARI_BALL_OPEN = 'safari-ball_1',
   SAFARI_STAR = 'safari_star',
   REG = 'reg',
+  SEL = 'sel',
 
   OVERWORLD_SHADOW = 'overworld_shadow',
   LIGHT = 'light',
@@ -194,6 +195,7 @@ export const enum ANIMATION {
   OVERWORLD_GRASS_2_B = 'overworld_grass_2_b',
   MAP_CURSOR_SEL = 'map_cursor_sel_anim',
   MAP_PLAYER = 'map_player_anim',
+  SEL = 'sel_anim',
   BASE_SURF_DOWN = 'base_surf_down',
   BASE_SURF_LEFT = 'base_surf_left',
   BASE_SURF_RIGHT = 'base_surf_right',

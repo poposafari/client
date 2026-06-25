@@ -24,7 +24,8 @@ import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from '@poposafari/i18n';
 import { screenFadeIn } from '@poposafari/utils/screen-fade';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
-import { BGM } from '@poposafari/types';
+import { ANIMATION, BGM, DEPTH, EASE, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { addImage, addSprite, addText, addWindow } from '@poposafari/utils';
 import { POPOTOWN_OST_TRACKS, resolveMapBgm, setPopotownOst } from '@poposafari/core/popotown-ost';
 
 export class OverworldPhase implements IGamePhase {
@@ -340,7 +341,144 @@ export class OverworldPhase implements IGamePhase {
         ],
         { name: '' },
       );
+      await this.runStarterTutorial();
     }
+  }
+
+  private async runStarterTutorial(): Promise<void> {
+    const { width, height } = this.scene.cameras.main;
+    const input = this.scene.getInputManager();
+    const talk = this.scene.getMessage('talk');
+    const depth = DEPTH.MESSAGE - 1;
+
+    const tweenAsync = (config: Phaser.Types.Tweens.TweenBuilderConfig): Promise<void> =>
+      new Promise((resolve) => {
+        this.scene.tweens.add({ ...config, onComplete: () => resolve() });
+      });
+
+    const overlay = this.scene.add
+      .rectangle(width / 2, height / 2, width, height, 0x000000, 1)
+      .setScrollFactor(0)
+      .setDepth(depth)
+      .setAlpha(0.7);
+
+    const icon = addImage(this.scene, TEXTURE.ICON_RUNNING, undefined, width / 2, height / 2)
+      .setScale(8.6)
+      .setScrollFactor(0)
+      .setDepth(depth)
+      .setAlpha(0);
+
+    const guideWindow = addWindow(
+      this.scene,
+      TEXTURE.WINDOW_GUIDE,
+      width / 2,
+      height / 2 - 220,
+      160,
+      160,
+      3,
+      10,
+      10,
+      10,
+      10,
+    )
+      .setScrollFactor(0)
+      .setDepth(depth)
+      .setAlpha(0);
+
+    const guideText = addText(
+      this.scene,
+      width / 2,
+      height / 2 - 220,
+      'R',
+      110,
+      'bold',
+      'center',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    )
+      .setScrollFactor(0)
+      .setDepth(depth)
+      .setAlpha(0);
+
+    const guidePointer = addSprite(this.scene, TEXTURE.SEL, 'sel-0', width / 2, height / 2 - 350)
+      .setScale(3)
+      .setScrollFactor(0)
+      .setDepth(depth + 0.1)
+      .setAlpha(0);
+    guidePointer.play(ANIMATION.SEL);
+
+    const pressText = addText(
+      this.scene,
+      guidePointer.x,
+      guidePointer.y - 140,
+      'PRESS!!',
+      65,
+      'bold',
+      'center',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    )
+      .setScrollFactor(0)
+      .setDepth(depth + 0.1)
+      .setAlpha(0);
+
+    guidePointer.on(
+      Phaser.Animations.Events.ANIMATION_UPDATE,
+      (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
+        if (frame.isFirst) pressText.setVisible(true);
+        else if (frame.isLast) pressText.setVisible(false);
+      },
+    );
+
+    const showGuide = async (
+      texture: TEXTURE,
+      key: string,
+      message: string | string[],
+    ): Promise<void> => {
+      if (icon.texture.key !== texture) {
+        input.setBlocked(true);
+        await tweenAsync({ targets: icon, alpha: 0, duration: 250, ease: EASE.LINEAR });
+        icon.setTexture(texture);
+        guideText.setText(key);
+
+        guidePointer.play(ANIMATION.SEL);
+        await tweenAsync({ targets: icon, alpha: 1, duration: 250, ease: EASE.LINEAR });
+        input.setBlocked(false);
+      }
+      await talk.showMessage(Array.isArray(message) ? message : [message], { name: '' });
+    };
+
+    input.setBlocked(true);
+    await tweenAsync({ targets: overlay, alpha: 0.8, duration: 600, ease: EASE.LINEAR });
+    await tweenAsync({
+      targets: [icon, guideWindow, guideText, guidePointer, pressText],
+      alpha: 1,
+      duration: 300,
+      ease: EASE.LINEAR,
+    });
+    input.setBlocked(false);
+
+    await talk.showMessage([i18next.t('etc:s000_guide_running')], { name: '' });
+    await showGuide(TEXTURE.ICON_MENU, 'S', [
+      i18next.t('etc:s000_guide_menu_0'),
+      i18next.t('etc:s000_guide_menu_1'),
+    ]);
+    await showGuide(TEXTURE.ICON_REGISTER, 'A', i18next.t('etc:s000_guide_register'));
+
+    input.setBlocked(true);
+    await tweenAsync({
+      targets: [overlay, icon, guideWindow, guideText, guidePointer, pressText],
+      alpha: 0,
+      duration: 600,
+      ease: EASE.LINEAR,
+    });
+    overlay.destroy();
+    icon.destroy();
+    guideWindow.destroy();
+    guideText.destroy();
+    guidePointer.destroy();
+    pressText.destroy();
+    input.setBlocked(false);
   }
 
   update(time: number, delta: number): void {
