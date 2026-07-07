@@ -13,7 +13,7 @@ export const etc: TranslationEtc = {
   arrowKey: '방향키',
   saveAndQuit: '저장 후 그만둔다',
   login: '로그인',
-  backToLogin: '로그인으로 돌아가기',
+  backToLogin: '돌아간다',
   register: '회원가입',
   username: '아이디',
   password: '비밀번호',

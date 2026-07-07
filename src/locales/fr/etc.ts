@@ -11,7 +11,7 @@ export const etc: TranslationEtc = {
   arrowKey: 'Flèches',
   saveAndQuit: 'Sauvegarder et quitter',
   login: 'Connexion',
-  backToLogin: 'Retour à la connexion',
+  backToLogin: 'Retour',
   register: 'Inscription',
   username: 'Identifiant',
   password: 'Mot de passe',
