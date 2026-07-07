@@ -358,12 +358,6 @@ export class OverworldUi extends BaseUi {
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMapRequested?.();
         break;
-      case KEY.J:
-        this.handleKeyJ();
-        break;
-      case KEY.ONE:
-        this.surf();
-        break;
       case KEY.Z:
       case KEY.ENTER:
         void this.handleTalkAction();
@@ -1073,15 +1067,6 @@ export class OverworldUi extends BaseUi {
           window: step.content.window ?? TEXTURE.WINDOW_NOTICE_0,
         });
       }
-    }
-  }
-
-  private handleKeyJ(): void {
-    if (!this.player) return;
-    const dir = this.player.getLastDirection();
-    if (this.player.jump(dir)) {
-      const speed = SPEED_BY_MOVEMENT_STATE[OverworldMovementState.JUMP] ?? 3;
-      this.player.setBaseSpeed(speed);
     }
   }
 
