@@ -298,7 +298,11 @@ export class UserManager {
 
   isPokedexRegistered(pokedexId: string): boolean {
     if (!this.pokedex) return false;
-    const normalize = (id: string) => id.split('_')[0].padStart(4, '0');
+
+    const normalize = (id: string) => {
+      const m = id.match(/^(\d+)(.*)$/);
+      return m ? m[1].padStart(4, '0') + m[2] : id;
+    };
     const target = normalize(pokedexId);
     return this.pokedex.some((p) => p.caughtCount > 0 && normalize(p.pokedexId) === target);
   }
