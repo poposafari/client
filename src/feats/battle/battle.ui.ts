@@ -18,7 +18,7 @@ import {
 } from './anim/ball-throw';
 import { EncounterTransition } from '@poposafari/utils/encounter-transition';
 import { PLAYER_HUD, resolveBattleTime } from './battle.constants';
-import { BGM, OptionKey, SFX } from '@poposafari/types';
+import { BGM, OptionKey, SFX, type PokemonRank } from '@poposafari/types';
 import { getPokemonI18Name } from '@poposafari/utils';
 
 export class BattleUi {
@@ -79,7 +79,8 @@ export class BattleUi {
 
   private resolveBattleBgm(): BGM {
     const data = this.scene.getMasterData().getPokemonData(this.ctx.wild.pokedexId);
-    if (data?.rank === 'epic') return BGM.BATTLE_STRONG;
+    const STRONG_RANKS: PokemonRank[] = ['ultra-rare', 'epic', 'unique', 'legendary'];
+    if (data && STRONG_RANKS.includes(data.rank)) return BGM.BATTLE_STRONG;
     const selected = Number(this.scene.getOption().getOption(OptionKey.BATTLE_BGM) ?? 0);
     if (selected === 1) return BGM.BATTLE_1;
     if (selected === 2) return BGM.BATTLE_2;

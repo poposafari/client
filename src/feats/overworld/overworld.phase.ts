@@ -222,7 +222,6 @@ export class OverworldPhase implements IGamePhase {
         }),
       );
     };
-    this.overworldUi.show();
 
     // this.scene.pushPhase(
     //   new RewardPhase(this.scene, {
@@ -287,6 +286,8 @@ export class OverworldPhase implements IGamePhase {
         () => socket.off('wild:despawn', onWildDespawn),
       );
     }
+
+    this.overworldUi.show();
 
     let fadeInDone: Promise<void> | null = null;
     {

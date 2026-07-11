@@ -10,6 +10,7 @@ import {
   TEXTSTROKE,
   TEXTSTYLE,
   TEXTURE,
+  type PokemonRank,
 } from '@poposafari/types';
 import {
   addContainer,
@@ -29,6 +30,17 @@ const TIME_I18N_KEY: Record<string, string> = {
   day: 'etc:timeDay',
   dusk: 'etc:timeDusk',
   night: 'etc:timeNight',
+};
+
+const RANK_COLOR: Record<PokemonRank, string> = {
+  common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
+  rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
+  epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
+  legendary: TEXTCOLOR.LEGENDARY,
 };
 
 export class BattleInfoUi extends Phaser.GameObjects.Container {
@@ -109,6 +121,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       TEXTSTYLE.BLACK,
       TEXTSHADOW.GRAY,
     );
+    const wildRank = scene.getMasterData().getPokemonData(ctx.wild.pokedexId)?.rank ?? 'common';
+    this.wildNameText.setColor(RANK_COLOR[wildRank]);
     this.wildHudContainer.add(this.wildNameText);
 
     this.wildGenderText = addText(

@@ -94,8 +94,12 @@ export const etc: TranslationEtc = {
   idleCountdown: 'Retour au titre dans {{seconds}} s',
   idleHintAnyKey: 'Appuyez sur une touche pour continuer',
   tierCommon: 'Commun',
+  tierUncommon: 'Peu commun',
   tierRare: 'Rare',
+  tierSuperRare: 'Super rare',
+  tierUltraRare: 'Ultra rare',
   tierEpic: 'Épique',
+  tierUnique: 'Unique',
   tierLegendary: 'Légendaire',
   s000_welcome_0: 'Bienvenue sur PopoSafari !',
   s000_welcome_1:

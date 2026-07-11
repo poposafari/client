@@ -55,15 +55,23 @@ export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
 
 const RANK_COLOR: Record<PokemonRank, string> = {
   common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
   rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
   epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
   legendary: TEXTCOLOR.LEGENDARY,
 };
 
 const RANK_LOCALE: Record<PokemonRank, string> = {
   common: 'etc:tierCommon',
+  uncommon: 'etc:tierUncommon',
   rare: 'etc:tierRare',
+  'super-rare': 'etc:tierSuperRare',
+  'ultra-rare': 'etc:tierUltraRare',
   epic: 'etc:tierEpic',
+  unique: 'etc:tierUnique',
   legendary: 'etc:tierLegendary',
 };
 
@@ -2667,8 +2675,10 @@ export class PokemonPcUi extends BaseUi {
     if (pokemonData) {
       const rank = pokemonData.rank;
       this.infoTier.setText(i18next.t(RANK_LOCALE[rank])).setStyle({ color: RANK_COLOR[rank] });
+      this.infoPokemonName.setColor(RANK_COLOR[rank]);
     } else {
       this.infoTier.setText('');
+      this.infoPokemonName.setColor(TEXTCOLOR.BLACK);
     }
 
     // this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);

@@ -8,9 +8,13 @@ export const PARTY_BONUS = {
   SHINY_BONUS: 0.05,
   TIER_BONUS: {
     common: 0,
-    rare: 0.01,
-    epic: 0.02,
-    legendary: 0.03,
+    uncommon: 0.01,
+    rare: 0.02,
+    'super-rare': 0.03,
+    'ultra-rare': 0.04,
+    epic: 0.05,
+    unique: 0.06,
+    legendary: 0.07,
   } as Record<PokemonRank, number>,
   SLOT_COUNT: 6,
 } as const;

@@ -131,7 +131,15 @@ export enum PokemonRegion {
   PALDEA = 'paldea',
 }
 
-export type PokemonRank = 'common' | 'rare' | 'epic' | 'legendary';
+export type PokemonRank =
+  | 'common'
+  | 'uncommon'
+  | 'rare'
+  | 'super-rare'
+  | 'ultra-rare'
+  | 'epic'
+  | 'unique'
+  | 'legendary';
 export type PokemonType =
   | 'normal'
   | 'fire'

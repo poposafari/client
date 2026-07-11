@@ -94,8 +94,12 @@ export const etc: TranslationEtc = {
   idleCountdown: '{{seconds}}びょうごに タイトルへ もどります',
   idleHintAnyKey: 'なにかキーを おすと つづけられます',
   tierCommon: 'ノーマル',
+  tierUncommon: 'アンコモン',
   tierRare: 'レア',
+  tierSuperRare: 'スーパーレア',
+  tierUltraRare: 'ウルトラレア',
   tierEpic: 'エピック',
+  tierUnique: 'ユニーク',
   tierLegendary: 'でんせつ',
   s000_welcome_0: 'ポポサファリへ ようこそ！',
   s000_welcome_1:

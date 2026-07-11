@@ -1,5 +1,10 @@
-import type { SafariWildInfo } from '@poposafari/scenes';
+import type { SafariItemInfo, SafariWildInfo } from '@poposafari/scenes';
 import { MOVEMENT_SPEED, TILE_MOVE_BASE_MS } from './overworld.constants';
+
+export interface SafariSnapshotPayload {
+  wilds: SafariWildInfo[];
+  items: SafariItemInfo[];
+}
 
 export interface PetState {
   pokedexId: string;
@@ -44,6 +49,7 @@ export interface InitOkPayload {
   weather?: string;
   weatherStartedAt?: number;
   weatherDuration?: number;
+  safari?: SafariSnapshotPayload;
 }
 
 export interface ChangeMapOkPayload {
@@ -53,6 +59,7 @@ export interface ChangeMapOkPayload {
   weather?: string;
   weatherStartedAt?: number;
   weatherDuration?: number;
+  safari?: SafariSnapshotPayload;
 }
 
 export interface GameTimeChangedPayload {

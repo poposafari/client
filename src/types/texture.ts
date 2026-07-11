@@ -61,8 +61,12 @@ export const enum TEXTURE {
   WINDOW_EXP = 'window_exp',
   WINDOW_MAP = 'window_map',
   WINDOW_COMMON = 'window_common',
+  WINDOW_UNCOMMON = 'window_uncommon',
   WINDOW_RARE = 'window_rare',
+  WINDOW_SUPER_RARE = 'window_super_rare',
+  WINDOW_ULTRA_RARE = 'window_ultra_rare',
   WINDOW_EPIC = 'window_epic',
+  WINDOW_UNIQUE = 'window_unique',
   WINDOW_LEGENDARY = 'window_legendary',
   KEYCAP = 'keycap',
 

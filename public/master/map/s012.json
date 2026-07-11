@@ -69,7 +69,6 @@
     ]
   },
   "wild": {
-    "min": 10,
     "max": 13,
     "dawn": {
       "sunny": [

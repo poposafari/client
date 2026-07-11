@@ -23,22 +23,34 @@ import i18next from 'i18next';
 
 const RANK_WINDOW: Record<PokemonRank, TEXTURE> = {
   common: TEXTURE.WINDOW_COMMON,
+  uncommon: TEXTURE.WINDOW_UNCOMMON,
   rare: TEXTURE.WINDOW_RARE,
+  'super-rare': TEXTURE.WINDOW_SUPER_RARE,
+  'ultra-rare': TEXTURE.WINDOW_ULTRA_RARE,
   epic: TEXTURE.WINDOW_EPIC,
+  unique: TEXTURE.WINDOW_UNIQUE,
   legendary: TEXTURE.WINDOW_LEGENDARY,
 };
 
 const RANK_COLOR: Record<PokemonRank, string> = {
   common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
   rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
   epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
   legendary: TEXTCOLOR.LEGENDARY,
 };
 
 const RANK_LOCALE: Record<PokemonRank, string> = {
   common: 'etc:tierCommon',
+  uncommon: 'etc:tierUncommon',
   rare: 'etc:tierRare',
+  'super-rare': 'etc:tierSuperRare',
+  'ultra-rare': 'etc:tierUltraRare',
   epic: 'etc:tierEpic',
+  unique: 'etc:tierUnique',
   legendary: 'etc:tierLegendary',
 };
 

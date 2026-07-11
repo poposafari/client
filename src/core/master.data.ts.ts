@@ -1506,7 +1506,6 @@ export type MapMasterEntry = {
   type?: string;
   cost?: number;
   wild?: {
-    min?: number;
     max?: number;
     dawn?: WildSlot;
     day?: WildSlot;

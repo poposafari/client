@@ -1,6 +1,6 @@
 import { GameEvent, GameScene } from '@poposafari/scenes';
 import type { SafariWildInfo } from '@poposafari/scenes';
-import { ANIMATION, DEPTH, SFX, TEXTCOLOR, TEXTURE } from '@poposafari/types';
+import { ANIMATION, DEPTH, SFX, TEXTCOLOR, TEXTURE, type PokemonRank } from '@poposafari/types';
 import {
   addImage,
   addObjText,
@@ -18,6 +18,17 @@ const IDLE_MIN_MS = 3000;
 const IDLE_MAX_MS = 6000;
 const STEP_MIN = 1;
 const STEP_MAX = 4;
+
+const RANK_COLOR: Record<PokemonRank, TEXTCOLOR> = {
+  common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
+  rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
+  epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
+  legendary: TEXTCOLOR.LEGENDARY,
+};
 
 const DIRS: DIRECTION[] = [DIRECTION.UP, DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT];
 const NAME_VISIBLE_RANGE = 3;
@@ -84,13 +95,14 @@ export class WildPokemonObject extends MovableObject {
       scene,
     );
     const initialDir = wild.lastDirection ?? DIRECTION.DOWN;
+    const rank = scene.getMasterData().getPokemonData(wild.pokedexId)?.rank ?? 'common';
     super(
       scene,
       mapAdapter,
       key,
       tileX,
       tileY,
-      { text: getPokemonI18Name(wild.pokedexId), color: TEXTCOLOR.WHITE, raw: true },
+      { text: getPokemonI18Name(wild.pokedexId), color: RANK_COLOR[rank], raw: true },
       initialDir,
       { scale: 1.4, blockingRefs, nameOffsetY: 70 },
     );

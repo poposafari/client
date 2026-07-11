@@ -12,8 +12,8 @@ import DayNightFilter from '@poposafari/utils/day-night-filter';
 const SOCKET_SERVER_URL =
   VITE_SOCKET_SERVER_URL ??
   (typeof window !== 'undefined'
-    ? `${window.location.protocol}//${window.location.hostname}:9010`
-    : 'http://localhost:9010');
+    ? `${window.location.protocol}//${window.location.hostname}:9000`
+    : 'http://localhost:9000');
 
 const AUTH_ERROR_MESSAGES = ['Missing connection token', 'Invalid or expired connection token'];
 
@@ -141,6 +141,16 @@ export class OverworldEntryPhase implements IGamePhase {
         this.scene.events.emit(GameEvent.WEATHER_CHANGED, weatherState);
       }
 
+      if (payload?.mapId && payload.safari) {
+        this.scene.setSafariInfo({
+          [payload.mapId]: {
+            wilds: payload.safari.wilds,
+            items: payload.safari.items,
+            entry: null,
+          },
+        });
+      }
+
       this.ui?.hide();
       this.ui?.destroy();
       this.ui = null;
@@ -207,17 +217,11 @@ export class OverworldEntryPhase implements IGamePhase {
         this.scene.events.emit(GameEvent.WEATHER_CHANGED, weatherState);
       }
 
-      // 마지막 위치가 사파리존이면 맵 데이터를 미리 가져온다.
       const lastMapId = payload.lastLocation?.map;
-      if (lastMapId && this.scene.getMapRegistry().get(lastMapId)?.type === 'safari') {
-        try {
-          const result = await this.scene.getApi().enterSafari(lastMapId, false);
-          if (result) {
-            this.scene.setSafariInfo({ [result.mapId]: result.mapInfo });
-          }
-        } catch (e) {
-          console.error('[OverworldEntry] enterSafari on init failed:', e);
-        }
+      if (lastMapId && payload.safari) {
+        this.scene.setSafariInfo({
+          [lastMapId]: { wilds: payload.safari.wilds, items: payload.safari.items, entry: null },
+        });
       }
 
       this.ui?.hide();

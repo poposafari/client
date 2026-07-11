@@ -10,6 +10,7 @@ import {
   TEXTSTROKE,
   TEXTSTYLE,
   TEXTURE,
+  type PokemonRank,
   type PokemonType,
 } from '@poposafari/types';
 
@@ -93,16 +94,28 @@ export function updateTextColor(text: GText, targetColor: TEXTCOLOR, targetShado
   text.setColor(targetColor);
 }
 
-export function updateRankTextColor(text: GText, rank: 'common' | 'rare' | 'epic' | 'legendary') {
+export function updateRankTextColor(text: GText, rank: PokemonRank) {
   switch (rank) {
     case 'common':
       updateTextColor(text, TEXTCOLOR.WHITE, TEXTSHADOW.GRAY);
       break;
+    case 'uncommon':
+      updateTextColor(text, TEXTCOLOR.UNCOMMON, TEXTSHADOW.GRAY);
+      break;
     case 'rare':
       updateTextColor(text, TEXTCOLOR.RARE, TEXTSHADOW.GRAY);
       break;
+    case 'super-rare':
+      updateTextColor(text, TEXTCOLOR.SUPER_RARE, TEXTSHADOW.GRAY);
+      break;
+    case 'ultra-rare':
+      updateTextColor(text, TEXTCOLOR.ULTRA_RARE, TEXTSHADOW.GRAY);
+      break;
     case 'epic':
       updateTextColor(text, TEXTCOLOR.EPIC, TEXTSHADOW.GRAY);
+      break;
+    case 'unique':
+      updateTextColor(text, TEXTCOLOR.UNIQUE, TEXTSHADOW.GRAY);
       break;
     case 'legendary':
       updateTextColor(text, TEXTCOLOR.LEGENDARY, TEXTSHADOW.GRAY);

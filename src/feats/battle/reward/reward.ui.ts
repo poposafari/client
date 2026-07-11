@@ -106,15 +106,23 @@ const CONST = {
 
 const RANK_COLOR: Record<PokemonRank, string> = {
   common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
   rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
   epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
   legendary: TEXTCOLOR.LEGENDARY,
 };
 
 const RANK_LOCALE: Record<PokemonRank, string> = {
   common: 'etc:tierCommon',
+  uncommon: 'etc:tierUncommon',
   rare: 'etc:tierRare',
+  'super-rare': 'etc:tierSuperRare',
+  'ultra-rare': 'etc:tierUltraRare',
   epic: 'etc:tierEpic',
+  unique: 'etc:tierUnique',
   legendary: 'etc:tierLegendary',
 };
 
@@ -339,6 +347,7 @@ export class RewardUi extends BaseUi {
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
+    nameText.setColor(RANK_COLOR[pokemonData?.rank ?? 'common']);
     target.add(nameText);
 
     let cursorX = nameText.displayWidth + nameText.x;

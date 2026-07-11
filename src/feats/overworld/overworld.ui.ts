@@ -620,6 +620,13 @@ export class OverworldUi extends BaseUi {
       this.removeSafariObject(stillThere as unknown as InteractiveObject);
       this.markTileFree(pos);
     }
+
+    const mapKey = this.mapConfig?.key;
+    if (mapKey) {
+      const info = this.scene.getSafariInfo().get(mapKey);
+      const idx = info?.wilds.findIndex((w) => w.uid === uid) ?? -1;
+      if (info && idx >= 0) info.wilds.splice(idx, 1);
+    }
     this.pendingDespawnUids.delete(uid);
   }
 
@@ -871,6 +878,9 @@ export class OverworldUi extends BaseUi {
     mapId: string;
     wild: import('@poposafari/scenes').SafariWildInfo;
   }): void {
+    // 이 uid의 despawn을 먼저 받았다면(아직 렌더 전) 뒤늦게 도착한 spawn을 무시 — 캐시 재추가도 막는다.
+    if (this.pendingDespawnUids.delete(payload.wild.uid)) return;
+
     const mapKey = this.mapConfig?.key;
     const info = this.scene.getSafariInfo().get(payload.mapId);
 
@@ -2389,18 +2399,7 @@ export class OverworldUi extends BaseUi {
               }
               const targetMapId = result.location as string;
               const ok = await this.scene.startMapTransitionWithFade(async () => {
-                if (targetMapId.startsWith('s') && !this.scene.getSafariInfo().has(targetMapId)) {
-                  try {
-                    const safariResult = await this.scene.getApi().enterSafari(targetMapId, false);
-                    if (safariResult) {
-                      this.scene.mergeSafariInfo({
-                        [safariResult.mapId]: safariResult.mapInfo,
-                      });
-                    }
-                  } catch {
-                    return null;
-                  }
-                }
+                // 사파리 스냅샷/버킷은 이제 소켓 change_map_ok가 권위적으로 내려준다(REST enterSafari 불필요).
                 if (targetMapId.startsWith('s')) {
                   this.scene.getUser()?.addVisitedMap(targetMapId);
                 }
