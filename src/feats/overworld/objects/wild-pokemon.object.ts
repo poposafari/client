@@ -35,6 +35,8 @@ const NAME_VISIBLE_RANGE = 3;
 const SHINY_SIZE_MARGIN = 0.6;
 const OWNED_ICON_SCALE = 1.3;
 const OWNED_ICON_GAP = 6;
+const LEVEL_LABEL_FONT_SIZE = 12;
+const LEVEL_LABEL_OFFSET_Y = 20;
 
 export class WildPokemonObject extends MovableObject {
   private readonly wild: SafariWildInfo;
@@ -59,6 +61,8 @@ export class WildPokemonObject extends MovableObject {
   private lastTimerLabel = '';
   private shinySprite: Phaser.GameObjects.Sprite | null = null;
   private ownedIcon: Phaser.GameObjects.Image | null = null;
+  /** 이름 위에 얹는 "Lv.{레벨}" 라벨. 색상을 이름과 독립적으로 바꿀 수 있게 별도 객체로 둔다. */
+  private levelLabel: Phaser.GameObjects.Text;
   private isPokedexRegistered = false;
   /** 페이드아웃이 실제로 시작되면 true. OverworldUi.handleWildDespawn이 1회만 실행되도록. */
   private despawning = false;
@@ -102,7 +106,11 @@ export class WildPokemonObject extends MovableObject {
       key,
       tileX,
       tileY,
-      { text: getPokemonI18Name(wild.pokedexId), color: RANK_COLOR[rank], raw: true },
+      {
+        text: getPokemonI18Name(wild.pokedexId),
+        color: RANK_COLOR[rank],
+        raw: true,
+      },
       initialDir,
       { scale: 1.4, blockingRefs, nameOffsetY: 70 },
     );
@@ -127,6 +135,18 @@ export class WildPokemonObject extends MovableObject {
       .setScale(OWNED_ICON_SCALE);
     this.ownedIcon.setDepth(DEPTH.MESSAGE);
     this.ownedIcon.setVisible(false);
+
+    this.levelLabel = addObjText(
+      scene,
+      tileX,
+      tileY,
+      `Lv.${wild.level}`,
+      LEVEL_LABEL_FONT_SIZE,
+      TEXTCOLOR.WHITE,
+    );
+    this.levelLabel.setOrigin(0.5, 0.5);
+    this.levelLabel.setDepth(DEPTH.MESSAGE);
+    this.levelLabel.setVisible(false);
 
     this.scene.events.on('player_tile_moved', this.onPlayerTileMoved);
     this.scene.events.on(GameEvent.PROFILE_CHANGED, this.onProfileChanged);
@@ -168,6 +188,10 @@ export class WildPokemonObject extends MovableObject {
 
   getOwnedIcon(): Phaser.GameObjects.Image | null {
     return this.ownedIcon;
+  }
+
+  getLevelLabel(): Phaser.GameObjects.Text {
+    return this.levelLabel;
   }
 
   isDespawning(): boolean {
@@ -250,6 +274,7 @@ export class WildPokemonObject extends MovableObject {
       super.update(delta);
       this.refreshTimer();
       this.syncOwnedIcon();
+      this.syncLevelLabel();
       return;
     }
 
@@ -277,6 +302,7 @@ export class WildPokemonObject extends MovableObject {
     this.refreshTimer();
     this.syncShinyOverlay();
     this.syncOwnedIcon();
+    this.syncLevelLabel();
   }
 
   private syncShinyOverlay(): void {
@@ -295,6 +321,13 @@ export class WildPokemonObject extends MovableObject {
       this.name.x - this.name.displayWidth / 2 - OWNED_ICON_GAP,
       this.name.y,
     );
+  }
+
+  private syncLevelLabel(): void {
+    const visible = this.name.visible;
+    this.levelLabel.setVisible(visible);
+    if (!visible) return;
+    this.levelLabel.setPosition(this.name.x, this.name.y - LEVEL_LABEL_OFFSET_Y);
   }
 
   /** 타이머 텍스트를 갱신. 이름표 바로 아래 위치를 따라다니게 한다.
@@ -371,6 +404,7 @@ export class WildPokemonObject extends MovableObject {
     this.shinySprite = null;
     this.ownedIcon?.destroy();
     this.ownedIcon = null;
+    this.levelLabel.destroy();
     super.destroy();
   }
 
@@ -383,6 +417,7 @@ export class WildPokemonObject extends MovableObject {
     const dy = Math.abs(this.tileY - this.lastPlayerTileY);
     this.name.setVisible(Math.max(dx, dy) <= NAME_VISIBLE_RANGE);
     this.syncOwnedIcon();
+    this.syncLevelLabel();
   }
 
   private beginNewCycle(): void {

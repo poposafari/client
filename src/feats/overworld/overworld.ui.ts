@@ -842,6 +842,7 @@ export class OverworldUi extends BaseUi {
       if (shiny) this.worldContainer.add(shiny);
       this.nameContainer.add(obj.getName());
       this.nameContainer.add(obj.getTimerText());
+      this.nameContainer.add(obj.getLevelLabel());
       const owned = obj.getOwnedIcon();
       if (owned) this.nameContainer.add(owned);
 
@@ -927,6 +928,7 @@ export class OverworldUi extends BaseUi {
     const ownedIcon = obj.getOwnedIcon();
     this.nameContainer.add(obj.getName());
     this.nameContainer.add(obj.getTimerText());
+    this.nameContainer.add(obj.getLevelLabel());
     if (ownedIcon) this.nameContainer.add(ownedIcon);
 
     this.refreshWildBlockingRefs();
@@ -1037,6 +1039,8 @@ export class OverworldUi extends BaseUi {
     if (shinyOverlay) fadeTargets.push(shinyOverlay);
     const ownedIcon = obj instanceof WildPokemonObject ? obj.getOwnedIcon() : null;
     if (ownedIcon) fadeTargets.push(ownedIcon);
+    const levelLabel = obj instanceof WildPokemonObject ? obj.getLevelLabel() : null;
+    if (levelLabel) fadeTargets.push(levelLabel);
     this.scene.tweens.add({
       targets: fadeTargets,
       alpha: 0,
