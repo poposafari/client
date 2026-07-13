@@ -45,6 +45,7 @@ export interface GetMeRes {
     gender: number;
     isShiny: boolean;
     nickname: string | null;
+    tier?: string | null;
     abilityId: string;
     natureId: string;
     skills: unknown;
@@ -89,6 +90,7 @@ export interface PokemonBoxItem {
   gender: number;
   isShiny: boolean;
   nickname: string | null;
+  tier?: string | null;
   abilityId: string;
   natureId: string;
   skills: unknown;

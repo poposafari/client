@@ -200,11 +200,21 @@ export class ApiManager {
     return res.data.success ? res.data.data : null;
   }
 
-  async evolvePokemon(id: number, cost: string): Promise<{ id: number; pokedexId: string } | null> {
-    const res = await this.client.post<ApiResponse<{ id: number; pokedexId: string }>>(
-      '/pokemon/evolve',
-      { id, cost },
+  async upgradePokemon(id: number): Promise<{ id: number; tier: string } | null> {
+    const res = await this.client.post<ApiResponse<{ id: number; tier: string }>>(
+      '/pokemon/upgrade',
+      { id },
     );
+    return res.data.success ? res.data.data : null;
+  }
+
+  async evolvePokemon(
+    id: number,
+    cost: string,
+  ): Promise<{ id: number; pokedexId: string; tier: string | null } | null> {
+    const res = await this.client.post<
+      ApiResponse<{ id: number; pokedexId: string; tier: string | null }>
+    >('/pokemon/evolve', { id, cost });
     return res.data.success ? res.data.data : null;
   }
 

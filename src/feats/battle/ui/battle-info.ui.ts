@@ -19,7 +19,7 @@ import {
   getPokemonI18Name,
   updatePokemonGenderIcon,
 } from '@poposafari/utils';
-import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
+import { partyMemberCaptureBonus, resolvePokemonTier } from '@poposafari/core/party-bonus';
 import type { BattleAction, BattleContext, BattleModifiers } from '../battle.types';
 import { LOCATION_HUD, PLAYER_HUD, WILD_HUD } from '../battle.constants';
 import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
@@ -453,7 +453,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let sum = 0;
     for (const p of party) {
-      const rank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const masterRank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const rank = resolvePokemonTier(p.tier, masterRank);
       sum += partyMemberCaptureBonus(p.level, p.isShiny, rank);
     }
     return sum;
@@ -466,7 +467,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let sum = 0;
     for (const p of party) {
-      const rank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const masterRank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const rank = resolvePokemonTier(p.tier, masterRank);
       sum += Number((partyMemberCaptureBonus(p.level, p.isShiny, rank) * 100).toFixed(1));
     }
     return Number(sum.toFixed(1));

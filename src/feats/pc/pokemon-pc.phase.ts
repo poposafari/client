@@ -119,6 +119,7 @@ export class PokemonPcPhase implements IGamePhase {
           gender: p.gender,
           isShiny: p.isShiny,
           nickname: p.nickname,
+          tier: p.tier,
           abilityId: p.abilityId,
           natureId: p.natureId,
           skills: p.skills,

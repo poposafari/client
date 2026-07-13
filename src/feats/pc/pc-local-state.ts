@@ -273,6 +273,13 @@ export class PcLocalState {
     }
   }
 
+  setTier(id: number, tier: string | null): void {
+    const pokemon = this.allPokemons.get(id);
+    if (pokemon) {
+      pokemon.tier = tier;
+    }
+  }
+
   setPokedexId(id: number, pokedexId: string): void {
     const pokemon = this.allPokemons.get(id);
     if (pokemon) {

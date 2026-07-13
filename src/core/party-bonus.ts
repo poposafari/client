@@ -19,6 +19,13 @@ export const PARTY_BONUS = {
   SLOT_COUNT: 6,
 } as const;
 
+export function resolvePokemonTier(
+  stored: string | null | undefined,
+  masterRank: PokemonRank,
+): PokemonRank {
+  return stored ? (stored as PokemonRank) : masterRank;
+}
+
 // 파티 1마리가 실제 포획률에 더해주는 보너스(÷6 반영분).
 // 6마리의 반환값을 모두 더하면 전투 화면의 partyBonus(= Σ기여값 ÷ 6)와 정확히 일치한다.
 export function partyMemberCaptureBonus(

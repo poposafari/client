@@ -1,13 +1,14 @@
 import type { GameScene } from '@poposafari/scenes';
 import { TEXTFONT, TEXTSHADOW, TEXTSTROKE, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText, getPokemonTexture } from '@poposafari/utils';
-import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
+import { partyMemberCaptureBonus, resolvePokemonTier } from '@poposafari/core/party-bonus';
 
 export interface PokemonSlotData {
   pokedexId: string;
   level: number;
   isShiny: boolean;
   heldItemId: string | null;
+  tier?: string | null;
 }
 
 export interface PokemonSlotOptions {
@@ -156,7 +157,7 @@ export class PokemonSlotContainer extends Phaser.GameObjects.Container {
 
     if (this.partyBonusText) {
       const master = this.scene.getMasterData().getPokemonData(String(pokemon.pokedexId));
-      const rank = master?.rank ?? 'common';
+      const rank = resolvePokemonTier(pokemon.tier, master?.rank ?? 'common');
       const bonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, rank);
       this.partyBonusText.setText(`+${(bonus * 100).toFixed(1)}%`).setVisible(true);
     }

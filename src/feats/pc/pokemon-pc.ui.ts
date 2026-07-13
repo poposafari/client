@@ -75,6 +75,38 @@ const RANK_LOCALE: Record<PokemonRank, string> = {
   legendary: 'etc:tierLegendary',
 };
 
+const TIER_ORDER: PokemonRank[] = [
+  'common',
+  'uncommon',
+  'rare',
+  'super-rare',
+  'ultra-rare',
+  'epic',
+  'unique',
+  'legendary',
+];
+
+const MAX_UPGRADE_TIER: PokemonRank = 'unique';
+const UPGRADE_CANDY_BY_TIER: Partial<Record<PokemonRank, number>> = {
+  uncommon: 25,
+  rare: 50,
+  'super-rare': 100,
+  'ultra-rare': 200,
+  epic: 400,
+  unique: 800,
+};
+
+const tierRank = (tier: PokemonRank): number => TIER_ORDER.indexOf(tier);
+
+const nextTier = (tier: PokemonRank): PokemonRank | null => {
+  const idx = TIER_ORDER.indexOf(tier);
+  if (idx === -1 || idx >= TIER_ORDER.length - 1) return null;
+  return TIER_ORDER[idx + 1];
+};
+
+const resolveTier = (stored: string | null | undefined, masterTier: PokemonRank): PokemonRank =>
+  stored ? (stored as PokemonRank) : masterTier;
+
 export class PokemonPcUi extends BaseUi {
   scene: GameScene;
   private bg!: GImage;
@@ -762,12 +794,14 @@ export class PokemonPcUi extends BaseUi {
     const isMaxLevel = pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL;
     const hasCandy = hasExpCandy && !isMaxLevel;
     const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
+    const canUpgrade = this.getUpgradeInfo(pokemon) !== null;
 
     items.push(
       { key: 'pc:grab', label: i18next.t('pc:grab') },
       { key: 'pc:heldItem', label: i18next.t('pc:heldItem'), disabled: !hasHeldItem },
       { key: 'pc:evolve', label: i18next.t('pc:evolve'), disabled: !canEvolve },
       { key: 'pc:strengthen', label: i18next.t('pc:strengthen'), disabled: !hasCandy },
+      { key: 'pc:promote', label: i18next.t('pc:promote'), disabled: !canUpgrade },
       { key: 'pc:rename', label: i18next.t('pc:rename') },
       { key: 'pc:sendToProfessor', label: i18next.t('pc:sendToProfessor') },
       { key: 'pc:cancel', label: i18next.t('pc:cancel') },
@@ -804,6 +838,11 @@ export class PokemonPcUi extends BaseUi {
           break;
         case 'pc:strengthen':
           this.enhancePokemon(pokemon).then(() => {
+            this.inputManager.push(this.gridSelect);
+          });
+          break;
+        case 'pc:promote':
+          this.upgradePokemon(pokemon).then(() => {
             this.inputManager.push(this.gridSelect);
           });
           break;
@@ -902,6 +941,7 @@ export class PokemonPcUi extends BaseUi {
     const isMaxLevel = pokemon.level >= PokemonPcUi.POKEMON_MAX_LEVEL;
     const hasCandy = hasExpCandy && !isMaxLevel;
     const canEvolve = !!pokemonData && pokemonData.nextEvol.next.length > 0;
+    const canUpgrade = this.getUpgradeInfo(pokemon) !== null;
 
     const currentBoxNumber = this.currentBoxIndex + 1;
     const isCurrentBoxFull = this.pcState.getNextFreeGridSlot(currentBoxNumber) === null;
@@ -916,6 +956,7 @@ export class PokemonPcUi extends BaseUi {
       { key: 'pc:heldItem', label: i18next.t('pc:heldItem'), disabled: !hasHeldItem },
       { key: 'pc:evolve', label: i18next.t('pc:evolve'), disabled: !canEvolve },
       { key: 'pc:strengthen', label: i18next.t('pc:strengthen'), disabled: !hasCandy },
+      { key: 'pc:promote', label: i18next.t('pc:promote'), disabled: !canUpgrade },
       { key: 'pc:rename', label: i18next.t('pc:rename') },
       { key: 'pc:cancel', label: i18next.t('pc:cancel') },
     ];
@@ -984,6 +1025,11 @@ export class PokemonPcUi extends BaseUi {
           break;
         case 'pc:strengthen':
           this.enhancePokemon(pokemon).then(() => {
+            this.inputManager.push(this);
+          });
+          break;
+        case 'pc:promote':
+          this.upgradePokemon(pokemon).then(() => {
             this.inputManager.push(this);
           });
           break;
@@ -1798,7 +1844,11 @@ export class PokemonPcUi extends BaseUi {
     const party = user?.getParty();
     if (party) {
       const idx = party.findIndex((p) => p.id === resp.id);
-      if (idx >= 0) party[idx] = { ...party[idx], level: resp.level, exp: resp.exp };
+      if (idx >= 0) {
+        party[idx] = { ...party[idx], level: resp.level, exp: resp.exp };
+        // 파티원 강화 시 오버월드 HUD 파티 보너스(레벨 의존)를 즉시 갱신하기 위해 setParty로 리스너 통지.
+        user?.setParty(party);
+      }
     }
 
     await this.playEnhanceAnimation(oldLevel, oldExp, resp.level, resp.exp, group);
@@ -1820,6 +1870,106 @@ export class PokemonPcUi extends BaseUi {
         }
       },
     });
+
+    this.inputManager.pop(this);
+    this.inputLocked = false;
+  }
+
+  /**
+   * 승급 가능 여부와 비용 정보를 계산한다. 승급 불가면 null.
+   * 서버(pokemon.service.ts upgrade)의 게이트와 동일: 레벨 100 + 다음 티어가 존재하고 유니크 이하.
+   */
+  private getUpgradeInfo(
+    pokemon: PokemonBoxItem,
+  ): { nextTier: PokemonRank; candyId: string; candyCost: number } | null {
+    const pokemonData = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    if (!pokemonData) return null;
+    if (pokemon.level < PokemonPcUi.POKEMON_MAX_LEVEL) return null;
+
+    const currentTier = resolveTier(pokemon.tier, pokemonData.rank);
+    const upgraded = nextTier(currentTier);
+    if (!upgraded || tierRank(upgraded) > tierRank(MAX_UPGRADE_TIER)) return null;
+
+    const candyCost = UPGRADE_CANDY_BY_TIER[upgraded];
+    if (candyCost === undefined) return null;
+
+    return { nextTier: upgraded, candyId: `${pokemonData.type1}-candy`, candyCost };
+  }
+
+  private async upgradePokemon(pokemon: PokemonBoxItem): Promise<void> {
+    const info = this.getUpgradeInfo(pokemon);
+    if (!info) return;
+
+    const { nextTier: upgraded, candyId, candyCost } = info;
+    const tierName = i18next.t(RANK_LOCALE[upgraded]);
+    const candyName = i18next.t(`item:${candyId}.name`);
+
+    // 확인 메시지: "{다음 티어}로 승급하시겠습니까?\n비용은 {사탕} x{개수}"
+    const questionUi = this.scene.getMessage('question');
+    await questionUi.showMessage(
+      i18next.t('pc:confirmUpgrade', { tier: tierName, candy: candyName, count: candyCost }),
+      { resolveWhen: 'displayed' },
+    );
+    const YES_NO_ITEMS = [
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
+    ];
+    const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
+    this.confirmMenu.hide();
+    questionUi.hide();
+
+    if (choice?.key !== 'yes') return;
+
+    // 입력 잠금
+    this.inputLocked = true;
+    this.inputManager.push(this);
+
+    const api = this.scene.getApi();
+    let resp: { id: number; tier: string } | null = null;
+    try {
+      resp = await api.upgradePokemon(pokemon.id);
+    } catch (err) {
+      await showApiErrorAsTalk(this.scene, err);
+      this.inputManager.pop(this);
+      this.inputLocked = false;
+      return;
+    }
+    if (!resp) {
+      this.inputManager.pop(this);
+      this.inputLocked = false;
+      return;
+    }
+
+    // 로컬 상태 동기화
+    this.pcState.setTier(resp.id, resp.tier);
+
+    const user = this.scene.getUser();
+    user?.decreaseItemQuantity(candyId, candyCost);
+
+    const cachedBox = user?.getPokemonBox();
+    if (cachedBox) {
+      const idx = cachedBox.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], tier: resp.tier };
+    }
+    const party = user?.getParty();
+    if (party) {
+      const idx = party.findIndex((p) => p.id === resp.id);
+      if (idx >= 0) {
+        party[idx] = { ...party[idx], tier: resp.tier };
+        // 파티원 승급 시 오버월드 HUD 파티 보너스(티어 의존)를 즉시 갱신하기 위해 setParty로 리스너 통지.
+        user?.setParty(party);
+      }
+    }
+
+    this.refreshCurrentBox();
+    this.updateInfo(String(resp.id));
+
+    const displayName = pokemon.nickname ?? getPokemonI18Name(pokemon.pokedexId);
+    const newTierName = i18next.t(RANK_LOCALE[resp.tier as PokemonRank]);
+    const talkUi = this.scene.getMessage('talk');
+    await talkUi.showMessage(
+      i18next.t('pc:promoteSuccess', { name: displayName, tier: newTierName }),
+    );
 
     this.inputManager.pop(this);
     this.inputLocked = false;
@@ -1888,7 +2038,7 @@ export class PokemonPcUi extends BaseUi {
     this.inputManager.push(this);
 
     const api = this.scene.getApi();
-    let resp: { id: number; pokedexId: string } | null = null;
+    let resp: { id: number; pokedexId: string; tier: string | null } | null = null;
     try {
       resp = await api.evolvePokemon(pokemon.id, selectedOption.cost);
     } catch (err) {
@@ -1911,8 +2061,9 @@ export class PokemonPcUi extends BaseUi {
       isFemale: pokemon.gender === 2,
     });
 
-    // 로컬 상태 동기화
+    // 로컬 상태 동기화 (진화체에 맞춰 서버가 재계산한 tier도 반영)
     this.pcState.setPokedexId(resp.id, resp.pokedexId);
+    this.pcState.setTier(resp.id, resp.tier);
 
     const user = this.scene.getUser();
 
@@ -1928,13 +2079,14 @@ export class PokemonPcUi extends BaseUi {
     const cachedBox = user?.getPokemonBox();
     if (cachedBox) {
       const idx = cachedBox.findIndex((p) => p.id === resp.id);
-      if (idx >= 0) cachedBox[idx] = { ...cachedBox[idx], pokedexId: resp.pokedexId };
+      if (idx >= 0)
+        cachedBox[idx] = { ...cachedBox[idx], pokedexId: resp.pokedexId, tier: resp.tier };
     }
     const party = user?.getParty();
     if (party) {
       const idx = party.findIndex((p) => p.id === resp.id);
       if (idx >= 0) {
-        party[idx] = { ...party[idx], pokedexId: resp.pokedexId };
+        party[idx] = { ...party[idx], pokedexId: resp.pokedexId, tier: resp.tier };
         user?.setParty(party);
       }
     }
@@ -2673,7 +2825,7 @@ export class PokemonPcUi extends BaseUi {
     }
 
     if (pokemonData) {
-      const rank = pokemonData.rank;
+      const rank = resolveTier(pokemon.tier, pokemonData.rank);
       this.infoTier.setText(i18next.t(RANK_LOCALE[rank])).setStyle({ color: RANK_COLOR[rank] });
       this.infoPokemonName.setColor(RANK_COLOR[rank]);
     } else {

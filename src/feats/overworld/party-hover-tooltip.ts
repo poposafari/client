@@ -429,7 +429,8 @@ export class PartyHoverTooltip {
     const masterData = this.scene.getMasterData();
     const pokemonData = masterData.getPokemonData(pokemon.pokedexId);
 
-    const rank: PokemonRank = pokemonData?.rank ?? 'common';
+    const baseRank: PokemonRank = pokemonData?.rank ?? 'common';
+    const rank: PokemonRank = pokemon.tier ? (pokemon.tier as PokemonRank) : baseRank;
     const growthGroup: GrowthGroup = pokemonData?.growthGroup ?? 'medium_fast';
 
     this.window.setTexture(RANK_WINDOW[rank]);
