@@ -2,6 +2,13 @@ import type { TranslationObject } from '../ko/object';
 
 export const object: TranslationObject = {
   cabbie_safari: 'タクシードライバー(サファリゾーン)',
+  safari_ticket_npc: 'むりょうサファリゾーンチケット',
+  safari_ticket_count: 'しょじ {{count}}/{{cap}}',
+  safari_ticket_next: 'つぎまで {{time}}',
+  safari_ticket_full: 'MAX',
+  safari_ticket_question: 'たまっている サファリゾーンチケット {{count}}まいを うけとりますか？',
+  safari_ticket_done: 'サファリゾーンチケットを {{count}}まい うけとりました！',
+  safari_ticket_none: 'まだ うけとれる サファリゾーンチケットが ありません。',
   shopkeeper: 'てんいん',
   shopkeeper_0: 'てんいん 1',
   shopkeeper_1: 'てんいん 2',

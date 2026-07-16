@@ -92,7 +92,7 @@ import {
 
 const MAX_NPC = 34;
 const MAX_DOOR = 19;
-const MAX_NPC_1 = 1;
+const MAX_NPC_1 = 2;
 const SPECIAL_NPC_1_INDICES = new Set<number>([0]);
 
 /** id like "skin_0" | "outfit_0" | "hair_0" -> numeric suffix "0" */

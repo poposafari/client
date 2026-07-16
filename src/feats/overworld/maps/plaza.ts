@@ -76,6 +76,15 @@ export const p001Config: MapConfig = {
       reaction: [],
     },
     {
+      key: 'npc23',
+      name: 'safari_ticket_npc',
+      special: 'safariTicket',
+      x: 38,
+      y: 22,
+      direction: DIRECTION.DOWN,
+      reaction: [],
+    },
+    {
       key: 'npc_1_0',
       name: 'musician',
       special: 'musician',

@@ -71,6 +71,24 @@ export interface GetMeRes {
   }[];
   pokemonBoxCount: number;
   visitedMaps: string[];
+  safariTicket: SafariTicketStatusRes;
+}
+
+export interface SafariTicketStatusRes {
+  available: number;
+  cap: number;
+  nextTicketAt: number | null;
+  nextTicketInMs: number | null;
+}
+
+export interface SafariTicketClaimRes {
+  claimed: number;
+  itemId: string;
+  quantity: number;
+  available: number;
+  cap: number;
+  nextTicketAt: number | null;
+  nextTicketInMs: number | null;
 }
 
 // ── 게임 진입 / 동접자 API ──

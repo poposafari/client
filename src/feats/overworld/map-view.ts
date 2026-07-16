@@ -11,7 +11,12 @@ import {
   SafariNpcObject,
   TriggerObject,
 } from './objects';
-import { FossilNpcObject, MartNpcObject, MusicianNpcObject } from './objects/special-npc.object';
+import {
+  FossilNpcObject,
+  MartNpcObject,
+  MusicianNpcObject,
+  SafariTicketNpcObject,
+} from './objects/special-npc.object';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import CaveFilter from '@poposafari/utils/cave-filter';
 import { AnimatedTiles } from './animated-tiles';
@@ -128,6 +133,8 @@ export class MapView {
           this.npcs.push(new FossilNpcObject(this.scene, n));
         } else if (n.special === 'musician') {
           this.npcs.push(new MusicianNpcObject(this.scene, n));
+        } else if (n.special === 'safariTicket') {
+          this.npcs.push(new SafariTicketNpcObject(this.scene, n));
         } else if (n.type === 'pokemon') {
           this.npcs.push(new PokemonNpcObject(this.scene, n, this));
         } else if (n.type === 'human') {

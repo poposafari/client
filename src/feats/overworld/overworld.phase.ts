@@ -24,7 +24,17 @@ import DayNightFilter from '@poposafari/utils/day-night-filter';
 import i18next from '@poposafari/i18n';
 import { screenFadeIn } from '@poposafari/utils/screen-fade';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
-import { ANIMATION, BGM, DEPTH, EASE, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  ANIMATION,
+  BGM,
+  DEPTH,
+  EASE,
+  ItemCategory,
+  SFX,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import { addImage, addSprite, addText, addWindow } from '@poposafari/utils';
 import { POPOTOWN_OST_TRACKS, resolveMapBgm, setPopotownOst } from '@poposafari/core/popotown-ost';
 
@@ -100,6 +110,83 @@ export class OverworldPhase implements IGamePhase {
     } finally {
       yesNoMenu.destroy();
       listUi.destroy();
+    }
+  }
+
+  private async handleSafariTicketTalk(): Promise<void> {
+    const question = this.scene.getMessage('question');
+    const talk = this.scene.getMessage('talk');
+    const user = this.scene.getUser();
+    if (!user) return;
+
+    const npcName = i18next.t('object:safari_ticket_npc');
+    const yesNoMenu = new MenuUi(this.scene, this.scene.getInputManager(), {
+      y: +800,
+      itemHeight: 70,
+    });
+    const yesNoItems = () => [
+      { key: 'yes', label: i18next.t('etc:yes') },
+      { key: 'no', label: i18next.t('etc:no') },
+    ];
+
+    try {
+      const state = user.getSafariTicket();
+      if (state.available <= 0) {
+        await talk.showMessage(i18next.t('object:safari_ticket_none'), { name: npcName });
+        return;
+      }
+
+      await question.showMessage(
+        i18next.t('object:safari_ticket_question', { count: state.available }),
+        { name: npcName, resolveWhen: 'displayed' },
+      );
+      const choice = await yesNoMenu.waitForSelect(yesNoItems());
+      yesNoMenu.hide();
+      question.hide();
+      if (choice?.key !== 'yes') return;
+
+      let result;
+      try {
+        result = await this.scene.getApi().claimSafariTicket();
+      } catch {
+        await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'), { name: npcName });
+        return;
+      }
+      if (!result) {
+        await talk.showMessage(i18next.t('error:INTERNAL_SERVER_ERROR'), { name: npcName });
+        return;
+      }
+
+      user.setSafariTicket({
+        available: result.available,
+        cap: result.cap,
+        nextTicketAt: result.nextTicketAt,
+        nextTicketInMs: result.nextTicketInMs,
+      });
+      user.updateItemQuantity(result.itemId, result.quantity);
+      this.scene.events.emit(GameEvent.SAFARI_TICKET_CHANGED);
+
+      // 땅 아이템 습득과 동일한 연출로 티켓 획득을 표시한다.
+      const nickname = user.getProfile().nickname ?? '';
+      const itemName = i18next.t(`item:${result.itemId}.name`, {
+        defaultValue: result.itemId,
+      });
+      this.scene.getAudio().playEffect(SFX.GET_0);
+
+      const category = this.scene.getMasterData().getItemData(result.itemId)?.category ?? null;
+      if (category) {
+        await this.scene.getMessage('pocketTalk').showPocketMessage({
+          name: nickname,
+          item: itemName,
+          category: category as ItemCategory,
+        });
+      } else {
+        await this.scene
+          .getMessage('talk')
+          .showMessage(i18next.t('safari:pickedItem', { name: nickname, item: itemName }));
+      }
+    } finally {
+      yesNoMenu.destroy();
     }
   }
 
@@ -199,6 +286,8 @@ export class OverworldPhase implements IGamePhase {
         this.scene.pushPhase(new FossilPhase(this.scene));
       } else if (phaseKey === 'musician') {
         void this.handleMusicianTalk();
+      } else if (phaseKey === 'safariTicket') {
+        void this.handleSafariTicketTalk();
       }
     };
     this.overworldUi.onWildEncounterRequested = (wild) => {

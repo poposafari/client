@@ -8,6 +8,7 @@ import {
   OverworldMovementState,
   PokedexEntry,
   PokemonBoxItem,
+  SafariTicketStatusRes,
   TownMapEntry,
 } from '@poposafari/types';
 import { MasterData } from './master.data.ts';
@@ -19,6 +20,9 @@ export interface ItemBagEntry {
 
 export const MAX_POKEMON_BOX_CAPACITY = 900;
 export const MAX_PARTY_SIZE = 6;
+
+//사파리존 무료 티켓 리젠 주기(8시간)
+export const SAFARI_TICKET_REGEN_INTERVAL_MS = 8 * 60 * 60 * 1000;
 
 export interface MappedProfile {
   nickname: string;
@@ -37,6 +41,7 @@ export class UserManager {
   private itemSlots!: string[];
   private visitedMaps!: Set<string>;
   private pokemonBoxCount!: number;
+  private safariTicket!: SafariTicketStatusRes;
 
   // ── Lazy Load 데이터 (UI 열 때 최초 1회 로드 후 캐싱) ──
   private pokemonBox: PokemonBoxItem[] | null = null;
@@ -71,6 +76,7 @@ export class UserManager {
     this.itemSlots = undefined as unknown as string[];
     this.visitedMaps = undefined as unknown as Set<string>;
     this.pokemonBoxCount = undefined as unknown as number;
+    this.safariTicket = undefined as unknown as SafariTicketStatusRes;
 
     this.pokemonBox = null;
     this.boxMeta = null;
@@ -115,6 +121,7 @@ export class UserManager {
     this.pokedex = user.pokedex;
     this.visitedMaps = new Set(user.visitedMaps ?? []);
     this.pokemonBoxCount = user.pokemonBoxCount ?? 0;
+    this.safariTicket = user.safariTicket;
   }
 
   getProfile(): MappedProfile {
@@ -127,6 +134,29 @@ export class UserManager {
 
   setHasStarter(value: boolean): void {
     this.profile.hasStarter = value;
+  }
+
+  getSafariTicket(): SafariTicketStatusRes {
+    const s = this.safariTicket;
+    if (!s) {
+      return { available: 0, cap: 0, nextTicketAt: null, nextTicketInMs: null };
+    }
+
+    const now = Date.now();
+    while (s.nextTicketAt !== null && now >= s.nextTicketAt && s.available < s.cap) {
+      s.available += 1;
+      if (s.available < s.cap) {
+        s.nextTicketAt += SAFARI_TICKET_REGEN_INTERVAL_MS;
+      } else {
+        s.nextTicketAt = null;
+      }
+    }
+    s.nextTicketInMs = s.nextTicketAt === null ? null : Math.max(0, s.nextTicketAt - now);
+    return s;
+  }
+
+  setSafariTicket(state: SafariTicketStatusRes): void {
+    this.safariTicket = { ...state };
   }
 
   getEquippedCostumes(): GetMeRes['equippedCostumes'] {

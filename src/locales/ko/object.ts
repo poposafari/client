@@ -4,6 +4,13 @@ export type TranslationObject = {
 
 export const object: TranslationObject = {
   cabbie_safari: '택시 드라이버(사파리존)',
+  safari_ticket_npc: '무료 사파리존 티켓',
+  safari_ticket_count: '보유 {{count}}/{{cap}}',
+  safari_ticket_next: '다음 {{time}}',
+  safari_ticket_full: 'MAX',
+  safari_ticket_question: '쌓여있는 사파리존 티켓 {{count}}장을 받으시겠어요?',
+  safari_ticket_done: '사파리존 티켓 {{count}}장을 받았다!',
+  safari_ticket_none: '아직 받을 수 있는 사파리존 티켓이 없어요.',
   shopkeeper: '점원',
   shopkeeper_0: '점원 1',
   shopkeeper_1: '점원 2',

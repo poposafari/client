@@ -52,7 +52,13 @@ export type ReactionStep =
   | { key: 'question'; content: QuestionStepContent }
   | { key: 'notice'; content: NoticeStepContent };
 
-export type SpecialNpc = 'professor' | 'safari' | 'mart' | 'fossil' | 'musician';
+export type SpecialNpc =
+  | 'professor'
+  | 'safari'
+  | 'mart'
+  | 'fossil'
+  | 'musician'
+  | 'safariTicket';
 
 export type NpcType = 'human' | 'pokemon';
 

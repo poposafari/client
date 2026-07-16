@@ -19,6 +19,8 @@ import {
   RegisterLocalReq,
   RestoreFossilReq,
   RestoreFossilRes,
+  SafariTicketStatusRes,
+  SafariTicketClaimRes,
   SafariBaitReq,
   SafariBaitRockRes,
   SafariCatchReq,
@@ -285,6 +287,18 @@ export class ApiManager {
       item,
       quantity,
     });
+    return res.data.success ? res.data.data : null;
+  }
+
+  async getSafariTicketStatus(): Promise<SafariTicketStatusRes | null> {
+    const res = await this.client.get<ApiResponse<SafariTicketStatusRes>>('/item/safari-ticket');
+    return res.data.success ? res.data.data : null;
+  }
+
+  async claimSafariTicket(): Promise<SafariTicketClaimRes | null> {
+    const res = await this.client.post<ApiResponse<SafariTicketClaimRes>>(
+      '/item/safari-ticket/claim',
+    );
     return res.data.success ? res.data.data : null;
   }
 

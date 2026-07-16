@@ -47,6 +47,7 @@ import {
   OtherPlayerObject,
   PetObject,
   PlayerObject,
+  SafariTicketNpcObject,
   WaterEdgeObject,
   WildPokemonObject,
 } from './objects';
@@ -1569,6 +1570,12 @@ export class OverworldUi extends BaseUi {
         this.worldContainer!.add(npc.getShadow());
         this.worldContainer!.add(npc.getSprite());
         this.nameContainer!.add(npc.getName());
+        if (npc instanceof SafariTicketNpcObject) {
+          this.nameContainer!.add(npc.getTimerText());
+          for (const icon of npc.getTicketIcons()) {
+            this.nameContainer!.add(icon);
+          }
+        }
       }
 
       const user = this.scene.getUser();

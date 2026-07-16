@@ -2,6 +2,13 @@ import type { TranslationObject } from '../ko/object';
 
 export const object: TranslationObject = {
   cabbie_safari: 'Taxista (Zona Safari)',
+  safari_ticket_npc: 'Entradas gratis a la Zona Safari',
+  safari_ticket_count: 'Stock {{count}}/{{cap}}',
+  safari_ticket_next: 'Próxima {{time}}',
+  safari_ticket_full: 'MAX',
+  safari_ticket_question: '¿Quieres recibir tus {{count}} entrada(s) acumulada(s) de la Zona Safari?',
+  safari_ticket_done: '¡Recibiste {{count}} entrada(s) de la Zona Safari!',
+  safari_ticket_none: 'Aún no tienes entradas de la Zona Safari para reclamar.',
   shopkeeper: 'Dependiente',
   shopkeeper_0: 'Dependiente 1',
   shopkeeper_1: 'Dependiente 2',
