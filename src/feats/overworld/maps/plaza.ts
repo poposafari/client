@@ -446,6 +446,7 @@ export const p003Config: MapConfig = {
         'safari-ball',
         'safari-zone-ticket',
         'move_surf',
+        'move_fly',
         'move_ancient-power',
         'move_double-hit',
         'move_dragon-pulse',

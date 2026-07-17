@@ -102,6 +102,7 @@ export class OverworldEntryPhase implements IGamePhase {
       targetMapId: this.initPosConfig!.location,
       x: this.initPosConfig!.x,
       y: this.initPosConfig!.y,
+      fly: this.initPosConfig!.useMapEntry ?? false,
     });
 
     const maintenanceProbe = window.setTimeout(() => {

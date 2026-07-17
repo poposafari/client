@@ -447,6 +447,7 @@ export interface InitPosConfig {
   location: MAP;
   x: number;
   y: number;
+  useMapEntry?: boolean;
 }
 
 export const OVERWORLD_DOOR: Record<DOOR, DoorConfig> = {

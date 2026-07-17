@@ -4,6 +4,7 @@ export const safari = {
   noTicket: 'No tienes un Ticket de la Zona Safari.\nConsigue uno primero.',
   ballGranted: '¡Bienvenido a la Zona Safari!\n¡Aquí tienes {{count}} Balls Safari!',
   confirmMove: '¿Viajar a {{map}}?',
+  confirmFly: '¿Volar a {{map}}?',
   pickedItem: '{{name}} obtuvo\n{{item}}.',
   pickedItemPocket: {
     line1: '¡{{name}} guardó el {{item}}',

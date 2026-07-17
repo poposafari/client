@@ -684,8 +684,8 @@ export const item: TranslationItem = {
     description: '포켓몬에게 풀베기를 가르친다.',
   },
   move_fly: {
-    name: '기술머신 비행',
-    description: '포켓몬에게 비행을 가르친다.',
+    name: '기술머신 공중날기',
+    description: '포켓몬에게 공중날기를 가르친다.',
   },
   move_surf: {
     name: '기술머신 파도타기',

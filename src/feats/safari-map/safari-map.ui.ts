@@ -193,7 +193,7 @@ export class SafariMapUi extends BaseUi {
   private titleTween: Phaser.Tweens.Tween | null = null;
   private inputGuide!: KeyGuideBarContainer;
 
-  private resolveClose: (() => void) | null = null;
+  private resolveClose: ((mapId: string | null) => void) | null = null;
 
   constructor(scene: GameScene) {
     super(scene, scene.getInputManager(), DEPTH.MESSAGE);
@@ -399,10 +399,17 @@ export class SafariMapUi extends BaseUi {
 
   onInput(key: string): void {
     switch (key) {
+      case KEY.Z:
+      case KEY.ENTER:
+        if (this.hoveredIndex >= 0 && this.isPointVisited(this.hoveredIndex)) {
+          this.scene.getAudio().playEffect(SFX.CURSOR_0);
+          this.close(MAP_POINTS[this.hoveredIndex].key);
+        }
+        break;
       case KEY.X:
       case KEY.ESC:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.close();
+        this.close(null);
         break;
     }
   }
@@ -531,17 +538,18 @@ export class SafariMapUi extends BaseUi {
     });
   }
 
-  private close(): void {
+  private close(mapId: string | null = null): void {
     if (this.resolveClose) {
       const resolve = this.resolveClose;
       this.resolveClose = null;
-      resolve();
+      resolve(mapId);
     }
   }
 
   errorEffect(_errorMsg: string): void {}
 
-  waitForInput(): Promise<void> {
+  /** 선택된 목적지 mapId를 반환한다. 취소(X/ESC) 시 null. */
+  waitForInput(): Promise<string | null> {
     return new Promise((resolve) => {
       this.resolveClose = resolve;
     });
