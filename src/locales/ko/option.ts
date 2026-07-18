@@ -20,4 +20,8 @@ export const option: TranslationOption = {
   speedNormal: '보통',
   speedFast: '빠르게',
   speedFaster: '더 빠르게',
+  categoryGeneral: '일반',
+  categorySound: '사운드',
+  categoryScreen: '화면',
+  categoryKeyboard: '키보드',
 };

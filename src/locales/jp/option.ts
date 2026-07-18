@@ -18,4 +18,8 @@ export const option: TranslationOption = {
   speedNormal: 'ふつう',
   speedFast: 'はやい',
   speedFaster: 'もっとはやい',
+  categoryGeneral: 'いっぱん',
+  categorySound: 'サウンド',
+  categoryScreen: 'がめん',
+  categoryKeyboard: 'キーボード',
 };

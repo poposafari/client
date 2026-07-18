@@ -728,6 +728,7 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadImage(TEXTURE.WINDOW_WHITE, 'ui/windows', 'window_white');
     this.scene.loadImage(TEXTURE.WINDOW_CURSOR, 'ui/windows', 'window_cursor');
     this.scene.loadImage(TEXTURE.WINDOW_CURSOR_R, 'ui/windows', 'window_cursor_r');
+    this.scene.loadImage(TEXTURE.WINDOW_CURSOR_Y, 'ui/windows', 'window_cursor_y');
     this.scene.loadImage(TEXTURE.WINDOW_HUD, 'ui/windows', 'window_hud');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_0, 'ui/windows', 'window_notice_0');
     this.scene.loadImage(TEXTURE.WINDOW_NOTICE_1, 'ui/windows', 'window_notice_1');
