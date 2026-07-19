@@ -604,4 +604,8 @@ export class OverworldPhase implements IGamePhase {
   onRefreshLanguage?(): void {
     this.overworldUi?.onRefreshLanguage();
   }
+
+  onRefreshKeybind?(): void {
+    this.overworldUi?.onRefreshKeybind();
+  }
 }

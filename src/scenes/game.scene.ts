@@ -5,6 +5,7 @@ import {
   AudioManager,
   IGamePhase,
   InputManager,
+  KeybindManager,
   OptionManager,
   SocketReconnectingUi,
 } from '@poposafari/core';
@@ -40,6 +41,7 @@ import WipeRightToLeftShader from '@poposafari/utils/wipe-rl-shader';
 export enum GameEvent {
   LANGUAGE_CHANGED = 'LANGUAGE_CHANGED',
   WINDOW_CHANGED = 'WINDOW_CHANGED',
+  KEYBIND_CHANGED = 'KEYBIND_CHANGED',
   GAME_TIME_CHANGED = 'GAME_TIME_CHANGED',
   WEATHER_CHANGED = 'WEATHER_CHANGED',
   PROFILE_CHANGED = 'PROFILE_CHANGED',
@@ -88,6 +90,7 @@ export class GameScene extends BaseScene {
   private api!: ApiManager;
   private audio!: AudioManager;
   private option!: OptionManager;
+  private keybind!: KeybindManager;
   private masterData!: MasterData;
   private user: UserManager | null = null;
   private mapRegistry!: MapRegistry;
@@ -343,7 +346,12 @@ export class GameScene extends BaseScene {
   create() {
     this.audio = new AudioManager(this);
     this.option = new OptionManager(this.audio);
-    this.inputManager = new InputManager(this, () => this.markActivity());
+    this.keybind = new KeybindManager();
+    this.inputManager = new InputManager(
+      this,
+      () => this.markActivity(),
+      (code) => this.keybind.resolveAction(code),
+    );
 
     this.input.on('pointerdown', () => this.markActivity());
     this.api = new ApiManager(VITE_API_BASE_URL ?? 'http://localhost:9000/api');
@@ -372,6 +380,11 @@ export class GameScene extends BaseScene {
     this.events.on(GameEvent.WINDOW_CHANGED, () => {
       this.phaseStack.forEach((phase) => {
         if (phase.onRefreshWindow) phase.onRefreshWindow();
+      });
+    });
+    this.events.on(GameEvent.KEYBIND_CHANGED, () => {
+      this.phaseStack.forEach((phase) => {
+        if (phase.onRefreshKeybind) phase.onRefreshKeybind();
       });
     });
 
@@ -450,6 +463,10 @@ export class GameScene extends BaseScene {
 
   getOption(): OptionManager {
     return this.option;
+  }
+
+  getKeybind(): KeybindManager {
+    return this.keybind;
   }
 
   getMasterData(): MasterData {
@@ -663,6 +680,7 @@ export class GameScene extends BaseScene {
     switch (event) {
       case GameEvent.LANGUAGE_CHANGED:
       case GameEvent.WINDOW_CHANGED:
+      case GameEvent.KEYBIND_CHANGED:
         this.events.emit(event);
         break;
     }

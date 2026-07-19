@@ -1,4 +1,5 @@
 import { GameScene } from '@poposafari/scenes';
+import { GameAction } from '@poposafari/types';
 import { IInputHandler, InputManager } from './input.manager';
 
 export interface IRefreshableLanguage {
@@ -33,7 +34,7 @@ export abstract class BaseUi extends Phaser.GameObjects.Container implements IIn
     this.inputManager.pop(this); // 스택 해제
   }
 
-  abstract onInput(key: string): void;
+  abstract onInput(key: string, action: GameAction | null): void;
   abstract errorEffect(errorMsg: string): void;
   abstract waitForInput(): Promise<any>;
   abstract createLayout(): void;

@@ -2,6 +2,7 @@ import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@popo
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GameAction,
   IMenuItem,
   IMenuListConfig,
   KEY,
@@ -125,14 +126,24 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     throw new Error('Method not implemented.');
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.items.length === 0) return;
-    if (this.handleNavigationInput(key)) return;
+    if (this.handleNavigationInput(key, action)) return;
     this.handleCustomInput(key);
   }
 
-  protected handleNavigationInput(key: string): boolean {
+  protected handleNavigationInput(key: string, action: GameAction | null): boolean {
     const cursorSfx = this.config.cursorSfx ?? SFX.CURSOR_0;
+    if (action === GameAction.CONFIRM) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.selectItem();
+      return true;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.cancel();
+      return true;
+    }
     switch (key) {
       case KEY.UP:
         this.scene.getAudio().playEffect(cursorSfx);
@@ -141,16 +152,6 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       case KEY.DOWN:
         this.scene.getAudio().playEffect(cursorSfx);
         this.moveCursor(1);
-        return true;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.selectItem();
-        return true;
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.cancel();
         return true;
     }
     return false;

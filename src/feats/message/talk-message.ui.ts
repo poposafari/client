@@ -1,5 +1,5 @@
 import { InputManager } from '@poposafari/core';
-import { EASE, KEY, TEXTURE } from '@poposafari/types';
+import { EASE, GameAction, TEXTURE } from '@poposafari/types';
 import { addImage } from '@poposafari/utils';
 import { MessageUi } from './message.ui';
 import { GameScene } from '@poposafari/scenes';
@@ -23,9 +23,9 @@ export class TalkMessageUi extends MessageUi {
     this.container.add(this.endCursor);
   }
 
-  onInput(key: string): void {
+  onInput(_key: string, action: GameAction | null): void {
     if (this.inputLocked) return;
-    if (key === KEY.Z || key === KEY.ENTER) {
+    if (action === GameAction.CONFIRM) {
       if (this.isTyping) {
         this.stopTyping();
       } else {

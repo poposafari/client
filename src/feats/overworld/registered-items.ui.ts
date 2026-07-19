@@ -1,6 +1,6 @@
 import { BaseUi } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, GameAction, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 
@@ -84,8 +84,24 @@ export class RegisteredItemsUi extends BaseUi {
     this.label.setText(i18next.exists(nameKey) ? i18next.t(nameKey) : itemId);
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.itemIds.length === 0) return;
+    if (action === GameAction.CONFIRM) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.finish(this.itemIds[this.cursorIndex]);
+      return;
+    }
+
+    if (action === GameAction.QUICKSLOT) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.finish(null);
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.finish(null);
+      return;
+    }
     switch (key) {
       case KEY.LEFT:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
@@ -94,17 +110,6 @@ export class RegisteredItemsUi extends BaseUi {
       case KEY.RIGHT:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.moveCursor(1);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.finish(this.itemIds[this.cursorIndex]);
-        break;
-      case KEY.X:
-      case KEY.ESC:
-      case KEY.A:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.finish(null);
         break;
     }
   }

@@ -1,6 +1,14 @@
 import { BaseUi } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { ANIMATION, DEPTH, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  ANIMATION,
+  DEPTH,
+  GameAction,
+  SFX,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import { addBackground, addImage, addSprite, addText } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
@@ -397,20 +405,18 @@ export class SafariMapUi extends BaseUi {
     }
   }
 
-  onInput(key: string): void {
-    switch (key) {
-      case KEY.Z:
-      case KEY.ENTER:
-        if (this.hoveredIndex >= 0 && this.isPointVisited(this.hoveredIndex)) {
-          this.scene.getAudio().playEffect(SFX.CURSOR_0);
-          this.close(MAP_POINTS[this.hoveredIndex].key);
-        }
-        break;
-      case KEY.X:
-      case KEY.ESC:
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      if (this.hoveredIndex >= 0 && this.isPointVisited(this.hoveredIndex)) {
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.close(null);
-        break;
+        this.close(MAP_POINTS[this.hoveredIndex].key);
+      }
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.close(null);
+      return;
     }
   }
 

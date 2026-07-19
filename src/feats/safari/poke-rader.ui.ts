@@ -4,6 +4,7 @@ import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   EASE,
+  GameAction,
   KEY,
   SFX,
   SYMBOL_ARROW_LEFT,
@@ -473,13 +474,13 @@ export class PokeRaderUi extends BaseUi {
     this.playCursorPulse();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CANCEL) {
+      (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
+      this.finishExit();
+      return;
+    }
     switch (key) {
-      case KEY.ESC:
-      case KEY.X:
-        (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
-        this.finishExit();
-        return;
       case KEY.UP:
       case KEY.DOWN: {
         (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);

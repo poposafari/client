@@ -3,6 +3,7 @@ import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   EASE,
+  GameAction,
   IMenuItem,
   KEY,
   PokemonHiddenMove,
@@ -582,16 +583,16 @@ export class PokemonPcUi extends BaseUi {
     super.hide();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.inputLocked) return;
     if (this.focusArea === 'party') {
-      this.handlePartyInput(key);
+      this.handlePartyInput(key, action);
     } else if (this.focusArea === 'top') {
-      this.handleTopInput(key);
+      this.handleTopInput(key, action);
     } else if (this.focusArea === 'grab') {
-      this.handleGrabInput(key);
+      this.handleGrabInput(key, action);
     } else if (this.focusArea === 'sellButtons') {
-      this.handleSellButtonsInput(key);
+      this.handleSellButtonsInput(key, action);
     }
   }
 
@@ -599,7 +600,21 @@ export class PokemonPcUi extends BaseUi {
     this.inputLocked = true;
   }
 
-  private handlePartyInput(key: string): void {
+  private handlePartyInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      // 빈 슬롯이면 무시
+      const slotPokemon = this.pcState.getPokemonAtPartySlot(this.partyCursorIndex);
+      if (!slotPokemon) return;
+      if (this.mode === 'selectForTeachMove' && !this.isEligibleForTeachMove(slotPokemon)) return;
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.openPartyMenu();
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.onClose?.();
+      return;
+    }
     switch (key) {
       case KEY.LEFT:
         this.switchFocus('grid');
@@ -623,28 +638,29 @@ export class PokemonPcUi extends BaseUi {
         }
         break;
       }
-      case KEY.Z:
-      case KEY.ENTER: {
-        // 빈 슬롯이면 무시
-        const slotPokemon = this.pcState.getPokemonAtPartySlot(this.partyCursorIndex);
-        if (!slotPokemon) break;
-        if (this.mode === 'selectForTeachMove' && !this.isEligibleForTeachMove(slotPokemon)) break;
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.openPartyMenu();
-        break;
-      }
       case KEY.N:
         this.cycleInfoPage();
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.onClose?.();
         break;
     }
   }
 
-  private handleTopInput(key: string): void {
+  private handleTopInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      if (this.sellMode) return;
+      if (this.mode !== 'manage') return;
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.openTopMenu();
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      if (this.sellMode) {
+        this.exitSellMode();
+        return;
+      }
+      this.onClose?.();
+      return;
+    }
     switch (key) {
       case KEY.DOWN:
         this.switchFocus('grid');
@@ -657,27 +673,22 @@ export class PokemonPcUi extends BaseUi {
       case KEY.RIGHT:
         this.switchBox(+1);
         break;
-      case KEY.Z:
-      case KEY.ENTER:
-        if (this.sellMode) break;
-        if (this.mode !== 'manage') break;
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.openTopMenu();
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        if (this.sellMode) {
-          this.exitSellMode();
-          break;
-        }
-        this.onClose?.();
-        break;
     }
   }
 
-  private handleGrabInput(key: string): void {
+  private handleGrabInput(key: string, action: GameAction | null): void {
     if (!this.grabbedPokemonId) return;
+
+    if (action === GameAction.CONFIRM) {
+      if (this.grabInTop) return;
+      this.placeGrabbedPokemon();
+      return;
+    }
+
+    if (action === GameAction.CANCEL) {
+      this.cancelGrab();
+      return;
+    }
 
     switch (key) {
       case KEY.UP:
@@ -738,15 +749,6 @@ export class PokemonPcUi extends BaseUi {
         }
         this.updateGrabCursorPosition();
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        if (this.grabInTop) break;
-        this.placeGrabbedPokemon();
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.cancelGrab();
         break;
     }
   }
@@ -1535,7 +1537,18 @@ export class PokemonPcUi extends BaseUi {
     }
   }
 
-  private handleSellButtonsInput(key: string): void {
+  private handleSellButtonsInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      if (this.sellButtonIndex === 0) this.confirmAndSell();
+      else this.exitSellMode();
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.exitSellMode();
+      return;
+    }
     switch (key) {
       case KEY.LEFT:
         if (this.sellButtonIndex !== 0) {
@@ -1554,17 +1567,6 @@ export class PokemonPcUi extends BaseUi {
       case KEY.UP:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.switchFocus('grid');
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        if (this.sellButtonIndex === 0) this.confirmAndSell();
-        else this.exitSellMode();
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.exitSellMode();
         break;
     }
   }

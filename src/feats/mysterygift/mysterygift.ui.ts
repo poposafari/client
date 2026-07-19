@@ -1,6 +1,6 @@
 import { BaseUi, IInputHandler } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, IMenuItem, TEXTURE } from '@poposafari/types';
+import { DEPTH, GameAction, IMenuItem, TEXTURE } from '@poposafari/types';
 import { MysterygiftMenuUi } from './mysterygift-menu.ui';
 import { addBackground, addContainer, getBackgroundKey } from '@poposafari/utils';
 
@@ -23,8 +23,8 @@ export class MysteryGiftUi extends BaseUi implements IInputHandler {
     this.initTestData();
   }
 
-  onInput(key: string): void {
-    this.menuList.onInput(key);
+  onInput(key: string, action: GameAction | null): void {
+    this.menuList.onInput(key, action);
   }
 
   errorEffect(errorMsg: string): void {

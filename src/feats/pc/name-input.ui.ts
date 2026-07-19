@@ -1,6 +1,6 @@
 import InputText from 'phaser3-rex-plugins/plugins/inputtext';
 import { BaseUi } from '@poposafari/core';
-import { DEPTH, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, GameAction, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addText, addTextInput, addWindow } from '@poposafari/utils';
 import i18next from 'i18next';
 import { GameScene } from '@poposafari/scenes';
@@ -30,14 +30,14 @@ export class NameInputUi extends BaseUi {
     this.createLayout();
   }
 
-  onInput(key: string): void {
-    switch (key) {
-      case KEY.ENTER:
-        this.confirm();
-        break;
-      case KEY.ESC:
-        this.cancel();
-        break;
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      this.confirm();
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.cancel();
+      return;
     }
   }
 

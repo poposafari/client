@@ -9,7 +9,16 @@ import {
 } from '@poposafari/core';
 import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, GrowthGroup, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  DEPTH,
+  GameAction,
+  GrowthGroup,
+  KEY,
+  SFX,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import { addImage, addText, addWindow } from '@poposafari/utils';
 import i18next from 'i18next';
 
@@ -214,10 +223,22 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     super.hide();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     const max = this.getMaxAllowed();
     if (max <= 0) {
-      if (key === KEY.ESC || key === KEY.X) this.resolve(false);
+      if (action === GameAction.CANCEL) this.resolve(false);
+      return;
+    }
+
+    if (action === GameAction.CONFIRM) {
+      this.playCursor();
+      this.resolve(true);
+      return;
+    }
+
+    if (action === GameAction.CANCEL) {
+      this.playCursor();
+      this.resolve(false);
       return;
     }
 
@@ -237,16 +258,6 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
       case KEY.DOWN:
         this.setAmount(Math.max(1, this.amount - STEP_LARGE));
         this.playCursor();
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.playCursor();
-        this.resolve(true);
-        break;
-      case KEY.ESC:
-      case KEY.X:
-        this.playCursor();
-        this.resolve(false);
         break;
     }
   }

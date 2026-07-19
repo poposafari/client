@@ -4,9 +4,9 @@ import { GameEvent, GameScene, type SafariWildInfo } from '@poposafari/scenes';
 import {
   ANIMATION,
   DEPTH,
+  GameAction,
   GetMeRes,
   ItemCategory,
-  KEY,
   OptionKey,
   OverworldDirection,
   OverworldMovementState,
@@ -327,7 +327,9 @@ export class OverworldUi extends BaseUi {
     if (this.surfPromptPending) return;
     if (this.talkActionPending) return;
 
-    if (key === KEY.R) {
+    const action = this.scene.getKeybind().resolveAction(key);
+
+    if (action === GameAction.RUNNING) {
       this.handleKeyR();
       this.syncRunningToggleIcon();
       return;
@@ -341,29 +343,27 @@ export class OverworldUi extends BaseUi {
     if (!this.player?.isMovementFinish()) {
       return;
     }
-    switch (key) {
-      case KEY.S:
+    switch (action) {
+      case GameAction.MENU:
         this.syncMenuToggleIcon(true);
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMenuRequested?.();
         break;
-      case KEY.A:
+      case GameAction.QUICKSLOT:
         if (this.newbieRestricted) break;
         this.syncRegistedItemIcon(true);
         this.onRegisteredItemsRequested?.();
         break;
-      case KEY.M:
+      case GameAction.MAP:
         if (this.newbieRestricted) break;
         if (!this.isInSafari()) break;
         this.syncMapToggleIcon(true);
         this.scene.getAudio().playEffect(SFX.OPEN_0);
         this.onMapRequested?.();
         break;
-      case KEY.Z:
-      case KEY.ENTER:
+      case GameAction.CONFIRM:
         void this.handleTalkAction();
         break;
-      // KEY.ESC 등 추가 키는 여기서 처리
       default:
         break;
     }
@@ -2165,6 +2165,10 @@ export class OverworldUi extends BaseUi {
     for (const door of this.doors) door.refreshNameText();
     for (const obj of this.safariObjects) obj.refreshNameText();
     this.player?.refreshNameText();
+  }
+
+  onRefreshKeybind(): void {
+    this.hud?.refreshGuideLabels();
   }
 
   private sortWorldContainerByDepth(): void {

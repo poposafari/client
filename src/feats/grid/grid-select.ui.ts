@@ -1,6 +1,6 @@
 import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX } from '@poposafari/types';
+import { DEPTH, GameAction, KEY, SFX } from '@poposafari/types';
 import { addContainer, addImage, addSprite, addWindow } from '@poposafari/utils';
 
 export interface IGridSelectItem {
@@ -14,8 +14,6 @@ export interface IGridSelectItem {
 
 const DEFAULT_SLICE = 16;
 
-const DEFAULT_CONFIRM_KEYS: string[] = [KEY.ENTER, KEY.Z];
-const DEFAULT_CANCEL_KEYS: string[] = [KEY.ESC, KEY.X];
 const DEFAULT_DIRECTION_KEYS = {
   up: KEY.UP,
   down: KEY.DOWN,
@@ -322,14 +320,6 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     return this.getItems().find((i) => i.key === key);
   }
 
-  protected getConfirmKeys(): string[] {
-    return DEFAULT_CONFIRM_KEYS;
-  }
-
-  protected getCancelKeys(): string[] {
-    return DEFAULT_CANCEL_KEYS;
-  }
-
   protected getDirectionKeys(): { up: string; down: string; left: string; right: string } {
     return { ...DEFAULT_DIRECTION_KEYS };
   }
@@ -346,16 +336,16 @@ export class GridSelectUi extends BaseUi implements IInputHandler, IRefreshableL
     return false;
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     const count = this.getItems().length;
     if (count === 0) return;
 
-    if (this.getConfirmKeys().includes(key)) {
+    if (action === GameAction.CONFIRM) {
       (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
       this.handleConfirm();
       return;
     }
-    if (this.getCancelKeys().includes(key)) {
+    if (action === GameAction.CANCEL) {
       (this.scene as GameScene).getAudio().playEffect(SFX.CURSOR_0);
       this.handleCancel();
       return;

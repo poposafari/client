@@ -2,6 +2,7 @@ import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@popo
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GameAction,
   IMenuItem,
   MONEY_SYMBOL,
   TEXTCOLOR,
@@ -207,8 +208,8 @@ export class MartBuyUi extends BaseUi implements IInputHandler, IRefreshableLang
     this.refreshMoneyText();
   }
 
-  onInput(key: string): void {
-    this.menuList.onInput(key);
+  onInput(key: string, action: GameAction | null): void {
+    this.menuList.onInput(key, action);
   }
 
   errorEffect(_errorMsg: string): void {}

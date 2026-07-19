@@ -1,7 +1,7 @@
 import { BaseUi, IInputHandler, IRefreshableLanguage } from '@poposafari/core';
 import i18next from '@poposafari/i18n';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, EASE, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, EASE, GameAction, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addContainer, addText, addWindow } from '@poposafari/utils';
 
 const HINT_DELAY_MS = 5000;
@@ -48,7 +48,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
     this.setVisible(false);
   }
 
-  abstract onInput(key: string): void;
+  abstract onInput(key: string, action: GameAction | null): void;
 
   createLayout() {
     const { width } = this.scene.cameras.main;

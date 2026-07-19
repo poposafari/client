@@ -1,5 +1,5 @@
 import { InputManager } from '@poposafari/core';
-import { EASE, KEY, TEXTURE } from '@poposafari/types';
+import { EASE, GameAction, TEXTURE } from '@poposafari/types';
 import { MessageConfig, MessageUi } from './message.ui';
 import { GameScene } from '@poposafari/scenes';
 
@@ -8,8 +8,8 @@ export class NoticeMessageUi extends MessageUi {
     super(scene);
   }
 
-  onInput(key: string): void {
-    if (key === KEY.Z || key === KEY.ENTER) {
+  onInput(_key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
       this.close();
     }
   }

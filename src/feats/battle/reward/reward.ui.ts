@@ -3,8 +3,8 @@ import { BaseUi, InputManager } from '@poposafari/core';
 import type { GameScene } from '@poposafari/scenes/game.scene';
 import {
   DEPTH,
+  GameAction,
   type GrowthGroup,
-  KEY,
   PokemonData,
   type PokemonRank,
   SFX,
@@ -158,8 +158,8 @@ export class RewardUi extends BaseUi {
 
   createLayout(): void {}
 
-  onInput(key: string): void {
-    if (key !== KEY.Z && key !== KEY.ENTER) return;
+  onInput(_key: string, action: GameAction | null): void {
+    if (action !== GameAction.CONFIRM) return;
     if (this.animating) {
       this.skipRequested = true;
       return;

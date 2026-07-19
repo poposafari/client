@@ -1,7 +1,10 @@
 import { debugLog } from '@poposafari/utils/debug';
+import { GameAction } from '@poposafari/types';
+
+export type ActionResolver = (code: string) => GameAction | null;
 
 export interface IInputHandler {
-  onInput(key: string): void | Promise<void>;
+  onInput(key: string, action: GameAction | null): void | Promise<void>;
 }
 
 export class InputManager {
@@ -11,7 +14,11 @@ export class InputManager {
 
   private readonly maxProcessPerFrame = 2;
 
-  constructor(scene: Phaser.Scene, onActivity?: () => void) {
+  constructor(
+    scene: Phaser.Scene,
+    onActivity?: () => void,
+    private resolveActionFn?: ActionResolver,
+  ) {
     scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
       if (this.blocked) {
         return;
@@ -77,6 +84,7 @@ export class InputManager {
   }
 
   private dispatch(key: string): void {
+    const action = this.resolveActionFn ? this.resolveActionFn(key) : null;
     while (this.stack.length > 0) {
       const handler = this.stack[this.stack.length - 1];
       const phaserGO = handler as unknown as { scene?: unknown; active?: boolean };
@@ -86,7 +94,7 @@ export class InputManager {
         continue;
       }
       try {
-        handler.onInput(key);
+        handler.onInput(key, action);
       } catch (err) {
         console.error('[InputManager] onInput threw:', err);
       }

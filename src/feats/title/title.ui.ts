@@ -2,6 +2,7 @@ import { AudioManager, BaseUi, IInputHandler, IRefreshableLanguage } from '@popo
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GameAction,
   KEY,
   SFX,
   TEXTCOLOR,
@@ -85,7 +86,25 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     this.updateCursor();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      const select = this.handleSelect();
+      this.audio.playEffect(SFX.CURSOR_0);
+
+      if (select !== 'none' && this.inputResolver) {
+        const inputMap: Record<string, TitleUiInput> = {
+          [i18next.t('etc:continue')]: 'continue',
+          [i18next.t('etc:newgame')]: 'newgame',
+          [i18next.t('etc:mysteryGift')]: 'mystery_gift',
+          [i18next.t('etc:option')]: 'option',
+          [i18next.t('etc:logout')]: 'logout',
+        };
+        const input = inputMap[select] ?? 'logout';
+        this.inputResolver({ input, cursorIndex: this.currentCursor });
+        this.inputResolver = null;
+      }
+      return;
+    }
     switch (key) {
       case KEY.UP:
         this.audio.playEffect(SFX.CURSOR_0);
@@ -94,24 +113,6 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
       case KEY.DOWN:
         this.audio.playEffect(SFX.CURSOR_0);
         this.moveCursor(1);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        const select = this.handleSelect();
-        this.audio.playEffect(SFX.CURSOR_0);
-
-        if (select !== 'none' && this.inputResolver) {
-          const inputMap: Record<string, TitleUiInput> = {
-            [i18next.t('etc:continue')]: 'continue',
-            [i18next.t('etc:newgame')]: 'newgame',
-            [i18next.t('etc:mysteryGift')]: 'mystery_gift',
-            [i18next.t('etc:option')]: 'option',
-            [i18next.t('etc:logout')]: 'logout',
-          };
-          const input = inputMap[select] ?? 'logout';
-          this.inputResolver({ input, cursorIndex: this.currentCursor });
-          this.inputResolver = null;
-        }
         break;
     }
   }

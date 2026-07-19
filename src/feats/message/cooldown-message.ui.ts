@@ -1,7 +1,7 @@
 import { BaseUi, IInputHandler, IRefreshableLanguage } from '@poposafari/core';
 import i18next from '@poposafari/i18n';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, EASE, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, EASE, GameAction, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addContainer, addText, addWindow } from '@poposafari/utils';
 
 const WINDOW_WIDTH = 1400;
@@ -137,10 +137,10 @@ export class CooldownMessageUi extends BaseUi implements IInputHandler, IRefresh
     });
   }
 
-  onInput(key: string): void {
+  onInput(_key: string, action: GameAction | null): void {
     if (this.inputLocked) return;
     if (!this.cooldownUnlocked) return;
-    if (key === KEY.Z || key === KEY.ENTER) {
+    if (action === GameAction.CONFIRM) {
       this.close();
     }
   }

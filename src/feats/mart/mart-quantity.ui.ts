@@ -1,6 +1,6 @@
 import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, MONEY_SYMBOL, SFX, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
+import { DEPTH, GameAction, KEY, MONEY_SYMBOL, SFX, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
 import { addText, addWindow } from '@poposafari/utils';
 import i18next from 'i18next';
 
@@ -98,7 +98,15 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
     this.setPosition(this.offsetX, this.offsetY);
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      this.finish(this.quantity);
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.finish(null);
+      return;
+    }
     switch (key) {
       case KEY.DOWN:
         this.adjustQuantity(-1);
@@ -111,14 +119,6 @@ export class MartQuantityUi extends BaseUi implements IInputHandler {
         break;
       case KEY.LEFT:
         this.adjustQuantity(-10);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.finish(this.quantity);
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.finish(null);
         break;
     }
   }

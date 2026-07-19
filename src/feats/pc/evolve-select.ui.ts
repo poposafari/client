@@ -2,6 +2,7 @@ import { BaseUi, IInputHandler } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GameAction,
   KEY,
   SFX,
   SYMBOL_FEMALE,
@@ -439,8 +440,23 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
     super.hide();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.items.length === 0) return;
+    if (action === GameAction.CONFIRM) {
+      const current = this.items[this.cursorIndex];
+      if (current && current.kind === 'option' && !current.affordable) {
+        this.scene.getAudio().playEffect(SFX.BUZZER);
+        return;
+      }
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.selectItem();
+      return;
+    }
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.resolve(null);
+      return;
+    }
     switch (key) {
       case KEY.UP:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
@@ -449,22 +465,6 @@ export class EvolveSelectUi extends BaseUi implements IInputHandler {
       case KEY.DOWN:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.moveCursor(1);
-        break;
-      case KEY.Z:
-      case KEY.ENTER: {
-        const current = this.items[this.cursorIndex];
-        if (current && current.kind === 'option' && !current.affordable) {
-          this.scene.getAudio().playEffect(SFX.BUZZER);
-          break;
-        }
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.selectItem();
-        break;
-      }
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.resolve(null);
         break;
     }
   }

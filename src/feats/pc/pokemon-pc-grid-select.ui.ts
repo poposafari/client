@@ -1,7 +1,7 @@
 import { InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import type { PokemonBoxItem } from '@poposafari/types';
-import { KEY, SFX, TEXTURE } from '@poposafari/types';
+import { GameAction, KEY, SFX, TEXTURE } from '@poposafari/types';
 import { addImage, addSprite, getPokedexId, getPokemonTexture } from '@poposafari/utils';
 import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-select.ui';
 import { PC_GRID_PER_BOX } from './pc.const';
@@ -150,12 +150,12 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
     }
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (key === KEY.N) {
       this.onPageToggle?.();
       return;
     }
-    super.onInput(key);
+    super.onInput(key, action);
   }
 
   protected handleDirectionInput(key: string): boolean {

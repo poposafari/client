@@ -1,6 +1,6 @@
 import i18next from '@poposafari/i18n';
 import { GameScene } from '@poposafari/scenes';
-import { ItemCategory, KEY, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { GameAction, ItemCategory, SFX, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addImage, addText } from '@poposafari/utils';
 import { TalkMessageUi } from './talk-message.ui';
 
@@ -62,9 +62,9 @@ export class PocketTalkMessageUi extends TalkMessageUi {
     this.container.add([this.categoryIcon, this.line2Text]);
   }
 
-  override onInput(key: string): void {
+  override onInput(_key: string, action: GameAction | null): void {
     if (this.inputLocked) return;
-    if (key === KEY.Z || key === KEY.ENTER) {
+    if (action === GameAction.CONFIRM) {
       if (this.isTyping) {
         if (this.isPocketPage) {
           this.stopPocketTyping();

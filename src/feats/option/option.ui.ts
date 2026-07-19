@@ -1,10 +1,12 @@
 import { BaseUi, LanguageItmes } from '@poposafari/core';
-import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   EASE,
+  GameAction,
   KEY,
+  KEYBIND_ACTION_I18N,
+  KEYBIND_ACTION_ORDER,
   LANGUAGE_KEY,
   OptionKey,
   SFX,
@@ -72,6 +74,10 @@ interface RowModel {
   values: string[];
   valueIndex: number;
   settable: boolean;
+  /** 키보드 카테고리 행에서만 존재. 이 행이 리바인딩하는 논리 액션. */
+  action?: GameAction;
+  /** action이 있을 때, 재바인딩 가능 여부(CANCEL은 false). */
+  rebindable?: boolean;
 }
 
 interface RowSlot {
@@ -95,7 +101,7 @@ export class OptionUi extends BaseUi {
   private rowSlots: RowSlot[] = [];
   private focusCursor!: GWindow;
   private cursorTween: Phaser.Tweens.Tween | null = null;
-  private inputGuide!: KeyGuideBarContainer;
+  private keyboardGuideText!: GText;
 
   private scrollTrack!: GWindow;
   private scrollThumb!: GWindow;
@@ -108,6 +114,10 @@ export class OptionUi extends BaseUi {
 
   private windowDirty = false;
   private languageDirty = false;
+  private keybindDirty = false;
+  /** 키 캡처 모드: true면 다음 키 입력 하나를 captureAction 행에 바인딩한다. */
+  private capturing = false;
+  private captureAction: GameAction | null = null;
   private resolveExit: (() => void) | null = null;
 
   private W = 0;
@@ -292,10 +302,19 @@ export class OptionUi extends BaseUi {
     this.scrollThumb.setOrigin(0.5, 0);
     this.add([this.scrollTrack, this.scrollThumb]);
 
-    this.inputGuide = new KeyGuideBarContainer(scene);
-    this.inputGuide.create(this.buildInputGuideOptions());
-    this.inputGuide.setPosition(this.W / 2 - 40, this.TOP_PANEL_Y);
-    this.add(this.inputGuide);
+    this.keyboardGuideText = addText(
+      scene,
+      this.ROW_VALUE_RIGHT_X,
+      this.TOP_PANEL_Y - 30,
+      '',
+      80,
+      '100',
+      'left',
+      TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    );
+    this.keyboardGuideText.setOrigin(1, 0);
+    this.add(this.keyboardGuideText);
   }
 
   private makeWindow(tex: TEXTURE, y: number, width: number, height: number): GWindow {
@@ -351,18 +370,18 @@ export class OptionUi extends BaseUi {
     const rows: RowModel[] = [];
 
     if (category === 'keyboard') {
-      const mk = (label: string, value: string): RowModel => ({
-        key: label,
-        label,
-        values: [value],
-        valueIndex: 0,
-        settable: false,
-      });
-      rows.push(
-        mk(i18next.t('etc:move'), i18next.t('etc:arrowKey')),
-        mk(i18next.t('etc:confirm'), 'Z / Enter'),
-        mk(i18next.t('etc:cancel'), 'X / Esc'),
-      );
+      const keybind = (this.scene as GameScene).getKeybind();
+      for (const action of KEYBIND_ACTION_ORDER) {
+        rows.push({
+          key: `kb:${action}`,
+          label: i18next.t(KEYBIND_ACTION_I18N[action]),
+          values: [keybind.getLabel(action)],
+          valueIndex: 0,
+          settable: false,
+          action,
+          rebindable: keybind.isRebindable(action),
+        });
+      }
     } else {
       const optionManager = (this.scene as GameScene).getOption();
       for (const key of CATEGORY_KEYS[category]) {
@@ -443,27 +462,16 @@ export class OptionUi extends BaseUi {
     this.refreshWindowTexture();
     this.refreshCategoryLabels();
     this.rebuildList();
-    this.inputGuide.recreate(this.buildInputGuideOptions());
   }
 
-  private buildInputGuideOptions() {
-    return {
-      entries: [
-        { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
-      ],
-      keycapTextSize: 36,
-      keycapPaddingX: 40,
-      keycapPaddingY: 30,
-      keycapScale: 2,
-      keycapTextYOffset: -5,
-      descriptionTextSize: 46,
-      gapKeyToDescription: 8,
-      gapBetweenEntries: 30,
-      gapInsideEntry: 4,
-      align: 'right' as const,
-      maxWidth: this.W / 2 - 200,
-    };
+  /** 키보드 카테고리에서만 상단 우측에 '* {확인 키}로 키 변경' 한 줄 가이드 표시(그 외 카테고리는 숨김). */
+  private refreshKeyboardGuide(): void {
+    if (this.currentCategory() !== 'keyboard') {
+      this.keyboardGuideText.setText('');
+      return;
+    }
+    const key = (this.scene as GameScene).getKeybind().getLabel(GameAction.CONFIRM);
+    this.keyboardGuideText.setText(`* ${i18next.t('option:keyboardGuide', { key })}`);
   }
 
   private refreshWindowTexture(): void {
@@ -502,6 +510,7 @@ export class OptionUi extends BaseUi {
     this.clampScrollToCursor();
     this.renderRows();
     this.refreshCursorAndHighlights();
+    this.refreshKeyboardGuide();
   }
 
   private renderRows(): void {
@@ -539,7 +548,13 @@ export class OptionUi extends BaseUi {
    */
   private buildValueParts(row: RowModel): { text: string; color: TEXTCOLOR }[] {
     if (!row.settable) {
-      return [{ text: row.values[0] ?? '', color: TEXTCOLOR.WHITE }];
+      if (this.capturing && row.action && row.action === this.captureAction) {
+        return [{ text: i18next.t('option:keyPressPrompt'), color: TEXTCOLOR.YELLOW }];
+      }
+
+      let color: TEXTCOLOR = TEXTCOLOR.WHITE;
+      if (row.action) color = row.rebindable ? TEXTCOLOR.YELLOW : TEXTCOLOR.GRAY;
+      return [{ text: row.values[0] ?? '', color }];
     }
     if (ARROW_STYLE_KEYS.has(row.key)) {
       const current = row.values[row.valueIndex] ?? '';
@@ -557,7 +572,12 @@ export class OptionUi extends BaseUi {
 
   private renderRow(slot: RowSlot, row: RowModel, rowIndex: number): void {
     const y = this.ROW_START_Y + rowIndex * this.ROW_STEP;
-    slot.label.setVisible(true).setText(row.label);
+
+    const labelLocked = !!row.action && row.rebindable === false;
+    slot.label
+      .setVisible(true)
+      .setText(row.label)
+      .setColor(labelLocked ? TEXTCOLOR.GRAY : TEXTCOLOR.WHITE);
 
     const parts = this.buildValueParts(row);
     const gap = ARROW_STYLE_KEYS.has(row.key) ? this.ARROW_GAP : this.PART_GAP;
@@ -609,23 +629,36 @@ export class OptionUi extends BaseUi {
     }
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     const audio = (this.scene as GameScene).getAudio();
-    switch (key) {
-      case KEY.ESC:
-      case KEY.X:
+
+    if (this.capturing) {
+      this.applyCaptureKey(key);
+      return;
+    }
+
+    if (action === GameAction.CONFIRM) {
+      if (this.focus !== 'list') return;
+      const row = this.rows[this.listCursor];
+      if (this.isQuitRow(row)) {
         audio.playEffect(SFX.CURSOR_0);
         this.finishExit();
         return;
+      }
+      // 키보드 카테고리: 행 확인 시 키 캡처 모드 진입(다음 키 하나만 바인딩).
+      if (this.currentCategory() === 'keyboard' && row?.action) {
+        this.startCapture(row);
+      }
+      return;
+    }
 
-      case KEY.Z:
-      case KEY.ENTER:
-        if (this.focus === 'list' && this.isQuitRow(this.rows[this.listCursor])) {
-          audio.playEffect(SFX.CURSOR_0);
-          this.finishExit();
-        }
-        return;
+    if (action === GameAction.CANCEL) {
+      audio.playEffect(SFX.CURSOR_0);
+      this.finishExit();
+      return;
+    }
 
+    switch (key) {
       case KEY.LEFT:
       case KEY.RIGHT: {
         const delta = key === KEY.LEFT ? -1 : +1;
@@ -718,12 +751,51 @@ export class OptionUi extends BaseUi {
     });
   }
 
-  getDirty(): { windowDirty: boolean; languageDirty: boolean } {
-    return { windowDirty: this.windowDirty, languageDirty: this.languageDirty };
+  getDirty(): { windowDirty: boolean; languageDirty: boolean; keybindDirty: boolean } {
+    return {
+      windowDirty: this.windowDirty,
+      languageDirty: this.languageDirty,
+      keybindDirty: this.keybindDirty,
+    };
   }
 
   onRefreshLanguage(): void {
     this.rebuildAll();
+  }
+
+  private startCapture(row: RowModel): void {
+    const audio = (this.scene as GameScene).getAudio();
+    if (!row.action) return;
+    if (!row.rebindable) {
+      audio.playEffect(SFX.BUZZER);
+      return;
+    }
+    this.capturing = true;
+    this.captureAction = row.action;
+    audio.playEffect(SFX.CURSOR_0);
+    this.refreshRowValue(this.listCursor);
+  }
+
+  private applyCaptureKey(key: string): void {
+    const audio = (this.scene as GameScene).getAudio();
+    const action = this.captureAction;
+    this.capturing = false;
+    this.captureAction = null;
+
+    if (key === KEY.UP || key === KEY.DOWN || key === KEY.LEFT || key === KEY.RIGHT) {
+      audio.playEffect(SFX.CURSOR_0);
+      this.rebuildList();
+      return;
+    }
+
+    if (action) {
+      const result = (this.scene as GameScene).getKeybind().rebind(action, key);
+      audio.playEffect(result === 'ok' ? SFX.CURSOR_0 : SFX.BUZZER);
+      if (result === 'ok') {
+        this.keybindDirty = true;
+      }
+    }
+    this.rebuildList();
   }
 
   private finishExit(): void {

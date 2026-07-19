@@ -5,6 +5,7 @@ export * from './ease';
 export * from './error';
 export * from './game';
 export * from './keyboard';
+export * from './keybind';
 export * from './audio';
 export * from './dto';
 export * from './object';

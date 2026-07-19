@@ -6,6 +6,7 @@ import {
   ANIMATION,
   DEPTH,
   EASE,
+  GameAction,
   MONEY_SYMBOL,
   TEXTSHADOW,
   TEXTSTROKE,
@@ -75,12 +76,12 @@ const FOGGY_TINT_BY_LAND = {
   sand: 0xd2b48c,
 } as const;
 
-type ToggleIconConfig = { texture: TEXTURE; guide: string };
+type ToggleIconConfig = { texture: TEXTURE; action: GameAction };
 
 const TOGGLE_ICONS: ReadonlyArray<ToggleIconConfig> = [
-  { texture: TEXTURE.ICON_REGISTER, guide: 'A' },
-  { texture: TEXTURE.ICON_RUNNING, guide: 'R' },
-  { texture: TEXTURE.ICON_MENU, guide: 'S' },
+  { texture: TEXTURE.ICON_REGISTER, action: GameAction.QUICKSLOT },
+  { texture: TEXTURE.ICON_RUNNING, action: GameAction.RUNNING },
+  { texture: TEXTURE.ICON_MENU, action: GameAction.MENU },
 ];
 
 const LOCATION_BANNER = {
@@ -110,6 +111,8 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
   private toggleIcons: GImage[] = [];
   private toggleIconTexts: GText[] = [];
   private toggleIconGroups: Array<Array<GImage | GText>> = [];
+  /** 각 액션의 가이드 키캡 라벨. 리바인드 시 refreshGuideLabels로 갱신. */
+  private guideTextByAction: Map<GameAction, GText> = new Map();
 
   private mapIcon!: GImage;
   private mapToggleGroup: Array<GImage | GText> = [];
@@ -333,8 +336,10 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     const step = iconWidth + spacing;
     const n = TOGGLE_ICONS.length;
 
+    const keybind = this.scene.getKeybind();
+
     for (let i = 0; i < n; i++) {
-      const { texture, guide } = TOGGLE_ICONS[i];
+      const { texture, action } = TOGGLE_ICONS[i];
       const x = -(n - 1 - i) * step;
 
       const icon = addImage(this.scene, texture, undefined, x, iconY).setScale(iconScale);
@@ -349,13 +354,14 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
         this.scene,
         x + guideOffsetX,
         guideTextY,
-        guide,
+        keybind.getLabel(action),
         guideFontSize,
         'bold',
         'center',
         TEXTSTYLE.WHITE,
         TEXTSHADOW.GRAY,
       );
+      this.guideTextByAction.set(action, guideText);
       icon.setTint(0x7f7f7f);
       this.toggleIcons.push(icon);
       this.toggleIconGroups.push([icon, guideIcon, guideText]);
@@ -377,13 +383,14 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
       this.scene,
       mapX + guideOffsetX,
       guideTextY,
-      'M',
+      keybind.getLabel(GameAction.MAP),
       guideFontSize,
       'bold',
       'center',
       TEXTSTYLE.WHITE,
       TEXTSHADOW.GRAY,
     );
+    this.guideTextByAction.set(GameAction.MAP, mapGuideText);
     this.mapIcon.setTint(0x7f7f7f);
     this.mapToggleGroup = [this.mapIcon, mapGuideIcon, mapGuideText];
     this.toggleIconContainer.add([this.mapIcon, mapGuideIcon, mapGuideText]);
@@ -392,6 +399,13 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     this.toggleIconContainer.setPosition(width / 2 - rightPadding, y);
 
     this.refreshMapToggleVisibility();
+  }
+
+  refreshGuideLabels(): void {
+    const keybind = this.scene.getKeybind();
+    for (const [action, text] of this.guideTextByAction) {
+      text.setText(keybind.getLabel(action));
+    }
   }
 
   private refreshMapToggleVisibility(): void {

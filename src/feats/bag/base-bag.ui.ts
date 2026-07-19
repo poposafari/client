@@ -3,6 +3,7 @@ import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
   EASE,
+  GameAction,
   IMenuItem,
   ItemCategory,
   KEY,
@@ -257,7 +258,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
     this.menuList.onCancel = () => this.handleCancel();
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.isPocketAnimating) return;
     switch (key) {
       case KEY.LEFT:
@@ -269,7 +270,7 @@ export abstract class BaseBagUi extends BaseUi implements IInputHandler, IRefres
         this.shiftCategory(1);
         return;
     }
-    this.menuList.onInput(key);
+    this.menuList.onInput(key, action);
   }
 
   errorEffect(_errorMsg: string): void {}

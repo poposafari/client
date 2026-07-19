@@ -17,7 +17,7 @@ export class OptionPhase implements IGamePhase {
   exit(): void {
     if (!this.ui) return;
 
-    const { windowDirty, languageDirty } = this.ui.getDirty();
+    const { windowDirty, languageDirty, keybindDirty } = this.ui.getDirty();
 
     this.ui.hide();
     this.ui.destroy();
@@ -27,6 +27,7 @@ export class OptionPhase implements IGamePhase {
 
     if (windowDirty) this.scene.emitEvent(GameEvent.WINDOW_CHANGED);
     if (languageDirty) this.scene.emitEvent(GameEvent.LANGUAGE_CHANGED);
+    if (keybindDirty) this.scene.emitEvent(GameEvent.KEYBIND_CHANGED);
   }
 
   onRefreshLanguage?(): void {

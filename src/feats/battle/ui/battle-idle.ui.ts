@@ -1,7 +1,16 @@
 import i18next from 'i18next';
 import { BaseUi, IInputHandler, InputManager } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, KEY, SFX, TEXTCOLOR, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import {
+  DEPTH,
+  GameAction,
+  KEY,
+  SFX,
+  TEXTCOLOR,
+  TEXTSHADOW,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
 import { addImage, addText, addWindow } from '@poposafari/utils';
 import type { BattleAction } from '../battle.types';
 import { COMMAND_MENU } from '../battle.constants';
@@ -89,7 +98,12 @@ export class BattleIdleUi extends BaseUi implements IInputHandler {
     });
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.CONFIRM) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.confirmSelection();
+      return;
+    }
     switch (key) {
       case KEY.UP:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
@@ -106,11 +120,6 @@ export class BattleIdleUi extends BaseUi implements IInputHandler {
       case KEY.RIGHT:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.moveCursor(1, 0);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.confirmSelection();
         break;
     }
   }

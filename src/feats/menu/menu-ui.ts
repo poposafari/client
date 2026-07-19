@@ -2,6 +2,7 @@ import { BaseUi, IInputHandler, InputManager, IRefreshableLanguage } from '@popo
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
+  GameAction,
   IMenuItem,
   KEY,
   SFX,
@@ -87,8 +88,20 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
     };
   }
 
-  onInput(key: string): void {
+  onInput(key: string, action: GameAction | null): void {
     if (this.items.length === 0) return;
+
+    if (action === GameAction.CONFIRM) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.selectItem();
+      return;
+    }
+
+    if (action === GameAction.CANCEL) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.cancel();
+      return;
+    }
 
     switch (key) {
       case KEY.UP:
@@ -98,16 +111,6 @@ export class MenuUi extends BaseUi implements IInputHandler, IRefreshableLanguag
       case KEY.DOWN:
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.moveCursor(1);
-        break;
-      case KEY.Z:
-      case KEY.ENTER:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.selectItem();
-        break;
-      case KEY.X:
-      case KEY.ESC:
-        this.scene.getAudio().playEffect(SFX.CURSOR_0);
-        this.cancel();
         break;
     }
   }
