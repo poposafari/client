@@ -164,6 +164,21 @@ export class PcLocalState {
     }
   }
 
+  applyBoxOrder(orderedIds: number[], scope: 'all' | { box: number }): void {
+    orderedIds.forEach((id, idx) => {
+      const state = this.current.get(id);
+      if (!state) return;
+      if (scope === 'all') {
+        state.boxNumber = Math.floor(idx / PC_GRID_PER_BOX) + 1;
+        state.gridNumber = idx % PC_GRID_PER_BOX;
+      } else {
+        state.boxNumber = scope.box;
+        state.gridNumber = idx;
+      }
+      state.partySlot = null;
+    });
+  }
+
   getNextFreePartySlot(): number | null {
     const used = new Set<number>();
     for (const [, state] of this.current) {

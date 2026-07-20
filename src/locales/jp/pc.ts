@@ -77,4 +77,13 @@ export const pc: Record<string, string> = {
   tutorial_1: 'パーティに いれた ポケモンは やせい\nポケモンの ほかくりつを あげてくれます。',
   tutorial_2: 'レベルが たかく めずらしく いろちがいの\nポケモンほど ほかくりつが おおきく あがるので',
   tutorial_3: 'パーティの へんせいに きを つけましょう！',
+  sort: '{{name}} せいり',
+  sortAll: 'ぜんぶ せいり',
+  sortByPokedex: 'ずかんばんごうじゅん',
+  sortByLevel: 'レベルじゅん',
+  sortByDate: 'つかまえたひじゅん',
+  sortByTier: 'ティアじゅん',
+  sortAsc: 'しょうじゅん',
+  sortDesc: 'こうじゅん',
+  sortAllConfirm: 'すべての ボックスの ポケモンを\nせいりします。つづけますか？',
 };

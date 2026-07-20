@@ -53,6 +53,8 @@ import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manag
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab' | 'sellButtons';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
+type PcSortKey = 'pokedex' | 'level' | 'caughtAt' | 'tier';
+type PcSortScope = 'currentBox' | 'all';
 
 const RANK_COLOR: Record<PokemonRank, string> = {
   common: TEXTCOLOR.COMMON,
@@ -163,6 +165,7 @@ export class PokemonPcUi extends BaseUi {
   private topMenu: MenuUi;
   private confirmMenu: MenuUi;
   private wallpaperMenu: MenuListUi;
+  private sortMenu: MenuListUi;
   private nameInput: NameInputUi;
   private enhancePanel!: EnhancePanelUi;
   private enhanceCandyMenu!: MenuListUi;
@@ -319,6 +322,13 @@ export class PokemonPcUi extends BaseUi {
     this.topMenu = new MenuUi(scene, scene.getInputManager(), { y: +1070 });
     this.confirmMenu = new MenuUi(scene, scene.getInputManager(), { y: +805, itemHeight: 70 });
     this.wallpaperMenu = new MenuListUi(scene, scene.getInputManager(), {
+      x: +1575,
+      y: +695,
+      visibleCount: 6,
+      itemHeight: 0,
+      showCancel: false,
+    });
+    this.sortMenu = new MenuListUi(scene, scene.getInputManager(), {
       x: +1575,
       y: +695,
       visibleCount: 6,
@@ -1053,7 +1063,13 @@ export class PokemonPcUi extends BaseUi {
   private static readonly PC_BGS_FRAME_COUNT = 33;
 
   private openTopMenu(): void {
+    const boxNumber = this.currentBoxIndex + 1;
+    const boxMeta = this.pcState.getBoxMeta(boxNumber);
+    const boxDisplayName = boxMeta.name || `${i18next.t('pc:box')} ${boxNumber}`;
+
     const items: IMenuItem[] = [
+      { key: 'pc:sort', label: i18next.t('pc:sort', { name: boxDisplayName }) },
+      { key: 'pc:sortAll', label: i18next.t('pc:sortAll') },
       { key: 'pc:changeWallpaper', label: i18next.t('pc:changeWallpaper') },
       { key: 'pc:rename', label: i18next.t('pc:rename') },
       { key: 'pc:cancel', label: i18next.t('pc:cancel') },
@@ -1070,6 +1086,12 @@ export class PokemonPcUi extends BaseUi {
       }
 
       switch (selected.key) {
+        case 'pc:sort':
+          void this.openSortFlow('currentBox');
+          break;
+        case 'pc:sortAll':
+          void this.openSortFlow('all');
+          break;
         case 'pc:changeWallpaper':
           this.openWallpaperMenu();
           break;
@@ -1081,6 +1103,115 @@ export class PokemonPcUi extends BaseUi {
           break;
       }
     });
+  }
+
+  private async openSortFlow(scope: PcSortScope): Promise<void> {
+    const keyItems: IMenuItem[] = [
+      { key: 'pokedex', label: i18next.t('pc:sortByPokedex') },
+      { key: 'level', label: i18next.t('pc:sortByLevel') },
+      { key: 'caughtAt', label: i18next.t('pc:sortByDate') },
+      { key: 'tier', label: i18next.t('pc:sortByTier') },
+      { key: 'cancel', label: i18next.t('pc:cancel') },
+    ];
+    const keySel = await this.sortMenu.waitForSelect(keyItems);
+    this.sortMenu.hide();
+    if (!keySel || keySel.key === 'cancel') {
+      this.inputManager.push(this);
+      return;
+    }
+
+    const dirItems: IMenuItem[] = [
+      { key: 'asc', label: i18next.t('pc:sortAsc') },
+      { key: 'desc', label: i18next.t('pc:sortDesc') },
+      { key: 'cancel', label: i18next.t('pc:cancel') },
+    ];
+    const dirSel = await this.sortMenu.waitForSelect(dirItems);
+    this.sortMenu.hide();
+    if (!dirSel || dirSel.key === 'cancel') {
+      this.inputManager.push(this);
+      return;
+    }
+    const asc = dirSel.key === 'asc';
+
+    if (scope === 'all') {
+      const questionUi = this.scene.getMessage('question');
+      await questionUi.showMessage(i18next.t('pc:sortAllConfirm'), { resolveWhen: 'displayed' });
+      const choice = await this.confirmMenu.waitForSelect([
+        { key: 'yes', label: i18next.t('etc:yes') },
+        { key: 'no', label: i18next.t('etc:no') },
+      ]);
+      this.confirmMenu.hide();
+      questionUi.hide();
+      if (choice?.key !== 'yes') {
+        this.inputManager.push(this);
+        return;
+      }
+    }
+
+    this.applySort(keySel.key as PcSortKey, asc, scope);
+    this.inputManager.push(this);
+  }
+
+  private applySort(key: PcSortKey, asc: boolean, scope: PcSortScope): void {
+    const comparator = this.buildSortComparator(key, asc);
+
+    if (scope === 'currentBox') {
+      const boxNumber = this.currentBoxIndex + 1;
+      const ordered = this.pcState.getBoxPokemons(boxNumber).sort(comparator);
+      this.pcState.applyBoxOrder(
+        ordered.map((p) => p.id),
+        { box: boxNumber },
+      );
+    } else {
+      const ordered = this.pcState.getAllBoxPokemons().sort(comparator);
+      this.pcState.applyBoxOrder(
+        ordered.map((p) => p.id),
+        'all',
+      );
+    }
+
+    this.scene.getAudio().playEffect(SFX.PC_PUT_DOWN);
+    this.refreshCurrentBox();
+    this.gridSelect.setCursorToIndex(0);
+  }
+
+  private buildSortComparator(
+    key: PcSortKey,
+    asc: boolean,
+  ): (a: PokemonBoxItem, b: PokemonBoxItem) => number {
+    const master = this.scene.getMasterData();
+    const dir = asc ? 1 : -1;
+
+    const pokedexNum = (p: PokemonBoxItem): number =>
+      parseInt(p.pokedexId.match(/^\d+/)?.[0] ?? '0', 10);
+
+    const primary = (p: PokemonBoxItem): number | string => {
+      switch (key) {
+        case 'pokedex':
+          return pokedexNum(p);
+        case 'level':
+          return p.level;
+        case 'caughtAt':
+          return p.caughtAt;
+        case 'tier': {
+          const masterTier = (master.getPokemonData(p.pokedexId)?.rank ?? 'common') as PokemonRank;
+          return tierRank(resolveTier(p.tier, masterTier));
+        }
+      }
+    };
+
+    return (a, b) => {
+      const pa = primary(a);
+      const pb = primary(b);
+      let c = pa < pb ? -1 : pa > pb ? 1 : 0;
+      c *= dir;
+      if (c !== 0) return c;
+
+      const na = pokedexNum(a);
+      const nb = pokedexNum(b);
+      if (na !== nb) return na - nb;
+      return a.id - b.id;
+    };
   }
 
   private openWallpaperMenu(): void {

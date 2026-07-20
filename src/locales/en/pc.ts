@@ -77,4 +77,13 @@ export const pc: Record<string, string> = {
   tutorial_1: 'Pokémon in your party raise the\ncatch rate of wild Pokémon.',
   tutorial_2: 'The higher their level, the rarer, and the\nshinier they are, the more the catch rate rises,',
   tutorial_3: 'so put some thought into your party!',
+  sort: 'Sort {{name}}',
+  sortAll: 'Sort All',
+  sortByPokedex: 'By Dex No.',
+  sortByLevel: 'By Level',
+  sortByDate: 'By Date Caught',
+  sortByTier: 'By Tier',
+  sortAsc: 'Ascending',
+  sortDesc: 'Descending',
+  sortAllConfirm: 'This will sort Pokémon across\nall Boxes. Continue?',
 };

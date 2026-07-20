@@ -77,4 +77,13 @@ export const pc: Record<string, string> = {
   tutorial_1: 'Los Pokémon de tu equipo aumentan\nla tasa de captura de los Pokémon salvajes.',
   tutorial_2: 'Cuanto mayor sea su nivel, más raro o más\nvariocolor sea, más sube la tasa de captura,',
   tutorial_3: '¡así que cuida la composición de tu equipo!',
+  sort: 'Ordenar {{name}}',
+  sortAll: 'Ordenar todo',
+  sortByPokedex: 'Por N.º Dex',
+  sortByLevel: 'Por nivel',
+  sortByDate: 'Por fecha',
+  sortByTier: 'Por rango',
+  sortAsc: 'Ascendente',
+  sortDesc: 'Descendente',
+  sortAllConfirm: 'Esto ordenará los Pokémon de\ntodas las cajas. ¿Continuar?',
 };

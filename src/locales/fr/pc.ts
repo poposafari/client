@@ -77,4 +77,13 @@ export const pc: Record<string, string> = {
   tutorial_1: 'Les Pokémon de ton équipe augmentent\nle taux de capture des Pokémon sauvages.',
   tutorial_2: 'Plus un Pokémon a un niveau élevé, est rare\nou chromatique, plus il fait grimper ce taux,',
   tutorial_3: 'alors soigne la composition de ton équipe !',
+  sort: 'Trier {{name}}',
+  sortAll: 'Tout trier',
+  sortByPokedex: 'Par N° Dex',
+  sortByLevel: 'Par niveau',
+  sortByDate: 'Par date',
+  sortByTier: 'Par rang',
+  sortAsc: 'Croissant',
+  sortDesc: 'Décroissant',
+  sortAllConfirm: 'Cela triera les Pokémon de\ntoutes les boîtes. Continuer ?',
 };

@@ -77,4 +77,13 @@ export const pc: Record<string, string> = {
   tutorial_1: '파티에 넣은 포켓몬은 야생 포켓몬의\n포획률을 올려줍니다.',
   tutorial_2: '레벨이 높고, 희귀하고, 색이 다른 포켓몬일수록\n포획률을 더 많이 올릴 수 있으니',
   tutorial_3: '파티 편성에 신경써주세요!',
+  sort: '{{name}} 정렬',
+  sortAll: '전체 정렬',
+  sortByPokedex: '도감번호순',
+  sortByLevel: '레벨순',
+  sortByDate: '포획 날짜순',
+  sortByTier: '티어순',
+  sortAsc: '오름차순',
+  sortDesc: '내림차순',
+  sortAllConfirm: '모든 박스의 포켓몬을\n정렬합니다. 계속하시겠습니까?',
 };
