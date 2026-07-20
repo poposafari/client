@@ -1,6 +1,7 @@
 import { BaseUi, LanguageItmes } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import {
+  BGM,
   DEPTH,
   EASE,
   GameAction,
@@ -67,6 +68,11 @@ const ARROW_STYLE_KEYS: ReadonlySet<string> = new Set<string>([
   LANGUAGE_KEY,
 ]);
 
+/** 배틀 배경음 옵션 값(index) → 실제 BGM 키. battle.ui.ts의 resolveBattleBgm과 순서가 같아야 한다. */
+const BATTLE_BGM_TRACKS: readonly BGM[] = [BGM.BATTLE_0, BGM.BATTLE_1, BGM.BATTLE_2];
+/** 미리듣기 전환 페이드(ms). */
+const BGM_PREVIEW_FADE_MS = 200;
+
 type FocusRow = 'category' | 'list';
 
 interface RowModel {
@@ -120,6 +126,9 @@ export class OptionUi extends BaseUi {
   private capturing = false;
   private captureAction: GameAction | null = null;
   private resolveExit: (() => void) | null = null;
+  /** 미리듣기 진입 직전에 재생 중이던 배경음(없으면 null). 옵션을 닫을 때 이 곡으로 되돌린다. */
+  private bgmBeforePreview: BGM | null = null;
+  private previewingBgm = false;
 
   private W = 0;
   private readonly TOP_PANEL_Y = -473;
@@ -617,8 +626,16 @@ export class OptionUi extends BaseUi {
   }
 
   private refreshCursorAndHighlights(): void {
+    this.syncBgmPreviewToCursor();
     this.refreshCategoryLabels();
     this.updateCursor();
+  }
+
+  private syncBgmPreviewToCursor(): void {
+    if (!this.previewingBgm) return;
+    const row = this.focus === 'list' ? this.rows[this.listCursor] : undefined;
+    if (row?.key === OptionKey.BATTLE_BGM) return;
+    this.stopBattleBgmPreview();
   }
 
   private updateCursor(): void {
@@ -742,7 +759,34 @@ export class OptionUi extends BaseUi {
       this.refreshWindowTexture();
       this.windowDirty = true;
     }
+    if (row.key === OptionKey.BATTLE_BGM) {
+      this.playBattleBgmPreview(row.valueIndex);
+    }
     this.refreshRowValue(this.listCursor);
+  }
+
+  private playBattleBgmPreview(valueIndex: number): void {
+    const bgm = BATTLE_BGM_TRACKS[valueIndex];
+    if (!bgm) return;
+
+    const audio = (this.scene as GameScene).getAudio();
+    if (!this.previewingBgm) {
+      this.bgmBeforePreview = audio.getBackgroundKey();
+      this.previewingBgm = true;
+    }
+    audio.playBackground(bgm, BGM_PREVIEW_FADE_MS);
+  }
+
+  private stopBattleBgmPreview(): void {
+    if (!this.previewingBgm) return;
+    this.previewingBgm = false;
+
+    const audio = (this.scene as GameScene).getAudio();
+    const restore = this.bgmBeforePreview;
+    this.bgmBeforePreview = null;
+
+    if (restore) audio.playBackground(restore, BGM_PREVIEW_FADE_MS);
+    else audio.stopBackground();
   }
 
   errorEffect(_errorMsg: string): void {}
@@ -805,6 +849,7 @@ export class OptionUi extends BaseUi {
   }
 
   private finishExit(): void {
+    this.stopBattleBgmPreview();
     if (!this.resolveExit) return;
     this.cursorTween?.stop();
     this.cursorTween = null;

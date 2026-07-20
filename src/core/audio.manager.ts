@@ -277,6 +277,11 @@ export class AudioManager {
     }
   }
 
+  public getBackgroundKey(): BGM | null {
+    if (!this.currentBgm) return null;
+    return this.currentBgm.key as BGM;
+  }
+
   public pauseBackground(): void {
     if (this.currentBgm && this.currentBgm.isPlaying) {
       this.currentBgm.pause();
