@@ -413,7 +413,7 @@ export class SafariMapUi extends BaseUi {
       }
       return;
     }
-    if (action === GameAction.CANCEL) {
+    if (action === GameAction.CANCEL || action === GameAction.MAP) {
       this.scene.getAudio().playEffect(SFX.CURSOR_0);
       this.close(null);
       return;

@@ -1,5 +1,5 @@
 import { GameScene } from '@poposafari/scenes';
-import { TEXTURE } from '@poposafari/types';
+import { GameAction, SFX, TEXTURE } from '@poposafari/types';
 import { MenuUi } from '../menu/menu-ui';
 import i18next from '@poposafari/i18n';
 
@@ -67,6 +67,15 @@ export class OverworldMenuUi extends MenuUi {
       itemHeight: 100,
       iconScale: 4,
     });
+  }
+
+  onInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.MENU) {
+      this.scene.getAudio().playEffect(SFX.CURSOR_0);
+      this.cancel();
+      return;
+    }
+    super.onInput(key, action);
   }
 
   private isInSafari(): boolean {
