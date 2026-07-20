@@ -7,6 +7,7 @@ import {
   pokemonLevelFromExp,
   pokemonTotalExpForLevel,
 } from '@poposafari/core';
+import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
 import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 import { GameScene } from '@poposafari/scenes';
 import {
@@ -14,6 +15,7 @@ import {
   GameAction,
   GrowthGroup,
   KEY,
+  PokemonRank,
   SFX,
   TEXTSHADOW,
   TEXTSTYLE,
@@ -28,6 +30,8 @@ export interface EnhancePanelOpenParams {
   currentLevel: number;
   currentExp: number;
   group: GrowthGroup;
+  isShiny: boolean;
+  rank: PokemonRank;
 }
 
 export interface EnhancePanelResult {
@@ -50,6 +54,7 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   private rightArrow!: GImage;
   private amountText!: GText;
   private levelPreview!: GText;
+  private partyBonusPreview!: GText;
   private expBar!: ExpBarContainer;
   private expPreviewText!: GText;
 
@@ -59,6 +64,8 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
   private currentLevel = 1;
   private currentExp = 0;
   private group: GrowthGroup = 'medium_fast';
+  private isShiny = false;
+  private rank: PokemonRank = 'common';
   private capExp = 0;
   private amount = 1;
 
@@ -73,7 +80,7 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
 
   createLayout(): void {
     const width = 850;
-    const height = 600;
+    const height = 680;
 
     this.window = addWindow(
       this.scene,
@@ -164,12 +171,24 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     this.levelPreview = addText(
       this.scene,
       0,
-      +290,
+      +285,
       '',
       70,
       '100',
       'center',
       TEXTSTYLE.YELLOW,
+      TEXTSHADOW.GRAY,
+    );
+
+    this.partyBonusPreview = addText(
+      this.scene,
+      0,
+      +350,
+      '',
+      44,
+      '100',
+      'center',
+      TEXTSTYLE.SIG_0,
       TEXTSHADOW.GRAY,
     );
 
@@ -185,6 +204,7 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
       this.expBar,
       this.expPreviewText,
       this.levelPreview,
+      this.partyBonusPreview,
     ]);
 
     this.setY(405);
@@ -195,6 +215,8 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     this.candyMax = Math.max(0, params.candyMax);
     this.currentLevel = params.currentLevel;
     this.group = params.group;
+    this.isShiny = params.isShiny;
+    this.rank = params.rank;
     this.currentExp = Math.max(
       params.currentExp,
       pokemonTotalExpForLevel(params.currentLevel, this.group),
@@ -296,6 +318,12 @@ export class EnhancePanelUi extends BaseUi implements IInputHandler {
     );
 
     this.levelPreview.setText(`Lv.${this.currentLevel} → Lv.${newLevel}`);
+
+    const curBonus = partyMemberCaptureBonus(this.currentLevel, this.isShiny, this.rank);
+    const newBonus = partyMemberCaptureBonus(newLevel, this.isShiny, this.rank);
+    this.partyBonusPreview.setText(
+      `${i18next.t('pc:enhancePartyBonus')} +${(curBonus * 100).toFixed(1)}% → +${(newBonus * 100).toFixed(1)}%`,
+    );
   }
 
   private playCursor(): void {

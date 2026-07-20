@@ -1,4 +1,5 @@
 import { BaseUi, EXP_CANDY_IDS, pokemonExpProgress } from '@poposafari/core';
+import { partyMemberCaptureBonus } from '@poposafari/core/party-bonus';
 import { GameScene } from '@poposafari/scenes';
 import {
   DEPTH,
@@ -40,6 +41,7 @@ import { MenuListUi } from '../menu/menu-list.ui';
 import { MenuUi } from '../menu/menu-ui';
 import { NameInputUi } from './name-input.ui';
 import { EnhancePanelUi } from './enhance-panel.ui';
+import { PartyBonusPreviewUi } from './party-bonus-preview.ui';
 import { EvolveSelectUi, parseCostParts } from './evolve-select.ui';
 import DayNightFilter from '@poposafari/utils/day-night-filter';
 import { EvolveUi } from './evolve.ui';
@@ -110,6 +112,18 @@ const nextTier = (tier: PokemonRank): PokemonRank | null => {
 const resolveTier = (stored: string | null | undefined, masterTier: PokemonRank): PokemonRank =>
   stored ? (stored as PokemonRank) : masterTier;
 
+// 진화 후 적용될 실효 티어. 서버 evolve 로직(pokemon.service.ts)과 동일:
+// 저장 티어가 없으면 진화체 기본 티어를 따르고, 저장 티어가 있으면
+// 진화체 기본 티어가 저장 티어 이상일 때만 진화체 기본 티어로 승격(그 외엔 저장 티어 유지).
+const predictEvolvedTier = (
+  storedTier: string | null | undefined,
+  evolvedMasterTier: PokemonRank,
+): PokemonRank => {
+  if (!storedTier) return evolvedMasterTier;
+  const stored = storedTier as PokemonRank;
+  return tierRank(evolvedMasterTier) >= tierRank(stored) ? evolvedMasterTier : stored;
+};
+
 export class PokemonPcUi extends BaseUi {
   scene: GameScene;
   private bg!: GImage;
@@ -168,6 +182,7 @@ export class PokemonPcUi extends BaseUi {
   private sortMenu: MenuListUi;
   private nameInput: NameInputUi;
   private enhancePanel!: EnhancePanelUi;
+  private partyBonusPreview!: PartyBonusPreviewUi;
   private enhanceCandyMenu!: MenuListUi;
   private evolveSelect!: EvolveSelectUi;
   private evolveUi!: EvolveUi;
@@ -337,6 +352,7 @@ export class PokemonPcUi extends BaseUi {
     });
     this.nameInput = new NameInputUi(scene);
     this.enhancePanel = new EnhancePanelUi(scene);
+    this.partyBonusPreview = new PartyBonusPreviewUi(scene);
     this.enhanceCandyMenu = new MenuListUi(scene, scene.getInputManager(), {
       x: +1580,
       y: +748,
@@ -1957,6 +1973,8 @@ export class PokemonPcUi extends BaseUi {
         currentLevel: pokemon.level,
         currentExp: pokemon.exp ?? 0,
         group,
+        isShiny: pokemon.isShiny,
+        rank: resolveTier(pokemon.tier, masterPokemon.rank),
       });
       if (!amountResult.confirmed) {
         continue;
@@ -2068,6 +2086,12 @@ export class PokemonPcUi extends BaseUi {
     const tierName = i18next.t(RANK_LOCALE[upgraded]);
     const candyName = i18next.t(`item:${candyId}.name`);
 
+    const pokemonData = this.scene.getMasterData().getPokemonData(pokemon.pokedexId);
+    const currentRank = resolveTier(pokemon.tier, pokemonData?.rank ?? 'common');
+    const currentBonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, currentRank);
+    const upgradedBonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, upgraded);
+    this.partyBonusPreview.show(currentBonus, upgradedBonus);
+
     // 확인 메시지: "{다음 티어}로 승급하시겠습니까?\n비용은 {사탕} x{개수}"
     const questionUi = this.scene.getMessage('question');
     await questionUi.showMessage(
@@ -2081,6 +2105,7 @@ export class PokemonPcUi extends BaseUi {
     const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
     this.confirmMenu.hide();
     questionUi.hide();
+    this.partyBonusPreview.hide();
 
     if (choice?.key !== 'yes') return;
 
@@ -2182,6 +2207,13 @@ export class PokemonPcUi extends BaseUi {
 
     const nextName = getPokemonI18Name(selectedOption.nextPokedexId);
 
+    const evolvedMaster = this.scene.getMasterData().getPokemonData(selectedOption.nextPokedexId);
+    const currentRank = resolveTier(pokemon.tier, masterPokemon.rank);
+    const resultRank = predictEvolvedTier(pokemon.tier, evolvedMaster?.rank ?? currentRank);
+    const currentBonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, currentRank);
+    const resultBonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, resultRank);
+    this.partyBonusPreview.show(currentBonus, resultBonus);
+
     // 확인 메시지
     const questionUi = this.scene.getMessage('question');
     await questionUi.showMessage(i18next.t('pc:confirmEvolve', { name: nextName }), {
@@ -2194,6 +2226,7 @@ export class PokemonPcUi extends BaseUi {
     const choice = await this.confirmMenu.waitForSelect(YES_NO_ITEMS);
     this.confirmMenu.hide();
     questionUi.hide();
+    this.partyBonusPreview.hide();
 
     if (choice?.key !== 'yes') return;
 

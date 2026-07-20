@@ -61,6 +61,7 @@ export const pc: Record<string, string> = {
   confirmEnhance: 'きょうかしますか？',
   enhanceGainedExp: '{{name}}は けいけんちを {{exp}} もらった！',
   enhanceLeveledUp: '{{name}}は レベル{{level}}に あがった！',
+  enhancePartyBonus: 'パーティボーナス',
   confirmUpgrade: '{{tier}}に しょうかくさせますか？\nコストは {{candy}} x{{count}}',
   promoteSuccess: '{{name}}は {{tier}}に しょうかくした！',
   confirm: 'けってい',

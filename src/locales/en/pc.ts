@@ -61,6 +61,7 @@ export const pc: Record<string, string> = {
   confirmEnhance: 'Enhance this Pokémon?',
   enhanceGainedExp: '{{name}} gained {{exp}} Exp. Points!',
   enhanceLeveledUp: '{{name}} grew to Lv. {{level}}!',
+  enhancePartyBonus: 'Party Bonus',
   confirmUpgrade: 'Promote to {{tier}}?\nCost: {{candy}} x{{count}}',
   promoteSuccess: '{{name}} was promoted to {{tier}}!',
   confirm: 'Confirm',

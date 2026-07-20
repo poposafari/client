@@ -61,6 +61,7 @@ export const pc: Record<string, string> = {
   confirmEnhance: '강화하시겠습니까?',
   enhanceGainedExp: '{{name, 은/는}} 경험치 {{exp, 을/를}} 얻었다!',
   enhanceLeveledUp: '{{name, 은/는}} 레벨 {{level}}로 올랐다!',
+  enhancePartyBonus: '파티 보너스',
   confirmUpgrade: '{{tier, (으)로}} 승급하시겠습니까?\n비용은 {{candy}} x{{count}}',
   promoteSuccess: '{{name, 은/는}} {{tier, (으)로}} 승급했다!',
   confirm: '결정하기',
