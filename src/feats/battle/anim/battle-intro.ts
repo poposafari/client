@@ -5,20 +5,7 @@ import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import type { BattleInfoUi } from '../ui/battle-info.ui';
 import { INTRO_SLIDE, PLAYER_HUD, WILD_HUD, WILD_SHADOW } from '../battle.constants';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
-
-/** Phaser tween 을 Promise 로 감싼 헬퍼. */
-function tweenAsync(
-  scene: Phaser.Scene,
-  config: Phaser.Types.Tweens.TweenBuilderConfig,
-): Promise<void> {
-  return new Promise((resolve) => {
-    scene.tweens.add({ ...config, onComplete: () => resolve() });
-  });
-}
-
-function delay(scene: Phaser.Scene, ms: number): Promise<void> {
-  return new Promise((resolve) => scene.time.delayedCall(ms, () => resolve()));
-}
+import { refreshBattleSpeed, tweenAsync } from './timing';
 
 export async function displayBattleIntro(
   scene: GameScene,
@@ -28,6 +15,7 @@ export async function displayBattleIntro(
   isShiny: boolean,
   pokedexId: string,
 ): Promise<void> {
+  refreshBattleSpeed(scene);
   const { width, height } = scene.cameras.main;
 
   // 1. 검정 오버레이 — wipe 직후의 검정 화면을 유지한 채 내부 컨테이너를 띄운다.

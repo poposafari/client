@@ -4,23 +4,11 @@ import { addImage } from '@poposafari/utils';
 import type { BattleSpriteUi } from '../ui/battle-sprite.ui';
 import { BALL_ANIM, THROW_ITEM, WILD_SHADOW, WILD_SPRITE } from '../battle.constants';
 import { resolveCryKey } from '@poposafari/core/master.data.ts';
+import { delay, getBattleSpeed, refreshBattleSpeed, scaled, tweenAsync } from './timing';
 
 const BALL_THROW_ANIM_KEY = 'battle_ball_throw';
 
 const ENTER_ANIM_SPEED = 1.35;
-
-function tweenAsync(
-  scene: Phaser.Scene,
-  config: Phaser.Types.Tweens.TweenBuilderConfig,
-): Promise<void> {
-  return new Promise((resolve) => {
-    scene.tweens.add({ ...config, onComplete: () => resolve() });
-  });
-}
-
-function delay(scene: Phaser.Scene, ms: number): Promise<void> {
-  return new Promise((resolve) => scene.time.delayedCall(ms, () => resolve()));
-}
 
 /** throwItem 을 시작 위치로 리셋하고 숨긴다. */
 function resetThrowItem(item: Phaser.GameObjects.Sprite): void {
@@ -52,7 +40,7 @@ function throwParabola(
     scene.tweens.add({
       targets: proxy,
       t: 1,
-      duration,
+      duration: scaled(duration),
       onUpdate: () => {
         const t = proxy.t;
         target.x = startX + (endX - startX) * t;
@@ -342,13 +330,13 @@ async function playBallExitParticles(scene: GameScene, sprite: BattleSpriteUi): 
 
     rayPromises.push(
       new Promise<void>((resolve) => {
-        scene.time.delayedCall(startDelay, () => {
+        scene.time.delayedCall(scaled(startDelay), () => {
           ray.setAlpha(peakAlpha);
           const proxy = { t: 0 };
           scene.tweens.add({
             targets: proxy,
             t: 1,
-            duration,
+            duration: scaled(duration),
             ease: EASE.LINEAR,
             onUpdate: () => {
               const t = proxy.t;
@@ -383,6 +371,7 @@ export async function playBallThrow(
   sprite: BattleSpriteUi,
   shakeCount: number = 3,
 ): Promise<void> {
+  refreshBattleSpeed(scene);
   const throwItem = sprite.getThrowItem();
   const wild = sprite.getWildSprite();
   const wildShadow = sprite.getWildShadow();
@@ -412,9 +401,10 @@ export async function playBallThrow(
 
   // 2. player_back 던지기 모션 → 포물선 투척
   await sprite.playPlayerBackThrowAnim();
-  scene.getAudio().playEffect(SFX.THROW);
+  scene.getAudio().playEffect(SFX.THROW, { rate: getBattleSpeed() });
   throwItem.setVisible(true);
   throwItem.play(BALL_THROW_ANIM_KEY);
+  throwItem.anims.timeScale = getBattleSpeed();
 
   await throwParabola(
     scene,
@@ -431,7 +421,7 @@ export async function playBallThrow(
   // 3. 도착 후 애니메이션 정지 → 0.5초 동안 첫 프레임 유지
   throwItem.stop();
   throwItem.setFrame(`${TEXTURE.SAFARI_BALL_THROW}-0`);
-  scene.getAudio().playEffect(SFX.BALL_DROP);
+  scene.getAudio().playEffect(SFX.BALL_DROP, { rate: getBattleSpeed() });
 
   // 위에서 아래로 찌그러지는 squash 효과
   const baseScale = throwItem.scaleX;
@@ -447,7 +437,7 @@ export async function playBallThrow(
 
   // 4. SAFARI_BALL_OPEN 으로 텍스처 변경 — 야생 + 그림자가 볼 안으로 빨려 들어감
   throwItem.setTexture(TEXTURE.SAFARI_BALL_OPEN);
-  scene.getAudio().playEffect(SFX.BALL_ENTER);
+  scene.getAudio().playEffect(SFX.BALL_ENTER, { rate: getBattleSpeed() });
 
   await tweenAsync(scene, {
     targets: throwItem,
@@ -528,7 +518,7 @@ export async function playBallThrow(
   ];
 
   // 최초 낙하
-  scene.getAudio().playEffect(SFX.BALL_DROP);
+  scene.getAudio().playEffect(SFX.BALL_DROP, { rate: getBattleSpeed() });
   await tweenAsync(scene, {
     targets: throwItem,
     y: dropTargetY,
@@ -545,7 +535,7 @@ export async function playBallThrow(
       ease: EASE.SINE_EASEOUT,
     });
     // 착지 (아래로) + 효과음
-    scene.getAudio().playEffect(SFX.BALL_DROP);
+    scene.getAudio().playEffect(SFX.BALL_DROP, { rate: getBattleSpeed() });
     await tweenAsync(scene, {
       targets: throwItem,
       y: dropTargetY,
@@ -559,7 +549,7 @@ export async function playBallThrow(
   // 6. shake
   const angle = BALL_ANIM.shakeAngleDeg;
   for (let i = 0; i < shakeCount; i++) {
-    scene.getAudio().playEffect(SFX.BALL_SHAKE);
+    scene.getAudio().playEffect(SFX.BALL_SHAKE, { rate: getBattleSpeed() });
 
     await tweenAsync(scene, {
       targets: throwItem,
@@ -584,9 +574,10 @@ export async function playBallThrow(
 }
 
 export async function playBallCatch(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+  refreshBattleSpeed(scene);
   const throwItem = sprite.getThrowItem();
   throwItem.setTint(0x808080);
-  scene.getAudio().playEffect(SFX.BALL_CATCH);
+  scene.getAudio().playEffect(SFX.BALL_CATCH, { rate: getBattleSpeed() });
 
   const wildContainer = sprite.getWildContainer();
   const sx = throwItem.x;
@@ -623,12 +614,13 @@ export async function playBallFail(
   sprite: BattleSpriteUi,
   pokedexId: string,
 ): Promise<void> {
+  refreshBattleSpeed(scene);
   const throwItem = sprite.getThrowItem();
   const wild = sprite.getWildSprite();
   const wildShadow = sprite.getWildShadow();
 
   throwItem.setTexture(TEXTURE.SAFARI_BALL_OPEN);
-  scene.getAudio().playEffect(SFX.BALL_EXIT);
+  scene.getAudio().playEffect(SFX.BALL_EXIT, { rate: getBattleSpeed() });
 
   playBallExitParticles(scene, sprite);
 
@@ -673,11 +665,12 @@ export async function playBallFail(
 
 /** FEED 연출: safari_bait 던지기 + 이모트. */
 export async function playFeedThrow(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+  refreshBattleSpeed(scene);
   const throwItem = sprite.getThrowItem();
   throwItem.setTexture('safari_bait');
 
   await sprite.playPlayerBackThrowAnim();
-  scene.getAudio().playEffect(SFX.THROW);
+  scene.getAudio().playEffect(SFX.THROW, { rate: getBattleSpeed() });
   throwItem.setVisible(true);
   await throwParabola(
     scene,
@@ -696,11 +689,12 @@ export async function playFeedThrow(scene: GameScene, sprite: BattleSpriteUi): P
 
 /** MUD 연출: safari_rock 던지기 + 야생 shake + 분노 이모트. */
 export async function playMudThrow(scene: GameScene, sprite: BattleSpriteUi): Promise<void> {
+  refreshBattleSpeed(scene);
   const throwItem = sprite.getThrowItem();
   throwItem.setTexture('safari_rock');
 
   await sprite.playPlayerBackThrowAnim();
-  scene.getAudio().playEffect(SFX.THROW);
+  scene.getAudio().playEffect(SFX.THROW, { rate: getBattleSpeed() });
   throwItem.setVisible(true);
   await throwParabola(
     scene,

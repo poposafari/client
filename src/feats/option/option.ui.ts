@@ -32,6 +32,7 @@ const CATEGORY_I18N: Record<OptionCategory, string> = {
 const CATEGORY_KEYS: Record<OptionCategory, string[]> = {
   general: [
     OptionKey.TEXT_SPEED,
+    OptionKey.BATTLE_SPEED,
     OptionKey.WILD_SPAWN_CRY,
     OptionKey.BATTLE_TUTORIAL,
     OptionKey.PC_TUTORIAL,
@@ -415,6 +416,11 @@ export class OptionUi extends BaseUi {
             i18next.t('option:speedFast'),
             i18next.t('option:speedFaster'),
           ],
+        };
+      case OptionKey.BATTLE_SPEED:
+        return {
+          label: i18next.t('option:battleSpeed'),
+          values: ['x1', 'x2', 'x3'],
         };
       case OptionKey.MASTER_VOLUME:
         return { label: i18next.t('option:masterVolume'), values: VOLUME_VALUES() };

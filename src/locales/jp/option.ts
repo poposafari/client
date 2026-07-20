@@ -2,6 +2,7 @@ import type { TranslationOption } from '../ko/option';
 
 export const option: TranslationOption = {
   textSpeed: 'かいわの はやさ',
+  battleSpeed: 'バトルえんしゅつの はやさ',
   masterVolume: 'マスター おんりょう',
   sfxVolume: 'こうかおんの おんりょう',
   bgmVolume: 'BGMの おんりょう',

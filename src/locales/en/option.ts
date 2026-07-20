@@ -2,6 +2,7 @@ import type { TranslationOption } from '../ko/option';
 
 export const option: TranslationOption = {
   textSpeed: 'Text Speed',
+  battleSpeed: 'Battle Speed',
   masterVolume: 'Master Volume',
   sfxVolume: 'SFX Volume',
   bgmVolume: 'BGM Volume',

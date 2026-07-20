@@ -1,4 +1,5 @@
 import { DEPTH, TEXTURE } from '@poposafari/types';
+import { getBattleSpeed } from './timing';
 
 const SHINY_ANIM_KEY = 'battle_shiny_sparkle';
 
@@ -46,6 +47,7 @@ export async function playShinySparkle(
   await new Promise<void>((resolve) => {
     sparkle.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => resolve());
     sparkle.play(SHINY_ANIM_KEY);
+    sparkle.anims.timeScale = getBattleSpeed();
   });
   sparkle.destroy();
 }

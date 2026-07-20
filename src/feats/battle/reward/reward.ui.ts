@@ -27,6 +27,7 @@ import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.contai
 import { ExpBarContainer } from '@poposafari/containers/exp-bar.container';
 import type { CaughtPokemon, PartyExpReward, RewardItem } from '../battle.types';
 import type { PartySnapshotEntry } from './reward.phase';
+import { refreshBattleSpeed, scaled } from '../anim/timing';
 
 export interface RewardDisplayData {
   pokemon: CaughtPokemon;
@@ -176,6 +177,7 @@ export class RewardUi extends BaseUi {
   }
 
   async build(data: RewardDisplayData): Promise<void> {
+    refreshBattleSpeed(this.scene as GameScene);
     this.removeAll(true);
     this.buildLayout(data);
     this.setAlpha(0);
@@ -674,6 +676,7 @@ export class RewardUi extends BaseUi {
       afterLevel: row.afterLevel,
       afterExp: row.afterExp,
       group: row.group,
+      totalDuration: scaled(1500),
       shouldSkip: () => this.skipRequested,
       onLevelUp: async (newLevel) => {
         await this.flashLevelUp(row, newLevel);
@@ -694,7 +697,7 @@ export class RewardUi extends BaseUi {
       this.scene.tweens.add({
         targets: row.levelText,
         scale: { from: 1.35, to: 1.0 },
-        duration: 240,
+        duration: scaled(240),
         ease: 'Back.easeOut',
         onComplete: () => resolve(),
       });
@@ -727,13 +730,13 @@ export class RewardUi extends BaseUi {
         targets: this,
         y: this.y - slideOffset,
         alpha: 1,
-        duration: 500,
+        duration: scaled(500),
         ease: 'Cubic.easeOut',
       });
       this.scene.tweens.add({
         targets: overlay,
         alpha: 0,
-        duration: 600,
+        duration: scaled(600),
         ease: 'Linear',
         onComplete: () => {
           overlay.destroy();

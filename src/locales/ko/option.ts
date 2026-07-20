@@ -4,6 +4,7 @@ export type TranslationOption = {
 
 export const option: TranslationOption = {
   textSpeed: '대화 속도',
+  battleSpeed: '배틀 연출 속도',
   masterVolume: '마스터 볼륨',
   sfxVolume: '효과음 볼륨',
   bgmVolume: '배경음 볼륨',

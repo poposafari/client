@@ -19,6 +19,7 @@ import {
   WILD_SPRITE,
   resolveBattleTime,
 } from '../battle.constants';
+import { scaled } from '../anim/timing';
 
 export class BattleSpriteUi extends Phaser.GameObjects.Container {
   private playerContainer!: Phaser.GameObjects.Container;
@@ -347,7 +348,7 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       scene.tweens.add({
         targets: proxy,
         t: 1,
-        duration,
+        duration: scaled(duration),
         // ease,
         onUpdate: () => {
           // ease 로 구부러진 t 를 정수 프레임 인덱스(0..frameCount-1)에 매핑.
@@ -384,7 +385,7 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       scene.tweens.add({
         targets: sprite,
         y: origY - 30,
-        duration: 200,
+        duration: scaled(200),
         yoyo: true,
         repeat: 3,
         onComplete: () => {
@@ -405,7 +406,7 @@ export class BattleSpriteUi extends Phaser.GameObjects.Container {
       scene.tweens.add({
         targets: sprite,
         x: origX - 20,
-        duration: 60,
+        duration: scaled(60),
         yoyo: true,
         repeat: 5,
         onComplete: () => {

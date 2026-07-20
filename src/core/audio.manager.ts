@@ -201,11 +201,12 @@ export class AudioManager {
     this.scene.sound.stopByKey(key as unknown as string);
   }
 
-  public playBackground(key: BGM, duration: number = 1000): void {
+  public playBackground(key: BGM, duration: number = 1000, rate: number = 1): void {
     if (this.currentBgm && this.currentBgm.key === (key as unknown as string)) {
       if (!this.currentBgm.isPlaying) {
         this.currentBgm.resume();
       }
+      this.currentBgm.setRate(rate > 0 ? rate : 1);
       return;
     }
 
@@ -223,6 +224,7 @@ export class AudioManager {
       loop: true,
     }) as Phaser.Sound.WebAudioSound;
 
+    this.currentBgm.setRate(rate > 0 ? rate : 1);
     this.currentBgm.setVolume(0);
     this.currentBgm.play();
 

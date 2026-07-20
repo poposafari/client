@@ -20,6 +20,8 @@ export interface EncounterTransitionOptions {
   tileFadeInMs?: number;
   /** onStart 발화 후 플리커 시작 전까지의 대기 시간(ms). BGM을 플리커 전에 먼저 들리게 할 때 사용. 기본 0 */
   preDelayMs?: number;
+  /** 연출 배속(1 = 등속). 모든 시간값(preDelay/flicker/duration/fade/hold)을 이 값으로 나눠 압축한다. 기본 1 */
+  speed?: number;
   /** 트랜지션 시작 시점에 호출 (사운드 트리거용) */
   onStart?: () => void;
 }
@@ -36,6 +38,7 @@ const DEFAULT_OPTIONS: Required<Omit<EncounterTransitionOptions, 'onStart'>> = {
   holdMs: 300,
   tileFadeInMs: 70,
   preDelayMs: 0,
+  speed: 1,
 };
 
 const TRANSITION_DEPTH = 99999;
@@ -55,6 +58,12 @@ export class EncounterTransition {
 
   constructor(options: EncounterTransitionOptions = {}) {
     this.opts = { ...DEFAULT_OPTIONS, ...options };
+  }
+
+  /** 배속을 반영한 지속시간(ms). */
+  private scale(ms: number): number {
+    const speed = this.opts.speed > 0 ? this.opts.speed : 1;
+    return ms / speed;
   }
 
   play(scene: Phaser.Scene, onComplete: () => void): void {
@@ -85,7 +94,7 @@ export class EncounterTransition {
     this.opts.onStart?.();
     if (this.opts.preDelayMs > 0) {
       await new Promise<void>((resolve) => {
-        const t = this.scene.time.delayedCall(this.opts.preDelayMs, () => resolve());
+        const t = this.scene.time.delayedCall(this.scale(this.opts.preDelayMs), () => resolve());
         this.timers.push(t);
       });
       if (this.cancelled) return;
@@ -101,7 +110,7 @@ export class EncounterTransition {
     for (let i = 0; i < this.opts.flickerCount; i++) {
       if (this.cancelled) return;
       await new Promise<void>((resolve) => {
-        cam.flash(this.opts.flickerDurationMs, 0, 0, 0);
+        cam.flash(this.scale(this.opts.flickerDurationMs), 0, 0, 0);
         cam.once('cameraflashcomplete', () => resolve());
       });
     }
@@ -133,7 +142,7 @@ export class EncounterTransition {
         .setVisible(false);
       this.tileRects.push(rect);
 
-      const t = this.scene.time.delayedCall(timeRatio * this.opts.durationMs, () => {
+      const t = this.scene.time.delayedCall(this.scale(timeRatio * this.opts.durationMs), () => {
         if (this.cancelled) return;
         rect.setVisible(true);
         if (fadeMs <= 0) {
@@ -144,21 +153,24 @@ export class EncounterTransition {
         this.scene.tweens.add({
           targets: rect,
           alpha: 1,
-          duration: fadeMs,
+          duration: this.scale(fadeMs),
           ease: 'Linear',
         });
       });
       this.timers.push(t);
     }
 
-    const consolidateTimer = this.scene.time.delayedCall(this.opts.durationMs + fadeMs, () => {
-      if (this.cancelled) return;
-      this.consolidateToSingleRect();
-    });
+    const consolidateTimer = this.scene.time.delayedCall(
+      this.scale(this.opts.durationMs + fadeMs),
+      () => {
+        if (this.cancelled) return;
+        this.consolidateToSingleRect();
+      },
+    );
     this.timers.push(consolidateTimer);
 
     const holdEndTimer = this.scene.time.delayedCall(
-      this.opts.durationMs + fadeMs + this.opts.holdMs,
+      this.scale(this.opts.durationMs + fadeMs + this.opts.holdMs),
       () => {
         if (this.cancelled) return;
         this.finish();
@@ -188,11 +200,6 @@ export class EncounterTransition {
         out.push({ ...positions[i], timeRatio: i / last });
       }
     } else if (this.opts.order === 'split') {
-      // 상단: (0,0) 좌상단 시작 → snake 패턴 (한 줄 끝나면 반대 방향)
-      //   row 0: 좌→우, row 1: 우→좌, row 2: 좌→우, ...
-      // 하단: (cols-1, rows-1) 우하단 시작 → snake 패턴 (아래→위 진행하며 방향 반전)
-      //   가장 아래 행: 우→좌, 그 위: 좌→우, ...
-      // 두 반쪽이 동시에 진행되어 화면 중앙에서 만남.
       const topRows = Math.ceil(rows / 2);
       const bottomRows = rows - topRows;
       const maxHalfTiles = Math.max(topRows, bottomRows) * cols;
