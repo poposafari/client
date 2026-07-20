@@ -44,6 +44,14 @@ export class BattlePhase implements IGamePhase {
     this.ui.hide();
   }
 
+  update(): void {
+    this.ui.tickTimer();
+  }
+
+  tickBackground(): void {
+    this.ui.tickTimer();
+  }
+
   private async run(): Promise<void> {
     await this.ui.show(this.ctx);
     await this.ui.playPreIntro();
@@ -162,6 +170,7 @@ export class BattlePhase implements IGamePhase {
 
       case 'result': {
         if (next.outcome.kind === 'caught') {
+          this.ui.stopTimer();
           await this.ui.playBallCatchAnim();
 
           const audio = this.scene.getAudio();
@@ -287,6 +296,7 @@ export class BattlePhase implements IGamePhase {
       }
 
       case 'exiting': {
+        this.ui.stopTimer();
         await this.ui.playExit(next.reason);
         this.ctx.onResolved?.(next.reason);
         this.scene.popPhase();

@@ -26,6 +26,7 @@ export const battle: TranslationBattle = {
   messageAngry: '{{name, 은/는}}\n화내고 있다.',
   messageWildFled: '{{name, 은/는}} 도망쳤다!',
   turn: '{{turn}} 턴',
+  despawnLabel: '디스폰까지',
   catchRate: '포획률 - {{rate}}%',
   catchRateBase: '기본 포획률({{rate}}%)',
   catchRateFeed: '먹이({{rate}}%)',

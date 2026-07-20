@@ -303,6 +303,16 @@ export class BattleUi {
     this.info?.incrementTurn();
   }
 
+  tickTimer(): void {
+    if (!this.built) return;
+    this.info?.tickTimer();
+  }
+
+  stopTimer(): void {
+    if (!this.built) return;
+    this.info?.stopTimer();
+  }
+
   updateSafariBallCount(count: number): void {
     this.info?.updateSafariBallCount(count);
     this.idle?.setBallDisabled(count <= 0);

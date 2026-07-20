@@ -21,7 +21,7 @@ import {
 } from '@poposafari/utils';
 import { partyMemberCaptureBonus, resolvePokemonTier } from '@poposafari/core/party-bonus';
 import type { BattleAction, BattleContext, BattleModifiers } from '../battle.types';
-import { LOCATION_HUD, PLAYER_HUD, WILD_HUD } from '../battle.constants';
+import { LOCATION_HUD, PLAYER_HUD, TIMER_HUD, WILD_HUD } from '../battle.constants';
 import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manager';
 import i18next from 'i18next';
 
@@ -30,6 +30,15 @@ const TIME_I18N_KEY: Record<string, string> = {
   day: 'etc:timeDay',
   dusk: 'etc:timeDusk',
   night: 'etc:timeNight',
+};
+
+type TimerStage = 'normal' | 'warn' | 'urgent' | 'expired';
+
+const TIMER_STAGE_COLOR: Record<TimerStage, string> = {
+  normal: TEXTCOLOR.WHITE,
+  warn: TEXTCOLOR.YELLOW,
+  urgent: TEXTCOLOR.ORANGE,
+  expired: TEXTCOLOR.RED,
 };
 
 const RANK_COLOR: Record<PokemonRank, string> = {
@@ -69,6 +78,15 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
   private battleTurn: number = 1;
   private battleTurnText!: GText;
+
+  private timerText!: GText;
+  private timerLabel!: GText;
+  private timerWild: BattleContext['wild'] | null = null;
+  private lastTimerLabel = '';
+  private timerStage: TimerStage | null = null;
+  private timerPulse: Phaser.Tweens.Tween | null = null;
+
+  private timerStopped = false;
 
   private playerSafariTitle!: GText;
   private playerLeftSafari!: GText;
@@ -348,9 +366,40 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     this.add(this.locationContainer);
 
+    this.timerWild = ctx.wild;
+    this.timerLabel = addText(
+      scene,
+      camW / 2,
+      height / 2 + TIMER_HUD.labelYOffset,
+      i18next.t('battle:despawnLabel'),
+      TIMER_HUD.labelFontSize,
+      '100',
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+    this.timerLabel.setVisible(false);
+    this.add(this.timerLabel);
+
+    this.timerText = addText(
+      scene,
+      camW / 2,
+      height / 2 + TIMER_HUD.yOffset,
+      '',
+      TIMER_HUD.fontSize,
+      '100',
+      'center',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+    this.timerText.setVisible(false);
+    this.add(this.timerText);
+    this.tickTimer();
+
     scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
     this.once('destroy', () => {
       scene.events.off(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
+      this.stopTimerPulse();
       this.tooltipManager?.destroy();
       this.tooltipManager = undefined;
     });
@@ -400,6 +449,76 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   incrementTurn(): void {
     this.battleTurn++;
     this.battleTurnText?.setText(this.buildTurnString());
+  }
+
+  tickTimer(): void {
+    if (!this.timerText) return;
+    if (this.timerStopped) return;
+
+    const expiresAt = this.timerWild?.expiresAt;
+
+    if (expiresAt == null) {
+      if (this.timerText.visible) this.setTimerVisible(false);
+      return;
+    }
+
+    const totalSec = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    const label = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    if (label !== this.lastTimerLabel) {
+      this.timerText.setText(label);
+      this.lastTimerLabel = label;
+    }
+
+    const stage: TimerStage =
+      totalSec <= 0
+        ? 'expired'
+        : totalSec <= TIMER_HUD.urgentSec
+          ? 'urgent'
+          : totalSec <= TIMER_HUD.warnSec
+            ? 'warn'
+            : 'normal';
+
+    if (stage !== this.timerStage) {
+      this.timerStage = stage;
+      this.timerText.setColor(TIMER_STAGE_COLOR[stage]);
+
+      if (stage === 'urgent') this.startTimerPulse();
+      else this.stopTimerPulse();
+    }
+
+    if (!this.timerText.visible) this.setTimerVisible(true);
+  }
+
+  stopTimer(): void {
+    if (this.timerStopped) return;
+    this.timerStopped = true;
+    this.stopTimerPulse();
+    this.setTimerVisible(false);
+  }
+
+  private setTimerVisible(visible: boolean): void {
+    this.timerText?.setVisible(visible);
+    this.timerLabel?.setVisible(visible);
+  }
+
+  private startTimerPulse(): void {
+    if (this.timerPulse) return;
+    this.timerPulse = this.scene.tweens.add({
+      targets: this.timerText,
+      scale: TIMER_HUD.pulseScale,
+      duration: TIMER_HUD.pulseMs,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  private stopTimerPulse(): void {
+    this.timerPulse?.remove();
+    this.timerPulse = null;
+    this.timerText?.setScale(1);
   }
 
   private onGameTimeChanged = (timeOfDay: string): void => {
@@ -453,7 +572,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let sum = 0;
     for (const p of party) {
-      const masterRank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const masterRank =
+        scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
       const rank = resolvePokemonTier(p.tier, masterRank);
       sum += partyMemberCaptureBonus(p.level, p.isShiny, rank);
     }
@@ -467,7 +587,8 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
 
     let sum = 0;
     for (const p of party) {
-      const masterRank = scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
+      const masterRank =
+        scene.getMasterData().getPokemonData(String(p.pokedexId))?.rank ?? 'common';
       const rank = resolvePokemonTier(p.tier, masterRank);
       sum += Number((partyMemberCaptureBonus(p.level, p.isShiny, rank) * 100).toFixed(1));
     }

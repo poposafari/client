@@ -24,6 +24,7 @@ export const battle: TranslationBattle = {
   messageAngry: '{{name}} est\nen colère !',
   messageWildFled: '{{name}} a pris la fuite !',
   turn: 'Tour {{turn}}',
+  despawnLabel: 'TEMPS RESTANT',
   catchRate: 'Taux de capture - {{rate}} %',
   catchRateBase: 'Taux de base ({{rate}} %)',
   catchRateFeed: 'APPÂT ({{rate}} %)',

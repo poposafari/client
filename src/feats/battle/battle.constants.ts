@@ -71,6 +71,20 @@ export const PLAYER_HUD = {
 
 export const LOCATION_HUD = { x: 1600, yOffset: -515 };
 
+export const TIMER_HUD = {
+  labelYOffset: -500,
+  labelFontSize: 60,
+
+  yOffset: -430,
+  fontSize: 96,
+
+  warnSec: 60,
+
+  urgentSec: 15,
+  pulseMs: 400,
+  pulseScale: 1.12,
+};
+
 // ───────── 커맨드 메뉴 (2x2) ─────────
 export const COMMAND_MENU = {
   containerXOffset: 690, // 기준 x = w/2 + 660

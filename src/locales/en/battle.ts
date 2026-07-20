@@ -24,6 +24,7 @@ export const battle: TranslationBattle = {
   messageAngry: '{{name}} is\nangry!',
   messageWildFled: '{{name}} ran away!',
   turn: 'Turn {{turn}}',
+  despawnLabel: 'TIME LEFT',
   catchRate: 'Catch Rate - {{rate}}%',
   catchRateBase: 'Base Catch Rate ({{rate}}%)',
   catchRateFeed: 'BAIT ({{rate}}%)',

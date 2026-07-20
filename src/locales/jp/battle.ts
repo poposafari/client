@@ -24,6 +24,7 @@ export const battle: TranslationBattle = {
   messageAngry: '{{name}}は\nおこっている。',
   messageWildFled: '{{name}}は にげていった！',
   turn: '{{turn}} ターン',
+  despawnLabel: 'きえるまで',
   catchRate: 'ほかくりつ - {{rate}}%',
   catchRateBase: 'きほんほかくりつ({{rate}}%)',
   catchRateFeed: 'エサ({{rate}}%)',
