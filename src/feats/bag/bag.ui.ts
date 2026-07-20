@@ -1,4 +1,4 @@
-import { ItemCategory, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { GameAction, ItemCategory, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { BaseBagUi } from './base-bag.ui';
 import { BAG_CATEGORIES } from './bag.constants';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
@@ -25,8 +25,8 @@ export class BagUi extends BaseBagUi {
     this.inputGuide.create({
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
-        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
+        { actions: [GameAction.CONFIRM], description: i18next.t('etc:confirm') },
+        { actions: [GameAction.CANCEL], description: i18next.t('etc:cancel') },
       ],
       keycapTextSize: 30,
       keycapPaddingX: 50,

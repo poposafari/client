@@ -1,15 +1,21 @@
 import { GameScene } from '@poposafari/scenes';
-import { TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { GameAction, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import { addText, addWindow } from '@poposafari/utils';
 
 /**
  * 하나의 키 가이드 entry. 키 1개 또는 여러 개(separator로 연결)와 그 옆 설명 텍스트 묶음.
  * 예: { keys: ['방향키'], description: '이동' }
- *     { keys: ['Esc', 'X'], description: '그만두기' }   // [Esc] / [X] 그만두기
+ *     { actions: [GameAction.CANCEL], description: '그만두기' }   // 현재 바인딩된 취소 키 표시
  */
 export interface KeyGuideEntry {
-  /** 키캡에 그릴 키 이름 목록 (caller가 직접 입력. 'Z', 'X', 'Esc', '방향키' 등) */
-  keys: string[];
+  /** 키캡에 그릴 키 이름 목록 (caller가 직접 입력. 'N', '방향키' 등 고정 라벨). */
+  keys?: string[];
+  /**
+   * 키캡에 그릴 액션 목록. 지정 시 각 액션의 **현재 키바인딩 라벨**을
+   * `scene.getKeybind().getLabel(action)` 로 읽어 `keys` 대신 사용한다.
+   * 키 커스터마이징 결과를 그대로 반영하려면 이 필드를 쓴다.
+   */
+  actions?: GameAction[];
   /** 키캡 옆 설명 텍스트 (caller가 i18next.t(...) 결과를 그대로 전달) */
   description: string;
   /** keys[] 사이에 들어갈 구분자 텍스트 (기본 '/') */
@@ -133,8 +139,14 @@ export class KeyGuideBarContainer extends Phaser.GameObjects.Container {
         description: undefined as unknown as GText,
       };
 
-      for (let ki = 0; ki < entry.keys.length; ki++) {
-        const keyLabel = entry.keys[ki];
+      // actions 지정 시 현재 키바인딩 라벨을 읽어 keys 대신 사용 (키 커스터마이징 반영).
+      const keyLabels =
+        entry.actions && entry.actions.length > 0
+          ? entry.actions.map((action) => this.scene.getKeybind().getLabel(action))
+          : (entry.keys ?? []);
+
+      for (let ki = 0; ki < keyLabels.length; ki++) {
+        const keyLabel = keyLabels[ki];
 
         const keyText = addText(
           this.scene,
@@ -174,7 +186,7 @@ export class KeyGuideBarContainer extends Phaser.GameObjects.Container {
         cursorX += keycapW;
         if (keycapH > maxHeight) maxHeight = keycapH;
 
-        if (ki < entry.keys.length - 1) {
+        if (ki < keyLabels.length - 1) {
           cursorX += opts.gapInsideEntry;
           const sepText = addText(
             this.scene,

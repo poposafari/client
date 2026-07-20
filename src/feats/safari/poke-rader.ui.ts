@@ -320,7 +320,7 @@ export class PokeRaderUi extends BaseUi {
     this.inputGuide.create({
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
+        { actions: [GameAction.CANCEL], description: i18next.t('etc:cancel') },
       ],
       keycapTextSize: 30,
       keycapPaddingX: 50,

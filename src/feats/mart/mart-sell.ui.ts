@@ -1,6 +1,6 @@
 import { BaseUi, InputManager, IRefreshableLanguage } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, MONEY_SYMBOL, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
+import { DEPTH, GameAction, MONEY_SYMBOL, TEXTSHADOW, TEXTSTYLE } from '@poposafari/types';
 import { addText, addWindow } from '@poposafari/utils';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import i18next from '@poposafari/i18n';
@@ -71,8 +71,8 @@ export class MartSellUi extends BaseUi implements IRefreshableLanguage {
     this.inputGuide.create({
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
-        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
+        { actions: [GameAction.CONFIRM], description: i18next.t('etc:confirm') },
+        { actions: [GameAction.CANCEL], description: i18next.t('etc:cancel') },
       ],
       keycapTextSize: 30,
       keycapPaddingX: 50,

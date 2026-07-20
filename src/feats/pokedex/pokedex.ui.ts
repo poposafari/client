@@ -2,7 +2,7 @@ import { BaseUi } from '@poposafari/core';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import { PokemonTypeContainer } from '@poposafari/containers/pokemon-type.container';
 import { GameScene } from '@poposafari/scenes';
-import { DEPTH, PokedexEntry, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
+import { DEPTH, GameAction, PokedexEntry, TEXTSHADOW, TEXTSTYLE, TEXTURE } from '@poposafari/types';
 import {
   addBackground,
   addImage,
@@ -58,7 +58,7 @@ export class PokedexUi extends BaseUi {
     this.inputGuide.create({
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['X', 'ESC'], description: i18next.t('etc:cancel') },
+        { actions: [GameAction.CANCEL], description: i18next.t('etc:cancel') },
       ],
       keycapTextSize: 40,
       keycapPaddingX: 50,

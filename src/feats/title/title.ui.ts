@@ -450,7 +450,7 @@ export class TitleUi extends BaseUi implements IInputHandler, IRefreshableLangua
     return {
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
-        { keys: ['Z', 'ENTER'], description: i18next.t('etc:confirm') },
+        { actions: [GameAction.CONFIRM], description: i18next.t('etc:confirm') },
       ],
       keycapTextSize: 36,
       keycapPaddingX: 50,
