@@ -32,6 +32,7 @@ export const option: TranslationOption = {
   keyRunning: 'ランニングシューズ',
   keyMap: 'マップ',
   keyQuickslot: 'クイックスロット',
+  keyGrab: 'つかむ',
   keyPressPrompt: 'キーをおしてください',
   keyReserved: 'よやくされたキー',
   keyboardGuide: '{{key}} キーでキーをへんこう',

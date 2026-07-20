@@ -300,6 +300,7 @@ export class PokemonPcUi extends BaseUi {
       else this.onClose?.();
     };
     this.gridSelect.onPageToggle = () => this.cycleInfoPage();
+    this.gridSelect.onGrabKey = () => this.grabSelectedGridPokemon();
 
     this.gridMenu = new MenuListUi(scene, scene.getInputManager(), {
       x: +1540,
@@ -601,6 +602,10 @@ export class PokemonPcUi extends BaseUi {
   }
 
   private handlePartyInput(key: string, action: GameAction | null): void {
+    if (action === GameAction.GRAB) {
+      this.grabSelectedPartyPokemon();
+      return;
+    }
     if (action === GameAction.CONFIRM) {
       // 빈 슬롯이면 무시
       const slotPokemon = this.pcState.getPokemonAtPartySlot(this.partyCursorIndex);
@@ -679,7 +684,7 @@ export class PokemonPcUi extends BaseUi {
   private handleGrabInput(key: string, action: GameAction | null): void {
     if (!this.grabbedPokemonId) return;
 
-    if (action === GameAction.CONFIRM) {
+    if (action === GameAction.CONFIRM || action === GameAction.GRAB) {
       if (this.grabInTop) return;
       this.placeGrabbedPokemon();
       return;
@@ -1144,6 +1149,32 @@ export class PokemonPcUi extends BaseUi {
     } else {
       this.inputManager.push(this.gridSelect);
     }
+  }
+
+  private grabSelectedGridPokemon(): void {
+    if (this.mode !== 'manage' || this.sellMode) return;
+    if (this.gridSelect.isEmptySlot(this.gridSelect.getSelectedIndex())) return;
+    const selectedKey = this.gridSelect.getSelectedKey();
+    const pokemon = this.boxPokemons.find((p) => String(p.id) === selectedKey);
+    if (!pokemon) return;
+
+    this.inputManager.pop(this.gridSelect);
+    this.startGrab(pokemon);
+  }
+
+  private async grabSelectedPartyPokemon(): Promise<void> {
+    if (this.mode !== 'manage' || this.sellMode) return;
+    const pokemon = this.pcState.getPokemonAtPartySlot(this.partyCursorIndex);
+    if (!pokemon) return;
+
+    const activeSurfId = this.scene.getUser()?.getActiveSurfPokemonId() ?? null;
+    this.inputManager.pop(this);
+    if (activeSurfId === pokemon.id) {
+      await this.scene.getMessage('talk').showMessage(i18next.t('pc:surfInUse'));
+      this.inputManager.push(this);
+      return;
+    }
+    this.startGrab(pokemon);
   }
 
   private startGrab(pokemon: PokemonBoxItem): void {
@@ -2280,6 +2311,7 @@ export class PokemonPcUi extends BaseUi {
       entries: [
         { keys: [i18next.t('etc:arrowKey')], description: i18next.t('etc:move') },
         { actions: [GameAction.CONFIRM], description: i18next.t('etc:confirm') },
+        { actions: [GameAction.GRAB], description: i18next.t('pc:grab') },
         { actions: [GameAction.CANCEL], description: i18next.t('etc:saveAndQuit') },
       ],
       keycapTextSize: 30,

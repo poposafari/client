@@ -32,6 +32,7 @@ export const option: TranslationOption = {
   keyRunning: 'Chaussures de course',
   keyMap: 'Carte',
   keyQuickslot: 'Accès rapide',
+  keyGrab: 'Attraper',
   keyPressPrompt: 'Appuyez sur une touche',
   keyReserved: 'Touche réservée',
   keyboardGuide: 'Appuyez sur {{key}} pour changer une touche',

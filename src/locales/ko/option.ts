@@ -34,6 +34,7 @@ export const option: TranslationOption = {
   keyRunning: '러닝슈즈',
   keyMap: '지도',
   keyQuickslot: '퀵슬롯',
+  keyGrab: '잡기',
   keyPressPrompt: '입력할 키를 누르세요',
   keyReserved: '예약된 키입니다',
   keyboardGuide: '{{key}} 키를 눌러 키를 변경',

@@ -67,6 +67,7 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
   onExitRight?: () => void;
   onExitBottom?: () => boolean;
   onPageToggle?: () => void;
+  onGrabKey?: () => void;
 
   constructor(scene: GameScene, inputManager: InputManager) {
     const config: IGridSelectConfig = {
@@ -153,6 +154,10 @@ export class PokemonPcGridSelectUi extends GridSelectUi {
   onInput(key: string, action: GameAction | null): void {
     if (key === KEY.N) {
       this.onPageToggle?.();
+      return;
+    }
+    if (action === GameAction.GRAB) {
+      this.onGrabKey?.();
       return;
     }
     super.onInput(key, action);
