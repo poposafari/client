@@ -296,26 +296,16 @@ export class OverworldHudUI extends Phaser.GameObjects.Container {
     return i18next.t(`etc:weather_${label}`);
   }
 
-  private toggleTooltip(i18nKey: string, action: GameAction): () => string {
-    const keybind = this.scene.getKeybind();
-    return () => `${i18next.t(i18nKey)}(${keybind.getLabel(action)})`;
-  }
-
   private registerTooltips(): void {
     const TOGGLE_TOOLTIP_KEYS = ['etc:tooltip_register', 'etc:tooltip_running', 'etc:tooltip_menu'];
     this.toggleIcons.forEach((icon, i) => {
       const key = TOGGLE_TOOLTIP_KEYS[i];
-      const action = TOGGLE_ICONS[i]?.action;
-      if (key && action !== undefined) {
-        this.tooltipManager.register(icon, this.toggleTooltip(key, action));
+      if (key) {
+        this.tooltipManager.register(icon, key);
       }
     });
 
-    if (this.mapIcon)
-      this.tooltipManager.register(
-        this.mapIcon,
-        this.toggleTooltip('etc:tooltip_map', GameAction.MAP),
-      );
+    if (this.mapIcon) this.tooltipManager.register(this.mapIcon, 'etc:tooltip_map');
 
     if (this.timeIcon) this.tooltipManager.register(this.timeIcon, () => this.getTimeTooltipText());
     if (this.weatherIcon)

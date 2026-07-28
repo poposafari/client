@@ -127,7 +127,7 @@ export class CooldownMessageUi extends BaseUi implements IInputHandler, IRefresh
           this.cooldownTimer = null;
         }
         this.cooldownUnlocked = true;
-        this.timerText.setText(i18next.t('etc:pressZOrEnter'));
+        this.timerText.setText(this.getHintLabel());
         this.startHintBlink();
       },
     });
@@ -153,11 +153,22 @@ export class CooldownMessageUi extends BaseUi implements IInputHandler, IRefresh
     throw new Error('Method not implemented.');
   }
 
+  private getHintLabel(): string {
+    const key = this.scene.getKeybind().getLabel(GameAction.CONFIRM);
+    return i18next.t('etc:pressZOrEnter', { key });
+  }
+
   onRefreshLanguage(): void {
     this.headerText.setText(i18next.t('etc:notice'));
     this.bodyText.setText(this.currentBody);
     if (this.cooldownUnlocked) {
-      this.timerText.setText(i18next.t('etc:pressZOrEnter'));
+      this.timerText.setText(this.getHintLabel());
+    }
+  }
+
+  onRefreshKeybind(): void {
+    if (this.cooldownUnlocked) {
+      this.timerText.setText(this.getHintLabel());
     }
   }
 

@@ -29,6 +29,7 @@ import {
   BGM,
   DEPTH,
   EASE,
+  GameAction,
   ItemCategory,
   SFX,
   TEXTSHADOW,
@@ -423,11 +424,12 @@ export class OverworldPhase implements IGamePhase {
     const profile = this.scene.getUser()?.getProfile();
     if (location === 's000' && profile?.hasStarter) {
       const talk = this.scene.getMessage('talk');
+      const confirmKey = this.scene.getKeybind().getLabel(GameAction.CONFIRM);
       await talk.showMessage(
         [
           i18next.t('etc:s000_welcome_0'),
           i18next.t('etc:s000_welcome_1'),
-          i18next.t('etc:s000_welcome_2'),
+          i18next.t('etc:s000_welcome_2', { key: confirmKey }),
         ],
         { name: '' },
       );
@@ -439,6 +441,7 @@ export class OverworldPhase implements IGamePhase {
     const { width, height } = this.scene.cameras.main;
     const input = this.scene.getInputManager();
     const talk = this.scene.getMessage('talk');
+    const keybind = this.scene.getKeybind();
     const depth = DEPTH.MESSAGE - 1;
 
     const tweenAsync = (config: Phaser.Types.Tweens.TweenBuilderConfig): Promise<void> =>
@@ -479,7 +482,7 @@ export class OverworldPhase implements IGamePhase {
       this.scene,
       width / 2,
       height / 2 - 220,
-      'R',
+      keybind.getLabel(GameAction.RUNNING),
       110,
       'bold',
       'center',
@@ -548,12 +551,19 @@ export class OverworldPhase implements IGamePhase {
     });
     input.setBlocked(false);
 
-    await talk.showMessage([i18next.t('etc:s000_guide_running')], { name: '' });
-    await showGuide(TEXTURE.ICON_MENU, 'S', [
-      i18next.t('etc:s000_guide_menu_0'),
+    await talk.showMessage(
+      [i18next.t('etc:s000_guide_running', { key: keybind.getLabel(GameAction.RUNNING) })],
+      { name: '' },
+    );
+    await showGuide(TEXTURE.ICON_MENU, keybind.getLabel(GameAction.MENU), [
+      i18next.t('etc:s000_guide_menu_0', { key: keybind.getLabel(GameAction.MENU) }),
       i18next.t('etc:s000_guide_menu_1'),
     ]);
-    await showGuide(TEXTURE.ICON_REGISTER, 'A', i18next.t('etc:s000_guide_register'));
+    await showGuide(
+      TEXTURE.ICON_REGISTER,
+      keybind.getLabel(GameAction.QUICKSLOT),
+      i18next.t('etc:s000_guide_register', { key: keybind.getLabel(GameAction.QUICKSLOT) }),
+    );
 
     input.setBlocked(true);
     await tweenAsync({

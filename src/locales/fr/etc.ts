@@ -90,7 +90,7 @@ export const etc: TranslationEtc = {
   mapPreparing: 'Chargement de la carte...',
   backToPlazaPrompt: 'Retourner à Bourg Popo ?',
   backToTitlePrompt: "Retourner à l'écran-titre ?",
-  pressZOrEnter: 'Appuyez sur Z ou ENTRÉE',
+  pressZOrEnter: 'Appuyez sur {{key}}',
   idleCountdown: 'Retour au titre dans {{seconds}} s',
   idleHintAnyKey: 'Appuyez sur une touche pour continuer',
   tierCommon: 'Commun',
@@ -105,12 +105,12 @@ export const etc: TranslationEtc = {
   s000_welcome_1:
     'Ceci est un safari spécial préparé\npour vous laisser choisir votre premier Pokémon.',
   s000_welcome_2:
-    "Approchez-vous d'un Pokémon que vous voulez capturer\net appuyez sur Z ou ENTRÉE !",
-  s000_guide_running: 'Appuyez sur R pour activer ou désactiver\nvos Chaussures de Course.',
-  s000_guide_menu_0: 'Appuyez sur S pour ouvrir le menu.',
+    "Approchez-vous d'un Pokémon que vous voulez capturer\net appuyez sur {{key}} !",
+  s000_guide_running: 'Appuyez sur {{key}} pour activer ou désactiver\nvos Chaussures de Course.',
+  s000_guide_menu_0: 'Appuyez sur {{key}} pour ouvrir le menu.',
   s000_guide_menu_1:
     'Dans le menu, accédez à de nombreuses fonctions\ncomme la Boîte Pokémon, le Sac et le PokéRadar.',
-  s000_guide_register: 'Appuyez sur A pour utiliser rapidement\nvotre objet enregistré.',
+  s000_guide_register: 'Appuyez sur {{key}} pour utiliser rapidement\nvotre objet enregistré.',
   s000_battle_intro_0: 'Vous avez rencontré un Pokémon sauvage !',
   s000_battle_intro_1: "Comme c'est un tutoriel,\nje vais expliquer brièvement chaque action.",
   s000_tutorial_ball_0:

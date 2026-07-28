@@ -12,7 +12,7 @@ export const pc: Record<string, string> = {
   confirmSendToProfessor: 'Envoyer {{name}} au Professeur ?',
   confirmSendSelectedToProfessor: 'Envoyer les Pokémon sélectionnés au Professeur ?',
   sellSelectTitle: 'Choisissez les Pokémon à envoyer au Professeur',
-  sellSelectGuide: 'Flèches : Déplacer   Z/ENTER : Sélectionner   X/ESC : Quitter',
+  sellSelectGuide: 'Flèches : Déplacer   {{confirmKey}} : Sélectionner   {{cancelKey}} : Quitter',
   decide: 'Valider',
   obtainedCandy: 'Vous avez obtenu {{item}} x{{quantity}} !',
   obtainedExpCandy: 'Et vous recevez {{item}} x{{quantity}} en bonus !',

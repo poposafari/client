@@ -33,7 +33,7 @@ export const option: TranslationOption = {
   keyRunning: 'Zapatillas',
   keyMap: 'Mapa',
   keyQuickslot: 'Acceso rápido',
-  keyGrab: 'Agarrar',
+  keyGrab: 'Agarrar (Caja Pokémon)',
   keyPressPrompt: 'Pulsa una tecla',
   keyReserved: 'Tecla reservada',
   keyboardGuide: 'Pulsa {{key}} para cambiar una tecla',

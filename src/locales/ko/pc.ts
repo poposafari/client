@@ -12,7 +12,7 @@ export const pc: Record<string, string> = {
   confirmSendToProfessor: '{{name, 을/를}} 박사에게 보내시겠습니까?',
   confirmSendSelectedToProfessor: '선택한 포켓몬들을 박사에게 보내시겠습니까?',
   sellSelectTitle: '박사에게 보낼 포켓몬을 선택해주세요',
-  sellSelectGuide: '방향키: 이동   Z/ENTER: 선택/취소   X/ESC: 그만둔다',
+  sellSelectGuide: '방향키: 이동   {{confirmKey}}: 선택/취소   {{cancelKey}}: 그만둔다',
   decide: '결정한다',
   obtainedCandy: '{{item}} x{{quantity, 을/를}} 손에 넣었다!',
   obtainedExpCandy: '그리고 {{item}} x{{quantity, 을/를}} 추가로 받았다!',

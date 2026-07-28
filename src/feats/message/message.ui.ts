@@ -82,7 +82,7 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
       this.scene,
       +940,
       -220,
-      i18next.t('etc:pressZOrEnter'),
+      this.getHintLabel(),
       90,
       '100',
       'left',
@@ -241,9 +241,18 @@ export abstract class MessageUi extends BaseUi implements IInputHandler, IRefres
     this.hintText.setVisible(false);
   }
 
+  private getHintLabel(): string {
+    const key = this.scene.getKeybind().getLabel(GameAction.CONFIRM);
+    return i18next.t('etc:pressZOrEnter', { key });
+  }
+
   onRefreshLanguage(): void {
     this.text.setText(i18next.t(this.fullText));
-    this.hintText.setText(i18next.t('msg:pressZOrEnter'));
+    this.hintText.setText(this.getHintLabel());
+  }
+
+  onRefreshKeybind(): void {
+    this.hintText.setText(this.getHintLabel());
   }
 
   override hide(): void {

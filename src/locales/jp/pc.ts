@@ -12,7 +12,7 @@ export const pc: Record<string, string> = {
   confirmSendToProfessor: '{{name}}を はかせに おくりますか？',
   confirmSendSelectedToProfessor: 'えらんだ ポケモンを はかせに おくりますか？',
   sellSelectTitle: 'はかせに おくる ポケモンを えらんでください',
-  sellSelectGuide: 'やじるし: いどう   Z/ENTER: せんたく/かいじょ   X/ESC: やめる',
+  sellSelectGuide: 'やじるし: いどう   {{confirmKey}}: せんたく/かいじょ   {{cancelKey}}: やめる',
   decide: 'けってい',
   obtainedCandy: '{{item}} x{{quantity}}を てに いれた！',
   obtainedExpCandy: 'さらに {{item}} x{{quantity}}も もらった！',

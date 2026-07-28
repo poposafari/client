@@ -372,10 +372,19 @@ export class GameScene extends BaseScene {
     this.questionUi = new QuestionMessageUi(this);
     this.cooldownUi = new CooldownMessageUi(this);
 
+    const messageUis = [
+      this.talkUi,
+      this.pocketTalkUi,
+      this.noticeUi,
+      this.questionUi,
+      this.cooldownUi,
+    ];
+
     this.events.on(GameEvent.LANGUAGE_CHANGED, () => {
       this.phaseStack.forEach((phase) => {
         if (phase.onRefreshLanguage) phase.onRefreshLanguage();
       });
+      messageUis.forEach((ui) => ui.onRefreshLanguage());
     });
     this.events.on(GameEvent.WINDOW_CHANGED, () => {
       this.phaseStack.forEach((phase) => {
@@ -386,6 +395,7 @@ export class GameScene extends BaseScene {
       this.phaseStack.forEach((phase) => {
         if (phase.onRefreshKeybind) phase.onRefreshKeybind();
       });
+      messageUis.forEach((ui) => ui.onRefreshKeybind());
     });
 
     const renderer = this.sys.renderer as Phaser.Renderer.WebGL.WebGLRenderer;

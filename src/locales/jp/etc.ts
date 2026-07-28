@@ -90,7 +90,7 @@ export const etc: TranslationEtc = {
   mapPreparing: 'マップを じゅんびちゅう...',
   backToPlazaPrompt: 'ポポタウンに もどりますか？',
   backToTitlePrompt: 'タイトルに もどりますか？',
-  pressZOrEnter: 'Zまたは ENTERキーを おしてください',
+  pressZOrEnter: '{{key}}キーを おしてください',
   idleCountdown: '{{seconds}}びょうごに タイトルへ もどります',
   idleHintAnyKey: 'なにかキーを おすと つづけられます',
   tierCommon: 'ノーマル',
@@ -104,12 +104,12 @@ export const etc: TranslationEtc = {
   s000_welcome_0: 'ポポサファリへ ようこそ！',
   s000_welcome_1:
     'ここは あなたの はじめての ポケモンを\nえらぶための とくべつな サファリゾーンです。',
-  s000_welcome_2: 'つかまえたい ポケモンに ちかづいて\nZまたは ENTERキーを おしてみてください！',
-  s000_guide_running: 'Rキーを おすと ランニングシューズを\nON／OFF できます。',
-  s000_guide_menu_0: 'Sキーを おすと メニューを ひらけます。',
+  s000_welcome_2: 'つかまえたい ポケモンに ちかづいて\n{{key}}キーを おしてみてください！',
+  s000_guide_running: '{{key}}キーを おすと ランニングシューズを\nON／OFF できます。',
+  s000_guide_menu_0: '{{key}}キーを おすと メニューを ひらけます。',
   s000_guide_menu_1:
     'メニューでは ポケモンボックスや バッグ、\nポケレーダーなど いろいろな きのうを かくにん できます。',
-  s000_guide_register: 'Aキーを おすと とうろくした アイテムを\nすばやく つかえます。',
+  s000_guide_register: '{{key}}キーを おすと とうろくした アイテムを\nすばやく つかえます。',
   s000_battle_intro_0: 'やせいの ポケモンと であった！',
   s000_battle_intro_1:
     'ここは チュートリアルなので\nそれぞれの こうどうを かんたんに せつめいします。',
