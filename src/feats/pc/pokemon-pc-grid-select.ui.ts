@@ -1,8 +1,18 @@
 import { InputManager } from '@poposafari/core';
+import { partyMemberCaptureBonus, resolvePokemonTier } from '@poposafari/core/party-bonus';
 import { GameScene } from '@poposafari/scenes';
-import type { PokemonBoxItem } from '@poposafari/types';
-import { GameAction, KEY, SFX, TEXTURE } from '@poposafari/types';
-import { addImage, addSprite, getPokedexId, getPokemonTexture } from '@poposafari/utils';
+import type { PokemonBoxItem, PokemonRank } from '@poposafari/types';
+import {
+  GameAction,
+  KEY,
+  SFX,
+  TEXTFONT,
+  TEXTSHADOW,
+  TEXTSTROKE,
+  TEXTSTYLE,
+  TEXTURE,
+} from '@poposafari/types';
+import { addImage, addSprite, addText, getPokedexId, getPokemonTexture } from '@poposafari/utils';
 import { GridSelectUi, IGridSelectConfig, IGridSelectItem } from '../grid/grid-select.ui';
 import { PC_GRID_PER_BOX } from './pc.const';
 
@@ -12,6 +22,8 @@ const EMPTY_SLOT_KEY_PREFIX = '__empty_';
 const HELD_ITEM_SCALE = 2.4;
 const HELD_ITEM_OFFSET_X = 30;
 const HELD_ITEM_OFFSET_Y = 50;
+const PARTY_BONUS_TEXT_SIZE = 32;
+const PARTY_BONUS_TEXT_OFFSET_Y = -30;
 
 function pokedexIdToKey(pokedexId: string): string {
   return getPokedexId(pokedexId);
@@ -41,6 +53,26 @@ function buildGridSlots(
       const overlayImage = hasHeldItem
         ? addImage(scene, heldItemId as string, undefined, 0, 0).setScale(HELD_ITEM_SCALE)
         : undefined;
+
+      const masterRank =
+        scene.getMasterData().getPokemonData(pokemon.pokedexId)?.rank ?? ('common' as PokemonRank);
+      const rank = resolvePokemonTier(pokemon.tier, masterRank);
+      const bonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, rank);
+      const bonusText = addText(
+        scene,
+        0,
+        0,
+        `+${(bonus * 100).toFixed(1)}%`,
+        PARTY_BONUS_TEXT_SIZE,
+        '150',
+        'center',
+        TEXTSTYLE.SIG_0,
+        TEXTSHADOW.NONE,
+        TEXTSTROKE.GRAY,
+      )
+        .setOrigin(0.5, 0.5)
+        .setFontFamily(TEXTFONT.MN);
+
       slots.push({
         key: String(pokemon.id),
         label: pokemon.nickname ?? key,
@@ -48,6 +80,8 @@ function buildGridSlots(
         overlayImage,
         overlayOffsetX: overlayImage ? HELD_ITEM_OFFSET_X : undefined,
         overlayOffsetY: overlayImage ? HELD_ITEM_OFFSET_Y : undefined,
+        extraText: bonusText,
+        extraTextOffsetY: PARTY_BONUS_TEXT_OFFSET_Y,
       });
     } else {
       slots.push({

@@ -147,6 +147,8 @@ export class PokemonPcUi extends BaseUi {
   private infoNature!: GText;
   private infoType1!: PokemonTypeContainer;
   private infoType2!: PokemonTypeContainer;
+  private infoPartyBonusLabel!: GText;
+  private infoPartyBonus!: GText;
   private heldItem!: GText;
   private infoPokedexSymbol!: GText;
   private infoNatureSymbol!: GText;
@@ -448,6 +450,8 @@ export class PokemonPcUi extends BaseUi {
       this.infoFriendship,
       this.infoType1,
       this.infoType2,
+      this.infoPartyBonusLabel,
+      this.infoPartyBonus,
       this.infoSkills[0],
       this.infoSkills[1],
       this.infoSkills[2],
@@ -1543,7 +1547,10 @@ export class PokemonPcUi extends BaseUi {
       this.scene,
       0,
       PokemonPcUi.SELL_GUIDE_Y + 20,
-      `(${i18next.t('pc:sellSelectGuide')})`,
+      `(${i18next.t('pc:sellSelectGuide', {
+        confirmKey: this.scene.getKeybind().getLabel(GameAction.CONFIRM),
+        cancelKey: this.scene.getKeybind().getLabel(GameAction.CANCEL),
+      })})`,
       30,
       100,
       'center',
@@ -2797,6 +2804,33 @@ export class PokemonPcUi extends BaseUi {
     // this.infoType1 = addImage(this.scene, TEXTURE.TYPES, undefined, -890, +240).setScale(2);
     // this.infoType2 = addImage(this.scene, TEXTURE.TYPES, undefined, -755, +240).setScale(2);
 
+    this.infoPartyBonusLabel = addText(
+      this.scene,
+      -945,
+      +210,
+      i18next.t('pc:enhancePartyBonus'),
+      50,
+      '100',
+      'left',
+      TEXTSTYLE.BLACK,
+      TEXTSHADOW.GRAY,
+    ).setOrigin(0, 1);
+
+    this.infoPartyBonus = addText(
+      this.scene,
+      0,
+      +210,
+      '',
+      50,
+      '100',
+      'left',
+      TEXTSTYLE.SIG_0,
+      TEXTSHADOW.GRAY,
+    ).setOrigin(0, 1);
+    this.infoPartyBonus.setX(
+      this.infoPartyBonusLabel.x + this.infoPartyBonusLabel.displayWidth + 10,
+    );
+
     this.infoType1 = new PokemonTypeContainer(this.scene, -890, +245);
     this.infoType2 = new PokemonTypeContainer(this.scene, -755, +245);
 
@@ -2833,6 +2867,10 @@ export class PokemonPcUi extends BaseUi {
     this.infoExpRemainingSymbol.setText(i18next.t(`etc:remainingExpSymbol`));
     this.infoCaptureDateSymbol.setText(i18next.t(`etc:captureDateSymbol`));
     this.infoCaptureLocationSymbol.setText(i18next.t(`etc:captureLocationSymbol`));
+    this.infoPartyBonusLabel.setText(i18next.t('pc:enhancePartyBonus'));
+    this.infoPartyBonus.setX(
+      this.infoPartyBonusLabel.x + this.infoPartyBonusLabel.displayWidth + 10,
+    );
 
     const GAP = 30;
     const placeValue = (symbol: GText, value: GText) => {
@@ -2886,6 +2924,7 @@ export class PokemonPcUi extends BaseUi {
     this.infoNatureSymbol.setText('');
     this.infoType1.setVisible(false);
     this.infoType2.setVisible(false);
+    this.infoPartyBonus.setText('');
     for (const skill of this.infoSkills) skill.clear();
     this.heldItemSymbol.setVisible(false);
     this.heldItem.setVisible(false);
@@ -3026,9 +3065,13 @@ export class PokemonPcUi extends BaseUi {
       const rank = resolveTier(pokemon.tier, pokemonData.rank);
       this.infoTier.setText(i18next.t(RANK_LOCALE[rank])).setStyle({ color: RANK_COLOR[rank] });
       this.infoPokemonName.setColor(RANK_COLOR[rank]);
+
+      const bonus = partyMemberCaptureBonus(pokemon.level, pokemon.isShiny, rank);
+      this.infoPartyBonus.setText(`+${(bonus * 100).toFixed(1)}%`);
     } else {
       this.infoTier.setText('');
       this.infoPokemonName.setColor(TEXTCOLOR.BLACK);
+      this.infoPartyBonus.setText('');
     }
 
     // this.infoLevel.setX(this.infoPokemonName.x + this.infoPokemonName.displayWidth + 10);
