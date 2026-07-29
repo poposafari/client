@@ -27,7 +27,8 @@ export const etc: TranslationEtc = {
     'Todavía está en desarrollo, pero ya puedes jugarlo.\nLo actualizamos constantemente para hacer un juego cada vez mejor.',
   welcome_4: 'Tenemos un canal oficial de Discord.\n¡Informa de errores o sugerencias por Discord!',
   welcome_5:
-    'Encontrarás el enlace de Discord en la parte inferior izquierda de la pantalla de título.',
+    'Encontrarás el enlace de Discord en la parte inferior izquierda de\nla pantalla de título.',
+  welcome_6: 'Para un juego fluido, activa la aceleración por hardware en\ntu navegador.',
   createAvatar_intro: 'Crea tu avatar',
   createAvatar: 'Crear avatar',
   enterYourNickname: 'Introduce un apodo',

@@ -40,6 +40,7 @@ export class WelcomeUi extends BaseUi implements IInputHandler {
         i18next.t('etc:welcome_3'),
         i18next.t('etc:welcome_4'),
         i18next.t('etc:welcome_5'),
+        i18next.t('etc:welcome_6'),
       ],
       { name: '테스트맨' },
     );

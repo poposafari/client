@@ -28,6 +28,8 @@ export const etc: TranslationEtc = {
   welcome_4:
     'Nous avons un canal Discord officiel.\nSignalez les bugs ou vos suggestions sur Discord !',
   welcome_5: "Le lien Discord se trouve en bas à gauche de l'écran-titre.",
+  welcome_6:
+    "Pour une expérience de jeu fluide, veuillez activer l'accélération\nmatérielle dans votre navigateur.",
   createAvatar_intro: 'Veuillez créer votre avatar',
   createAvatar: 'Créer un avatar',
   enterYourNickname: 'Saisir un pseudo',
@@ -104,8 +106,7 @@ export const etc: TranslationEtc = {
   s000_welcome_0: 'Bienvenue sur PopoSafari !',
   s000_welcome_1:
     'Ceci est un safari spécial préparé\npour vous laisser choisir votre premier Pokémon.',
-  s000_welcome_2:
-    "Approchez-vous d'un Pokémon que vous voulez capturer\net appuyez sur {{key}} !",
+  s000_welcome_2: "Approchez-vous d'un Pokémon que vous voulez capturer\net appuyez sur {{key}} !",
   s000_guide_running: 'Appuyez sur {{key}} pour activer ou désactiver\nvos Chaussures de Course.',
   s000_guide_menu_0: 'Appuyez sur {{key}} pour ouvrir le menu.',
   s000_guide_menu_1:

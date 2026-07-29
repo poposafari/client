@@ -29,6 +29,7 @@ export const etc: TranslationEtc = {
     '아직 개발 중이지만, 지금 바로 플레이하실 수 있습니다.\n꾸준히 업데이트하며 더 나은 게임을 만들어가고 있습니다',
   welcome_4: '공식 디스코드 채널을 운영 중입니다.\n버그 제보나 건의사항은 디스코드로 알려주세요!',
   welcome_5: '디스코드 링크는 타이틀 화면 좌측 하단에 있습니다.',
+  welcome_6: '원활한 게임 플레이를 위해,\n브라우저 내에 하드웨어 가속을 켜주세요.',
   createAvatar_intro: '당신의 아바타를 생성해주세요',
   createAvatar: '아바타 생성',
   enterYourNickname: '닉네임 입력',

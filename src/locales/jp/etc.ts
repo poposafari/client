@@ -28,6 +28,8 @@ export const etc: TranslationEtc = {
   welcome_4:
     'こうしきの Discordチャンネルを うんえいしています。\nバグほうこくや ごようぼうは Discordへ おしらせください！',
   welcome_5: 'Discordの リンクは タイトルがめんの ひだりしたに あります。',
+  welcome_6:
+    'かいてきに プレイするために、ブラウザの ハードウェアアクセラレーションを オンに してください。',
   createAvatar_intro: 'あなたの アバターを つくってください',
   createAvatar: 'アバターさくせい',
   enterYourNickname: 'ニックネームを にゅうりょく',
