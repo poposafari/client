@@ -173,6 +173,7 @@ export class OverworldUi extends BaseUi {
 
   private keyPressStartTime: Partial<Record<DIRECTION, number>> = {};
   private lastFrameKeys: KeyState = { up: false, down: false, left: false, right: false };
+  private dirPressOrder: DIRECTION[] = [];
   private wasIdleLastFrame = true;
 
   private doorTransitionPending = false;
@@ -296,6 +297,17 @@ export class OverworldUi extends BaseUi {
       if (ox === fx && oy === fy) return obj;
     }
     return null;
+  }
+
+  private syncDirPressOrder(keys: KeyState): void {
+    for (const { dir, key } of DIR_KEYS) {
+      if (keys[key] && !this.lastFrameKeys[key]) {
+        this.dirPressOrder = this.dirPressOrder.filter((d) => d !== dir);
+        this.dirPressOrder.push(dir);
+      } else if (!keys[key] && this.dirPressOrder.includes(dir)) {
+        this.dirPressOrder = this.dirPressOrder.filter((d) => d !== dir);
+      }
+    }
   }
 
   private oppositeDirection(dir: DIRECTION): DIRECTION {
@@ -1709,6 +1721,7 @@ export class OverworldUi extends BaseUi {
 
       this.keyPressStartTime = {};
       this.lastFrameKeys = { up: false, down: false, left: false, right: false };
+      this.dirPressOrder = [];
       this.wasIdleLastFrame = true;
     }
 
@@ -2255,6 +2268,7 @@ export class OverworldUi extends BaseUi {
       const cam = this.scene.cameras.main;
       cam.setScroll(center.x - cam.width / 2, center.y - cam.height / 2);
       this.lastFrameKeys = { up: false, down: false, left: false, right: false };
+      this.dirPressOrder = [];
       return;
     }
 
@@ -2297,6 +2311,7 @@ export class OverworldUi extends BaseUi {
 
     if (this.wildEncounterPending || this.petTalkPending) {
       this.lastFrameKeys = { up: false, down: false, left: false, right: false };
+      this.dirPressOrder = [];
       this.wasIdleLastFrame = this.player.isMovementFinish();
       return;
     }
@@ -2338,12 +2353,15 @@ export class OverworldUi extends BaseUi {
     this.handleMovementStateTransition(user?.getOverworldMovementState());
 
     if (movementState === OverworldMovementState.JUMP) {
-      this.lastFrameKeys = {
+      const jumpKeys: KeyState = {
         up: this.cursorKeys.up.isDown,
         down: this.cursorKeys.down.isDown,
         left: this.cursorKeys.left.isDown,
         right: this.cursorKeys.right.isDown,
       };
+      // 점프 중에도 눌린 순서를 놓치지 않아야 착지 직후 최신 입력이 살아난다.
+      this.syncDirPressOrder(jumpKeys);
+      this.lastFrameKeys = jumpKeys;
       this.wasIdleLastFrame = isIdle;
       return;
     }
@@ -2372,6 +2390,12 @@ export class OverworldUi extends BaseUi {
       right: this.cursorKeys.right.isDown,
     };
 
+    this.syncDirPressOrder(keys);
+
+    const orderedKeys = [...DIR_KEYS].sort(
+      (a, b) => this.dirPressOrder.indexOf(b.dir) - this.dirPressOrder.indexOf(a.dir),
+    );
+
     if (isIdle) {
       for (const { dir, key } of DIR_KEYS) {
         if (this.lastFrameKeys[key] && !keys[key]) {
@@ -2382,7 +2406,7 @@ export class OverworldUi extends BaseUi {
         }
       }
 
-      for (const { dir, key } of DIR_KEYS) {
+      for (const { dir, key } of orderedKeys) {
         if (!keys[key]) continue;
         if (!this.wasIdleLastFrame) {
           if (this.tryExitSurfByJump(dir)) {
