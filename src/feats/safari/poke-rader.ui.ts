@@ -6,6 +6,7 @@ import {
   EASE,
   GameAction,
   KEY,
+  PokemonRank,
   SFX,
   SYMBOL_ARROW_LEFT,
   SYMBOL_ARROW_RIGHT,
@@ -56,6 +57,20 @@ const WEIGHT_TEXT_OFFSET_Y = 60;
 
 const UNCAUGHT_TINT = 0x000000;
 
+const TIER_GLOW_COLOR: Record<PokemonRank, TEXTCOLOR> = {
+  common: TEXTCOLOR.COMMON,
+  uncommon: TEXTCOLOR.UNCOMMON,
+  rare: TEXTCOLOR.RARE,
+  'super-rare': TEXTCOLOR.SUPER_RARE,
+  'ultra-rare': TEXTCOLOR.ULTRA_RARE,
+  epic: TEXTCOLOR.EPIC,
+  unique: TEXTCOLOR.UNIQUE,
+  legendary: TEXTCOLOR.LEGENDARY,
+};
+const TIER_GLOW_OUTER_STRENGTH = 5;
+const TIER_GLOW_QUALITY = 0.5;
+const TIER_GLOW_DISTANCE = 8;
+
 const WEIGHT_PCT_HIGH = 20;
 const WEIGHT_PCT_LOW = 5;
 
@@ -91,6 +106,10 @@ const CURSOR_PULSE_DURATION = 350;
 
 function normalizePokedexId(id: string): string {
   return id.split('_')[0].padStart(4, '0');
+}
+
+function hexColorToNumber(hex: TEXTCOLOR): number {
+  return parseInt(hex.replace('#', ''), 16);
 }
 
 function getWeightColor(pct: number): TEXTCOLOR {
@@ -375,6 +394,15 @@ export class PokeRaderUi extends BaseUi {
       if (!this.caughtSet.has(normalizePokedexId(id))) {
         sprite.setTintFill(UNCAUGHT_TINT);
       }
+      const rank = scene.getMasterData().getPokemonData(normalizePokedexId(id))?.rank ?? 'common';
+      sprite.preFX?.addGlow(
+        hexColorToNumber(TIER_GLOW_COLOR[rank]),
+        TIER_GLOW_OUTER_STRENGTH,
+        0,
+        false,
+        TIER_GLOW_QUALITY,
+        TIER_GLOW_DISTANCE,
+      );
       this.iconSprites.push(sprite);
 
       const pct = total > 0 ? (weight / total) * 100 : 0;
