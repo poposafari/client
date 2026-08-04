@@ -41,7 +41,12 @@ export const enum TEXTURE {
   MAP_CURSOR_SEL = 'map_cursor_sel',
 
   BG_POKEDEX = 'bg_pokedex',
+  BG_POKEDEX_0 = 'bg_pokedex_0',
+  BG_POKEDEX_1 = 'bg_pokedex_1',
   POKEDEX_TITLE = 'pokedex-title',
+  POKEDEX_TITLE_INFO = 'pokedex-title-0',
+  POKEDEX_TITLE_AREA = 'pokedex-title-1',
+  POKEDEX_TITLE_FORMS = 'pokedex-title-2',
   OWNED = 'owned',
 
   WINDOW_0 = 'window_0',

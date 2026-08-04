@@ -687,7 +687,12 @@ export class LoadingPhase implements IGamePhase {
     this.scene.loadAtlas(TEXTURE.MAP_PLAYER, 'ui/map', 'map_player', 'map_player');
 
     this.scene.loadImage(TEXTURE.BG_POKEDEX, 'ui/pokedex', 'bg_pokedex');
+    this.scene.loadImage(TEXTURE.BG_POKEDEX_0, 'ui/pokedex', 'bg_pokedex_0');
+    this.scene.loadImage(TEXTURE.BG_POKEDEX_1, 'ui/pokedex', 'bg_pokedex_1');
     this.scene.loadImage(TEXTURE.POKEDEX_TITLE, 'ui/pokedex', 'pokedex-title');
+    this.scene.loadImage(TEXTURE.POKEDEX_TITLE_INFO, 'ui/pokedex', 'title-0');
+    this.scene.loadImage(TEXTURE.POKEDEX_TITLE_AREA, 'ui/pokedex', 'title-1');
+    this.scene.loadImage(TEXTURE.POKEDEX_TITLE_FORMS, 'ui/pokedex', 'title-2');
     this.scene.loadImage(TEXTURE.OWNED, 'ui/pokedex', 'owned');
 
     this.scene.loadImage(TEXTURE.LIGHT, 'ui', 'light');

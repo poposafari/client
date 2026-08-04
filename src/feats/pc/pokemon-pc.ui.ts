@@ -2924,6 +2924,7 @@ export class PokemonPcUi extends BaseUi {
     this.infoNatureSymbol.setText('');
     this.infoType1.setVisible(false);
     this.infoType2.setVisible(false);
+    this.infoPartyBonusLabel.setText('');
     this.infoPartyBonus.setText('');
     for (const skill of this.infoSkills) skill.clear();
     this.heldItemSymbol.setVisible(false);

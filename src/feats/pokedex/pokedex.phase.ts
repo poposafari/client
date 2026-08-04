@@ -1,11 +1,13 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
-import { IMenuItem } from '@poposafari/types';
+import { IMenuItem, SFX } from '@poposafari/types';
 import { getPokemonI18Name, screenFadeIn } from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { PokedexUi } from './pokedex.ui';
 import { PokedexListUi } from './pokedex-list.ui';
 import { PokedexFilterUi } from './pokedex-filter.ui';
+import { PokedexDetailUi } from './pokedex-detail.ui';
+import { buildCaughtSets, isPokedexSeen, type CaughtSets } from './pokedex.util';
 
 const TOTAL_POKEDEX = 1025;
 const NAME_MASK = '----------';
@@ -36,25 +38,27 @@ const GEN_RANGES: ReadonlyArray<{ from: number; to: number }> = [
   { from: 906, to: TOTAL_POKEDEX },
 ];
 
-function baseId(id: string): string {
-  return id.split(/[-_]/)[0].padStart(4, '0');
-}
-
 const HYPHEN_FORM_BASES = new Set(['0201', '0422', '0423', '0585', '0586', '0669', '0670', '0671']);
 
 export class PokedexPhase implements IGamePhase {
   private ui: PokedexUi | null = null;
   private listUi: PokedexListUi | null = null;
   private filterUi: PokedexFilterUi | null = null;
+  private detailUi: PokedexDetailUi | null = null;
 
   private filterIdx = 0;
   private lastItems: IMenuItem[] = [];
+  private caughtSets: CaughtSets = { keySet: new Set(), baseSet: new Set() };
 
   constructor(private scene: GameScene) {}
 
   async enter(): Promise<void> {
+    this.caughtSets = buildCaughtSets(this.scene.getUser()?.getPokedex() ?? []);
+
     this.ui = new PokedexUi(this.scene);
     this.ui.show();
+
+    this.detailUi = new PokedexDetailUi(this.scene);
 
     this.filterUi = new PokedexFilterUi(
       this.scene,
@@ -76,6 +80,13 @@ export class PokedexPhase implements IGamePhase {
     while (true) {
       const selected = await this.listUi.waitForSelect();
       if (!selected) break;
+
+      if (!isPokedexSeen(selected.key, this.caughtSets)) {
+        this.scene.getAudio().playEffect(SFX.BUZZER);
+        continue;
+      }
+
+      await this.detailUi.open(selected.key);
     }
 
     this.scene.popPhase();
@@ -101,13 +112,7 @@ export class PokedexPhase implements IGamePhase {
 
   private buildItems(filterIdx: number): IMenuItem[] {
     const masterData = this.scene.getMasterData();
-    const user = this.scene.getUser();
-    const pokedex = user?.getPokedex() ?? [];
-
-    const caughtBaseSet = new Set(
-      pokedex.filter((p) => p.caughtCount > 0).map((p) => baseId(p.pokedexId)),
-    );
-    const caughtKeySet = new Set(pokedex.filter((p) => p.caughtCount > 0).map((p) => p.pokedexId));
+    const { keySet: caughtKeySet, baseSet: caughtBaseSet } = this.caughtSets;
 
     const variantsByBase = new Map<string, string[]>();
     for (const key of masterData.getPokemonDataKeys()) {
@@ -156,6 +161,11 @@ export class PokedexPhase implements IGamePhase {
   }
 
   exit(): void {
+    if (this.detailUi) {
+      this.detailUi.hide();
+      this.detailUi.destroy();
+      this.detailUi = null;
+    }
     if (this.listUi) {
       this.listUi.hide();
       this.listUi.destroy();

@@ -619,3 +619,67 @@ export function getSessionBackgroundKey(): TEXTURE {
   }
   return sessionBackgroundKey;
 }
+
+export function setAutoWordWrap(text: GText, wrapWidth: number): void {
+  text.setWordWrapCallback(((raw: string) => wrapTextByWidth(raw, wrapWidth, text)) as any);
+  text.setText(text.text);
+}
+
+const BREAKABLE_CHAR = /[぀-ヿ㐀-䶿一-鿿豈-﫿]/;
+const SPACE_CHAR = /[\s　]/;
+const NO_LINE_START = /[。、，．,.!?！？」』）\)\]｝》〉ー…]/;
+
+function wrapTextByWidth(raw: string, wrapWidth: number, text: GText): string {
+  const context = text.context;
+  if (!context || wrapWidth <= 0) return raw;
+
+  const flat = raw.replace(/\s*\n\s*/g, (matched, offset: number) => {
+    const prev = raw[offset - 1] ?? '';
+    const next = raw[offset + matched.length] ?? '';
+    return BREAKABLE_CHAR.test(prev) && BREAKABLE_CHAR.test(next) ? '　' : ' ';
+  });
+
+  const tokens = tokenizeForWrap(flat);
+  const lines: string[] = [];
+  let line = '';
+
+  for (const token of tokens) {
+    if (line === '' && SPACE_CHAR.test(token)) continue;
+
+    if (line !== '' && NO_LINE_START.test(token)) {
+      line += token;
+      continue;
+    }
+
+    const candidate = line + token;
+    if (line !== '' && context.measureText(candidate).width > wrapWidth) {
+      lines.push(line);
+      line = SPACE_CHAR.test(token) ? '' : token;
+      continue;
+    }
+    line = candidate;
+  }
+  if (line !== '') lines.push(line);
+
+  return lines.join('\n');
+}
+
+function tokenizeForWrap(text: string): string[] {
+  const tokens: string[] = [];
+  let word = '';
+
+  for (const char of text) {
+    if (SPACE_CHAR.test(char) || BREAKABLE_CHAR.test(char)) {
+      if (word !== '') {
+        tokens.push(word);
+        word = '';
+      }
+      tokens.push(char);
+    } else {
+      word += char;
+    }
+  }
+  if (word !== '') tokens.push(word);
+
+  return tokens;
+}
