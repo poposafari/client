@@ -74,6 +74,26 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   private dragStartPointerLocalY = 0;
   private dragStartThumbY = 0;
 
+  private readonly HOLD_REPEAT = {
+    INITIAL_DELAY: 350,
+    /** 반복 시작 간격(ms) */
+    INTERVAL_START: 160,
+    /** 최대 가속 시 간격(ms) */
+    INTERVAL_MIN: 45,
+    /** INTERVAL_START → INTERVAL_MIN 까지 도달하는 데 걸리는 홀드 시간(ms) */
+    RAMP_MS: 1200,
+    /** 가속 구간에서 커서 SFX가 겹쳐 터지지 않도록 하는 최소 간격(ms) */
+    SFX_MIN_GAP: 90,
+  } as const;
+
+  private holdKey: string | null = null;
+  private holdDelta = 0;
+
+  private holdInputOwner: IInputHandler | null = null;
+  private holdStartedAt = 0;
+  private holdNextRepeatAt = 0;
+  private holdLastSfxAt = 0;
+
   constructor(scene: GameScene, inputManager: InputManager, config: IMenuListConfig) {
     super(scene, inputManager, DEPTH.MESSAGE);
     this.scene = scene;
@@ -82,6 +102,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.initMetrics();
     this.initConfig();
     this.createLayout();
+    this.setupHoldRepeat();
   }
 
   private initMetrics() {
@@ -135,11 +156,13 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   protected handleNavigationInput(key: string, action: GameAction | null): boolean {
     const cursorSfx = this.config.cursorSfx ?? SFX.CURSOR_0;
     if (action === GameAction.CONFIRM) {
+      this.stopHoldRepeat();
       this.scene.getAudio().playEffect(SFX.CURSOR_0);
       this.selectItem();
       return true;
     }
     if (action === GameAction.CANCEL) {
+      this.stopHoldRepeat();
       this.scene.getAudio().playEffect(SFX.CURSOR_0);
       this.cancel();
       return true;
@@ -148,10 +171,12 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
       case KEY.UP:
         this.scene.getAudio().playEffect(cursorSfx);
         this.moveCursor(-1);
+        this.startHoldRepeat(key, -1);
         return true;
       case KEY.DOWN:
         this.scene.getAudio().playEffect(cursorSfx);
         this.moveCursor(1);
+        this.startHoldRepeat(key, 1);
         return true;
     }
     return false;
@@ -308,6 +333,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   public setItems(items: IMenuItem[]) {
+    this.stopHoldRepeat();
     this.items = [...items];
 
     if (this.config.showCancel) {
@@ -722,6 +748,7 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
   }
 
   public hide(): void {
+    this.stopHoldRepeat();
     if (this.isDraggingScroll) {
       this.isDraggingScroll = false;
       this.scrollThumb.setAlpha(1);
@@ -741,6 +768,76 @@ export class MenuListUi extends BaseUi implements IInputHandler, IRefreshableLan
     this.items.forEach((item) => {
       item.label = i18next.t(item.key);
     });
+  }
+
+  private setupHoldRepeat(): void {
+    const keyboard = this.scene.input.keyboard;
+    keyboard?.on('keyup', this.onHoldKeyUp, this);
+    this.scene.game.events.on(Phaser.Core.Events.BLUR, this.stopHoldRepeat, this);
+    this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.updateHoldRepeat, this);
+
+    this.once(Phaser.GameObjects.Events.DESTROY, () => {
+      keyboard?.off('keyup', this.onHoldKeyUp, this);
+      this.scene.game.events.off(Phaser.Core.Events.BLUR, this.stopHoldRepeat, this);
+      this.scene.events.off(Phaser.Scenes.Events.UPDATE, this.updateHoldRepeat, this);
+    });
+  }
+
+  private startHoldRepeat(key: string, delta: number): void {
+    if (this.items.length <= this.config.visibleCount) return;
+
+    const now = this.scene.time.now;
+    this.holdKey = key;
+    this.holdDelta = delta;
+    this.holdInputOwner = this.inputManager.getTop();
+    this.holdStartedAt = now;
+    this.holdNextRepeatAt = now + this.HOLD_REPEAT.INITIAL_DELAY;
+    this.holdLastSfxAt = now;
+  }
+
+  protected stopHoldRepeat(): void {
+    this.holdKey = null;
+    this.holdDelta = 0;
+    this.holdInputOwner = null;
+  }
+
+  private onHoldKeyUp = (event: KeyboardEvent): void => {
+    if (event.code === this.holdKey) this.stopHoldRepeat();
+  };
+
+  private updateHoldRepeat = (): void => {
+    if (!this.holdKey) return;
+
+    const top = this.inputManager.getTop();
+    if (
+      !this.visible ||
+      this.inputManager.isBlocked() ||
+      (top !== this && top !== this.holdInputOwner)
+    ) {
+      this.stopHoldRepeat();
+      return;
+    }
+
+    const now = this.scene.time.now;
+    if (now < this.holdNextRepeatAt) return;
+
+    // 끝에 도달하면 반대쪽 끝으로 순환한다.
+    this.moveCursor(this.holdDelta);
+
+    if (now - this.holdLastSfxAt >= this.HOLD_REPEAT.SFX_MIN_GAP) {
+      this.holdLastSfxAt = now;
+      this.scene.getAudio().playEffect(this.config.cursorSfx ?? SFX.CURSOR_0);
+    }
+
+    this.holdNextRepeatAt = now + this.getHoldRepeatInterval(now);
+  };
+
+  /** 홀드 지속 시간에 비례해 INTERVAL_START → INTERVAL_MIN 으로 선형 가속 */
+  private getHoldRepeatInterval(now: number): number {
+    const { INITIAL_DELAY, INTERVAL_START, INTERVAL_MIN, RAMP_MS } = this.HOLD_REPEAT;
+    const repeatingMs = Math.max(0, now - this.holdStartedAt - INITIAL_DELAY);
+    const t = Math.min(1, repeatingMs / RAMP_MS);
+    return INTERVAL_START + (INTERVAL_MIN - INTERVAL_START) * t;
   }
 
   private isScrollInteractable(): boolean {

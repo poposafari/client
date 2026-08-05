@@ -46,6 +46,10 @@ export class InputManager {
     }
   }
 
+  isBlocked(): boolean {
+    return this.blocked;
+  }
+
   setBlocked(blocked: boolean): void {
     this.blocked = blocked;
     if (blocked) {
@@ -63,6 +67,10 @@ export class InputManager {
       this.stack.pop();
     }
     this.logInputStack('pop');
+  }
+
+  getTop(): IInputHandler | null {
+    return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
   }
 
   isTop(handler: IInputHandler): boolean {
