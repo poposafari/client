@@ -1,9 +1,9 @@
 import { IGamePhase } from '@poposafari/core';
 import { GameScene } from '@poposafari/scenes';
 import { MenuUi } from '@poposafari/feats/menu/menu-ui';
-import { IMenuItem, MAP } from '@poposafari/types';
+import { MAP } from '@poposafari/types';
 import { InitPosConfig } from '@poposafari/feats/overworld/maps/door';
-import { SafariZoneListUi } from './safari-zone-list.ui';
+import { SafariMapUi } from '@poposafari/feats/safari-map/safari-map.ui';
 import { showApiErrorAsTalk } from '@poposafari/utils';
 import i18next from 'i18next';
 
@@ -47,7 +47,7 @@ const YES_NO_ITEMS = () => [
 ];
 
 export class SafariPhase implements IGamePhase {
-  private zoneListUi: SafariZoneListUi | null = null;
+  private mapUi: SafariMapUi | null = null;
   private menuUi: MenuUi | null = null;
 
   constructor(private scene: GameScene) {}
@@ -57,7 +57,13 @@ export class SafariPhase implements IGamePhase {
 
     await talk.showMessage([i18next.t('safari:greeting1'), i18next.t('safari:greeting2')]);
 
-    this.zoneListUi = new SafariZoneListUi(this.scene);
+    this.mapUi = new SafariMapUi(this.scene, {
+      selectableKeys: SAFARI_ZONES.map((zone) => zone.key),
+      showPlayerMarker: false,
+      showTicketCount: true,
+    });
+    this.mapUi.show();
+
     this.menuUi = new MenuUi(this.scene, this.scene.getInputManager(), {
       y: +800,
       itemHeight: 70,
@@ -69,23 +75,16 @@ export class SafariPhase implements IGamePhase {
   private async showZoneSelection(): Promise<void> {
     const question = this.scene.getMessage('question');
 
-    const items: IMenuItem[] = SAFARI_ZONES.map((zone) => ({
-      key: zone.key,
-      label: i18next.t(zone.labelKey),
-    }));
-
     while (true) {
-      const selected = await this.zoneListUi!.waitForSelect(items);
+      const selectedKey = await this.mapUi!.waitForInput();
 
-      if (!selected) {
+      if (!selectedKey) {
         this.scene.popPhase();
         return;
       }
 
-      const zone = SAFARI_ZONES.find((z) => z.key === selected.key);
+      const zone = SAFARI_ZONES.find((z) => z.key === selectedKey);
       if (!zone) continue;
-
-      this.zoneListUi!.hide();
 
       await question.showMessage(
         i18next.t('safari:confirmMove', { map: i18next.t(zone.labelKey) }),
@@ -144,15 +143,17 @@ export class SafariPhase implements IGamePhase {
 
   exit(): void {
     this.scene.getMessage('question').hide();
-    this.zoneListUi?.hide();
-    this.zoneListUi?.destroy();
-    this.zoneListUi = null;
     this.menuUi?.hide();
     this.menuUi?.destroy();
     this.menuUi = null;
+    this.mapUi?.hide();
+    this.mapUi?.destroy();
+    this.mapUi = null;
   }
 
-  update?(time: number, delta: number): void {}
+  update?(time: number, delta: number): void {
+    this.mapUi?.update(time, delta);
+  }
 
   onPause?(): void {}
 

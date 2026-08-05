@@ -1,5 +1,5 @@
 import { BaseUi } from '@poposafari/core';
-import { GameScene } from '@poposafari/scenes';
+import { GameEvent, GameScene } from '@poposafari/scenes';
 import {
   ANIMATION,
   DEPTH,
@@ -9,7 +9,14 @@ import {
   TEXTSTYLE,
   TEXTURE,
 } from '@poposafari/types';
-import { addBackground, addImage, addSprite, addText } from '@poposafari/utils';
+import {
+  addBackground,
+  addContainer,
+  addImage,
+  addSprite,
+  addText,
+  addWindow,
+} from '@poposafari/utils';
 import i18next from '@poposafari/i18n';
 import { KeyGuideBarContainer } from '@poposafari/containers/key-guide-bar.container';
 import {
@@ -45,7 +52,6 @@ const SNAP_SPEED = 1200;
 
 const CURSOR_SEL_SCALE = 2;
 
-
 const UNVISITED_TINT = 0x848884;
 
 const MAP_PLAYER_SCALE = 2;
@@ -61,10 +67,32 @@ const HEADER_ICON_GAP = 40;
 const FALLBACK_CURSOR_X = 0;
 const FALLBACK_CURSOR_Y = -40;
 
+const SAFARI_ZONE_TICKET_ID = 'safari-zone-ticket';
+
+const TICKET_PANEL = {
+  X: +740,
+  Y: +380,
+  WIDTH: 400,
+  HEIGHT: 130,
+  ICON_SCALE: 3.2,
+  FONT_SIZE: 70,
+  ICON_TEXT_GAP: 50,
+  LABEL_FONT_SIZE: 60,
+  LABEL_X: +180,
+  LABEL_GAP: 70,
+} as const;
+
 let lastCursor: { x: number; y: number } | null = null;
+
+export interface SafariMapUiConfig {
+  selectableKeys?: string[];
+  showPlayerMarker?: boolean;
+  showTicketCount?: boolean;
+}
 
 export class SafariMapUi extends BaseUi {
   scene: GameScene;
+  private uiConfig: SafariMapUiConfig;
   private bg!: GImage;
   private island!: GImage;
   private edges!: Phaser.GameObjects.Graphics;
@@ -79,7 +107,7 @@ export class SafariMapUi extends BaseUi {
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
 
   private pointSprites: GImage[] = [];
-  private visitedPoints: Set<string> = new Set();
+  private selectablePoints: Set<string> = new Set();
   private cursorSelSprite: Phaser.GameObjects.Sprite | null = null;
   private playerSprite: Phaser.GameObjects.Sprite | null = null;
   private hoveredIndex = -1;
@@ -87,31 +115,56 @@ export class SafariMapUi extends BaseUi {
   private titleTween: Phaser.Tweens.Tween | null = null;
   private inputGuide!: KeyGuideBarContainer;
 
+  private ticketPanel: GContainer | null = null;
+  private ticketWindow: GWindow | null = null;
+  private ticketIcon: GImage | null = null;
+  private ticketCountText: GText | null = null;
+  private ticketLabelText: GText | null = null;
+
   private resolveClose: ((mapId: string | null) => void) | null = null;
 
-  constructor(scene: GameScene) {
+  private readonly onTicketChanged = (): void => {
+    this.refreshTicketCount();
+  };
+
+  constructor(scene: GameScene, config: SafariMapUiConfig = {}) {
     super(scene, scene.getInputManager(), DEPTH.MESSAGE);
     this.scene = scene;
-    this.computeVisitedPoints();
+    this.uiConfig = config;
+    this.computeSelectablePoints();
     this.initCursorPosition();
     this.createLayout();
     this.cursorKeys = this.scene.input.keyboard?.createCursorKeys() ?? null;
+
+    this.scene.input.on('pointermove', this.onPointerMove, this);
+    this.once(Phaser.GameObjects.Events.DESTROY, () => {
+      this.scene.input.off('pointermove', this.onPointerMove, this);
+    });
+
+    if (this.uiConfig.showTicketCount) {
+      this.scene.events.on(GameEvent.SAFARI_TICKET_CHANGED, this.onTicketChanged);
+    }
   }
 
-  private computeVisitedPoints(): void {
+  private computeSelectablePoints(): void {
+    if (this.uiConfig.selectableKeys) {
+      for (const key of this.uiConfig.selectableKeys) this.selectablePoints.add(key);
+      return;
+    }
+
     const user = this.scene.getUser();
     if (!user) return;
     for (const point of MAP_POINTS) {
       const maps = POINT_TO_MAPS[point.key] ?? [point.key];
       if (maps.some((m) => user.hasVisitedMap(m))) {
-        this.visitedPoints.add(point.key);
+        this.selectablePoints.add(point.key);
       }
     }
   }
 
-  private isPointVisited(index: number): boolean {
+  private isPointSelectable(index: number): boolean {
     if (index < 0 || index >= MAP_POINTS.length) return false;
-    return this.visitedPoints.has(MAP_POINTS[index].key);
+    return this.selectablePoints.has(MAP_POINTS[index].key);
   }
 
   private initCursorPosition(): void {
@@ -142,13 +195,9 @@ export class SafariMapUi extends BaseUi {
 
   createLayout(): void {
     this.bg = addBackground(this.scene, TEXTURE.BG_MAP);
-    this.island = addImage(
-      this.scene,
-      TEXTURE.MAP_ISLAND,
-      undefined,
-      0,
-      ISLAND_OFFSET_Y,
-    ).setScale(ISLAND_SCALE);
+    this.island = addImage(this.scene, TEXTURE.MAP_ISLAND, undefined, 0, ISLAND_OFFSET_Y).setScale(
+      ISLAND_SCALE,
+    );
 
     this.edges = this.scene.add.graphics();
     this.drawEdges();
@@ -206,7 +255,7 @@ export class SafariMapUi extends BaseUi {
         point.y,
       ).setScale(POINT_SCALE);
       sprite.setScrollFactor(0);
-      if (this.visitedPoints.has(point.key)) {
+      if (this.selectablePoints.has(point.key)) {
         sprite.setInteractive({ useHandCursor: true });
         sprite.on('pointerdown', () => this.onPointClick(i));
       } else {
@@ -252,6 +301,8 @@ export class SafariMapUi extends BaseUi {
     });
     this.inputGuide.setPosition(+920, +500);
 
+    if (this.uiConfig.showTicketCount) this.createTicketPanel();
+
     this.add([
       this.bg,
       this.island,
@@ -266,12 +317,86 @@ export class SafariMapUi extends BaseUi {
       this.titleText,
       this.cursor,
       this.inputGuide,
+      ...(this.ticketPanel ? [this.ticketPanel] : []),
     ]);
 
     this.updateHover();
   }
 
+  private createTicketPanel(): void {
+    this.ticketPanel = addContainer(this.scene, DEPTH.DEFAULT, TICKET_PANEL.X, TICKET_PANEL.Y);
+
+    this.ticketWindow = addWindow(
+      this.scene,
+      this.scene.getOption().getWindow(),
+      0,
+      0,
+      TICKET_PANEL.WIDTH,
+      TICKET_PANEL.HEIGHT,
+      4,
+      16,
+      16,
+      16,
+      16,
+    );
+
+    const iconTexture = this.scene.textures.exists(SAFARI_ZONE_TICKET_ID)
+      ? SAFARI_ZONE_TICKET_ID
+      : TEXTURE.BLANK;
+    this.ticketIcon = addImage(this.scene, iconTexture, undefined, 0, 0).setScale(
+      TICKET_PANEL.ICON_SCALE,
+    );
+
+    this.ticketCountText = addText(
+      this.scene,
+      0,
+      0,
+      'x0',
+      TICKET_PANEL.FONT_SIZE,
+      '100',
+      'left',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+
+    // 패널 바로 위(윗변 기준 위쪽)에 붙는 제목 라벨
+    this.ticketLabelText = addText(
+      this.scene,
+      TICKET_PANEL.LABEL_X,
+      -TICKET_PANEL.HEIGHT / 2 - TICKET_PANEL.LABEL_GAP,
+      i18next.t('etc:ownedTicket'),
+      TICKET_PANEL.LABEL_FONT_SIZE,
+      '500',
+      'left',
+      TEXTSTYLE.WHITE,
+      TEXTSHADOW.GRAY,
+    );
+    this.ticketLabelText.setOrigin(1, 0);
+
+    this.ticketPanel.add([
+      this.ticketWindow,
+      this.ticketIcon,
+      this.ticketCountText,
+      this.ticketLabelText,
+    ]);
+    this.refreshTicketCount();
+  }
+
+  private refreshTicketCount(): void {
+    if (!this.ticketIcon || !this.ticketCountText) return;
+
+    const quantity = this.scene.getUser()?.getItemQuantity(SAFARI_ZONE_TICKET_ID) ?? 0;
+    this.ticketCountText.setText(`x${quantity}`);
+
+    const iconWidth = this.ticketIcon.displayWidth;
+    const groupWidth = iconWidth + TICKET_PANEL.ICON_TEXT_GAP + this.ticketCountText.width;
+    const startX = -groupWidth / 2;
+    this.ticketIcon.setX(startX + iconWidth / 2);
+    this.ticketCountText.setX(this.ticketIcon.x + iconWidth / 2 + TICKET_PANEL.ICON_TEXT_GAP);
+  }
+
   private createPlayerMarker(): void {
+    if (this.uiConfig.showPlayerMarker === false) return;
     const point = this.findPlayerPoint();
     if (!point) return;
 
@@ -291,7 +416,7 @@ export class SafariMapUi extends BaseUi {
 
   onInput(key: string, action: GameAction | null): void {
     if (action === GameAction.CONFIRM) {
-      if (this.hoveredIndex >= 0 && this.isPointVisited(this.hoveredIndex)) {
+      if (this.hoveredIndex >= 0 && this.isPointSelectable(this.hoveredIndex)) {
         this.scene.getAudio().playEffect(SFX.CURSOR_0);
         this.close(MAP_POINTS[this.hoveredIndex].key);
       }
@@ -359,7 +484,7 @@ export class SafariMapUi extends BaseUi {
     let nearestDist = POINT_HIT_RADIUS;
 
     for (let i = 0; i < MAP_POINTS.length; i++) {
-      if (!this.isPointVisited(i)) continue;
+      if (!this.isPointSelectable(i)) continue;
       const p = MAP_POINTS[i];
       const dist = Math.sqrt((this.cursorX - p.x) ** 2 + (this.cursorY - p.y) ** 2);
       if (dist < nearestDist) {
@@ -407,9 +532,26 @@ export class SafariMapUi extends BaseUi {
 
   private onPointClick(index: number): void {
     if (!this.scene.getInputManager().isTop(this)) return;
-    if (!this.isPointVisited(index)) return;
+    if (!this.isPointSelectable(index)) return;
     this.setHovered(index);
+
+    // 커서가 이미 포인터를 따라오므로 포인트 클릭은 곧 확정이다.
+    this.scene.getAudio().playEffect(SFX.CURSOR_0);
+    this.close(MAP_POINTS[index].key);
   }
+
+  /** 마우스 포인터를 지도 좌표계로 변환해 커서를 옮긴다. */
+  private onPointerMove = (pointer: Phaser.Input.Pointer): void => {
+    if (!this.visible) return;
+    if (!this.scene.getInputManager().isTop(this)) return;
+
+    const local = this.getWorldTransformMatrix().applyInverse(pointer.x, pointer.y);
+    this.snapping = false;
+    this.cursorX = Math.max(MAP_BOUND_LEFT, Math.min(MAP_BOUND_RIGHT, local.x));
+    this.cursorY = Math.max(MAP_BOUND_TOP, Math.min(MAP_BOUND_BOTTOM, local.y));
+    this.cursor.setPosition(this.cursorX + CURSOR_OFFSET_X, this.cursorY + CURSOR_OFFSET_Y);
+    this.updateHover();
+  };
 
   private tweenTitle(targetScale: number, ease: string, onComplete?: () => void): void {
     if (this.titleTween) {
@@ -438,6 +580,11 @@ export class SafariMapUi extends BaseUi {
 
   errorEffect(_errorMsg: string): void {}
 
+  public show(): void {
+    super.show();
+    this.refreshTicketCount();
+  }
+
   /** 선택된 목적지 mapId를 반환한다. 취소(X/ESC) 시 null. */
   waitForInput(): Promise<string | null> {
     return new Promise((resolve) => {
@@ -452,6 +599,9 @@ export class SafariMapUi extends BaseUi {
       this.titleTween = null;
     }
     this.cursorKeys = null;
+    if (this.uiConfig.showTicketCount) {
+      this.scene.events.off(GameEvent.SAFARI_TICKET_CHANGED, this.onTicketChanged);
+    }
     super.destroy(fromScene);
   }
 }

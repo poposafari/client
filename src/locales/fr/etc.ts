@@ -75,6 +75,7 @@ export const etc: TranslationEtc = {
   pokeRader: 'POKé RADAR',
   map: 'CARTE',
   safariMap: 'CARTE DU POPO SAFARI',
+  ownedTicket: 'TICKETS POSSÉDÉS',
   pc: 'BOÎTE POKéMON',
   bag: 'SAC',
   pokedex: 'POKéDEX',

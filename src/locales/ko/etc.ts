@@ -75,6 +75,7 @@ export const etc: TranslationEtc = {
   pokeRader: '포케레이더',
   map: '지도',
   safariMap: '포포사파리 지도',
+  ownedTicket: '보유 중인 티켓',
   pc: '포켓몬 박스',
   bag: '가방',
   pokedex: '포켓몬 도감',
