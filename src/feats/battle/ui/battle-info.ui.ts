@@ -108,6 +108,11 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private static readonly WILD_NAME_SHINY_GAP = 30;
   private static readonly WILD_NAME_LEVEL_MARGIN = 25;
 
+  private static readonly LOCATION_FONT_SIZE = 80;
+  private static readonly LOCATION_MIN_FONT_SIZE = 40;
+  private static readonly LOCATION_TIMER_MARGIN = 10;
+  private static readonly LOCATION_SHRINK_BIAS = 0.9;
+
   constructor(scene: GameScene) {
     super(scene, 0, 0);
     this.setScrollFactor(0);
@@ -341,7 +346,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
       0,
       0,
       this.buildLocationString(),
-      80,
+      BattleInfoUi.LOCATION_FONT_SIZE,
       '100',
       'right',
       TEXTSTYLE.WHITE,
@@ -394,6 +399,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     );
     this.timerText.setVisible(false);
     this.add(this.timerText);
+    this.fitLocationBesideTimer();
     this.tickTimer();
 
     scene.events.on(GameEvent.GAME_TIME_CHANGED, this.onGameTimeChanged, this);
@@ -433,6 +439,33 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
     if (this.wildShiny) {
       this.wildShiny.setX(this.wildGenderText.x + this.wildGenderText.displayWidth + shinyGap);
     }
+  }
+
+  private fitLocationBesideTimer(): void {
+    if (!this.locationText || !this.timerText) return;
+
+    this.locationText.setFontSize(BattleInfoUi.LOCATION_FONT_SIZE);
+
+    const prevLabel = this.timerText.text;
+    if (!prevLabel) this.timerText.setText('00:00');
+    const timerWidth = Math.max(this.timerText.displayWidth, this.timerLabel?.displayWidth ?? 0);
+    if (!prevLabel) this.timerText.setText(prevLabel);
+
+    const timerRightEdge = this.timerText.x + timerWidth / 2;
+    const available =
+      this.locationContainer.x - timerRightEdge - BattleInfoUi.LOCATION_TIMER_MARGIN;
+    if (available <= 0) return;
+
+    const width = this.locationText.displayWidth;
+    if (width <= available) return;
+
+    const newSize = Math.max(
+      BattleInfoUi.LOCATION_MIN_FONT_SIZE,
+      Math.floor(
+        BattleInfoUi.LOCATION_FONT_SIZE * (available / width) * BattleInfoUi.LOCATION_SHRINK_BIAS,
+      ),
+    );
+    this.locationText.setFontSize(newSize);
   }
 
   private buildLocationString(): string {
@@ -524,6 +557,7 @@ export class BattleInfoUi extends Phaser.GameObjects.Container {
   private onGameTimeChanged = (timeOfDay: string): void => {
     this.currentTime = timeOfDay;
     this.locationText?.setText(this.buildLocationString());
+    this.fitLocationBesideTimer();
   };
 
   show(): void {
