@@ -2,5 +2,5 @@ legacy
 node_modules
 dist
 .cursor
-docs
+docs/plan
 .env.local
