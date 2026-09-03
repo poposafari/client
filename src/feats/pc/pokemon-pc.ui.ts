@@ -55,7 +55,7 @@ import { HudTooltipManager } from '@poposafari/feats/overworld/hud-tooltip.manag
 
 type PcFocusArea = 'grid' | 'party' | 'top' | 'grab' | 'sellButtons';
 export type PcMode = 'manage' | 'selectForGive' | 'selectForTeachMove';
-type PcSortKey = 'pokedex' | 'level' | 'caughtAt' | 'tier';
+type PcSortKey = 'pokedex' | 'level' | 'caughtAt' | 'tier' | 'partyBonus';
 type PcSortScope = 'currentBox' | 'all';
 
 const RANK_COLOR: Record<PokemonRank, string> = {
@@ -102,6 +102,11 @@ const UPGRADE_CANDY_BY_TIER: Partial<Record<PokemonRank, number>> = {
 };
 
 const tierRank = (tier: PokemonRank): number => TIER_ORDER.indexOf(tier);
+
+// 파티 보너스는 ÷6 때문에 순환소수가 되어, 수학적으로 같은 값도 부동소수점 표현이 갈린다.
+// (예: L1/ultra-rare와 L6/super-rare = 둘 다 0.007이지만 0.006999999999999999로도 나옴)
+// 정렬 키를 백만분율 정수로 양자화해야 동점이 동점으로 판정되어 도감번호 타이브레이커가 걸린다.
+const PARTY_BONUS_SORT_PRECISION = 1e6;
 
 const nextTier = (tier: PokemonRank): PokemonRank | null => {
   const idx = TIER_ORDER.indexOf(tier);
@@ -1131,6 +1136,7 @@ export class PokemonPcUi extends BaseUi {
       { key: 'level', label: i18next.t('pc:sortByLevel') },
       { key: 'caughtAt', label: i18next.t('pc:sortByDate') },
       { key: 'tier', label: i18next.t('pc:sortByTier') },
+      { key: 'partyBonus', label: i18next.t('pc:sortByPartyBonus') },
       { key: 'cancel', label: i18next.t('pc:cancel') },
     ];
     const keySel = await this.sortMenu.waitForSelect(keyItems);
@@ -1216,6 +1222,15 @@ export class PokemonPcUi extends BaseUi {
         case 'tier': {
           const masterTier = (master.getPokemonData(p.pokedexId)?.rank ?? 'common') as PokemonRank;
           return tierRank(resolveTier(p.tier, masterTier));
+        }
+        case 'partyBonus': {
+          const masterTier = (master.getPokemonData(p.pokedexId)?.rank ?? 'common') as PokemonRank;
+          const bonus = partyMemberCaptureBonus(
+            p.level,
+            p.isShiny,
+            resolveTier(p.tier, masterTier),
+          );
+          return Math.round(bonus * PARTY_BONUS_SORT_PRECISION);
         }
       }
     };

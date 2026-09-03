@@ -84,6 +84,7 @@ export const pc: Record<string, string> = {
   sortByLevel: 'レベルじゅん',
   sortByDate: 'つかまえたひじゅん',
   sortByTier: 'ティアじゅん',
+  sortByPartyBonus: 'パーティボーナスじゅん',
   sortAsc: 'しょうじゅん',
   sortDesc: 'こうじゅん',
   sortAllConfirm: 'すべての ボックスの ポケモンを\nせいりします。つづけますか？',

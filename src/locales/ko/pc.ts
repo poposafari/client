@@ -84,6 +84,7 @@ export const pc: Record<string, string> = {
   sortByLevel: '레벨순',
   sortByDate: '포획 날짜순',
   sortByTier: '티어순',
+  sortByPartyBonus: '파티 보너스순',
   sortAsc: '오름차순',
   sortDesc: '내림차순',
   sortAllConfirm: '모든 박스의 포켓몬을\n정렬합니다. 계속하시겠습니까?',

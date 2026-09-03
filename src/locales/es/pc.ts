@@ -84,6 +84,7 @@ export const pc: Record<string, string> = {
   sortByLevel: 'Por nivel',
   sortByDate: 'Por fecha',
   sortByTier: 'Por rango',
+  sortByPartyBonus: 'Por bonus de equipo',
   sortAsc: 'Ascendente',
   sortDesc: 'Descendente',
   sortAllConfirm: 'Esto ordenará los Pokémon de\ntodas las cajas. ¿Continuar?',
