@@ -15,6 +15,7 @@ export class OptionManager {
     [OptionKey.BATTLE_TUTORIAL]: 0,
     [OptionKey.PC_TUTORIAL]: 0,
     [OptionKey.BATTLE_BGM]: 0,
+    [OptionKey.BATTLE_BGM_SPEED]: 0,
     [OptionKey.BATTLE_SPEED]: 0,
   };
 
@@ -86,6 +87,8 @@ export class OptionManager {
         return value >= 0 && value <= 1;
       case OptionKey.BATTLE_BGM:
         return value >= 0 && value <= 2;
+      case OptionKey.BATTLE_BGM_SPEED:
+        return value >= 0 && value <= 1;
       case OptionKey.BATTLE_SPEED:
         return value >= 0 && value <= 2;
       default:

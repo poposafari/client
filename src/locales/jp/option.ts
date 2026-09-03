@@ -14,6 +14,7 @@ export const option: TranslationOption = {
   pcTutorial: 'ポケモンボックス チュートリアル',
   battleBgm: 'バトル BGM',
   battleBgmValue: 'BGM',
+  battleBgmSpeed: 'バトルBGMに ばいそくを てきよう',
   on: 'オン',
   off: 'オフ',
   speedNormal: 'ふつう',

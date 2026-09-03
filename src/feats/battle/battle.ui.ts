@@ -17,7 +17,7 @@ import {
   playMudThrow,
 } from './anim/ball-throw';
 import { EncounterTransition } from '@poposafari/utils/encounter-transition';
-import { refreshBattleSpeed } from './anim/timing';
+import { getBattleBgmSpeed, refreshBattleSpeed } from './anim/timing';
 import { PLAYER_HUD, resolveBattleTime } from './battle.constants';
 import { BGM, OptionKey, SFX, type PokemonRank } from '@poposafari/types';
 import { getPokemonI18Name } from '@poposafari/utils';
@@ -91,12 +91,13 @@ export class BattleUi {
   async playPreIntro(): Promise<void> {
     const bgm = this.resolveBattleBgm();
     const speed = refreshBattleSpeed(this.scene);
+    const bgmSpeed = getBattleBgmSpeed();
     return new Promise<void>((resolve) => {
       const transition = new EncounterTransition({
         order: 'split',
         preDelayMs: 400,
         speed,
-        onStart: () => this.scene.getAudio().playBackground(bgm, 100, speed),
+        onStart: () => this.scene.getAudio().playBackground(bgm, 100, bgmSpeed),
       });
       this.pendingTransition = transition;
       transition.play(this.scene, () => resolve());

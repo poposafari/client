@@ -43,6 +43,7 @@ const CATEGORY_KEYS: Record<OptionCategory, string[]> = {
     OptionKey.SFX_VOLUME,
     OptionKey.BGM_VOLUME,
     OptionKey.BATTLE_BGM,
+    OptionKey.BATTLE_BGM_SPEED,
   ],
   screen: [LANGUAGE_KEY, OptionKey.WINDOW],
   keyboard: [],
@@ -441,6 +442,11 @@ export class OptionUi extends BaseUi {
         return {
           label: i18next.t('option:battleBgm'),
           values: ['1', '2', '3'].map((n) => `${i18next.t('option:battleBgmValue')} ${n}`),
+        };
+      case OptionKey.BATTLE_BGM_SPEED:
+        return {
+          label: i18next.t('option:battleBgmSpeed'),
+          values: [i18next.t('option:on'), i18next.t('option:off')],
         };
       case OptionKey.WINDOW:
         return {

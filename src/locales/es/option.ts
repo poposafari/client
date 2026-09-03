@@ -14,6 +14,7 @@ export const option: TranslationOption = {
   pcTutorial: 'Tutorial de la Caja Pokémon',
   battleBgm: 'Música de combate',
   battleBgmValue: 'Música',
+  battleBgmSpeed: 'Acelerar música de combate',
   on: 'Activado',
   off: 'Desactivado',
   speedNormal: 'Normal',

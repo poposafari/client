@@ -22,6 +22,7 @@ export enum OptionKey {
   BATTLE_TUTORIAL = 'battle_tutorial',
   PC_TUTORIAL = 'pc_tutorial',
   BATTLE_BGM = 'battle_bgm',
+  BATTLE_BGM_SPEED = 'battle_bgm_speed',
   BATTLE_SPEED = 'battle_speed',
 }
 

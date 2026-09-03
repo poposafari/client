@@ -16,6 +16,7 @@ export const option: TranslationOption = {
   pcTutorial: '포켓몬 박스 튜토리얼',
   battleBgm: '배틀 배경음',
   battleBgmValue: '배경음',
+  battleBgmSpeed: '배틀 배경음 배속 적용',
   on: '켜기',
   off: '끄기',
   speedNormal: '보통',

@@ -14,6 +14,7 @@ export const option: TranslationOption = {
   pcTutorial: 'Pokémon Box Tutorial',
   battleBgm: 'Battle BGM',
   battleBgmValue: 'BGM',
+  battleBgmSpeed: 'Speed Up Battle BGM',
   on: 'On',
   off: 'Off',
   speedNormal: 'Normal',

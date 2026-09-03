@@ -8,7 +8,7 @@ import { BattleTutorialPhase } from './tutorial/battle-tutorial.phase';
 import { ApiError, BGM, ErrorCode, MAP, OptionKey, SFX } from '@poposafari/types';
 import i18next from '@poposafari/i18n';
 import { screenFadeOut } from '@poposafari/utils/screen-fade';
-import { getBattleSpeed } from './anim/timing';
+import { getBattleBgmSpeed, getBattleSpeed } from './anim/timing';
 
 export class BattlePhase implements IGamePhase {
   private readonly ui: BattleUi;
@@ -180,7 +180,7 @@ export class BattlePhase implements IGamePhase {
 
           await this.ui.showCaughtTalk(sfxDone);
 
-          audio.playBackground(BGM.BATTLE_VICTORY, 1000, speed);
+          audio.playBackground(BGM.BATTLE_VICTORY, 1000, getBattleBgmSpeed());
 
           const { pokemon, rewards, partyExp } = next.outcome;
 
