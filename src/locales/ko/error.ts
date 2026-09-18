@@ -46,7 +46,6 @@ export const error: TranslationError = {
   ITEM_NOT_HOLDABLE: '지니게 할 수 없는 아이템입니다.',
   ITEM_NOT_REGISTERABLE: '등록할 수 없는 아이템입니다.',
   ITEM_NOT_OWNED: '보유하지 않은 아이템입니다.',
-  POKEMON_NOT_OWNED: '보유하지 않은 포켓몬입니다.',
   POKEMON_NO_HELD_ITEM: '포켓몬이 도구를 가지고 있지 않습니다.',
   INSUFFICIENT_MONEY: '돈이 부족합니다.',
   PARTY_LIMIT_EXCEEDED: '파티 인원이 가득 찼습니다.',

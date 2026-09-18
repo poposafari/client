@@ -1,12 +1,11 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import i18next from 'i18next';
-import { ApiError, ErrorCode, UserPokemon } from '@poposafari/types';
+import { ApiError, ErrorCode } from '@poposafari/types';
 import {
   CostumeEntry,
   CreateUserReq,
   GameConnectRes,
   GetMeRes,
-  GetStartingPokemonsRes,
   GetUserRes,
   ItemBagItem,
   LoginLocalReq,
@@ -17,16 +16,11 @@ import {
   PokedexEntry,
   PokemonBoxItem,
   RegisterLocalReq,
-  RestoreFossilReq,
   RestoreFossilRes,
   SafariTicketStatusRes,
   SafariTicketClaimRes,
-  SafariBaitReq,
   SafariBaitRockRes,
-  SafariCatchReq,
   SafariCatchRes,
-  SafariRockReq,
-  StartingPokemon,
   TownMapEntry,
 } from '@poposafari/types/dto';
 import { SafariMapInfo, SafariWildInfo, SafariItemInfo } from '@poposafari/scenes';
@@ -121,7 +115,7 @@ export class ApiManager {
 
   async checkSession(): Promise<boolean> {
     try {
-      await this.client.post<ApiResponse<null>>('/auth/check');
+      await this.client.get<ApiResponse<null>>('/sessions/current');
       return true;
     } catch {
       return false;
@@ -130,16 +124,16 @@ export class ApiManager {
 
   async loginLocal(username: string, password: string): Promise<void> {
     const payload: LoginLocalReq = { username, password };
-    await this.client.post<ApiResponse<null>>('/auth/login/local', payload);
+    await this.client.post<ApiResponse<null>>('/sessions', payload);
   }
 
   async registerLocal(username: string, password: string): Promise<void> {
     const payload: RegisterLocalReq = { username, password };
-    await this.client.post<ApiResponse<null>>('/auth/register/local', payload);
+    await this.client.post<ApiResponse<null>>('/accounts', payload);
   }
 
   async getMe(): Promise<GetMeRes | null> {
-    const res = await this.client.get<ApiResponse<GetMeRes>>('/user/me');
+    const res = await this.client.get<ApiResponse<GetMeRes>>('/users/me');
 
     if (res.data.success) {
       return res.data.data;
@@ -149,7 +143,7 @@ export class ApiManager {
   }
 
   async getPokemonBox(): Promise<PokemonBoxItem[] | null> {
-    const res = await this.client.get<ApiResponse<PokemonBoxItem[]>>('/pokemon/box');
+    const res = await this.client.get<ApiResponse<PokemonBoxItem[]>>('/users/me/pokemons');
     return res.data.success ? res.data.data : null;
   }
 
@@ -158,7 +152,7 @@ export class ApiManager {
     boxMeta?: BoxMetaItem[],
     nicknames?: NicknameChange[],
   ): Promise<boolean> {
-    const res = await this.client.patch<ApiResponse<null>>('/pokemon/box/arrange', {
+    const res = await this.client.patch<ApiResponse<null>>('/users/me/pokemons', {
       changes,
       ...(boxMeta?.length ? { boxMeta } : {}),
       ...(nicknames?.length ? { nicknames } : {}),
@@ -167,7 +161,7 @@ export class ApiManager {
   }
 
   async getBoxMeta(): Promise<BoxMetaItem[] | null> {
-    const res = await this.client.get<ApiResponse<BoxMetaItem[]>>('/pokemon/box/meta');
+    const res = await this.client.get<ApiResponse<BoxMetaItem[]>>('/users/me/boxes');
     return res.data.success ? res.data.data : null;
   }
 
@@ -176,7 +170,7 @@ export class ApiManager {
   ): Promise<{ rewards: { itemId: string; quantity: number }[] } | null> {
     const res = await this.client.post<
       ApiResponse<{ rewards: { itemId: string; quantity: number }[] }>
-    >('/pokemon/sell', { ids });
+    >('/users/me/pokemons/sell', { ids });
     return res.data.success ? res.data.data : null;
   }
 
@@ -198,14 +192,13 @@ export class ApiManager {
         expToNext: { current: number; next: number; remaining: number };
         leveledUp: boolean;
       }>
-    >('/pokemon/enhance', { id, candies });
+    >(`/users/me/pokemons/${id}/enhance`, { candies });
     return res.data.success ? res.data.data : null;
   }
 
   async upgradePokemon(id: number): Promise<{ id: number; tier: string } | null> {
     const res = await this.client.post<ApiResponse<{ id: number; tier: string }>>(
-      '/pokemon/upgrade',
-      { id },
+      `/users/me/pokemons/${id}/upgrade`,
     );
     return res.data.success ? res.data.data : null;
   }
@@ -216,20 +209,20 @@ export class ApiManager {
   ): Promise<{ id: number; pokedexId: string; tier: string | null } | null> {
     const res = await this.client.post<
       ApiResponse<{ id: number; pokedexId: string; tier: string | null }>
-    >('/pokemon/evolve', { id, cost });
+    >(`/users/me/pokemons/${id}/evolve`, { cost });
     return res.data.success ? res.data.data : null;
   }
 
   async learnMove(id: number, move: string): Promise<{ id: number; skills: string[] } | null> {
     const res = await this.client.post<ApiResponse<{ id: number; skills: string[] }>>(
-      '/pokemon/learn-move',
-      { id, move },
+      `/users/me/pokemons/${id}/moves`,
+      { move },
     );
     return res.data.success ? res.data.data : null;
   }
 
   async getItemBag(): Promise<ItemBagItem[] | null> {
-    const res = await this.client.get<ApiResponse<ItemBagItem[]>>('/item/bag');
+    const res = await this.client.get<ApiResponse<ItemBagItem[]>>('/users/me/items');
     return res.data.success ? res.data.data : null;
   }
 
@@ -237,35 +230,26 @@ export class ApiManager {
     userPokemonId: number,
     heldItem: string,
   ): Promise<{ pokemonId: number; heldItem: string; previousHeld: string | null } | null> {
-    const res = await this.client.post<
+    const res = await this.client.put<
       ApiResponse<{ pokemonId: number; heldItem: string; previousHeld: string | null }>
-    >('/item/give-hold', { userPokemonId, heldItem });
+    >(`/users/me/pokemons/${userPokemonId}/held-item`, { heldItem });
     return res.data.success ? res.data.data : null;
   }
 
   async takeHeldItem(id: number): Promise<{ pokemonId: number; returnedItem: string } | null> {
-    const res = await this.client.post<ApiResponse<{ pokemonId: number; returnedItem: string }>>(
-      '/item/take-hold',
-      { id },
+    const res = await this.client.delete<ApiResponse<{ pokemonId: number; returnedItem: string }>>(
+      `/users/me/pokemons/${id}/held-item`,
     );
     return res.data.success ? res.data.data : null;
   }
 
-  async registerItem(
+  async setItemRegister(
     itemId: string,
+    register: boolean,
   ): Promise<{ itemId: string; quantity: number; register: boolean } | null> {
-    const res = await this.client.post<
+    const res = await this.client.patch<
       ApiResponse<{ itemId: string; quantity: number; register: boolean }>
-    >('/item/register', { itemId });
-    return res.data.success ? res.data.data : null;
-  }
-
-  async unregisterItem(
-    itemId: string,
-  ): Promise<{ itemId: string; quantity: number; register: boolean } | null> {
-    const res = await this.client.post<
-      ApiResponse<{ itemId: string; quantity: number; register: boolean }>
-    >('/item/unregister', { itemId });
+    >(`/users/me/items/${itemId}`, { register });
     return res.data.success ? res.data.data : null;
   }
 
@@ -278,47 +262,48 @@ export class ApiManager {
   } | null> {
     const res = await this.client.post<
       ApiResponse<{ money: number; item: { itemId: string; quantity: number; register: boolean } }>
-    >('/item/buy', { item, quantity });
+    >(`/users/me/items/${item}/buy`, { quantity });
     return res.data.success ? res.data.data : null;
   }
 
   async sellItem(item: string, quantity: number): Promise<{ money: number } | null> {
-    const res = await this.client.post<ApiResponse<{ money: number }>>('/item/sell', {
-      item,
-      quantity,
-    });
+    const res = await this.client.post<ApiResponse<{ money: number }>>(
+      `/users/me/items/${item}/sell`,
+      { quantity },
+    );
     return res.data.success ? res.data.data : null;
   }
 
   async getSafariTicketStatus(): Promise<SafariTicketStatusRes | null> {
-    const res = await this.client.get<ApiResponse<SafariTicketStatusRes>>('/item/safari-ticket');
+    const res =
+      await this.client.get<ApiResponse<SafariTicketStatusRes>>('/users/me/safari-ticket');
     return res.data.success ? res.data.data : null;
   }
 
   async claimSafariTicket(): Promise<SafariTicketClaimRes | null> {
     const res = await this.client.post<ApiResponse<SafariTicketClaimRes>>(
-      '/item/safari-ticket/claim',
+      '/users/me/safari-ticket/claim',
     );
     return res.data.success ? res.data.data : null;
   }
 
   async getPokedex(): Promise<PokedexEntry[] | null> {
-    const res = await this.client.get<ApiResponse<PokedexEntry[]>>('/pokedex');
+    const res = await this.client.get<ApiResponse<PokedexEntry[]>>('/users/me/pokedex');
     return res.data.success ? res.data.data : null;
   }
 
   async getTownMap(): Promise<TownMapEntry[] | null> {
-    const res = await this.client.get<ApiResponse<TownMapEntry[]>>('/town-map');
+    const res = await this.client.get<ApiResponse<TownMapEntry[]>>('/users/me/visited-maps');
     return res.data.success ? res.data.data : null;
   }
 
   async getCostumeList(): Promise<CostumeEntry[] | null> {
-    const res = await this.client.get<ApiResponse<CostumeEntry[]>>('/costume');
+    const res = await this.client.get<ApiResponse<CostumeEntry[]>>('/users/me/costumes');
     return res.data.success ? res.data.data : null;
   }
 
   async gameConnect(): Promise<GameConnectRes> {
-    const res = await this.client.post<ApiResponse<GameConnectRes>>('/game/connect');
+    const res = await this.client.post<ApiResponse<GameConnectRes>>('/game/connections');
     if (res.data.success) {
       return res.data.data;
     }
@@ -326,7 +311,7 @@ export class ApiManager {
   }
 
   async getOnlineCount(): Promise<OnlineCountRes> {
-    const res = await this.client.get<ApiResponse<OnlineCountRes>>('/game/online');
+    const res = await this.client.get<ApiResponse<OnlineCountRes>>('/game/online-count');
     if (res.data.success) {
       return res.data.data;
     }
@@ -342,31 +327,11 @@ export class ApiManager {
   }
 
   async deleteAccount(): Promise<void> {
-    await this.client.delete<ApiResponse<null>>('/auth/delete');
+    await this.client.delete('/accounts/me');
   }
 
   async createUser(avatar: CreateUserReq): Promise<GetUserRes | null> {
-    const res = await this.client.post<ApiResponse<GetUserRes>>('/user/create', avatar);
-
-    if (res.data.success) {
-      return res.data.data;
-    }
-
-    return null;
-  }
-
-  async getStartingPokemons(): Promise<StartingPokemon[] | null> {
-    const res = await this.client.get<ApiResponse<GetStartingPokemonsRes>>('/game/starting');
-
-    if (res.data.success) {
-      return res.data.data.list || [];
-    }
-
-    return null;
-  }
-
-  async pickStartingPokemon(index: number): Promise<UserPokemon | null> {
-    const res = await this.client.post<ApiResponse<null>>('/game/starting/catch', { index });
+    const res = await this.client.post<ApiResponse<GetUserRes>>('/users', avatar);
 
     if (res.data.success) {
       return res.data.data;
@@ -384,7 +349,7 @@ export class ApiManager {
         mapData: { wilds: SafariWildInfo[]; items: SafariItemInfo[] };
         entry?: { x: number; y: number };
       }>
-    >('/game/safari/enter', { mapId, needEntry });
+    >('/safari/enter', { mapId, needEntry });
     if (!res.data.success || !res.data.data) return null;
     const { mapData, entry } = res.data.data;
     return {
@@ -399,45 +364,39 @@ export class ApiManager {
 
   async pickGroundItem(uid: string): Promise<{ itemId: string; newQuantity: number } | null> {
     const res = await this.client.post<ApiResponse<{ itemId: string; newQuantity: number }>>(
-      '/game/safari/pick-item',
-      { uid },
+      `/safari/items/${uid}/pick`,
     );
     return res.data.success ? res.data.data : null;
   }
 
-  async safariCatch(payload: SafariCatchReq): Promise<SafariCatchRes | null> {
-    const res = await this.client.post<ApiResponse<SafariCatchRes>>('/game/safari/catch', payload);
+  async safariCatch(uid: string): Promise<SafariCatchRes | null> {
+    const res = await this.client.post<ApiResponse<SafariCatchRes>>(`/safari/wilds/${uid}/catch`);
     return res.data.success ? res.data.data : null;
   }
 
   /** FEED: 베잇 투척. 서버는 flee 확률만 계산 후 {result:'flee'|'stay'} 반환. */
-  async safariBait(payload: SafariBaitReq): Promise<SafariBaitRockRes | null> {
-    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(
-      '/game/safari/bait',
-      payload,
-    );
+  async safariBait(uid: string): Promise<SafariBaitRockRes | null> {
+    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(`/safari/wilds/${uid}/bait`);
     return res.data.success ? res.data.data : null;
   }
 
   /** MUD: 진흙 투척. 서버는 flee 확률만 계산 후 {result:'flee'|'stay'} 반환. */
-  async safariRock(payload: SafariRockReq): Promise<SafariBaitRockRes | null> {
-    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(
-      '/game/safari/rock',
-      payload,
-    );
+  async safariRock(uid: string): Promise<SafariBaitRockRes | null> {
+    const res = await this.client.post<ApiResponse<SafariBaitRockRes>>(`/safari/wilds/${uid}/rock`);
     return res.data.success ? res.data.data : null;
   }
 
   async restoreFossil(id: number): Promise<RestoreFossilRes | null> {
-    const payload: RestoreFossilReq = { id };
-    const res = await this.client.post<ApiResponse<RestoreFossilRes>>('/fossil/restore', payload);
+    const res = await this.client.post<ApiResponse<RestoreFossilRes>>(
+      `/users/me/fossils/${id}/restore`,
+    );
     return res.data.success ? res.data.data : null;
   }
 
   async exitSafari(): Promise<{ mapId: string; entry: { x: number; y: number } } | null> {
     const res =
       await this.client.post<ApiResponse<{ mapId: string; entry: { x: number; y: number } }>>(
-        '/game/safari/exit',
+        '/safari/exit',
       );
     return res.data.success ? res.data.data : null;
   }

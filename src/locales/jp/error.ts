@@ -45,7 +45,6 @@ export const error: TranslationError = {
   ITEM_NOT_HOLDABLE: 'このアイテムは もたせられません。',
   ITEM_NOT_REGISTERABLE: 'このアイテムは とうろくできません。',
   ITEM_NOT_OWNED: 'このアイテムを しょじしていません。',
-  POKEMON_NOT_OWNED: 'このポケモンを しょじしていません。',
   POKEMON_NO_HELD_ITEM: 'ポケモンは どうぐを もっていません。',
   INSUFFICIENT_MONEY: 'おかねが たりません。',
   PARTY_LIMIT_EXCEEDED: 'パーティが まんいんです。',

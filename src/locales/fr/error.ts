@@ -44,7 +44,6 @@ export const error: TranslationError = {
   ITEM_NOT_HOLDABLE: 'Cet objet ne peut pas être tenu.',
   ITEM_NOT_REGISTERABLE: 'Cet objet ne peut pas être enregistré.',
   ITEM_NOT_OWNED: 'Vous ne possédez pas cet objet.',
-  POKEMON_NOT_OWNED: 'Vous ne possédez pas ce Pokémon.',
   POKEMON_NO_HELD_ITEM: 'Ce Pokémon ne tient aucun objet.',
   INSUFFICIENT_MONEY: "Pas assez d'argent.",
   PARTY_LIMIT_EXCEEDED: "L'équipe est pleine.",

@@ -133,9 +133,7 @@ export class BattlePhase implements IGamePhase {
         // API 호출을 애니메이션 전에 수행하여 결과에 따라 shake 횟수를 결정한다.
         let outcome: CatchResult;
         try {
-          const res = await this.scene.getApi().safariCatch({
-            uid: this.ctx.wild.uid,
-          });
+          const res = await this.scene.getApi().safariCatch(this.ctx.wild.uid);
           const user = this.scene.getUser();
           const party = user?.getParty();
           if (user && party && party.length > 0 && res?.partyFriendship?.length) {
@@ -344,8 +342,8 @@ export class BattlePhase implements IGamePhase {
       const api = this.scene.getApi();
       const res =
         kind === 'bait'
-          ? await api.safariBait({ uid: this.ctx.wild.uid })
-          : await api.safariRock({ uid: this.ctx.wild.uid });
+          ? await api.safariBait(this.ctx.wild.uid)
+          : await api.safariRock(this.ctx.wild.uid);
       if (res?.result === 'flee') result = 'flee';
     } catch {}
 

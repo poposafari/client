@@ -275,10 +275,11 @@ export class BagPhase implements IGamePhase {
         }
 
         const pokemonId = selectedPokemon.id;
+        const alreadyHeld = selectedPokemon.heldItemId === itemId;
         const res = await api.giveHold(pokemonId, itemId);
         if (!res) return;
 
-        user.decreaseItemQuantity(itemId, 1);
+        if (!alreadyHeld) user.decreaseItemQuantity(itemId, 1);
         if (res.previousHeld) {
           const existing = user.getItemBag()?.get(res.previousHeld);
           user.updateItemQuantity(
@@ -331,7 +332,7 @@ export class BagPhase implements IGamePhase {
     if (changes.length === 0) return;
 
     for (const { itemId, register } of changes) {
-      const res = register ? await api.registerItem(itemId) : await api.unregisterItem(itemId);
+      const res = await api.setItemRegister(itemId, register);
       if (!res) continue;
       user.updateItemQuantity(res.itemId, res.quantity, res.register);
       this.localState.markCommitted(res.itemId, res.register);

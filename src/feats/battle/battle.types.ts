@@ -3,7 +3,7 @@ import type { SafariWildInfo } from '@poposafari/scenes/game.scene';
 export type BattleModifiers = { bait: boolean; rock: boolean };
 export type BattleAction = { type: 'ball' } | { type: 'feed' } | { type: 'mud' } | { type: 'run' };
 
-/** POST /api/game/safari/catch 응답 매핑.*/
+/** POST /api/safari/wilds/:uid/catch 응답 매핑.*/
 export type RewardItem = { itemId: string; quantity: number };
 
 export interface PartyExpReward {
@@ -66,11 +66,7 @@ export interface BattleContext {
   onResolved?: (reason: 'catch' | 'flee_wild' | 'flee_player') => void;
 }
 
-/** 서버 safari catch 요청/응답 DTO. ApiManager.safariCatch 에서 사용. */
-export interface SafariCatchReq {
-  uid: string;
-}
-
+/** 서버 safari catch 응답 DTO. ApiManager.safariCatch 에서 사용. */
 export type SafariCatchRes =
   | {
       result: 'caught';

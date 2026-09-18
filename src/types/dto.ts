@@ -23,7 +23,7 @@ export interface GetUserRes {
   costume: string[];
 }
 
-// ── 게임 진입 API (GET /api/user/me) ──
+// ── 게임 진입 API (GET /api/users/me) ──
 export interface GetMeRes {
   profile: {
     nickname: string;
@@ -170,40 +170,7 @@ export interface CreateUserReq {
   };
 }
 
-// {
-//     "index": 0,
-//     "pokemonId": "0001",
-//     "region": "",
-//     "form": null,
-//     "gender": 1,
-//     "shiny": false,
-//     "comment": "이상해씨"
-// },
-export interface StartingPokemon {
-  index: number;
-  pokemonId: string;
-  region: string;
-  form: string | null;
-  gender: number;
-  shiny: boolean;
-  comment: string;
-}
-
-export interface GetStartingPokemonsRes {
-  list: StartingPokemon[];
-}
-
-export interface SafariCatchReq {
-  uid: string;
-}
-
-// ── 사파리 베잇/락 (POST /api/game/safari/bait|rock) ──
-export interface SafariBaitReq {
-  uid: string;
-}
-export interface SafariRockReq {
-  uid: string;
-}
+// ── 사파리 베잇/락 (POST /api/safari/wilds/:uid/bait|rock) ──
 export type SafariBaitRockRes = { result: 'flee' | 'stay' };
 
 export interface SafariCatchCaughtPokemon {
@@ -253,10 +220,7 @@ export type SafariCatchRes =
   | { result: 'fail'; partyFriendship?: SafariPartyFriendship[] }
   | { result: 'flee'; partyFriendship?: SafariPartyFriendship[] };
 
-// ── 화석 복원 (POST /api/fossil/restore) ──
-export interface RestoreFossilReq {
-  id: number;
-}
+// ── 화석 복원 (POST /api/users/me/fossils/:fossilId/restore) ──
 
 export interface RestoreFossilPokemon {
   id: number;
